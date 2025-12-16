@@ -1,0 +1,58 @@
+{
+  "report_generated": "2025-12-17T05:08:37.590524",
+  "benchmarks_run": 5,
+  "regressions_detected": 0,
+  "overall_status": "PASS",
+  "regressions": [],
+  "benchmarks": [
+    {
+      "test_name": "API Response Time",
+      "timestamp": "2025-12-17T05:08:36.934153",
+      "response_time": 0.010115694999694825,
+      "throughput": 988.5628224557665,
+      "memory_usage": 62.715971439254616,
+      "cpu_usage": 38.68643472334425,
+      "error_rate": 0.001
+    },
+    {
+      "test_name": "Fraud Detection Throughput",
+      "timestamp": "2025-12-17T05:08:37.084513",
+      "response_time": 0.005016517639160156,
+      "throughput": 1993.4146990608722,
+      "memory_usage": 57.409886382910216,
+      "cpu_usage": 52.25156267863187,
+      "error_rate": 0.001
+    },
+    {
+      "test_name": "Database Query Performance",
+      "timestamp": "2025-12-17T05:08:37.210307",
+      "response_time": 0.002120494842529297,
+      "throughput": 4715.880368787947,
+      "memory_usage": 60.757226744390614,
+      "cpu_usage": 51.18501379311635,
+      "error_rate": 0.001
+    },
+    {
+      "test_name": "Memory Intensive Operations",
+      "timestamp": "2025-12-17T05:08:37.342652",
+      "response_time": 0.0031109094619750977,
+      "throughput": 3214.494064269894,
+      "memory_usage": 56.01427332531114,
+      "cpu_usage": 53.33477630165678,
+      "error_rate": 0.001
+    },
+    {
+      "test_name": "CPU Intensive Calculations",
+      "timestamp": "2025-12-17T05:08:37.487551",
+      "response_time": 0.0042509794235229496,
+      "throughput": 2352.399060005945,
+      "memory_usage": 62.88395443106291,
+      "cpu_usage": 43.34967774189458,
+      "error_rate": 0.001
+    }
+  ],
+  "recommendations": [
+    "Performance is within acceptable thresholds",
+    "Continue monitoring for future regressions"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "documentation_generated": "2025-12-17T05:11:46.216613",
+  "sections": {
+    "api_endpoints": 0,
+    "database_models": 0,
+    "services": 0,
+    "configuration_files": 2
+  },
+  "files": [
+    "API_DOCUMENTATION.md",
+    "MODEL_DOCUMENTATION.md",
+    "SERVICE_DOCUMENTATION.md",
+    "CONFIG_DOCUMENTATION.md",
+    "AUTOMATED_DOCUMENTATION_README.md"
+  ]
+}

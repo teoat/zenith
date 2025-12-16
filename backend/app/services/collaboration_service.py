@@ -6,6 +6,7 @@ Provides WebSocket-based real-time collaboration for investigation workflows
 import asyncio
 import json
 import logging
+import os
 import queue
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -66,11 +67,17 @@ class CollaborationManager:
             # Start message processing loop
             asyncio.create_task(self.process_messages())
 
-            # Keep server running
-            await self.server.wait_closed()
+            # For testing/development, don't wait for server closure
+            # This allows the server to start without blocking the lifespan
+            if os.getenv("TESTING", "false").lower() == "true":
+                logger.info("WebSocket server started in testing mode - not waiting for closure")
+                return
 
+            # Keep server running (production mode)
+            await self.server.wait_closed()
         except Exception as e:
             logger.error(f"Failed to start WebSocket server: {e}")
+            self.running = False
             raise
 
     async def stop_server(self):

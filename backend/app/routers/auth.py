@@ -35,7 +35,71 @@ class UserCreateRequest(BaseModel):
     )
 
 
+class RegisterRequest(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
+    email: str = Field(..., pattern=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+    password: str = Field(..., min_length=8, max_length=128)
+    full_name: str = Field(..., min_length=1, max_length=100)
+    role: Optional[str] = "ANALYST"  # Default role
+
+
 # ===== AUTHENTICATION ENDPOINTS =====
+
+@router.post("/register", status_code=status.HTTP_201_CREATED)
+async def register(user_data: RegisterRequest):
+    """
+    Register a new user with password strength validation
+    """
+    try:
+        # Validate password strength
+        password_errors = auth_service.validate_password_strength(user_data.password)
+        if password_errors:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "message": "Password does not meet security requirements",
+                    "errors": password_errors
+                }
+            )
+        
+        # Check if username already exists
+        existing_user = auth_service.get_user_by_username(user_data.username)
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username already exists"
+            )
+        
+        # Check if email already exists
+        existing_email = auth_service.get_user_by_email(user_data.email)
+        if existing_email:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Email already registered"
+            )
+        
+        # Create user
+        new_user = auth_service.create_user(user_data)
+        
+        logger.info(f"New user registered: {new_user.username}")
+        
+        return {
+            "id": new_user.id,
+            "username": new_user.username,
+            "email": new_user.email,
+            "full_name": new_user.full_name,
+            "role": new_user.role,
+            "message": "User registered successfully"
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Registration error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Registration failed"
+        )
 
 
 @router.post("/login", response_model=TokenResponse)

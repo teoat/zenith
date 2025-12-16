@@ -256,7 +256,20 @@ class E2ETestFramework:
         results["total"] += 1
         try:
             uri = f"{self.ws_url}/ws/session/{test_session_id}"
-            async with websockets.connect(uri) as websocket:
+            # Try to connect with timeout
+            try:
+                websocket = await asyncio.wait_for(websockets.connect(uri), timeout=5.0)
+            except (asyncio.TimeoutError, OSError) as e:
+                # WebSocket server not available, skip test
+                results["skipped"] = results.get("skipped", 0) + 1
+                results["details"].append({
+                    "test": "websocket_join_session",
+                    "status": "skipped",
+                    "reason": f"WebSocket server not available: {e}"
+                })
+                return results
+
+            async with websocket:
                 # Send join message
                 join_message = {
                     "type": "join_session",

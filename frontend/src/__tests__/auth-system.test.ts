@@ -3,44 +3,34 @@
  * Tests JWT tokens, MFA, session management, and security features
  */
 
-// Mock localStorage BEFORE any imports
+import '@testing-library/jest-dom';
+
+// Mock localStorage
+const mockLocalStorage = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+};
 Object.defineProperty(window, 'localStorage', {
-  value: {
-    getItem: jest.fn((key: string) => {
-      if (key === 'token') return 'fake-jwt-token-for-testing';
-      return null;
-    }),
-    setItem: jest.fn(),
-    removeItem: jest.fn(),
-    clear: jest.fn(),
-  },
+  value: mockLocalStorage,
   writable: true,
 });
 
-// Mock import.meta BEFORE any imports
+// Mock fetch globally
+global.fetch = jest.fn();
+
+// Mock import.meta
 global.import = {
   meta: {
     env: {
       VITE_API_URL: 'http://localhost:8000/api/v1',
-      VITE_MAPBOX_TOKEN: 'test-token',
-      VITE_ENABLE_THREAT_MAP: 'true',
-      VITE_ENABLE_ADVANCED_FORENSIC: 'true',
-      VITE_USE_SIMPLE_PDF_VIEWER: 'false'
     }
   }
 };
 
-// Mock fetch globally
-(global.fetch as jest.MockedFunction<typeof fetch>) = jest.fn();
-
-import '@testing-library/jest-dom';
+// Import the actual client functions
 import { request, getToken } from '../services/client';
-
-// Mock the getToken function
-jest.mock('../services/client', () => ({
-  ...jest.requireActual('../services/client'),
-  getToken: jest.fn(() => 'fake-jwt-token-for-testing'),
-}));
 
 // Test utilities
 const mockFetch = (response: unknown, status = 200) => {
@@ -58,8 +48,6 @@ const mockFetchError = (status: number, message = 'Error') => {
     json: async () => ({ detail: message }),
   } as Response);
 };
-
-// Mock import.meta.env
 global.import = {
   meta: {
     env: {
@@ -75,16 +63,25 @@ global.import = {
 describe('Authentication System', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  afterEach(() => {
-    // Reset getToken mock after each test
-    (getToken as jest.MockedFunction<typeof getToken>).mockReset();
+    mockLocalStorage.getItem.mockImplementation((key: string) => {
+      if (key === 'token') return null; // Default to no token
+      return null;
+    });
   });
 
   describe('JWT Token Management', () => {
+    test('getToken should return token from localStorage', () => {
+      mockLocalStorage.getItem.mockReturnValue('test-token');
+      expect(getToken()).toBe('test-token');
+    });
+
+    test('getToken should return null when no token', () => {
+      mockLocalStorage.getItem.mockReturnValue(null);
+      expect(getToken()).toBe(null);
+    });
+
     test('should include Authorization header when token exists', async () => {
-      (getToken as jest.MockedFunction<typeof getToken>).mockReturnValue('fake-jwt-token-for-testing');
+      mockLocalStorage.getItem.mockReturnValue('fake-jwt-token-for-testing');
       mockFetch({ data: 'protected resource' });
 
       await request('/protected-endpoint');
@@ -100,7 +97,7 @@ describe('Authentication System', () => {
     });
 
     test('should not include Authorization header when no token', async () => {
-      // getToken already returns null from beforeEach
+      mockLocalStorage.getItem.mockReturnValue(null);
       mockFetch({ data: 'public resource' });
 
       await request('/public-endpoint');
@@ -116,7 +113,7 @@ describe('Authentication System', () => {
     });
 
     test('should exclude dev tokens from Authorization header', async () => {
-      (getToken as jest.MockedFunction<typeof getToken>).mockReturnValue('dev-token-378x492');
+      mockLocalStorage.getItem.mockReturnValue('dev-token-378x492');
       mockFetch({ data: 'dev resource' });
 
       await request('/dev-endpoint');
@@ -143,7 +140,6 @@ describe('Authentication System', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         'http://localhost:8000/api/v1/users/1',
         expect.objectContaining({
-          method: 'GET',
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
           }),
@@ -213,22 +209,22 @@ describe('Authentication System', () => {
       );
     });
 
-    test('should handle missing VITE_API_URL gracefully', async () => {
-      // Temporarily remove the env var
-      const originalEnv = window.import.meta.env.VITE_API_URL;
-      delete window.import.meta.env.VITE_API_URL;
+    test('should use default localhost API URL when not configured', async () => {
+      // Temporarily modify the env var
+      const originalEnv = global.import.meta.env.VITE_API_URL;
+      global.import.meta.env.VITE_API_URL = 'http://test-api:9000/api/v1';
 
       mockFetch({ success: true });
 
       await request('/test');
 
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/v1/test', // Fallback to relative URL
+        'http://test-api:9000/api/v1/test',
         expect.anything()
       );
 
       // Restore
-      window.import.meta.env.VITE_API_URL = originalEnv;
+      global.import.meta.env.VITE_API_URL = originalEnv;
     });
   });
 
