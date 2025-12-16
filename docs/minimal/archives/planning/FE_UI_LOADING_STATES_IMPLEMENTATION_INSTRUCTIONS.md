@@ -1,1 +1,0 @@
-../../../archives/planning/FE_UI_LOADING_STATES_IMPLEMENTATION_INSTRUCTIONS.md

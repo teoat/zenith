@@ -16,7 +16,7 @@ from app.services.fraud_rules_engine import get_fraud_engine
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
-    prefix="/fraud-rules",
+    prefix="",
     tags=["Fraud Rules Engine"],
     responses={404: {"description": "Not found"}},
 )

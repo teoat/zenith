@@ -13,7 +13,15 @@ import os
 import io
 import hashlib
 from typing import Dict, List, Any, Optional, Tuple
+from enum import Enum
 from dataclasses import dataclass
+
+@dataclass
+class FileType(str, Enum):
+    TEXT = 'text'
+    IMAGE = 'image'
+    PDF = 'pdf'
+
 from datetime import datetime
 from pathlib import Path
 from PIL import Image

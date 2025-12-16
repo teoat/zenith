@@ -8,7 +8,7 @@ import tempfile
 import os
 from PIL import Image
 from datetime import datetime
-from app.services.intelligence.evidence_processor import (
+from app.services.evidence_processor import (
     MultiModalProcessor,
     ExtractedEvidence,
     FileType

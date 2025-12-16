@@ -7,43 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class AIService:
-    def __init__(self):
-        self.model = None
 
-    def _initialize_model(self):
-        # No-op lightweight initializer for tests
-        self.model = None
-
-    def _load_model(self):
-        # No-op loader
-        return None
-
-    def _save_model(self):
-        # No-op saver
-        return True
-
-    def _train_model(self, training_data: List[Dict[str, Any]]):
-        # No-op training; pretend to train
-        self.model = {"trained": True, "samples": len(training_data)}
-
-    def analyze_transaction(self, transaction: Dict[str, Any]) -> Dict[str, Any]:
-        # Simple heuristic: higher amounts -> higher fraud probability
-        amount = float(transaction.get('amount', 0))
-        fraud_probability = min(1.0, amount / 100000.0)
-        return {
-            'fraud_probability': fraud_probability,
-            'risk_score': round(fraud_probability * 100, 2)
-        }
-
-    def train_model(self, training_data: List[Dict[str, Any]]) -> bool:
-        try:
-            self._train_model(training_data)
-            self._save_model()
-            return True
-        except Exception as e:
-            logger.error(f"train_model failed: {e}")
-            return False
 """
 AI Integration Layer for Simple378 Fraud Detection
 Provides semantic search, AI analysis, and intelligent insights
@@ -246,6 +210,21 @@ class AIService:
                 logger.info(f"Rebuilt TF-IDF index with {len(documents)} documents")
         except Exception as e:
             logger.error(f"Failed to rebuild index: {e}")
+
+    def embed_text(self, text: str) -> List[float]:
+        """Generate embedding for text using TF-IDF or fallback"""
+        try:
+            if self.tfidf_vectorizer:
+                return self.tfidf_vectorizer.transform([text]).toarray()[0].tolist()
+            else:
+                # Fallback hash-based vector (deterministically random)
+                # Using 384 dimensions to match MiniLM default
+                import random
+                random.seed(hash(text))
+                return [random.random() for _ in range(384)]
+        except Exception as e:
+            logger.error(f"Failed to embed text: {e}")
+            return [0.0] * 384
 
     async def add_document(self, doc_id: str, content: str, metadata: Dict[str, Any] = None):
         """Add a document to the vector store"""

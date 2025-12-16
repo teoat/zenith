@@ -15,8 +15,8 @@
         "structuring",
         "smurfing"
       ],
-      "created_at": "2025-12-17 02:03:22.359901",
-      "updated_at": "2025-12-17 02:03:22.359906",
+      "created_at": "2025-12-17 02:28:26.725269",
+      "updated_at": "2025-12-17 02:28:26.725274",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -38,8 +38,8 @@
         "round_numbers",
         "suspicious"
       ],
-      "created_at": "2025-12-17 02:03:22.359930",
-      "updated_at": "2025-12-17 02:03:22.359932",
+      "created_at": "2025-12-17 02:28:26.725283",
+      "updated_at": "2025-12-17 02:28:26.725284",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -60,8 +60,8 @@
         "velocity",
         "frequency"
       ],
-      "created_at": "2025-12-17 02:03:22.359937",
-      "updated_at": "2025-12-17 02:03:22.359938",
+      "created_at": "2025-12-17 02:28:26.725288",
+      "updated_at": "2025-12-17 02:28:26.725289",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -83,8 +83,8 @@
         "geographic",
         "international"
       ],
-      "created_at": "2025-12-17 02:03:22.360077",
-      "updated_at": "2025-12-17 02:03:22.360078",
+      "created_at": "2025-12-17 02:28:26.725441",
+      "updated_at": "2025-12-17 02:28:26.725442",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -106,14 +106,14 @@
         "shell_company",
         "new_entity"
       ],
-      "created_at": "2025-12-17 02:03:22.360083",
-      "updated_at": "2025-12-17 02:03:22.360084",
+      "created_at": "2025-12-17 02:28:26.725447",
+      "updated_at": "2025-12-17 02:28:26.725447",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
       "action": "flag"
     }
   ],
-  "last_updated": "2025-12-17T02:03:22.360090",
+  "last_updated": "2025-12-17T02:28:26.725454",
   "version": "1.0"
 }

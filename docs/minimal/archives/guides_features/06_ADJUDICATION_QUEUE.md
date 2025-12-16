@@ -1,1 +1,0 @@
-../../../archives/guides_features/06_ADJUDICATION_QUEUE.md

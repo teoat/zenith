@@ -1,1 +1,0 @@
-../../../../../frontend/src/components/evidence/EvidenceViewer.tsx
