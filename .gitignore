@@ -31,6 +31,12 @@ build/
 # Electron app bundles and helpers (do not push)
 electron/
 
+# Diagnostic reports (timestamped ones - keep examples)
+diagnostic_results_*.json
+COMPREHENSIVE_DIAGNOSTIC_REPORT_*.md
+!diagnostic_results_example.json
+!COMPREHENSIVE_DIAGNOSTIC_REPORT_EXAMPLE.md
+
 # Misc
 /.idea/
 .vscode/
