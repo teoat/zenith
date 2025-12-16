@@ -983,7 +983,10 @@ class ComprehensiveDiagnosticSuite:
         avg_maturity = sum(maturity_scores.values()) // len(maturity_scores) if maturity_scores else 0
         if avg_maturity >= 90:
             summary['maturity_level'] = 'optimized'
-        elif avg_maturity >= 80:
+        if maturity_scores:
+            avg_maturity = sum(maturity_scores.values()) // len(maturity_scores)
+        else:
+            avg_maturity = 0
             summary['maturity_level'] = 'managed'
         elif avg_maturity >= 70:
             summary['maturity_level'] = 'defined'
