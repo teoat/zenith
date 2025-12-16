@@ -26,7 +26,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'backend'))
 # Optional imports - gracefully handle missing dependencies
 try:
     from core.database import create_tables
-    from app.services.compliance_service import ComplianceService
     BACKEND_AVAILABLE = True
 except ImportError as e:
     print(f"⚠️  Warning: Backend modules not fully available: {e}")
