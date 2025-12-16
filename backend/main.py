@@ -75,6 +75,7 @@ from core.performance import PerformanceMonitoringMiddleware
 from core.api_documentation import setup_api_documentation
 from core.sentry_config import init_sentry
 from core.validation import InputValidationMiddleware
+from middleware.request_id import RequestIDMiddleware
 
 
 # Utility function for safe service calls with graceful degradation
@@ -343,6 +344,9 @@ from core.csrf_protection import CSRFProtectionMiddleware
 
 app.add_middleware(CSRFProtectionMiddleware)
 
+# Request ID middleware - distributed tracing (runs early)
+app.add_middleware(RequestIDMiddleware)
+
 
 # Request logging middleware
 @app.middleware("http")
@@ -355,11 +359,11 @@ async def request_logging_middleware(request: Request, call_next):
 
     from app.services.audit_service import audit_service
 
-    request_id = str(uuid.uuid4())[:8]
-    start_time = time.time()
+    from app.services.audit_service import audit_service
 
-    # Add request ID to request state for use in handlers
-    request.state.request_id = request_id
+    # Use existing request ID from RequestIDMiddleware, or fallback
+    request_id = getattr(request.state, "request_id", str(uuid.uuid4())[:8])
+    start_time = time.time()
 
     # Get client information
     client_ip = request.client.host if request.client else "unknown"
