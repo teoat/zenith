@@ -15,6 +15,10 @@ import InvestigationWizard, { InvestigationData } from '../components/cases/Inve
 import WidgetErrorBoundary from '../components/WidgetErrorBoundary';
 import Skeleton from '../components/ui/Skeleton';
 import { VirtualizedList } from '../components/ui/VirtualizedList';
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 const CaseKanban = React.lazy(() => import('../components/cases/CaseKanban'));
 const AdjudicationQueue = React.lazy(() => import('../pages/AdjudicationQueue'));
 
@@ -161,6 +165,7 @@ const Cases = () => {
 
                     <VirtualizedList
                       items={filteredCases}
+<<<<<<< Updated upstream
                       estimateSize={120}
                       renderItem={(caseItem, index) => (
                         <div
@@ -208,10 +213,65 @@ const Cases = () => {
                                   caseItem.priority === 'HIGH' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
                                   caseItem.priority === 'MEDIUM' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300' :
                                   'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+=======
+                      estimateSize={80}
+                      getItemKey={(caseItem) => caseItem.id}
+                      renderItem={(caseItem) => {
+                        const isSelected = selectedCases.has(caseItem.id);
+                        return (
+                          <div
+                            key={caseItem.id}
+                            className={`flex items-center p-4 border-b border-slate-200 dark:border-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors ${previewCaseId === caseItem.id ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-l-blue-500' : 'hover:bg-slate-50 dark:hover:bg-slate-800 border-l-4 border-l-transparent'}`}
+                            onClick={() => handleOpenCase(caseItem.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleOpenCase(caseItem.id);
+                              }
+                            }}
+                            tabIndex={0}
+                            role="button"
+                            aria-current={previewCaseId === caseItem.id ? 'page' : undefined}
+                            aria-label={`Open case: ${caseItem.title}`}
+                          >
+                            {/* Selection Checkbox */}
+                            <div 
+                              className="mr-3 shrink-0"
+                              onClick={(e) => toggleCaseSelection(caseItem.id, e)}
+                              role="checkbox"
+                              aria-checked={isSelected}
+                              tabIndex={0}
+                              aria-label={`Select case ${caseItem.title}`}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.stopPropagation();
+                                  toggleCaseSelection(caseItem.id);
+                                }
+                              }}
+                            >
+                              {isSelected ? (
+                                <CheckSquareIcon size={20} className="text-blue-500" />
+                              ) : (
+                                <SquareIcon size={20} className="text-slate-300 dark:text-slate-600 hover:text-slate-400" />
+                              )}
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex justify-between items-start">
+                                <p className="font-semibold text-slate-800 dark:text-white transition-colors truncate pr-2">{caseItem.title}</p>
+                              </div>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400`}>
+                                  {caseItem.status}
+                                </span>
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-bold ${
+                                  caseItem.priority === 'HIGH' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+>>>>>>> Stashed changes
                                 }`}>
                                   {caseItem.priority}
                                 </span>
                               </div>
+<<<<<<< Updated upstream
 
                               <p className="text-sm text-slate-600 dark:text-slate-400 mb-2 line-clamp-2">
                                 {caseItem.description}
@@ -228,6 +288,16 @@ const Cases = () => {
                       emptyMessage="No cases found matching your search."
                       className="h-[calc(100%-44px)]"
                     />
+=======
+                            </div>
+                          </div>
+                        );
+                      }}
+                      emptyMessage="No cases found matching your search."
+                      className="h-[calc(100%-44px)]"
+                    />
+                  </>
+>>>>>>> Stashed changes
                 )}
               </div>
             </div>

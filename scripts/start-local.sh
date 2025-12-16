@@ -111,7 +111,11 @@ cd ..
 # Frontend dependencies
 echo "✓ Installing frontend dependencies..."
 cd frontend
+<<<<<<< Updated upstream
 npm install
+=======
+npm install --silent
+>>>>>>> Stashed changes
 echo "  ✓ Frontend dependencies installed"
 
 cd ..

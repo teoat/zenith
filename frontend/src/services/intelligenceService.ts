@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 /**
  * Frontend Intelligence Service Integration
  * Phase 5 Extension: Connects frontend to intelligence APIs
@@ -10,6 +11,19 @@
 
 import { api } from '../lib/api';
 import { useState } from 'react';
+=======
+"""
+Frontend Intelligence Service Integration
+Phase 5 Extension: Connects frontend to intelligence APIs
+
+Provides service layer for:
+- Fraud detection analysis
+- Evidence processing
+- Risk scoring
+"""
+
+import { api } from '../lib/api';
+>>>>>>> Stashed changes
 
 // Types
 export interface TransactionInput {

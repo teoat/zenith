@@ -1,4 +1,5 @@
 """
+<<<<<<< Updated upstream
 Fraud Rules Engine API Router
 Provides endpoints for managing and using fraud detection rules
 """
@@ -561,4 +562,226 @@ async def update_alert_status(alert_id: str, update: AlertUpdate, db: Session = 
         "id": alert.id,
         "status": alert.status,
         "updatedAt": alert.updated_at.isoformat() if alert.updated_at else datetime.now(timezone.utc).isoformat()
+=======
+Fraud Detection API Router
+Endpoints for rule management and transaction evaluation
+"""
+from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel, Field
+from typing import List, Dict, Any, Optional
+from datetime import datetime
+
+from app.services.fraud.rule_engine import (
+    RuleEngine, FraudRule, VelocityRule, AmountThresholdRule, 
+    GeographicAnomalyRule, RuleType, RiskLevel, create_default_rules
+)
+
+router = APIRouter()
+
+# Global rule engine instance
+fraud_engine = create_default_rules()
+
+# Request/Response Models
+class TransactionEvaluationRequest(BaseModel):
+    transaction_id: str
+    account_id: str
+    amount: float
+    currency: str = "USD"
+    timestamp: str
+    location: Optional[Dict[str, float]] = None
+    merchant: Optional[str] = None
+    category: Optional[str] = None
+
+class ContextData(BaseModel):
+    recent_transactions: List[Dict[str, Any]] = []
+    last_transaction: Optional[Dict[str, Any]] = None
+    account_history: Optional[Dict[str, Any]] = None
+
+class EvaluationRequest(BaseModel):
+    transaction: TransactionEvaluationRequest
+    context: Optional[ContextData] = None
+
+class RuleCreateRequest(BaseModel):
+    rule_type: str
+    name: str
+    description: str
+    risk_level: str
+    parameters: Dict[str, Any]
+
+@router.post('/evaluate')
+async def evaluate_transaction(request: EvaluationRequest):
+    """
+    Evaluate a transaction for fraud
+    
+    Returns fraud risk assessment and recommendations
+    """
+    try:
+        transaction_dict = request.transaction.dict()
+        context_dict = request.context.dict() if request.context else {}
+        
+        result = fraud_engine.evaluate_transaction(transaction_dict, context_dict)
+        
+        return {
+            "transaction_id": request.transaction.transaction_id,
+            **result,
+            "evaluated_at": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Evaluation failed: {str(e)}")
+
+@router.get('/rules')
+async def list_rules():
+    """Get all fraud detection rules"""
+    return {
+        "rules": [
+            {
+                "rule_id": rule.rule_id,
+                "name": rule.name,
+                "description": rule.description,
+                "rule_type": rule.rule_type.value,
+                "risk_level": rule.risk_level.value,
+                "enabled": rule.enabled,
+                "triggered_count": rule.triggered_count,
+                "created_at": rule.created_at.isoformat()
+            }
+            for rule in fraud_engine.rules
+        ],
+        "total_count": len(fraud_engine.rules)
+    }
+
+@router.get('/rules/{rule_id}')
+async def get_rule(rule_id: str):
+    """Get specific rule details"""
+    rule = fraud_engine.get_rule(rule_id)
+    if not rule:
+        raise HTTPException(status_code=404, detail=f"Rule {rule_id} not found")
+    
+    return {
+        "rule_id": rule.rule_id,
+        "name": rule.name,
+        "description": rule.description,
+        "rule_type": rule.rule_type.value,
+        "risk_level": rule.risk_level.value,
+        "enabled": rule.enabled,
+        "triggered_count": rule.triggered_count,
+        "created_at": rule.created_at.isoformat()
+    }
+
+@router.patch('/rules/{rule_id}/toggle')
+async def toggle_rule(rule_id: str):
+    """Enable or disable a rule"""
+    rule = fraud_engine.get_rule(rule_id)
+    if not rule:
+        raise HTTPException(status_code=404, detail=f"Rule {rule_id} not found")
+    
+    rule.enabled = not rule.enabled
+    
+    return {
+        "rule_id": rule_id,
+        "enabled": rule.enabled,
+        "message": f"Rule {'enabled' if rule.enabled else 'disabled'}"
+    }
+
+@router.post('/rules')
+async def create_rule(request: RuleCreateRequest):
+    """Create a new fraud detection rule"""
+    try:
+        rule_type = RuleType(request.rule_type)
+        risk_level = RiskLevel(request.risk_level)
+        
+        # Create rule based on type
+        if rule_type == RuleType.VELOCITY:
+            rule = VelocityRule(
+                rule_id=f"VEL{len([r for r in fraud_engine.rules if r.rule_type == RuleType.VELOCITY]) + 1:03d}",
+                max_transactions=request.parameters.get('max_transactions', 5),
+                time_window_minutes=request.parameters.get('time_window_minutes', 5),
+                risk_level=risk_level
+            )
+        elif rule_type == RuleType.AMOUNT:
+            rule = AmountThresholdRule(
+                rule_id=f"AMT{len([r for r in fraud_engine.rules if r.rule_type == RuleType.AMOUNT]) + 1:03d}",
+                threshold_amount=request.parameters.get('threshold_amount', 10000.0),
+                currency=request.parameters.get('currency', 'USD'),
+                risk_level=risk_level
+            )
+        elif rule_type == RuleType.GEOGRAPHIC:
+            rule = GeographicAnomalyRule(
+                rule_id=f"GEO{len([r for r in fraud_engine.rules if r.rule_type == RuleType.GEOGRAPHIC]) + 1:03d}",
+                max_distance_km=request.parameters.get('max_distance_km', 500),
+                min_time_hours=request.parameters.get('min_time_hours', 1),
+                risk_level=risk_level
+            )
+        else:
+            raise HTTPException(status_code=400, detail=f"Unsupported rule type: {rule_type}")
+        
+        fraud_engine.add_rule(rule)
+        
+        return {
+            "rule_id": rule.rule_id,
+            "message": "Rule created successfully",
+            "rule": {
+                "rule_id": rule.rule_id,
+                "name": rule.name,
+                "rule_type": rule.rule_type.value,
+                "risk_level": rule.risk_level.value
+            }
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create rule: {str(e)}")
+
+@router.delete('/rules/{rule_id}')
+async def delete_rule(rule_id: str):
+    """Delete a fraud detection rule"""
+    rule = fraud_engine.get_rule(rule_id)
+    if not rule:
+        raise HTTPException(status_code=404, detail=f"Rule {rule_id} not found")
+    
+    fraud_engine.remove_rule(rule_id)
+    
+    return {
+        "rule_id": rule_id,
+        "message": "Rule deleted successfully"
+    }
+
+@router.get('/stats')
+async def get_engine_stats():
+    """Get fraud detection engine statistics"""
+    return fraud_engine.get_stats()
+
+@router.post('/batch-evaluate')
+async def batch_evaluate_transactions(transactions: List[EvaluationRequest]):
+    """
+    Evaluate multiple transactions in batch
+    
+    Useful for bulk processing or historical analysis
+    """
+    results = []
+    
+    for request in transactions:
+        try:
+            transaction_dict = request.transaction.dict()
+            context_dict = request.context.dict() if request.context else {}
+            
+            result = fraud_engine.evaluate_transaction(transaction_dict, context_dict)
+            
+            results.append({
+                "transaction_id": request.transaction.transaction_id,
+                "success": True,
+                **result
+            })
+        except Exception as e:
+            results.append({
+                "transaction_id": request.transaction.transaction_id,
+                "success": False,
+                "error": str(e)
+            })
+    
+    return {
+        "total_evaluated": len(results),
+        "successful": sum(1 for r in results if r["success"]),
+        "failed": sum(1 for r in results if not r["success"]),
+        "results": results
+>>>>>>> Stashed changes
     }

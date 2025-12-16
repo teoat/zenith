@@ -394,6 +394,7 @@ async def ai_health_check():
     try:
         ai_service = await get_ai_service()
 
+<<<<<<< Updated upstream
         health_status = {
             "service": "ai",
             "status": "healthy" if ai_service.initialized else "initializing",
@@ -407,6 +408,484 @@ async def ai_health_check():
                     "status": "healthy" if ai_service.tfidf_vectorizer else "building",
                     "features": ai_service.tfidf_vectorizer.n_features_ if ai_service.tfidf_vectorizer else 0
                 }
+=======
+        # Start training in background
+        background_tasks.add_task(
+            ai_service.train_model,
+            request.model_type,
+            request.training_data,
+            request.hyperparameters
+        )
+
+        # Log training initiation
+        await audit_service.log_access(
+            action="ai_model_training_initiated",
+            resource=f"model:{request.model_type}",
+            details={
+                "training_samples": len(request.training_data),
+                "hyperparameters": request.hyperparameters
+            }
+        )
+
+        return {
+            "message": f"Training initiated for {request.model_type} model",
+            "status": "training",
+            "model_type": request.model_type,
+            "training_samples": len(request.training_data),
+            "started_at": datetime.now(timezone.utc).isoformat()
+        }
+
+    except Exception as e:
+        logger.error(f"Model training failed for {request.model_type}: {e}")
+        raise HTTPException(status_code=500, detail="Model training failed")
+
+@router.get("/models/status")
+async def get_model_status(db: Session = Depends(get_db)):
+    """
+    Get status of all AI models
+    """
+    try:
+        ai_service = AIService(db)
+
+        model_status = await ai_service.get_model_status()
+
+        return {
+            "models": model_status,
+            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "status": "operational"
+        }
+
+    except TypeError as e:
+        # Handle session type errors gracefully
+        logger.warning(f"Model status check with session issue: {e}")
+        return {
+            "models": {
+                "status": "initializing",
+                "message": "AI models are being initialized"
+            },
+            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "status": "initializing"
+        }
+    except Exception as e:
+        logger.error(f"Failed to get model status: {e}")
+        # Return a structured error response instead of raising HTTPException
+        return {
+            "models": {
+                "status": "error",
+                "error_message": str(e)
+            },
+            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "status": "error"
+        }
+
+
+@router.get("/insights/{case_id}")
+async def get_case_insights(
+    case_id: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Get AI-generated insights for a specific case
+    """
+    try:
+        ai_service = AIService(db)
+
+        insights = await ai_service.get_case_insights(case_id)
+
+        return {
+            "case_id": case_id,
+            "insights": insights,
+            "generated_at": datetime.now(timezone.utc).isoformat()
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to get insights for case {case_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve insights")
+
+@router.post("/feedback/{transaction_id}")
+async def submit_ai_feedback(
+    transaction_id: str,
+    feedback: Dict[str, Any],
+    db: Session = Depends(get_db)
+):
+    """
+    Submit feedback on AI analysis results for model improvement
+    """
+    try:
+        ai_service = AIService(db)
+
+        await ai_service.store_feedback(
+            transaction_id,
+            feedback,
+            "test_user"  # Mock user ID for testing
+        )
+
+        # Log feedback submission
+        await audit_service.log_access(
+            action="ai_feedback_submitted",
+            resource=f"transaction:{transaction_id}",
+            details={
+                "feedback_type": feedback.get('type'),
+                "feedback_data": feedback
+            }
+        )
+
+        return {
+            "message": "Feedback submitted successfully",
+            "transaction_id": transaction_id,
+            "feedback_processed": True
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to submit feedback for {transaction_id}: {e}")
+        raise HTTPException(status_code=500, detail="Feedback submission failed")
+
+@router.post("/federated/update")
+async def apply_federated_update(
+    model_updates: List[Dict[str, Any]],
+    db: Session = Depends(get_db)
+):
+    """
+    Apply federated learning updates from partner institutions
+    """
+    try:
+        ai_service = AIService(db)
+
+        result = await ai_service.apply_federated_updates(model_updates)
+
+        # Log federated update
+        await audit_service.log_access(
+            action="federated_learning_update",
+            resource="ai_models",
+            details={
+                "partners_contributed": len(model_updates),
+                "new_version": result.get('new_version')
+            }
+        )
+
+        return result
+
+    except Exception as e:
+        logger.error(f"Federated update failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Federated update failed")
+
+@router.get("/performance")
+async def get_ai_performance_metrics(db: Session = Depends(get_db)):
+    """
+    Get AI model performance metrics
+    """
+    try:
+        ai_service = AIService(db)
+
+        performance_metrics = await ai_service.get_performance_metrics()
+
+        return {
+            "performance": performance_metrics,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to get AI performance metrics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve performance metrics")
+
+@router.post("/anomaly-detection")
+async def detect_anomalies(
+    data: Dict[str, Any],
+    db: Session = Depends(get_db)
+):
+    """
+    Real-time anomaly detection using AI
+    """
+    try:
+        ai_service = AIService(db)
+
+        anomalies = await ai_service.detect_anomalies(data)
+
+        return {
+            "anomalies_detected": anomalies,
+            "confidence": anomalies[0].get('confidence', 0) if anomalies else 0,
+            "detected_at": datetime.now(timezone.utc).isoformat()
+        }
+
+    except Exception as e:
+        logger.error(f"Anomaly detection failed: {e}")
+        raise HTTPException(status_code=500, detail="Anomaly detection failed")
+
+@router.post("/chat")
+async def chat_with_ai(
+    request: ChatRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Chat with domain-specific fraud investigation personas using advanced LLM integration
+    """
+    try:
+        ai_service = AIService(db)
+        
+        start_time = datetime.now(timezone.utc)
+
+        # Get enhanced LLM response
+        response_text = await ai_service.generate_chat_response(
+            request.message,
+            request.context,
+            request.persona
+        )
+
+        response_time = int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000)
+
+        # Try to get additional LLM metadata
+        confidence = None
+        confidence_interval = None
+        provider = None
+        regulatory_citations = []
+
+        try:
+            from app.services.intelligence.advanced_llm_service import get_llm_service
+            llm_service = await get_llm_service()
+            
+            # Generate full response with metadata
+            full_response = await llm_service.generate_response(
+                prompt=request.message,
+                persona=request.persona,
+                context=request.context,
+                confidence_analysis=True
+            )
+            
+            confidence = full_response.confidence
+            confidence_interval = full_response.confidence_interval
+            provider = full_response.provider
+            regulatory_citations = full_response.metadata.get('regulatory_citations', [])
+            
+        except Exception as llm_error:
+            logger.warning(f"Could not get enhanced LLM metadata: {llm_error}")
+
+        # Generate contextual suggestions based on message and persona
+        case_id = None
+        if request.context and request.context.get('project'):
+            case_id = request.context['project'].get('caseId')
+
+        suggestions = []
+        if case_id:
+            suggestions = await ai_service.generate_contextual_suggestions(
+                case_id,
+                request.message
+            )
+
+        # Log AI chat interaction with enhanced metrics
+        await audit_service.log_access(
+            action="ai_chat_interaction",
+            resource=f"chat:{request.persona}",
+            details={
+                "message_length": len(request.message),
+                "context_provided": bool(request.context),
+                "suggestions_generated": len(suggestions),
+                "persona": request.persona,
+                "provider": provider,
+                "confidence": confidence,
+                "response_time_ms": response_time,
+                "llm_enhanced": provider is not None
+            }
+        )
+
+        return ChatResponse(
+            response=response_text,
+            persona=request.persona,
+            confidence=confidence,
+            confidence_interval=confidence_interval,
+            provider=provider,
+            response_time_ms=response_time,
+            suggestions=suggestions,
+            regulatory_citations=regulatory_citations
+        )
+
+    except Exception as e:
+        logger.error(f"AI chat failed: {e}")
+        raise HTTPException(status_code=500, detail="AI chat failed")
+
+@router.post("/chat/multi-persona")
+async def multi_persona_chat(
+    request: MultiPersonaRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Get responses from multiple personas concurrently for comprehensive analysis
+    """
+    try:
+        start_time = datetime.now(timezone.utc)
+        
+        # Get LLM service for multi-persona analysis
+        from app.services.intelligence.advanced_llm_service import get_llm_service
+        llm_service = await get_llm_service()
+        
+        # Generate responses from all requested personas
+        responses = await llm_service.multi_persona_analysis(
+            prompt=request.message,
+            personas=request.personas,
+            context=request.context
+        )
+        
+        # Convert to response format
+        chat_responses = {}
+        for persona, llm_response in responses.items():
+            chat_responses[persona] = ChatResponse(
+                response=llm_response.content,
+                persona=persona,
+                confidence=llm_response.confidence,
+                confidence_interval=llm_response.confidence_interval,
+                provider=llm_response.provider,
+                response_time_ms=llm_response.response_time_ms,
+                regulatory_citations=llm_response.metadata.get('regulatory_citations', [])
+            )
+        
+        # Generate synthesis combining insights
+        synthesis = await _generate_persona_synthesis(chat_responses, request.message)
+        
+        # Calculate overall confidence
+        confidences = [r.confidence for r in chat_responses.values() if r.confidence]
+        overall_confidence = sum(confidences) / len(confidences) if confidences else 0.0
+        
+        response_time = int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000)
+        
+        # Log multi-persona interaction
+        await audit_service.log_access(
+            action="ai_multi_persona_chat",
+            resource="multi_persona_analysis",
+            details={
+                "personas_requested": request.personas,
+                "responses_generated": len(chat_responses),
+                "overall_confidence": overall_confidence,
+                "response_time_ms": response_time
+            }
+        )
+        
+        return MultiPersonaResponse(
+            responses=chat_responses,
+            synthesis=synthesis,
+            overall_confidence=overall_confidence,
+            response_time_ms=response_time
+        )
+        
+    except Exception as e:
+        logger.error(f"Multi-persona chat failed: {e}")
+        raise HTTPException(status_code=500, detail="Multi-persona analysis failed")
+
+async def _generate_persona_synthesis(responses: Dict[str, ChatResponse], original_query: str) -> str:
+    """Generate synthesized analysis combining multiple persona perspectives"""
+    try:
+        synthesis_parts = ["## Multi-Perspective Analysis Synthesis\n"]
+        
+        # Analyze agreement/disagreement
+        risk_scores = []
+        recommendations = []
+        key_insights = []
+        
+        for persona, response in responses.items():
+            # Extract risk indicators
+            content_lower = response.response.lower()
+            if 'high risk' in content_lower or 'elevated risk' in content_lower:
+                risk_scores.append(0.8)
+            elif 'medium risk' in content_lower or 'moderate risk' in content_lower:
+                risk_scores.append(0.6)
+            else:
+                risk_scores.append(0.4)
+            
+            # Collect recommendations
+            for line in response.response.split('\n'):
+                if any(keyword in line.lower() for keyword in ['recommend', 'should', 'must', 'investigate']):
+                    recommendations.append(f"{persona.title()}: {line.strip()}")
+            
+            # Collect key insights
+            for line in response.response.split('\n'):
+                if len(line.strip()) > 20 and not line.lower().startswith(('recommend', 'should', 'must')):
+                    key_insights.append(f"{persona.title()}: {line.strip()}")
+        
+        # Generate synthesis
+        if risk_scores:
+            avg_risk = sum(risk_scores) / len(risk_scores)
+            risk_level = "HIGH" if avg_risk > 0.7 else "MEDIUM" if avg_risk > 0.5 else "LOW"
+            synthesis_parts.append(f"**Overall Risk Assessment: {risk_level}** (Confidence: {avg_risk:.2f})\n")
+        
+        if recommendations:
+            synthesis_parts.append("### Key Recommendations:\n")
+            for rec in recommendations[:5]:  # Top 5 recommendations
+                synthesis_parts.append(f"- {rec}")
+            synthesis_parts.append("")
+        
+        if key_insights:
+            synthesis_parts.append("### Critical Insights:\n")
+            for insight in key_insights[:3]:  # Top 3 insights
+                synthesis_parts.append(f"- {insight}")
+        
+        return "\n".join(synthesis_parts)
+        
+    except Exception as e:
+        logger.error(f"Synthesis generation failed: {e}")
+        return "Synthesis temporarily unavailable. Review individual persona responses for detailed analysis."
+
+@router.post("/analyze/multimodal")
+async def multimodal_analysis(
+    case_data: Dict[str, Any],
+    db: Session = Depends(get_db)
+):
+    """
+    Perform multi-modal analysis combining transaction, behavioral, network, and document analysis
+    """
+    try:
+        ai_service = AIService(db)
+        
+        start_time = datetime.now(timezone.utc)
+        
+        # Perform enhanced multi-modal analysis
+        analysis_result = await ai_service.analyze_case(case_data, 'multimodal_analysis')
+        
+        response_time = int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000)
+        
+        # Add performance metrics
+        analysis_result['response_time_ms'] = response_time
+        analysis_result['timestamp'] = datetime.now(timezone.utc).isoformat()
+        
+        # Log multi-modal analysis
+        await audit_service.log_access(
+            action="ai_multimodal_analysis",
+            resource=f"case:{case_data.get('case_id', 'unknown')}",
+            details={
+                "analysis_type": "multimodal",
+                "confidence": analysis_result.get('confidence', 0),
+                "risk_score": analysis_result.get('risk_score', 0),
+                "response_time_ms": response_time,
+                "llm_enhanced": analysis_result.get('llm_enhanced', False)
+            }
+        )
+        
+        return analysis_result
+        
+    except Exception as e:
+        logger.error(f"Multi-modal analysis failed: {e}")
+        raise HTTPException(status_code=500, detail="Multi-modal analysis failed")
+
+@router.get("/llm/status")
+async def get_llm_status():
+    """
+    Get status of all LLM providers and personas
+    """
+    try:
+        from app.services.intelligence.advanced_llm_service import get_llm_service
+        llm_service = await get_llm_service()
+        
+        status = await llm_service.get_provider_status()
+        
+        return {
+            "status": "operational",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "providers": status,
+            "capabilities": {
+                "real_llm_integration": True,
+                "confidence_intervals": True,
+                "multi_persona_analysis": True,
+                "multimodal_analysis": True,
+                "fraud_specific_finetuning": True,
+                "domain_expertise": True
+>>>>>>> Stashed changes
             }
         }
 

@@ -5,7 +5,11 @@ Tests all three fraud detection algorithms
 
 import pytest
 from datetime import datetime, timedelta
+<<<<<<< Updated upstream
 from app.services.fraud_detection_engine import (
+=======
+from app.services.intelligence.fraud_detection_engine import (
+>>>>>>> Stashed changes
     FraudDetectionEngine,
     Transaction,
     FraudType,

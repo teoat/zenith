@@ -269,7 +269,11 @@ async def request_logging_middleware(request: Request, call_next):
     """
     Middleware for logging all requests with comprehensive audit trail.
     """
+<<<<<<< Updated upstream
     from app.services.audit_service import audit_service
+=======
+    from app.services.core.audit_service import audit_service
+>>>>>>> Stashed changes
     import uuid
     import time
 
@@ -319,8 +323,12 @@ async def request_logging_middleware(request: Request, call_next):
         "path": path,
         "query_params": query_params[:500] if query_params else None,  # Limit size
         "user_agent": user_agent[:200],
+<<<<<<< Updated upstream
         "session_id": session_id,
         "request_id": request_id
+=======
+        "session_id": session_id
+>>>>>>> Stashed changes
     }
 
     try:
@@ -337,6 +345,7 @@ async def request_logging_middleware(request: Request, call_next):
             "success": response.status_code < 400
         })
 
+<<<<<<< Updated upstream
         # Log successful requests to application log
         log_request(
             request_id=request_id,
@@ -346,6 +355,8 @@ async def request_logging_middleware(request: Request, call_next):
             duration=duration
         )
 
+=======
+>>>>>>> Stashed changes
         # Log audit event to persistent database
         audit_service.log_request(
             user_id=user_id,
@@ -353,7 +364,11 @@ async def request_logging_middleware(request: Request, call_next):
             method=method,
             endpoint=path,
             status_code=response.status_code,
+<<<<<<< Updated upstream
             processing_time=duration,
+=======
+            processing_time=process_time,
+>>>>>>> Stashed changes
             details={**details, 'action': action, 'resource_type': resource_type, 'resource_id': resource_id},
             ip_address=client_ip,
             user_agent=user_agent
@@ -362,6 +377,7 @@ async def request_logging_middleware(request: Request, call_next):
         return response
 
     except Exception as e:
+<<<<<<< Updated upstream
         duration = time.time() - start_time
         
         # Log failed requests to application log
@@ -374,6 +390,26 @@ async def request_logging_middleware(request: Request, call_next):
                 "path": str(request.url.path),
                 "duration": duration
             }
+=======
+        process_time = time.time() - start_time
+        details.update({
+            "error": str(e),
+            "response_time": round(process_time, 3),
+            "success": False
+        })
+
+        # Log failed request
+        audit_service.log_request(
+            user_id=user_id,
+            session_id=session_id,
+            method=method,
+            endpoint=path,
+            status_code=500,
+            processing_time=process_time,
+            details={**details, 'action': f"failed_{action}", 'resource_type': resource_type, 'resource_id': resource_id},
+            ip_address=client_ip,
+            user_agent=user_agent
+>>>>>>> Stashed changes
         )
 
         details.update({
@@ -406,6 +442,7 @@ app.middleware("http")(rate_limit_middleware)
 # Include routers with API versioning (before static files)
 API_VERSION = "v1"
 
+<<<<<<< Updated upstream
 
 # Standard Routers
 app.include_router(auth_router, prefix=f"/api/{API_VERSION}/auth", tags=["Authentication"])
@@ -435,6 +472,45 @@ app.include_router(backup_router, prefix=f"/api/{API_VERSION}/backup", tags=["Ba
 app.include_router(fraud_rules_router, prefix=f"/api/{API_VERSION}/rules", tags=["Fraud Rules"])
 app.include_router(collaboration_router, prefix=f"/api/{API_VERSION}/collaboration", tags=["Collaboration"])
 app.include_router(stats_router, prefix=f"/api/{API_VERSION}/stats", tags=["Stats"])
+=======
+# Modular Routers (Replacement for monolithic api.py)
+# Consolidated router includes - reduced from 31 to 8 includes
+app.include_router(identity_router, prefix=f"/api/{API_VERSION}/auth", tags=["Identity"])
+app.include_router(fraud_detection_router, prefix=f"/api/{API_VERSION}/fraud", tags=["Fraud Detection"])
+
+# AI & Intelligence
+from app.routers.ai import router as ai_router
+app.include_router(ai_router, prefix=f"/api/{API_VERSION}/ai", tags=["AI Intelligence"])
+
+app.include_router(case_management_router, prefix=f"/api/{API_VERSION}/case_management", tags=["Case Management"])
+app.include_router(search_graph_router, prefix=f"/api/{API_VERSION}/search", tags=["Search & Graph"])
+app.include_router(analytics_reporting_router, prefix=f"/api/{API_VERSION}/analytics", tags=["Analytics & Reporting"])
+app.include_router(observability_router, prefix=f"/api/{API_VERSION}/observability", tags=["Observability"])
+app.include_router(administration_router, prefix=f"/api/{API_VERSION}/admin", tags=["Administration"])
+app.include_router(communication_router, prefix=f"/api/{API_VERSION}/communication", tags=["Communication"])
+
+# New routers for monitoring, streaming, and real-time features
+try:
+    from app.routers.metrics import router as metrics_router
+    app.include_router(metrics_router, tags=["Metrics"])
+except ImportError:
+    logger.warning("Metrics router not available")
+
+try:
+    from app.routers.streaming import router as streaming_router
+    app.include_router(streaming_router, prefix=f"/api/{API_VERSION}", tags=["Streaming"])
+except ImportError:
+    logger.warning("Streaming router not available")
+
+try:
+    from app.routers.websocket import router as websocket_router
+    app.include_router(websocket_router, tags=["WebSocket"])
+except ImportError:
+    logger.warning("WebSocket router not available")
+from app.routers.diagnostics import router as diagnostics_router
+app.include_router(diagnostics_router, prefix=f"/api/{API_VERSION}/diagnostics", tags=["Diagnostics"])
+from app.routers.reconciliation import router as reconciliation_router
+>>>>>>> Stashed changes
 app.include_router(reconciliation_router, prefix=f"/api/{API_VERSION}/reconciliation", tags=["Reconciliation"])
 app.include_router(onboarding_router, prefix=f"/api/{API_VERSION}/onboarding", tags=["Onboarding"])
 app.include_router(metadata_router, prefix=f"/api/{API_VERSION}/metadata", tags=["Metadata"])
