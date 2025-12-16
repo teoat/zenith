@@ -18,3 +18,19 @@ Slow request: GET /health took 1.02s
 INFO:     127.0.0.1:57877 - "GET /health HTTP/1.1" 200 OK
 2025-12-17 07:58:44 - 378x492 - INFO - logging:136 - HTTP request
 INFO:     127.0.0.1:58292 - "GET /docs HTTP/1.1" 200 OK
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/fastapi/openapi/utils.py:207: UserWarning: Duplicate Operation ID register_api_v1_auth_register_post for function register at /Users/Arief/Desktop/378x492/backend/app/routers/auth.py
+  warnings.warn(message, stacklevel=1)
+2025-12-17 08:04:35 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:59405 - "GET /openapi.json HTTP/1.1" 200 OK
+2025-12-17 08:04:35 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:59410 - "GET /openapi.json HTTP/1.1" 200 OK
+2025-12-17 08:04:41 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:59463 - "GET /openapi.json HTTP/1.1" 200 OK
+2025-12-17 08:04:41 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:59465 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-17 08:33:29 - 378x492 - INFO - main:240 - Shutting down 378x492 Fraud Detection API
+2025-12-17 08:33:29 - 378x492 - ERROR - main:259 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [30536]

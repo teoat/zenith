@@ -42,7 +42,6 @@ from app.routers.evidence import router as evidence_router
 from app.routers.fraud import router as fraud_router
 from app.routers.fraud_rules import router as fraud_rules_router
 from app.routers.graph import router as graph_router
-from app.routers.health import router as health_router  # Health checks
 from app.routers.logging import router as logging_router
 from app.routers.metadata import router as metadata_router
 from app.routers.multimodal import router as multimodal_router
@@ -51,7 +50,6 @@ from app.routers.onboarding import router as onboarding_router
 from app.routers.proof import router as proof_router
 from app.routers.realtime_sync import router as realtime_sync_router
 from app.routers.reconciliation import router as reconciliation_router
-from app.routers.relationship_graph import router as relationship_graph_router
 from app.routers.reporting import router as reporting_router
 from app.routers.search import router as search_router
 from app.routers.semantic_search import router as semantic_search_router
@@ -192,11 +190,19 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting 378x492 Fraud Detection API", extra={"event": "startup"})
     try:
-        # Create database tables
-        create_tables()
-        logger.info(
-            "Database tables created successfully", extra={"event": "database_init"}
-        )
+        # Create database tables (Development only)
+        # In production, use Alembic migrations: `alembic upgrade head`
+        if os.getenv("ENVIRONMENT", "development").lower() == "development":
+            create_tables()
+            logger.info(
+                "Database tables created successfully (Development Mode)", 
+                extra={"event": "database_init"}
+            )
+        else:
+            logger.info(
+                "Skipping auto-table creation (Production Mode). Ensure migrations are applied.", 
+                extra={"event": "database_init"}
+            )
 
         # Initialize Sentry
         # if init_sentry():
@@ -572,11 +578,7 @@ app.include_router(
 app.include_router(
     metadata_router, prefix=f"/api/{API_VERSION}/metadata", tags=["Metadata"]
 )
-app.include_router(
-    relationship_graph_router,
-    prefix=f"/api/{API_VERSION}/relationships",
-    tags=["relationship_graph"],
-)
+
 app.include_router(proof_router, prefix=f"/api/{API_VERSION}/proof", tags=["Proof"])
 
 
@@ -617,303 +619,6 @@ except ImportError:
 
 
 # Health check endpoints
-@app.get("/health")
-def health_check():
-    """Comprehensive health check with system metrics"""
-    try:
-        # Get comprehensive health metrics using safe_call
-        health_metrics = safe_call(monitoring_service.get_health_metrics, default={
-            'timestamp': None,
-            'uptime_seconds': 0,
-            'system_health': 100,
-            'cpu_percent': None,
-            'memory_percent': None,
-            'disk_usage_percent': None
-        })
-
-        # Check database connectivity
-        db_status = "healthy"
-        try:
-            # We can use the existing readiness check logic
-            pass
-        except Exception as e:
-            db_status = f"unhealthy: {str(e)}"
-
-        # Check AI service health (be tolerant for tests where AI may be patched)
-        ai_status = "healthy"
-        try:
-            from app.services.ai_service import ai_service
-            # Keep AI marked healthy here; tests that need to simulate unready
-            # state should patch the ai_service module directly.
-            ai_status = "healthy"
-        except Exception:
-            # If AI service is not importable during tests, treat it as healthy
-            ai_status = "healthy"
-
-        # Check monitoring services status
-        monitoring_status = "healthy"
-        performance_monitor_status = "unavailable"
-        user_journey_status = "active"
-        
-        try:
-            if hasattr(performance_monitor, 'get_current_metrics'):
-                test_metrics = safe_call(performance_monitor.get_current_metrics, default=None)
-                performance_monitor_status = "active" if test_metrics else "degraded"
-            else:
-                performance_monitor_status = "unavailable"
-        except Exception:
-            performance_monitor_status = "error"
-        
-        try:
-            if hasattr(user_journey_tracker, 'get_funnel_analysis'):
-                user_journey_status = "active"
-            else:
-                user_journey_status = "unavailable"
-        except Exception:
-            user_journey_status = "error"
-
-        # Determine overall status
-        overall_status = "healthy"
-        if db_status != "healthy" or ai_status != "healthy":
-            overall_status = "degraded"
-        if health_metrics.get('system_health', 100) < 50:
-            overall_status = "critical"
-        if performance_monitor_status == "error":
-            overall_status = "degraded"
-
-        return {
-            "status": overall_status,
-            "service": "fraud-detection-backend",
-            "version": "1.0.0",
-            "timestamp": health_metrics.get('timestamp'),
-            "uptime": health_metrics.get('uptime_seconds'),
-            "system_health": health_metrics.get('system_health'),
-            "components": {
-                "database": db_status,
-                "ai_service": ai_status,
-                "monitoring": monitoring_status,
-                "performance_monitor": performance_monitor_status,
-                "user_journey_tracker": user_journey_status
-            },
-            "metrics": {
-                "cpu_percent": health_metrics.get('cpu_percent'),
-                "memory_percent": health_metrics.get('memory_percent'),
-                "disk_usage": health_metrics.get('disk_usage_percent')
-            }
-        }
-    except Exception as e:
-        return {
-            "status": "unhealthy",
-            "service": "fraud-detection-backend",
-            "error": str(e),
-            "timestamp": "unknown"
-        }
-
-
-@app.get("/health/ready")
-def readiness_check(db: Session = Depends(get_db)):
-    """Readiness check - ensures all dependencies are available"""
-    try:
-        # Test database connectivity
-        db.execute(text("SELECT 1"))
-
-        # Test AI service readiness - be permissive in test runs
-        ai_ready = True
-        try:
-            from app.services.ai_service import ai_service
-
-            ai_ready = (
-                ai_service.initialized if hasattr(ai_service, "initialized") else True
-            )
-        except Exception:
-            # If AI service is missing in test environment, assume ready
-            ai_ready = True
-
-        return {
-            "status": "ready",
-            "database": "connected",
-            "ai_service": "ready",
-            "timestamp": "now",
-        }
-    except Exception as e:
-        raise HTTPException(status_code=503, detail=f"Service not ready: {str(e)}")
-
-
-@app.get("/health/live")
-def liveness_check():
-    """Liveness check - basic heartbeat"""
-    return {"status": "alive", "service": "fraud-detection-backend", "timestamp": "now"}
-
-
-@app.get("/health/detailed")
-def detailed_health_check():
-    """Detailed health check with all system metrics"""
-    try:
-        health_metrics = monitoring_service.get_health_metrics()
-        system_metrics = monitoring_service.get_system_metrics()
-
-        return {
-            "status": "healthy",
-            "timestamp": health_metrics.get("timestamp"),
-            "system": health_metrics,
-            "performance": system_metrics,
-            "services": {
-                "database": "connected",  # Would need actual check
-                "redis": "connected",  # Would need actual check
-                "ai_service": "ready",  # Would need actual check
-            },
-        }
-    except Exception as e:
-        return {"status": "error", "error": str(e), "timestamp": "now"}
-
-
-@app.get("/performance/baselines")
-def get_performance_baselines():
-    """Get performance baselines and current metrics"""
-    try:
-        # Check if monitoring is disabled (test mode)
-        if not hasattr(performance_monitor, 'get_baselines'):
-            # Return AI-enhanced mock data for testing
-            import random
-            import time
-
-            # Simulate AI-predicted baselines based on historical data
-            current_hour = time.time() % 86400 // 3600
-            is_peak_hour = 9 <= current_hour <= 17  # Business hours
-
-            baseline_throughput = 120 if is_peak_hour else 80
-            current_throughput = baseline_throughput + random.randint(-20, 30)
-
-            return {
-                "baselines": {
-                    "response_time_p50": 0.12,
-                    "response_time_p95": 0.45,
-                    "response_time_p99": 1.2,
-                    "error_rate": 0.008,
-                    "throughput_rpm": baseline_throughput,
-                    "memory_usage_percent": 68.5,
-                    "cpu_usage_percent": 42.3,
-                    "ai_prediction_confidence": 0.87
-                },
-                "current_metrics": {
-                    "response_time_p50": round(random.uniform(0.08, 0.25), 3),
-                    "response_time_p95": round(random.uniform(0.2, 0.8), 3),
-                    "response_time_p99": round(random.uniform(0.8, 2.5), 3),
-                    "error_rate": round(random.uniform(0.001, 0.02), 4),
-                    "throughput_rpm": current_throughput,
-                    "memory_usage_percent": round(random.uniform(60, 85), 1),
-                    "cpu_usage_percent": round(random.uniform(35, 75), 1),
-                    "active_connections": random.randint(5, 25),
-                    "ai_service_status": "healthy",
-                    "cache_hit_rate": round(random.uniform(0.75, 0.95), 3)
-                },
-                "ai_predictions": {
-                    "next_hour_load": "moderate" if current_throughput < 100 else "high",
-                    "recommended_scaling": current_throughput > 150,
-                    "anomaly_detected": random.random() < 0.05,
-                    "confidence_score": round(random.uniform(0.7, 0.95), 3)
-                },
-                "alerts": [
-                    {
-                        "id": f"alert_{int(time.time())}",
-                        "type": "performance",
-                        "severity": "info",
-                        "message": "AI monitoring active - performance within normal ranges",
-                        "timestamp": "now"
-                    }
-                ] if random.random() < 0.3 else [],
-                "status": "healthy",
-                "ai_enhanced": True,
-                "last_ai_analysis": "2024-12-17T07:30:00Z"
-            }
-
-        # Use safe_call to gracefully handle any errors
-        baselines = safe_call(performance_monitor.get_baselines, default={})
-        current_metrics = safe_call(performance_monitor.get_current_metrics, default={})
-        alerts = safe_call(performance_monitor.check_thresholds, default=[])
-
-        return {
-            "baselines": baselines,
-            "current_metrics": current_metrics,
-            "alerts": alerts,
-            "status": "healthy" if not alerts else "warning"
-        }
-    except Exception as e:
-        logger.warning(f"Performance monitor error: {e}")
-        return {
-            "status": "error",
-            "error": str(e),
-            "baselines": {},
-            "current_metrics": {},
-            "alerts": []
-        }
-
-
-@app.get("/performance/metrics")
-def get_performance_metrics():
-    """Get current performance metrics"""
-    try:
-        # Check if monitoring is disabled (test mode)
-        if not hasattr(performance_monitor, 'get_current_metrics'):
-            # Return AI-enhanced comprehensive metrics for testing
-            import random
-            import time
-
-            return {
-                "timestamp": "2024-12-17T07:35:00Z",
-                "system_metrics": {
-                    "cpu_usage_percent": round(random.uniform(20, 80), 1),
-                    "memory_usage_percent": round(random.uniform(50, 90), 1),
-                    "disk_usage_percent": round(random.uniform(30, 70), 1),
-                    "network_io_mbps": round(random.uniform(10, 100), 1),
-                    "active_connections": random.randint(5, 50)
-                },
-                "application_metrics": {
-                    "response_time_p50": round(random.uniform(0.05, 0.3), 3),
-                    "response_time_p95": round(random.uniform(0.2, 1.0), 3),
-                    "response_time_p99": round(random.uniform(0.5, 3.0), 3),
-                    "error_rate_percent": round(random.uniform(0.01, 2.0), 3),
-                    "throughput_rpm": random.randint(50, 200),
-                    "cache_hit_rate": round(random.uniform(0.7, 0.98), 3),
-                    "db_connection_pool_usage": round(random.uniform(0.1, 0.9), 2)
-                },
-                "ai_service_metrics": {
-                    "model_inference_time_ms": round(random.uniform(50, 500), 1),
-                    "ai_requests_per_minute": random.randint(10, 100),
-                    "model_accuracy_score": round(random.uniform(0.85, 0.98), 3),
-                    "gpu_memory_usage_percent": round(random.uniform(30, 85), 1) if random.random() > 0.5 else None,
-                    "active_models": random.randint(1, 5)
-                },
-                "business_metrics": {
-                    "cases_processed_today": random.randint(10, 200),
-                    "alerts_generated": random.randint(5, 50),
-                    "fraud_detected_amount": round(random.uniform(1000, 50000), 2),
-                    "user_sessions_active": random.randint(20, 100),
-                    "api_calls_total": random.randint(1000, 10000)
-                },
-                "ai_insights": {
-                    "performance_trend": random.choice(["improving", "stable", "degrading"]),
-                    "predicted_peak_hour": f"{random.randint(10, 16)}:00",
-                    "anomaly_probability": round(random.uniform(0.01, 0.3), 3),
-                    "optimization_recommendations": [
-                        "Consider scaling up database instances" if random.random() > 0.7 else None,
-                        "Cache frequently accessed data" if random.random() > 0.6 else None,
-                        "Optimize slow queries" if random.random() > 0.8 else None
-                    ]
-                },
-                "health_score": round(random.uniform(0.7, 1.0), 2),
-                "last_updated": "2024-12-17T07:35:00Z"
-            }
-
-        return safe_call(performance_monitor.get_current_metrics, default={
-            "status": "monitoring_unavailable",
-            "message": "Performance metrics service not available"
-        })
-    except Exception as e:
-        logger.warning(f"Performance metrics error: {e}")
-        return {"status": "error", "error": str(e)}
-
-
 @app.get("/analytics/journey")
 def get_journey_analytics():
     """Get user journey and funnel analytics"""

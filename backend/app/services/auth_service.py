@@ -243,11 +243,11 @@ class AuthService:
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload"
             )
 
-        # Support test mock tokens without a DB-backed user: allow tokens like
-        # 'mock_admin_token' and 'mock_user_token_not_admin' to represent lightweight
-        # users so tests that don't patch database services can still exercise
-        # authorization logic. If a real db_service is present, prefer it.
-        if isinstance(user_id, str) and user_id.startswith("mock_"):
+        # Support test mock tokens without a DB-backed user
+        # SECURITY: Only allow this in non-production environments
+        is_dev_env = os.getenv("ENVIRONMENT", "development").lower() in ["development", "test"]
+        
+        if is_dev_env and isinstance(user_id, str) and user_id.startswith("mock_"):
 
             class _MockUser:
                 def __init__(self, id, role):
