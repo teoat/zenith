@@ -753,7 +753,6 @@ class ComprehensiveDiagnosticSuite:
             import json
             with open(package_json, 'r') as f:
                 pkg = json.load(f)
-                dependencies['node_deps'] = {
                     'dependencies': len(pkg.get('dependencies', {})),
                     'devDependencies': len(pkg.get('devDependencies', {})),
                     'total': len(pkg.get('dependencies', {})) + len(pkg.get('devDependencies', {}))
