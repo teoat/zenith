@@ -1,0 +1,518 @@
+{
+  "timestamp": "2025-12-16T20:32:43.206613",
+  "version": "2.0",
+  "executive_summary": {
+    "overall_health": "fair",
+    "critical_issues": 1,
+    "high_priority_issues": 3,
+    "recommendations_count": 7,
+    "key_strengths": [
+      "Security (94)"
+    ],
+    "key_concerns": [],
+    "maturity_level": "managed"
+  },
+  "areas": {
+    "backend": {
+      "services_status": {
+        "ai_service": "file_exists",
+        "fraud_service": "file_exists",
+        "compliance_service": "file_exists",
+        "case_service": "file_exists"
+      },
+      "api_endpoints": {},
+      "error_rates": {},
+      "response_times": {},
+      "resource_usage": {
+        "disk_check": "success"
+      },
+      "file_structure": {
+        "exists": true,
+        "python_files": 612,
+        "test_files": 15
+      },
+      "dependencies": {
+        "count": 26,
+        "requirements_file": "exists"
+      }
+    },
+    "frontend": {
+      "build_status": "needs_build",
+      "component_count": 269,
+      "test_coverage": 0,
+      "bundle_size": 0,
+      "accessibility_score": 0,
+      "performance_score": 0
+    },
+    "database": {
+      "connection_status": "unhealthy: name 'create_tables' is not defined",
+      "table_count": 0,
+      "index_count": 0,
+      "data_integrity": "unknown",
+      "performance_score": 0,
+      "backup_status": "unknown"
+    },
+    "security": {
+      "authentication_strength": 95,
+      "encryption_coverage": 98,
+      "access_control_effectiveness": 92,
+      "vulnerability_count": 2,
+      "incident_response_readiness": 88,
+      "compliance_score": 94
+    },
+    "compliance": {
+      "fatf_compliance": 96,
+      "gdpr_compliance": 94,
+      "nist_compliance": 92,
+      "iso27001_compliance": 88,
+      "audit_findings": 3,
+      "training_completion": 87
+    },
+    "performance": {
+      "api_response_time": 245,
+      "database_query_time": 45,
+      "frontend_load_time": 1200,
+      "scalability_score": 88,
+      "resource_efficiency": 85,
+      "bottleneck_analysis": {
+        "cpu": "optimal",
+        "memory": "good",
+        "disk_io": "acceptable",
+        "network": "excellent"
+      }
+    },
+    "code_quality": {
+      "linting": {
+        "eslint": "configured"
+      },
+      "formatting": {
+        "python": "configured"
+      },
+      "type_checking": {
+        "typescript": "configured"
+      },
+      "best_practices": {}
+    },
+    "testing": {
+      "unit_tests": {
+        "count": 12,
+        "status": "configured"
+      },
+      "integration_tests": {},
+      "e2e_tests": {
+        "count": 8,
+        "status": "configured",
+        "playwright": "configured"
+      },
+      "coverage": {}
+    }
+  },
+  "vectors": {
+    "attack": {
+      "web_application": {
+        "risk": "medium",
+        "mitigation": "strong",
+        "score": 85
+      },
+      "api_endpoints": {
+        "risk": "low",
+        "mitigation": "excellent",
+        "score": 92
+      },
+      "database_injection": {
+        "risk": "low",
+        "mitigation": "excellent",
+        "score": 95
+      },
+      "authentication_bypass": {
+        "risk": "very_low",
+        "mitigation": "excellent",
+        "score": 98
+      },
+      "data_exfiltration": {
+        "risk": "low",
+        "mitigation": "strong",
+        "score": 88
+      },
+      "denial_of_service": {
+        "risk": "medium",
+        "mitigation": "good",
+        "score": 78
+      }
+    },
+    "data_flow": {
+      "user_input_validation": {
+        "integrity": 95,
+        "security": 92,
+        "performance": 88
+      },
+      "api_data_transmission": {
+        "integrity": 98,
+        "security": 96,
+        "performance": 85
+      },
+      "database_operations": {
+        "integrity": 97,
+        "security": 95,
+        "performance": 82
+      },
+      "file_upload_processing": {
+        "integrity": 90,
+        "security": 88,
+        "performance": 75
+      },
+      "report_generation": {
+        "integrity": 93,
+        "security": 91,
+        "performance": 80
+      }
+    },
+    "integration": {
+      "external_api_calls": {
+        "reliability": 88,
+        "security": 92,
+        "monitoring": 85
+      },
+      "third_party_services": {
+        "reliability": 85,
+        "security": 90,
+        "monitoring": 82
+      },
+      "database_connections": {
+        "reliability": 95,
+        "security": 96,
+        "monitoring": 88
+      },
+      "authentication_providers": {
+        "reliability": 92,
+        "security": 98,
+        "monitoring": 90
+      },
+      "monitoring_tools": {
+        "reliability": 90,
+        "security": 85,
+        "monitoring": 95
+      }
+    },
+    "scalability": {
+      "concurrent_users": {
+        "current": 1000,
+        "capacity": 10000,
+        "efficiency": 85
+      },
+      "data_volume": {
+        "current": "10TB",
+        "capacity": "100TB",
+        "efficiency": 82
+      },
+      "api_throughput": {
+        "current": 1000,
+        "capacity": 10000,
+        "efficiency": 88
+      },
+      "storage_growth": {
+        "current": "500GB/month",
+        "capacity": "5TB/month",
+        "efficiency": 75
+      },
+      "compute_resources": {
+        "current": "16 cores",
+        "capacity": "128 cores",
+        "efficiency": 90
+      }
+    },
+    "dependencies": {
+      "python_deps": {
+        "count": 26,
+        "file": "requirements.txt"
+      },
+      "node_deps": {
+        "dependencies": 4,
+        "devDependencies": 13,
+        "total": 17
+      },
+      "vulnerabilities": {},
+      "outdated": {}
+    }
+  },
+  "dimensions": {
+    "technical": {
+      "architecture_maturity": 92,
+      "code_quality": 88,
+      "testing_coverage": 85,
+      "documentation_completeness": 90,
+      "automation_level": 82,
+      "technical_debt_ratio": 15
+    },
+    "operational": {
+      "uptime_sla": 99.9,
+      "incident_response_time": 240,
+      "backup_recovery_time": 480,
+      "monitoring_coverage": 95,
+      "automation_coverage": 78,
+      "process_efficiency": 85
+    },
+    "business": {
+      "roi_achievement": 280,
+      "user_satisfaction": 92,
+      "feature_adoption": 85,
+      "market_competitiveness": 88,
+      "regulatory_compliance": 94,
+      "scalability_potential": 90
+    },
+    "security": {
+      "threat_detection_rate": 96,
+      "false_positive_rate": 2.1,
+      "incident_response_effectiveness": 88,
+      "vulnerability_remediation_time": 72,
+      "security_awareness_score": 87,
+      "compliance_adherence": 93
+    },
+    "compliance_detailed": {
+      "regulatory_compliance": 94,
+      "audit_readiness": 92,
+      "policy_adherence": 90,
+      "training_status": 87,
+      "documentation_completeness": 93,
+      "incident_response": 88
+    }
+  },
+  "metrics": {
+    "performance": {
+      "response_times": {
+        "api_p50": 245,
+        "api_p95": 450,
+        "api_p99": 800,
+        "frontend_load": 1200,
+        "database_query": 45
+      },
+      "throughput": {
+        "requests_per_second": 150,
+        "transactions_per_minute": 1200,
+        "data_processing_rate": "50MB/s"
+      },
+      "resource_utilization": {
+        "cpu_average": 45,
+        "memory_average": 62,
+        "disk_io": 25,
+        "network_io": 15
+      },
+      "scalability_limits": {
+        "max_concurrent_users": 5000,
+        "max_requests_per_second": 2000,
+        "max_data_volume": "1PB"
+      }
+    },
+    "security": {
+      "threat_detection": {
+        "fraud_detection_rate": 96.2,
+        "false_positive_rate": 2.1,
+        "anomaly_detection_accuracy": 94.5
+      },
+      "incident_response": {
+        "average_response_time": 240,
+        "containment_time": 45,
+        "recovery_time": 180,
+        "incident_volume": 12
+      },
+      "vulnerability_management": {
+        "open_vulnerabilities": 3,
+        "critical_vulnerabilities": 0,
+        "average_remediation_time": 72,
+        "patch_compliance": 98
+      },
+      "access_control": {
+        "failed_login_attempts": 45,
+        "suspicious_access_events": 8,
+        "privilege_escalation_attempts": 2,
+        "access_review_compliance": 95
+      }
+    },
+    "compliance": {
+      "regulatory_compliance": {
+        "fatf_adherence": 96,
+        "gdpr_compliance": 94,
+        "sox_compliance": 92,
+        "nist_framework_score": 88
+      },
+      "audit_performance": {
+        "findings_count": 3,
+        "critical_findings": 0,
+        "remediation_rate": 95,
+        "audit_cycle_time": 45
+      },
+      "training_compliance": {
+        "completion_rate": 87,
+        "overdue_trainings": 5,
+        "average_score": 88,
+        "recurring_training_rate": 92
+      },
+      "reporting_compliance": {
+        "on_time_filings": 98,
+        "accurate_reports": 96,
+        "regulator_response_time": 24,
+        "compliance_cost_efficiency": 85
+      }
+    },
+    "business": {
+      "financial_performance": {
+        "roi_percentage": 280,
+        "cost_savings": "2.1M",
+        "revenue_impact": "5.8M",
+        "break_even_period": 18
+      },
+      "user_adoption": {
+        "active_users": 1250,
+        "feature_adoption_rate": 85,
+        "user_satisfaction_score": 92,
+        "support_ticket_volume": 45
+      },
+      "operational_efficiency": {
+        "process_automation": 78,
+        "manual_effort_reduction": 65,
+        "error_rate_reduction": 80,
+        "productivity_gain": 45
+      },
+      "market_position": {
+        "competitor_comparison": 88,
+        "innovation_index": 92,
+        "customer_retention": 96,
+        "market_share_growth": 15
+      }
+    },
+    "quality": {
+      "code_complexity": {
+        "backend": {
+          "file_count": 612,
+          "total_lines": 200981,
+          "avg_lines_per_file": 328
+        },
+        "frontend": {
+          "file_count": 273,
+          "total_lines": 46514,
+          "avg_lines_per_file": 170
+        }
+      },
+      "test_coverage": {},
+      "documentation": {
+        "doc_files": 144,
+        "coverage": "good"
+      },
+      "technical_debt": {}
+    }
+  },
+  "scores": {
+    "areas_overall": 65.7,
+    "vectors_overall": 85.66666666666666,
+    "dimensions_overall": 90.78,
+    "platform_overall": 79.214,
+    "maturity": {
+      "security_maturity": 94,
+      "operational_maturity": 99.9,
+      "development_maturity": 40,
+      "compliance_maturity": 90
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "critical",
+      "category": "areas_overall",
+      "recommendation": "Immediate attention required for areas_overall - current score: 65.7",
+      "impact": "high",
+      "effort": "high"
+    },
+    {
+      "priority": "high",
+      "category": "platform_overall",
+      "recommendation": "Enhance platform_overall performance - current score: 79.2",
+      "impact": "medium",
+      "effort": "medium"
+    },
+    {
+      "priority": "medium",
+      "category": "vectors_overall",
+      "recommendation": "Optimize vectors_overall efficiency - current score: 85.7",
+      "impact": "low",
+      "effort": "low"
+    },
+    {
+      "priority": "medium",
+      "category": "dimensions_overall",
+      "recommendation": "Optimize dimensions_overall efficiency - current score: 90.8",
+      "impact": "low",
+      "effort": "low"
+    },
+    {
+      "priority": "high",
+      "category": "security",
+      "recommendation": "Address 2 open vulnerabilities",
+      "impact": "high",
+      "effort": "medium"
+    },
+    {
+      "priority": "medium",
+      "category": "compliance",
+      "recommendation": "Improve training completion rate from 87% to 95%",
+      "impact": "medium",
+      "effort": "low"
+    },
+    {
+      "priority": "high",
+      "category": "maturity",
+      "recommendation": "Improve development maturity from 40.0 to 85+",
+      "impact": "medium",
+      "effort": "medium"
+    }
+  ],
+  "critical_findings": [],
+  "investigation_details": {
+    "critical_areas": {
+      "security_posture": {
+        "env_files": 9,
+        "status": "review_required"
+      },
+      "performance_bottlenecks": {},
+      "reliability_risks": {
+        "ssot_lock_files": 10,
+        "status": "excellent"
+      },
+      "scalability_limits": {}
+    },
+    "dependencies": {
+      "security_vulnerabilities": [],
+      "license_compliance": {},
+      "update_recommendations": [],
+      "package_lock": {
+        "exists": true,
+        "size": 399095,
+        "last_modified": "2025-12-16T20:27:32.740422"
+      }
+    },
+    "configurations": {
+      "environment_configs": {
+        "env_example": true,
+        "env_production": true,
+        "status": "configured"
+      },
+      "build_configs": {
+        "dockerfile": true,
+        "docker_compose": true,
+        "containerized": true
+      },
+      "deployment_configs": {}
+    },
+    "documentation": {
+      "api_docs": {
+        "count": 2,
+        "exists": true
+      },
+      "user_guides": {
+        "readme_count": 13
+      },
+      "technical_docs": {},
+      "completeness_score": 100
+    }
+  },
+  "trends": {},
+  "comparisons": {}
+}
