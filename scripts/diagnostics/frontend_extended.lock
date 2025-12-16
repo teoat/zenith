@@ -1,0 +1,2246 @@
+{
+  "category": "frontend_extended",
+  "generated_at": "2025-12-17T04:12:59.329097",
+  "version": "1.0.0-extended-protection",
+  "description": "Extended SSOT protection for frontend category files",
+  "total_files": 143,
+  "investigation_method": "deep_file_analysis",
+  "protection_criteria": {
+    "risk_multiplier": 1.5,
+    "keywords": [
+      "component",
+      "page",
+      "ui",
+      "interface",
+      "dashboard"
+    ],
+    "business_impact": "User experience and functionality",
+    "security_impact": "Client-side security"
+  },
+  "files": {
+    "PageErrorBoundary.tsx": {
+      "full_path": "frontend/src/components/PageErrorBoundary.tsx",
+      "category": "frontend",
+      "checksum": "7cf2e5e697c07cab9f3f12de627258a20a04c0fe997d6bd234c2167f40c7b23d",
+      "size_bytes": 3307,
+      "modified": "2025-12-17T03:49:21.919671",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.329555"
+    },
+    "AccessibleForm.tsx": {
+      "full_path": "frontend/src/components/ui/AccessibleForm.tsx",
+      "category": "frontend",
+      "checksum": "9ae766cbb8afac76ac7b4244be4bd41869ad554a2ef4b35497991845834704d8",
+      "size_bytes": 7857,
+      "modified": "2025-12-17T03:49:21.196000",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.329952"
+    },
+    "Pagination.tsx": {
+      "full_path": "frontend/src/components/ui/Pagination.tsx",
+      "category": "frontend",
+      "checksum": "893acfd2a5732e4978d9386c6c3e240075543371743ccdb05d25049dd9d128cc",
+      "size_bytes": 3459,
+      "modified": "2025-12-17T03:49:21.197562",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.330357"
+    },
+    "WindowControls.tsx": {
+      "full_path": "frontend/src/components/ui/WindowControls.tsx",
+      "category": "frontend",
+      "checksum": "e90672b18e668b19e662bf0d8fc7619c22a34041475a58e0eb1af1276e891c35",
+      "size_bytes": 821,
+      "modified": "2025-12-17T03:49:21.198620",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.330711"
+    },
+    "tabs.tsx": {
+      "full_path": "frontend/src/components/ui/tabs.tsx",
+      "category": "frontend",
+      "checksum": "dbdc264c50415a752b0f1ffce47131fe43a010b86df4735c3848e79849542cb3",
+      "size_bytes": 2500,
+      "modified": "2025-12-17T03:49:21.199368",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.331103"
+    },
+    "Card.tsx": {
+      "full_path": "frontend/src/components/ui/Card.tsx",
+      "category": "frontend",
+      "checksum": "b4a21e7431b4afbd03ca48666438bd99ac90e58ad3c69cac666b4564e5d8c25e",
+      "size_bytes": 1962,
+      "modified": "2025-12-17T03:49:21.206041",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.331429"
+    },
+    "slider.tsx": {
+      "full_path": "frontend/src/components/ui/slider.tsx",
+      "category": "frontend",
+      "checksum": "b969782bf081237933cc36f04fb003c3e6efc70610b27e3e50b22ca67bb3f5eb",
+      "size_bytes": 1082,
+      "modified": "2025-12-17T03:49:21.207004",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.331727"
+    },
+    "progress.tsx": {
+      "full_path": "frontend/src/components/ui/progress.tsx",
+      "category": "frontend",
+      "checksum": "0dcc8674c114b8d19f16b84bc1399c5d1f87db3caaac3e57be18cf166d6e07ac",
+      "size_bytes": 669,
+      "modified": "2025-12-17T03:49:21.208176",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.332108"
+    },
+    "AccessibleButton.tsx": {
+      "full_path": "frontend/src/components/ui/AccessibleButton.tsx",
+      "category": "frontend",
+      "checksum": "a0802bfacdd5e3f1d26b439251ebb0ef98cae442167dd546b9833e5524a646d5",
+      "size_bytes": 3233,
+      "modified": "2025-12-17T03:49:21.209745",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.332414"
+    },
+    "MultiModalUpload.tsx": {
+      "full_path": "frontend/src/components/ui/MultiModalUpload.tsx",
+      "category": "frontend",
+      "checksum": "a8528e3775894cddee0c5aa7f43ca9d311430e7c278048511f9c0342f5d9d6c7",
+      "size_bytes": 10524,
+      "modified": "2025-12-17T03:49:21.214421",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.332807"
+    },
+    "SplitView.tsx": {
+      "full_path": "frontend/src/components/ui/SplitView.tsx",
+      "category": "frontend",
+      "checksum": "df014a785bff3a970c986f78ea8aa4230a558ca0756b0c315c983a553eaf8503",
+      "size_bytes": 5345,
+      "modified": "2025-12-17T03:49:21.216487",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.333136"
+    },
+    "VirtualizedList.tsx": {
+      "full_path": "frontend/src/components/ui/VirtualizedList.tsx",
+      "category": "frontend",
+      "checksum": "fd34728c9c49b7516af42e12005aa781ddb4773f8231e72e2b080de4273de086",
+      "size_bytes": 2152,
+      "modified": "2025-12-17T03:49:21.217559",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.333516"
+    },
+    "VirtualList.tsx": {
+      "full_path": "frontend/src/components/ui/VirtualList.tsx",
+      "category": "frontend",
+      "checksum": "0e6eee14c7122b82603c4a432b4ca99a097c34e0d1936756964e5780b815d213",
+      "size_bytes": 4651,
+      "modified": "2025-12-17T03:49:21.221256",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.333876"
+    },
+    "StatusIndicator.tsx": {
+      "full_path": "frontend/src/components/ui/StatusIndicator.tsx",
+      "category": "frontend",
+      "checksum": "3ab72b590daff0e7564a9ebd4e74bf3fcdfef4b351a664eae000e01fd79dd01f",
+      "size_bytes": 827,
+      "modified": "2025-12-17T03:49:21.222041",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.334178"
+    },
+    "scroll-area.tsx": {
+      "full_path": "frontend/src/components/ui/scroll-area.tsx",
+      "category": "frontend",
+      "checksum": "471f940631241772309275517476c0a38df17ff9518b0e22e1273be254949125",
+      "size_bytes": 509,
+      "modified": "2025-12-17T03:49:21.222662",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.334481"
+    },
+    "label.tsx": {
+      "full_path": "frontend/src/components/ui/label.tsx",
+      "category": "frontend",
+      "checksum": "e69cfc27d78c9ef31b248ab8ea4fa54327c1038843f70efb5cd85d54c0bf1e0e",
+      "size_bytes": 710,
+      "modified": "2025-12-17T03:49:21.223354",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.334856"
+    },
+    "ProgressBar.tsx": {
+      "full_path": "frontend/src/components/ui/ProgressBar.tsx",
+      "category": "frontend",
+      "checksum": "bbb9ad92486fbc974912554df6d8a193671c832698e4e5eabd4164d73b4042e7",
+      "size_bytes": 1254,
+      "modified": "2025-12-17T03:49:21.224206",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.335152"
+    },
+    "alert.tsx": {
+      "full_path": "frontend/src/components/ui/alert.tsx",
+      "category": "frontend",
+      "checksum": "2fde516e7bb93f008b80f84a62bd4406042c1d0d601768b2cc1622f84d48af32",
+      "size_bytes": 1616,
+      "modified": "2025-12-17T03:49:21.227795",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.335539"
+    },
+    "TouchComponents.tsx": {
+      "full_path": "frontend/src/components/ui/TouchComponents.tsx",
+      "category": "frontend",
+      "checksum": "9479927ca86e3d61a883a04f724ded2796210a03efb21b4247b6869badf00cf2",
+      "size_bytes": 1174,
+      "modified": "2025-12-17T03:49:21.230285",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.335925"
+    },
+    "ResizablePanel.tsx": {
+      "full_path": "frontend/src/components/ui/ResizablePanel.tsx",
+      "category": "frontend",
+      "checksum": "4aeb8aee5c94bad63fc5e3d27432f4c1a1eebd932ee81183add67a91499d10ee",
+      "size_bytes": 11517,
+      "modified": "2025-12-17T03:50:13.682621",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.336285"
+    },
+    "switch.tsx": {
+      "full_path": "frontend/src/components/ui/switch.tsx",
+      "category": "frontend",
+      "checksum": "bd29ce723e952bc7f8fab367320347ca82fbb933f4da9872c7120d6765662ebe",
+      "size_bytes": 1139,
+      "modified": "2025-12-17T03:49:21.234643",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.336654"
+    },
+    "avatar.tsx": {
+      "full_path": "frontend/src/components/ui/avatar.tsx",
+      "category": "frontend",
+      "checksum": "3978dd59cae12226b0c2b3b911f04d9216b7ea88aa39883d860453bca48f6975",
+      "size_bytes": 1100,
+      "modified": "2025-12-17T03:49:21.236423",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.336941"
+    },
+    "DataGrid.tsx": {
+      "full_path": "frontend/src/components/ui/DataGrid.tsx",
+      "category": "frontend",
+      "checksum": "63c83ffd86e2f4b5b7b6037d595c4f3a056ebd43376dcc00d86fbcf726e09eda",
+      "size_bytes": 4697,
+      "modified": "2025-12-17T03:49:21.239239",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.337347"
+    },
+    "AIInsights.tsx": {
+      "full_path": "frontend/src/components/ui/AIInsights.tsx",
+      "category": "frontend",
+      "checksum": "d9896d2f60a4b86b355d4123efc11bc0cf385a872f263f99fbbae9318845677c",
+      "size_bytes": 7936,
+      "modified": "2025-12-17T03:49:21.244555",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.337804"
+    },
+    "dialog.tsx": {
+      "full_path": "frontend/src/components/ui/dialog.tsx",
+      "category": "frontend",
+      "checksum": "dc4d7932bbd0fd38224f96e03bc978da36742d579164b701fbc5501a659d21fa",
+      "size_bytes": 2141,
+      "modified": "2025-12-17T03:49:21.245745",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.338104"
+    },
+    "KeyboardShortcutsModal.tsx": {
+      "full_path": "frontend/src/components/ui/KeyboardShortcutsModal.tsx",
+      "category": "frontend",
+      "checksum": "af6463ac97a69e5b81c65dfecf6aea24d7b7d5094692d52a03fab10f426cf60f",
+      "size_bytes": 2808,
+      "modified": "2025-12-17T03:49:21.246741",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.338477"
+    },
+    "badge.tsx": {
+      "full_path": "frontend/src/components/ui/badge.tsx",
+      "category": "frontend",
+      "checksum": "95cf3d2d616ddab5b094db4f67306f2eacb8de23977ec08df6c9c2d4eb38ace2",
+      "size_bytes": 1127,
+      "modified": "2025-12-17T03:49:21.247486",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.338769"
+    },
+    "separator.tsx": {
+      "full_path": "frontend/src/components/ui/separator.tsx",
+      "category": "frontend",
+      "checksum": "c4bccfc275e2ef2e85d735a2626098cfac9eaf688f4fbd6a3ebaba96ab177086",
+      "size_bytes": 532,
+      "modified": "2025-12-17T03:49:21.521561",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.339141"
+    },
+    "ProgressiveDisclosure.tsx": {
+      "full_path": "frontend/src/components/ui/ProgressiveDisclosure.tsx",
+      "category": "frontend",
+      "checksum": "fe0bc01767c3803cfee8a0ab56a59dfb937c76257d205be90394ce8fc97076ef",
+      "size_bytes": 5633,
+      "modified": "2025-12-17T03:50:23.310167",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.339455"
+    },
+    "Button.tsx": {
+      "full_path": "frontend/src/components/ui/Button.tsx",
+      "category": "frontend",
+      "checksum": "9b6db438ecfcc7f213fce230492aa2b8182dd449ad55f241a45ff46809864333",
+      "size_bytes": 2522,
+      "modified": "2025-12-17T03:49:21.538102",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.339820"
+    },
+    "SyncStatus.tsx": {
+      "full_path": "frontend/src/components/ui/SyncStatus.tsx",
+      "category": "frontend",
+      "checksum": "c5bde42137e9c3fe88348a8efbdbded406bd2534fe65ab3d05c4831ef30e3112",
+      "size_bytes": 5658,
+      "modified": "2025-12-17T03:49:21.549339",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.340146"
+    },
+    "checkbox.tsx": {
+      "full_path": "frontend/src/components/ui/checkbox.tsx",
+      "category": "frontend",
+      "checksum": "70fd7526ce6801153035ed3254a769e2f7b7e1bb56092861e20cdcb5c0b5b60c",
+      "size_bytes": 1063,
+      "modified": "2025-12-17T03:49:21.550259",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.340523"
+    },
+    "SemanticSearch.tsx": {
+      "full_path": "frontend/src/components/ui/SemanticSearch.tsx",
+      "category": "frontend",
+      "checksum": "afe03ee44acaab58b7525a448bcb81aa821afb33f09336755214d5ad20b99110",
+      "size_bytes": 6678,
+      "modified": "2025-12-17T03:50:18.215309",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.340837"
+    },
+    "select.tsx": {
+      "full_path": "frontend/src/components/ui/select.tsx",
+      "category": "frontend",
+      "checksum": "00afadb74cda705ad7d8f4914760e8fb7a02535be185792038b11f9ceb8c6e9b",
+      "size_bytes": 5614,
+      "modified": "2025-12-17T03:49:21.552820",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.341147"
+    },
+    "textarea.tsx": {
+      "full_path": "frontend/src/components/ui/textarea.tsx",
+      "category": "frontend",
+      "checksum": "d9ac946a933ab419e67e96e4c6d933a3137678af4c8665da9b032cc50517982f",
+      "size_bytes": 756,
+      "modified": "2025-12-17T03:49:21.553845",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.341516"
+    },
+    "Input.tsx": {
+      "full_path": "frontend/src/components/ui/Input.tsx",
+      "category": "frontend",
+      "checksum": "e8fb208e21d40a4213d6e7b027b78a7040b398c58541847402812143290af2fe",
+      "size_bytes": 896,
+      "modified": "2025-12-17T03:49:21.554456",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.341889"
+    },
+    "FileDropZone.tsx": {
+      "full_path": "frontend/src/components/ui/FileDropZone.tsx",
+      "category": "frontend",
+      "checksum": "09b66cdd8f163cfcce19ed10a982ebe9c687b320d6755dfe6ac0fedeb7619003",
+      "size_bytes": 2629,
+      "modified": "2025-12-17T03:49:21.555297",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.342272"
+    },
+    "AccessibleModal.tsx": {
+      "full_path": "frontend/src/components/ui/AccessibleModal.tsx",
+      "category": "frontend",
+      "checksum": "b7e16ec5e452b9f54578bd31129210171a33720310f4a7f5928976464602b5a1",
+      "size_bytes": 4819,
+      "modified": "2025-12-17T03:49:21.556360",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.342668"
+    },
+    "Skeleton.tsx": {
+      "full_path": "frontend/src/components/ui/Skeleton.tsx",
+      "category": "frontend",
+      "checksum": "b5be2a0f05de3fbaa25dbe6fad31dfa7b5a1f934ad5dd09664d79fc2ed7bb7af",
+      "size_bytes": 866,
+      "modified": "2025-12-17T03:49:21.557144",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.342956"
+    },
+    "DragDrop.tsx": {
+      "full_path": "frontend/src/components/ui/DragDrop.tsx",
+      "category": "frontend",
+      "checksum": "c52b1b1cf85d1ea73266a82f8a83d87008cfe87b8d9983a10ec497993d4d5398",
+      "size_bytes": 6930,
+      "modified": "2025-12-17T03:49:21.558161",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.343287"
+    },
+    "VirtualizedList.test.tsx": {
+      "full_path": "frontend/src/components/ui/__tests__/VirtualizedList.test.tsx",
+      "category": "frontend",
+      "checksum": "8a2e063427eb7ab8146dffe5d26ba7fdd29ba0c982b259d26dce0e3173cab823",
+      "size_bytes": 2469,
+      "modified": "2025-12-17T03:49:21.235477",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.343600"
+    },
+    "RuleBuilder.tsx": {
+      "full_path": "frontend/src/components/settings/RuleBuilder.tsx",
+      "category": "frontend",
+      "checksum": "031564496fdef4efad5cbfd48e5d1e9744102a492aad8c404dd7c3456b9e88a2",
+      "size_bytes": 7321,
+      "modified": "2025-12-17T03:49:21.561729",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.343932"
+    },
+    "ReportBuilder.tsx": {
+      "full_path": "frontend/src/components/reporting/ReportBuilder.tsx",
+      "category": "frontend",
+      "checksum": "c7c815cceddeb9296785c22c56bd22071f97a6f9de0d5465fada92067fb421b1",
+      "size_bytes": 3605,
+      "modified": "2025-12-17T03:49:21.605668",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.344307"
+    },
+    "ui-components.test.tsx": {
+      "full_path": "frontend/src/components/__tests__/ui-components.test.tsx",
+      "category": "frontend",
+      "checksum": "8296bace9161c909eb684e385ca9af716750951377aaf7a93265b61d4a62357a",
+      "size_bytes": 1333,
+      "modified": "2025-12-17T03:49:21.954288",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.344687"
+    },
+    "GeneralTab.tsx": {
+      "full_path": "frontend/src/pages/settings/components/GeneralTab.tsx",
+      "category": "frontend",
+      "checksum": "6c7a20d16ddcee233ce22e087ab65fb0df9c5cc64ecf67f5a89508837632716a",
+      "size_bytes": 2924,
+      "modified": "2025-12-17T03:49:22.595973",
+      "risk_score": 62,
+      "protection_reason": "Contains 2 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 620,
+      "investigation_timestamp": "2025-12-17T04:12:59.344994"
+    },
+    "ui-ux-verification.spec.ts": {
+      "full_path": "frontend/e2e/ui-ux-verification.spec.ts",
+      "category": "frontend",
+      "checksum": "ff8284ffad8e76e5306255b7c52b50d69d93b9c0b32becf5749fdabbcee010da",
+      "size_bytes": 2982,
+      "modified": "2025-12-17T01:38:37.312164",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.345302"
+    },
+    "useUIStore.ts": {
+      "full_path": "frontend/src/stores/useUIStore.ts",
+      "category": "frontend",
+      "checksum": "13e0e2d2035f26e48b63cfaf408ba5ea0b52c421b221efe756c77c7668c67959",
+      "size_bytes": 1029,
+      "modified": "2025-12-17T03:49:21.114268",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.345682"
+    },
+    "RoleSelection.tsx": {
+      "full_path": "frontend/src/components/RoleSelection.tsx",
+      "category": "frontend",
+      "checksum": "bd8289c76a4dfb5b0ad220cd06a56a5c6429708d85a5688ba43649d2e6deafb5",
+      "size_bytes": 1269,
+      "modified": "2025-12-17T03:49:21.185255",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.345993"
+    },
+    "OnboardingTour.tsx": {
+      "full_path": "frontend/src/components/OnboardingTour.tsx",
+      "category": "frontend",
+      "checksum": "f728c029c878029eec788edf8ad0853d6fffaec08c6d111c3eefba828d2e0b41",
+      "size_bytes": 461,
+      "modified": "2025-12-17T03:49:21.608773",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.346278"
+    },
+    "ErrorMessage.tsx": {
+      "full_path": "frontend/src/components/ErrorMessage.tsx",
+      "category": "frontend",
+      "checksum": "71b8f7d6d1d9470ff3787a855512bb281f03f56746eb0759c8b1124a89b09e8e",
+      "size_bytes": 4168,
+      "modified": "2025-12-17T03:52:58.239132",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.346660"
+    },
+    "RelationshipGraph.tsx": {
+      "full_path": "frontend/src/components/RelationshipGraph.tsx",
+      "category": "frontend",
+      "checksum": "22c744f14512fd379c08063174c8a69a93b3e45a515bf5fad7fcfcd1278e8da8",
+      "size_bytes": 23812,
+      "modified": "2025-12-17T03:49:21.908789",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.347221"
+    },
+    "CaseProgressBar.tsx": {
+      "full_path": "frontend/src/components/CaseProgressBar.tsx",
+      "category": "frontend",
+      "checksum": "7abe8e036ba292883a82af56293911f6819e9bedabdcd3b468141fd7c9117d9e",
+      "size_bytes": 6498,
+      "modified": "2025-12-17T03:49:21.921424",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.347574"
+    },
+    "WebSocketSync.tsx": {
+      "full_path": "frontend/src/components/WebSocketSync.tsx",
+      "category": "frontend",
+      "checksum": "3306971a90290c74bb62ed15f7921f9433108696a41f9b128218544737a7fa18",
+      "size_bytes": 1558,
+      "modified": "2025-12-17T03:49:21.923279",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.347908"
+    },
+    "NotificationContainer.tsx": {
+      "full_path": "frontend/src/components/NotificationContainer.tsx",
+      "category": "frontend",
+      "checksum": "c46a6ab00f39e97a2ba290eef5acdb8ecdd7e5364ab22335a76575e0c6c1c123",
+      "size_bytes": 1444,
+      "modified": "2025-12-17T03:49:21.923918",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.348287"
+    },
+    "OnboardingWizard.tsx": {
+      "full_path": "frontend/src/components/OnboardingWizard.tsx",
+      "category": "frontend",
+      "checksum": "9333feb013fe6994290cbec5d2b333452eb06139465ef9371b90c14ff08f79db",
+      "size_bytes": 417,
+      "modified": "2025-12-17T03:49:21.932266",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.348668"
+    },
+    "RookieChecklist.tsx": {
+      "full_path": "frontend/src/components/common/RookieChecklist.tsx",
+      "category": "frontend",
+      "checksum": "d25ac2a38ed1e5bb0666bddbefcc5d9691f9a6e122e3a27f056cbce8a3cd82da",
+      "size_bytes": 6030,
+      "modified": "2025-12-17T03:49:21.943976",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.370037"
+    },
+    "InvestigationNotebook.tsx": {
+      "full_path": "frontend/src/components/InvestigationNotebook.tsx",
+      "category": "frontend",
+      "checksum": "63ff2568d452339f73b3678626609b9c228a6cdddd82c542ed467d169ef26516",
+      "size_bytes": 11624,
+      "modified": "2025-12-17T03:49:21.955476",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.349463"
+    },
+    "FrienlyWelcome.tsx": {
+      "full_path": "frontend/src/components/FrienlyWelcome.tsx",
+      "category": "frontend",
+      "checksum": "5b1523ced9e9482507d95d5fc6b380e454ec9ace5885d68905e225aba2c0496b",
+      "size_bytes": 380,
+      "modified": "2025-12-17T03:49:21.966318",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.349777"
+    },
+    "TemporalPlayback.tsx": {
+      "full_path": "frontend/src/components/TemporalPlayback.tsx",
+      "category": "frontend",
+      "checksum": "1bc88ab41ebb8e345ea282006ef161cbf1ad8b309b7fac80e6bf79d52850395c",
+      "size_bytes": 6331,
+      "modified": "2025-12-17T03:49:21.967416",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.350204"
+    },
+    "OfflineIndicator.tsx": {
+      "full_path": "frontend/src/components/OfflineIndicator.tsx",
+      "category": "frontend",
+      "checksum": "07d5e5a324e566d9760e09ddd8ba07238e8c239c75eb5640512fd3840e5f0b64",
+      "size_bytes": 1403,
+      "modified": "2025-12-17T03:49:21.968581",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.350500"
+    },
+    "DigitalDossierGenerator.tsx": {
+      "full_path": "frontend/src/components/DigitalDossierGenerator.tsx",
+      "category": "frontend",
+      "checksum": "260c22027e996a6c5aa6a3b23eb073c95b190a2e586125c9440626e033b2564a",
+      "size_bytes": 9625,
+      "modified": "2025-12-17T03:49:21.969704",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.350862"
+    },
+    "ErrorBoundary.tsx": {
+      "full_path": "frontend/src/components/ErrorBoundary.tsx",
+      "category": "frontend",
+      "checksum": "d483eb63aeb24eee4d92dfde41d2b9d87854872e8f69f33ce8dc6f06ce3000b4",
+      "size_bytes": 8158,
+      "modified": "2025-12-17T03:49:21.979141",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.351193"
+    },
+    "LoadingState.tsx": {
+      "full_path": "frontend/src/components/LoadingState.tsx",
+      "category": "frontend",
+      "checksum": "123829834a46638b5aba489513f62fa924984d3187476d914f5879dc94ea202a",
+      "size_bytes": 4739,
+      "modified": "2025-12-17T03:49:21.980179",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.351514"
+    },
+    "AIInsightPanel.tsx": {
+      "full_path": "frontend/src/components/visualization/AIInsightPanel.tsx",
+      "category": "frontend",
+      "checksum": "62218d19c7dc32bc8f8d36841a914363d352421b069a41f6cec960eb75d90e99",
+      "size_bytes": 3628,
+      "modified": "2025-12-17T03:49:21.186230",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.351837"
+    },
+    "MensReaAnalyzer.tsx": {
+      "full_path": "frontend/src/components/evidence/MensReaAnalyzer.tsx",
+      "category": "frontend",
+      "checksum": "e961017c26b4bce4d1b8430b8ef03a333682089f3bd9c286667ffae0c52a9644",
+      "size_bytes": 6325,
+      "modified": "2025-12-17T03:49:21.616362",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.357660"
+    },
+    "EvidenceBoard.tsx": {
+      "full_path": "frontend/src/components/collaboration/EvidenceBoard.tsx",
+      "category": "frontend",
+      "checksum": "9eb18be9f4603f32b539697cf3eab5344bf3583412a7c2262a5e052d94b1e7f7",
+      "size_bytes": 18297,
+      "modified": "2025-12-17T03:49:39.113080",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.352750"
+    },
+    "HypothesisBoard.tsx": {
+      "full_path": "frontend/src/components/evidence/HypothesisBoard.tsx",
+      "category": "frontend",
+      "checksum": "7cfe3bef3d3f219e6dc699a4c7698edd712201cfa84674a8dac657be9c9a8821",
+      "size_bytes": 6289,
+      "modified": "2025-12-17T03:49:21.622418",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.359032"
+    },
+    "CollaborativeEditor.tsx": {
+      "full_path": "frontend/src/components/collaboration/CollaborativeEditor.tsx",
+      "category": "frontend",
+      "checksum": "41695b711541fade5bdd318cb62749b4d65c0969a68b74bda21423cca1410750",
+      "size_bytes": 9269,
+      "modified": "2025-12-17T03:49:21.589847",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.353622"
+    },
+    "KeyFindings.tsx": {
+      "full_path": "frontend/src/components/reporting/KeyFindings.tsx",
+      "category": "frontend",
+      "checksum": "1037612166b6045716d000f0e0c1c7de093ead29bb5c18d7ee916b9d25bf542e",
+      "size_bytes": 3863,
+      "modified": "2025-12-17T03:49:21.591296",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.353996"
+    },
+    "AIWriter.tsx": {
+      "full_path": "frontend/src/components/reporting/AIWriter.tsx",
+      "category": "frontend",
+      "checksum": "8155a2ac47380f22ae1e1e96d384019517ef10f52e55b534b019389b6f72390e",
+      "size_bytes": 7369,
+      "modified": "2025-12-17T03:49:21.595560",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.354335"
+    },
+    "SummaryPreview.tsx": {
+      "full_path": "frontend/src/components/reporting/SummaryPreview.tsx",
+      "category": "frontend",
+      "checksum": "579516ffd1e02a31288dff3c36ddbeac0090a05f5549b2904a3870fa87adeff9",
+      "size_bytes": 5505,
+      "modified": "2025-12-17T03:49:21.599010",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.354656"
+    },
+    "SuccessBanner.tsx": {
+      "full_path": "frontend/src/components/reporting/SuccessBanner.tsx",
+      "category": "frontend",
+      "checksum": "82859755e64674590766cdc517213d6731531897d140c526943e75ee315fea7f",
+      "size_bytes": 2773,
+      "modified": "2025-12-17T03:49:21.600958",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.354953"
+    },
+    "ProjectTracker.tsx": {
+      "full_path": "frontend/src/components/reporting/ProjectTracker.tsx",
+      "category": "frontend",
+      "checksum": "9bf3109843ab1eb003b20cc5d21fef4067874e880f56789eecd1ef6c361953b5",
+      "size_bytes": 9320,
+      "modified": "2025-12-17T03:49:21.602831",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.355312"
+    },
+    "ConclusionWizard.tsx": {
+      "full_path": "frontend/src/components/reporting/ConclusionWizard.tsx",
+      "category": "frontend",
+      "checksum": "dad5e63b88750b552a88bc6caa69cbc02c15cef9835835eefecb699dbd2cb7a5",
+      "size_bytes": 8034,
+      "modified": "2025-12-17T03:49:21.603889",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.355713"
+    },
+    "DossierExport.tsx": {
+      "full_path": "frontend/src/components/reporting/DossierExport.tsx",
+      "category": "frontend",
+      "checksum": "f8600589bd2ed8c9913abf2d99974639bf0d66394e393610a24a9ab1680d6fef",
+      "size_bytes": 6142,
+      "modified": "2025-12-17T03:49:21.604877",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.356021"
+    },
+    "AutoReportGenerator.tsx": {
+      "full_path": "frontend/src/components/intelligence/AutoReportGenerator.tsx",
+      "category": "frontend",
+      "checksum": "d58b80314b845817872628d0ee80e69e3c7c0b08f6ef5b0c03f865d663d882ef",
+      "size_bytes": 20825,
+      "modified": "2025-12-17T03:49:47.738303",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.360095"
+    },
+    "EvidenceViewer.tsx": {
+      "full_path": "frontend/src/components/evidence/EvidenceViewer.tsx",
+      "category": "frontend",
+      "checksum": "a829918cdd8319228c58f0d22041f940f7c56d6437228f09e504e5677eb07c03",
+      "size_bytes": 11264,
+      "modified": "2025-12-17T03:49:21.611504",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.356693"
+    },
+    "TamperDetector.tsx": {
+      "full_path": "frontend/src/components/evidence/TamperDetector.tsx",
+      "category": "frontend",
+      "checksum": "c7f42dba2ec54339a78e2d43480bd0161cf4c608d15b66355cb8b9057ab21427",
+      "size_bytes": 5003,
+      "modified": "2025-12-17T03:49:21.614060",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.356995"
+    },
+    "DocumentViewer.tsx": {
+      "full_path": "frontend/src/components/evidence/DocumentViewer.tsx",
+      "category": "frontend",
+      "checksum": "8a98712040d87deee5efc3a572da72d9114f167a22b1eeef57dc7e1543fa7825",
+      "size_bytes": 10541,
+      "modified": "2025-12-17T03:49:53.064555",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.357346"
+    },
+    "ForensicCanvas.tsx": {
+      "full_path": "frontend/src/components/evidence/ForensicCanvas.tsx",
+      "category": "frontend",
+      "checksum": "6d14e0aecb452a9548657886b8389f303cbeece560059a6ab69a1a557b408d1d",
+      "size_bytes": 5512,
+      "modified": "2025-12-17T03:49:21.617413",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.357967"
+    },
+    "FolderTree.tsx": {
+      "full_path": "frontend/src/components/evidence/FolderTree.tsx",
+      "category": "frontend",
+      "checksum": "c4d64b2f2e2019b1c9f63479621082db4b2400eb89b70bb9c73ddfce7ad83662",
+      "size_bytes": 4619,
+      "modified": "2025-12-17T03:49:21.619735",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.358278"
+    },
+    "UploadWizard.tsx": {
+      "full_path": "frontend/src/components/evidence/UploadWizard.tsx",
+      "category": "frontend",
+      "checksum": "b8d979caff0bd0723b7706af5796464a75b9649a4ac46c49ca3f6630cb0fb809",
+      "size_bytes": 10394,
+      "modified": "2025-12-17T03:49:21.621185",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.358605"
+    },
+    "CourtDocumentGenerator.tsx": {
+      "full_path": "frontend/src/components/intelligence/CourtDocumentGenerator.tsx",
+      "category": "frontend",
+      "checksum": "e1f155dea0e8a4238b632c78073b3c8b3a1f1224f47aa07a8064a190460df3dd",
+      "size_bytes": 21039,
+      "modified": "2025-12-17T03:49:21.886819",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.359559"
+    },
+    "ContextTabs.tsx": {
+      "full_path": "frontend/src/components/adjudication/ContextTabs.tsx",
+      "category": "frontend",
+      "checksum": "a2a9e8bcaa401e0879518d48d51aba28851d70c86cffc7146f8e1f27b0ffa6fd",
+      "size_bytes": 1960,
+      "modified": "2025-12-17T03:49:21.897341",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.360470"
+    },
+    "AlertList.tsx": {
+      "full_path": "frontend/src/components/adjudication/AlertList.tsx",
+      "category": "frontend",
+      "checksum": "e73f4971538cf8e9ac24b070322782c84588395180cdc7b795fef9e8c5a33d22",
+      "size_bytes": 2355,
+      "modified": "2025-12-17T03:49:21.898083",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.360849"
+    },
+    "AdjudicationLayout.tsx": {
+      "full_path": "frontend/src/components/adjudication/AdjudicationLayout.tsx",
+      "category": "frontend",
+      "checksum": "68de68044b89948d4c31f98d1fab3c7477a7ba8e2a8a0172aa12703d01097601",
+      "size_bytes": 1771,
+      "modified": "2025-12-17T03:49:21.898838",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.361162"
+    },
+    "AlertListItem.tsx": {
+      "full_path": "frontend/src/components/adjudication/AlertListItem.tsx",
+      "category": "frontend",
+      "checksum": "a96726c9b5b0447923432b29dbed5cc02719e0aadec96b0b77473b3a7ae622d8",
+      "size_bytes": 3112,
+      "modified": "2025-12-17T03:49:21.899577",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.361561"
+    },
+    "AlertDetail.tsx": {
+      "full_path": "frontend/src/components/adjudication/AlertDetail.tsx",
+      "category": "frontend",
+      "checksum": "522f05d9af83b3aad6bafd9ba989ffbad9e138b1faa141a3a21841fe11bc2d0c",
+      "size_bytes": 1959,
+      "modified": "2025-12-17T03:49:21.901434",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.361884"
+    },
+    "HistoryTab.tsx": {
+      "full_path": "frontend/src/components/adjudication/tabs/HistoryTab.tsx",
+      "category": "frontend",
+      "checksum": "77c7efa20bd1c665ff765ae1e167dddbd8cceb91f8d4ac6a03ae7b1e049a91df",
+      "size_bytes": 2088,
+      "modified": "2025-12-17T03:49:21.889753",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.362261"
+    },
+    "AIReasoningTab.tsx": {
+      "full_path": "frontend/src/components/adjudication/tabs/AIReasoningTab.tsx",
+      "category": "frontend",
+      "checksum": "c0fd222b8b4ce2541983dad67792faf6aa0857c50845828f8a56a511429dfae1",
+      "size_bytes": 2887,
+      "modified": "2025-12-17T03:49:21.890441",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.362562"
+    },
+    "ContextTab.tsx": {
+      "full_path": "frontend/src/components/adjudication/tabs/ContextTab.tsx",
+      "category": "frontend",
+      "checksum": "6a66a0dba5c6672d2ab5cc4f793b8cf19ae89b7086e73c5632be038be2b613ee",
+      "size_bytes": 2654,
+      "modified": "2025-12-17T03:49:21.892709",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.362851"
+    },
+    "GraphTab.tsx": {
+      "full_path": "frontend/src/components/adjudication/tabs/GraphTab.tsx",
+      "category": "frontend",
+      "checksum": "384444821939214f45557f7f4e5a0e5c0dd139fb1919790957bafc4c6361048d",
+      "size_bytes": 1424,
+      "modified": "2025-12-17T03:49:21.895884",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.363132"
+    },
+    "AppLayout.tsx": {
+      "full_path": "frontend/src/components/layout/AppLayout.tsx",
+      "category": "frontend",
+      "checksum": "2065443f2e4ea81de8c632d6a9ba7d80ab521e0cf96568ce783d0c3cc9bfd557",
+      "size_bytes": 930,
+      "modified": "2025-12-17T03:49:21.905656",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.363418"
+    },
+    "Header.tsx": {
+      "full_path": "frontend/src/components/layout/Header.tsx",
+      "category": "frontend",
+      "checksum": "7352abb6ad6e80dac23cafc4bab91d983e5b735b4a65ebbf1b60a5e9150f1e18",
+      "size_bytes": 1472,
+      "modified": "2025-12-17T03:49:21.906384",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.363707"
+    },
+    "Sidebar.tsx": {
+      "full_path": "frontend/src/components/layout/Sidebar.tsx",
+      "category": "frontend",
+      "checksum": "e0bfeafe22904fe127cee85eef55bddb6c6987bb72396c9dabf14864778cb0da",
+      "size_bytes": 2965,
+      "modified": "2025-12-17T03:49:21.907053",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.364013"
+    },
+    "RichCaseCard.tsx": {
+      "full_path": "frontend/src/components/cases/RichCaseCard.tsx",
+      "category": "frontend",
+      "checksum": "e9de387c5abc31374ceafa3ce5d85e4d808e1d8c589d91b76e31de7732f7e07d",
+      "size_bytes": 5449,
+      "modified": "2025-12-17T03:49:21.910630",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.364340"
+    },
+    "CasePreviewDrawer.tsx": {
+      "full_path": "frontend/src/components/cases/CasePreviewDrawer.tsx",
+      "category": "frontend",
+      "checksum": "91938968636958b37b8ee34981966fbdffe11b841ec28c91c499bcc7202ec4ce",
+      "size_bytes": 11275,
+      "modified": "2025-12-17T03:49:21.911857",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.364703"
+    },
+    "FacetedFilter.tsx": {
+      "full_path": "frontend/src/components/cases/FacetedFilter.tsx",
+      "category": "frontend",
+      "checksum": "c743a5f70e2f13548b25d51fe27161ce4db0f6b67733150e5d755bba4efa7b13",
+      "size_bytes": 6653,
+      "modified": "2025-12-17T03:49:21.912932",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.365037"
+    },
+    "NewInvestigationWizard.tsx": {
+      "full_path": "frontend/src/components/cases/NewInvestigationWizard.tsx",
+      "category": "frontend",
+      "checksum": "9f0a2b6ddb537634ffdb7f78fba4882c21b3ee486989014422cc684fbd1539d1",
+      "size_bytes": 10748,
+      "modified": "2025-12-17T03:49:21.914254",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.365397"
+    },
+    "CaseKanban.tsx": {
+      "full_path": "frontend/src/components/cases/CaseKanban.tsx",
+      "category": "frontend",
+      "checksum": "1d9d45015dcb9290296f5dd599beef0da5c291d48b267407b89707b91595b3bc",
+      "size_bytes": 16390,
+      "modified": "2025-12-17T03:51:52.783720",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.365897"
+    },
+    "CaseTable.tsx": {
+      "full_path": "frontend/src/components/cases/CaseTable.tsx",
+      "category": "frontend",
+      "checksum": "a3b4e0b3af1547a9677a34905a3c4f532001fc6d5d4ad35257dbb967649366f8",
+      "size_bytes": 4269,
+      "modified": "2025-12-17T03:49:21.917133",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.366225"
+    },
+    "InvestigationWizard.tsx": {
+      "full_path": "frontend/src/components/cases/InvestigationWizard.tsx",
+      "category": "frontend",
+      "checksum": "e8a898269e8cbf523aa314254d443438ebf43e323d78cc321cf6416a6445341e",
+      "size_bytes": 24751,
+      "modified": "2025-12-17T03:49:21.918821",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.366824"
+    },
+    "InvestigationCanvas.tsx": {
+      "full_path": "frontend/src/components/investigation/InvestigationCanvas.tsx",
+      "category": "frontend",
+      "checksum": "d2023a55ffd51e3c0934e578e9ec869eaba92ce20b57442d1b5f2d8d2a22663b",
+      "size_bytes": 29301,
+      "modified": "2025-12-17T03:49:21.925822",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.367363"
+    },
+    "PathfindingVisualizer.tsx": {
+      "full_path": "frontend/src/components/investigation/PathfindingVisualizer.tsx",
+      "category": "frontend",
+      "checksum": "88add7d9eb6c037aa3c0ef4aad006d1a029e56d9e1efef629be0b5dd2cb3e1bc",
+      "size_bytes": 8809,
+      "modified": "2025-12-17T03:49:21.927266",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.367742"
+    },
+    "NodeInspector.tsx": {
+      "full_path": "frontend/src/components/investigation/NodeInspector.tsx",
+      "category": "frontend",
+      "checksum": "c9152f342f86a1eac5d88c8140494d736fe6a0c0550a46f34e708aa343e28afa",
+      "size_bytes": 6602,
+      "modified": "2025-12-17T03:49:21.928462",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.368062"
+    },
+    "EntityRegistry.tsx": {
+      "full_path": "frontend/src/components/investigation/EntityRegistry.tsx",
+      "category": "frontend",
+      "checksum": "e103e9d7b6166de7d8432250202a8d219abc38e4b6f07563acf0e012f3bcde88",
+      "size_bytes": 5593,
+      "modified": "2025-12-17T03:49:21.929582",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.368390"
+    },
+    "GraphCanvas.tsx": {
+      "full_path": "frontend/src/components/investigation/GraphCanvas.tsx",
+      "category": "frontend",
+      "checksum": "7b8481a88900b4114b67bf720ac1442ebe7eec99aad13136fce1984c24f6d613",
+      "size_bytes": 7326,
+      "modified": "2025-12-17T03:49:21.930707",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.368784"
+    },
+    "InvestigationSkeleton.tsx": {
+      "full_path": "frontend/src/components/investigation/InvestigationSkeleton.tsx",
+      "category": "frontend",
+      "checksum": "68182e2fd73d820bfd7d11444fb8039fe4c3fc392cb7ad4bc3b659580dd77785",
+      "size_bytes": 2597,
+      "modified": "2025-12-17T03:49:21.931554",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.369076"
+    },
+    "WelcomeMessage.tsx": {
+      "full_path": "frontend/src/components/common/WelcomeMessage.tsx",
+      "category": "frontend",
+      "checksum": "27b045d04413ebae7916a8258b4e73e2fd5dff33a7837199ca8f531e1b6bff28",
+      "size_bytes": 4199,
+      "modified": "2025-12-17T03:49:21.941629",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.369395"
+    },
+    "JourneyProgress.tsx": {
+      "full_path": "frontend/src/components/common/JourneyProgress.tsx",
+      "category": "frontend",
+      "checksum": "6f9e6c44d978d8ec7951c7d6208257ab322e392fbe247257eac8ec945a35a193",
+      "size_bytes": 7492,
+      "modified": "2025-12-17T03:49:21.942766",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.369728"
+    },
+    "TourSpotlight.tsx": {
+      "full_path": "frontend/src/components/common/TourSpotlight.tsx",
+      "category": "frontend",
+      "checksum": "26425c061f1edee6d057847f58ca348f3dc65d334d5b128654829ac69375b527",
+      "size_bytes": 4305,
+      "modified": "2025-12-17T03:49:21.944992",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.370349"
+    },
+    "EntityGraph3D.tsx": {
+      "full_path": "frontend/src/components/visualizations/EntityGraph3D.tsx",
+      "category": "frontend",
+      "checksum": "812e81af14ea5f7e45a40a5c743a7df4a52d438883d08cdf2ea85d36d016956f",
+      "size_bytes": 17557,
+      "modified": "2025-12-17T03:50:09.142461",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.370758"
+    },
+    "TemporalFlowVisualizer.tsx": {
+      "full_path": "frontend/src/components/visualizations/TemporalFlowVisualizer.tsx",
+      "category": "frontend",
+      "checksum": "b681850822554864fba6822a6e0bec6fcfca12bced3eba482d3c99f799a15feb",
+      "size_bytes": 16097,
+      "modified": "2025-12-17T03:49:21.948376",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.371130"
+    },
+    "BehavioralHeatmap.tsx": {
+      "full_path": "frontend/src/components/visualizations/BehavioralHeatmap.tsx",
+      "category": "frontend",
+      "checksum": "9dc91edaa22989de69c617c4c3c89eeaee3137f327659ae48423d494501f33ee",
+      "size_bytes": 14920,
+      "modified": "2025-12-17T03:49:21.949687",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.371627"
+    },
+    "NetworkGraph.tsx": {
+      "full_path": "frontend/src/components/visualizations/NetworkGraph.tsx",
+      "category": "frontend",
+      "checksum": "d08b34fc315ee49efe5dc77735f5585eb3aaf711b50cbca15440fea56052e4ca",
+      "size_bytes": 1855,
+      "modified": "2025-12-17T03:49:21.950828",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.371999"
+    },
+    "NetworkGraph3D.tsx": {
+      "full_path": "frontend/src/components/visualizations/NetworkGraph3D.tsx",
+      "category": "frontend",
+      "checksum": "f3dea31ee0d70a484fc4b0810c84c6fcd55bbe55c856b3e8f8e91789d0cb3fe1",
+      "size_bytes": 12081,
+      "modified": "2025-12-17T03:49:21.952089",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.372371"
+    },
+    "CorrelationMatrix.tsx": {
+      "full_path": "frontend/src/components/visualizations/CorrelationMatrix.tsx",
+      "category": "frontend",
+      "checksum": "3cce6bdc6a3b38c37c7c5aac4ec7fa7c98c9ae3f66f87995818d0fee0b21500a",
+      "size_bytes": 15708,
+      "modified": "2025-12-17T03:50:02.980973",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.372747"
+    },
+    "AIAssistant.tsx": {
+      "full_path": "frontend/src/components/ai/AIAssistant.tsx",
+      "category": "frontend",
+      "checksum": "de576a7ab91b5f127463e0c2b9432711b77e3e3cc36fd8c217bbc6ed5f031903",
+      "size_bytes": 15204,
+      "modified": "2025-12-17T03:49:21.961555",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.373152"
+    },
+    "AccessibilityChecker.tsx": {
+      "full_path": "frontend/src/components/accessibility/AccessibilityChecker.tsx",
+      "category": "frontend",
+      "checksum": "e7794e92a45d8f0f65b0e0d3930d40b0f7ea645f81134eeb1d301fa3132f050b",
+      "size_bytes": 1990,
+      "modified": "2025-12-17T03:49:21.975456",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.373532"
+    },
+    "ExceptionQueue.tsx": {
+      "full_path": "frontend/src/components/recon/ExceptionQueue.tsx",
+      "category": "frontend",
+      "checksum": "4eac122ce0139d4a58e4e8a72698a84d944674f5f14fdfba6dede1eedf61976d",
+      "size_bytes": 2120,
+      "modified": "2025-12-17T03:49:21.976197",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.373823"
+    },
+    "MatchCanvas.tsx": {
+      "full_path": "frontend/src/components/recon/MatchCanvas.tsx",
+      "category": "frontend",
+      "checksum": "ff1fbbd857e3519f3ce76c1a0791e8aa0500458508d6e6829284550d11865650",
+      "size_bytes": 8049,
+      "modified": "2025-12-17T03:49:21.977346",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.374226"
+    },
+    "TransactionCard.tsx": {
+      "full_path": "frontend/src/components/recon/TransactionCard.tsx",
+      "category": "frontend",
+      "checksum": "697caecf8c53ed9c91937e7151852c1566c998b9f15f4711631a3c431af70b03",
+      "size_bytes": 3196,
+      "modified": "2025-12-17T03:49:21.978095",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.374614"
+    },
+    "components.test.tsx": {
+      "full_path": "frontend/src/__tests__/components.test.tsx",
+      "category": "frontend",
+      "checksum": "c30c8344f94f7f9875edba2f3a3990fa5974ac6bc766feb9a7fab6dcddda5c65",
+      "size_bytes": 9036,
+      "modified": "2025-12-17T03:49:21.987895",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.375028"
+    },
+    "DesignSystemShowcase.tsx": {
+      "full_path": "frontend/src/pages/DesignSystemShowcase.tsx",
+      "category": "frontend",
+      "checksum": "e1e19dba8ed00e673ea895efa907df47e0f89d7040b7807dabca932470dc4db8",
+      "size_bytes": 2623,
+      "modified": "2025-12-17T03:49:22.603218",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.375321"
+    },
+    "Reporting.tsx": {
+      "full_path": "frontend/src/pages/Reporting.tsx",
+      "category": "frontend",
+      "checksum": "4fbaa66c90e84504e1b1bd773f5392b03d522458f3085fb446375a6091f02748",
+      "size_bytes": 2691,
+      "modified": "2025-12-17T04:10:43.324998",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.375606"
+    },
+    "Login.tsx": {
+      "full_path": "frontend/src/pages/Login.tsx",
+      "category": "frontend",
+      "checksum": "0ac0e2550a2f9a8c1aeefc1e5a6f6ce7f730862df5cf13eaa7d88af87bfd644a",
+      "size_bytes": 4726,
+      "modified": "2025-12-17T03:49:22.608437",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.375899"
+    },
+    "Ingestion.tsx": {
+      "full_path": "frontend/src/pages/Ingestion.tsx",
+      "category": "frontend",
+      "checksum": "f56143972911b33fbb46a0c6c525ef6970a130021fbc3862e24777950686d4de",
+      "size_bytes": 27553,
+      "modified": "2025-12-17T03:49:22.611608",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.376451"
+    },
+    "NetworkAnalysis.tsx": {
+      "full_path": "frontend/src/pages/NetworkAnalysis.tsx",
+      "category": "frontend",
+      "checksum": "259bd32bdd161ba05c811d998c0c4169f9bfa22c16fd26128cf8c90a48bc0cf1",
+      "size_bytes": 4250,
+      "modified": "2025-12-17T03:49:22.620804",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.376774"
+    },
+    "Setup.tsx": {
+      "full_path": "frontend/src/pages/Setup.tsx",
+      "category": "frontend",
+      "checksum": "4e19794c040bb5b5864b805c8c7fee59de207c92a78f4206e688451d47cd3c8b",
+      "size_bytes": 11261,
+      "modified": "2025-12-17T03:49:22.858389",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.377142"
+    },
+    "AgentDrafts.tsx": {
+      "full_path": "frontend/src/pages/AgentDrafts.tsx",
+      "category": "frontend",
+      "checksum": "686a71a7c50fb2f707cf43972f68f7053edca9ef2ada8ca0fe687e4c098c2440",
+      "size_bytes": 339,
+      "modified": "2025-12-17T03:49:22.861163",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.377462"
+    },
+    "AdjudicationQueue.tsx": {
+      "full_path": "frontend/src/pages/AdjudicationQueue.tsx",
+      "category": "frontend",
+      "checksum": "9707ac9ab19aa3a0379fcc3f16333de2d240ac972f5dbe020789b8c448f4cad8",
+      "size_bytes": 4230,
+      "modified": "2025-12-17T03:49:22.868334",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.377786"
+    },
+    "Investigation.tsx": {
+      "full_path": "frontend/src/pages/Investigation.tsx",
+      "category": "frontend",
+      "checksum": "8b2a67905ad9a5f49c2b94cde2dc1a05d35f93952da0a4f9d5a99a72f4100ce2",
+      "size_bytes": 5844,
+      "modified": "2025-12-17T04:10:56.304018",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.378255"
+    },
+    "IntegrationHub.tsx": {
+      "full_path": "frontend/src/pages/IntegrationHub.tsx",
+      "category": "frontend",
+      "checksum": "52d629d33958bb870a0555131c480db8f2d0500d4f2f0d8f4256fd2b656cb5c2",
+      "size_bytes": 36328,
+      "modified": "2025-12-17T03:49:22.875384",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.378737"
+    },
+    "Cases.tsx": {
+      "full_path": "frontend/src/pages/Cases.tsx",
+      "category": "frontend",
+      "checksum": "dd35a8f124045f14354f7f05928f75fdafaa2d00e532366a9092708442258af6",
+      "size_bytes": 13696,
+      "modified": "2025-12-17T03:49:22.914196",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.379190"
+    },
+    "Forensics.tsx": {
+      "full_path": "frontend/src/pages/Forensics.tsx",
+      "category": "frontend",
+      "checksum": "420741ca997186cb6cbd626bc457542b497e8d5eab2bdbac78d82d9ffc1e9c5a",
+      "size_bytes": 14105,
+      "modified": "2025-12-17T03:49:22.919696",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.379652"
+    },
+    "AgentApprovals.tsx": {
+      "full_path": "frontend/src/pages/AgentApprovals.tsx",
+      "category": "frontend",
+      "checksum": "58cd9b51ffee1b86a660921e626780157f4e43d7ca62a370558257ae80472d6c",
+      "size_bytes": 359,
+      "modified": "2025-12-17T03:49:22.922253",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.379956"
+    },
+    "NotFound.tsx": {
+      "full_path": "frontend/src/pages/NotFound.tsx",
+      "category": "frontend",
+      "checksum": "a1a6bc6a0c6ef292e1bdfc5ad890be0470db759165aa511622773d0fcb46feee",
+      "size_bytes": 3480,
+      "modified": "2025-12-17T03:49:22.930053",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.380270"
+    },
+    "ComplianceMonitoring.tsx": {
+      "full_path": "frontend/src/pages/ComplianceMonitoring.tsx",
+      "category": "frontend",
+      "checksum": "a112a37c70f1d70ad5eda9baa26d1d72b968eca18b683824c002854a99f2c30d",
+      "size_bytes": 13749,
+      "modified": "2025-12-17T03:49:22.934736",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.380667"
+    },
+    "comprehensive_diagnostic_suite.py": {
+      "full_path": "scripts/diagnostics/comprehensive_diagnostic_suite.py",
+      "category": "frontend",
+      "checksum": "a4dc7cccc57a05176712f5788921ca95066f105a961e3f318159d8a3a99aeded",
+      "size_bytes": 28298,
+      "modified": "2025-12-17T01:38:36.790321",
+      "risk_score": 54,
+      "protection_reason": "Contains 1 protection keywords for frontend",
+      "business_impact": "User experience and functionality",
+      "security_impact": "Client-side security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 540,
+      "investigation_timestamp": "2025-12-17T04:12:59.381272"
+    }
+  }
+}

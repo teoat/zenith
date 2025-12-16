@@ -1,5 +1,7 @@
 module.exports = {
+  preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'jsdom',
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.{ts,tsx}',
@@ -12,8 +14,18 @@ module.exports = {
     '^@lib/(.*)$': '<rootDir>/src/lib/$1',
     '^@utils/(.*)$': '<rootDir>/src/utils/$1'
   },
+  globals: {
+    'ts-jest': {
+      useESM: true,
+      tsconfig: {
+        module: 'ESNext',
+        target: 'ES2017'
+      }
+    }
+  },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
+      useESM: true,
       tsconfig: 'tsconfig.json'
     }]
   },

@@ -1,0 +1,222 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-12-17T00:00:00Z",
+  "approvedBy": "system",
+  "checksum": "64924fde3a8284e77eee1cd9fc1dde409928f649718869a5a0d03841b0cab019",
+  "api_version": "v1",
+  "base_url": "/api/v1",
+  "protocol": "REST + WebSocket",
+  "authentication": {
+    "type": "JWT Bearer tokens",
+    "endpoints": {
+      "login": {
+        "method": "POST",
+        "path": "/auth/login",
+        "request": {
+          "username": "string (required)",
+          "password": "string (required, min 8 chars)",
+          "mfa_code": "string (optional)"
+        },
+        "response": {
+          "access_token": "string",
+          "refresh_token": "string",
+          "token_type": "bearer",
+          "expires_in": 1800
+        }
+      },
+      "mfa_setup": {
+        "method": "GET",
+        "path": "/auth/mfa/setup",
+        "response": {
+          "secret": "string",
+          "otpauth_url": "string"
+        }
+      },
+      "mfa_verify": {
+        "method": "POST",
+        "path": "/auth/mfa/verify",
+        "request": {"code": "string"},
+        "response": {"message": "MFA enabled successfully"}
+      },
+      "register": {
+        "method": "POST",
+        "path": "/auth/register",
+        "request": {
+          "username": "string (3-50 chars)",
+          "email": "string (email format)",
+          "full_name": "string (1-100 chars)",
+          "role": "string (analyst|senior_analyst|investigator|manager|admin)"
+        },
+        "response": {
+          "access_token": "string",
+          "refresh_token": "string",
+          "token_type": "bearer",
+          "expires_in": 1800
+        }
+      }
+    }
+  },
+  "core_resources": {
+    "cases": {
+      "list": {
+        "method": "GET",
+        "path": "/cases",
+        "query_params": {
+          "page": "integer (default: 1)",
+          "per_page": "integer (default: 20)",
+          "status": "string (optional)",
+          "priority": "string (optional)",
+          "search": "string (optional)"
+        },
+        "response": {
+          "cases": "array of case objects",
+          "pagination": {
+            "page": "integer",
+            "per_page": "integer",
+            "total": "integer",
+            "total_pages": "integer"
+          }
+        }
+      },
+      "create": {
+        "method": "POST",
+        "path": "/cases",
+        "request": {
+          "title": "string (required)",
+          "description": "string (optional)",
+          "priority": "string (default: Medium)",
+          "assigneeId": "string (optional)",
+          "tags": "array (optional)",
+          "selectedCountry": "string (optional)",
+          "selectedDocuments": "array (optional)",
+          "reconciliationType": "string (default: general)",
+          "selectedCalendarFormat": "string (default: gregory)",
+          "selectedCurrencyFormat": "string (default: USD)",
+          "selectedDecimalFormat": "string (default: standard)",
+          "milestones": "array (optional)",
+          "proposedFeatures": "array (optional)",
+          "status": "string (default: OPEN)"
+        },
+        "response": {
+          "id": "string",
+          "message": "Case created successfully",
+          "case": "case object"
+        }
+      },
+      "get": {
+        "method": "GET",
+        "path": "/cases/{case_id}",
+        "response": {"case": "case object"}
+      },
+      "update": {
+        "method": "PUT",
+        "path": "/cases/{case_id}",
+        "request": "case update object",
+        "response": {
+          "id": "string",
+          "message": "Case updated successfully",
+          "case": "case object"
+        }
+      },
+      "delete": {
+        "method": "DELETE",
+        "path": "/cases/{case_id}",
+        "response": {"message": "Case deleted successfully"}
+      },
+      "notes": {
+        "add": {
+          "method": "POST",
+          "path": "/cases/{case_id}/notes",
+          "request": "note object",
+          "response": {
+            "id": "string",
+            "message": "Note added successfully",
+            "createdAt": "string"
+          }
+        },
+        "list": {
+          "method": "GET",
+          "path": "/cases/{case_id}/notes",
+          "query_params": {"include_internal": "boolean (default: true)"},
+          "response": {"notes": "array of note objects"}
+        }
+      }
+    },
+    "fraud": {
+      "analyze_case": {
+        "method": "POST",
+        "path": "/fraud/analyze/{case_id}",
+        "request": {"transaction_ids": "array of strings (optional)"},
+        "response": "fraud analysis result"
+      },
+      "get_alerts": {
+        "method": "GET",
+        "path": "/fraud/alerts/{case_id}",
+        "response": {"alerts": "array of alert objects"}
+      },
+      "update_alert_status": {
+        "method": "PUT",
+        "path": "/fraud/alerts/{alert_id}/status",
+        "request": {"status": "string (open|investigating|resolved|false_positive)"},
+        "response": {"message": "Alert status updated successfully"}
+      },
+      "stats": {
+        "method": "GET",
+        "path": "/fraud/stats",
+        "response": {
+          "total_cases_analyzed": "integer",
+          "total_alerts_generated": "integer",
+          "high_risk_alerts": "integer",
+          "resolved_alerts": "integer",
+          "average_response_time": "string"
+        }
+      }
+    }
+  },
+  "additional_routers": [
+    "search (/api/v1/search)",
+    "admin (/api/v1/admin)",
+    "users (/api/v1/users)",
+    "analytics (/api/v1/analytics)",
+    "reporting (/api/v1/reporting)",
+    "ai (/api/v1/ai)",
+    "advanced_ai (/api/v1/advanced_ai)",
+    "multimodal (/api/v1/multimodal)",
+    "semantic_search (/api/v1/semantic_search)",
+    "logging (/api/v1/logging)",
+    "apm (/api/v1/apm)",
+    "graph (/api/v1/graph)",
+    "sync (/api/v1/sync)",
+    "notifications (/api/v1/notifications)",
+    "backup (/api/v1/backup)",
+    "rules (/api/v1/rules)",
+    "collaboration (/api/v1/collaboration)",
+    "stats (/api/v1/stats)",
+    "reconciliation (/api/v1/reconciliation)",
+    "onboarding (/api/v1/onboarding)",
+    "metadata (/api/v1/metadata)",
+    "relationships (/api/v1/relationships)",
+    "proof (/api/v1/proof)"
+  ],
+  "health_endpoints": [
+    "GET /health",
+    "GET /health/ready",
+    "GET /health/live",
+    "GET /health/detailed",
+    "GET /performance/baselines",
+    "GET /performance/metrics",
+    "GET /analytics/journey",
+    "POST /analytics/track",
+    "GET /diagnostics/dashboard",
+    "GET /metrics"
+  ],
+  "rate_limiting": {
+    "authenticated_users": "1000 requests/hour",
+    "anonymous_users": "100 requests/hour"
+  },
+  "pagination": {
+    "default_limit": 50,
+    "max_limit": 1000,
+    "operators": ["eq", "ne", "gt", "gte", "lt", "lte", "contains"]
+  }
+}

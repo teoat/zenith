@@ -7,7 +7,7 @@ import { Activity, AlertTriangle, FolderOpen, Users } from 'lucide-react';
 const ThreatMap = React.lazy(() => import('../components/dashboard/ThreatMap'));
 import LiveQueue from '../components/dashboard/LiveQueue';
 import AIWatchtower from '../components/dashboard/AIWatchtower';
-import MetricSparkline from '../components/dashboard/MetricSparkline';
+const MetricSparkline = React.lazy(() => import('../components/dashboard/MetricSparkline'));
 import LoadingState from '../components/LoadingState';
 import ErrorMessage from '../components/ErrorMessage';
 import RookieChecklist from '../components/common/RookieChecklist';
@@ -58,7 +58,9 @@ const KPICard = memo<KPICardProps>(({
     <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{value}</h3>
     <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">{title}</p>
     {sparklineData && (
-      <MetricSparkline data={sparklineData} color={sparklineColor} height={32} />
+      <React.Suspense fallback={<div className="h-8 bg-slate-200 dark:bg-slate-700 animate-pulse rounded" />}>
+        <MetricSparkline data={sparklineData} color={sparklineColor} height={32} />
+      </React.Suspense>
     )}
   </div>
 ));

@@ -44,7 +44,7 @@ class ApprovalService {
       
       // For now, return local state
       return Array.from(this.pendingActions.values());
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to fetch pending actions:', error);
       return [];
     }
@@ -145,7 +145,7 @@ class ApprovalService {
           // Execute financial transaction
           break;
       }
-    } catch (_error) {
+    } catch (error) {
       console.error(`[ApprovalService] Failed to execute action ${action.id}:`, error);
       throw error;
     }

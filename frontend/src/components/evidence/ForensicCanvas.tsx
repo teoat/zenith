@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import EvidenceViewer from './EvidenceViewer';
+import React from 'react';
 import { EvidenceItem } from '../../lib/api';
 import { Eye, Binary, FileJson } from 'lucide-react';
+
+const EvidenceViewer = React.lazy(() => import('./EvidenceViewer'));
 
 interface ForensicCanvasProps {
   fileUrl: string | null;
@@ -9,6 +11,10 @@ interface ForensicCanvasProps {
 }
 
 export const ForensicCanvas: React.FC<ForensicCanvasProps> = ({ fileUrl, evidence }) => {
+  // Feature flags for forensic viewing
+  const enableAdvancedViewing = import.meta.env.VITE_ENABLE_ADVANCED_FORENSIC !== 'false';
+  const useSimplePdfViewer = import.meta.env.VITE_USE_SIMPLE_PDF_VIEWER === 'true';
+
   const [viewMode, setViewMode] = useState<'visual' | 'hex' | 'metadata'>('visual');
 
   if (!fileUrl) {
@@ -20,11 +26,32 @@ export const ForensicCanvas: React.FC<ForensicCanvasProps> = ({ fileUrl, evidenc
       );
   }
 
+  // Show simplified view if advanced viewing is disabled
+  if (!enableAdvancedViewing) {
+    return (
+      <div className="flex flex-col h-full bg-slate-950">
+        <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
+          <FileText size={48} className="mb-4 opacity-50" />
+          <h3 className="text-lg font-medium mb-2">Advanced Viewing Disabled</h3>
+          <p className="text-sm text-center max-w-md">
+            Forensic analysis features have been disabled to improve performance.
+            Basic file information is still available in the evidence panel.
+          </p>
+          {fileUrl && (
+            <div className="mt-4 text-xs text-slate-500">
+              File: {evidence?.fileName}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full bg-slate-950">
       {/* Canvas Toolbar */}
       <div className="h-10 bg-slate-900 border-b border-slate-800 flex items-center px-2 gap-1 shrink-0">
-          <button 
+          <button
             onClick={() => setViewMode('visual')}
             className={`px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 transition-colors ${
                 viewMode === 'visual' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -32,7 +59,7 @@ export const ForensicCanvas: React.FC<ForensicCanvasProps> = ({ fileUrl, evidenc
           >
               <Eye size={14} /> Visual
           </button>
-          <button 
+          <button
             onClick={() => setViewMode('hex')}
             className={`px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 transition-colors ${
                 viewMode === 'hex' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -40,7 +67,7 @@ export const ForensicCanvas: React.FC<ForensicCanvasProps> = ({ fileUrl, evidenc
           >
               <Binary size={14} /> Hex View
           </button>
-          <button 
+          <button
             onClick={() => setViewMode('metadata')}
             className={`px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 transition-colors ${
                 viewMode === 'metadata' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -52,9 +79,26 @@ export const ForensicCanvas: React.FC<ForensicCanvasProps> = ({ fileUrl, evidenc
 
       {/* Content Area */}
       <div className="flex-1 overflow-hidden relative">
-          {viewMode === 'visual' && (
-              <EvidenceViewer fileUrl={fileUrl} />
-          )}
+           {viewMode === 'visual' && (
+               useSimplePdfViewer ? (
+                   <iframe
+                       src={fileUrl || undefined}
+                       className="w-full h-full border-0"
+                       title="Document Viewer"
+                   />
+               ) : (
+                   <React.Suspense fallback={
+                       <div className="absolute inset-0 flex items-center justify-center bg-slate-950">
+                           <div className="text-center text-slate-400">
+                               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                               <p>Loading document viewer...</p>
+                           </div>
+                       </div>
+                   }>
+                       <EvidenceViewer fileUrl={fileUrl} />
+                   </React.Suspense>
+               )
+           )}
 
           {viewMode === 'hex' && (
               <div className="absolute inset-0 overflow-auto p-4 font-mono text-xs text-green-500 bg-slate-950 leading-relaxed whitespace-pre-wrap select-text">

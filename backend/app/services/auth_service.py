@@ -2,6 +2,8 @@
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Any
 import secrets
+import os
+import sys
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from fastapi import HTTPException, status, Depends
@@ -11,14 +13,34 @@ from core.database import User, UserRole
 from core.logging import logger, log_security_event
 from app.services.database_service import db_service
 
+# SSOT Integration
+try:
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'backend'))
+    from app.services.ssot_lockfiles_system import ssot_manager
+    SSOT_ENABLED = True
+except ImportError:
+    SSOT_ENABLED = False
+
 # Password hashing - use pbkdf2_sha256 to avoid requiring argon2 in test envs
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
-# JWT settings
-SECRET_KEY = "your-secret-key-change-in-production"  # Should come from env
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-REFRESH_TOKEN_EXPIRE_DAYS = 7
+# JWT settings from SSOT (with fallbacks)
+def _get_ssot_value(key, default):
+    """Get value from SSOT with fallback to default."""
+    if not SSOT_ENABLED:
+        return default
+    try:
+        return ssot_manager.get_value(key)
+    except (KeyError, Exception):
+        return default
+
+SECRET_KEY = _get_ssot_value("auth.jwt.secret_key", "your-secret-key-change-in-production")
+ALGORITHM = _get_ssot_value("auth.jwt.algorithm", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = _get_ssot_value("auth.jwt.access_token_expire_minutes", 30)
+REFRESH_TOKEN_EXPIRE_DAYS = _get_ssot_value("auth.jwt.refresh_token_expire_days", 7)
+PASSWORD_MIN_LENGTH = _get_ssot_value("auth.password.min_length", 8)
+MAX_LOGIN_ATTEMPTS = _get_ssot_value("auth.security.max_login_attempts", 5)
+ACCOUNT_LOCKOUT_MINUTES = _get_ssot_value("auth.security.account_lockout_minutes", 15)
 
 # Security scheme
 # Use auto_error=False so missing credentials can be handled and mapped to 401

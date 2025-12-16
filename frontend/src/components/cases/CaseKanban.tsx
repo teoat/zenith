@@ -280,7 +280,7 @@ const CaseKanban = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [focusedCard, items]);
+  }, [focusedCard]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),

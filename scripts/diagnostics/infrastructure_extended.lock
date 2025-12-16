@@ -1,0 +1,87 @@
+{
+  "category": "infrastructure_extended",
+  "generated_at": "2025-12-17T04:12:59.326653",
+  "version": "1.0.0-extended-protection",
+  "description": "Extended SSOT protection for infrastructure category files",
+  "total_files": 4,
+  "investigation_method": "deep_file_analysis",
+  "protection_criteria": {
+    "risk_multiplier": 1.6,
+    "keywords": [
+      "docker",
+      "deployment",
+      "build",
+      "ci",
+      "cd",
+      "pipeline"
+    ],
+    "business_impact": "Deployment and scalability",
+    "security_impact": "Infrastructure security"
+  },
+  "files": {
+    "FinancialHealth.tsx": {
+      "full_path": "frontend/src/components/reporting/FinancialHealth.tsx",
+      "category": "infrastructure",
+      "checksum": "1f761ac597401a0c30cfd7ec08d7c31766d8c9f8eebb4c177f77267c7abc72fc",
+      "size_bytes": 15337,
+      "modified": "2025-12-17T03:49:21.594562",
+      "risk_score": 57,
+      "protection_reason": "Contains 1 protection keywords for infrastructure",
+      "business_impact": "Deployment and scalability",
+      "security_impact": "Infrastructure security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 570,
+      "investigation_timestamp": "2025-12-17T04:12:59.327116"
+    },
+    "DecisionPanel.tsx": {
+      "full_path": "frontend/src/components/adjudication/DecisionPanel.tsx",
+      "category": "infrastructure",
+      "checksum": "9c3aaccd2a3a83933472127f9f362e44c2bad340ada881cbe975223b1601ea69",
+      "size_bytes": 2785,
+      "modified": "2025-12-17T03:49:21.902184",
+      "risk_score": 57,
+      "protection_reason": "Contains 1 protection keywords for infrastructure",
+      "business_impact": "Deployment and scalability",
+      "security_impact": "Infrastructure security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 570,
+      "investigation_timestamp": "2025-12-17T04:12:59.327540"
+    },
+    "Reconciliation.tsx": {
+      "full_path": "frontend/src/pages/Reconciliation.tsx",
+      "category": "infrastructure",
+      "checksum": "cee8bf8d6adaa721540badef7def4fe9e8cc3015dafce8ae3053b13602043c1a",
+      "size_bytes": 11835,
+      "modified": "2025-12-17T03:49:22.618071",
+      "risk_score": 57,
+      "protection_reason": "Contains 1 protection keywords for infrastructure",
+      "business_impact": "Deployment and scalability",
+      "security_impact": "Infrastructure security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 570,
+      "investigation_timestamp": "2025-12-17T04:12:59.327972"
+    },
+    "docker-compose.production.yml": {
+      "full_path": "infrastructure/docker-compose.production.yml",
+      "category": "infrastructure",
+      "checksum": "76cfb6ce91a88ca182f41d903eeb8949ac4bf6b4d9ddda0ae97a1775f2778649",
+      "size_bytes": 5109,
+      "modified": "2025-12-17T01:38:36.814978",
+      "risk_score": 57,
+      "protection_reason": "Contains 1 protection keywords for infrastructure",
+      "business_impact": "Deployment and scalability",
+      "security_impact": "Infrastructure security",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 570,
+      "investigation_timestamp": "2025-12-17T04:12:59.328517"
+    }
+  }
+}

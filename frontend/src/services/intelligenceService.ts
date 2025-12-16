@@ -83,8 +83,8 @@ class IntelligenceService {
 
       return await response.json();
     } catch (_error) {
-      console.error('Fraud analysis error:', error);
-      throw error;
+      console.error('Fraud analysis error:', _error);
+      throw _error;
     }
   }
 

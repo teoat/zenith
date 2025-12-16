@@ -1,0 +1,50 @@
+{
+  "registry_version": "1.0.0",
+  "created_at": "2025-01-01T00:00:00Z",
+  "platform": "fraud_detection_platform",
+  "lockfiles": {
+    "python_dependencies.lock": {
+      "purpose": "Python dependency specifications with exact versions and checksums",
+      "criticality": "high",
+      "update_frequency": "on_dependency_changes",
+      "validation_required": true
+    },
+    "environment_config.lock": {
+      "purpose": "Environment-specific configuration locking",
+      "criticality": "high",
+      "update_frequency": "on_environment_changes",
+      "validation_required": true
+    },
+    "build_deployment.lock": {
+      "purpose": "Build and deployment process specifications",
+      "criticality": "medium",
+      "update_frequency": "on_build_changes",
+      "validation_required": true
+    },
+    "security_config.lock": {
+      "purpose": "Security configuration and policy locking",
+      "criticality": "critical",
+      "update_frequency": "on_security_policy_changes",
+      "validation_required": true
+    },
+    "compliance_config.lock": {
+      "purpose": "Regulatory compliance configuration locking",
+      "criticality": "critical",
+      "update_frequency": "on_regulatory_changes",
+      "validation_required": true
+    }
+  },
+  "validation_rules": {
+    "checksum_verification": "required",
+    "dependency_resolution": "locked",
+    "configuration_drift": "prevented",
+    "security_compliance": "enforced",
+    "reproducible_builds": "guaranteed"
+  },
+  "emergency_procedures": {
+    "lockfile_corruption": "restore_from_backup",
+    "dependency_conflict": "manual_resolution_required",
+    "security_violation": "immediate_lockdown",
+    "compliance_breach": "audit_and_remediation"
+  }
+}

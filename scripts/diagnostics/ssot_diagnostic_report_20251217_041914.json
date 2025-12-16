@@ -1,0 +1,199 @@
+{
+  "timestamp": "2025-12-17T04:19:14.234295",
+  "diagnostics_version": "1.0.0",
+  "overall_status": "healthy",
+  "categories": {
+    "ssot_master": {
+      "file": "ssot_master.json",
+      "status": "healthy",
+      "issues": [],
+      "recommendations": []
+    },
+    "lockfiles": {
+      "category": "lockfiles",
+      "status": "healthy",
+      "files": {
+        "dependencies.lock": {
+          "file": "dependencies.lock",
+          "category": "dependencies",
+          "status": "valid",
+          "issues": []
+        },
+        "environments.lock": {
+          "file": "environments.lock",
+          "category": "environments",
+          "status": "valid",
+          "issues": []
+        },
+        "configurations.lock": {
+          "file": "configurations.lock",
+          "category": "configurations",
+          "status": "valid",
+          "issues": []
+        },
+        "business_logic.lock": {
+          "file": "business_logic.lock",
+          "category": "business_logic",
+          "status": "valid",
+          "issues": []
+        },
+        "security_config.lock": {
+          "file": "security_config.lock",
+          "category": "security_config",
+          "status": "valid",
+          "issues": []
+        },
+        "api_contracts.lock": {
+          "file": "api_contracts.lock",
+          "category": "api_contracts",
+          "status": "valid",
+          "issues": []
+        },
+        "test_fixtures.lock": {
+          "file": "test_fixtures.lock",
+          "category": "test_fixtures",
+          "status": "valid",
+          "issues": []
+        },
+        "infrastructure.lock": {
+          "file": "infrastructure.lock",
+          "category": "infrastructure",
+          "status": "valid",
+          "issues": []
+        }
+      },
+      "summary": {
+        "total": 8,
+        "present": 8,
+        "valid": 8,
+        "corrupted": 0,
+        "missing": 0
+      }
+    },
+    "critical_files": {
+      "category": "critical_files",
+      "status": "healthy",
+      "files": {
+        "data/fraud_rules.json": {
+          "file": "data/fraud_rules.json",
+          "type": "json",
+          "description": "fraud_rules",
+          "status": "valid",
+          "issues": []
+        },
+        "backend/app/services/fraud_service.py": {
+          "file": "backend/app/services/fraud_service.py",
+          "type": "python",
+          "description": "fraud_service",
+          "status": "valid",
+          "issues": []
+        },
+        "backend/core/security/rbac.py": {
+          "file": "backend/core/security/rbac.py",
+          "type": "python",
+          "description": "rbac",
+          "status": "valid",
+          "issues": []
+        },
+        "backend/core/database.py": {
+          "file": "backend/core/database.py",
+          "type": "python",
+          "description": "database_schema",
+          "status": "valid",
+          "issues": []
+        },
+        "backend/app/services/database_service.py": {
+          "file": "backend/app/services/database_service.py",
+          "type": "python",
+          "description": "database_service",
+          "status": "valid",
+          "issues": []
+        },
+        "backend/app/services/auth_service.py": {
+          "file": "backend/app/services/auth_service.py",
+          "type": "python",
+          "description": "auth_service",
+          "status": "valid",
+          "issues": []
+        },
+        "backend/core/security/__init__.py": {
+          "file": "backend/core/security/__init__.py",
+          "type": "python",
+          "description": "security_framework",
+          "status": "valid",
+          "issues": []
+        },
+        "backend/main.py": {
+          "file": "backend/main.py",
+          "type": "python",
+          "description": "api_gateway",
+          "status": "valid",
+          "issues": []
+        },
+        "backend/app/routers/identity.py": {
+          "file": "backend/app/routers/identity.py",
+          "type": "python",
+          "description": "identity_api",
+          "status": "valid",
+          "issues": []
+        },
+        "frontend/src/pages/Dashboard.tsx": {
+          "file": "frontend/src/pages/Dashboard.tsx",
+          "type": "typescript",
+          "description": "dashboard",
+          "status": "valid",
+          "issues": []
+        },
+        "frontend/src/utils/api.ts": {
+          "file": "frontend/src/utils/api.ts",
+          "type": "typescript",
+          "description": "api_client",
+          "status": "valid",
+          "issues": []
+        },
+        ".env.production": {
+          "file": ".env.production",
+          "type": "text",
+          "description": "production_env",
+          "status": "valid",
+          "issues": []
+        },
+        "Dockerfile": {
+          "file": "Dockerfile",
+          "type": "dockerfile",
+          "description": "container_spec",
+          "status": "valid",
+          "issues": []
+        },
+        "scripts/setup-production.sh": {
+          "file": "scripts/setup-production.sh",
+          "type": "shell",
+          "description": "production_setup",
+          "status": "valid",
+          "issues": []
+        },
+        "scripts/validate-production.sh": {
+          "file": "scripts/validate-production.sh",
+          "type": "shell",
+          "description": "production_validation",
+          "status": "valid",
+          "issues": []
+        }
+      },
+      "summary": {
+        "total": 15,
+        "present": 15,
+        "valid": 15,
+        "invalid": 0,
+        "missing": 0
+      }
+    }
+  },
+  "recommendations": [
+    "\u2705 INFO: Run 'scripts/diagnostics/manage_ssot_lockfiles.sh generate' to create missing lockfiles",
+    "\u2705 INFO: Run 'scripts/diagnostics/manage_ssot_lockfiles.sh verify' to verify integrity",
+    "\u2705 INFO: Schedule daily lockfile verification in CI/CD pipeline",
+    "\u2705 INFO: Implement automated SSOT backup and recovery procedures"
+  ],
+  "critical_issues": []
+}

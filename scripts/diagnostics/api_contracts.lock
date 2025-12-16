@@ -1,0 +1,1789 @@
+{
+  "category": "api_contracts",
+  "generated_at": "2025-12-17T04:08:41.506673",
+  "version": "1.0.0-ssot-comprehensive",
+  "description": "Comprehensive SSOT protection for api_contracts files",
+  "total_files": 184,
+  "files": {
+    "api_integration_hub.py": {
+      "full_path": "backend/app/services/api_integration_hub.py",
+      "category": "critical",
+      "checksum": "2a73b4bc6c3144f7d6cbf633d81a63c3d401bf56077227854cbd2fbde6099b6d",
+      "size_bytes": 21694,
+      "modified": "2025-12-17T01:38:35.973528",
+      "risk_score": 100,
+      "protection_reason": "Category: critical, Risk: 105",
+      "locked_at": "2025-12-17T04:08:41.506892"
+    },
+    "test_api.py": {
+      "full_path": "backend/tests/integration/test_api.py",
+      "category": "critical",
+      "checksum": "5789e633ddfc353b3adc16cd815fe5e53979bf039ff885665accd8373def9f09",
+      "size_bytes": 3836,
+      "modified": "2025-12-17T01:38:36.343547",
+      "risk_score": 100,
+      "protection_reason": "Category: critical, Risk: 105",
+      "locked_at": "2025-12-17T04:08:41.507003"
+    },
+    "test_api_endpoints.py": {
+      "full_path": "backend/tests/integration/test_api_endpoints.py",
+      "category": "critical",
+      "checksum": "7c0ee9b9220151cf964878da9978757e1d39134b3c15a7f56411049be43ccac9",
+      "size_bytes": 5386,
+      "modified": "2025-12-17T01:38:36.343770",
+      "risk_score": 100,
+      "protection_reason": "Category: critical, Risk: 105",
+      "locked_at": "2025-12-17T04:08:41.530544"
+    },
+    "_api.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_vendor/truststore/_api.py",
+      "category": "critical",
+      "checksum": "69ff201191bfbe1b2e7626bdbf3e1eb37561f3102a873433e026e3b3afebc6eb",
+      "size_bytes": 11234,
+      "modified": "2025-12-17T01:38:36.212161",
+      "risk_score": 100,
+      "protection_reason": "Category: critical, Risk: 105",
+      "locked_at": "2025-12-17T04:08:41.530792"
+    },
+    "api.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_vendor/platformdirs/api.py",
+      "category": "critical",
+      "checksum": "53d133237118c5c5d6502b48191965aab70df7d8b62d26359aadbe1adb14c044",
+      "size_bytes": 9277,
+      "modified": "2025-12-17T01:38:36.135268",
+      "risk_score": 100,
+      "protection_reason": "Category: critical, Risk: 105",
+      "locked_at": "2025-12-17T04:08:41.531056"
+    },
+    "api.ts": {
+      "full_path": "frontend/src/lib/api.ts",
+      "category": "critical",
+      "checksum": "91748670b82de900eba1ca3ab38a62de314a616d50eca30e238a25da7b6ada14",
+      "size_bytes": 4863,
+      "modified": "2025-12-17T03:49:22.531500",
+      "risk_score": 100,
+      "protection_reason": "Category: critical, Risk: 105",
+      "locked_at": "2025-12-17T04:08:41.531593"
+    },
+    "useApiError.ts": {
+      "full_path": "frontend/src/hooks/useApiError.ts",
+      "category": "critical",
+      "checksum": "7752e2b63f3ae96acec3eb793d779c18be55dabfcf4805c7dca4835855f822f7",
+      "size_bytes": 3136,
+      "modified": "2025-12-17T03:49:21.989622",
+      "risk_score": 100,
+      "protection_reason": "Category: critical, Risk: 105",
+      "locked_at": "2025-12-17T04:08:41.531416"
+    },
+    "useApiWithRetry.ts": {
+      "full_path": "frontend/src/hooks/useApiWithRetry.ts",
+      "category": "critical",
+      "checksum": "89e740e09485c340bf368036684135ea9e018b26d90cf70e824a23ab01dcb432",
+      "size_bytes": 1380,
+      "modified": "2025-12-17T03:49:21.990971",
+      "risk_score": 100,
+      "protection_reason": "Category: critical, Risk: 105",
+      "locked_at": "2025-12-17T04:08:41.531500"
+    },
+    "logging.py": {
+      "full_path": "backend/app/routers/logging.py",
+      "category": "high",
+      "checksum": "15c287c29b153f308f2b96ddf6eb54f69a9881e94ef723784a922ed603ac0a27",
+      "size_bytes": 17510,
+      "modified": "2025-12-17T01:38:35.905692",
+      "risk_score": 85,
+      "protection_reason": "Category: high, Risk: 85",
+      "locked_at": "2025-12-17T04:08:41.531715"
+    },
+    "metrics.py": {
+      "full_path": "backend/app/routers/metrics.py",
+      "category": "high",
+      "checksum": "fa3bd96c74888cdc832c0a6bb4bbf081e0f995c9a72c62a372f15f8622f1be5e",
+      "size_bytes": 4203,
+      "modified": "2025-12-17T01:38:35.906040",
+      "risk_score": 85,
+      "protection_reason": "Category: high, Risk: 85",
+      "locked_at": "2025-12-17T04:08:41.536359"
+    },
+    "direct_url_helpers.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/direct_url_helpers.py",
+      "category": "medium",
+      "checksum": "b6d2afe06314aa54703cfa20f7f094a29cba483828c5520bcde049ce07e7dad8",
+      "size_bytes": 3200,
+      "modified": "2025-12-17T01:38:36.085428",
+      "risk_score": 75,
+      "protection_reason": "Category: medium, Risk: 75",
+      "locked_at": "2025-12-17T04:08:41.536494"
+    },
+    "backup.py": {
+      "full_path": "backend/app/routers/backup.py",
+      "category": "medium",
+      "checksum": "8118b34c1810f2d58669606b350c0569eff763eafcf1bfde9cbe97210ba80146",
+      "size_bytes": 19638,
+      "modified": "2025-12-17T01:38:35.902193",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.541302"
+    },
+    "advanced_ai.py": {
+      "full_path": "backend/app/routers/advanced_ai.py",
+      "category": "medium",
+      "checksum": "84aa6e6884c3e3b8cc66a57fd913c5868b0531efe6d83db26758c596552f8738",
+      "size_bytes": 2144,
+      "modified": "2025-12-17T01:38:35.900070",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.541435"
+    },
+    "reporting_header_fix.py": {
+      "full_path": "backend/app/routers/reporting_header_fix.py",
+      "category": "medium",
+      "checksum": "4bf1e342767c066fa6d4dd5f8eab0a6eb559b15db362728194122f6e8cfe9898",
+      "size_bytes": 519,
+      "modified": "2025-12-17T01:38:35.909613",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.541522"
+    },
+    "metadata.py": {
+      "full_path": "backend/app/routers/metadata.py",
+      "category": "medium",
+      "checksum": "894ce2909ae5d244a1aad12535d0573862bf788291e4f8b6ce5c3f9a50cc1891",
+      "size_bytes": 4664,
+      "modified": "2025-12-17T01:38:35.905860",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.541612"
+    },
+    "audit.py": {
+      "full_path": "backend/app/routers/audit.py",
+      "category": "medium",
+      "checksum": "28d695e3751e21e5a6e2d646133ba53f1188a574ff97708e75af038a4b8de52c",
+      "size_bytes": 918,
+      "modified": "2025-12-17T01:38:35.901679",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.549414"
+    },
+    "compliance.py": {
+      "full_path": "backend/app/routers/compliance.py",
+      "category": "medium",
+      "checksum": "e995bc414c68650d1d666146758558c0db196baf95cace880b2ca4afb429e3dd",
+      "size_bytes": 9860,
+      "modified": "2025-12-17T01:38:35.903132",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.549612"
+    },
+    "users.py": {
+      "full_path": "backend/app/routers/users.py",
+      "category": "medium",
+      "checksum": "c7a86725ebf0d1901129e32aade52fb999a8053225680f39870638e98833ef29",
+      "size_bytes": 4083,
+      "modified": "2025-12-17T01:38:35.910684",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.549709"
+    },
+    "reconciliation.py": {
+      "full_path": "backend/app/routers/reconciliation.py",
+      "category": "medium",
+      "checksum": "231e35c6126482192d3d60ff202361a37ab3fc42c943785b73b3e05ef646cb07",
+      "size_bytes": 8990,
+      "modified": "2025-12-17T01:38:35.908563",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.549808"
+    },
+    "health.py": {
+      "full_path": "backend/app/routers/health.py",
+      "category": "medium",
+      "checksum": "29a3114f183b33c6cbb6c9cfa2ee29034cf92bf3e55f008afe7d20bd2c46a669",
+      "size_bytes": 4551,
+      "modified": "2025-12-17T01:38:35.905013",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.549896"
+    },
+    "diagnostics.py": {
+      "full_path": "backend/app/routers/diagnostics.py",
+      "category": "medium",
+      "checksum": "ead53979f3e8c323b4ec76b63baea64f19b5f611c11a2209358d00ee1347b091",
+      "size_bytes": 14167,
+      "modified": "2025-12-17T01:38:35.903637",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.550004"
+    },
+    "onboarding.py": {
+      "full_path": "backend/app/routers/onboarding.py",
+      "category": "medium",
+      "checksum": "f15e4143e059e79252e8318cd3504db0a3896a2db6412043af0b254c6d304250",
+      "size_bytes": 1886,
+      "modified": "2025-12-17T03:17:41.019517",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.550084"
+    },
+    "ai.py": {
+      "full_path": "backend/app/routers/ai.py",
+      "category": "medium",
+      "checksum": "f45b61efc8b03034c91557868aa3b344fee2a54e774dd6e083a04fe03cdc1a86",
+      "size_bytes": 30736,
+      "modified": "2025-12-17T03:18:03.847100",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.555196"
+    },
+    "graph.py": {
+      "full_path": "backend/app/routers/graph.py",
+      "category": "medium",
+      "checksum": "f12b088c51f3d97a67dc4966a82517584f2776f3e0be3dc522f57a0ee82b632b",
+      "size_bytes": 19138,
+      "modified": "2025-12-17T01:38:35.904685",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.555561"
+    },
+    "realtime_sync.py": {
+      "full_path": "backend/app/routers/realtime_sync.py",
+      "category": "medium",
+      "checksum": "4cc6dbbd8d3af38354e47cafa529ba790f07ccf52b215e8b11a1857fdc0a3b54",
+      "size_bytes": 10646,
+      "modified": "2025-12-17T01:38:35.908351",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.555760"
+    },
+    "multimodal.py": {
+      "full_path": "backend/app/routers/multimodal.py",
+      "category": "medium",
+      "checksum": "6a0a0b5f25d3b37c86536e83e43155bef9954e775445ebbf873de89cfe6d5b1d",
+      "size_bytes": 17381,
+      "modified": "2025-12-17T01:38:35.906220",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.555991"
+    },
+    "intelligence.py": {
+      "full_path": "backend/app/routers/intelligence.py",
+      "category": "medium",
+      "checksum": "2e0a9aa0c2cc59684b998d212b603a9f8ac59135f02a78fdaa4e4c881e813309",
+      "size_bytes": 7661,
+      "modified": "2025-12-17T01:38:35.905505",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.556111"
+    },
+    "cases.py": {
+      "full_path": "backend/app/routers/cases.py",
+      "category": "medium",
+      "checksum": "52a902ed9071fe9caca950fb776dc7279acfa69604b19252028899e8326632f4",
+      "size_bytes": 12309,
+      "modified": "2025-12-17T01:38:35.902409",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.556221"
+    },
+    "ocr.py": {
+      "full_path": "backend/app/routers/ocr.py",
+      "category": "medium",
+      "checksum": "b6e20b6f2ba20db661c01d108524bb784247013dc8c260d030e0b63f9cc025d4",
+      "size_bytes": 2482,
+      "modified": "2025-12-17T01:38:35.907213",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.556417"
+    },
+    "admin.py": {
+      "full_path": "backend/app/routers/admin.py",
+      "category": "medium",
+      "checksum": "2b0f883c8cc9fe48117759ed456d4457f4ad9e4c7a61b5f777a95e3357b64e50",
+      "size_bytes": 7508,
+      "modified": "2025-12-17T01:38:35.899880",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.556532"
+    },
+    "apm.py": {
+      "full_path": "backend/app/routers/apm.py",
+      "category": "medium",
+      "checksum": "a8909222ddb54edb2fd8ef395efb461e19a6a32c8be83df057aadd1d2dc99ce6",
+      "size_bytes": 21718,
+      "modified": "2025-12-17T01:38:35.901101",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.556739"
+    },
+    "stats.py": {
+      "full_path": "backend/app/routers/stats.py",
+      "category": "medium",
+      "checksum": "c99469b131be8dc277b68ad781555208192948a812e7acbd67de3c8112c0e1dd",
+      "size_bytes": 10151,
+      "modified": "2025-12-17T01:38:35.910285",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.556854"
+    },
+    "collaboration.py": {
+      "full_path": "backend/app/routers/collaboration.py",
+      "category": "medium",
+      "checksum": "81caa4545e333b2cc75615d686fafa6b24ff61cb59508f3c21cc1c9b9a312bca",
+      "size_bytes": 2355,
+      "modified": "2025-12-17T01:38:35.902603",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.557730"
+    },
+    "proof.py": {
+      "full_path": "backend/app/routers/proof.py",
+      "category": "medium",
+      "checksum": "4a6cd4a2a632e738f60c26021f18d62c7007dccbaf7071ee52948ef7ae5df547",
+      "size_bytes": 17690,
+      "modified": "2025-12-17T01:38:35.908098",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.557881"
+    },
+    "search.py": {
+      "full_path": "backend/app/routers/search.py",
+      "category": "medium",
+      "checksum": "2e26d8a2d188c719811555ab14b25531b81c63632ee1131ab7d42d8a94322881",
+      "size_bytes": 2032,
+      "modified": "2025-12-17T01:38:35.909832",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.558053"
+    },
+    "notifications.py": {
+      "full_path": "backend/app/routers/notifications.py",
+      "category": "medium",
+      "checksum": "d21c906d889ef40f58a8e1fc1191857551cbd8861560fdc693f82bfbee6dce73",
+      "size_bytes": 11299,
+      "modified": "2025-12-17T01:38:35.906608",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.558163"
+    },
+    "analytics.py": {
+      "full_path": "backend/app/routers/analytics.py",
+      "category": "medium",
+      "checksum": "6293180cb1ff454fee00289091e45edd32c93a9a7ae21be800d9b5e5d1ea6c6d",
+      "size_bytes": 5443,
+      "modified": "2025-12-17T01:38:35.900824",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.558253"
+    },
+    "relationship_graph.py": {
+      "full_path": "backend/app/routers/relationship_graph.py",
+      "category": "medium",
+      "checksum": "9ec4cb5714bacdb9cf23236722192405a526814415717a234a111b699d28ac7e",
+      "size_bytes": 11704,
+      "modified": "2025-12-17T01:38:35.908788",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.558355"
+    },
+    "streaming.py": {
+      "full_path": "backend/app/routers/streaming.py",
+      "category": "medium",
+      "checksum": "7be3d580931cbe656daab5b895e2919d68fbf1f1f404b27dae03cf44fb324896",
+      "size_bytes": 4924,
+      "modified": "2025-12-17T01:38:35.910488",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.558441"
+    },
+    "evidence.py": {
+      "full_path": "backend/app/routers/evidence.py",
+      "category": "medium",
+      "checksum": "49aeeb0aa4b966625d3bdd89ab148bc692bc3728269fb2756025b3b8e1f9f132",
+      "size_bytes": 14912,
+      "modified": "2025-12-17T01:38:35.903940",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.558547"
+    },
+    "ai_enhanced.py": {
+      "full_path": "backend/app/routers/ai_enhanced.py",
+      "category": "medium",
+      "checksum": "c67805dd9be565283ba1b92806c3e0bd672040b246a86319091d5715a707449d",
+      "size_bytes": 16951,
+      "modified": "2025-12-17T01:38:35.900540",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.569453"
+    },
+    "semantic_search.py": {
+      "full_path": "backend/app/routers/semantic_search.py",
+      "category": "medium",
+      "checksum": "05180a8969ebfc361ba044f3929a33d0b60a244bf179c242d5756796c2b00d1f",
+      "size_bytes": 14008,
+      "modified": "2025-12-17T01:38:35.910042",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.569627"
+    },
+    "websocket.py": {
+      "full_path": "backend/app/routers/websocket.py",
+      "category": "medium",
+      "checksum": "af02434d5cee29bfad833b70371b10298b5496353d42f3359d7b65b859714f3a",
+      "size_bytes": 10303,
+      "modified": "2025-12-17T01:38:35.910889",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.569786"
+    },
+    "reporting.py": {
+      "full_path": "backend/app/routers/reporting.py",
+      "category": "medium",
+      "checksum": "d75b40c7ada1ac2cf5629d6e0bb77db781b2711f5029b231fa503a146460a374",
+      "size_bytes": 13243,
+      "modified": "2025-12-17T01:38:35.908967",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.588069"
+    },
+    "ultimate_platform_perfection_service.py": {
+      "full_path": "backend/app/services/ultimate_platform_perfection_service.py",
+      "category": "medium",
+      "checksum": "7d50085ae0c28eff384aa9f8d06cecb64f0ba5ea77bbfb8edc3ec71432a9073a",
+      "size_bytes": 22303,
+      "modified": "2025-12-17T01:38:36.000686",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.588274"
+    },
+    "investigation_service.py": {
+      "full_path": "backend/app/services/investigation_service.py",
+      "category": "medium",
+      "checksum": "60eadad694f8149916b73b5efd93b24402344bf6c3758e7ac217a64ac20a32c9",
+      "size_bytes": 2583,
+      "modified": "2025-12-17T01:38:35.992297",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.588423"
+    },
+    "ai_code_reviewer.py": {
+      "full_path": "backend/app/services/ai_code_reviewer.py",
+      "category": "medium",
+      "checksum": "8cf1664cc1e3c84c801054f06c6b3ddbd2e80c426e2adce2ca001f0263f44fbc",
+      "size_bytes": 32474,
+      "modified": "2025-12-17T01:38:35.968167",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.588590"
+    },
+    "ai_service.py": {
+      "full_path": "backend/app/services/ai_service.py",
+      "category": "medium",
+      "checksum": "337da8bf66135cff98d46252a4b1e990285f3dbf7256698104c1b5041bde445e",
+      "size_bytes": 33630,
+      "modified": "2025-12-17T02:28:09.756669",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.588745"
+    },
+    "perfect_innovation_readiness_system.py": {
+      "full_path": "backend/app/services/perfect_innovation_readiness_system.py",
+      "category": "medium",
+      "checksum": "aa2196095ebd8eb63271000d31a8186c677127a3859511eae4ae958a70986b08",
+      "size_bytes": 12559,
+      "modified": "2025-12-17T03:33:05.525645",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.588858"
+    },
+    "perfect_code_quality_service.py": {
+      "full_path": "backend/app/services/perfect_code_quality_service.py",
+      "category": "medium",
+      "checksum": "8b608d8a647179db092f5843e80c11c9b64158256d1da1f42f4c57b2b9790b9a",
+      "size_bytes": 43514,
+      "modified": "2025-12-17T01:38:35.995997",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.589695"
+    },
+    "predictive_maintenance.py": {
+      "full_path": "backend/app/services/predictive_maintenance.py",
+      "category": "medium",
+      "checksum": "18e3202492787172986a92ab5d1ca04263252b6d6ce881b85df8c62333f224e3",
+      "size_bytes": 24093,
+      "modified": "2025-12-17T01:38:35.996772",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.589855"
+    },
+    "orchestration_notification_service.py": {
+      "full_path": "backend/app/services/orchestration_notification_service.py",
+      "category": "medium",
+      "checksum": "f2c8adfa78b9f76d18b7ad194e9e4185fb9e0cf3b73e4d76354e1a556475b5dc",
+      "size_bytes": 12773,
+      "modified": "2025-12-17T01:38:35.995329",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.589971"
+    },
+    "investigation_workflow_service.py": {
+      "full_path": "backend/app/services/investigation_workflow_service.py",
+      "category": "medium",
+      "checksum": "eab92b1b39b8e97ef83f91f58f17f9de08d1ebfd9072c7772bcc7d8a662f211d",
+      "size_bytes": 13939,
+      "modified": "2025-12-17T01:38:35.992536",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.597584"
+    },
+    "temporal_burst_detector.py": {
+      "full_path": "backend/app/services/temporal_burst_detector.py",
+      "category": "medium",
+      "checksum": "8ace68a4cafb34cd77dfa62563193ac4d0524e4da408c249ef46eb67f30a1fad",
+      "size_bytes": 15418,
+      "modified": "2025-12-17T01:38:36.000281",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.597778"
+    },
+    "reconciliation_service.py": {
+      "full_path": "backend/app/services/reconciliation_service.py",
+      "category": "medium",
+      "checksum": "d02cfbb8b0a9b57e6d1a9b6f107c3e242348fc5a6d5736232b2f40fb6e90a833",
+      "size_bytes": 5602,
+      "modified": "2025-12-17T01:38:35.997296",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.597910"
+    },
+    "explainable_ai.py": {
+      "full_path": "backend/app/services/explainable_ai.py",
+      "category": "medium",
+      "checksum": "37ecf303c17f325b60653c85aaa7990f719ee6024e63517adf9e9cfd258e8d16",
+      "size_bytes": 16601,
+      "modified": "2025-12-17T01:38:35.981341",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.598033"
+    },
+    "enterprise_integration.py": {
+      "full_path": "backend/app/services/enterprise_integration.py",
+      "category": "medium",
+      "checksum": "f67940f03442057d8a02469fbacf7caede9edf5fd4ffd428fcfae92239c0aaeb",
+      "size_bytes": 16207,
+      "modified": "2025-12-17T01:38:35.980114",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.598148"
+    },
+    "vector_store.py": {
+      "full_path": "backend/app/services/vector_store.py",
+      "category": "medium",
+      "checksum": "976b1ec08f43f077c83783137e9a5a5ec126e618219fe89ab2c39fe7ab07475d",
+      "size_bytes": 1006,
+      "modified": "2025-12-17T01:38:36.001160",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.598229"
+    },
+    "notification_service.py": {
+      "full_path": "backend/app/services/notification_service.py",
+      "category": "medium",
+      "checksum": "8f23409cb76b6f54810e47fb86e67fd1d9dae1d863b35bee214d56b97825c5d8",
+      "size_bytes": 18910,
+      "modified": "2025-12-17T01:38:35.994735",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.598390"
+    },
+    "cost_optimization_service.py": {
+      "full_path": "backend/app/services/cost_optimization_service.py",
+      "category": "medium",
+      "checksum": "36563dfc4ac0a2a024a39c36443dc0a4e80d3f239a321c477877a88880719926",
+      "size_bytes": 54642,
+      "modified": "2025-12-17T01:38:35.977444",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.598614"
+    },
+    "immutable_audit_chain.py": {
+      "full_path": "backend/app/services/immutable_audit_chain.py",
+      "category": "medium",
+      "checksum": "854f5bee1540610fe2b6b4369445e1775dbfd9bd493f417b6ac0eb965d505fd2",
+      "size_bytes": 15504,
+      "modified": "2025-12-17T01:38:35.991571",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.598912"
+    },
+    "enhanced_experimentation_platform.py": {
+      "full_path": "backend/app/services/enhanced_experimentation_platform.py",
+      "category": "medium",
+      "checksum": "efc271d5902b56ce516b41938e6bf2ebbc1015d4de4a742bb5854cce01fe7c5d",
+      "size_bytes": 14996,
+      "modified": "2025-12-17T03:26:12.303354",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.599048"
+    },
+    "code_quality_improvement.py": {
+      "full_path": "backend/app/services/code_quality_improvement.py",
+      "category": "medium",
+      "checksum": "a3c7aa29f25b6f32c74792b8a1c39a1f90fcf9913aa01e48bcdfb2384178d67f",
+      "size_bytes": 21747,
+      "modified": "2025-12-17T03:26:57.234880",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.599180"
+    },
+    "red_team_persona.py": {
+      "full_path": "backend/app/services/red_team_persona.py",
+      "category": "medium",
+      "checksum": "e74976941464b30aafc34c656660dff91897eef3e757e4ccf6eefe04aabf666a",
+      "size_bytes": 2189,
+      "modified": "2025-12-17T01:38:35.997433",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.599264"
+    },
+    "perfect_systems_suite.py": {
+      "full_path": "backend/app/services/perfect_systems_suite.py",
+      "category": "medium",
+      "checksum": "a9d910f8532e7fd8b691be051cf3c99f28ab99f16210219145d011fb89f88899",
+      "size_bytes": 16768,
+      "modified": "2025-12-17T03:32:56.344409",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.599379"
+    },
+    "backup_service.py": {
+      "full_path": "backend/app/services/backup_service.py",
+      "category": "medium",
+      "checksum": "81640995af87985bba1dba6df959893f6d0c765595934e87fab61e321c23f6bc",
+      "size_bytes": 30400,
+      "modified": "2025-12-17T01:38:35.975777",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.599752"
+    },
+    "architecture_planner.py": {
+      "full_path": "backend/app/services/architecture_planner.py",
+      "category": "medium",
+      "checksum": "4c98df7fe41c5df54dc4a428bfeb0134bbeddc3c8f1e8ac0aae7e594c9467d95",
+      "size_bytes": 22302,
+      "modified": "2025-12-17T01:38:35.974202",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.599902"
+    },
+    "graph_visualization_service.py": {
+      "full_path": "backend/app/services/graph_visualization_service.py",
+      "category": "medium",
+      "checksum": "d391a275c8d4fb9d416efd999e2192fa9bd60e039b269c54d882fca6c4f42745",
+      "size_bytes": 1095,
+      "modified": "2025-12-17T01:38:35.991306",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.599988"
+    },
+    "performance_monitor.py": {
+      "full_path": "backend/app/services/performance_monitor.py",
+      "category": "medium",
+      "checksum": "2f318707706686e30ea6a5c629cc47fd70200a5ba82e6653799f8436e1236231",
+      "size_bytes": 25173,
+      "modified": "2025-12-17T01:38:35.996399",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.600121"
+    },
+    "graph_service.py": {
+      "full_path": "backend/app/services/graph_service.py",
+      "category": "medium",
+      "checksum": "0199d019e9d15e0a4d46c10975cf231163806c96612ab7d297e950f34c903044",
+      "size_bytes": 17555,
+      "modified": "2025-12-17T01:38:35.991141",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.600237"
+    },
+    "multimodal_analyzer.py": {
+      "full_path": "backend/app/services/multimodal_analyzer.py",
+      "category": "medium",
+      "checksum": "27b961ae4d11962c16aa8ea37c5c193706d685d6fa55aaa3b14ffa184afb57ef",
+      "size_bytes": 3866,
+      "modified": "2025-12-17T01:38:35.994302",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.600362"
+    },
+    "privacy_preserving_ml_service.py": {
+      "full_path": "backend/app/services/privacy_preserving_ml_service.py",
+      "category": "medium",
+      "checksum": "59a99238f0fe8bee229e564dda89317b878b7c58f7e948b6e951e6ed89fc871b",
+      "size_bytes": 23673,
+      "modified": "2025-12-17T01:38:35.996970",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.601515"
+    },
+    "predictive_alerting.py": {
+      "full_path": "backend/app/services/predictive_alerting.py",
+      "category": "medium",
+      "checksum": "6638efcc66d186ba32e3aae93bdd35f9f0cd0860c41ee907394002e87bb59388",
+      "size_bytes": 15134,
+      "modified": "2025-12-17T01:38:35.996586",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.612805"
+    },
+    "case_service.py": {
+      "full_path": "backend/app/services/case_service.py",
+      "category": "medium",
+      "checksum": "b975638b415c02ecdc4ce3ef2936fa1446a273865b8fd5718a92278179b39aa3",
+      "size_bytes": 2725,
+      "modified": "2025-12-17T01:38:35.976085",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.612907"
+    },
+    "perfect_architecture_service.py": {
+      "full_path": "backend/app/services/perfect_architecture_service.py",
+      "category": "medium",
+      "checksum": "b121a26838520f6dc4b42b0006c25578ee24e8c3715259d280944f6ac979e4ee",
+      "size_bytes": 39187,
+      "modified": "2025-12-17T01:38:35.995557",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.613167"
+    },
+    "advanced_analytics.py": {
+      "full_path": "backend/app/services/advanced_analytics.py",
+      "category": "medium",
+      "checksum": "3eefdb3f088595bee51aba3a0e3c98f9b11cc997a69eeb6ccbdf143a3766ac41",
+      "size_bytes": 17160,
+      "modified": "2025-12-17T01:38:35.966925",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.613294"
+    },
+    "apm_service.py": {
+      "full_path": "backend/app/services/apm_service.py",
+      "category": "medium",
+      "checksum": "f4a99063c2988917346b7b2305cd7316699e78db85d6253316171c890dc8f1ef",
+      "size_bytes": 18775,
+      "modified": "2025-12-17T01:38:35.973990",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.613459"
+    },
+    "semantic_search_service.py": {
+      "full_path": "backend/app/services/semantic_search_service.py",
+      "category": "medium",
+      "checksum": "22717f9a15db0dd289835d79625e496a2d8818bdebc0cde5021b37f9c250cb48",
+      "size_bytes": 20276,
+      "modified": "2025-12-17T01:38:35.999161",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.613604"
+    },
+    "sync_service.py": {
+      "full_path": "backend/app/services/sync_service.py",
+      "category": "medium",
+      "checksum": "76c8700e22e634376b56d646c00deda27f58848274db2a4340ccd8d655eced91",
+      "size_bytes": 16444,
+      "modified": "2025-12-17T01:38:35.999856",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.613721"
+    },
+    "metadata_correlation_service.py": {
+      "full_path": "backend/app/services/metadata_correlation_service.py",
+      "category": "medium",
+      "checksum": "7469f047618ad3ef2ebf3fc06f3a394054b392ae53092d425823237618db2819",
+      "size_bytes": 8329,
+      "modified": "2025-12-17T01:38:35.993411",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.614030"
+    },
+    "ai_training_service.py": {
+      "full_path": "backend/app/services/ai_training_service.py",
+      "category": "medium",
+      "checksum": "60f420892b19bc9ee775a1c3a7dd2ccf51bbf43c2c68be481c7fb50d93891e82",
+      "size_bytes": 13990,
+      "modified": "2025-12-17T01:38:35.972988",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.614152"
+    },
+    "perfect_risk_management_system.py": {
+      "full_path": "backend/app/services/perfect_risk_management_system.py",
+      "category": "medium",
+      "checksum": "1b5fdb3a3409eb9a560acb595ca72aadbde64450225a0cafc5b979d847fbfc45",
+      "size_bytes": 12954,
+      "modified": "2025-12-17T03:32:53.025547",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.614309"
+    },
+    "innovation_framework_service.py": {
+      "full_path": "backend/app/services/innovation_framework_service.py",
+      "category": "medium",
+      "checksum": "ee63e501a7fbe7db0743631ad7ab787d20d5c31a9ff001d966c01346b8216123",
+      "size_bytes": 26218,
+      "modified": "2025-12-17T01:38:35.991958",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.614467"
+    },
+    "collaboration_service.py": {
+      "full_path": "backend/app/services/collaboration_service.py",
+      "category": "medium",
+      "checksum": "cd11b8548366ea120e9f8fcb6c410426c92c94b7c2b4ceb4fb3de4b02746fcfb",
+      "size_bytes": 20862,
+      "modified": "2025-12-17T01:38:35.976660",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.641933"
+    },
+    "metadata_extraction_service.py": {
+      "full_path": "backend/app/services/metadata_extraction_service.py",
+      "category": "medium",
+      "checksum": "53b74ed606ce39a7f24bb7a76a56ff4edf088ba67101e6bc00688c3529a2e4e8",
+      "size_bytes": 10829,
+      "modified": "2025-12-17T01:38:35.993650",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.642097"
+    },
+    "multimodal_analysis_service.py": {
+      "full_path": "backend/app/services/multimodal_analysis_service.py",
+      "category": "medium",
+      "checksum": "4a1098bc12bf483a2bdabae3781149452dfa890d255a39b8d2b9ebeed6eaddd6",
+      "size_bytes": 35798,
+      "modified": "2025-12-17T03:01:07.679032",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.642265"
+    },
+    "vector_optimizer.py": {
+      "full_path": "backend/app/services/vector_optimizer.py",
+      "category": "medium",
+      "checksum": "77f62ed6221564fde1e9db242de61c58d24bc4acf9a41a3f7cba3609d3162654",
+      "size_bytes": 13288,
+      "modified": "2025-12-17T01:38:36.001023",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.642379"
+    },
+    "timeline_reconstruction.py": {
+      "full_path": "backend/app/services/intelligence/timeline_reconstruction.py",
+      "category": "medium",
+      "checksum": "f866065a2f183d24cac80dbe78e6c698287b4ab94a6f28ff9097e80f15f1e71f",
+      "size_bytes": 10303,
+      "modified": "2025-12-17T03:05:16.941400",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.646160"
+    },
+    "compliance_service.py": {
+      "full_path": "backend/app/services/compliance_service.py",
+      "category": "medium",
+      "checksum": "bb9aed425258dbb533e48b7e0a873af506c430639cda1dd29fcacadb3b9313d9",
+      "size_bytes": 38518,
+      "modified": "2025-12-17T01:38:35.976863",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.642642"
+    },
+    "audit_service.py": {
+      "full_path": "backend/app/services/audit_service.py",
+      "category": "medium",
+      "checksum": "8bdce2ace26a86a1d2531198bc248a8ea0e187cf68145b35dcd21c75d81c5cac",
+      "size_bytes": 19922,
+      "modified": "2025-12-17T01:38:35.974614",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.642764"
+    },
+    "perfect_availability_service.py": {
+      "full_path": "backend/app/services/perfect_availability_service.py",
+      "category": "medium",
+      "checksum": "003e241b3d298d950699ac7235063d09cb61effd042a68925745e3b91582be85",
+      "size_bytes": 37004,
+      "modified": "2025-12-17T01:38:35.995770",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.642923"
+    },
+    "implementation_pipeline_service.py": {
+      "full_path": "backend/app/services/implementation_pipeline_service.py",
+      "category": "medium",
+      "checksum": "d7a350a082950fe0a5577e2ff16e10b74727644ea8c7f5e8f078c334690adb2b",
+      "size_bytes": 14926,
+      "modified": "2025-12-17T01:38:35.991757",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.643032"
+    },
+    "audit_trail_service.py": {
+      "full_path": "backend/app/services/audit_trail_service.py",
+      "category": "medium",
+      "checksum": "39e6a060cd94bebb11bb82282bbd8b8fc0ae74a1191dbd0f729fc62e8834a6f4",
+      "size_bytes": 20622,
+      "modified": "2025-12-17T01:38:35.975139",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.643152"
+    },
+    "user_journey_tracker.py": {
+      "full_path": "backend/app/services/user_journey_tracker.py",
+      "category": "medium",
+      "checksum": "d814dfaea1fd2b6b3fcb2226188bf6293f0cc1b306329d045433a6c4da4d47db",
+      "size_bytes": 4078,
+      "modified": "2025-12-17T01:38:36.000849",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.643239"
+    },
+    "comprehensive_diagnostic_orchestrator.py": {
+      "full_path": "backend/app/services/comprehensive_diagnostic_orchestrator.py",
+      "category": "medium",
+      "checksum": "72e33b2dd3f5382ea3ba689087b7a370d25a6fbcd4a7fe8c5b32eadca5c9e64a",
+      "size_bytes": 81531,
+      "modified": "2025-12-17T03:38:38.187231",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.643500"
+    },
+    "search_service.py": {
+      "full_path": "backend/app/services/search_service.py",
+      "category": "medium",
+      "checksum": "1b1c9cd544634b92e5b375337dd8ed836acf2688d7bc1628ac1403f11656a0c5",
+      "size_bytes": 8363,
+      "modified": "2025-12-17T01:38:35.998821",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.643600"
+    },
+    "local_rag_engine.py": {
+      "full_path": "backend/app/services/local_rag_engine.py",
+      "category": "medium",
+      "checksum": "ebc8a2e1322b2f4244438cd73926282424a82d8582a98293da78a061c3a2c40f",
+      "size_bytes": 3040,
+      "modified": "2025-12-17T01:38:35.992691",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.643684"
+    },
+    "geocoding_service.py": {
+      "full_path": "backend/app/services/geocoding_service.py",
+      "category": "medium",
+      "checksum": "28ca778398cb7d5a2ce180d000385fa75d1a87e32ae6f2d304602cfed70df2e8",
+      "size_bytes": 11548,
+      "modified": "2025-12-17T01:38:35.990911",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.643787"
+    },
+    "regulatory_reporter.py": {
+      "full_path": "backend/app/services/regulatory_reporter.py",
+      "category": "medium",
+      "checksum": "9cbc81ad90ec63418e336acf27af49b31651d61f5789aba3172973db243f8f9a",
+      "size_bytes": 21170,
+      "modified": "2025-12-17T01:38:35.997886",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.643910"
+    },
+    "advanced_compliance.py": {
+      "full_path": "backend/app/services/advanced_compliance.py",
+      "category": "medium",
+      "checksum": "071d623f39834af6736b396f14a85bf6b32eb7600e499eb4070341de6f9998aa",
+      "size_bytes": 27631,
+      "modified": "2025-12-17T01:38:35.967148",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.644081"
+    },
+    "technical_debt_reduction_service.py": {
+      "full_path": "backend/app/services/technical_debt_reduction_service.py",
+      "category": "medium",
+      "checksum": "a09ee47118f55934f13ce92231ef0c0cd84367790016c9201bd389a4405e2e48",
+      "size_bytes": 24235,
+      "modified": "2025-12-17T01:38:36.000082",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.644223"
+    },
+    "comprehensive_risk_mitigation.py": {
+      "full_path": "backend/app/services/comprehensive_risk_mitigation.py",
+      "category": "medium",
+      "checksum": "ffebac4b2644801024e7832cae9db8fcd00553c75d7ccf6a86155499d452b93d",
+      "size_bytes": 20841,
+      "modified": "2025-12-17T03:26:34.036355",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.644351"
+    },
+    "automated_resolution_engine.py": {
+      "full_path": "backend/app/services/automated_resolution_engine.py",
+      "category": "medium",
+      "checksum": "95687b3a984cb1c62d91bedfa5939bbae62a28df0cd2bb3b3b34de86ed3cd0a5",
+      "size_bytes": 26298,
+      "modified": "2025-12-17T01:38:35.975586",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.644487"
+    },
+    "storage_monitor.py": {
+      "full_path": "backend/app/services/storage_monitor.py",
+      "category": "medium",
+      "checksum": "7a02640f51a0fa9463a9e591b46c2689e1e743199d64e5c8509d22cf23cce7eb",
+      "size_bytes": 9855,
+      "modified": "2025-12-17T01:38:35.999402",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.644701"
+    },
+    "ai_integration_hub.py": {
+      "full_path": "backend/app/services/ai_integration_hub.py",
+      "category": "medium",
+      "checksum": "51db2837f22edd389501aca243033770b7fb812271b6860a7e88923190e1a3ad",
+      "size_bytes": 5533,
+      "modified": "2025-12-17T01:38:35.971242",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.644853"
+    },
+    "sync_protocol_service.py": {
+      "full_path": "backend/app/services/sync_protocol_service.py",
+      "category": "medium",
+      "checksum": "f0319f1b47176e43d2df1dc1aca1385b9b5e8292309db2941e7f75971c385364",
+      "size_bytes": 10384,
+      "modified": "2025-12-17T01:38:35.999635",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.644967"
+    },
+    "ai_case_assignment.py": {
+      "full_path": "backend/app/services/ai_case_assignment.py",
+      "category": "medium",
+      "checksum": "c093bba17e4daf55c710e5271c4dc79c134e9073deb29c849115ea8bf9abe07b",
+      "size_bytes": 13426,
+      "modified": "2025-12-17T01:38:35.967953",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.645078"
+    },
+    "advanced_ai_service.py": {
+      "full_path": "backend/app/services/advanced_ai_service.py",
+      "category": "medium",
+      "checksum": "c7a09f6c2ada0eadde7bbb6c01ba8009dbdd7f47a796f515232b76258ec75865",
+      "size_bytes": 25932,
+      "modified": "2025-12-17T01:38:35.966713",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.645216"
+    },
+    "scalability_service.py": {
+      "full_path": "backend/app/services/scalability_service.py",
+      "category": "medium",
+      "checksum": "6e7a2bd9896f221b56026669e423ebe14780154c28192348d41c19d426455dfa",
+      "size_bytes": 35819,
+      "modified": "2025-12-17T01:38:35.998225",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.645376"
+    },
+    "ssot_lockfiles_system.py": {
+      "full_path": "backend/app/services/ssot_lockfiles_system.py",
+      "category": "medium",
+      "checksum": "c8eca6a6ce63de4e7f456feed5c8b28e2eb2b2c64c2229f1620c15dcf1eb0455",
+      "size_bytes": 21100,
+      "modified": "2025-12-17T03:42:51.799459",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.645498"
+    },
+    "monitoring_service.py": {
+      "full_path": "backend/app/services/monitoring_service.py",
+      "category": "medium",
+      "checksum": "e86ed6d45436805b930a3dea0fd7c9939b208bfccc18ae6d1fc0a4413923b61f",
+      "size_bytes": 11758,
+      "modified": "2025-12-17T01:38:35.993888",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.645600"
+    },
+    "perfect_competitive_positioning_system.py": {
+      "full_path": "backend/app/services/perfect_competitive_positioning_system.py",
+      "category": "medium",
+      "checksum": "52b1621a78ebb188204a1e44bd386b2d400f9953786f8ae9ed0178354737abc5",
+      "size_bytes": 11862,
+      "modified": "2025-12-17T03:31:45.701303",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.645705"
+    },
+    "evidence_service.py": {
+      "full_path": "backend/app/services/evidence_service.py",
+      "category": "medium",
+      "checksum": "78f18a0dafcbc8595dabf58961cf7ad042a3de97a96c9f97549249addd69a1ed",
+      "size_bytes": 36058,
+      "modified": "2025-12-17T01:38:35.981111",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.645858"
+    },
+    "crdt_service.py": {
+      "full_path": "backend/app/services/collaboration/crdt_service.py",
+      "category": "medium",
+      "checksum": "dfb71ec906ae0ffc5cdca82548aefde80eed33005ebd519ceed4b20000e36259",
+      "size_bytes": 6660,
+      "modified": "2025-12-17T01:38:35.976459",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.645950"
+    },
+    "evidence_processor.py": {
+      "full_path": "backend/app/services/intelligence/evidence_processor.py",
+      "category": "medium",
+      "checksum": "b06b7ad5008e756922bba8c42a2773d8cb8875218c1e3d5ae33e37b9183215a8",
+      "size_bytes": 14488,
+      "modified": "2025-12-17T03:05:16.940702",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.646061"
+    },
+    "document_processor.py": {
+      "full_path": "backend/app/services/ocr/document_processor.py",
+      "category": "medium",
+      "checksum": "8b41679b8c006356e6cf3bd77c293186e266ffa7d8df6906de9beb83872ab359",
+      "size_bytes": 9508,
+      "modified": "2025-12-17T01:38:35.995070",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.646260"
+    },
+    "regulatory_intelligence.py": {
+      "full_path": "backend/app/services/regulatory/regulatory_intelligence.py",
+      "category": "medium",
+      "checksum": "6f9b71120ca32b4df187555b4430a998ff0669ca5f0ce665e6d7e11dda238aa7",
+      "size_bytes": 25206,
+      "modified": "2025-12-17T03:18:13.766690",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.646393"
+    },
+    "workflow_engine.py": {
+      "full_path": "backend/app/services/workflow/workflow_engine.py",
+      "category": "medium",
+      "checksum": "d0affe9ad21d282bf9f7993b763e896259016683423908493ac72c4ab52735f3",
+      "size_bytes": 22977,
+      "modified": "2025-12-17T01:38:36.001408",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.646521"
+    },
+    "test_routers.py": {
+      "full_path": "backend/tests/unit/test_routers.py",
+      "category": "medium",
+      "checksum": "6b085724dda9c3a30acdea5a84a12fbaaf94eca43f1dea32e39e9503e2bdf605",
+      "size_bytes": 8143,
+      "modified": "2025-12-17T01:38:36.356723",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.646618"
+    },
+    "utils.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_vendor/requests/utils.py",
+      "category": "medium",
+      "checksum": "592df01d241a6847dc7aed6cca2168e637f87bf0962944dea7f21a6ce548fc9d",
+      "size_bytes": 33225,
+      "modified": "2025-12-17T01:38:36.160934",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649052"
+    },
+    "misc.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/misc.py",
+      "category": "medium",
+      "checksum": "d63129aa37ea62643a2b70f8fcef315d23e7f1a11f1f6b8c3a534ceca3ef4ab8",
+      "size_bytes": 23374,
+      "modified": "2025-12-17T01:38:36.088191",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.646847"
+    },
+    "egg_link.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/egg_link.py",
+      "category": "medium",
+      "checksum": "6167ecadb99f72b7d682a418cba3ae223b326fd21f2f5abfdafe33b26b355a32",
+      "size_bytes": 2459,
+      "modified": "2025-12-17T01:38:36.085624",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.646932"
+    },
+    "compat.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/compat.py",
+      "category": "medium",
+      "checksum": "0bd2c75c900a930007f079f79cf933f4460adeba8f05e3bf21790e1b6cf3b1d4",
+      "size_bytes": 2514,
+      "modified": "2025-12-17T01:38:36.084656",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647018"
+    },
+    "deprecation.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/deprecation.py",
+      "category": "medium",
+      "checksum": "1d586fc8ee6a89115c1bcf0f859969ffceea74a40dc0f4d42081d6b6c4d1db22",
+      "size_bytes": 3696,
+      "modified": "2025-12-17T01:38:36.085201",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647107"
+    },
+    "subprocess.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/subprocess.py",
+      "category": "medium",
+      "checksum": "af8f816bf61cdee6574298b42b8a5916c093fd0a9d4afb45dd727edb4e1059a0",
+      "size_bytes": 8983,
+      "modified": "2025-12-17T01:38:36.089256",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647207"
+    },
+    "filesystem.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/filesystem.py",
+      "category": "medium",
+      "checksum": "76ee2538e953381ab6d95e647f4c97332768d4a5360acf9c32d62cddb124d777",
+      "size_bytes": 4988,
+      "modified": "2025-12-17T01:38:36.086721",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647298"
+    },
+    "_jaraco_text.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py",
+      "category": "medium",
+      "checksum": "335e6e50f221e4da4fd6d754181c516aeeaad59004b48f3e5f22c4113b1c15f1",
+      "size_bytes": 3350,
+      "modified": "2025-12-17T01:38:36.084150",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647386"
+    },
+    "temp_dir.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/temp_dir.py",
+      "category": "medium",
+      "checksum": "0fd73c0fb58e3eba0e3bc1860eaa417954a3d74346166ba71b4a364e87638c85",
+      "size_bytes": 9307,
+      "modified": "2025-12-17T01:38:36.089501",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647486"
+    },
+    "retry.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/retry.py",
+      "category": "medium",
+      "checksum": "f37c11784076adc9ed319e552ddedab1c6984a39ff90b765402ab120bc5690f3",
+      "size_bytes": 1461,
+      "modified": "2025-12-17T01:38:36.088586",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647572"
+    },
+    "appdirs.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/appdirs.py",
+      "category": "medium",
+      "checksum": "2ebcc33d930a561d2bb9bb42c7dbeedd79596cb092ba0e954a3e10b2fb7ae810",
+      "size_bytes": 1681,
+      "modified": "2025-12-17T01:38:36.084473",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647672"
+    },
+    "packaging.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "category": "medium",
+      "checksum": "b39b6952616e9b05741fd2524f3af2ac863827040cf29686b7b4a6ede370b766",
+      "size_bytes": 1601,
+      "modified": "2025-12-17T01:38:36.088407",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647759"
+    },
+    "entrypoints.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/entrypoints.py",
+      "category": "medium",
+      "checksum": "b8f8c0c9284a39b768b63423254ce9ad0eabdf142f0c86705187c71ea67b0e89",
+      "size_bytes": 3324,
+      "modified": "2025-12-17T01:38:36.085793",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647847"
+    },
+    "filetypes.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/filetypes.py",
+      "category": "medium",
+      "checksum": "b0431adfca9aaa3bf1d5989ddce0805236b7d4138153e512b9230f06f537ca3a",
+      "size_bytes": 689,
+      "modified": "2025-12-17T01:38:36.086971",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.647928"
+    },
+    "compatibility_tags.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/compatibility_tags.py",
+      "category": "medium",
+      "checksum": "0e23522eaa6eaee5d46a6190c0e2765990720c62d319a5e2f4ef977fc7ce8b7e",
+      "size_bytes": 6630,
+      "modified": "2025-12-17T01:38:36.084876",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.648023"
+    },
+    "datetime.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/datetime.py",
+      "category": "medium",
+      "checksum": "1addbd325e13a0f48cf3c8f9e22bb8dd62adad4f40fa6a0fe1098c8a2ab379d5",
+      "size_bytes": 241,
+      "modified": "2025-12-17T01:38:36.085037",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.648103"
+    },
+    "urls.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/urls.py",
+      "category": "medium",
+      "checksum": "685fde83dba5e5df1b302c5f4924b141c7ecf8ea4975b4ad62a647a32d8ad511",
+      "size_bytes": 1601,
+      "modified": "2025-12-17T01:38:36.090633",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.648184"
+    },
+    "hashes.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/hashes.py",
+      "category": "medium",
+      "checksum": "777d942357a7f27caa67375942fc5455d7de0687b80035b1ec7b6b20ce3e5d0e",
+      "size_bytes": 4998,
+      "modified": "2025-12-17T01:38:36.087631",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.648274"
+    },
+    "virtualenv.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/virtualenv.py",
+      "category": "medium",
+      "checksum": "997f943f2c3530fc61c14c4a85ba96597ef427a3c75c0263555ad19c6d21f667",
+      "size_bytes": 3455,
+      "modified": "2025-12-17T01:38:36.090826",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.648360"
+    },
+    "_log.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/_log.py",
+      "category": "medium",
+      "checksum": "fa31cb384fd31da673e4115c0a7a122fd11802d2749d77a6e3db3da1fe23bcac",
+      "size_bytes": 1015,
+      "modified": "2025-12-17T01:38:36.084288",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.648441"
+    },
+    "glibc.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/glibc.py",
+      "category": "medium",
+      "checksum": "b0487c44924b612751bd3a803b84c754f3c0f9848354b0f8488f52a3e6f15f55",
+      "size_bytes": 3726,
+      "modified": "2025-12-17T01:38:36.087396",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.648527"
+    },
+    "wheel.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/wheel.py",
+      "category": "medium",
+      "checksum": "61d46e8fa322706f90f4c834dc56d4bf55932da9ba2dcec08228d8e2fa15ca2b",
+      "size_bytes": 4468,
+      "modified": "2025-12-17T01:38:36.091000",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.648615"
+    },
+    "unpacking.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/utils/unpacking.py",
+      "category": "medium",
+      "checksum": "e2d6360feb1bb41b762dcc2cf7c126dcc3c03dd1e75d20579e9494d0ba065194",
+      "size_bytes": 11939,
+      "modified": "2025-12-17T01:38:36.090352",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.648720"
+    },
+    "_internal_utils.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_vendor/requests/_internal_utils.py",
+      "category": "medium",
+      "checksum": "9cc4329abe21b37d93a95a3901b0ab99c24486f3d487bc57965bb2ab0b252e24",
+      "size_bytes": 1495,
+      "modified": "2025-12-17T01:38:36.158073",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.648899"
+    },
+    "memoryManager.d.ts": {
+      "full_path": "frontend/src/utils/memoryManager.d.ts",
+      "category": "medium",
+      "checksum": "30585e3496da858818fc7c156e2f65117bf8e3b714b4feebcf4bc97e99829a56",
+      "size_bytes": 333,
+      "modified": "2025-12-17T03:49:21.121401",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649132"
+    },
+    "errorHandler.ts": {
+      "full_path": "frontend/src/utils/errorHandler.ts",
+      "category": "medium",
+      "checksum": "7ada8183b4be67d0f1cfbb8bf8e08c4a0f6ba1db6c6858d95eaa8587135d4a31",
+      "size_bytes": 2442,
+      "modified": "2025-12-17T03:49:21.122187",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649212"
+    },
+    "performanceMonitor.ts": {
+      "full_path": "frontend/src/utils/performanceMonitor.ts",
+      "category": "medium",
+      "checksum": "3bba5de8bbac7c4562dea694efd049bd24749630348468ea829f2ae64f342aa9",
+      "size_bytes": 5540,
+      "modified": "2025-12-17T03:49:21.123153",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649298"
+    },
+    "webVitals.ts": {
+      "full_path": "frontend/src/utils/webVitals.ts",
+      "category": "medium",
+      "checksum": "e7c7b16ec1be5fab54d037f6767cd662feaeff8e3f8b6d35a2fa62ed2b35bc60",
+      "size_bytes": 731,
+      "modified": "2025-12-17T03:49:21.123812",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649375"
+    },
+    "antiDebug.ts": {
+      "full_path": "frontend/src/utils/antiDebug.ts",
+      "category": "medium",
+      "checksum": "37b49458f5d024da52b0ee59ee91605f6a4993996d601f003957f01e895805c1",
+      "size_bytes": 936,
+      "modified": "2025-12-17T03:49:21.168673",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649452"
+    },
+    "electron.ts": {
+      "full_path": "frontend/src/utils/electron.ts",
+      "category": "medium",
+      "checksum": "815d93411623a4d23fa00843c179f280a83f5a66511c3b48648748a927cbe0a2",
+      "size_bytes": 3108,
+      "modified": "2025-12-17T03:49:21.173794",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649534"
+    },
+    "memoryManager.js": {
+      "full_path": "frontend/src/utils/memoryManager.js",
+      "category": "medium",
+      "checksum": "60ac95d2be26366e5a372bf174fc6c41ba7dc9b3a6c1baaa7cfba3d9cd9f3313",
+      "size_bytes": 7119,
+      "modified": "2025-12-17T01:38:37.494153",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649623"
+    },
+    "leakPrevention.js": {
+      "full_path": "frontend/src/utils/leakPrevention.js",
+      "category": "medium",
+      "checksum": "fd061bcc18bb1d6b3d46ee211963a4a6f9febce6a16a5cad3796422677c565ae",
+      "size_bytes": 8128,
+      "modified": "2025-12-17T01:38:37.493758",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649716"
+    },
+    "verifyIntegrity.ts": {
+      "full_path": "frontend/src/utils/verifyIntegrity.ts",
+      "category": "medium",
+      "checksum": "9f4bd99b3868ddf2c9019b078f1f7d9fb3aa66e40557393ae0b078c4c06fc1c9",
+      "size_bytes": 1187,
+      "modified": "2025-12-17T03:49:21.184400",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649793"
+    },
+    "utils.ts": {
+      "full_path": "frontend/src/lib/utils.ts",
+      "category": "medium",
+      "checksum": "b18aa8a0cdbb5f7c79075ddf9cc5ead28535c29e75b8dcb420ae1986475d5633",
+      "size_bytes": 167,
+      "modified": "2025-12-17T03:49:22.527759",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649869"
+    },
+    "reporting.ts": {
+      "full_path": "frontend/src/services/reporting.ts",
+      "category": "medium",
+      "checksum": "41a6ff786a9e1f2b393a20dbf880687d942e86c640b5d47bad58820ac4ecf1ba",
+      "size_bytes": 3264,
+      "modified": "2025-12-17T03:49:22.944395",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.649952"
+    },
+    "complianceMonitoring.ts": {
+      "full_path": "frontend/src/services/complianceMonitoring.ts",
+      "category": "medium",
+      "checksum": "8713c9cad48b359fa4934d4c14408f368524c96af31a53ebbb07d77173be0069",
+      "size_bytes": 9392,
+      "modified": "2025-12-17T03:49:22.948260",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650048"
+    },
+    "evidence.ts": {
+      "full_path": "frontend/src/services/evidence.ts",
+      "category": "medium",
+      "checksum": "5630c3a8f3a36b4b92f8d7bbd7168da0d02add1f4ef6dabd4fdf9b953b36a1b1",
+      "size_bytes": 2415,
+      "modified": "2025-12-17T03:49:22.955165",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650131"
+    },
+    "integrations.ts": {
+      "full_path": "frontend/src/services/integrations.ts",
+      "category": "medium",
+      "checksum": "f32907935f4f718610e86349e19fce7308593ba548eef69313f6ff87935ec55a",
+      "size_bytes": 2776,
+      "modified": "2025-12-17T03:49:22.960910",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650213"
+    },
+    "diagnosticsService.ts": {
+      "full_path": "frontend/src/services/diagnosticsService.ts",
+      "category": "medium",
+      "checksum": "b61ab3934526aa269156990d57805c96e39e35cae5aea988fd7892f34a681ff5",
+      "size_bytes": 7640,
+      "modified": "2025-12-17T03:49:22.964361",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650303"
+    },
+    "notifications.ts": {
+      "full_path": "frontend/src/services/notifications.ts",
+      "category": "medium",
+      "checksum": "592f46dc5afe50cc59c59be0df191625c70a2c4968184a8333a37a9cb7880bca",
+      "size_bytes": 390,
+      "modified": "2025-12-17T03:49:22.966274",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650378"
+    },
+    "settings.ts": {
+      "full_path": "frontend/src/services/settings.ts",
+      "category": "medium",
+      "checksum": "b4f8de1e07f520a69de07aa0579a981e53f3ff4df0968aa6a28d7b00b1b8a450",
+      "size_bytes": 970,
+      "modified": "2025-12-17T03:49:22.981587",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650462"
+    },
+    "fileProcessing.ts": {
+      "full_path": "frontend/src/services/fileProcessing.ts",
+      "category": "medium",
+      "checksum": "5ecafc792f88aa75eaec7788e8f8eeae41f271e9dd624ad7cfddc8bfc715db23",
+      "size_bytes": 8368,
+      "modified": "2025-12-17T03:49:22.983321",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650556"
+    },
+    "CaseSyncEngine.ts": {
+      "full_path": "frontend/src/services/CaseSyncEngine.ts",
+      "category": "medium",
+      "checksum": "36afc618c5334fff422222fc2c46f9483df2751b62f21f8a7d54fd632ef62c3b",
+      "size_bytes": 11774,
+      "modified": "2025-12-17T03:49:22.989396",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650656"
+    },
+    "cases.ts": {
+      "full_path": "frontend/src/services/cases.ts",
+      "category": "medium",
+      "checksum": "807e645683be2ffe48937e741aa7ed89ce456d34749dbe382934ebd9119fd611",
+      "size_bytes": 1876,
+      "modified": "2025-12-17T03:49:22.991543",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650735"
+    },
+    "errorReporting.ts": {
+      "full_path": "frontend/src/services/errorReporting.ts",
+      "category": "medium",
+      "checksum": "93b88072898b6aca73c0316909f991c217c3ba0574e38548b9172b0cab0f92e5",
+      "size_bytes": 4286,
+      "modified": "2025-12-17T03:49:22.995328",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650821"
+    },
+    "approvalService.ts": {
+      "full_path": "frontend/src/services/approvalService.ts",
+      "category": "medium",
+      "checksum": "80c5ad165478488e8ca81ece31be76c1631a6ae0666c2498649aaed94b2b0f1d",
+      "size_bytes": 6120,
+      "modified": "2025-12-17T04:03:03.523073",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650908"
+    },
+    "client.ts": {
+      "full_path": "frontend/src/services/client.ts",
+      "category": "medium",
+      "checksum": "774163af843b817f0716d76aa615a04a8e7586023adcabd37f0365d79fc7a31e",
+      "size_bytes": 1662,
+      "modified": "2025-12-17T03:49:23.258036",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.650986"
+    },
+    "graph.ts": {
+      "full_path": "frontend/src/services/graph.ts",
+      "category": "medium",
+      "checksum": "84d8765fd3df3ca52667ea26116ca59fe4edb1f0c9a13aeee670372a643bb2b7",
+      "size_bytes": 2238,
+      "modified": "2025-12-17T03:49:23.259098",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651065"
+    },
+    "ai.ts": {
+      "full_path": "frontend/src/services/ai.ts",
+      "category": "medium",
+      "checksum": "9cac16c49d0584a1d40728c56a3de9dc1676deb77541eb4b56e9bd4f5df2efd1",
+      "size_bytes": 2093,
+      "modified": "2025-12-17T03:49:23.261569",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651144"
+    },
+    "onboarding.ts": {
+      "full_path": "frontend/src/services/onboarding.ts",
+      "category": "medium",
+      "checksum": "813dadc48f3fd379c5636f8379439c8fecc861ca703401cc2f7503037c14b16c",
+      "size_bytes": 498,
+      "modified": "2025-12-17T03:49:23.265167",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651220"
+    },
+    "monitoring.ts": {
+      "full_path": "frontend/src/services/monitoring.ts",
+      "category": "medium",
+      "checksum": "d33788776a303ac5aa573758468e77e93f5e014588566d156f6dc263c3d24fe0",
+      "size_bytes": 2101,
+      "modified": "2025-12-17T03:49:23.265985",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651298"
+    },
+    "compliance.ts": {
+      "full_path": "frontend/src/services/compliance.ts",
+      "category": "medium",
+      "checksum": "65e87a436488582f4520b43d73849ff30744f09ea1c19469c5e5f88b2dc33d3c",
+      "size_bytes": 10242,
+      "modified": "2025-12-17T03:49:23.267343",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651395"
+    },
+    "reconciliation.ts": {
+      "full_path": "frontend/src/services/reconciliation.ts",
+      "category": "medium",
+      "checksum": "107c51d3b999cfa02788d013809e4c832ae784a008111b13d61c22571bd3aee2",
+      "size_bytes": 2432,
+      "modified": "2025-12-17T03:49:23.268161",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651479"
+    },
+    "intelligenceService.ts": {
+      "full_path": "frontend/src/services/intelligenceService.ts",
+      "category": "medium",
+      "checksum": "3230fd92f77c4b2ba21d3bc38e5c4f656398c73f79e809324c10ab983f35dfe9",
+      "size_bytes": 7078,
+      "modified": "2025-12-17T03:49:23.269181",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651568"
+    },
+    "user.ts": {
+      "full_path": "frontend/src/services/user.ts",
+      "category": "medium",
+      "checksum": "4b91e84b8c592cd16e8c50ef8f4436d4620fe03ddec074a6032d936c8c8bbd3d",
+      "size_bytes": 294,
+      "modified": "2025-12-17T03:49:23.270409",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651643"
+    },
+    "sync.ts": {
+      "full_path": "frontend/src/services/sync.ts",
+      "category": "medium",
+      "checksum": "fc5c302c02a9a95dab7a5aba1b62d005dddf5751c2332adf464ebf9c975a1ea3",
+      "size_bytes": 1044,
+      "modified": "2025-12-17T03:49:23.271844",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651719"
+    },
+    "alerts.ts": {
+      "full_path": "frontend/src/services/alerts.ts",
+      "category": "medium",
+      "checksum": "47e252dc79d54478d82228e4922b2699cd21e96e611a5309e7c9c822db782cac",
+      "size_bytes": 927,
+      "modified": "2025-12-17T03:49:23.272551",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651796"
+    },
+    "fix_router_syntax.py": {
+      "full_path": "scripts/fix_router_syntax.py",
+      "category": "medium",
+      "checksum": "abd5afefddbd509994f2869c3e40a8a21fe4c4e87d1bb9c77598d1e06ef7e963",
+      "size_bytes": 2023,
+      "modified": "2025-12-17T01:38:37.984753",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651876"
+    },
+    "secure_all_routers.py": {
+      "full_path": "scripts/secure_all_routers.py",
+      "category": "medium",
+      "checksum": "afa5a107f4c963f2fdfb8f304f9f7813d018c9b1d30796053410cd08942a37a8",
+      "size_bytes": 6427,
+      "modified": "2025-12-17T01:38:37.986711",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.651963"
+    }
+  }
+}

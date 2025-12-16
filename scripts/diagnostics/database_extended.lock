@@ -1,0 +1,363 @@
+{
+  "category": "database_extended",
+  "generated_at": "2025-12-17T04:12:59.150029",
+  "version": "1.0.0-extended-protection",
+  "description": "Extended SSOT protection for database category files",
+  "total_files": 21,
+  "investigation_method": "deep_file_analysis",
+  "protection_criteria": {
+    "risk_multiplier": 2.0,
+    "keywords": [
+      "database",
+      "db",
+      "sql",
+      "migration",
+      "model",
+      "schema"
+    ],
+    "business_impact": "Data integrity and system reliability",
+    "security_impact": "Data breach prevention"
+  },
+  "files": {
+    "SQLITE_MIGRATION.md": {
+      "full_path": "backend/SQLITE_MIGRATION.md",
+      "category": "database",
+      "checksum": "44dbeefd88dd39dac8e9dcb644df86f2e9c77081cc778b8236192aaef95504f1",
+      "size_bytes": 9474,
+      "modified": "2025-12-17T01:38:35.854906",
+      "risk_score": 84,
+      "protection_reason": "Contains 2 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 840,
+      "investigation_timestamp": "2025-12-17T04:12:59.151052"
+    },
+    "README_MIGRATIONS.md": {
+      "full_path": "backend/README_MIGRATIONS.md",
+      "category": "database",
+      "checksum": "187f845fdc18e0e4494a9d88ab4c926c1538044e183985510177381e00f0c2a9",
+      "size_bytes": 992,
+      "modified": "2025-12-17T01:38:35.854680",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.151618"
+    },
+    "link.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/link.py",
+      "category": "database",
+      "checksum": "878948f0c68303b0d3231209fcd80313ae04138875b17dc0076dd8d50bbc5be9",
+      "size_bytes": 21793,
+      "modified": "2025-12-17T01:38:36.047958",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.152248"
+    },
+    "selection_prefs.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/selection_prefs.py",
+      "category": "database",
+      "checksum": "960632a385bc95bdb6c2c631d84941041d1cbd236505582e7300732f8ddd7f31",
+      "size_bytes": 2016,
+      "modified": "2025-12-17T01:38:36.048632",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.152750"
+    },
+    "direct_url.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/direct_url.py",
+      "category": "database",
+      "checksum": "e0d31669cbbf4333cf591102d6d7bbbfa59fbfed87908e2dbd2245f820602e1e",
+      "size_bytes": 6555,
+      "modified": "2025-12-17T01:38:36.047268",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.153236"
+    },
+    "index.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/index.py",
+      "category": "database",
+      "checksum": "b589cbf28c468b8692356babd261bc0c03fbac2eb2ba16bf33024ef31c3472b2",
+      "size_bytes": 1030,
+      "modified": "2025-12-17T01:38:36.047584",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.153553"
+    },
+    "target_python.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/target_python.py",
+      "category": "database",
+      "checksum": "2347854be7a26b793086b3af82ca61159b4d001d88c1767d4abf5fa7a22304fe",
+      "size_bytes": 4243,
+      "modified": "2025-12-17T01:38:36.048823",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.153887"
+    },
+    "pylock.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/pylock.py",
+      "category": "database",
+      "checksum": "56669aef580e495d196334605a2226e0ac156c295a6a131cbaf28290ffd9ce70",
+      "size_bytes": 6211,
+      "modified": "2025-12-17T01:38:36.048136",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.154232"
+    },
+    "__init__.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/__init__.py",
+      "category": "database",
+      "checksum": "023982101c57fcc1fd7ff8d58c818d08524a60261e4847b5f32caf371e2e44a4",
+      "size_bytes": 62,
+      "modified": "2025-12-17T01:38:36.043370",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.154548"
+    },
+    "search_scope.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/search_scope.py",
+      "category": "database",
+      "checksum": "d61c54d8856c01a2d9563a7409bcc96d8698cc2c6fef6fd06e0dc92f4aa15e8d",
+      "size_bytes": 4507,
+      "modified": "2025-12-17T01:38:36.048460",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.154956"
+    },
+    "candidate.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/candidate.py",
+      "category": "database",
+      "checksum": "cf380546ec3f9163e32a91b0ecb0b4654303d8243611b7ab50862cf22ce37420",
+      "size_bytes": 753,
+      "modified": "2025-12-17T01:38:36.047084",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.155335"
+    },
+    "format_control.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/format_control.py",
+      "category": "database",
+      "checksum": "3f07a6606d4bdbb04cd1fd4a3fad6b9b6e304a110d172c6a943d535aedf86a57",
+      "size_bytes": 2471,
+      "modified": "2025-12-17T01:38:36.047426",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.155643"
+    },
+    "installation_report.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/installation_report.py",
+      "category": "database",
+      "checksum": "72a7d627ddd3842c6371a72a496af23820f65ed227d4266b83367102fe45419d",
+      "size_bytes": 2839,
+      "modified": "2025-12-17T01:38:36.047755",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.156017"
+    },
+    "scheme.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_internal/models/scheme.py",
+      "category": "database",
+      "checksum": "3da9261c93377bc38e592645b5fcf5033edfd6678e3499e41ae431165b77c011",
+      "size_bytes": 575,
+      "modified": "2025-12-17T01:38:36.048287",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.156406"
+    },
+    "modeline.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_vendor/pygments/modeline.py",
+      "category": "database",
+      "checksum": "2b9792911f064b5af93a45d74c739c57468cffac6993d7963442005be38e2768",
+      "size_bytes": 1005,
+      "modified": "2025-12-17T01:38:36.147305",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.156816"
+    },
+    "models.py": {
+      "full_path": "backend/models/models.py",
+      "category": "database",
+      "checksum": "7d28427968d41a1dbc9dda8a2e089104a1bffc58ec3271229b375d443ecda737",
+      "size_bytes": 153,
+      "modified": "2025-12-17T01:38:36.327473",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.158188"
+    },
+    "MIGRATION_WORKFLOW.md": {
+      "full_path": "backend/docs/MIGRATION_WORKFLOW.md",
+      "category": "database",
+      "checksum": "f7d89490008d16a13337d219d43369eeeb596211195cb5a80a83ea6df53c8e0e",
+      "size_bytes": 3280,
+      "modified": "2025-12-17T01:38:36.324306",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.158609"
+    },
+    "backup_db.py": {
+      "full_path": "backend/scripts/backup_db.py",
+      "category": "database",
+      "checksum": "caffbde70ede7d6e71523a650563956d2fa8178144a70c9b9e5fb69d67d437da",
+      "size_bytes": 10666,
+      "modified": "2025-12-17T01:38:36.331300",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.159140"
+    },
+    "run_migrations.sh": {
+      "full_path": "backend/scripts/run_migrations.sh",
+      "category": "database",
+      "checksum": "bec8ba87be072ffed072fbb1b35889f426df79d951fb17461aa2e408a352b190",
+      "size_bytes": 402,
+      "modified": "2025-12-17T01:38:36.332613",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.159474"
+    },
+    "migrate_to_sqlite.py": {
+      "full_path": "scripts/utilities/migrate_to_sqlite.py",
+      "category": "database",
+      "checksum": "a1b86a08a3ea50bd66e452ef9f104241356dd49d8f68db6c797c53e8db705d9e",
+      "size_bytes": 4760,
+      "modified": "2025-12-17T01:38:37.505558",
+      "risk_score": 72,
+      "protection_reason": "Contains 1 protection keywords for database",
+      "business_impact": "Data integrity and system reliability",
+      "security_impact": "Data breach prevention",
+      "dependencies": [
+        "database_schema",
+        "data_models"
+      ],
+      "estimated_protection_value": 720,
+      "investigation_timestamp": "2025-12-17T04:12:59.159939"
+    }
+  }
+}

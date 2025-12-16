@@ -1,0 +1,131 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-12-17T00:00:00Z",
+  "approvedBy": "system",
+  "checksum": "3ba85cf6ee7d2a922bcbb3973ae0685cdda05464a1b42e39fbd1adef21bdfd61",
+  "description": "Single Source of Truth for feature flag configurations and schema",
+  "schema": {
+    "feature_flags": {
+      "id": "TEXT PRIMARY KEY",
+      "name": "TEXT NOT NULL UNIQUE",
+      "description": "TEXT",
+      "enabled": "BOOLEAN DEFAULT FALSE",
+      "rollout_percentage": "INTEGER DEFAULT 0",
+      "targeting_rules": "TEXT",
+      "created_at": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+      "updated_at": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+      "created_by": "TEXT"
+    },
+    "user_feature_assignments": {
+      "user_id": "TEXT NOT NULL",
+      "feature_id": "TEXT NOT NULL",
+      "enabled": "BOOLEAN NOT NULL",
+      "assigned_at": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+      "PRIMARY KEY": "(user_id, feature_id)",
+      "FOREIGN KEY (feature_id)": "REFERENCES feature_flags(id)"
+    },
+    "feature_flag_audit": {
+      "id": "INTEGER PRIMARY KEY AUTOINCREMENT",
+      "feature_id": "TEXT NOT NULL",
+      "action": "TEXT NOT NULL",
+      "previous_state": "TEXT",
+      "new_state": "TEXT",
+      "changed_by": "TEXT",
+      "changed_at": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+      "FOREIGN KEY (feature_id)": "REFERENCES feature_flags(id)"
+    }
+  },
+  "api_endpoints": {
+    "get_all_flags": {
+      "method": "GET",
+      "path": "/api/feature-flags",
+      "response": "List[FeatureFlag]"
+    },
+    "get_flag": {
+      "method": "GET",
+      "path": "/api/feature-flags/{flag_id}",
+      "response": "FeatureFlag"
+    },
+    "create_flag": {
+      "method": "POST",
+      "path": "/api/feature-flags",
+      "body": "FeatureFlag"
+    },
+    "update_flag": {
+      "method": "PUT",
+      "path": "/api/feature-flags/{flag_id}",
+      "body": "FeatureFlag"
+    },
+    "enable_flag": {
+      "method": "POST",
+      "path": "/api/feature-flags/{flag_id}/enable",
+      "params": "percentage: int = 100"
+    },
+    "disable_flag": {
+      "method": "POST",
+      "path": "/api/feature-flags/{flag_id}/disable"
+    },
+    "evaluate_flag": {
+      "method": "GET",
+      "path": "/api/feature-flags/evaluate/{flag_id}",
+      "params": "user_id: str",
+      "response": "bool"
+    }
+  },
+  "initial_flags": [
+    {
+      "id": "smart-loading-states",
+      "name": "Smart Loading States",
+      "description": "Skeleton screens and progressive loading",
+      "enabled": false,
+      "rollout_percentage": 0
+    },
+    {
+      "id": "enhanced-error-messages",
+      "name": "Enhanced Error Messages",
+      "description": "Contextual error handling with suggestions",
+      "enabled": false,
+      "rollout_percentage": 0
+    },
+    {
+      "id": "keyboard-shortcuts",
+      "name": "Keyboard Shortcuts",
+      "description": "Comprehensive keyboard navigation",
+      "enabled": false,
+      "rollout_percentage": 0
+    },
+    {
+      "id": "performance-dashboard",
+      "name": "Performance Dashboard",
+      "description": "Real-time metrics visualization",
+      "enabled": false,
+      "rollout_percentage": 0
+    },
+    {
+      "id": "case-conclusion-wizard",
+      "name": "Case Conclusion Wizard",
+      "description": "Structured SAR generator",
+      "enabled": false,
+      "rollout_percentage": 0
+    },
+    {
+      "id": "interactive-dossier",
+      "name": "Interactive Digital Dossier",
+      "description": "HTML bundle with provenance",
+      "enabled": false,
+      "rollout_percentage": 0
+    }
+  ],
+  "rollout_strategy": {
+    "gradual_rollout": {
+      "day_1": "Enable for 10% of users, monitor 24 hours",
+      "day_2": "Increase to 25%, monitor 24 hours",
+      "day_3": "Increase to 50%, monitor 24 hours",
+      "day_4": "Increase to 100%, monitor 1 week"
+    },
+    "emergency_rollback": {
+      "trigger": "Alert when error rate > 2%",
+      "action": "Set rollout to 0% (instant disable), notify team, create post-mortem"
+    }
+  }
+}

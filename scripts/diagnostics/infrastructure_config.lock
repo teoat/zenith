@@ -1,0 +1,39 @@
+{
+  "docker_compose": {
+    "version": "3.8",
+    "services_locked": true,
+    "networks_locked": true,
+    "volumes_locked": true,
+    "security_hardened": true,
+    "monitoring_integrated": true
+  },
+  "kubernetes": {
+    "api_version": "apps/v1",
+    "namespace_locked": "fraud-detection",
+    "replicas_locked": 3,
+    "health_checks_enabled": true,
+    "auto_scaling_enabled": true,
+    "security_context_locked": true
+  },
+  "terraform": {
+    "provider_version_locked": true,
+    "resource_configuration_locked": true,
+    "state_management_locked": true,
+    "remote_state_enabled": true,
+    "plan_approval_required": true
+  },
+  "monitoring": {
+    "prometheus_config_locked": true,
+    "alert_rules_locked": true,
+    "dashboard_config_locked": true,
+    "metrics_retention_locked": "30d",
+    "anomaly_detection_enabled": true
+  },
+  "security": {
+    "network_policies_locked": true,
+    "secret_management_locked": true,
+    "certificate_management_locked": true,
+    "intrusion_detection_enabled": true,
+    "log_aggregation_locked": true
+  }
+}

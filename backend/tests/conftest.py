@@ -7,14 +7,29 @@ import os
 import sys
 from unittest.mock import MagicMock
 
-# Mock networkx if not present
-sys.modules["networkx"] = MagicMock()
+# Ensure backend directory is at the front of sys.path to avoid import conflicts
+# with the root 'app' directory shims
+_backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _backend_dir not in sys.path:
+    sys.path.insert(0, _backend_dir)
+
+# Mock networkx if not present with proper __spec__
+mock_networkx = MagicMock()
+mock_networkx.__spec__ = MagicMock()
+mock_networkx.__spec__.name = "networkx"
+sys.modules["networkx"] = mock_networkx
 
 # Set environment to development for tests to bypass production security middleware
 os.environ["ENVIRONMENT"] = "development"
+
+# Mock heavy ML dependencies before they can import
+# This prevents transformers/torch from trying to use networkx
+sys.modules["transformers"] = MagicMock()
+sys.modules["sentence_transformers"] = MagicMock()
+
 # Conditionally mock heavy/optional dependencies
 # Only mock them if they cannot be imported (e.g. absent in CI env)
-for lib in ["pytesseract", "PIL", "cv2", "PyPDF2", "docx", "transformers", "sentence_transformers"]:
+for lib in ["pytesseract", "PIL", "cv2", "PyPDF2", "docx"]:
     try:
         __import__(lib)
     except ImportError:

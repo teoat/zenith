@@ -4,11 +4,21 @@ This is a lightweight, deterministic implementation intended to satisfy unit
 tests in `tests/unit/test_fraud_detection.py`. It intentionally avoids heavy
 dependencies and mirrors the expected API surface.
 """
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
+
 from dataclasses import dataclass
 from typing import List, Dict, Any, Tuple
 from enum import Enum
 from datetime import datetime
 
+# SSOT Integration
+try:
+    from app.services.ssot_lockfiles_system import ssot_manager
+    SSOT_ENABLED = True
+except ImportError:
+    SSOT_ENABLED = False
 
 class RiskLevel(Enum):
     LOW = "low"
@@ -26,9 +36,20 @@ class FraudPattern:
 
 class FraudDetectionEngine:
     def __init__(self):
-        # Default thresholds matching the legacy tests
-        self.fuzzy_threshold = 80
-        self.velocity_threshold = 5
+        # Load configuration from SSOT if available
+        if SSOT_ENABLED:
+            self.fuzzy_threshold = ssot_manager.get_value("fraud_detection.fuzzy_threshold", 80)
+            self.velocity_threshold = ssot_manager.get_value("fraud_detection.velocity_threshold", 5)
+            self.accuracy_target = ssot_manager.get_value("fraud_detection.accuracy_target", 0.995)
+            self.max_response_time = ssot_manager.get_value("fraud_detection.max_response_time", 100)
+            self.enable_ml_models = ssot_manager.get_value("fraud_detection.enable_ml_models", True)
+        else:
+            # Default thresholds matching the legacy tests
+            self.fuzzy_threshold = 80
+            self.velocity_threshold = 5
+            self.accuracy_target = 0.995
+            self.max_response_time = 100
+            self.enable_ml_models = True
         self.structuring_threshold = 10000
         self.anomaly_zscore_threshold = 3.0
 

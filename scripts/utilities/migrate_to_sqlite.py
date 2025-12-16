@@ -33,8 +33,11 @@ try:
 
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
+except ImportError as e:
+    print(f"Import error: {e}")
+    sys.exit(1)
 
-    def get_postgres_engine():
+def get_postgres_engine():
         """Create PostgreSQL engine"""
         postgres_url = os.getenv('POSTGRES_URL')
         if not postgres_url:
@@ -48,94 +51,94 @@ try:
             logger.error("psycopg2-binary not installed. Install with: pip install psycopg2-binary")
             return None
 
-    def migrate_table(pg_engine, table_name, sqlite_session):
-        """Migrate a single table from PostgreSQL to SQLite"""
-        if not pg_engine:
+def migrate_table(pg_engine, table_name, sqlite_session):
+    """Migrate a single table from PostgreSQL to SQLite"""
+    if not pg_engine:
+        return
+
+    try:
+        # Get table schema from PostgreSQL
+        schema_query = text(f"""
+            SELECT column_name, data_type, is_nullable, column_default
+            FROM information_schema.columns
+            WHERE table_name = '{table_name}'
+            ORDER BY ordinal_position
+        """)
+
+        with pg_engine.connect() as pg_conn:
+            columns = pg_conn.execute(schema_query).fetchall()
+
+        if not columns:
+            logger.warning(f"No schema found for table {table_name}")
             return
 
-        try:
-            with pg_engine.connect() as pg_conn:
-                # Get column information
-                columns_query = text("""
-                    SELECT column_name, data_type, is_nullable
-                    FROM information_schema.columns
-                    WHERE table_name = :table_name
-                    ORDER BY ordinal_position
-                """)
+        # Get data
+        data_query = text(f"SELECT * FROM {table_name}")
+        data = pg_conn.execute(data_query).fetchall()
 
-                columns = pg_conn.execute(columns_query, {'table_name': table_name}).fetchall()
+        if not data:
+            logger.info(f"No data found in table {table_name}")
+            return
 
-                if not columns:
-                    logger.warning(f"No columns found for table {table_name}")
-                    return
+        # Insert into SQLite
+        column_names = [col[0] for col in columns]
+        placeholders = ', '.join([':' + col for col in column_names])
+        insert_query = text(f"INSERT INTO {table_name} ({', '.join(column_names)}) VALUES ({placeholders})")
 
-                # Get data
-                data_query = text(f"SELECT * FROM {table_name}")
-                data = pg_conn.execute(data_query).fetchall()
+        for row in data:
+            row_dict = dict(zip(column_names, row))
+            sqlite_session.execute(insert_query, row_dict)
 
-                if not data:
-                    logger.info(f"No data found in table {table_name}")
-                    return
+        sqlite_session.commit()
+        logger.info(f"Migrated {len(data)} rows from {table_name}")
 
-                # Insert into SQLite
-                column_names = [col[0] for col in columns]
-                placeholders = ', '.join([':' + col for col in column_names])
-                insert_query = text(f"INSERT INTO {table_name} ({', '.join(column_names)}) VALUES ({placeholders})")
+    except Exception as e:
+        logger.error(f"Failed to migrate table {table_name}: {e}")
 
-                for row in data:
-                    row_dict = dict(zip(column_names, row))
-                    sqlite_session.execute(insert_query, row_dict)
+def main():
+    logger.info("Starting database migration from PostgreSQL to SQLite")
 
-                sqlite_session.commit()
-                logger.info(f"Migrated {len(data)} rows from {table_name}")
+    # Get PostgreSQL connection
+    pg_engine = get_postgres_engine()
+    if not pg_engine:
+        logger.info("No PostgreSQL connection available, creating fresh SQLite database")
+    else:
+        logger.info("Connected to PostgreSQL database")
 
-        except Exception as e:
-            logger.error(f"Failed to migrate table {table_name}: {e}")
+    # Create SQLite tables
+    logger.info("Creating SQLite database tables")
+    create_tables()
 
-    def main():
-        logger.info("Starting database migration from PostgreSQL to SQLite")
+    # Get SQLite session
+    sqlite_session = SessionLocal()
 
-        # Get PostgreSQL connection
-        pg_engine = get_postgres_engine()
-        if not pg_engine:
-            logger.info("No PostgreSQL connection available, creating fresh SQLite database")
-        else:
-            logger.info("Connected to PostgreSQL database")
+    try:
+        if pg_engine:
+            # List of tables to migrate (in dependency order)
+            tables_to_migrate = [
+                'users',
+                'teams',
+                'cases',
+                'case_notes',
+                'case_activities',
+                'transactions',
+                'evidence'
+            ]
 
-        # Create SQLite tables
-        logger.info("Creating SQLite database tables")
-        create_tables()
+            for table_name in tables_to_migrate:
+                logger.info(f"Migrating table: {table_name}")
+                migrate_table(pg_engine, table_name, sqlite_session)
 
-        # Get SQLite session
-        sqlite_session = SessionLocal()
+        logger.info("Database migration completed successfully")
 
-        try:
-            if pg_engine:
-                # List of tables to migrate (in dependency order)
-                tables_to_migrate = [
-                    'users',
-                    'teams',
-                    'cases',
-                    'case_notes',
-                    'case_activities',
-                    'transactions',
-                    'evidence'
-                ]
-
-                for table_name in tables_to_migrate:
-                    logger.info(f"Migrating table: {table_name}")
-                    migrate_table(pg_engine, table_name, sqlite_session)
-
-            logger.info("Database migration completed successfully")
-
-        except Exception as e:
-            logger.error(f"Migration failed: {e}")
-            sqlite_session.rollback()
-            raise
-        finally:
-            sqlite_session.close()
-            if pg_engine:
-                pg_engine.dispose()
+    except Exception as e:
+        logger.error(f"Migration failed: {e}")
+        sqlite_session.rollback()
+        raise
+    finally:
+        sqlite_session.close()
+        if pg_engine:
+            pg_engine.dispose()
 
 if __name__ == '__main__':
     main()

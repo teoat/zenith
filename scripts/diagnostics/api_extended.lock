@@ -1,0 +1,125 @@
+{
+  "category": "api_extended",
+  "generated_at": "2025-12-17T04:12:59.163356",
+  "version": "1.0.0-extended-protection",
+  "description": "Extended SSOT protection for api category files",
+  "total_files": 6,
+  "investigation_method": "deep_file_analysis",
+  "protection_criteria": {
+    "risk_multiplier": 1.8,
+    "keywords": [
+      "api",
+      "endpoint",
+      "route",
+      "router",
+      "handler",
+      "controller"
+    ],
+    "business_impact": "System integration and functionality",
+    "security_impact": "API abuse prevention"
+  },
+  "files": {
+    "fraud.py": {
+      "full_path": "backend/app/routers/fraud.py",
+      "category": "api",
+      "checksum": "57f4fa0472f29e487c1594d00e93c3f4a7e662d60f5e6f35fe5b88049d119f02",
+      "size_bytes": 3143,
+      "modified": "2025-12-17T02:39:29.300922",
+      "risk_score": 75,
+      "protection_reason": "Contains 2 protection keywords for api",
+      "business_impact": "System integration and functionality",
+      "security_impact": "API abuse prevention",
+      "dependencies": [
+        "backend_services",
+        "frontend_clients"
+      ],
+      "estimated_protection_value": 750,
+      "investigation_timestamp": "2025-12-17T04:12:59.163837"
+    },
+    "identity.py": {
+      "full_path": "backend/app/routers/identity.py",
+      "category": "api",
+      "checksum": "7328447c6e11a89024dc1b84ab74a74bd747bb0d05cb13a2808713d32eccbd62",
+      "size_bytes": 13308,
+      "modified": "2025-12-17T03:41:18.402434",
+      "risk_score": 75,
+      "protection_reason": "Contains 2 protection keywords for api",
+      "business_impact": "System integration and functionality",
+      "security_impact": "API abuse prevention",
+      "dependencies": [
+        "backend_services",
+        "frontend_clients"
+      ],
+      "estimated_protection_value": 750,
+      "investigation_timestamp": "2025-12-17T04:12:59.164378"
+    },
+    "verify_reporting_endpoints.py": {
+      "full_path": "backend/tests/verify_reporting_endpoints.py",
+      "category": "api",
+      "checksum": "214fc57eacbde6fca6f560494c061799e937aa4e5eed5f0ed7ab6ee0d5ffd917",
+      "size_bytes": 1607,
+      "modified": "2025-12-17T01:38:36.357164",
+      "risk_score": 64,
+      "protection_reason": "Contains 1 protection keywords for api",
+      "business_impact": "System integration and functionality",
+      "security_impact": "API abuse prevention",
+      "dependencies": [
+        "backend_services",
+        "frontend_clients"
+      ],
+      "estimated_protection_value": 640,
+      "investigation_timestamp": "2025-12-17T04:12:59.164704"
+    },
+    "verify_routes_manual.py": {
+      "full_path": "backend/tests/verify_routes_manual.py",
+      "category": "api",
+      "checksum": "ca1d215d2a07ad7a9f478a33bc0250a62db8b1c1a05fb57d1b3fd8cd9e1993dc",
+      "size_bytes": 3014,
+      "modified": "2025-12-17T01:38:36.357295",
+      "risk_score": 64,
+      "protection_reason": "Contains 1 protection keywords for api",
+      "business_impact": "System integration and functionality",
+      "security_impact": "API abuse prevention",
+      "dependencies": [
+        "backend_services",
+        "frontend_clients"
+      ],
+      "estimated_protection_value": 640,
+      "investigation_timestamp": "2025-12-17T04:12:59.165026"
+    },
+    "controller.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_vendor/cachecontrol/controller.py",
+      "category": "api",
+      "checksum": "731d0797cc4b66052e5eecbbf068a1f406230adaaeae6623549c72038c96b7bc",
+      "size_bytes": 19101,
+      "modified": "2025-12-17T01:38:36.100239",
+      "risk_score": 64,
+      "protection_reason": "Contains 1 protection keywords for api",
+      "business_impact": "System integration and functionality",
+      "security_impact": "API abuse prevention",
+      "dependencies": [
+        "backend_services",
+        "frontend_clients"
+      ],
+      "estimated_protection_value": 640,
+      "investigation_timestamp": "2025-12-17T04:12:59.165567"
+    },
+    "ProofVisualizationRoute.tsx": {
+      "full_path": "frontend/src/pages/ProofVisualizationRoute.tsx",
+      "category": "api",
+      "checksum": "8b4f26bd0aac7264e6776b19a85d51931b9354d15249ab3b80634732324ad7b8",
+      "size_bytes": 481,
+      "modified": "2025-12-17T03:49:22.604791",
+      "risk_score": 64,
+      "protection_reason": "Contains 1 protection keywords for api",
+      "business_impact": "System integration and functionality",
+      "security_impact": "API abuse prevention",
+      "dependencies": [
+        "backend_services",
+        "frontend_clients"
+      ],
+      "estimated_protection_value": 640,
+      "investigation_timestamp": "2025-12-17T04:12:59.166033"
+    }
+  }
+}

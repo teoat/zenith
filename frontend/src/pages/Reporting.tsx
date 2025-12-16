@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { LayoutDashboard, TrendingUp, Presentation, FileText } from 'lucide-react';
-import SummaryPreview from '../components/reporting/SummaryPreview';
-import FinancialHealth from '../components/reporting/FinancialHealth';
-import ProjectTracker from '../components/reporting/ProjectTracker';
 import ReportBuilder from '../components/reporting/ReportBuilder';
+
+const SummaryPreview = React.lazy(() => import('../components/reporting/SummaryPreview'));
+const FinancialHealth = React.lazy(() => import('../components/reporting/FinancialHealth'));
+const ProjectTracker = React.lazy(() => import('../components/reporting/ProjectTracker'));
 
 const Reporting = () => {
   const [activeTab, setActiveTab] = useState<'summary' | 'financial' | 'project' | 'builder'>('summary');
@@ -42,14 +44,16 @@ const Reporting = () => {
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto w-full">
-          {activeTab === 'summary' && <SummaryPreview />}
-          {activeTab === 'financial' && <FinancialHealth />}
-          {activeTab === 'project' && <ProjectTracker />}
-          {activeTab === 'builder' && (
-            <div className="p-6">
-              <ReportBuilder />
-            </div>
-          )}
+          <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>}>
+            {activeTab === 'summary' && <SummaryPreview />}
+            {activeTab === 'financial' && <FinancialHealth />}
+            {activeTab === 'project' && <ProjectTracker />}
+            {activeTab === 'builder' && (
+              <div className="p-6">
+                <ReportBuilder />
+              </div>
+            )}
+          </Suspense>
         </div>
       </div>
     </div>

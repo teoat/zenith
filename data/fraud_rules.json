@@ -15,8 +15,8 @@
         "structuring",
         "smurfing"
       ],
-      "created_at": "2025-12-16 22:16:29.123040",
-      "updated_at": "2025-12-16 22:16:29.123045",
+      "created_at": "2025-12-17 04:32:17.282127",
+      "updated_at": "2025-12-17 04:32:17.282133",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -38,8 +38,8 @@
         "round_numbers",
         "suspicious"
       ],
-      "created_at": "2025-12-16 22:16:29.123052",
-      "updated_at": "2025-12-16 22:16:29.123052",
+      "created_at": "2025-12-17 04:32:17.282147",
+      "updated_at": "2025-12-17 04:32:17.282148",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -60,8 +60,8 @@
         "velocity",
         "frequency"
       ],
-      "created_at": "2025-12-16 22:16:29.123056",
-      "updated_at": "2025-12-16 22:16:29.123057",
+      "created_at": "2025-12-17 04:32:17.282152",
+      "updated_at": "2025-12-17 04:32:17.282152",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -83,8 +83,8 @@
         "geographic",
         "international"
       ],
-      "created_at": "2025-12-16 22:16:29.123062",
-      "updated_at": "2025-12-16 22:16:29.123063",
+      "created_at": "2025-12-17 04:32:17.282157",
+      "updated_at": "2025-12-17 04:32:17.282157",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -106,37 +106,14 @@
         "shell_company",
         "new_entity"
       ],
-      "created_at": "2025-12-16 22:16:29.123071",
-      "updated_at": "2025-12-16 22:16:29.123072",
-      "trigger_count": 0,
-      "last_triggered": null,
-      "confidence_threshold": 0.8,
-      "action": "flag"
-    },
-    {
-      "id": "default_supply_chain_anomaly",
-      "name": "Supply Chain Anomaly",
-      "description": "Detects supply chain fraud patterns including vendor relationships and procurement anomalies",
-      "type": "RuleType.SUPPLY_CHAIN_ANALYSIS",
-      "conditions": [
-        "RuleCondition(field='amount', operator=<Operator.GREATER_THAN: 'greater_than'>, value=10000, case_sensitive=False, description='Transaction amount > $10,000')"
-      ],
-      "logical_operator": "LogicalOperator.AND",
-      "severity": "high",
-      "enabled": true,
-      "tags": [
-        "supply_chain",
-        "vendor",
-        "procurement"
-      ],
-      "created_at": "2025-12-16 22:16:29.123076",
-      "updated_at": "2025-12-16 22:16:29.123076",
+      "created_at": "2025-12-17 04:32:17.282162",
+      "updated_at": "2025-12-17 04:32:17.282163",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
       "action": "flag"
     }
   ],
-  "last_updated": "2025-12-16T22:16:29.123082",
+  "last_updated": "2025-12-17T04:32:17.282168",
   "version": "1.0"
 }

@@ -1,0 +1,310 @@
+{
+  "category": "business_logic_extended",
+  "generated_at": "2025-12-17T04:12:59.317548",
+  "version": "1.0.0-extended-protection",
+  "description": "Extended SSOT protection for business_logic category files",
+  "total_files": 22,
+  "investigation_method": "deep_file_analysis",
+  "protection_criteria": {
+    "risk_multiplier": 1.9,
+    "keywords": [
+      "service",
+      "engine",
+      "processor",
+      "calculator",
+      "validator"
+    ],
+    "business_impact": "Core business functionality",
+    "security_impact": "Business logic integrity"
+  },
+  "files": {
+    "fraud_rules.json": {
+      "full_path": "backend/data/fraud_rules.json",
+      "category": "business_logic",
+      "checksum": "3e79a24fbf97b2f20cd02a8972e36d31ad55f5bb2a9dc3f48aa9d8b71fb6b215",
+      "size_bytes": 4552,
+      "modified": "2025-12-17T04:08:10.996454",
+      "risk_score": 79,
+      "protection_reason": "Contains 2 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 790,
+      "investigation_timestamp": "2025-12-17T04:12:59.317716"
+    },
+    "main.py": {
+      "full_path": "scripts/utilities/main.py",
+      "category": "business_logic",
+      "checksum": "61d17b88cd03933184890131fcb9bbfa46a7d6e4cf3546f56f9f8eba4cb0b730",
+      "size_bytes": 194,
+      "modified": "2025-12-17T01:38:37.504388",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.325766"
+    },
+    "csrf.py": {
+      "full_path": "backend/core/csrf.py",
+      "category": "business_logic",
+      "checksum": "de3857f59079c6b97c821048ae8484c559834c4b284c621238627bb9952a3b1d",
+      "size_bytes": 2939,
+      "modified": "2025-12-17T01:38:36.314350",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.318742"
+    },
+    "csrf_protection.py": {
+      "full_path": "backend/core/csrf_protection.py",
+      "category": "business_logic",
+      "checksum": "7458ed7c80c5a43d2ba9ba4346a9167dce853d6e4ae26d5a320b9855ab4e0638",
+      "size_bytes": 8666,
+      "modified": "2025-12-17T01:38:36.314619",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.319076"
+    },
+    "cache.py": {
+      "full_path": "backend/core/cache.py",
+      "category": "business_logic",
+      "checksum": "a63e3012a3bfb0af5207b1ad1ae98823aad33241f76564931c9addb3265f3060",
+      "size_bytes": 2397,
+      "modified": "2025-12-17T01:38:36.312617",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.319447"
+    },
+    "error_handling.py": {
+      "full_path": "backend/core/error_handling.py",
+      "category": "business_logic",
+      "checksum": "e005daaa9e459937fd96f84cf0cc504a0e9187449006bb030b7059c03a7b3419",
+      "size_bytes": 9393,
+      "modified": "2025-12-17T01:38:36.315447",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.319811"
+    },
+    "exceptions.py": {
+      "full_path": "backend/core/exceptions.py",
+      "category": "business_logic",
+      "checksum": "96b695e526328589eae2131f205f4c3e86925d651ea454d60b853287759db1ba",
+      "size_bytes": 6817,
+      "modified": "2025-12-17T01:38:36.315626",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.320120"
+    },
+    "sentry.py": {
+      "full_path": "backend/core/sentry.py",
+      "category": "business_logic",
+      "checksum": "7bab6f7e1e338e7b4de8fdd868f903e838265205158901015c99b2b50e3c95aa",
+      "size_bytes": 2548,
+      "modified": "2025-12-17T01:38:36.317437",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.320487"
+    },
+    "cache_service.py": {
+      "full_path": "backend/app/services/cache_service.py",
+      "category": "business_logic",
+      "checksum": "88befb5e8eac9b38081c2c25077aa2857427b59d189f743f0d08001feae6bb02",
+      "size_bytes": 16512,
+      "modified": "2025-12-17T01:38:35.975942",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.320992"
+    },
+    "fraud_service.py": {
+      "full_path": "backend/app/services/fraud_service.py",
+      "category": "business_logic",
+      "checksum": "81ee1be485c38533495516e0f57f2760d6e04a89a17fb3ec1c69558c9449a5f8",
+      "size_bytes": 5304,
+      "modified": "2025-12-17T02:38:56.654848",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.321466"
+    },
+    "rbac_service.py": {
+      "full_path": "backend/app/services/rbac_service.py",
+      "category": "business_logic",
+      "checksum": "3e827f855f106b22c4e927aaf24740cb0fcaa77af23bbadcf6f62ef5bb9e9db6",
+      "size_bytes": 4532,
+      "modified": "2025-12-17T01:38:35.997122",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.321787"
+    },
+    "__init__.py": {
+      "full_path": "backend/app/services/fraud/rules/__init__.py",
+      "category": "business_logic",
+      "checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "modified": "2025-12-17T01:38:35.984578",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.322570"
+    },
+    "test_evidence_processor.py": {
+      "full_path": "backend/tests/test_evidence_processor.py",
+      "category": "business_logic",
+      "checksum": "adae7eeb6a99e89b899624ce9ad9408ad4d3e00fc06671a5c608f72b8ebef5db",
+      "size_bytes": 9866,
+      "modified": "2025-12-17T03:05:16.944685",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.322938"
+    },
+    "test_core_services.py": {
+      "full_path": "backend/tests/unit/test_core_services.py",
+      "category": "business_logic",
+      "checksum": "60d4507b5e3cab799d4575a4362e064b9fa096b455f173839527a6b812ead575",
+      "size_bytes": 16450,
+      "modified": "2025-12-17T01:38:36.356331",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.323403"
+    },
+    "_appengine_environ.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/_appengine_environ.py",
+      "category": "business_logic",
+      "checksum": "6c36f2384856d8228b25c42a00a032ac41cdf9a925b321c52aaeaf17c645b269",
+      "size_bytes": 957,
+      "modified": "2025-12-17T01:38:36.218666",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.324184"
+    },
+    "appengine.py": {
+      "full_path": "backend/backend/venv/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/appengine.py",
+      "category": "business_logic",
+      "checksum": "551ebc780544d77ee5c53823043c029dae5488165338a6b4d408fffb905a0b3e",
+      "size_bytes": 11036,
+      "modified": "2025-12-17T01:38:36.220221",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.324631"
+    },
+    "chaosEngineering.ts": {
+      "full_path": "frontend/src/lib/chaosEngineering.ts",
+      "category": "business_logic",
+      "checksum": "bd453ae80b15de53136754af847804e937783f5b0aff48e7e61ec1f08f2a7ad1",
+      "size_bytes": 7609,
+      "modified": "2025-12-17T03:49:22.571518",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.325063"
+    },
+    "EvidenceScorer.ts": {
+      "full_path": "frontend/src/services/EvidenceScorer.ts",
+      "category": "business_logic",
+      "checksum": "bbda05cb730801a420645f9c322bc46c7b29541165943a1cd3a64f02ea4aa379",
+      "size_bytes": 16368,
+      "modified": "2025-12-17T03:49:22.974576",
+      "risk_score": 68,
+      "protection_reason": "Contains 1 protection keywords for business_logic",
+      "business_impact": "Core business functionality",
+      "security_impact": "Business logic integrity",
+      "dependencies": [
+        "core_system"
+      ],
+      "estimated_protection_value": 680,
+      "investigation_timestamp": "2025-12-17T04:12:59.325464"
+    }
+  }
+}

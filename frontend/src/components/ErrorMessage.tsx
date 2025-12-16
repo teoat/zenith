@@ -13,7 +13,7 @@ interface ErrorMessageProps {
     category?: string;
     message: string;
     suggestion?: string;
-    context?: Record<string, any>;
+    context?: Record<string, unknown>;
   } | string;
   onDismiss?: () => void;
   className?: string;

@@ -105,8 +105,6 @@ async def login(login_data: LoginRequest, request: Request):
 class MFAVerifyRequest(BaseModel):
     code: str
 
-print(f"DEBUG: auth_service type: {type(auth_service)}")
-print(f"DEBUG: auth_service dir: {dir(auth_service)}")
 @router.get("/mfa/setup")
 async def mfa_setup(current_user: User = Depends(auth_service.get_current_user)):
     """Generate MFA secret and QR code URI for setup"""

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import React, { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { DndContext, useDroppable, DragEndEvent } from '@dnd-kit/core';
 import { useToast } from '../providers/ToastProvider';
-import GraphCanvas from '../components/investigation/GraphCanvas';
 import EntityRegistry from '../components/investigation/EntityRegistry';
 import { Share2, Save, RotateCcw } from 'lucide-react';
 import { api, GraphData as ApiGraphData } from '../lib/api';
@@ -10,6 +10,8 @@ import InvestigationSkeleton from '../components/investigation/InvestigationSkel
 import { AccessibleButton } from '../components/ui/AccessibleButton';
 // Removed GraphData import from ../lib/api to avoid conflict
 import { GraphData, GraphNode } from '../components/investigation/GraphCanvas';
+
+const GraphCanvas = React.lazy(() => import('../components/investigation/GraphCanvas'));
 
 const DroppableCanvas = ({ children }: { children: React.ReactNode }) => {
   const { setNodeRef } = useDroppable({
@@ -161,7 +163,9 @@ const Investigation = () => {
           {/* Graph Canvas */}
           <div className="flex-1 relative overflow-hidden">
             <DroppableCanvas>
+              <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>}>
                 <GraphCanvas key={graphVersion} data={graphData} />
+              </Suspense>
             </DroppableCanvas>
           </div>
 

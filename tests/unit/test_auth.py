@@ -20,7 +20,7 @@ class TestAuthService:
         # Hash password
         hashed = auth_svc.hash_password(password)
         assert hashed != password
-        assert hashed.startswith("$argon2")
+        assert hashed.startswith("$pbkdf2-sha256")
 
         # Verify correct password
         assert auth_svc.verify_password(password, hashed)
