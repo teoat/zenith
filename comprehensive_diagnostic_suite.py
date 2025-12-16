@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'backend'))
 
 # Optional imports - gracefully handle missing dependencies
 try:
-    from core.database import create_tables, ComplianceAuditLog, RegulatoryReport
+    from core.database import create_tables
     from core.database import SecurityIncident, AccessReview, TrainingRecord
     from app.services.compliance_service import ComplianceService
     BACKEND_AVAILABLE = True
