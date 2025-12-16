@@ -1399,9 +1399,12 @@ async def main():
             if metrics and isinstance(metrics, dict):
                 avg_score = sum(v for v in metrics.values() if isinstance(v, (int, float))) / len(metrics)
                 status = "🟢" if avg_score >= 85 else "🟡" if avg_score >= 70 else "🔴"
-                print(f"   {status} {dimension.replace('_', ' ').title()}: {avg_score:.1f}/100")
-
-        print(f"\n🎓 Maturity Scores:")
+                    if metrics and isinstance(metrics, dict):
+                        numeric_values = [v for v in metrics.values() if isinstance(v, (int, float))]
+                        if not numeric_values:
+                            continue
+                        avg_score = sum(numeric_values) / len(numeric_values)
+                        status = "🟢" if avg_score >= 85 else "🟡" if avg_score >= 70 else "🔴"
         maturity = results['scores'].get('maturity', {})
         for aspect, score in maturity.items():
             status = "🟢" if score >= 85 else "🟡" if score >= 70 else "🔴"
