@@ -46,8 +46,8 @@ A comprehensive Python-based diagnostic tool that analyzes the platform across *
 | Dimension | What's Analyzed | Score |
 |-----------|----------------|-------|
 | **Technical** | Architecture, code quality, testing | 75.3/100 |
-| **Operational** | Uptime, monitoring, incident response | 179.7/100 |
-| **Business** | ROI, users, market position | 121.5/100 |
+| **Operational** | Uptime, monitoring, incident response | 100/100 |
+| **Business** | ROI, users, market position | 100/100 |
 | **Security** | Threat detection, incident response | 73/100 |
 | **Compliance** | Regulatory adherence, audits | 90.7/100 |
 
