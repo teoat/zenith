@@ -1,1 +1,1 @@
-app.middleware('http')(rate_limit_middleware)
+app.middleware("http")(rate_limit_middleware)

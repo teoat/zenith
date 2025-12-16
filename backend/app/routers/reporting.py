@@ -1,16 +1,18 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
 import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
 
-from core.database import get_db, User
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
 from app.services.auth_service import auth_service
+from core.database import User, get_db
 
 router = APIRouter()
 
 # --- Models ---
+
 
 class CaseAnalytics(BaseModel):
     totalCases: int
@@ -20,6 +22,7 @@ class CaseAnalytics(BaseModel):
     avgResolutionTimeDays: float
     urgentCases: int
 
+
 class TransactionAnalytics(BaseModel):
     totalVolume: float
     flaggedVolume: float
@@ -27,22 +30,26 @@ class TransactionAnalytics(BaseModel):
     flaggedCount: int
     riskDistribution: Dict[str, int]
 
+
 class SystemOverview(BaseModel):
     ingestionRate: float
     activeUsers: int
     systemHealth: float
     lastSyncTime: datetime.datetime
 
+
 class ReportFormat(str, Enum):
-    PDF = 'pdf'
-    HTML = 'html'
-    CSV = 'csv'
+    PDF = "pdf"
+    HTML = "html"
+    CSV = "csv"
+
 
 class ReportTemplate(str, Enum):
-    EXECUTIVE = 'executive'
-    STANDARD = 'standard'
-    DETAILED = 'detailed'
-    COMPLIANCE = 'compliance'
+    EXECUTIVE = "executive"
+    STANDARD = "standard"
+    DETAILED = "detailed"
+    COMPLIANCE = "compliance"
+
 
 class ReportRequest(BaseModel):
     caseIds: Optional[List[str]] = None
@@ -51,10 +58,12 @@ class ReportRequest(BaseModel):
     template: ReportTemplate = ReportTemplate.STANDARD
     includeSensitiveData: bool = False
 
+
 class ReportResponse(BaseModel):
     reportUrl: str
     generatedAt: datetime.datetime
     expiresAt: datetime.datetime
+
 
 class CaseSummaryStats(BaseModel):
     caseId: str
@@ -69,6 +78,7 @@ class CaseSummaryStats(BaseModel):
     alertsResolved: int
     avgResolutionTimeMinutes: float
 
+
 class Finding(BaseModel):
     id: str
     type: str
@@ -76,15 +86,18 @@ class Finding(BaseModel):
     description: str
     evidence: Optional[List[str]] = None
 
+
 class CaseSummaryResponse(BaseModel):
     stats: CaseSummaryStats
     findings: List[Finding]
 
+
 class ScheduleFrequency(str, Enum):
-    DAILY = 'daily'
-    WEEKLY = 'weekly'
-    MONTHLY = 'monthly'
-    QUARTERLY = 'quarterly'
+    DAILY = "daily"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
+    QUARTERLY = "quarterly"
+
 
 class ScheduledReportRequest(BaseModel):
     name: str
@@ -93,6 +106,7 @@ class ScheduledReportRequest(BaseModel):
     recipients: List[str]
     caseIds: Optional[List[str]] = None
     enabled: bool = True
+
 
 class ScheduledReport(BaseModel):
     id: str
@@ -104,6 +118,7 @@ class ScheduledReport(BaseModel):
     lastRunAt: Optional[datetime.datetime]
     enabled: bool
 
+
 class ReportTemplateInfo(BaseModel):
     id: str
     name: str
@@ -111,7 +126,9 @@ class ReportTemplateInfo(BaseModel):
     sections: List[str]
     estimatedPages: str
 
+
 # --- Endpoints ---
+
 
 @router.get("/analytics/cases", response_model=CaseAnalytics, tags=["analytics"])
 async def get_case_analytics():
@@ -122,17 +139,15 @@ async def get_case_analytics():
         "totalCases": 150,
         "activeCases": 45,
         "resolvedCases": 105,
-        "casesByStatus": {
-            "new": 10,
-            "investigation": 30,
-            "review": 5,
-            "closed": 105
-        },
+        "casesByStatus": {"new": 10, "investigation": 30, "review": 5, "closed": 105},
         "avgResolutionTimeDays": 12.5,
-        "urgentCases": 3
+        "urgentCases": 3,
     }
 
-@router.get("/analytics/transactions", response_model=TransactionAnalytics, tags=["analytics"])
+
+@router.get(
+    "/analytics/transactions", response_model=TransactionAnalytics, tags=["analytics"]
+)
 async def get_transaction_analytics():
     """
     Get aggregated analytics for transactions.
@@ -146,9 +161,10 @@ async def get_transaction_analytics():
             "low": 10000,
             "medium": 2000,
             "high": 350,
-            "critical": 150
-        }
+            "critical": 150,
+        },
     }
+
 
 @router.get("/analytics/overview", response_model=SystemOverview, tags=["analytics"])
 async def get_system_overview():
@@ -159,8 +175,9 @@ async def get_system_overview():
         "ingestionRate": 99.9,
         "activeUsers": 5,
         "systemHealth": 100.0,
-        "lastSyncTime": datetime.datetime.now(datetime.timezone.utc)
+        "lastSyncTime": datetime.datetime.now(datetime.timezone.utc),
     }
+
 
 @router.post("/reporting/export", response_model=ReportResponse, tags=["reporting"])
 async def generate_report(request: ReportRequest):
@@ -171,18 +188,23 @@ async def generate_report(request: ReportRequest):
     try:
         generated_at = datetime.datetime.now(datetime.timezone.utc)
         expires_at = generated_at + datetime.timedelta(days=1)
-        
+
         report_id = f"rpt_{int(generated_at.timestamp())}"
-        
+
         return {
             "reportUrl": f"https://storage.example.com/exports/{report_id}.{request.format.value}",
             "generatedAt": generated_at,
-            "expiresAt": expires_at
+            "expiresAt": expires_at,
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/reporting/summary/{case_id}", response_model=CaseSummaryResponse, tags=["reporting"])
+
+@router.get(
+    "/reporting/summary/{case_id}",
+    response_model=CaseSummaryResponse,
+    tags=["reporting"],
+)
 async def get_case_summary(case_id: str):
     """
     Get comprehensive summary statistics and findings for a case.
@@ -200,7 +222,7 @@ async def get_case_summary(case_id: str):
             "confirmedFraud": 3,
             "falsePositives": 45,
             "alertsResolved": 98,
-            "avgResolutionTimeMinutes": 8.3
+            "avgResolutionTimeMinutes": 8.3,
         },
         "findings": [
             {
@@ -208,37 +230,40 @@ async def get_case_summary(case_id: str):
                 "type": "pattern",
                 "severity": "high",
                 "description": "Identified 15 high-risk mirroring patterns involving 3 entities",
-                "evidence": ["doc_001", "doc_002"]
+                "evidence": ["doc_001", "doc_002"],
             },
             {
                 "id": "f2",
                 "type": "amount",
                 "severity": "high",
-                "description": "Total flagged amount: $4.8M across 150 transactions"
+                "description": "Total flagged amount: $4.8M across 150 transactions",
             },
             {
                 "id": "f3",
                 "type": "confirmation",
                 "severity": "critical",
                 "description": "3 confirmed fraudulent transactions referred to authorities",
-                "evidence": ["doc_003", "doc_004", "doc_005"]
+                "evidence": ["doc_003", "doc_004", "doc_005"],
             },
             {
                 "id": "f4",
                 "type": "false_positive",
                 "severity": "low",
-                "description": "45 false positives correctly ruled out"
+                "description": "45 false positives correctly ruled out",
             },
             {
                 "id": "f5",
                 "type": "recommendation",
                 "severity": "medium",
-                "description": "Recommended enhanced monitoring for 2 vendor accounts"
-            }
-        ]
+                "description": "Recommended enhanced monitoring for 2 vendor accounts",
+            },
+        ],
     }
 
-@router.get("/reporting/templates", response_model=List[ReportTemplateInfo], tags=["reporting"])
+
+@router.get(
+    "/reporting/templates", response_model=List[ReportTemplateInfo], tags=["reporting"]
+)
 async def get_report_templates():
     """
     Get available report templates with their metadata.
@@ -248,33 +273,69 @@ async def get_report_templates():
             "id": "executive",
             "name": "Executive Summary",
             "description": "High-level overview for C-suite and board presentation",
-            "sections": ["Cover Page", "Executive Summary", "Top 5 Findings", "Key Visualizations", "Signature Block"],
-            "estimatedPages": "2-3"
+            "sections": [
+                "Cover Page",
+                "Executive Summary",
+                "Top 5 Findings",
+                "Key Visualizations",
+                "Signature Block",
+            ],
+            "estimatedPages": "2-3",
         },
         {
             "id": "standard",
             "name": "Standard Investigation",
             "description": "Complete case documentation for standard reporting",
-            "sections": ["Cover Page", "Executive Summary", "Methodology", "Timeline", "Full Findings", "Visualizations", "Recommendations", "Signature Block"],
-            "estimatedPages": "8-12"
+            "sections": [
+                "Cover Page",
+                "Executive Summary",
+                "Methodology",
+                "Timeline",
+                "Full Findings",
+                "Visualizations",
+                "Recommendations",
+                "Signature Block",
+            ],
+            "estimatedPages": "8-12",
         },
         {
             "id": "detailed",
             "name": "Detailed Audit Trail",
             "description": "Full audit trail for legal proceedings and compliance",
-            "sections": ["Cover Page", "Executive Summary", "Methodology", "Timeline", "Full Findings", "All Visualizations", "Complete Transaction List", "Entity Roster", "Chain of Custody", "Signature Block"],
-            "estimatedPages": "15-25"
+            "sections": [
+                "Cover Page",
+                "Executive Summary",
+                "Methodology",
+                "Timeline",
+                "Full Findings",
+                "All Visualizations",
+                "Complete Transaction List",
+                "Entity Roster",
+                "Chain of Custody",
+                "Signature Block",
+            ],
+            "estimatedPages": "15-25",
         },
         {
             "id": "compliance",
             "name": "Regulatory Compliance",
             "description": "Format for SAR/STR regulatory submissions",
-            "sections": ["Regulatory Header", "Subject Information", "Suspicious Activity Summary", "Transaction Details", "Supporting Documentation", "Filer Certification"],
-            "estimatedPages": "10-15"
-        }
+            "sections": [
+                "Regulatory Header",
+                "Subject Information",
+                "Suspicious Activity Summary",
+                "Transaction Details",
+                "Supporting Documentation",
+                "Filer Certification",
+            ],
+            "estimatedPages": "10-15",
+        },
     ]
 
-@router.get("/reporting/scheduled", response_model=List[ScheduledReport], tags=["reporting"])
+
+@router.get(
+    "/reporting/scheduled", response_model=List[ScheduledReport], tags=["reporting"]
+)
 async def get_scheduled_reports():
     """
     Get list of configured scheduled reports.
@@ -289,7 +350,7 @@ async def get_scheduled_reports():
             "recipients": ["admin@example.com", "manager@example.com"],
             "nextRunAt": now + datetime.timedelta(days=7 - now.weekday()),
             "lastRunAt": now - datetime.timedelta(days=now.weekday()),
-            "enabled": True
+            "enabled": True,
         },
         {
             "id": "sched_002",
@@ -297,11 +358,14 @@ async def get_scheduled_reports():
             "frequency": "monthly",
             "template": "compliance",
             "recipients": ["compliance@example.com"],
-            "nextRunAt": (now.replace(day=1) + datetime.timedelta(days=32)).replace(day=1),
+            "nextRunAt": (now.replace(day=1) + datetime.timedelta(days=32)).replace(
+                day=1
+            ),
             "lastRunAt": now.replace(day=1) - datetime.timedelta(days=1),
-            "enabled": True
-        }
+            "enabled": True,
+        },
     ]
+
 
 @router.post("/reporting/scheduled", response_model=ScheduledReport, tags=["reporting"])
 async def create_scheduled_report(request: ScheduledReportRequest):
@@ -309,7 +373,7 @@ async def create_scheduled_report(request: ScheduledReportRequest):
     Create a new scheduled report configuration.
     """
     now = datetime.datetime.now(datetime.timezone.utc)
-    
+
     # Calculate next run based on frequency
     if request.frequency == ScheduleFrequency.DAILY:
         next_run = now + datetime.timedelta(days=1)
@@ -322,7 +386,7 @@ async def create_scheduled_report(request: ScheduledReportRequest):
         year = now.year if month <= 12 else now.year + 1
         month = month if month <= 12 else month - 12
         next_run = now.replace(year=year, month=month, day=1)
-    
+
     return {
         "id": f"sched_{int(now.timestamp())}",
         "name": request.name,
@@ -331,8 +395,9 @@ async def create_scheduled_report(request: ScheduledReportRequest):
         "recipients": request.recipients,
         "nextRunAt": next_run,
         "lastRunAt": None,
-        "enabled": request.enabled
+        "enabled": request.enabled,
     }
+
 
 @router.delete("/reporting/scheduled/{schedule_id}", tags=["reporting"])
 async def delete_scheduled_report(schedule_id: str):
@@ -340,6 +405,7 @@ async def delete_scheduled_report(schedule_id: str):
     Delete a scheduled report configuration.
     """
     return {"message": f"Scheduled report {schedule_id} deleted successfully"}
+
 
 @router.get("/reporting/financial-health/{case_id}", tags=["reporting"])
 async def get_financial_health(case_id: str):
@@ -360,9 +426,10 @@ async def get_financial_health(case_id: str):
             {"name": "Vendors", "amount": -120000, "type": "negative"},
             {"name": "Suspicious", "amount": -45000, "type": "suspicious"},
             {"name": "Operating", "amount": -30000, "type": "negative"},
-            {"name": "Balance", "amount": 125000, "type": "balance"}
-        ]
+            {"name": "Balance", "amount": 125000, "type": "balance"},
+        ],
     }
+
 
 @router.get("/reporting/project-tracker/{case_id}", tags=["reporting"])
 async def get_project_tracker(case_id: str):
@@ -372,18 +439,47 @@ async def get_project_tracker(case_id: str):
     return {
         "caseId": case_id,
         "milestones": [
-            {"id": "m1", "name": "Down Payment", "status": "complete", "amount": 50000, "completedAt": "2025-01-15"},
-            {"id": "m2", "name": "Foundation", "status": "complete", "amount": 100000, "completedAt": "2025-02-28"},
-            {"id": "m3", "name": "Structure", "status": "delayed", "amount": 150000, "dueDate": "2025-04-15"},
-            {"id": "m4", "name": "Finishes", "status": "pending", "amount": 100000, "dueDate": "2025-06-30"},
-            {"id": "m5", "name": "Handover", "status": "pending", "amount": 50000, "dueDate": "2025-08-15"}
+            {
+                "id": "m1",
+                "name": "Down Payment",
+                "status": "complete",
+                "amount": 50000,
+                "completedAt": "2025-01-15",
+            },
+            {
+                "id": "m2",
+                "name": "Foundation",
+                "status": "complete",
+                "amount": 100000,
+                "completedAt": "2025-02-28",
+            },
+            {
+                "id": "m3",
+                "name": "Structure",
+                "status": "delayed",
+                "amount": 150000,
+                "dueDate": "2025-04-15",
+            },
+            {
+                "id": "m4",
+                "name": "Finishes",
+                "status": "pending",
+                "amount": 100000,
+                "dueDate": "2025-06-30",
+            },
+            {
+                "id": "m5",
+                "name": "Handover",
+                "status": "pending",
+                "amount": 50000,
+                "dueDate": "2025-08-15",
+            },
         ],
         "benchmarks": [
             {"category": "Materials", "project": 120, "industry": 100},
             {"category": "Labor", "project": 95, "industry": 100},
             {"category": "Equipment", "project": 110, "industry": 100},
-            {"category": "Overhead", "project": 85, "industry": 100}
+            {"category": "Overhead", "project": 85, "industry": 100},
         ],
-        "overallProgress": 45
+        "overallProgress": 45,
     }
-

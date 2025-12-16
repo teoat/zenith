@@ -66,7 +66,7 @@ class TestAuthService:
         with pytest.raises(Exception):
             auth_svc.decode_token("")
 
-    @patch('services.auth.db_service')
+    @patch('app.services.auth_service.db_service')
     def test_authenticate_user_success(self, mock_db, auth_svc):
         """Test successful user authentication"""
         # Mock user
@@ -96,7 +96,7 @@ class TestAuthService:
         result = auth_svc.authenticate_user("nonexistent", "password")
         assert result is None
 
-    @patch('services.auth.db_service')
+    @patch('app.services.database_service.db_service')
     def test_get_current_user_success(self, mock_db, auth_svc):
         """Test getting current authenticated user"""
         # Mock user

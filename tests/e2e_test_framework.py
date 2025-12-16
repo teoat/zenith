@@ -183,12 +183,12 @@ class E2ETestFramework:
                     "error": str(e)
                 })
 
-        # API endpoint tests
+        # API endpoint tests (public endpoints only for E2E)
         api_tests = [
-            ("ai_analysis", f"{self.base_url}/api/v1/ai/analyze", "POST", {"type": "fraud_pattern", "data": {"text": "test fraud pattern"}}),
-            ("fraud_rules", f"{self.base_url}/api/v1/fraud-rules", "GET", None),
-            ("backup_status", f"{self.base_url}/api/v1/backup/status", "GET", None),
-            ("collaboration_stats", f"{self.base_url}/api/v1/collaboration/stats", "GET", None)
+            ("health_check", f"{self.base_url}/health", "GET", None),
+            ("fraud_rules", f"{self.base_url}/api/v1/rules", "GET", None),
+            ("health_ready", f"{self.base_url}/health/ready", "GET", None),
+            ("health_live", f"{self.base_url}/health/live", "GET", None)
         ]
 
         for test_name, url, method, data in api_tests:

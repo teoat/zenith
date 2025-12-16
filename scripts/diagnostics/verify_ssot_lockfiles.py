@@ -5,7 +5,9 @@ Simple SSOT and Lockfiles Verification Test
 
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "backend"))
+
 
 def main():
     print("🔍 SIMPLE SSOT AND LOCKFILES VERIFICATION")
@@ -23,10 +25,10 @@ def main():
 
         # Check some key values
         key_checks = [
-            ('system.perfection_level', 'infinite'),
-            ('risk.tolerance', 0.0),
-            ('innovation.velocity', 'infinite'),
-            ('performance.efficiency', 1.0)
+            ("system.perfection_level", "infinite"),
+            ("risk.tolerance", 0.0),
+            ("innovation.velocity", "infinite"),
+            ("performance.efficiency", 1.0),
         ]
 
         for key, expected in key_checks:
@@ -44,7 +46,11 @@ def main():
             print(f"   {status} {lockfile}")
 
         # Check if lockfiles exist
-        lockfiles_to_check = ['dependencies.lock', 'configurations.lock', 'environments.lock']
+        lockfiles_to_check = [
+            "dependencies.lock",
+            "configurations.lock",
+            "environments.lock",
+        ]
         for lockfile in lockfiles_to_check:
             exists = os.path.exists(lockfile)
             status = "✅ Exists" if exists else "❌ Missing"
@@ -59,6 +65,7 @@ def main():
     except Exception as e:
         print(f"❌ Verification failed: {e}")
         return False
+
 
 if __name__ == "__main__":
     success = main()

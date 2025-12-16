@@ -1,12 +1,19 @@
 """Unit tests for core modules"""
+
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
-from core.config import Settings
-from core.logging import setup_logging, log_request, log_error, log_security_event
-from core.validation import InputValidationMiddleware, sanitize_string, validate_filename
-from core.metrics import PrometheusMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
+
+from core.config import Settings
+from core.logging import log_error, log_request, log_security_event, setup_logging
+from core.metrics import PrometheusMiddleware
+from core.validation import (
+    InputValidationMiddleware,
+    sanitize_string,
+    validate_filename,
+)
 
 
 class TestSettings:
@@ -19,7 +26,7 @@ class TestSettings:
         assert settings.API_V1_STR == "/api/v1"
         assert settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES == 30
 
-    @patch.dict('os.environ', {'SECRET_KEY': 'test-secret'})
+    @patch.dict("os.environ", {"SECRET_KEY": "test-secret"})
     def test_settings_with_env(self):
         """Test settings with environment variables"""
         settings = Settings()
@@ -37,19 +44,19 @@ class TestLogging:
 
     def test_log_request(self):
         """Test request logging"""
-        with patch('core.logging.logger') as mock_logger:
+        with patch("core.logging.logger") as mock_logger:
             log_request("req-123", "GET", "/api/test", 200, 0.5, "user-123")
             mock_logger.info.assert_called_once()
 
     def test_log_error(self):
         """Test error logging"""
-        with patch('core.logging.logger') as mock_logger:
+        with patch("core.logging.logger") as mock_logger:
             log_error("test_error", "Test error message", {"details": "test"})
             mock_logger.error.assert_called_once()
 
     def test_log_security_event(self):
         """Test security event logging"""
-        with patch('core.logging.logger') as mock_logger:
+        with patch("core.logging.logger") as mock_logger:
             log_security_event("login_failed", "user-123", "192.168.1.1")
             mock_logger.warning.assert_called_once()
 
@@ -61,6 +68,7 @@ class TestValidation:
     def middleware(self):
         """Create validation middleware instance"""
         from unittest.mock import MagicMock
+
         mock_app = MagicMock()
         return InputValidationMiddleware(mock_app)
 
@@ -88,7 +96,9 @@ class TestValidation:
         mock_request = MagicMock(spec=Request)
         mock_request.method = "POST"
         mock_request.headers = {"content-type": "application/json"}
-        mock_request.body.return_value = b'{"query": "SELECT * FROM users WHERE id = 1 OR 1=1"}'
+        mock_request.body.return_value = (
+            b'{"query": "SELECT * FROM users WHERE id = 1 OR 1=1"}'
+        )
 
         with pytest.raises(Exception):  # Should raise HTTPException
             await middleware.dispatch(mock_request, lambda r: JSONResponse({}))

@@ -3,13 +3,14 @@
 Debug authentication issue
 """
 
-import sys
 import os
+import sys
 
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend.app.services.auth_service import auth_service
+
 
 def test_auth():
     """Test authentication directly"""
@@ -39,7 +40,9 @@ def test_auth():
     except Exception as e:
         print(f"Error: {e}")
         import traceback
+
         traceback.print_exc()
+
 
 if __name__ == "__main__":
     test_auth()

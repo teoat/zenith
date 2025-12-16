@@ -4,6 +4,7 @@ backed by Starlette's TestClient so tests written for older helpers keep working
 This shadow file is intentionally small and only implements the sync methods
 used by the test suite (get, post, put, delete, json(), status_code access, etc.).
 """
+
 from typing import Any
 
 
@@ -44,6 +45,7 @@ class AsyncClient:
 
     def __exit__(self, exc_type, exc, tb):
         self.close()
+
 
 # Also support top-level functions or other attributes if tests expect them
 __all__ = ["AsyncClient"]

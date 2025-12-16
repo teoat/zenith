@@ -1,26 +1,30 @@
 # backend/services/evidence_processor.py
 import asyncio
 import concurrent.futures
+import hashlib
+import logging
+import mimetypes
 import os
 import tempfile
 import time
-from typing import Dict, List, Any, Optional, Callable
-from pathlib import Path
-import logging
 from dataclasses import dataclass
 from datetime import datetime
-import hashlib
-import mimetypes
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
+
 try:
-    from app.services.search_service import evidence_search_index
     from app.services.ai_service import ai_service
+    from app.services.search_service import evidence_search_index
+
     vector_store = ai_service.vector_store
 except ImportError:
-    from app.services.search_service import evidence_search_index
     from app.services.ai_service import ai_service
+    from app.services.search_service import evidence_search_index
+
     vector_store = ai_service.vector_store
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class ProcessingResult:
@@ -42,6 +46,7 @@ class ProcessingResult:
         if self.metadata is None:
             self.metadata = {}
 
+
 class EvidenceProcessor:
     """
     Optimized evidence processing pipeline with parallel processing and memory management
@@ -54,31 +59,63 @@ class EvidenceProcessor:
 
         # Processing capabilities
         self.supported_types = {
-            'image': ['image/jpeg', 'image/png', 'image/tiff', 'image/bmp', 'image/gif', 'image/webp'],
-            'document': [
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.ms-excel',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'application/vnd.ms-powerpoint',
-                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            "image": [
+                "image/jpeg",
+                "image/png",
+                "image/tiff",
+                "image/bmp",
+                "image/gif",
+                "image/webp",
             ],
-            'text': ['text/plain', 'text/csv', 'text/html', 'text/markdown', 'application/json'],
-            'audio': ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/webm'],
-            'video': ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/webm', 'video/ogg'],
-            'archive': ['application/zip', 'application/x-rar-compressed', 'application/x-7z-compressed']
+            "document": [
+                "application/pdf",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/vnd.ms-powerpoint",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            ],
+            "text": [
+                "text/plain",
+                "text/csv",
+                "text/html",
+                "text/markdown",
+                "application/json",
+            ],
+            "audio": [
+                "audio/mpeg",
+                "audio/wav",
+                "audio/ogg",
+                "audio/mp4",
+                "audio/webm",
+            ],
+            "video": [
+                "video/mp4",
+                "video/avi",
+                "video/mov",
+                "video/wmv",
+                "video/webm",
+                "video/ogg",
+            ],
+            "archive": [
+                "application/zip",
+                "application/x-rar-compressed",
+                "application/x-7z-compressed",
+            ],
         }
 
         # Performance metrics
         self.metrics = {
-            'total_processed': 0,
-            'total_processing_time': 0.0,
-            'errors': 0,
-            'by_type': {}
+            "total_processed": 0,
+            "total_processing_time": 0.0,
+            "errors": 0,
+            "by_type": {},
         }
 
-    async def process_files_batch(self, file_paths: List[str], options: Dict[str, Any] = None) -> List[ProcessingResult]:
+    async def process_files_batch(
+        self, file_paths: List[str], options: Dict[str, Any] = None
+    ) -> List[ProcessingResult]:
         """
         Process multiple files in parallel with optimized resource usage
         """
@@ -99,20 +136,22 @@ class EvidenceProcessor:
         results = []
 
         for i in range(0, len(tasks), batch_size):
-            batch_tasks = tasks[i:i + batch_size]
+            batch_tasks = tasks[i : i + batch_size]
             batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
 
             for result in batch_results:
                 if isinstance(result, Exception):
                     logger.error(f"Batch processing error: {result}")
-                    results.append(ProcessingResult(
-                        file_id="",
-                        file_path="",
-                        file_type="",
-                        size_bytes=0,
-                        processing_time=0.0,
-                        error=str(result)
-                    ))
+                    results.append(
+                        ProcessingResult(
+                            file_id="",
+                            file_path="",
+                            file_type="",
+                            size_bytes=0,
+                            processing_time=0.0,
+                            error=str(result),
+                        )
+                    )
                 else:
                     results.append(result)
 
@@ -127,19 +166,20 @@ class EvidenceProcessor:
         logger.info(f"Processed {len(file_paths)} files in {batch_time:.2f}s")
         return results
 
-    async def _process_single_file_async(self, file_path: str, options: Dict[str, Any]) -> ProcessingResult:
+    async def _process_single_file_async(
+        self, file_path: str, options: Dict[str, Any]
+    ) -> ProcessingResult:
         """
         Process a single file asynchronously
         """
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(
-            self.executor,
-            self._process_single_file_sync,
-            file_path,
-            options
+            self.executor, self._process_single_file_sync, file_path, options
         )
 
-    def _process_single_file_sync(self, file_path: str, options: Dict[str, Any]) -> ProcessingResult:
+    def _process_single_file_sync(
+        self, file_path: str, options: Dict[str, Any]
+    ) -> ProcessingResult:
         """
         Process a single file synchronously (runs in thread pool)
         """
@@ -155,7 +195,7 @@ class EvidenceProcessor:
             mime_type = self._detect_mime_type(file_path)
 
             # Check file size limits
-            max_size = options.get('max_file_size', 50 * 1024 * 1024)  # 50MB default
+            max_size = options.get("max_file_size", 50 * 1024 * 1024)  # 50MB default
             if file_size > max_size:
                 raise ValueError(f"File too large: {file_size} bytes (max: {max_size})")
 
@@ -165,24 +205,31 @@ class EvidenceProcessor:
                 file_path=file_path,
                 file_type=mime_type,
                 size_bytes=file_size,
-                processing_time=0.0
+                processing_time=0.0,
             )
 
-            if mime_type in self.supported_types['image']:
+            if mime_type in self.supported_types["image"]:
                 self._process_image(file_path, result, options)
-            elif mime_type in self.supported_types['document']:
+            elif mime_type in self.supported_types["document"]:
                 self._process_document(file_path, result, options)
-            elif mime_type in self.supported_types['text']:
+            elif mime_type in self.supported_types["text"]:
                 self._process_text(file_path, result, options)
-            elif mime_type in self.supported_types['audio']:
+            elif mime_type in self.supported_types["audio"]:
                 self._process_audio(file_path, result, options)
-            elif mime_type in self.supported_types['video']:
+            elif mime_type in self.supported_types["video"]:
                 self._process_video(file_path, result, options)
-            elif mime_type in ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv']:
+            elif mime_type in [
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "text/csv",
+            ]:
                 self._process_spreadsheet(file_path, result, options)
-            elif mime_type in ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation']:
+            elif mime_type in [
+                "application/vnd.ms-powerpoint",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            ]:
                 self._process_presentation(file_path, result, options)
-            elif mime_type in self.supported_types['archive']:
+            elif mime_type in self.supported_types["archive"]:
                 self._process_archive(file_path, result, options)
             else:
                 result.error = f"Unsupported file type: {mime_type}"
@@ -193,14 +240,16 @@ class EvidenceProcessor:
             if not result.error:
                 try:
                     processing_dict = {
-                        'extracted_text': result.extracted_text,
-                        'key_entities': result.key_entities,
-                        'metadata': result.metadata,
-                        'file_type': result.file_type,
-                        'quality_score': result.quality_score,
-                        'sentiment_score': result.sentiment_score
+                        "extracted_text": result.extracted_text,
+                        "key_entities": result.key_entities,
+                        "metadata": result.metadata,
+                        "file_type": result.file_type,
+                        "quality_score": result.quality_score,
+                        "sentiment_score": result.sentiment_score,
                     }
-                    evidence_search_index.index_evidence(result.file_id, result.file_path, processing_dict)
+                    evidence_search_index.index_evidence(
+                        result.file_id, result.file_path, processing_dict
+                    )
 
                     # Add to vector store for semantic search
                     content_to_embed = result.extracted_text or result.file_path
@@ -209,15 +258,17 @@ class EvidenceProcessor:
                             document_id=result.file_id,
                             content=content_to_embed,
                             metadata={
-                                'file_path': result.file_path,
-                                'file_type': result.file_type,
-                                'quality_score': result.quality_score,
-                                'sentiment_score': result.sentiment_score
-                            }
+                                "file_path": result.file_path,
+                                "file_type": result.file_type,
+                                "quality_score": result.quality_score,
+                                "sentiment_score": result.sentiment_score,
+                            },
                         )
 
                 except Exception as index_error:
-                    logger.warning(f"Failed to index evidence {result.file_id}: {index_error}")
+                    logger.warning(
+                        f"Failed to index evidence {result.file_id}: {index_error}"
+                    )
 
             return result
 
@@ -229,53 +280,61 @@ class EvidenceProcessor:
                 file_type="",
                 size_bytes=0,
                 processing_time=time.time() - start_time,
-                error=str(e)
+                error=str(e),
             )
 
-    def _process_image(self, file_path: str, result: ProcessingResult, options: Dict[str, Any]):
+    def _process_image(
+        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+    ):
         """Process image files with OCR and analysis"""
         try:
             # Import here to avoid import errors if PIL is not available
-            from PIL import Image
-            import pytesseract
             import cv2
             import numpy as np
+            import pytesseract
+            from PIL import Image
 
             # Open image
             image = Image.open(file_path)
 
             # Basic image analysis
-            result.metadata.update({
-                'width': image.width,
-                'height': image.height,
-                'format': image.format,
-                'mode': image.mode
-            })
+            result.metadata.update(
+                {
+                    "width": image.width,
+                    "height": image.height,
+                    "format": image.format,
+                    "mode": image.mode,
+                }
+            )
 
             # OCR processing
-            if options.get('enable_ocr', True):
+            if options.get("enable_ocr", True):
                 try:
                     # Convert PIL to numpy array for OpenCV processing
-                    if image.mode != 'RGB':
-                        image = image.convert('RGB')
+                    if image.mode != "RGB":
+                        image = image.convert("RGB")
 
                     # Enhance image for better OCR
                     opencv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
                     # Apply preprocessing for better OCR accuracy
                     gray = cv2.cvtColor(opencv_image, cv2.COLOR_BGR2GRAY)
-                    _, threshold = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+                    _, threshold = cv2.threshold(
+                        gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
+                    )
 
                     # OCR
-                    text = pytesseract.image_to_string(threshold, lang='eng')
+                    text = pytesseract.image_to_string(threshold, lang="eng")
                     result.extracted_text = text.strip()
 
                     # Extract key entities (simplified - could use NLP models)
                     result.key_entities = self._extract_entities_from_text(text)
 
                 except Exception as ocr_error:
-                    logger.warning(f"OCR processing failed for {file_path}: {ocr_error}")
-                    result.metadata['ocr_error'] = str(ocr_error)
+                    logger.warning(
+                        f"OCR processing failed for {file_path}: {ocr_error}"
+                    )
+                    result.metadata["ocr_error"] = str(ocr_error)
 
             # Image forensics analysis
             forensics_result = self._analyze_image_forensics(opencv_image, image)
@@ -293,7 +352,9 @@ class EvidenceProcessor:
         except Exception as e:
             result.error = f"Image processing failed: {e}"
 
-    def _analyze_image_forensics(self, opencv_image: 'np.ndarray', pil_image: 'Image') -> Dict[str, Any]:
+    def _analyze_image_forensics(
+        self, opencv_image: "np.ndarray", pil_image: "Image"
+    ) -> Dict[str, Any]:
         """Analyze image for forensic indicators"""
         forensics = {}
 
@@ -318,19 +379,21 @@ class EvidenceProcessor:
             forensics.update(self._detect_clone_regions(opencv_image))
 
         except Exception as e:
-            forensics['forensics_error'] = str(e)
+            forensics["forensics_error"] = str(e)
 
         return forensics
 
-    def _error_level_analysis(self, image: 'Image') -> Dict[str, Any]:
+    def _error_level_analysis(self, image: "Image") -> Dict[str, Any]:
         """Perform Error Level Analysis to detect manipulation"""
         try:
             import cv2
             import numpy as np
 
             # Save image with high quality JPEG
-            temp_path = os.path.join(self.temp_dir, f"temp_ela_{hash(image.tobytes())}.jpg")
-            image.save(temp_path, 'JPEG', quality=95)
+            temp_path = os.path.join(
+                self.temp_dir, f"temp_ela_{hash(image.tobytes())}.jpg"
+            )
+            image.save(temp_path, "JPEG", quality=95)
 
             # Reload and compare
             reloaded = Image.open(temp_path)
@@ -339,24 +402,26 @@ class EvidenceProcessor:
 
             # Calculate difference
             if original_array.shape == reloaded_array.shape:
-                diff = np.abs(original_array.astype(np.int16) - reloaded_array.astype(np.int16))
+                diff = np.abs(
+                    original_array.astype(np.int16) - reloaded_array.astype(np.int16)
+                )
                 ela_score = np.mean(diff)
 
                 # Clean up
                 os.unlink(temp_path)
 
                 return {
-                    'ela_score': float(ela_score),
-                    'manipulation_likelihood': 'high' if ela_score > 10 else 'low'
+                    "ela_score": float(ela_score),
+                    "manipulation_likelihood": "high" if ela_score > 10 else "low",
                 }
             else:
                 os.unlink(temp_path)
-                return {'ela_score': 0.0, 'manipulation_likelihood': 'unknown'}
+                return {"ela_score": 0.0, "manipulation_likelihood": "unknown"}
 
         except Exception as e:
-            return {'ela_error': str(e)}
+            return {"ela_error": str(e)}
 
-    def _analyze_image_noise(self, image: 'np.ndarray') -> Dict[str, Any]:
+    def _analyze_image_noise(self, image: "np.ndarray") -> Dict[str, Any]:
         """Analyze image noise patterns"""
         try:
             import cv2
@@ -374,14 +439,14 @@ class EvidenceProcessor:
             noise_level = 1.0 / (1.0 + laplacian_var / 1000.0)
 
             return {
-                'noise_level': float(noise_level),
-                'sharpness_score': float(laplacian_var)
+                "noise_level": float(noise_level),
+                "sharpness_score": float(laplacian_var),
             }
 
         except Exception as e:
-            return {'noise_analysis_error': str(e)}
+            return {"noise_analysis_error": str(e)}
 
-    def _analyze_image_metadata(self, image: 'Image') -> Dict[str, Any]:
+    def _analyze_image_metadata(self, image: "Image") -> Dict[str, Any]:
         """Analyze image metadata for forensic clues"""
         metadata = {}
 
@@ -389,30 +454,30 @@ class EvidenceProcessor:
             # Extract EXIF data
             exif_data = image._getexif()
             if exif_data:
-                metadata['has_exif'] = True
+                metadata["has_exif"] = True
 
                 # Check for suspicious metadata
-                suspicious_software = ['photoshop', 'gimp', 'paint']
-                software = exif_data.get(305, '').lower()  # Software tag
+                suspicious_software = ["photoshop", "gimp", "paint"]
+                software = exif_data.get(305, "").lower()  # Software tag
                 if any(s in software for s in suspicious_software):
-                    metadata['suspicious_software'] = software
+                    metadata["suspicious_software"] = software
 
                 # Check creation date vs modification date
                 date_original = exif_data.get(36867)  # DateTimeOriginal
                 date_digitized = exif_data.get(36868)  # DateTimeDigitized
 
                 if date_original and date_digitized:
-                    metadata['date_consistency'] = date_original == date_digitized
+                    metadata["date_consistency"] = date_original == date_digitized
 
             else:
-                metadata['has_exif'] = False
+                metadata["has_exif"] = False
 
         except Exception as e:
-            metadata['metadata_error'] = str(e)
+            metadata["metadata_error"] = str(e)
 
         return metadata
 
-    def _detect_compression_artifacts(self, image: 'np.ndarray') -> Dict[str, Any]:
+    def _detect_compression_artifacts(self, image: "np.ndarray") -> Dict[str, Any]:
         """Detect JPEG compression artifacts"""
         try:
             import cv2
@@ -431,14 +496,14 @@ class EvidenceProcessor:
             artifact_score = np.mean(np.abs(high_pass))
 
             return {
-                'compression_artifacts': float(artifact_score),
-                'likely_compressed': artifact_score > 50
+                "compression_artifacts": float(artifact_score),
+                "likely_compressed": artifact_score > 50,
             }
 
         except Exception as e:
-            return {'compression_analysis_error': str(e)}
+            return {"compression_analysis_error": str(e)}
 
-    def _detect_clone_regions(self, image: 'np.ndarray') -> Dict[str, Any]:
+    def _detect_clone_regions(self, image: "np.ndarray") -> Dict[str, Any]:
         """Basic clone region detection"""
         try:
             import cv2
@@ -459,7 +524,7 @@ class EvidenceProcessor:
 
             for y in range(0, height - block_size, block_size):
                 for x in range(0, width - block_size, block_size):
-                    block = gray[y:y+block_size, x:x+block_size]
+                    block = gray[y : y + block_size, x : x + block_size]
 
                     # Look for identical blocks elsewhere
                     for y2 in range(y + block_size, height - block_size, block_size):
@@ -467,7 +532,7 @@ class EvidenceProcessor:
                             if x == x2 and y == y2:
                                 continue
 
-                            block2 = gray[y2:y2+block_size, x2:x2+block_size]
+                            block2 = gray[y2 : y2 + block_size, x2 : x2 + block_size]
                             if np.array_equal(block, block2):
                                 clone_detected = True
                                 break
@@ -479,21 +544,26 @@ class EvidenceProcessor:
                     break
 
             return {
-                'clone_regions_detected': clone_detected,
-                'clone_detection_method': 'basic_block_comparison'
+                "clone_regions_detected": clone_detected,
+                "clone_detection_method": "basic_block_comparison",
             }
 
         except Exception as e:
-            return {'clone_detection_error': str(e)}
+            return {"clone_detection_error": str(e)}
 
-    def _process_document(self, file_path: str, result: ProcessingResult, options: Dict[str, Any]):
+    def _process_document(
+        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+    ):
         """Process document files (PDF, DOCX, etc.)"""
         try:
             mime_type = result.file_type
 
-            if mime_type == 'application/pdf':
+            if mime_type == "application/pdf":
                 self._process_pdf(file_path, result, options)
-            elif mime_type in ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']:
+            elif mime_type in [
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            ]:
                 self._process_docx(file_path, result, options)
             else:
                 result.error = f"Unsupported document type: {mime_type}"
@@ -501,7 +571,9 @@ class EvidenceProcessor:
         except Exception as e:
             result.error = f"Document processing failed: {e}"
 
-    def _process_pdf(self, file_path: str, result: ProcessingResult, options: Dict[str, Any]):
+    def _process_pdf(
+        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+    ):
         """Process PDF files"""
         try:
             # Import here to avoid import errors
@@ -515,18 +587,22 @@ class EvidenceProcessor:
                 text += page.get_text() + "\n"
 
             result.extracted_text = text.strip()
-            result.metadata.update({
-                'pages': len(doc),
-                'title': doc.metadata.get('title', ''),
-                'author': doc.metadata.get('author', ''),
-                'subject': doc.metadata.get('subject', '')
-            })
+            result.metadata.update(
+                {
+                    "pages": len(doc),
+                    "title": doc.metadata.get("title", ""),
+                    "author": doc.metadata.get("author", ""),
+                    "subject": doc.metadata.get("subject", ""),
+                }
+            )
 
             # Extract entities
             result.key_entities = self._extract_entities_from_text(text)
 
             # Quality assessment based on text length and structure
-            result.quality_score = min(1.0, len(text) / 10000)  # Normalize by expected content
+            result.quality_score = min(
+                1.0, len(text) / 10000
+            )  # Normalize by expected content
 
             # Sentiment analysis
             result.sentiment_score = self._analyze_sentiment(text)
@@ -538,7 +614,9 @@ class EvidenceProcessor:
         except Exception as e:
             result.error = f"PDF processing failed: {e}"
 
-    def _process_docx(self, file_path: str, result: ProcessingResult, options: Dict[str, Any]):
+    def _process_docx(
+        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+    ):
         """Process DOCX files"""
         try:
             # Import here to avoid import errors
@@ -552,10 +630,9 @@ class EvidenceProcessor:
                 text += paragraph.text + "\n"
 
             result.extracted_text = text.strip()
-            result.metadata.update({
-                'paragraphs': len(doc.paragraphs),
-                'tables': len(doc.tables)
-            })
+            result.metadata.update(
+                {"paragraphs": len(doc.paragraphs), "tables": len(doc.tables)}
+            )
 
             # Extract entities
             result.key_entities = self._extract_entities_from_text(text)
@@ -571,18 +648,22 @@ class EvidenceProcessor:
         except Exception as e:
             result.error = f"DOCX processing failed: {e}"
 
-    def _process_text(self, file_path: str, result: ProcessingResult, options: Dict[str, Any]):
+    def _process_text(
+        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+    ):
         """Process text files"""
         try:
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                 text = f.read()
 
             result.extracted_text = text
-            result.metadata.update({
-                'lines': len(text.split('\n')),
-                'characters': len(text),
-                'encoding': 'utf-8'
-            })
+            result.metadata.update(
+                {
+                    "lines": len(text.split("\n")),
+                    "characters": len(text),
+                    "encoding": "utf-8",
+                }
+            )
 
             # Extract entities
             result.key_entities = self._extract_entities_from_text(text)
@@ -596,73 +677,92 @@ class EvidenceProcessor:
         except Exception as e:
             result.error = f"Text processing failed: {e}"
 
-    def _process_audio(self, file_path: str, result: ProcessingResult, options: Dict[str, Any]):
+    def _process_audio(
+        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+    ):
         """Process audio files for speech-to-text and analysis"""
         try:
             # Basic audio metadata extraction
-            result.metadata.update({
-                'media_type': 'audio',
-                'processing_capabilities': ['metadata', 'duration', 'format']
-            })
+            result.metadata.update(
+                {
+                    "media_type": "audio",
+                    "processing_capabilities": ["metadata", "duration", "format"],
+                }
+            )
 
             # Placeholder for audio processing - would integrate with speech recognition
             # For now, just extract basic metadata
             try:
                 import wave
-                if file_path.lower().endswith('.wav'):
-                    with wave.open(file_path, 'rb') as wav_file:
+
+                if file_path.lower().endswith(".wav"):
+                    with wave.open(file_path, "rb") as wav_file:
                         duration = wav_file.getnframes() / wav_file.getframerate()
-                        result.metadata.update({
-                            'duration_seconds': duration,
-                            'sample_rate': wav_file.getframerate(),
-                            'channels': wav_file.getnchannels(),
-                            'sample_width': wav_file.getsampwidth()
-                        })
+                        result.metadata.update(
+                            {
+                                "duration_seconds": duration,
+                                "sample_rate": wav_file.getframerate(),
+                                "channels": wav_file.getnchannels(),
+                                "sample_width": wav_file.getsampwidth(),
+                            }
+                        )
             except ImportError:
-                result.metadata['note'] = 'Install wave module for WAV file analysis'
+                result.metadata["note"] = "Install wave module for WAV file analysis"
 
             # Speech-to-text placeholder (would integrate with Google Speech API, etc.)
-            result.extracted_text = "[Audio content - speech-to-text processing not implemented]"
+            result.extracted_text = (
+                "[Audio content - speech-to-text processing not implemented]"
+            )
             result.quality_score = 0.5  # Placeholder quality score
 
         except Exception as e:
             result.error = f"Audio processing failed: {e}"
 
-    def _process_video(self, file_path: str, result: ProcessingResult, options: Dict[str, Any]):
+    def _process_video(
+        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+    ):
         """Process video files for frame analysis and metadata"""
         try:
-            result.metadata.update({
-                'media_type': 'video',
-                'processing_capabilities': ['metadata', 'frames', 'audio_track']
-            })
+            result.metadata.update(
+                {
+                    "media_type": "video",
+                    "processing_capabilities": ["metadata", "frames", "audio_track"],
+                }
+            )
 
             # Video metadata extraction (placeholder - would use OpenCV, etc.)
-            result.metadata.update({
-                'estimated_duration': 'Unknown',  # Would extract from video
-                'resolution': 'Unknown',  # Would extract width/height
-                'frame_rate': 'Unknown',  # Would extract FPS
-                'has_audio': False  # Would check for audio track
-            })
+            result.metadata.update(
+                {
+                    "estimated_duration": "Unknown",  # Would extract from video
+                    "resolution": "Unknown",  # Would extract width/height
+                    "frame_rate": "Unknown",  # Would extract FPS
+                    "has_audio": False,  # Would check for audio track
+                }
+            )
 
             # Frame analysis placeholder
             result.extracted_text = "[Video content - frame analysis not implemented]"
-            result.key_entities = [{
-                'type': 'video_metadata',
-                'confidence': 1.0,
-                'text': f'Video file: {os.path.basename(file_path)}'
-            }]
+            result.key_entities = [
+                {
+                    "type": "video_metadata",
+                    "confidence": 1.0,
+                    "text": f"Video file: {os.path.basename(file_path)}",
+                }
+            ]
             result.quality_score = 0.6  # Placeholder quality score
 
         except Exception as e:
             result.error = f"Video processing failed: {e}"
 
-    def _process_spreadsheet(self, file_path: str, result: ProcessingResult, options: Dict[str, Any]):
+    def _process_spreadsheet(
+        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+    ):
         """Process Excel/CSV files"""
         try:
             import pandas as pd
 
             # Read spreadsheet
-            if file_path.lower().endswith('.csv'):
+            if file_path.lower().endswith(".csv"):
                 df = pd.read_csv(file_path)
             else:
                 df = pd.read_excel(file_path)
@@ -672,18 +772,22 @@ class EvidenceProcessor:
             for col in df.columns:
                 text_content.extend([str(val) for val in df[col].dropna()])
 
-            result.extracted_text = '\n'.join(text_content)
+            result.extracted_text = "\n".join(text_content)
 
             # Metadata
-            result.metadata.update({
-                'rows': len(df),
-                'columns': len(df.columns),
-                'column_names': list(df.columns),
-                'data_types': {col: str(df[col].dtype) for col in df.columns}
-            })
+            result.metadata.update(
+                {
+                    "rows": len(df),
+                    "columns": len(df.columns),
+                    "column_names": list(df.columns),
+                    "data_types": {col: str(df[col].dtype) for col in df.columns},
+                }
+            )
 
             # Extract entities (financial data patterns)
-            result.key_entities = self._extract_financial_entities(result.extracted_text)
+            result.key_entities = self._extract_financial_entities(
+                result.extracted_text
+            )
 
             # Quality assessment
             result.quality_score = min(1.0, len(df) / 1000)  # Based on data volume
@@ -693,7 +797,9 @@ class EvidenceProcessor:
         except Exception as e:
             result.error = f"Spreadsheet processing failed: {e}"
 
-    def _process_presentation(self, file_path: str, result: ProcessingResult, options: Dict[str, Any]):
+    def _process_presentation(
+        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+    ):
         """Process PowerPoint files"""
         try:
             from pptx import Presentation
@@ -706,15 +812,16 @@ class EvidenceProcessor:
                     if hasattr(shape, "text"):
                         text_content.append(shape.text)
 
-            result.extracted_text = '\n\n'.join(text_content)
+            result.extracted_text = "\n\n".join(text_content)
 
-            result.metadata.update({
-                'slides': len(prs.slides),
-                'media_type': 'presentation'
-            })
+            result.metadata.update(
+                {"slides": len(prs.slides), "media_type": "presentation"}
+            )
 
             # Extract entities
-            result.key_entities = self._extract_entities_from_text(result.extracted_text)
+            result.key_entities = self._extract_entities_from_text(
+                result.extracted_text
+            )
             result.quality_score = min(1.0, len(text_content) / 100)
 
         except ImportError:
@@ -722,44 +829,61 @@ class EvidenceProcessor:
         except Exception as e:
             result.error = f"Presentation processing failed: {e}"
 
-    def _process_archive(self, file_path: str, result: ProcessingResult, options: Dict[str, Any]):
+    def _process_archive(
+        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+    ):
         """Process archive files (ZIP, RAR, etc.)"""
         try:
             import zipfile
 
-            with zipfile.ZipFile(file_path, 'r') as zip_ref:
+            with zipfile.ZipFile(file_path, "r") as zip_ref:
                 file_list = zip_ref.namelist()
                 file_info = []
 
                 for info in zip_ref.filelist:
-                    file_info.append({
-                        'filename': info.filename,
-                        'size': info.file_size,
-                        'compressed_size': info.compress_size,
-                        'date_time': str(info.date_time)
-                    })
+                    file_info.append(
+                        {
+                            "filename": info.filename,
+                            "size": info.file_size,
+                            "compressed_size": info.compress_size,
+                            "date_time": str(info.date_time),
+                        }
+                    )
 
-                result.metadata.update({
-                    'archive_type': 'zip',
-                    'total_files': len(file_list),
-                    'files': file_info,
-                    'compression_ratio': sum(f['compressed_size'] for f in file_info) / max(1, sum(f['size'] for f in file_info))
-                })
+                result.metadata.update(
+                    {
+                        "archive_type": "zip",
+                        "total_files": len(file_list),
+                        "files": file_info,
+                        "compression_ratio": sum(
+                            f["compressed_size"] for f in file_info
+                        )
+                        / max(1, sum(f["size"] for f in file_info)),
+                    }
+                )
 
                 # Extract text from text files in archive
-                text_files = [f for f in file_list if any(f.lower().endswith(ext) for ext in ['.txt', '.md', '.csv'])]
+                text_files = [
+                    f
+                    for f in file_list
+                    if any(f.lower().endswith(ext) for ext in [".txt", ".md", ".csv"])
+                ]
                 extracted_texts = []
 
                 for text_file in text_files[:5]:  # Limit to first 5 text files
                     try:
                         with zip_ref.open(text_file) as file:
-                            content = file.read().decode('utf-8', errors='ignore')
-                            extracted_texts.append(f"=== {text_file} ===\n{content[:1000]}...")
+                            content = file.read().decode("utf-8", errors="ignore")
+                            extracted_texts.append(
+                                f"=== {text_file} ===\n{content[:1000]}..."
+                            )
                     except:
                         continue
 
-                result.extracted_text = '\n\n'.join(extracted_texts)
-                result.quality_score = min(1.0, len(file_list) / 50)  # Based on archive size
+                result.extracted_text = "\n\n".join(extracted_texts)
+                result.quality_score = min(
+                    1.0, len(file_list) / 50
+                )  # Based on archive size
 
         except ImportError:
             result.error = "Archive processing requires zipfile (built-in)"
@@ -773,39 +897,33 @@ class EvidenceProcessor:
 
         # Amount patterns
         amount_patterns = [
-            r'\$[\d,]+\.?\d*',  # $1,234.56
-            r'[\d,]+\.?\d*\s*(?:USD|dollars?|bucks?)',  # 1234 USD
+            r"\$[\d,]+\.?\d*",  # $1,234.56
+            r"[\d,]+\.?\d*\s*(?:USD|dollars?|bucks?)",  # 1234 USD
         ]
 
         for pattern in amount_patterns:
             matches = re.findall(pattern, text, re.IGNORECASE)
             for match in matches:
-                entities.append({
-                    'type': 'amount',
-                    'text': match,
-                    'confidence': 0.9
-                })
+                entities.append({"type": "amount", "text": match, "confidence": 0.9})
 
         # Account numbers (simplified)
         account_patterns = [
-            r'\b\d{10,16}\b',  # 10-16 digit numbers (potential account numbers)
+            r"\b\d{10,16}\b",  # 10-16 digit numbers (potential account numbers)
         ]
 
         for pattern in account_patterns:
             matches = re.findall(pattern, text)
             for match in matches:
-                entities.append({
-                    'type': 'account_number',
-                    'text': match,
-                    'confidence': 0.7
-                })
+                entities.append(
+                    {"type": "account_number", "text": match, "confidence": 0.7}
+                )
 
         return entities
 
     def _detect_mime_type(self, file_path: str) -> str:
         """Detect MIME type of file"""
         mime_type, _ = mimetypes.guess_type(file_path)
-        return mime_type or 'application/octet-stream'
+        return mime_type or "application/octet-stream"
 
     def _generate_file_id(self, file_path: str) -> str:
         """Generate unique file ID based on path and content"""
@@ -821,40 +939,26 @@ class EvidenceProcessor:
         import re
 
         # Email addresses
-        emails = re.findall(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', text)
+        emails = re.findall(
+            r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b", text
+        )
         for email in emails:
-            entities.append({
-                'type': 'email',
-                'value': email,
-                'confidence': 0.9
-            })
+            entities.append({"type": "email", "value": email, "confidence": 0.9})
 
         # Phone numbers (basic pattern)
-        phones = re.findall(r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b', text)
+        phones = re.findall(r"\b\d{3}[-.]?\d{3}[-.]?\d{4}\b", text)
         for phone in phones:
-            entities.append({
-                'type': 'phone',
-                'value': phone,
-                'confidence': 0.8
-            })
+            entities.append({"type": "phone", "value": phone, "confidence": 0.8})
 
         # Currency amounts
-        amounts = re.findall(r'\$[\d,]+(?:\.\d{2})?', text)
+        amounts = re.findall(r"\$[\d,]+(?:\.\d{2})?", text)
         for amount in amounts:
-            entities.append({
-                'type': 'currency',
-                'value': amount,
-                'confidence': 0.95
-            })
+            entities.append({"type": "currency", "value": amount, "confidence": 0.95})
 
         # Dates (basic pattern)
-        dates = re.findall(r'\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b', text)
+        dates = re.findall(r"\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b", text)
         for date in dates:
-            entities.append({
-                'type': 'date',
-                'value': date,
-                'confidence': 0.7
-            })
+            entities.append({"type": "date", "value": date, "confidence": 0.7})
 
         return entities
 
@@ -869,7 +973,7 @@ class EvidenceProcessor:
             size_score = min(1.0, total_pixels / (1920 * 1080))  # HD baseline
 
             # Color depth factor
-            color_score = 1.0 if image.mode == 'RGB' else 0.7
+            color_score = 1.0 if image.mode == "RGB" else 0.7
 
             # Overall quality score
             return (size_score + color_score) / 2
@@ -883,8 +987,23 @@ class EvidenceProcessor:
             return 0.0
 
         # Simple keyword-based sentiment analysis
-        positive_words = ['good', 'excellent', 'approved', 'verified', 'confirmed', 'success']
-        negative_words = ['bad', 'fraud', 'suspicious', 'denied', 'rejected', 'error', 'failed']
+        positive_words = [
+            "good",
+            "excellent",
+            "approved",
+            "verified",
+            "confirmed",
+            "success",
+        ]
+        negative_words = [
+            "bad",
+            "fraud",
+            "suspicious",
+            "denied",
+            "rejected",
+            "error",
+            "failed",
+        ]
 
         text_lower = text.lower()
         positive_count = sum(1 for word in positive_words if word in text_lower)
@@ -901,37 +1020,44 @@ class EvidenceProcessor:
 
     def _update_batch_metrics(self, results: List[ProcessingResult], batch_time: float):
         """Update performance metrics"""
-        self.metrics['total_processed'] += len(results)
-        self.metrics['total_processing_time'] += batch_time
+        self.metrics["total_processed"] += len(results)
+        self.metrics["total_processing_time"] += batch_time
 
         for result in results:
             if result.error:
-                self.metrics['errors'] += 1
+                self.metrics["errors"] += 1
 
-            file_type = result.file_type.split('/')[0] if '/' in result.file_type else 'unknown'
-            if file_type not in self.metrics['by_type']:
-                self.metrics['by_type'][file_type] = {'count': 0, 'total_time': 0.0}
+            file_type = (
+                result.file_type.split("/")[0] if "/" in result.file_type else "unknown"
+            )
+            if file_type not in self.metrics["by_type"]:
+                self.metrics["by_type"][file_type] = {"count": 0, "total_time": 0.0}
 
-            self.metrics['by_type'][file_type]['count'] += 1
-            self.metrics['by_type'][file_type]['total_time'] += result.processing_time
+            self.metrics["by_type"][file_type]["count"] += 1
+            self.metrics["by_type"][file_type]["total_time"] += result.processing_time
 
     def get_performance_metrics(self) -> Dict[str, Any]:
         """Get processing performance metrics"""
-        avg_time = self.metrics['total_processing_time'] / max(1, self.metrics['total_processed'])
+        avg_time = self.metrics["total_processing_time"] / max(
+            1, self.metrics["total_processed"]
+        )
 
         return {
-            'total_processed': self.metrics['total_processed'],
-            'total_processing_time': self.metrics['total_processing_time'],
-            'average_processing_time': avg_time,
-            'error_rate': self.metrics['errors'] / max(1, self.metrics['total_processed']),
-            'throughput': self.metrics['total_processed'] / max(1, self.metrics['total_processing_time']),
-            'by_type': self.metrics['by_type']
+            "total_processed": self.metrics["total_processed"],
+            "total_processing_time": self.metrics["total_processing_time"],
+            "average_processing_time": avg_time,
+            "error_rate": self.metrics["errors"]
+            / max(1, self.metrics["total_processed"]),
+            "throughput": self.metrics["total_processed"]
+            / max(1, self.metrics["total_processing_time"]),
+            "by_type": self.metrics["by_type"],
         }
 
     def cleanup(self):
         """Clean up resources"""
         self.executor.shutdown(wait=True)
         logger.info("Evidence processor cleaned up")
+
 
 # Create singleton instance
 evidence_processor = EvidenceProcessor(max_workers=4)

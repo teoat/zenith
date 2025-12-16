@@ -10,11 +10,12 @@ import logging
 import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
 
 from app.services.diagnostics.diagnostic_service import DiagnosticService
 
 logger = logging.getLogger(__name__)
+
 
 class AutomatedScoringSystem:
     """Automated scoring system for continuous health monitoring."""
@@ -28,7 +29,8 @@ class AutomatedScoringSystem:
     def _init_db(self):
         """Initialize scoring database."""
         with sqlite3.connect(self.db_path) as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS health_scores (
                     id INTEGER PRIMARY KEY,
                     timestamp TEXT NOT NULL,
@@ -40,9 +42,11 @@ class AutomatedScoringSystem:
                     trend TEXT,  -- improving, declining, stable
                     created_at TEXT DEFAULT CURRENT_TIMESTAMP
                 )
-            """)
+            """
+            )
 
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS overall_scores (
                     id INTEGER PRIMARY KEY,
                     timestamp TEXT NOT NULL,
@@ -52,12 +56,19 @@ class AutomatedScoringSystem:
                     trend TEXT,
                     created_at TEXT DEFAULT CURRENT_TIMESTAMP
                 )
-            """)
+            """
+            )
 
             # Indexes for performance
-            conn.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON health_scores(timestamp)")
-            conn.execute("CREATE INDEX IF NOT EXISTS idx_dimension ON health_scores(dimension)")
-            conn.execute("CREATE INDEX IF NOT EXISTS idx_overall_timestamp ON overall_scores(timestamp)")
+            conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_timestamp ON health_scores(timestamp)"
+            )
+            conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_dimension ON health_scores(dimension)"
+            )
+            conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_overall_timestamp ON overall_scores(timestamp)"
+            )
 
     async def run_scoring_cycle(self) -> Dict[str, Any]:
         """Run a complete scoring cycle."""
@@ -82,7 +93,7 @@ class AutomatedScoringSystem:
                 "dimensions": diagnostics,
                 "trends": trends,
                 "alerts": alerts,
-                "recommendations": diagnostics.get("recommendations", [])
+                "recommendations": diagnostics.get("recommendations", []),
             }
 
             logger.info(f"Scoring cycle completed: {result['overall_score']:.1%}")
@@ -92,7 +103,9 @@ class AutomatedScoringSystem:
             logger.error(f"Scoring cycle failed: {e}")
             return {"error": str(e), "timestamp": datetime.now().isoformat()}
 
-    async def _calculate_trends(self, current_diagnostics: Dict[str, Any]) -> Dict[str, Any]:
+    async def _calculate_trends(
+        self, current_diagnostics: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Calculate trends based on historical data."""
         trends = {}
 
@@ -104,18 +117,26 @@ class AutomatedScoringSystem:
                 continue
 
             current_score = data["health_score"]
-            dimension_trend = self._analyze_trend(dimension, current_score, historical_data)
+            dimension_trend = self._analyze_trend(
+                dimension, current_score, historical_data
+            )
 
             trends[dimension] = dimension_trend
 
         # Overall trend
         current_overall = current_diagnostics.get("overall_health_score", 0)
-        overall_historical = [s["overall_score"] for s in historical_data.get("overall", [])]
-        trends["overall"] = self._analyze_trend("overall", current_overall, {"overall": overall_historical})
+        overall_historical = [
+            s["overall_score"] for s in historical_data.get("overall", [])
+        ]
+        trends["overall"] = self._analyze_trend(
+            "overall", current_overall, {"overall": overall_historical}
+        )
 
         return trends
 
-    def _analyze_trend(self, dimension: str, current_score: float, historical: Dict[str, List[float]]) -> Dict[str, Any]:
+    def _analyze_trend(
+        self, dimension: str, current_score: float, historical: Dict[str, List[float]]
+    ) -> Dict[str, Any]:
         """Analyze trend for a specific dimension."""
         historical_scores = historical.get(dimension, [])
 
@@ -138,7 +159,10 @@ class AutomatedScoringSystem:
 
         # Calculate volatility
         if len(recent_scores) > 1:
-            volatility = sum(abs(recent_scores[i] - recent_scores[i-1]) for i in range(1, len(recent_scores))) / len(recent_scores)
+            volatility = sum(
+                abs(recent_scores[i] - recent_scores[i - 1])
+                for i in range(1, len(recent_scores))
+            ) / len(recent_scores)
         else:
             volatility = 0
 
@@ -146,10 +170,14 @@ class AutomatedScoringSystem:
             "trend": trend,
             "change": change,
             "volatility": volatility,
-            "confidence": min(len(historical_scores) / 10, 1.0)  # More data = higher confidence
+            "confidence": min(
+                len(historical_scores) / 10, 1.0
+            ),  # More data = higher confidence
         }
 
-    def _get_historical_scores(self, days_back: int = 7) -> Dict[str, List[Dict[str, Any]]]:
+    def _get_historical_scores(
+        self, days_back: int = 7
+    ) -> Dict[str, List[Dict[str, Any]]]:
         """Get historical scoring data."""
         cutoff_date = (datetime.now() - timedelta(days=days_back)).isoformat()
 
@@ -159,18 +187,17 @@ class AutomatedScoringSystem:
             # Get overall scores
             cursor = conn.execute(
                 "SELECT timestamp, overall_score FROM overall_scores WHERE timestamp >= ? ORDER BY timestamp",
-                (cutoff_date,)
+                (cutoff_date,),
             )
             for row in cursor:
-                historical["overall"].append({
-                    "timestamp": row[0],
-                    "overall_score": row[1]
-                })
+                historical["overall"].append(
+                    {"timestamp": row[0], "overall_score": row[1]}
+                )
 
             # Get dimension scores
             cursor = conn.execute(
                 "SELECT dimension, score FROM health_scores WHERE timestamp >= ? ORDER BY timestamp",
-                (cutoff_date,)
+                (cutoff_date,),
             )
             for row in cursor:
                 dimension = row[0]
@@ -180,7 +207,9 @@ class AutomatedScoringSystem:
 
         return historical
 
-    async def _store_scoring_results(self, diagnostics: Dict[str, Any], trends: Dict[str, Any]):
+    async def _store_scoring_results(
+        self, diagnostics: Dict[str, Any], trends: Dict[str, Any]
+    ):
         """Store scoring results in database."""
         timestamp = datetime.now().isoformat()
 
@@ -191,35 +220,49 @@ class AutomatedScoringSystem:
                     continue
 
                 trend_info = trends.get(dimension, {})
-                conn.execute("""
+                conn.execute(
+                    """
                     INSERT INTO health_scores (timestamp, dimension, score, metrics, alerts, recommendations, trend)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    timestamp,
-                    dimension,
-                    data["health_score"],
-                    json.dumps(data.get("metrics", {})),
-                    json.dumps(data.get("alerts", [])),
-                    json.dumps(data.get("recommendations", [])),
-                    trend_info.get("trend", "unknown")
-                ))
+                """,
+                    (
+                        timestamp,
+                        dimension,
+                        data["health_score"],
+                        json.dumps(data.get("metrics", {})),
+                        json.dumps(data.get("alerts", [])),
+                        json.dumps(data.get("recommendations", [])),
+                        trend_info.get("trend", "unknown"),
+                    ),
+                )
 
             # Store overall score
             overall_trend = trends.get("overall", {})
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO overall_scores (timestamp, overall_score, dimensions_score, recommendations, trend)
                 VALUES (?, ?, ?, ?, ?)
-            """, (
-                timestamp,
-                diagnostics.get("overall_health_score", 0),
-                json.dumps({k: v for k, v in diagnostics.items() if isinstance(v, dict) and "health_score" in v}),
-                json.dumps(diagnostics.get("recommendations", [])),
-                overall_trend.get("trend", "unknown")
-            ))
+            """,
+                (
+                    timestamp,
+                    diagnostics.get("overall_health_score", 0),
+                    json.dumps(
+                        {
+                            k: v
+                            for k, v in diagnostics.items()
+                            if isinstance(v, dict) and "health_score" in v
+                        }
+                    ),
+                    json.dumps(diagnostics.get("recommendations", [])),
+                    overall_trend.get("trend", "unknown"),
+                ),
+            )
 
             conn.commit()
 
-    def _generate_alerts(self, diagnostics: Dict[str, Any], trends: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _generate_alerts(
+        self, diagnostics: Dict[str, Any], trends: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Generate alerts based on diagnostics and trends."""
         alerts = []
 
@@ -227,20 +270,27 @@ class AutomatedScoringSystem:
 
         # Critical alerts
         if overall_score < 0.8:
-            alerts.append({
-                "severity": "critical",
-                "message": f"Overall system health critically low: {overall_score:.1%}",
-                "action_required": "Immediate investigation required"
-            })
+            alerts.append(
+                {
+                    "severity": "critical",
+                    "message": f"Overall system health critically low: {overall_score:.1%}",
+                    "action_required": "Immediate investigation required",
+                }
+            )
 
         # Score drop alerts
         overall_trend = trends.get("overall", {})
-        if overall_trend.get("trend") == "declining" and abs(overall_trend.get("change", 0)) > 0.05:
-            alerts.append({
-                "severity": "high",
-                "message": f"System health declining: {overall_trend['change']:.1%} change",
-                "action_required": "Investigate root causes"
-            })
+        if (
+            overall_trend.get("trend") == "declining"
+            and abs(overall_trend.get("change", 0)) > 0.05
+        ):
+            alerts.append(
+                {
+                    "severity": "high",
+                    "message": f"System health declining: {overall_trend['change']:.1%} change",
+                    "action_required": "Investigate root causes",
+                }
+            )
 
         # Dimension-specific alerts
         for dimension, data in diagnostics.items():
@@ -251,17 +301,21 @@ class AutomatedScoringSystem:
             dimension_trend = trends.get(dimension, {})
 
             if score < 0.7:
-                alerts.append({
-                    "severity": "high",
-                    "message": f"{dimension.replace('_', ' ').title()} health critical: {score:.1%}",
-                    "action_required": "Immediate attention required"
-                })
+                alerts.append(
+                    {
+                        "severity": "high",
+                        "message": f"{dimension.replace('_', ' ').title()} health critical: {score:.1%}",
+                        "action_required": "Immediate attention required",
+                    }
+                )
             elif dimension_trend.get("trend") == "declining":
-                alerts.append({
-                    "severity": "medium",
-                    "message": f"{dimension.replace('_', ' ').title()} trending downward",
-                    "action_required": "Monitor closely"
-                })
+                alerts.append(
+                    {
+                        "severity": "medium",
+                        "message": f"{dimension.replace('_', ' ').title()} trending downward",
+                        "action_required": "Monitor closely",
+                    }
+                )
 
         return alerts
 
@@ -269,40 +323,32 @@ class AutomatedScoringSystem:
         """Get historical scoring data for dashboard."""
         cutoff_date = (datetime.now() - timedelta(days=days_back)).isoformat()
 
-        history = {
-            "overall_scores": [],
-            "dimension_trends": {},
-            "alerts_summary": []
-        }
+        history = {"overall_scores": [], "dimension_trends": {}, "alerts_summary": []}
 
         with sqlite3.connect(self.db_path) as conn:
             # Overall scores
             cursor = conn.execute(
                 "SELECT timestamp, overall_score, trend FROM overall_scores WHERE timestamp >= ? ORDER BY timestamp",
-                (cutoff_date,)
+                (cutoff_date,),
             )
             for row in cursor:
-                history["overall_scores"].append({
-                    "timestamp": row[0],
-                    "score": row[1],
-                    "trend": row[2]
-                })
+                history["overall_scores"].append(
+                    {"timestamp": row[0], "score": row[1], "trend": row[2]}
+                )
 
             # Dimension trends
             cursor = conn.execute(
                 "SELECT dimension, timestamp, score, trend FROM health_scores WHERE timestamp >= ? ORDER BY timestamp",
-                (cutoff_date,)
+                (cutoff_date,),
             )
             for row in cursor:
                 dimension = row[0]
                 if dimension not in history["dimension_trends"]:
                     history["dimension_trends"][dimension] = []
 
-                history["dimension_trends"][dimension].append({
-                    "timestamp": row[1],
-                    "score": row[2],
-                    "trend": row[3]
-                })
+                history["dimension_trends"][dimension].append(
+                    {"timestamp": row[1], "score": row[2], "trend": row[3]}
+                )
 
         return history
 
@@ -318,8 +364,10 @@ class AutomatedScoringSystem:
 
             await asyncio.sleep(interval_minutes * 60)
 
+
 # Global scoring system instance
 scoring_system = AutomatedScoringSystem()
+
 
 async def main():
     """Main function for testing."""
@@ -332,6 +380,7 @@ async def main():
     # Get history
     history = await scoring_system.get_scoring_history(days_back=1)
     print(f"Historical data points: {len(history.get('overall_scores', []))}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -5,17 +5,18 @@ Comprehensive platform for running controlled experiments and accelerating innov
 """
 
 import asyncio
-import time
 import json
 import logging
-from typing import Dict, List, Any, Optional, Tuple, Callable
-from dataclasses import dataclass, field
-from enum import Enum
-from datetime import datetime, timedelta
-import statistics
 import random
+import statistics
+import time
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
+from enum import Enum
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
+
 
 class ExperimentStatus(Enum):
     PROPOSED = "proposed"
@@ -25,6 +26,7 @@ class ExperimentStatus(Enum):
     FAILED = "failed"
     CANCELLED = "cancelled"
 
+
 class ExperimentType(Enum):
     A_B_TEST = "a_b_test"
     MULTIVARIATE = "multivariate"
@@ -33,18 +35,22 @@ class ExperimentType(Enum):
     CHAOS_ENGINEERING = "chaos_engineering"
     PERFORMANCE_TEST = "performance_test"
 
+
 @dataclass
 class ExperimentVariant:
     """A/B test variant"""
+
     variant_id: str
     name: str
     configuration: Dict[str, Any]
     traffic_percentage: float
     metrics: Dict[str, float] = field(default_factory=dict)
 
+
 @dataclass
 class Experiment:
     """Enhanced experiment representation"""
+
     experiment_id: str
     title: str
     hypothesis: str
@@ -60,6 +66,7 @@ class Experiment:
     lessons_learned: List[str] = field(default_factory=list)
     statistical_significance: Optional[float] = None
     confidence_interval: Optional[Tuple[float, float]] = None
+
 
 class EnhancedExperimentationPlatform:
     """Comprehensive experimentation platform with advanced features"""
@@ -78,54 +85,52 @@ class EnhancedExperimentationPlatform:
     def _initialize_experiment_templates(self):
         """Initialize experiment templates for rapid experimentation"""
         self.experiment_templates = {
-            'a_b_feature_rollout': {
-                'type': ExperimentType.A_B_TEST,
-                'description': 'Standard A/B test for feature rollout',
-                'variants': [
-                    {'name': 'control', 'percentage': 50},
-                    {'name': 'treatment', 'percentage': 50}
+            "a_b_feature_rollout": {
+                "type": ExperimentType.A_B_TEST,
+                "description": "Standard A/B test for feature rollout",
+                "variants": [
+                    {"name": "control", "percentage": 50},
+                    {"name": "treatment", "percentage": 50},
                 ],
-                'metrics': ['conversion_rate', 'user_engagement', 'error_rate'],
-                'duration_days': 14,
-                'min_sample_size': 5000
+                "metrics": ["conversion_rate", "user_engagement", "error_rate"],
+                "duration_days": 14,
+                "min_sample_size": 5000,
             },
-            'canary_deployment': {
-                'type': ExperimentType.CANARY_DEPLOYMENT,
-                'description': 'Gradual rollout with automated rollback',
-                'variants': [
-                    {'name': 'baseline', 'percentage': 95},
-                    {'name': 'canary', 'percentage': 5}
+            "canary_deployment": {
+                "type": ExperimentType.CANARY_DEPLOYMENT,
+                "description": "Gradual rollout with automated rollback",
+                "variants": [
+                    {"name": "baseline", "percentage": 95},
+                    {"name": "canary", "percentage": 5},
                 ],
-                'metrics': ['response_time', 'error_rate', 'resource_usage'],
-                'duration_days': 7,
-                'auto_rollback_triggers': ['error_rate > 0.05', 'response_time > 2.0']
+                "metrics": ["response_time", "error_rate", "resource_usage"],
+                "duration_days": 7,
+                "auto_rollback_triggers": ["error_rate > 0.05", "response_time > 2.0"],
             },
-            'chaos_experiment': {
-                'type': ExperimentType.CHAOS_ENGINEERING,
-                'description': 'Controlled failure injection testing',
-                'variants': [
-                    {'name': 'baseline', 'percentage': 100}
-                ],
-                'metrics': ['system_stability', 'recovery_time', 'error_handling'],
-                'duration_minutes': 30,
-                'failure_types': ['cpu_stress', 'memory_pressure', 'network_partition']
-            }
+            "chaos_experiment": {
+                "type": ExperimentType.CHAOS_ENGINEERING,
+                "description": "Controlled failure injection testing",
+                "variants": [{"name": "baseline", "percentage": 100}],
+                "metrics": ["system_stability", "recovery_time", "error_handling"],
+                "duration_minutes": 30,
+                "failure_types": ["cpu_stress", "memory_pressure", "network_partition"],
+            },
         }
 
     def _setup_metrics_collection(self):
         """Setup automated metrics collection"""
         self.metrics_collectors = {
-            'conversion_rate': self._collect_conversion_metrics,
-            'user_engagement': self._collect_engagement_metrics,
-            'error_rate': self._collect_error_metrics,
-            'response_time': self._collect_performance_metrics,
-            'resource_usage': self._collect_resource_metrics,
-            'system_stability': self._collect_stability_metrics
+            "conversion_rate": self._collect_conversion_metrics,
+            "user_engagement": self._collect_engagement_metrics,
+            "error_rate": self._collect_error_metrics,
+            "response_time": self._collect_performance_metrics,
+            "resource_usage": self._collect_resource_metrics,
+            "system_stability": self._collect_stability_metrics,
         }
 
-    async def create_experiment_from_template(self, template_name: str,
-                                            title: str, hypothesis: str,
-                                            owner: str) -> Experiment:
+    async def create_experiment_from_template(
+        self, template_name: str, title: str, hypothesis: str, owner: str
+    ) -> Experiment:
         """Rapid experiment creation from template"""
         if template_name not in self.experiment_templates:
             raise ValueError(f"Template {template_name} not found")
@@ -135,12 +140,12 @@ class EnhancedExperimentationPlatform:
 
         # Create variants from template
         variants = []
-        for i, variant_config in enumerate(template['variants']):
+        for i, variant_config in enumerate(template["variants"]):
             variant = ExperimentVariant(
                 variant_id=f"{experiment_id}_v{i}",
-                name=variant_config['name'],
+                name=variant_config["name"],
                 configuration={},
-                traffic_percentage=variant_config['percentage']
+                traffic_percentage=variant_config["percentage"],
             )
             variants.append(variant)
 
@@ -148,12 +153,12 @@ class EnhancedExperimentationPlatform:
             experiment_id=experiment_id,
             title=title,
             hypothesis=hypothesis,
-            type=template['type'],
+            type=template["type"],
             variants=variants,
-            success_criteria=template.get('success_criteria', []),
+            success_criteria=template.get("success_criteria", []),
             status=ExperimentStatus.PROPOSED,
             owner=owner,
-            created_at=datetime.now()
+            created_at=datetime.now(),
         )
 
         self.experiments[experiment_id] = experiment
@@ -190,22 +195,30 @@ class EnhancedExperimentationPlatform:
             # Collect metrics for all variants
             for variant in experiment.variants:
                 for metric_name in self.metrics_collectors.keys():
-                    if metric_name in experiment.results.get('target_metrics', []):
+                    if metric_name in experiment.results.get("target_metrics", []):
                         try:
-                            value = await self.metrics_collectors[metric_name](variant.variant_id)
+                            value = await self.metrics_collectors[metric_name](
+                                variant.variant_id
+                            )
                             variant.metrics[metric_name] = value
                         except Exception as e:
-                            logger.error(f"Failed to collect {metric_name} for {variant.variant_id}: {e}")
+                            logger.error(
+                                f"Failed to collect {metric_name} for {variant.variant_id}: {e}"
+                            )
 
             # Check for statistical significance
             if self._check_statistical_significance(experiment):
-                await self._complete_experiment(experiment_id, "Statistical significance achieved")
+                await self._complete_experiment(
+                    experiment_id, "Statistical significance achieved"
+                )
                 break
 
             # Check auto-rollback conditions for canary deployments
             if experiment.type == ExperimentType.CANARY_DEPLOYMENT:
                 if self._should_rollback(experiment):
-                    await self._rollback_experiment(experiment_id, "Auto-rollback triggered")
+                    await self._rollback_experiment(
+                        experiment_id, "Auto-rollback triggered"
+                    )
                     break
 
     def _check_statistical_significance(self, experiment: Experiment) -> bool:
@@ -215,8 +228,13 @@ class EnhancedExperimentationPlatform:
 
         # Simplified statistical significance check
         # In production, use proper statistical tests (t-test, chi-square, etc.)
-        control_variant = next((v for v in experiment.variants if v.name == 'control'), experiment.variants[0])
-        treatment_variant = next((v for v in experiment.variants if v.name != control_variant.name), None)
+        control_variant = next(
+            (v for v in experiment.variants if v.name == "control"),
+            experiment.variants[0],
+        )
+        treatment_variant = next(
+            (v for v in experiment.variants if v.name != control_variant.name), None
+        )
 
         if not treatment_variant:
             return False
@@ -228,8 +246,8 @@ class EnhancedExperimentationPlatform:
         # Calculate effect size and confidence
         # This is a simplified implementation
         effect_size = abs(
-            treatment_variant.metrics.get('conversion_rate', 0) -
-            control_variant.metrics.get('conversion_rate', 0)
+            treatment_variant.metrics.get("conversion_rate", 0)
+            - control_variant.metrics.get("conversion_rate", 0)
         )
 
         # Assume significance if effect size > 5% and confidence > threshold
@@ -237,13 +255,15 @@ class EnhancedExperimentationPlatform:
 
     def _should_rollback(self, experiment: Experiment) -> bool:
         """Check if canary deployment should be rolled back"""
-        canary_variant = next((v for v in experiment.variants if v.name == 'canary'), None)
+        canary_variant = next(
+            (v for v in experiment.variants if v.name == "canary"), None
+        )
         if not canary_variant:
             return False
 
         # Check rollback triggers
-        error_rate = canary_variant.metrics.get('error_rate', 0)
-        response_time = canary_variant.metrics.get('response_time', 0)
+        error_rate = canary_variant.metrics.get("error_rate", 0)
+        response_time = canary_variant.metrics.get("response_time", 0)
 
         return error_rate > 0.05 or response_time > 2.0
 
@@ -256,7 +276,7 @@ class EnhancedExperimentationPlatform:
         # Analyze results
         results = self._analyze_experiment_results(experiment)
         experiment.results = results
-        experiment.statistical_significance = results.get('significance', 0.0)
+        experiment.statistical_significance = results.get("significance", 0.0)
 
         logger.info(f"Completed experiment {experiment_id}: {reason}")
 
@@ -272,36 +292,42 @@ class EnhancedExperimentationPlatform:
     def _analyze_experiment_results(self, experiment: Experiment) -> Dict[str, Any]:
         """Analyze experiment results and generate insights"""
         analysis = {
-            'winner': None,
-            'effect_size': 0.0,
-            'significance': 0.0,
-            'insights': [],
-            'recommendations': []
+            "winner": None,
+            "effect_size": 0.0,
+            "significance": 0.0,
+            "insights": [],
+            "recommendations": [],
         }
 
         if len(experiment.variants) >= 2:
             # Find best performing variant
-            best_variant = max(experiment.variants,
-                             key=lambda v: v.metrics.get('conversion_rate', 0))
-            analysis['winner'] = best_variant.name
+            best_variant = max(
+                experiment.variants, key=lambda v: v.metrics.get("conversion_rate", 0)
+            )
+            analysis["winner"] = best_variant.name
 
             # Calculate effect size (simplified)
-            control = next((v for v in experiment.variants if v.name == 'control'), experiment.variants[0])
-            analysis['effect_size'] = abs(
-                best_variant.metrics.get('conversion_rate', 0) -
-                control.metrics.get('conversion_rate', 0)
+            control = next(
+                (v for v in experiment.variants if v.name == "control"),
+                experiment.variants[0],
+            )
+            analysis["effect_size"] = abs(
+                best_variant.metrics.get("conversion_rate", 0)
+                - control.metrics.get("conversion_rate", 0)
             )
 
             # Generate insights
-            if analysis['effect_size'] > 0.1:
-                analysis['insights'].append("Strong positive effect detected")
-                analysis['recommendations'].append("Roll out winning variant to 100%")
-            elif analysis['effect_size'] > 0.05:
-                analysis['insights'].append("Moderate effect detected")
-                analysis['recommendations'].append("Consider gradual rollout")
+            if analysis["effect_size"] > 0.1:
+                analysis["insights"].append("Strong positive effect detected")
+                analysis["recommendations"].append("Roll out winning variant to 100%")
+            elif analysis["effect_size"] > 0.05:
+                analysis["insights"].append("Moderate effect detected")
+                analysis["recommendations"].append("Consider gradual rollout")
             else:
-                analysis['insights'].append("No significant effect detected")
-                analysis['recommendations'].append("Reconsider hypothesis or test different variants")
+                analysis["insights"].append("No significant effect detected")
+                analysis["recommendations"].append(
+                    "Reconsider hypothesis or test different variants"
+                )
 
         return analysis
 
@@ -339,19 +365,20 @@ class EnhancedExperimentationPlatform:
         experiment = self.experiments[experiment_id]
 
         return {
-            'experiment_id': experiment.experiment_id,
-            'title': experiment.title,
-            'status': experiment.status.value,
-            'progress': self._calculate_progress(experiment),
-            'variants': [
+            "experiment_id": experiment.experiment_id,
+            "title": experiment.title,
+            "status": experiment.status.value,
+            "progress": self._calculate_progress(experiment),
+            "variants": [
                 {
-                    'name': v.name,
-                    'traffic_percentage': v.traffic_percentage,
-                    'metrics': v.metrics
-                } for v in experiment.variants
+                    "name": v.name,
+                    "traffic_percentage": v.traffic_percentage,
+                    "metrics": v.metrics,
+                }
+                for v in experiment.variants
             ],
-            'results': experiment.results,
-            'statistical_significance': experiment.statistical_significance
+            "results": experiment.results,
+            "statistical_significance": experiment.statistical_significance,
         }
 
     def _calculate_progress(self, experiment: Experiment) -> float:
@@ -364,6 +391,7 @@ class EnhancedExperimentationPlatform:
         target_samples = self.min_sample_size * len(experiment.variants)
 
         return min(1.0, total_samples / target_samples)
+
 
 # Global instance
 enhanced_experimentation_platform = EnhancedExperimentationPlatform()

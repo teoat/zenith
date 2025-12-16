@@ -1,10 +1,11 @@
 # User Journey Analytics Service
 import json
 import threading
-from typing import Dict, Any, List, Optional
-from datetime import datetime
 from collections import defaultdict, deque
+from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 
 class UserJourneyTracker:
     """Track user journeys and funnel analysis"""
@@ -17,18 +18,20 @@ class UserJourneyTracker:
             "case_created": "Created new case",
             "evidence_uploaded": "Uploaded evidence",
             "analysis_started": "Started analysis",
-            "report_generated": "Generated report"
+            "report_generated": "Generated report",
         }
         self.conversion_funnel = defaultdict(int)
         self.session_data = deque(maxlen=10000)  # Keep last 10k sessions
 
-    def track_event(self, user_id: str, event_type: str, metadata: Dict[str, Any] = None):
+    def track_event(
+        self, user_id: str, event_type: str, metadata: Dict[str, Any] = None
+    ):
         """Track a user event"""
         event = {
             "user_id": user_id,
             "event_type": event_type,
             "timestamp": datetime.utcnow().isoformat(),
-            "metadata": metadata or {}
+            "metadata": metadata or {},
         }
 
         self.journey_data[user_id].append(event)
@@ -48,17 +51,21 @@ class UserJourneyTracker:
         funnel_analysis = {}
 
         for step, description in self.funnel_steps.items():
-            conversion_rate = (self.conversion_funnel[step] / total_users * 100) if total_users > 0 else 0
+            conversion_rate = (
+                (self.conversion_funnel[step] / total_users * 100)
+                if total_users > 0
+                else 0
+            )
             funnel_analysis[step] = {
                 "description": description,
                 "count": self.conversion_funnel[step],
-                "conversion_rate": round(conversion_rate, 2)
+                "conversion_rate": round(conversion_rate, 2),
             }
 
         return {
             "total_users": total_users,
             "funnel_steps": funnel_analysis,
-            "drop_off_points": self._calculate_drop_offs(funnel_analysis)
+            "drop_off_points": self._calculate_drop_offs(funnel_analysis),
         }
 
     def _calculate_drop_offs(self, funnel_data: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -67,7 +74,7 @@ class UserJourneyTracker:
         steps = list(self.funnel_steps.keys())
 
         for i in range(1, len(steps)):
-            prev_step = steps[i-1]
+            prev_step = steps[i - 1]
             current_step = steps[i]
 
             prev_count = funnel_data[prev_step]["count"]
@@ -75,12 +82,14 @@ class UserJourneyTracker:
 
             if prev_count > 0:
                 drop_off_rate = ((prev_count - current_count) / prev_count) * 100
-                drop_offs.append({
-                    "from_step": prev_step,
-                    "to_step": current_step,
-                    "drop_off_rate": round(drop_off_rate, 2),
-                    "retained_users": current_count
-                })
+                drop_offs.append(
+                    {
+                        "from_step": prev_step,
+                        "to_step": current_step,
+                        "drop_off_rate": round(drop_off_rate, 2),
+                        "retained_users": current_count,
+                    }
+                )
 
         return drop_offs
 
@@ -106,9 +115,10 @@ class UserJourneyTracker:
             "event_breakdown": dict(event_counts),
             "time_range": {
                 "earliest": earliest if timestamps else None,
-                "latest": latest if timestamps else None
-            }
+                "latest": latest if timestamps else None,
+            },
         }
+
 
 # Global user journey tracker instance
 user_journey_tracker = UserJourneyTracker()

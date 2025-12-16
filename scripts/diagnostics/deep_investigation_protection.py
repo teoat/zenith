@@ -4,22 +4,24 @@ Deep Investigation and SSOT Protection for Remaining Files
 Identifies and protects all remaining files that should be SSOT locked
 """
 
+import hashlib
+import json
 import os
 import sys
-import json
-import hashlib
-from pathlib import Path
-from typing import Dict, List, Any, Set, Tuple
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Set, Tuple
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
+
 @dataclass
 class DeepFileAnalysis:
     """Deep analysis result for files needing protection"""
+
     path: str
     category: str
     risk_score: int
@@ -28,6 +30,7 @@ class DeepFileAnalysis:
     security_impact: str
     dependencies: List[str]
     estimated_protection_value: int
+
 
 class DeepSSOTInvestigator:
     """Deep investigator for remaining SSOT protection gaps"""
@@ -45,56 +48,77 @@ class DeepSSOTInvestigator:
                 "risk_multiplier": 2.0,
                 "keywords": ["database", "db", "sql", "migration", "model", "schema"],
                 "business_impact": "Data integrity and system reliability",
-                "security_impact": "Data breach prevention"
+                "security_impact": "Data breach prevention",
             },
             "security": {
                 "risk_multiplier": 2.0,
-                "keywords": ["security", "auth", "encrypt", "decrypt", "token", "jwt", "oauth"],
+                "keywords": [
+                    "security",
+                    "auth",
+                    "encrypt",
+                    "decrypt",
+                    "token",
+                    "jwt",
+                    "oauth",
+                ],
                 "business_impact": "System access control",
-                "security_impact": "Unauthorized access prevention"
+                "security_impact": "Unauthorized access prevention",
             },
             "api": {
                 "risk_multiplier": 1.8,
-                "keywords": ["api", "endpoint", "route", "router", "handler", "controller"],
+                "keywords": [
+                    "api",
+                    "endpoint",
+                    "route",
+                    "router",
+                    "handler",
+                    "controller",
+                ],
                 "business_impact": "System integration and functionality",
-                "security_impact": "API abuse prevention"
+                "security_impact": "API abuse prevention",
             },
             "configuration": {
                 "risk_multiplier": 1.7,
                 "keywords": ["config", "setting", "env", "environment", "constant"],
                 "business_impact": "System behavior and performance",
-                "security_impact": "Configuration tampering prevention"
+                "security_impact": "Configuration tampering prevention",
             },
             "business_logic": {
                 "risk_multiplier": 1.9,
-                "keywords": ["service", "engine", "processor", "calculator", "validator"],
+                "keywords": [
+                    "service",
+                    "engine",
+                    "processor",
+                    "calculator",
+                    "validator",
+                ],
                 "business_impact": "Core business functionality",
-                "security_impact": "Business logic integrity"
+                "security_impact": "Business logic integrity",
             },
             "infrastructure": {
                 "risk_multiplier": 1.6,
                 "keywords": ["docker", "deployment", "build", "ci", "cd", "pipeline"],
                 "business_impact": "Deployment and scalability",
-                "security_impact": "Infrastructure security"
+                "security_impact": "Infrastructure security",
             },
             "frontend": {
                 "risk_multiplier": 1.5,
                 "keywords": ["component", "page", "ui", "interface", "dashboard"],
                 "business_impact": "User experience and functionality",
-                "security_impact": "Client-side security"
+                "security_impact": "Client-side security",
             },
             "monitoring": {
                 "risk_multiplier": 1.4,
                 "keywords": ["monitor", "log", "metric", "alert", "health"],
                 "business_impact": "System observability",
-                "security_impact": "Security monitoring"
+                "security_impact": "Security monitoring",
             },
             "testing": {
                 "risk_multiplier": 1.3,
                 "keywords": ["test", "spec", "fixture", "mock", "validation"],
                 "business_impact": "Quality assurance",
-                "security_impact": "Security testing integrity"
-            }
+                "security_impact": "Security testing integrity",
+            },
         }
 
     def _load_existing_protections(self) -> Set[str]:
@@ -105,7 +129,7 @@ class DeepSSOTInvestigator:
         for lockfile in self.diagnostics_dir.glob("*.lock"):
             if lockfile.exists():
                 try:
-                    with open(lockfile, 'r') as f:
+                    with open(lockfile, "r") as f:
                         data = json.load(f)
                         if "files" in data and isinstance(data["files"], dict):
                             protected.update(data["files"].keys())
@@ -131,16 +155,34 @@ class DeepSSOTInvestigator:
                     continue
 
                 # Skip unwanted files
-                if any(skip in str(file_path) for skip in [
-                    "node_modules", "__pycache__", ".git", "dist", ".next",
-                    "build", "coverage", "test-results", ".pytest_cache"
-                ]):
+                if any(
+                    skip in str(file_path)
+                    for skip in [
+                        "node_modules",
+                        "__pycache__",
+                        ".git",
+                        "dist",
+                        ".next",
+                        "build",
+                        "coverage",
+                        "test-results",
+                        ".pytest_cache",
+                    ]
+                ):
                     continue
 
                 # Only analyze relevant file types
                 if file_path.suffix.lower() not in [
-                    '.py', '.ts', '.tsx', '.js', '.json', '.md', '.sh', '.yml', '.yaml'
-                ] and not file_path.name.startswith('Dockerfile'):
+                    ".py",
+                    ".ts",
+                    ".tsx",
+                    ".js",
+                    ".json",
+                    ".md",
+                    ".sh",
+                    ".yml",
+                    ".yaml",
+                ] and not file_path.name.startswith("Dockerfile"):
                     continue
 
                 filename = file_path.name
@@ -153,7 +195,9 @@ class DeepSSOTInvestigator:
                     investigation_results.append(analysis)
 
         # Sort by protection value (highest first)
-        investigation_results.sort(key=lambda x: x.estimated_protection_value, reverse=True)
+        investigation_results.sort(
+            key=lambda x: x.estimated_protection_value, reverse=True
+        )
         return investigation_results
 
     def _analyze_file_deep(self, file_path: Path) -> DeepFileAnalysis:
@@ -173,20 +217,34 @@ class DeepSSOTInvestigator:
         # Analyze against all protection criteria
         matches = []
         for crit_name, criteria in self.protection_criteria.items():
-            keyword_matches = sum(1 for keyword in criteria["keywords"] if keyword in file_str)
+            keyword_matches = sum(
+                1 for keyword in criteria["keywords"] if keyword in file_str
+            )
             if keyword_matches > 0:
                 matches.append((crit_name, criteria, keyword_matches))
 
         if not matches:
             # Check for other indicators
-            if any(indicator in file_str for indicator in [
-                "fraud", "detection", "scoring", "risk", "alert", "transaction"
-            ]):
+            if any(
+                indicator in file_str
+                for indicator in [
+                    "fraud",
+                    "detection",
+                    "scoring",
+                    "risk",
+                    "alert",
+                    "transaction",
+                ]
+            ):
                 # Fraud detection specific files
-                matches.append(("business_logic", self.protection_criteria["business_logic"], 2))
+                matches.append(
+                    ("business_logic", self.protection_criteria["business_logic"], 2)
+                )
             elif "core" in file_str or "main" in filename:
                 # Core system files
-                matches.append(("business_logic", self.protection_criteria["business_logic"], 1))
+                matches.append(
+                    ("business_logic", self.protection_criteria["business_logic"], 1)
+                )
 
         if matches:
             # Use the highest priority match
@@ -197,7 +255,12 @@ class DeepSSOTInvestigator:
             base_risk = 30  # Base risk for matching files
 
             # Calculate risk score
-            risk_score = min(100, int(base_risk * criteria["risk_multiplier"] * (1 + keyword_count * 0.2)))
+            risk_score = min(
+                100,
+                int(
+                    base_risk * criteria["risk_multiplier"] * (1 + keyword_count * 0.2)
+                ),
+            )
 
             # Set impacts
             business_impact = criteria["business_impact"]
@@ -207,7 +270,9 @@ class DeepSSOTInvestigator:
             protection_value = risk_score * 10  # Points per risk point
 
             # Generate protection reason
-            protection_reason = f"Contains {keyword_count} protection keywords for {crit_name}"
+            protection_reason = (
+                f"Contains {keyword_count} protection keywords for {crit_name}"
+            )
 
             # Identify dependencies (simplified)
             if "database" in crit_name:
@@ -227,12 +292,14 @@ class DeepSSOTInvestigator:
                 business_impact=business_impact,
                 security_impact=security_impact,
                 dependencies=dependencies,
-                estimated_protection_value=protection_value
+                estimated_protection_value=protection_value,
             )
 
         return None
 
-    def apply_additional_protections(self, investigations: List[DeepFileAnalysis]) -> Dict[str, Any]:
+    def apply_additional_protections(
+        self, investigations: List[DeepFileAnalysis]
+    ) -> Dict[str, Any]:
         """Apply additional SSOT protections based on deep investigation"""
         additional_protections = {
             "database": [],
@@ -243,7 +310,7 @@ class DeepSSOTInvestigator:
             "infrastructure": [],
             "frontend": [],
             "monitoring": [],
-            "testing": []
+            "testing": [],
         }
 
         # Categorize files for protection
@@ -267,13 +334,15 @@ class DeepSSOTInvestigator:
             lockfile_data = self._create_extended_lockfile(category, files)
 
             try:
-                with open(lockfile_path, 'w') as f:
+                with open(lockfile_path, "w") as f:
                     json.dump(lockfile_data, f, indent=2, default=str)
 
                 protection_results[category] = {
                     "files_protected": len(files),
                     "lockfile": lockfile_name,
-                    "total_protection_value": sum(f.estimated_protection_value for f in files)
+                    "total_protection_value": sum(
+                        f.estimated_protection_value for f in files
+                    ),
                 }
 
                 total_protected += len(files)
@@ -286,11 +355,15 @@ class DeepSSOTInvestigator:
             "total_additional_protections": total_protected,
             "categories_extended": list(protection_results.keys()),
             "protection_results": protection_results,
-            "estimated_risk_reduction": sum(sum(f.estimated_protection_value for f in files)
-                                          for files in additional_protections.values())
+            "estimated_risk_reduction": sum(
+                sum(f.estimated_protection_value for f in files)
+                for files in additional_protections.values()
+            ),
         }
 
-    def _create_extended_lockfile(self, category: str, files: List[DeepFileAnalysis]) -> Dict[str, Any]:
+    def _create_extended_lockfile(
+        self, category: str, files: List[DeepFileAnalysis]
+    ) -> Dict[str, Any]:
         """Create extended lockfile data"""
         lockfile_data = {
             "category": f"{category}_extended",
@@ -300,7 +373,7 @@ class DeepSSOTInvestigator:
             "total_files": len(files),
             "investigation_method": "deep_file_analysis",
             "protection_criteria": self.protection_criteria.get(category, {}),
-            "files": {}
+            "files": {},
         }
 
         for file_analysis in files:
@@ -312,14 +385,18 @@ class DeepSSOTInvestigator:
                 "category": file_analysis.category,
                 "checksum": self.calculate_file_hash(file_path),
                 "size_bytes": file_path.stat().st_size if file_path.exists() else 0,
-                "modified": datetime.fromtimestamp(file_path.stat().st_mtime).isoformat() if file_path.exists() else "unknown",
+                "modified": (
+                    datetime.fromtimestamp(file_path.stat().st_mtime).isoformat()
+                    if file_path.exists()
+                    else "unknown"
+                ),
                 "risk_score": file_analysis.risk_score,
                 "protection_reason": file_analysis.protection_reason,
                 "business_impact": file_analysis.business_impact,
                 "security_impact": file_analysis.security_impact,
                 "dependencies": file_analysis.dependencies,
                 "estimated_protection_value": file_analysis.estimated_protection_value,
-                "investigation_timestamp": datetime.now().isoformat()
+                "investigation_timestamp": datetime.now().isoformat(),
             }
 
         return lockfile_data
@@ -330,16 +407,19 @@ class DeepSSOTInvestigator:
             return "file_missing"
 
         try:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 return hashlib.sha256(f.read()).hexdigest()
         except Exception:
             return "error_calculating"
 
-    def generate_investigation_report(self, investigations: List[DeepFileAnalysis],
-                                    protection_results: Dict[str, Any]) -> Dict[str, Any]:
+    def generate_investigation_report(
+        self, investigations: List[DeepFileAnalysis], protection_results: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Generate comprehensive investigation and protection report"""
         total_files_investigated = len(investigations)
-        total_protection_value = sum(inv.estimated_protection_value for inv in investigations)
+        total_protection_value = sum(
+            inv.estimated_protection_value for inv in investigations
+        )
 
         # Calculate coverage improvement
         previous_coverage = 64.8  # From previous analysis
@@ -350,22 +430,39 @@ class DeepSSOTInvestigator:
             "timestamp": datetime.now().isoformat(),
             "investigation_version": "2.0.0-deep-analysis",
             "files_investigated": total_files_investigated,
-            "additional_protections_applied": protection_results["total_additional_protections"],
+            "additional_protections_applied": protection_results[
+                "total_additional_protections"
+            ],
             "categories_extended": protection_results["categories_extended"],
             "coverage_improvement": {
                 "before": previous_coverage,
                 "after": improved_coverage,
-                "improvement_percent": round((improved_coverage - previous_coverage) / previous_coverage * 100, 1)
+                "improvement_percent": round(
+                    (improved_coverage - previous_coverage) / previous_coverage * 100, 1
+                ),
             },
             "risk_reduction": {
                 "estimated_points": protection_results["estimated_risk_reduction"],
-                "methodology": "Deep risk analysis with business impact scoring"
+                "methodology": "Deep risk analysis with business impact scoring",
             },
             "investigation_summary": {
                 "total_protection_value": total_protection_value,
-                "average_protection_value_per_file": round(total_protection_value / total_files_investigated, 1) if total_files_investigated > 0 else 0,
-                "high_value_protections": len([f for f in investigations if f.estimated_protection_value > 500]),
-                "critical_business_impact": len([f for f in investigations if "core" in f.business_impact.lower() or "critical" in f.business_impact.lower()])
+                "average_protection_value_per_file": (
+                    round(total_protection_value / total_files_investigated, 1)
+                    if total_files_investigated > 0
+                    else 0
+                ),
+                "high_value_protections": len(
+                    [f for f in investigations if f.estimated_protection_value > 500]
+                ),
+                "critical_business_impact": len(
+                    [
+                        f
+                        for f in investigations
+                        if "core" in f.business_impact.lower()
+                        or "critical" in f.business_impact.lower()
+                    ]
+                ),
             },
             "top_investigated_files": [
                 {
@@ -374,14 +471,15 @@ class DeepSSOTInvestigator:
                     "risk_score": inv.risk_score,
                     "protection_value": inv.estimated_protection_value,
                     "business_impact": inv.business_impact,
-                    "security_impact": inv.security_impact
+                    "security_impact": inv.security_impact,
                 }
                 for inv in investigations[:15]  # Top 15
             ],
-            "protection_results": protection_results["protection_results"]
+            "protection_results": protection_results["protection_results"],
         }
 
         return report
+
 
 def main():
     """Main investigation and protection function"""
@@ -400,7 +498,9 @@ def main():
     print("\n🔥 Top 10 Highest Value Protection Targets:")
     for i, inv in enumerate(investigations[:10], 1):
         print(f"{i}. {inv.path}")
-        print(f"   Category: {inv.category} | Risk: {inv.risk_score} | Value: {inv.estimated_protection_value}")
+        print(
+            f"   Category: {inv.category} | Risk: {inv.risk_score} | Value: {inv.estimated_protection_value}"
+        )
         print(f"   Business Impact: {inv.business_impact}")
         print(f"   Security Impact: {inv.security_impact}")
 
@@ -410,11 +510,13 @@ def main():
 
     # Step 3: Generate report
     print("\n📊 Generating investigation report...")
-    report = investigator.generate_investigation_report(investigations, protection_results)
+    report = investigator.generate_investigation_report(
+        investigations, protection_results
+    )
 
     # Save report
     report_path = investigator.diagnostics_dir / "deep_investigation_report.json"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         json.dump(report, f, indent=2, default=str)
 
     # Display final results
@@ -423,8 +525,12 @@ def main():
     print("=" * 55)
 
     print(f"🔬 Files Investigated: {len(investigations)}")
-    print(f"🔒 Additional Files Protected: {protection_results['total_additional_protections']}")
-    print(f"📂 Extended Categories: {', '.join(protection_results['categories_extended'])}")
+    print(
+        f"🔒 Additional Files Protected: {protection_results['total_additional_protections']}"
+    )
+    print(
+        f"📂 Extended Categories: {', '.join(protection_results['categories_extended'])}"
+    )
 
     print("\n📈 Coverage Improvement:")
     print(f"  Before: {report['coverage_improvement']['before']}%")
@@ -435,9 +541,15 @@ def main():
     print(f"  Estimated Points: -{report['risk_reduction']['estimated_points']:,}")
 
     print("\n💎 Protection Value:")
-    print(f"  Total Value: {report['investigation_summary']['total_protection_value']:,} points")
-    print(f"  High-Value Protections: {report['investigation_summary']['high_value_protections']}")
-    print(f"  Critical Business Impact: {report['investigation_summary']['critical_business_impact']}")
+    print(
+        f"  Total Value: {report['investigation_summary']['total_protection_value']:,} points"
+    )
+    print(
+        f"  High-Value Protections: {report['investigation_summary']['high_value_protections']}"
+    )
+    print(
+        f"  Critical Business Impact: {report['investigation_summary']['critical_business_impact']}"
+    )
 
     print("\n🔍 Verification:")
     print("  Run: scripts/diagnostics/manage_ssot_lockfiles.sh verify")
@@ -448,6 +560,7 @@ def main():
 
     print("\n🏆 STATUS: MAXIMUM SSOT PROTECTION ACHIEVED")
     print("  All identified files with business/security value are now protected.")
+
 
 if __name__ == "__main__":
     main()

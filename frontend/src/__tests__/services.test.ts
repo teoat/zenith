@@ -3,6 +3,24 @@
  * Tests for UI components, hooks, and services
  */
 import '@testing-library/jest-dom';
+import { request } from '../services/client';
+import { authService } from '../services/auth';
+import { caseService } from '../services/cases';
+import { graphService } from '../services/graph';
+import { evidenceService } from '../services/evidence';
+import { monitoringService } from '../services/monitoring';
+
+// Mock localStorage
+const localStorageMock = {
+  getItem: jest.fn((key: string) => {
+    if (key === 'token') return 'fake-jwt-token-for-testing';
+    return null;
+  }),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+};
+global.localStorage = localStorageMock;
 
 // Mock fetch globally
 (global.fetch as jest.MockedFunction<typeof fetch>) = jest.fn();
@@ -31,9 +49,7 @@ describe('Auth Service', () => {
 
   it('should call login endpoint with credentials', async () => {
     mockFetch({ access_token: 'test-token', user: { id: '1', email: 'test@test.com' } });
-    
-    const { authService } = await import('../services/auth');
-    
+
     await authService.login({ email: 'test@test.com', password: 'password123' });
     
     expect(global.fetch).toHaveBeenCalledWith(
@@ -48,7 +64,6 @@ describe('Auth Service', () => {
   it('should handle MFA code in login', async () => {
     mockFetch({ access_token: 'test-token' });
     
-    const { authService } = await import('../services/auth');
     
     await authService.login({ 
       email: 'test@test.com', 
@@ -67,7 +82,6 @@ describe('Auth Service', () => {
   it('should handle login errors gracefully', async () => {
     mockFetchError(401);
     
-    const { authService } = await import('../services/auth');
     
     await expect(authService.login({ 
       email: 'wrong@test.com', 
@@ -84,9 +98,7 @@ describe('Client Request Utility', () => {
   it('should add authorization header when token exists', async () => {
     localStorage.setItem('token', 'test-token');
     mockFetch({ data: 'test' });
-    
-    const { request } = await import('../services/client');
-    
+
     await request('/api/test');
     
     expect(global.fetch).toHaveBeenCalledWith(
@@ -101,9 +113,7 @@ describe('Client Request Utility', () => {
 
   it('should handle network errors', async () => {
     (global.fetch as jest.MockedFunction<typeof fetch>).mockRejectedValueOnce(new Error('Network error'));
-    
-    const { request } = await import('../services/client');
-    
+
     await expect(request('/api/test')).rejects.toThrow('Network error');
   });
 });
@@ -121,7 +131,6 @@ describe('Cases Service', () => {
     mockFetch({ cases: mockCases });
     
     // Note: Importing caseService (singular)
-    const { caseService } = await import('../services/cases');
     
     await caseService.getCases();
     
@@ -134,7 +143,6 @@ describe('Cases Service', () => {
   it('should create a new case', async () => {
     mockFetch({ id: 'new-case-id', title: 'New Case' });
     
-    const { caseService } = await import('../services/cases');
     
     await caseService.createCase({
       title: 'New Case',
@@ -153,7 +161,6 @@ describe('Cases Service', () => {
   it('should update a case', async () => {
     mockFetch({ id: '1', status: 'INVESTIGATING' });
     
-    const { caseService } = await import('../services/cases');
     
     await caseService.updateCase('1', { status: 'INVESTIGATING' });
     
@@ -174,7 +181,6 @@ describe('Graph Service', () => {
   it('should fetch graph data', async () => {
     mockFetch({ nodes: [], edges: [] });
     
-    const { graphService } = await import('../services/graph');
     
     await graphService.getGraphData();
     
@@ -184,7 +190,6 @@ describe('Graph Service', () => {
   it('should build graph from transactions', async () => {
     mockFetch({ nodes: [{ id: 'A' }], edges: [] });
     
-    const { graphService } = await import('../services/graph');
     
     await graphService.buildGraph(30);
     
@@ -197,7 +202,6 @@ describe('Graph Service', () => {
   it('should save graph snapshot', async () => {
     mockFetch({ id: 'snapshot-1' });
     
-    const { graphService } = await import('../services/graph');
     
     await graphService.saveGraphSnapshot('case-123', {
       nodes: [],
@@ -221,7 +225,6 @@ describe('Evidence Service', () => {
   it('should fetch evidence list', async () => {
     mockFetch([{ id: '1', filename: 'doc.pdf' }]);
     
-    const { evidenceService } = await import('../services/evidence');
     
     await evidenceService.getEvidence();
     
@@ -231,7 +234,6 @@ describe('Evidence Service', () => {
   it('should upload evidence file', async () => {
     mockFetch({ id: 'evidence-1', status: 'uploaded' });
     
-    const { evidenceService } = await import('../services/evidence');
     
     const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
     
@@ -254,7 +256,6 @@ describe('Monitoring Service', () => {
   it('should fetch system health', async () => {
     mockFetch({ system_metrics: { status: 'healthy', cpu_percent: 10 } });
     
-    const { monitoringService } = await import('../services/monitoring');
     
     const health = await monitoringService.getSystemStatus();
     
@@ -268,7 +269,6 @@ describe('API Facade', () => {
   });
 
   it('should expose all service methods', async () => {
-    const { api } = await import('../lib/api');
     
     // Check that key methods exist
     expect(api).toHaveProperty('login');

@@ -6,19 +6,21 @@ Compatible with both Electron (desktop) and web platforms.
 
 import asyncio
 import json
-import time
-import random
 import logging
-from typing import Dict, List, Any, Optional, Tuple, Set
-from dataclasses import dataclass, asdict
+import random
+import threading
+import time
+from collections import deque
+from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-import threading
-import psutil
+from typing import Any, Dict, List, Optional, Set, Tuple
+
 import numpy as np
-from collections import deque
+import psutil
 
 logger = logging.getLogger(__name__)
+
 
 class FailureMode(Enum):
     CPU_SPIKE = "cpu_spike"
@@ -30,6 +32,7 @@ class FailureMode(Enum):
     SERVICE_DEPENDENCY_FAILURE = "service_dependency_failure"
     LOAD_BALANCER_SATURATION = "load_balancer_saturation"
 
+
 class ChaosExperiment(Enum):
     CPU_STRESS = "cpu_stress"
     MEMORY_PRESSURE = "memory_pressure"
@@ -38,6 +41,7 @@ class ChaosExperiment(Enum):
     DATABASE_LOAD = "database_load"
     CACHE_EVICTION = "cache_eviction"
     DEPENDENCY_DELAY = "dependency_delay"
+
 
 class HealingAction(Enum):
     SCALE_UP = "scale_up"
@@ -48,9 +52,11 @@ class HealingAction(Enum):
     FAILOVER = "failover"
     ROLLBACK_DEPLOYMENT = "rollback_deployment"
 
+
 @dataclass
 class SystemMetrics:
     """Real-time system performance metrics"""
+
     timestamp: datetime
     cpu_percent: float
     memory_percent: float
@@ -61,9 +67,11 @@ class SystemMetrics:
     error_rate: float
     response_time_ms: float
 
+
 @dataclass
 class FailurePrediction:
     """AI-powered failure prediction"""
+
     failure_mode: FailureMode
     probability: float
     time_to_failure_hours: float
@@ -72,9 +80,11 @@ class FailurePrediction:
     recommended_actions: List[HealingAction]
     predicted_impact: str
 
+
 @dataclass
 class ChaosExperimentResult:
     """Result of a chaos engineering experiment"""
+
     experiment_id: str
     experiment_type: ChaosExperiment
     start_time: datetime
@@ -86,9 +96,11 @@ class ChaosExperimentResult:
     affected_services: List[str]
     lessons_learned: List[str]
 
+
 @dataclass
 class SelfHealingAction:
     """Automated self-healing action"""
+
     action_id: str
     action_type: HealingAction
     target_service: str
@@ -97,6 +109,7 @@ class SelfHealingAction:
     success: bool
     impact_assessment: str
     rollback_available: bool
+
 
 class PredictiveMaintenanceEngine:
     """AI-powered predictive maintenance with chaos engineering capabilities"""
@@ -152,8 +165,9 @@ class PredictiveMaintenanceEngine:
         self.monitoring_active = False
         logger.info("Stopped predictive maintenance monitoring")
 
-    async def run_chaos_experiment(self, experiment_type: ChaosExperiment,
-                                 duration_seconds: int = 300) -> ChaosExperimentResult:
+    async def run_chaos_experiment(
+        self, experiment_type: ChaosExperiment, duration_seconds: int = 300
+    ) -> ChaosExperimentResult:
         """
         Execute a controlled chaos engineering experiment
 
@@ -174,7 +188,9 @@ class PredictiveMaintenanceEngine:
             baseline_metrics = await self._collect_system_metrics()
 
             # Execute chaos injection
-            affected_services = await self._inject_failure(experiment_type, duration_seconds)
+            affected_services = await self._inject_failure(
+                experiment_type, duration_seconds
+            )
 
             # Monitor during experiment
             experiment_metrics = []
@@ -189,7 +205,9 @@ class PredictiveMaintenanceEngine:
 
             # Post-experiment analysis
             end_time = datetime.now()
-            stability_score = self._calculate_stability_score(baseline_metrics, experiment_metrics)
+            stability_score = self._calculate_stability_score(
+                baseline_metrics, experiment_metrics
+            )
 
             lessons_learned = self._analyze_experiment_results(
                 experiment_type, baseline_metrics, experiment_metrics, recovery_time
@@ -205,7 +223,7 @@ class PredictiveMaintenanceEngine:
                 failure_injection_success=True,
                 recovery_time_seconds=recovery_time,
                 affected_services=affected_services,
-                lessons_learned=lessons_learned
+                lessons_learned=lessons_learned,
             )
 
             self.chaos_experiments.append(result)
@@ -226,10 +244,12 @@ class PredictiveMaintenanceEngine:
                 failure_injection_success=False,
                 recovery_time_seconds=0.0,
                 affected_services=[],
-                lessons_learned=[f"Experiment failed: {str(e)}"]
+                lessons_learned=[f"Experiment failed: {str(e)}"],
             )
 
-    async def execute_self_healing(self, prediction: FailurePrediction) -> SelfHealingAction:
+    async def execute_self_healing(
+        self, prediction: FailurePrediction
+    ) -> SelfHealingAction:
         """
         Execute automated self-healing based on failure prediction
 
@@ -244,7 +264,9 @@ class PredictiveMaintenanceEngine:
         # Determine best healing action based on failure mode
         healing_action = self._select_healing_action(prediction)
 
-        logger.info(f"Executing self-healing action: {healing_action.value} for {prediction.failure_mode.value}")
+        logger.info(
+            f"Executing self-healing action: {healing_action.value} for {prediction.failure_mode.value}"
+        )
 
         try:
             # Execute the healing action
@@ -261,7 +283,7 @@ class PredictiveMaintenanceEngine:
                 execution_time=datetime.now(),
                 success=success,
                 impact_assessment=impact,
-                rollback_available=self._is_rollback_available(healing_action)
+                rollback_available=self._is_rollback_available(healing_action),
             )
 
             self.healing_actions.append(action_record)
@@ -283,7 +305,7 @@ class PredictiveMaintenanceEngine:
                 execution_time=datetime.now(),
                 success=False,
                 impact_assessment=f"Action failed: {str(e)}",
-                rollback_available=False
+                rollback_available=False,
             )
 
     async def get_system_health_score(self) -> float:
@@ -294,9 +316,15 @@ class PredictiveMaintenanceEngine:
         recent_metrics = list(self.metrics_history)[-10:]  # Last 10 samples
 
         # Calculate health components
-        cpu_health = 100 - (sum(m.cpu_percent for m in recent_metrics) / len(recent_metrics))
-        memory_health = 100 - (sum(m.memory_percent for m in recent_metrics) / len(recent_metrics))
-        error_health = 100 - (sum(m.error_rate * 100 for m in recent_metrics) / len(recent_metrics))
+        cpu_health = 100 - (
+            sum(m.cpu_percent for m in recent_metrics) / len(recent_metrics)
+        )
+        memory_health = 100 - (
+            sum(m.memory_percent for m in recent_metrics) / len(recent_metrics)
+        )
+        error_health = 100 - (
+            sum(m.error_rate * 100 for m in recent_metrics) / len(recent_metrics)
+        )
 
         # Weighted average
         health_score = (cpu_health * 0.3) + (memory_health * 0.4) + (error_health * 0.3)
@@ -312,34 +340,52 @@ class PredictiveMaintenanceEngine:
             avg_metrics = self._calculate_average_metrics()
 
             # CPU optimization recommendations
-            if avg_metrics['cpu_percent'] > 80:
-                recommendations.append({
-                    'type': 'optimization',
-                    'priority': 'high',
-                    'title': 'High CPU Usage Detected',
-                    'description': f'Average CPU usage is {avg_metrics["cpu_percent"]:.1f}%',
-                    'actions': ['Implement query optimization', 'Consider horizontal scaling', 'Review background processes']
-                })
+            if avg_metrics["cpu_percent"] > 80:
+                recommendations.append(
+                    {
+                        "type": "optimization",
+                        "priority": "high",
+                        "title": "High CPU Usage Detected",
+                        "description": f'Average CPU usage is {avg_metrics["cpu_percent"]:.1f}%',
+                        "actions": [
+                            "Implement query optimization",
+                            "Consider horizontal scaling",
+                            "Review background processes",
+                        ],
+                    }
+                )
 
             # Memory optimization recommendations
-            if avg_metrics['memory_percent'] > 85:
-                recommendations.append({
-                    'type': 'optimization',
-                    'priority': 'high',
-                    'title': 'High Memory Usage Detected',
-                    'description': f'Average memory usage is {avg_metrics["memory_percent"]:.1f}%',
-                    'actions': ['Implement memory pooling', 'Review cache sizes', 'Consider memory-optimized instances']
-                })
+            if avg_metrics["memory_percent"] > 85:
+                recommendations.append(
+                    {
+                        "type": "optimization",
+                        "priority": "high",
+                        "title": "High Memory Usage Detected",
+                        "description": f'Average memory usage is {avg_metrics["memory_percent"]:.1f}%',
+                        "actions": [
+                            "Implement memory pooling",
+                            "Review cache sizes",
+                            "Consider memory-optimized instances",
+                        ],
+                    }
+                )
 
         # Add chaos engineering recommendations
         if not self.chaos_experiments:
-            recommendations.append({
-                'type': 'testing',
-                'priority': 'medium',
-                'title': 'Implement Chaos Engineering',
-                'description': 'No chaos experiments have been run recently',
-                'actions': ['Schedule regular chaos experiments', 'Test failure scenarios', 'Validate recovery procedures']
-            })
+            recommendations.append(
+                {
+                    "type": "testing",
+                    "priority": "medium",
+                    "title": "Implement Chaos Engineering",
+                    "description": "No chaos experiments have been run recently",
+                    "actions": [
+                        "Schedule regular chaos experiments",
+                        "Test failure scenarios",
+                        "Validate recovery procedures",
+                    ],
+                }
+            )
 
         return recommendations
 
@@ -365,65 +411,96 @@ class PredictiveMaintenanceEngine:
             timestamp=datetime.now(),
             cpu_percent=cpu_percent,
             memory_percent=memory.percent,
-            disk_io_percent=disk.write_bytes / max(disk.read_bytes + disk.write_bytes, 1) * 100,
+            disk_io_percent=disk.write_bytes
+            / max(disk.read_bytes + disk.write_bytes, 1)
+            * 100,
             network_latency_ms=network_latency,
             active_connections=active_connections,
             queue_depth=queue_depth,
             error_rate=error_rate,
-            response_time_ms=response_time
+            response_time_ms=response_time,
         )
 
-    async def _analyze_failure_predictions(self, current_metrics: SystemMetrics) -> List[FailurePrediction]:
+    async def _analyze_failure_predictions(
+        self, current_metrics: SystemMetrics
+    ) -> List[FailurePrediction]:
         """Analyze metrics to predict potential failures"""
         predictions = []
 
         # CPU failure prediction
         if current_metrics.cpu_percent > 85:
-            predictions.append(FailurePrediction(
-                failure_mode=FailureMode.CPU_SPIKE,
-                probability=min(current_metrics.cpu_percent / 100, 0.9),
-                time_to_failure_hours=random.uniform(1, 24),
-                confidence_score=0.85,
-                contributing_factors=["High CPU utilization", "Potential memory pressure"],
-                recommended_actions=[HealingAction.SCALE_UP, HealingAction.OPTIMIZE_QUERIES],
-                predicted_impact="Degraded response times, potential service timeouts"
-            ))
+            predictions.append(
+                FailurePrediction(
+                    failure_mode=FailureMode.CPU_SPIKE,
+                    probability=min(current_metrics.cpu_percent / 100, 0.9),
+                    time_to_failure_hours=random.uniform(1, 24),
+                    confidence_score=0.85,
+                    contributing_factors=[
+                        "High CPU utilization",
+                        "Potential memory pressure",
+                    ],
+                    recommended_actions=[
+                        HealingAction.SCALE_UP,
+                        HealingAction.OPTIMIZE_QUERIES,
+                    ],
+                    predicted_impact="Degraded response times, potential service timeouts",
+                )
+            )
 
         # Memory failure prediction
         if current_metrics.memory_percent > 90:
-            predictions.append(FailurePrediction(
-                failure_mode=FailureMode.MEMORY_LEAK,
-                probability=min(current_metrics.memory_percent / 100, 0.95),
-                time_to_failure_hours=random.uniform(0.5, 12),
-                confidence_score=0.90,
-                contributing_factors=["High memory usage", "Potential memory leaks"],
-                recommended_actions=[HealingAction.RESTART_SERVICE, HealingAction.CLEAR_CACHE],
-                predicted_impact="Out of memory errors, service crashes"
-            ))
+            predictions.append(
+                FailurePrediction(
+                    failure_mode=FailureMode.MEMORY_LEAK,
+                    probability=min(current_metrics.memory_percent / 100, 0.95),
+                    time_to_failure_hours=random.uniform(0.5, 12),
+                    confidence_score=0.90,
+                    contributing_factors=[
+                        "High memory usage",
+                        "Potential memory leaks",
+                    ],
+                    recommended_actions=[
+                        HealingAction.RESTART_SERVICE,
+                        HealingAction.CLEAR_CACHE,
+                    ],
+                    predicted_impact="Out of memory errors, service crashes",
+                )
+            )
 
         # Network latency prediction
         if current_metrics.network_latency_ms > 200:
-            predictions.append(FailurePrediction(
-                failure_mode=FailureMode.NETWORK_LATENCY,
-                probability=min(current_metrics.network_latency_ms / 500, 0.8),
-                time_to_failure_hours=random.uniform(2, 48),
-                confidence_score=0.75,
-                contributing_factors=["High network latency", "Potential connectivity issues"],
-                recommended_actions=[HealingAction.FAILOVER],
-                predicted_impact="Slow response times, user experience degradation"
-            ))
+            predictions.append(
+                FailurePrediction(
+                    failure_mode=FailureMode.NETWORK_LATENCY,
+                    probability=min(current_metrics.network_latency_ms / 500, 0.8),
+                    time_to_failure_hours=random.uniform(2, 48),
+                    confidence_score=0.75,
+                    contributing_factors=[
+                        "High network latency",
+                        "Potential connectivity issues",
+                    ],
+                    recommended_actions=[HealingAction.FAILOVER],
+                    predicted_impact="Slow response times, user experience degradation",
+                )
+            )
 
         return predictions
 
-    async def _evaluate_auto_healing(self, predictions: List[FailurePrediction]) -> None:
+    async def _evaluate_auto_healing(
+        self, predictions: List[FailurePrediction]
+    ) -> None:
         """Evaluate predictions and trigger automatic healing if needed"""
         for prediction in predictions:
             if prediction.probability > 0.8 and prediction.time_to_failure_hours < 2:
                 # High probability, imminent failure - trigger healing
-                logger.warning(f"Triggering auto-healing for predicted {prediction.failure_mode.value}")
+                logger.warning(
+                    f"Triggering auto-healing for predicted {prediction.failure_mode.value}"
+                )
                 await self.execute_self_healing(prediction)
 
-    async def _inject_failure(self, experiment_type: ChaosExperiment, duration: int) -> List[str]:
+    async def _inject_failure(
+        self, experiment_type: ChaosExperiment, duration: int
+    ) -> List[str]:
         """Inject controlled failure for chaos experiment"""
         affected_services = []
 
@@ -452,7 +529,9 @@ class PredictiveMaintenanceEngine:
 
         return affected_services
 
-    async def _recover_from_failure(self, experiment_type: ChaosExperiment, affected_services: List[str]) -> None:
+    async def _recover_from_failure(
+        self, experiment_type: ChaosExperiment, affected_services: List[str]
+    ) -> None:
         """Recover from injected failure"""
         # In real implementation, this would restart services, restore connections, etc.
         logger.info(f"Recovering from {experiment_type.value} experiment")
@@ -460,7 +539,9 @@ class PredictiveMaintenanceEngine:
         # Simulate recovery time
         await asyncio.sleep(random.uniform(5, 30))
 
-    def _calculate_stability_score(self, baseline: SystemMetrics, experiment_metrics: List[SystemMetrics]) -> float:
+    def _calculate_stability_score(
+        self, baseline: SystemMetrics, experiment_metrics: List[SystemMetrics]
+    ) -> float:
         """Calculate system stability score during chaos experiment"""
         if not experiment_metrics:
             return 100.0
@@ -475,13 +556,19 @@ class PredictiveMaintenanceEngine:
 
         return max(0.0, min(100.0, stability_score))
 
-    def _analyze_experiment_results(self, experiment_type: ChaosExperiment,
-                                  baseline: SystemMetrics, experiment_metrics: List[SystemMetrics],
-                                  recovery_time: float) -> List[str]:
+    def _analyze_experiment_results(
+        self,
+        experiment_type: ChaosExperiment,
+        baseline: SystemMetrics,
+        experiment_metrics: List[SystemMetrics],
+        recovery_time: float,
+    ) -> List[str]:
         """Analyze chaos experiment results and extract lessons learned"""
         lessons = []
 
-        avg_experiment_cpu = sum(m.cpu_percent for m in experiment_metrics) / len(experiment_metrics)
+        avg_experiment_cpu = sum(m.cpu_percent for m in experiment_metrics) / len(
+            experiment_metrics
+        )
         max_experiment_cpu = max(m.cpu_percent for m in experiment_metrics)
 
         if recovery_time > 60:  # Recovery took more than 1 minute
@@ -512,7 +599,9 @@ class PredictiveMaintenanceEngine:
 
         return action_map.get(prediction.failure_mode, HealingAction.RESTART_SERVICE)
 
-    async def _perform_healing_action(self, action: HealingAction, prediction: FailurePrediction) -> bool:
+    async def _perform_healing_action(
+        self, action: HealingAction, prediction: FailurePrediction
+    ) -> bool:
         """Perform the actual healing action"""
         try:
             if action == HealingAction.SCALE_UP:
@@ -551,7 +640,9 @@ class PredictiveMaintenanceEngine:
             logger.error(f"Healing action failed: {e}")
             return False
 
-    async def _assess_healing_impact(self, action: HealingAction, prediction: FailurePrediction) -> str:
+    async def _assess_healing_impact(
+        self, action: HealingAction, prediction: FailurePrediction
+    ) -> str:
         """Assess the impact of the healing action"""
         # In real implementation, would measure actual impact
         return f"Successfully mitigated {prediction.failure_mode.value} through {action.value}"
@@ -568,11 +659,14 @@ class PredictiveMaintenanceEngine:
 
         metrics_list = list(self.metrics_history)
         return {
-            'cpu_percent': sum(m.cpu_percent for m in metrics_list) / len(metrics_list),
-            'memory_percent': sum(m.memory_percent for m in metrics_list) / len(metrics_list),
-            'error_rate': sum(m.error_rate for m in metrics_list) / len(metrics_list),
-            'response_time_ms': sum(m.response_time_ms for m in metrics_list) / len(metrics_list)
+            "cpu_percent": sum(m.cpu_percent for m in metrics_list) / len(metrics_list),
+            "memory_percent": sum(m.memory_percent for m in metrics_list)
+            / len(metrics_list),
+            "error_rate": sum(m.error_rate for m in metrics_list) / len(metrics_list),
+            "response_time_ms": sum(m.response_time_ms for m in metrics_list)
+            / len(metrics_list),
         }
+
 
 # Global instance
 predictive_maintenance_engine = PredictiveMaintenanceEngine()

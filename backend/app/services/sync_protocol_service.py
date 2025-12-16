@@ -5,13 +5,14 @@ Handles synchronization between different system components.
 """
 
 import asyncio
-import logging
-from typing import Dict, List, Any, Optional
-from datetime import datetime, timedelta
 import json
+import logging
+from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
+
 
 class SynchronizationProtocolService:
     """Service for managing synchronization protocols between system components."""
@@ -25,39 +26,75 @@ class SynchronizationProtocolService:
         return {
             "code_documentation": {
                 "name": "Code ↔ Documentation Sync",
-                "triggers": ["api_endpoint_changes", "schema_modifications", "feature_additions"],
-                "actions": ["auto_generate_api_docs", "update_user_guides", "sync_developer_docs"],
+                "triggers": [
+                    "api_endpoint_changes",
+                    "schema_modifications",
+                    "feature_additions",
+                ],
+                "actions": [
+                    "auto_generate_api_docs",
+                    "update_user_guides",
+                    "sync_developer_docs",
+                ],
                 "frequency": "on_change",
-                "enabled": True
+                "enabled": True,
             },
             "frontend_backend": {
                 "name": "Frontend ↔ Backend Sync",
-                "triggers": ["api_contract_changes", "data_model_updates", "auth_changes"],
-                "actions": ["validate_frontend_integration", "update_type_definitions", "sync_auth_flows"],
+                "triggers": [
+                    "api_contract_changes",
+                    "data_model_updates",
+                    "auth_changes",
+                ],
+                "actions": [
+                    "validate_frontend_integration",
+                    "update_type_definitions",
+                    "sync_auth_flows",
+                ],
                 "frequency": "continuous",
-                "enabled": True
+                "enabled": True,
             },
             "tests_implementation": {
                 "name": "Tests ↔ Implementation Sync",
                 "triggers": ["code_changes", "feature_additions", "bug_fixes"],
-                "actions": ["run_relevant_tests", "update_test_cases", "ensure_coverage_maintenance"],
+                "actions": [
+                    "run_relevant_tests",
+                    "update_test_cases",
+                    "ensure_coverage_maintenance",
+                ],
                 "frequency": "on_change",
-                "enabled": True
+                "enabled": True,
             },
             "security_performance": {
                 "name": "Security ↔ Performance Sync",
-                "triggers": ["security_updates", "performance_changes", "optimization_deployments"],
-                "actions": ["validate_security_impact", "monitor_performance_regression", "balance_security_performance"],
+                "triggers": [
+                    "security_updates",
+                    "performance_changes",
+                    "optimization_deployments",
+                ],
+                "actions": [
+                    "validate_security_impact",
+                    "monitor_performance_regression",
+                    "balance_security_performance",
+                ],
                 "frequency": "continuous",
-                "enabled": True
+                "enabled": True,
             },
             "deployment_monitoring": {
                 "name": "Deployment ↔ Monitoring Sync",
-                "triggers": ["deployment_events", "health_check_failures", "scaling_events"],
-                "actions": ["update_monitoring_configs", "correlate_deployment_health", "alert_on_sync_issues"],
+                "triggers": [
+                    "deployment_events",
+                    "health_check_failures",
+                    "scaling_events",
+                ],
+                "actions": [
+                    "update_monitoring_configs",
+                    "correlate_deployment_health",
+                    "alert_on_sync_issues",
+                ],
                 "frequency": "real_time",
-                "enabled": True
-            }
+                "enabled": True,
+            },
         }
 
     async def check_sync_status(self) -> Dict[str, Any]:
@@ -67,7 +104,7 @@ class SynchronizationProtocolService:
             "protocols": {},
             "overall_sync_health": 1.0,
             "sync_issues": [],
-            "last_sync_events": []
+            "last_sync_events": [],
         }
 
         for protocol_name, protocol_config in self.sync_protocols.items():
@@ -75,25 +112,33 @@ class SynchronizationProtocolService:
                 continue
 
             # Check sync status for this protocol
-            sync_status = await self._check_protocol_sync_status(protocol_name, protocol_config)
+            sync_status = await self._check_protocol_sync_status(
+                protocol_name, protocol_config
+            )
             status_report["protocols"][protocol_name] = sync_status
 
             if sync_status["status"] != "synced":
                 status_report["overall_sync_health"] -= 0.1
-                status_report["sync_issues"].append({
-                    "protocol": protocol_name,
-                    "issue": sync_status.get("issue", "Sync out of date"),
-                    "severity": sync_status.get("severity", "medium")
-                })
+                status_report["sync_issues"].append(
+                    {
+                        "protocol": protocol_name,
+                        "issue": sync_status.get("issue", "Sync out of date"),
+                        "severity": sync_status.get("severity", "medium"),
+                    }
+                )
 
-        status_report["overall_sync_health"] = max(0.0, status_report["overall_sync_health"])
+        status_report["overall_sync_health"] = max(
+            0.0, status_report["overall_sync_health"]
+        )
 
         # Get recent sync events
         status_report["last_sync_events"] = self.sync_history[-10:]  # Last 10 events
 
         return status_report
 
-    async def _check_protocol_sync_status(self, protocol_name: str, config: Dict[str, Any]) -> Dict[str, Any]:
+    async def _check_protocol_sync_status(
+        self, protocol_name: str, config: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Check sync status for a specific protocol."""
         # This is a simplified implementation - in practice, this would check actual sync status
 
@@ -121,7 +166,7 @@ class SynchronizationProtocolService:
         return {
             "status": "synced",
             "last_check": datetime.now().isoformat(),
-            "next_check": (datetime.now() + timedelta(hours=1)).isoformat()
+            "next_check": (datetime.now() + timedelta(hours=1)).isoformat(),
         }
 
     async def _check_code_doc_sync(self) -> Dict[str, Any]:
@@ -131,7 +176,7 @@ class SynchronizationProtocolService:
             "status": "synced",
             "last_check": datetime.now().isoformat(),
             "coverage": 0.95,
-            "outdated_docs": []
+            "outdated_docs": [],
         }
 
     async def _check_frontend_backend_sync(self) -> Dict[str, Any]:
@@ -141,7 +186,7 @@ class SynchronizationProtocolService:
             "status": "synced",
             "last_check": datetime.now().isoformat(),
             "api_contracts_valid": True,
-            "type_definitions_current": True
+            "type_definitions_current": True,
         }
 
     async def _check_test_implementation_sync(self) -> Dict[str, Any]:
@@ -153,7 +198,7 @@ class SynchronizationProtocolService:
             "test_coverage": 0.87,
             "outdated_tests": ["api_integration_tests"],
             "issue": "Test coverage below target",
-            "severity": "medium"
+            "severity": "medium",
         }
 
     async def _check_security_performance_sync(self) -> Dict[str, Any]:
@@ -162,7 +207,7 @@ class SynchronizationProtocolService:
             "status": "synced",
             "last_check": datetime.now().isoformat(),
             "security_overhead": 0.05,  # 5% performance impact
-            "balance_score": 0.92
+            "balance_score": 0.92,
         }
 
     async def _check_deployment_monitoring_sync(self) -> Dict[str, Any]:
@@ -171,10 +216,12 @@ class SynchronizationProtocolService:
             "status": "synced",
             "last_check": datetime.now().isoformat(),
             "monitoring_configs_current": True,
-            "health_correlation_active": True
+            "health_correlation_active": True,
         }
 
-    async def trigger_sync_action(self, protocol_name: str, action: str) -> Dict[str, Any]:
+    async def trigger_sync_action(
+        self, protocol_name: str, action: str
+    ) -> Dict[str, Any]:
         """Trigger a specific synchronization action."""
         if protocol_name not in self.sync_protocols:
             return {"error": f"Unknown protocol: {protocol_name}"}
@@ -189,20 +236,29 @@ class SynchronizationProtocolService:
             "protocol": protocol_name,
             "action": action,
             "status": "initiated",
-            "details": f"Manual sync action triggered for {protocol_name}"
+            "details": f"Manual sync action triggered for {protocol_name}",
         }
         self.sync_history.append(sync_event)
 
         # Execute action (simplified - in practice would perform actual sync)
         try:
-            if protocol_name == "tests_implementation" and action == "run_relevant_tests":
+            if (
+                protocol_name == "tests_implementation"
+                and action == "run_relevant_tests"
+            ):
                 # Trigger test run
                 result = await self._run_relevant_tests()
-            elif protocol_name == "code_documentation" and action == "auto_generate_api_docs":
+            elif (
+                protocol_name == "code_documentation"
+                and action == "auto_generate_api_docs"
+            ):
                 # Generate API docs
                 result = await self._generate_api_docs()
             else:
-                result = {"status": "completed", "message": f"Action {action} simulated"}
+                result = {
+                    "status": "completed",
+                    "message": f"Action {action} simulated",
+                }
 
             sync_event["status"] = "completed"
             sync_event["result"] = result
@@ -221,7 +277,7 @@ class SynchronizationProtocolService:
             "tests_run": 150,
             "tests_passed": 147,
             "tests_failed": 3,
-            "coverage": 0.89
+            "coverage": 0.89,
         }
 
     async def _generate_api_docs(self) -> Dict[str, Any]:
@@ -230,10 +286,12 @@ class SynchronizationProtocolService:
         return {
             "docs_generated": True,
             "endpoints_documented": 45,
-            "schemas_updated": 12
+            "schemas_updated": 12,
         }
 
-    async def configure_protocol(self, protocol_name: str, config: Dict[str, Any]) -> Dict[str, Any]:
+    async def configure_protocol(
+        self, protocol_name: str, config: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Configure a synchronization protocol."""
         if protocol_name not in self.sync_protocols:
             return {"error": f"Unknown protocol: {protocol_name}"}
@@ -244,12 +302,13 @@ class SynchronizationProtocolService:
         return {
             "status": "configured",
             "protocol": protocol_name,
-            "config": self.sync_protocols[protocol_name]
+            "config": self.sync_protocols[protocol_name],
         }
 
     def get_sync_history(self, limit: int = 50) -> List[Dict[str, Any]]:
         """Get synchronization history."""
         return self.sync_history[-limit:]
+
 
 # Global synchronization protocol service instance
 sync_protocol_service = SynchronizationProtocolService()

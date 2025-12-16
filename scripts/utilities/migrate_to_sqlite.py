@@ -23,13 +23,15 @@ import sys
 from pathlib import Path
 
 # Add backend to path
-backend_path = Path(__file__).parent / 'backend'
+backend_path = Path(__file__).parent / "backend"
 sys.path.insert(0, str(backend_path))
 
 try:
-    from core.database import create_tables, SessionLocal, Base
-    from sqlalchemy import create_engine, text
     import logging
+
+    from sqlalchemy import create_engine, text
+
+    from core.database import Base, SessionLocal, create_tables
 
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
@@ -37,19 +39,24 @@ except ImportError as e:
     print(f"Import error: {e}")
     sys.exit(1)
 
-def get_postgres_engine():
-        """Create PostgreSQL engine"""
-        postgres_url = os.getenv('POSTGRES_URL')
-        if not postgres_url:
-            logger.warning("No POSTGRES_URL provided, skipping PostgreSQL connection")
-            return None
 
-        try:
-            from sqlalchemy import create_engine
-            return create_engine(postgres_url)
-        except ImportError:
-            logger.error("psycopg2-binary not installed. Install with: pip install psycopg2-binary")
-            return None
+def get_postgres_engine():
+    """Create PostgreSQL engine"""
+    postgres_url = os.getenv("POSTGRES_URL")
+    if not postgres_url:
+        logger.warning("No POSTGRES_URL provided, skipping PostgreSQL connection")
+        return None
+
+    try:
+        from sqlalchemy import create_engine
+
+        return create_engine(postgres_url)
+    except ImportError:
+        logger.error(
+            "psycopg2-binary not installed. Install with: pip install psycopg2-binary"
+        )
+        return None
+
 
 def migrate_table(pg_engine, table_name, sqlite_session):
     """Migrate a single table from PostgreSQL to SQLite"""
@@ -58,12 +65,14 @@ def migrate_table(pg_engine, table_name, sqlite_session):
 
     try:
         # Get table schema from PostgreSQL
-        schema_query = text(f"""
+        schema_query = text(
+            f"""
             SELECT column_name, data_type, is_nullable, column_default
             FROM information_schema.columns
             WHERE table_name = '{table_name}'
             ORDER BY ordinal_position
-        """)
+        """
+        )
 
         with pg_engine.connect() as pg_conn:
             columns = pg_conn.execute(schema_query).fetchall()
@@ -82,8 +91,10 @@ def migrate_table(pg_engine, table_name, sqlite_session):
 
         # Insert into SQLite
         column_names = [col[0] for col in columns]
-        placeholders = ', '.join([':' + col for col in column_names])
-        insert_query = text(f"INSERT INTO {table_name} ({', '.join(column_names)}) VALUES ({placeholders})")
+        placeholders = ", ".join([":" + col for col in column_names])
+        insert_query = text(
+            f"INSERT INTO {table_name} ({', '.join(column_names)}) VALUES ({placeholders})"
+        )
 
         for row in data:
             row_dict = dict(zip(column_names, row))
@@ -95,13 +106,16 @@ def migrate_table(pg_engine, table_name, sqlite_session):
     except Exception as e:
         logger.error(f"Failed to migrate table {table_name}: {e}")
 
+
 def main():
     logger.info("Starting database migration from PostgreSQL to SQLite")
 
     # Get PostgreSQL connection
     pg_engine = get_postgres_engine()
     if not pg_engine:
-        logger.info("No PostgreSQL connection available, creating fresh SQLite database")
+        logger.info(
+            "No PostgreSQL connection available, creating fresh SQLite database"
+        )
     else:
         logger.info("Connected to PostgreSQL database")
 
@@ -116,13 +130,13 @@ def main():
         if pg_engine:
             # List of tables to migrate (in dependency order)
             tables_to_migrate = [
-                'users',
-                'teams',
-                'cases',
-                'case_notes',
-                'case_activities',
-                'transactions',
-                'evidence'
+                "users",
+                "teams",
+                "cases",
+                "case_notes",
+                "case_activities",
+                "transactions",
+                "evidence",
             ]
 
             for table_name in tables_to_migrate:
@@ -140,5 +154,6 @@ def main():
         if pg_engine:
             pg_engine.dispose()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

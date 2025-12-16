@@ -1,8 +1,8 @@
-
-import sys
 import os
-from fastapi.testclient import TestClient
+import sys
 from unittest.mock import MagicMock
+
+from fastapi.testclient import TestClient
 
 # Add backend directory AND project root to sys.path
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,15 +32,19 @@ mock_graph = MagicMock()
 sample_nodes = [
     ("node1", {"label": "John Doe", "type": "person", "risk_score": 80}),
     ("node2", {"label": "Evil Corp", "type": "company", "risk_score": 95}),
-    ("node3", {"label": "Safe Bank", "type": "bank", "risk_score": 10})
+    ("node3", {"label": "Safe Bank", "type": "bank", "risk_score": 10}),
 ]
 mock_graph.nodes.return_value = sample_nodes
 # Make nodes() callable with data=True
-mock_graph.nodes.side_effect = lambda data=False: sample_nodes if data else [n[0] for n in sample_nodes]
+mock_graph.nodes.side_effect = lambda data=False: (
+    sample_nodes if data else [n[0] for n in sample_nodes]
+)
 
 graph_service_mock.relationship_graph.graph = mock_graph
 sys.modules["services.relationship_graph"] = graph_service_mock
-sys.modules["app.services.relationship_graph"] = graph_service_mock # support both import paths
+sys.modules["app.services.relationship_graph"] = (
+    graph_service_mock  # support both import paths
+)
 
 # Now import main
 try:
@@ -52,13 +56,15 @@ except ImportError:
 
 # We might need to manually override the import in api/graph.py if it was already imported
 import api.graph
-api.graph.relationship_graph = graph_service_mock.relationship_graph 
+
+api.graph.relationship_graph = graph_service_mock.relationship_graph
 
 client = TestClient(app)
 
+
 def test_graph_search():
     print("Verifying Graph Search API...")
-    
+
     # 1. Search for "John"
     print("\n[TEST] GET /api/v1/graph/search?query=John")
     try:
@@ -67,7 +73,11 @@ def test_graph_search():
         if response.status_code == 200:
             data = response.json()
             print("Response:", data)
-            if data['success'] and len(data['results']) == 1 and data['results'][0]['id'] == 'node1':
+            if (
+                data["success"]
+                and len(data["results"]) == 1
+                and data["results"][0]["id"] == "node1"
+            ):
                 print("✅ PASS: Found John Doe")
             else:
                 print("❌ FAIL: Did not find expected node")
@@ -84,7 +94,7 @@ def test_graph_search():
         if response.status_code == 200:
             data = response.json()
             print("Response:", data)
-            if len(data['results']) == 1 and data['results'][0]['id'] == 'node2':
+            if len(data["results"]) == 1 and data["results"][0]["id"] == "node2":
                 print("✅ PASS: Found Evil Corp")
             else:
                 print("❌ FAIL: Did not find expected node")
@@ -92,6 +102,7 @@ def test_graph_search():
             print(f"❌ FAIL: {response.text}")
     except Exception as e:
         print(f"❌ FAIL (Exception): {e}")
+
 
 if __name__ == "__main__":
     test_graph_search()

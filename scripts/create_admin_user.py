@@ -3,16 +3,18 @@
 Create admin user for 378x492 Fraud Detection Platform
 """
 
-import sys
 import os
+import sys
 
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import uuid
+
+from backend.app.services.auth_service import auth_service
 from backend.app.services.database_service import db_service
 from backend.core.database import User, utc_now
-from backend.app.services.auth_service import auth_service
-import uuid
+
 
 def create_admin_user():
     """Create admin user if it doesn't exist"""
@@ -35,7 +37,7 @@ def create_admin_user():
                 is_active=True,
                 created_at=utc_now(),
                 mfa_enabled=False,
-                mfa_secret=None
+                mfa_secret=None,
             )
 
             db.add(admin_user)
@@ -53,6 +55,7 @@ def create_admin_user():
     except Exception as e:
         print(f"❌ Failed to create admin user: {e}")
         return None
+
 
 if __name__ == "__main__":
     create_admin_user()

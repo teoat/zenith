@@ -1,75 +1,83 @@
 # main.py
-from fastapi import FastAPI, Request, Response
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.exceptions import HTTPException as StarletteHTTPException
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
-from slowapi.middleware import SlowAPIMiddleware
-import uvicorn
 import os
 import time
+from contextlib import asynccontextmanager
+
+import uvicorn
 from dotenv import load_dotenv
+from fastapi import FastAPI, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.util import get_remote_address
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.middleware.base import BaseHTTPMiddleware
 
 # Load environment variables from .env file
 load_dotenv()
 
-from app.routers.auth import router as auth_router
-from app.routers.search import router as search_router
-from app.routers.admin import router as admin_router
-from app.routers.users import router as users_router
-from app.routers.analytics import router as analytics_router
-from app.routers.fraud import router as fraud_router
-from app.routers.multimodal import router as multimodal_router
-from app.routers.semantic_search import router as semantic_search_router
-from app.routers.logging import router as logging_router
-from app.routers.health import router as health_router  # Health checks
-from app.routers.apm import router as apm_router
-from app.routers.graph import router as graph_router
-from app.routers.realtime_sync import router as realtime_sync_router
-from app.routers.notifications import router as notifications_router
-from app.routers.stats import router as stats_router
-from app.routers.reporting import router as reporting_router
-from app.routers.ai import router as ai_router
-from app.routers.backup import router as backup_router
-from app.routers.fraud_rules import router as fraud_rules_router
-from app.routers.collaboration import router as collaboration_router
-from app.services.collaboration_service import collaboration_manager
-from app.routers.cases import router as cases_router
-from app.routers.evidence import router as evidence_router
-from app.routers.audit import router as audit_router
-from app.routers.reconciliation import router as reconciliation_router
-from app.services.monitoring_service import monitoring_service, create_monitoring_middleware
-from app.routers.onboarding import router as onboarding_router
-from app.routers.metadata import router as metadata_router
-from app.routers.relationship_graph import router as relationship_graph_router
-from app.routers.proof import router as proof_router
-from app.routers import advanced_ai
-from core.database import create_tables, get_db
-from core.metrics import PrometheusMiddleware
-from core.validation import InputValidationMiddleware
-from core.logging import logger, log_request, log_error
-from core.sentry_config import init_sentry
-from app.services.apm_service import APMMiddleware, apm_service
-from app.services.ai_training_service import training_pipeline
-from app.services.sync_service import sync_manager
-from app.services.audit_service import audit_service
-from app.services.performance_monitor import performance_monitor
-from app.services.user_journey_tracker import user_journey_tracker
-from sqlalchemy.orm import Session
-from sqlalchemy import text
-from fastapi import Depends, HTTPException
 import traceback
 
+from fastapi import Depends, HTTPException
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
+from app.routers import advanced_ai
+from app.routers.admin import router as admin_router
+from app.routers.ai import router as ai_router
+from app.routers.analytics import router as analytics_router
+from app.routers.apm import router as apm_router
+from app.routers.audit import router as audit_router
+from app.routers.auth import router as auth_router
+from app.routers.backup import router as backup_router
+from app.routers.cases import router as cases_router
+from app.routers.collaboration import router as collaboration_router
+from app.routers.evidence import router as evidence_router
+from app.routers.fraud import router as fraud_router
+from app.routers.fraud_rules import router as fraud_rules_router
+from app.routers.graph import router as graph_router
+from app.routers.health import router as health_router  # Health checks
+from app.routers.logging import router as logging_router
+from app.routers.metadata import router as metadata_router
+from app.routers.multimodal import router as multimodal_router
+from app.routers.notifications import router as notifications_router
+from app.routers.onboarding import router as onboarding_router
+from app.routers.proof import router as proof_router
+from app.routers.realtime_sync import router as realtime_sync_router
+from app.routers.reconciliation import router as reconciliation_router
+from app.routers.relationship_graph import router as relationship_graph_router
+from app.routers.reporting import router as reporting_router
+from app.routers.search import router as search_router
+from app.routers.semantic_search import router as semantic_search_router
+from app.routers.stats import router as stats_router
+from app.routers.users import router as users_router
+from app.services.ai_training_service import training_pipeline
+from app.services.apm_service import APMMiddleware, apm_service
+from app.services.audit_service import audit_service
+from app.services.collaboration_service import collaboration_manager
+from app.services.monitoring_service import (
+    create_monitoring_middleware,
+    monitoring_service,
+)
+from app.services.performance_monitor import performance_monitor
+from app.services.sync_service import sync_manager
+from app.services.user_journey_tracker import user_journey_tracker
+from core.database import create_tables, get_db
+from core.logging import log_error, log_request, logger
+from core.metrics import PrometheusMiddleware
+from core.sentry_config import init_sentry
+from core.validation import InputValidationMiddleware
+
+
 # Security Audit Logging Functions
-def log_security_event(event_type: str, user_id: str = None, details: dict = None, request: Request = None):
+def log_security_event(
+    event_type: str, user_id: str = None, details: dict = None, request: Request = None
+):
     """Log security-related events"""
     try:
         audit_details = {
@@ -80,26 +88,31 @@ def log_security_event(event_type: str, user_id: str = None, details: dict = Non
         }
 
         if request:
-            audit_details.update({
-                "ip_address": request.client.host if request.client else "unknown",
-                "user_agent": request.headers.get("user-agent", "unknown"),
-                "endpoint": str(request.url),
-                "method": request.method
-            })
+            audit_details.update(
+                {
+                    "ip_address": request.client.host if request.client else "unknown",
+                    "user_agent": request.headers.get("user-agent", "unknown"),
+                    "endpoint": str(request.url),
+                    "method": request.method,
+                }
+            )
 
         # Log to audit service
         audit_service.log_security_event(
             user_id=user_id,
             action=event_type,
             resource_type="security",
-            details=json.dumps(audit_details)
+            details=json.dumps(audit_details),
         )
 
         # Also log to application logger
-        logger.warning(f"Security Event: {event_type} - User: {user_id} - Details: {details}")
+        logger.warning(
+            f"Security Event: {event_type} - User: {user_id} - Details: {details}"
+        )
 
     except Exception as e:
         logger.error(f"Failed to log security event: {e}")
+
 
 def log_auth_failure(user_id: str, reason: str, request: Request = None):
     """Log authentication failures"""
@@ -107,17 +120,21 @@ def log_auth_failure(user_id: str, reason: str, request: Request = None):
         "AUTH_FAILURE",
         user_id=user_id,
         details={"reason": reason, "attempted_login": True},
-        request=request
+        request=request,
     )
 
-def log_suspicious_activity(activity_type: str, user_id: str, details: dict, request: Request = None):
+
+def log_suspicious_activity(
+    activity_type: str, user_id: str, details: dict, request: Request = None
+):
     """Log suspicious activities"""
     log_security_event(
         f"SUSPICIOUS_{activity_type.upper()}",
         user_id=user_id,
         details=details,
-        request=request
+        request=request,
     )
+
 
 # Security Headers Middleware
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -125,10 +142,10 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response = await call_next(request)
 
         # Security headers
-        response.headers['X-Content-Type-Options'] = 'nosniff'
-        response.headers['X-Frame-Options'] = 'DENY'
-        response.headers['X-XSS-Protection'] = '1; mode=block'
-        response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
         # Content Security Policy
         csp = (
@@ -140,15 +157,16 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "connect-src 'self' https://api.378x492.com; "
             "frame-ancestors 'none';"
         )
-        response.headers['Content-Security-Policy'] = csp
+        response.headers["Content-Security-Policy"] = csp
 
         # Remove server information (use del instead of pop for MutableHeaders)
-        if 'Server' in response.headers:
-            del response.headers['Server']
-        if 'X-Powered-By' in response.headers:
-            del response.headers['X-Powered-By']
+        if "Server" in response.headers:
+            del response.headers["Server"]
+        if "X-Powered-By" in response.headers:
+            del response.headers["X-Powered-By"]
 
         return response
+
 
 # Lifespan context manager (replaces deprecated on_event decorators)
 @asynccontextmanager
@@ -159,7 +177,9 @@ async def lifespan(app: FastAPI):
     try:
         # Create database tables
         create_tables()
-        logger.info("Database tables created successfully", extra={"event": "database_init"})
+        logger.info(
+            "Database tables created successfully", extra={"event": "database_init"}
+        )
 
         # Initialize Sentry
         # if init_sentry():
@@ -168,18 +188,32 @@ async def lifespan(app: FastAPI):
         # monitoring_service.start_monitoring()
         # performance_monitor.start_monitoring()
         # apm_service.start_monitoring()
-        logger.info("Monitoring services disabled for debugging", extra={"event": "monitoring_start"})
+        logger.info(
+            "Monitoring services disabled for debugging",
+            extra={"event": "monitoring_start"},
+        )
 
-        logger.info("Collaboration WebSocket server skipped for testing", extra={"event": "collaboration_skipped"})
-        logger.info("378x492 API startup completed successfully", extra={"event": "startup_complete"})
+        logger.info(
+            "Collaboration WebSocket server skipped for testing",
+            extra={"event": "collaboration_skipped"},
+        )
+        logger.info(
+            "378x492 API startup completed successfully",
+            extra={"event": "startup_complete"},
+        )
     except Exception as e:
-        logger.error("Failed to start 378x492 API", extra={"error": str(e), "event": "startup_failed"})
+        logger.error(
+            "Failed to start 378x492 API",
+            extra={"error": str(e), "event": "startup_failed"},
+        )
         raise
 
     yield  # Application runs here
-    
+
     # Shutdown
-    logger.info("Shutting down 378x492 Fraud Detection API", extra={"event": "shutdown"})
+    logger.info(
+        "Shutting down 378x492 Fraud Detection API", extra={"event": "shutdown"}
+    )
     try:
         monitoring_service.stop_monitoring()
         performance_monitor.stop_monitoring()
@@ -187,17 +221,25 @@ async def lifespan(app: FastAPI):
         logger.info("Monitoring services stopped", extra={"event": "monitoring_stop"})
 
         await collaboration_manager.stop_server()
-        logger.info("Collaboration WebSocket server stopped", extra={"event": "collaboration_stop"})
+        logger.info(
+            "Collaboration WebSocket server stopped",
+            extra={"event": "collaboration_stop"},
+        )
 
-        logger.info("378x492 API shutdown completed", extra={"event": "shutdown_complete"})
+        logger.info(
+            "378x492 API shutdown completed", extra={"event": "shutdown_complete"}
+        )
     except Exception as e:
-        logger.error("Error during shutdown", extra={"error": str(e), "event": "shutdown_error"})
+        logger.error(
+            "Error during shutdown", extra={"error": str(e), "event": "shutdown_error"}
+        )
+
 
 app = FastAPI(
     title="378x492 Fraud Detection API",
     version="1.0.0",
     description="Backend API for desktop fraud detection application",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 # Environment-based configuration
@@ -209,7 +251,12 @@ if not is_development:
     app.add_middleware(HTTPSRedirectMiddleware)
     app.add_middleware(
         TrustedHostMiddleware,
-        allowed_hosts=["api.378x492.com", "localhost", "testserver", "testclient"]  # Configure for your domain
+        allowed_hosts=[
+            "api.378x492.com",
+            "localhost",
+            "testserver",
+            "testclient",
+        ],  # Configure for your domain
     )
 
 # CORS configuration with security
@@ -220,14 +267,11 @@ if is_development:
         "http://localhost:5173",  # Vite dev server
         "http://localhost:5173",  # React dev server
         "http://127.0.0.1:5173",
-        "http://127.0.0.1:3000"
+        "http://127.0.0.1:3000",
     ]
 else:
     # Production: Restrict to specific domains
-    allowed_origins = [
-        "https://app.378x492.com",
-        "https://api.378x492.com"
-    ]
+    allowed_origins = ["https://app.378x492.com", "https://api.378x492.com"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -240,9 +284,9 @@ app.add_middleware(
         "X-Requested-With",
         "Accept",
         "Accept-Encoding",
-        "Accept-Language"
+        "Accept-Language",
     ],
-    max_age=86400  # 24 hours
+    max_age=86400,  # 24 hours
 )
 
 # Rate limiting
@@ -262,7 +306,9 @@ app.add_middleware(SecurityHeadersMiddleware)
 
 # CSRF protection middleware - RE-ENABLED for production security
 from core.csrf_protection import CSRFProtectionMiddleware
+
 app.add_middleware(CSRFProtectionMiddleware)
+
 
 # Request logging middleware
 @app.middleware("http")
@@ -270,9 +316,10 @@ async def request_logging_middleware(request: Request, call_next):
     """
     Middleware for logging all requests with comprehensive audit trail.
     """
-    from app.services.audit_service import audit_service
-    import uuid
     import time
+    import uuid
+
+    from app.services.audit_service import audit_service
 
     request_id = str(uuid.uuid4())[:8]
     start_time = time.time()
@@ -303,7 +350,10 @@ async def request_logging_middleware(request: Request, call_next):
     # Determine audit action type
     if path.startswith("/api/v1/auth"):
         action = "login" if method == "POST" and "login" in path else "auth_access"
-    elif any(path.startswith(f"/api/v1/{endpoint}") for endpoint in ["cases", "transactions", "alerts"]):
+    elif any(
+        path.startswith(f"/api/v1/{endpoint}")
+        for endpoint in ["cases", "transactions", "alerts"]
+    ):
         action = "data_access" if method == "GET" else "data_modification"
     elif path.startswith("/api/v1/admin"):
         action = "admin_operation"
@@ -321,7 +371,7 @@ async def request_logging_middleware(request: Request, call_next):
         "query_params": query_params[:500] if query_params else None,  # Limit size
         "user_agent": user_agent[:200],
         "session_id": session_id,
-        "request_id": request_id
+        "request_id": request_id,
     }
 
     try:
@@ -332,11 +382,13 @@ async def request_logging_middleware(request: Request, call_next):
         response.headers["X-Request-ID"] = request_id
 
         # Update audit details with response info
-        details.update({
-            "status_code": response.status_code,
-            "response_time": round(duration, 3),
-            "success": response.status_code < 400
-        })
+        details.update(
+            {
+                "status_code": response.status_code,
+                "response_time": round(duration, 3),
+                "success": response.status_code < 400,
+            }
+        )
 
         # Log successful requests to application log
         log_request(
@@ -344,7 +396,7 @@ async def request_logging_middleware(request: Request, call_next):
             method=request.method,
             path=str(request.url.path),
             status_code=response.status_code,
-            duration=duration
+            duration=duration,
         )
 
         # Log audit event to persistent database
@@ -355,16 +407,21 @@ async def request_logging_middleware(request: Request, call_next):
             endpoint=path,
             status_code=response.status_code,
             processing_time=duration,
-            details={**details, 'action': action, 'resource_type': resource_type, 'resource_id': resource_id},
+            details={
+                **details,
+                "action": action,
+                "resource_type": resource_type,
+                "resource_id": resource_id,
+            },
             ip_address=client_ip,
-            user_agent=user_agent
+            user_agent=user_agent,
         )
 
         return response
 
     except Exception as e:
         duration = time.time() - start_time
-        
+
         # Log failed requests to application log
         log_error(
             "request_failed",
@@ -373,8 +430,8 @@ async def request_logging_middleware(request: Request, call_next):
                 "request_id": request_id,
                 "method": request.method,
                 "path": str(request.url.path),
-                "duration": duration
-            }
+                "duration": duration,
+            },
         )
 
         # Log failed request to audit log
@@ -385,81 +442,141 @@ async def request_logging_middleware(request: Request, call_next):
             endpoint=path,
             status_code=500,
             processing_time=duration,
-            details={**details, 'action': f"failed_{action}", 'resource_type': resource_type, 'resource_id': resource_id},
+            details={
+                **details,
+                "action": f"failed_{action}",
+                "resource_type": resource_type,
+                "resource_id": resource_id,
+            },
             ip_address=client_ip,
-            user_agent=user_agent
+            user_agent=user_agent,
         )
         raise
+
 
 # Monitoring middleware
 app.middleware("http")(create_monitoring_middleware())
 
 # Rate limiting middleware for DoS protection
 from app.middleware.rate_limit import rate_limit_middleware
+
 app.middleware("http")(rate_limit_middleware)
 
 # Include routers with API versioning (before static files)
 API_VERSION = "v1"
 
 # Standard Routers
-app.include_router(auth_router, prefix=f"/api/{API_VERSION}/auth", tags=["Authentication"])
+app.include_router(
+    auth_router, prefix=f"/api/{API_VERSION}/auth", tags=["Authentication"]
+)
 app.include_router(search_router, prefix=f"/api/{API_VERSION}/search", tags=["Search"])
 app.include_router(admin_router, prefix=f"/api/{API_VERSION}/admin", tags=["Admin"])
 app.include_router(users_router, prefix=f"/api/{API_VERSION}/users", tags=["Users"])
-app.include_router(analytics_router, prefix=f"/api/{API_VERSION}/analytics", tags=["Analytics"])
-app.include_router(reporting_router, prefix=f"/api/{API_VERSION}/reporting", tags=["Reporting"])
+app.include_router(
+    analytics_router, prefix=f"/api/{API_VERSION}/analytics", tags=["Analytics"]
+)
+app.include_router(
+    reporting_router, prefix=f"/api/{API_VERSION}/reporting", tags=["Reporting"]
+)
 app.include_router(cases_router, prefix=f"/api/{API_VERSION}/cases", tags=["Cases"])
 app.include_router(audit_router, prefix=f"/api/{API_VERSION}/audit", tags=["Audit"])
-app.include_router(evidence_router, prefix=f"/api/{API_VERSION}/evidence", tags=["Evidence"])
+app.include_router(
+    evidence_router, prefix=f"/api/{API_VERSION}/evidence", tags=["Evidence"]
+)
 app.include_router(fraud_router, prefix=f"/api/{API_VERSION}/fraud", tags=["Fraud"])
 
 # AI & Intelligence
 app.include_router(ai_router, prefix=f"/api/{API_VERSION}/ai", tags=["AI Intelligence"])
-app.include_router(advanced_ai.router, prefix=f"/api/{API_VERSION}/advanced_ai", tags=["Advanced AI"])
+app.include_router(
+    advanced_ai.router, prefix=f"/api/{API_VERSION}/advanced_ai", tags=["Advanced AI"]
+)
 
 # Additional Routers
-app.include_router(multimodal_router, prefix=f"/api/{API_VERSION}/multimodal", tags=["Multimodal"])
-app.include_router(semantic_search_router, prefix=f"/api/{API_VERSION}/semantic_search", tags=["Semantic Search"])
-app.include_router(logging_router, prefix=f"/api/{API_VERSION}/logging", tags=["Logging"])
+app.include_router(
+    multimodal_router, prefix=f"/api/{API_VERSION}/multimodal", tags=["Multimodal"]
+)
+app.include_router(
+    semantic_search_router,
+    prefix=f"/api/{API_VERSION}/semantic_search",
+    tags=["Semantic Search"],
+)
+app.include_router(
+    logging_router, prefix=f"/api/{API_VERSION}/logging", tags=["Logging"]
+)
 app.include_router(apm_router, prefix=f"/api/{API_VERSION}/apm", tags=["APM"])
 app.include_router(graph_router, prefix=f"/api/{API_VERSION}/graph", tags=["Graph"])
-app.include_router(realtime_sync_router, prefix=f"/api/{API_VERSION}/sync", tags=["Realtime Sync"])
-app.include_router(notifications_router, prefix=f"/api/{API_VERSION}/notifications", tags=["Notifications"])
+app.include_router(
+    realtime_sync_router, prefix=f"/api/{API_VERSION}/sync", tags=["Realtime Sync"]
+)
+app.include_router(
+    notifications_router,
+    prefix=f"/api/{API_VERSION}/notifications",
+    tags=["Notifications"],
+)
 app.include_router(backup_router, prefix=f"/api/{API_VERSION}/backup", tags=["Backup"])
-app.include_router(fraud_rules_router, prefix=f"/api/{API_VERSION}/rules", tags=["Fraud Rules"])
-app.include_router(collaboration_router, prefix=f"/api/{API_VERSION}/collaboration", tags=["Collaboration"])
+app.include_router(
+    fraud_rules_router, prefix=f"/api/{API_VERSION}/rules", tags=["Fraud Rules"]
+)
+app.include_router(
+    collaboration_router,
+    prefix=f"/api/{API_VERSION}/collaboration",
+    tags=["Collaboration"],
+)
 app.include_router(stats_router, prefix=f"/api/{API_VERSION}/stats", tags=["Stats"])
-app.include_router(reconciliation_router, prefix=f"/api/{API_VERSION}/reconciliation", tags=["Reconciliation"])
-app.include_router(onboarding_router, prefix=f"/api/{API_VERSION}/onboarding", tags=["Onboarding"])
-app.include_router(metadata_router, prefix=f"/api/{API_VERSION}/metadata", tags=["Metadata"])
-app.include_router(relationship_graph_router, prefix=f"/api/{API_VERSION}/relationships", tags=["relationship_graph"])
+app.include_router(
+    reconciliation_router,
+    prefix=f"/api/{API_VERSION}/reconciliation",
+    tags=["Reconciliation"],
+)
+app.include_router(
+    onboarding_router, prefix=f"/api/{API_VERSION}/onboarding", tags=["Onboarding"]
+)
+app.include_router(
+    metadata_router, prefix=f"/api/{API_VERSION}/metadata", tags=["Metadata"]
+)
+app.include_router(
+    relationship_graph_router,
+    prefix=f"/api/{API_VERSION}/relationships",
+    tags=["relationship_graph"],
+)
 app.include_router(proof_router, prefix=f"/api/{API_VERSION}/proof", tags=["Proof"])
 
 
 # Optional Routers (Check for ImportError above/try-except)
 try:
     from app.routers.metrics import router as metrics_router
+
     app.include_router(metrics_router, tags=["Metrics"])
 except ImportError:
     pass
 
 try:
     from app.routers.streaming import router as streaming_router
-    app.include_router(streaming_router, prefix=f"/api/{API_VERSION}", tags=["Streaming"])
+
+    app.include_router(
+        streaming_router, prefix=f"/api/{API_VERSION}", tags=["Streaming"]
+    )
 except ImportError:
     pass
 
 try:
     from app.routers.websocket import router as websocket_router
+
     app.include_router(websocket_router, tags=["WebSocket"])
 except ImportError:
     pass
 
 try:
     from app.routers.diagnostics import router as diagnostics_router
-    app.include_router(diagnostics_router, prefix=f"/api/{API_VERSION}/diagnostics", tags=["Diagnostics"])
+
+    app.include_router(
+        diagnostics_router,
+        prefix=f"/api/{API_VERSION}/diagnostics",
+        tags=["Diagnostics"],
+    )
 except ImportError:
     pass
+
 
 # Health check endpoints
 @app.get("/health")
@@ -481,6 +598,7 @@ def health_check():
         ai_status = "healthy"
         try:
             from app.services.ai_service import ai_service
+
             # Keep AI marked healthy here; tests that need to simulate unready
             # state should patch the ai_service module directly.
             ai_status = "healthy"
@@ -492,34 +610,35 @@ def health_check():
         overall_status = "healthy"
         if db_status != "healthy" or ai_status != "healthy":
             overall_status = "degraded"
-        if health_metrics.get('system_health', 100) < 50:
+        if health_metrics.get("system_health", 100) < 50:
             overall_status = "critical"
 
         return {
             "status": overall_status,
             "service": "fraud-detection-backend",
             "version": "1.0.0",
-            "timestamp": health_metrics.get('timestamp'),
-            "uptime": health_metrics.get('uptime_seconds'),
-            "system_health": health_metrics.get('system_health'),
+            "timestamp": health_metrics.get("timestamp"),
+            "uptime": health_metrics.get("uptime_seconds"),
+            "system_health": health_metrics.get("system_health"),
             "components": {
                 "database": db_status,
                 "ai_service": ai_status,
-                "monitoring": "healthy"
+                "monitoring": "healthy",
             },
             "metrics": {
-                "cpu_percent": health_metrics.get('cpu_percent'),
-                "memory_percent": health_metrics.get('memory_percent'),
-                "disk_usage": health_metrics.get('disk_usage_percent')
-            }
+                "cpu_percent": health_metrics.get("cpu_percent"),
+                "memory_percent": health_metrics.get("memory_percent"),
+                "disk_usage": health_metrics.get("disk_usage_percent"),
+            },
         }
     except Exception as e:
         return {
             "status": "unhealthy",
             "service": "fraud-detection-backend",
             "error": str(e),
-            "timestamp": "unknown"
+            "timestamp": "unknown",
         }
+
 
 @app.get("/health/ready")
 def readiness_check(db: Session = Depends(get_db)):
@@ -532,7 +651,10 @@ def readiness_check(db: Session = Depends(get_db)):
         ai_ready = True
         try:
             from app.services.ai_service import ai_service
-            ai_ready = ai_service.initialized if hasattr(ai_service, 'initialized') else True
+
+            ai_ready = (
+                ai_service.initialized if hasattr(ai_service, "initialized") else True
+            )
         except Exception:
             # If AI service is missing in test environment, assume ready
             ai_ready = True
@@ -541,19 +663,17 @@ def readiness_check(db: Session = Depends(get_db)):
             "status": "ready",
             "database": "connected",
             "ai_service": "ready",
-            "timestamp": "now"
+            "timestamp": "now",
         }
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Service not ready: {str(e)}")
 
+
 @app.get("/health/live")
 def liveness_check():
     """Liveness check - basic heartbeat"""
-    return {
-        "status": "alive",
-        "service": "fraud-detection-backend",
-        "timestamp": "now"
-    }
+    return {"status": "alive", "service": "fraud-detection-backend", "timestamp": "now"}
+
 
 @app.get("/health/detailed")
 def detailed_health_check():
@@ -564,21 +684,18 @@ def detailed_health_check():
 
         return {
             "status": "healthy",
-            "timestamp": health_metrics.get('timestamp'),
+            "timestamp": health_metrics.get("timestamp"),
             "system": health_metrics,
             "performance": system_metrics,
             "services": {
                 "database": "connected",  # Would need actual check
-                "redis": "connected",     # Would need actual check
-                "ai_service": "ready"     # Would need actual check
-            }
+                "redis": "connected",  # Would need actual check
+                "ai_service": "ready",  # Would need actual check
+            },
         }
     except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": "now"
-        }
+        return {"status": "error", "error": str(e), "timestamp": "now"}
+
 
 @app.get("/performance/baselines")
 def get_performance_baselines():
@@ -592,7 +709,7 @@ def get_performance_baselines():
             "baselines": baselines,
             "current_metrics": current_metrics,
             "alerts": alerts,
-            "status": "healthy" if not alerts else "warning"
+            "status": "healthy" if not alerts else "warning",
         }
     except Exception as e:
         return {
@@ -600,8 +717,9 @@ def get_performance_baselines():
             "error": str(e),
             "baselines": {},
             "current_metrics": {},
-            "alerts": []
+            "alerts": [],
         }
+
 
 @app.get("/performance/metrics")
 def get_performance_metrics():
@@ -609,10 +727,8 @@ def get_performance_metrics():
     try:
         return performance_monitor.get_current_metrics()
     except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e)
-        }
+        return {"status": "error", "error": str(e)}
+
 
 @app.get("/analytics/journey")
 def get_journey_analytics():
@@ -624,15 +740,16 @@ def get_journey_analytics():
         return {
             "funnel_analysis": funnel_data,
             "session_analytics": session_data,
-            "status": "success"
+            "status": "success",
         }
     except Exception as e:
         return {
             "status": "error",
             "error": str(e),
             "funnel_analysis": {},
-            "session_analytics": {}
+            "session_analytics": {},
         }
+
 
 @app.post("/analytics/track")
 def track_user_event(event_type: str, user_id: str = None, metadata: dict = None):
@@ -642,6 +759,7 @@ def track_user_event(event_type: str, user_id: str = None, metadata: dict = None
         return {"status": "tracked"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
 
 @app.get("/diagnostics/dashboard")
 def get_diagnostics_dashboard():
@@ -667,34 +785,47 @@ def get_diagnostics_dashboard():
             system_status = "critical"
         elif alerts:
             system_status = "warning"
-        elif health_data.get('system_health', 100) < 80:
+        elif health_data.get("system_health", 100) < 80:
             system_status = "degraded"
 
         return {
             "status": system_status,
             "timestamp": "now",
             "summary": {
-                "system_health": health_data.get('system_health', 0),
+                "system_health": health_data.get("system_health", 0),
                 "active_alerts": len(alerts),
-                "total_users": journey_data.get('total_users', 0),
-                "performance_score": "good" if not alerts else "needs_attention"
+                "total_users": journey_data.get("total_users", 0),
+                "performance_score": "good" if not alerts else "needs_attention",
             },
             "health": health_data,
             "performance": {
                 "baselines": performance_data,
                 "current": current_metrics,
-                "alerts": alerts
+                "alerts": alerts,
             },
-            "user_analytics": {
-                "journey": journey_data,
-                "sessions": session_data
-            },
+            "user_analytics": {"journey": journey_data, "sessions": session_data},
             "recommendations": [
-                "Monitor CPU usage if > 90%" if any("cpu" in alert.lower() for alert in alerts) else None,
-                "Check memory usage if > 85%" if any("memory" in alert.lower() for alert in alerts) else None,
-                "Review user drop-off in funnel" if journey_data.get('drop_off_points') else None,
-                "Scale infrastructure if needed" if system_status == "critical" else None
-            ]
+                (
+                    "Monitor CPU usage if > 90%"
+                    if any("cpu" in alert.lower() for alert in alerts)
+                    else None
+                ),
+                (
+                    "Check memory usage if > 85%"
+                    if any("memory" in alert.lower() for alert in alerts)
+                    else None
+                ),
+                (
+                    "Review user drop-off in funnel"
+                    if journey_data.get("drop_off_points")
+                    else None
+                ),
+                (
+                    "Scale infrastructure if needed"
+                    if system_status == "critical"
+                    else None
+                ),
+            ],
         }
     except Exception as e:
         return {
@@ -705,14 +836,17 @@ def get_diagnostics_dashboard():
             "health": {},
             "performance": {"alerts": ["Monitoring system error"]},
             "user_analytics": {},
-            "recommendations": ["Check system logs", "Contact system administrator"]
+            "recommendations": ["Check system logs", "Contact system administrator"],
         }
+
 
 @app.get("/metrics")
 def metrics_endpoint():
     """Prometheus metrics"""
     from core.metrics import get_metrics
+
     return get_metrics()
+
 
 # Frontend serving
 @app.get("/")
@@ -722,9 +856,13 @@ async def serve_index():
     if os.path.exists(frontend_dist):
         return FileResponse(os.path.join(frontend_dist, "index.html"))
     else:
-        return {"message": "Frontend not built. Run 'npm run build:frontend' to build the frontend."}
+        return {
+            "message": "Frontend not built. Run 'npm run build:frontend' to build the frontend."
+        }
+
 
 # Global exception handlers
+
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
@@ -736,17 +874,13 @@ async def http_exception_handler(request: Request, exc: HTTPException):
             "status_code": exc.status_code,
             "path": str(request.url),
             "method": request.method,
-            "client_ip": request.client.host if request.client else None
-        }
+            "client_ip": request.client.host if request.client else None,
+        },
     )
 
     # Return standard FastAPI error shape to match tests that expect a top-level 'detail' key
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={
-            "detail": exc.detail
-        }
-    )
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
@@ -757,7 +891,7 @@ async def general_exception_handler(request: Request, exc: Exception):
         "traceback": traceback.format_exc(),
         "path": str(request.url),
         "method": request.method,
-        "client_ip": request.client.host if request.client else None
+        "client_ip": request.client.host if request.client else None,
     }
 
     log_error("unexpected_error", f"Unexpected error: {str(exc)}", error_details)
@@ -770,9 +904,9 @@ async def general_exception_handler(request: Request, exc: Exception):
                 "error": {
                     "type": "internal_server_error",
                     "status_code": 500,
-                    "detail": "An unexpected error occurred. Please try again later."
+                    "detail": "An unexpected error occurred. Please try again later.",
                 }
-            }
+            },
         )
     else:
         # Show full details in development
@@ -783,10 +917,11 @@ async def general_exception_handler(request: Request, exc: Exception):
                     "type": "unexpected_error",
                     "status_code": 500,
                     "detail": str(exc),
-                    "traceback": traceback.format_exc()
+                    "traceback": traceback.format_exc(),
                 }
-            }
+            },
         )
+
 
 @app.exception_handler(StarletteHTTPException)
 async def starlette_exception_handler(request: Request, exc: StarletteHTTPException):
@@ -797,21 +932,18 @@ async def starlette_exception_handler(request: Request, exc: StarletteHTTPExcept
         {
             "status_code": exc.status_code,
             "path": str(request.url),
-            "method": request.method
-        }
+            "method": request.method,
+        },
     )
 
     # Preserve the familiar FastAPI/Starlette response shape
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={
-            "detail": exc.detail
-        }
-    )
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
 
 if __name__ == "__main__":
-    import os
     import asyncio
+    import os
+
     # Security: Only enable reload in development
     reload_enabled = os.getenv("ENVIRONMENT", "production").lower() == "development"
 
@@ -825,5 +957,5 @@ if __name__ == "__main__":
         host=os.getenv("HOST", "127.0.0.1"),
         port=int(os.getenv("PORT", "8000")),
         reload=reload_enabled,  # Only reload in development
-        log_level="info"
+        log_level="info",
     )

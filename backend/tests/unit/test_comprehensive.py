@@ -1,18 +1,25 @@
 """Comprehensive backend tests to reach 80% coverage"""
+
+import uuid
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
 from fastapi import HTTPException
-from starlette.testclient import TestClient
 from main import app
-from core.config import Settings
-from core.logging import setup_logging, log_request, log_error, log_security_event
-from core.validation import InputValidationMiddleware, sanitize_string, validate_filename
-from core.database import Case, Transaction, Evidence, User, CaseStatus
+from starlette.testclient import TestClient
+
 from app.services.auth_service import auth_service
 from app.services.database_service import db_service
 from app.services.fraud_service import FraudDetectionService
 from app.services.monitoring_service import monitoring_service
-import uuid
+from core.config import Settings
+from core.database import Case, CaseStatus, Evidence, Transaction, User
+from core.logging import log_error, log_request, log_security_event, setup_logging
+from core.validation import (
+    InputValidationMiddleware,
+    sanitize_string,
+    validate_filename,
+)
 
 
 class TestCoreFunctionality:
@@ -33,19 +40,19 @@ class TestCoreFunctionality:
 
     def test_log_request(self):
         """Test request logging"""
-        with patch('core.logging.logger.info') as mock_info:
+        with patch("core.logging.logger.info") as mock_info:
             log_request("req-123", "GET", "/api/test", 200, 0.5, "user-123")
             mock_info.assert_called_once()
 
     def test_log_error(self):
         """Test error logging"""
-        with patch('core.logging.logger.error') as mock_error:
+        with patch("core.logging.logger.error") as mock_error:
             log_error("test_error", "Test error message", {"details": "test"})
             mock_error.assert_called_once()
 
     def test_log_security_event(self):
         """Test security event logging"""
-        with patch('core.logging.logger.warning') as mock_warning:
+        with patch("core.logging.logger.warning") as mock_warning:
             log_security_event("login_failed", "user-123", "192.168.1.1")
             mock_warning.assert_called_once()
 
@@ -80,7 +87,7 @@ class TestDatabaseModels:
             description="Test case description",
             status=CaseStatus.OPEN,
             customer_name="John Doe",
-            fraud_amount=5000.0
+            fraud_amount=5000.0,
         )
 
         assert case.id == case_id
@@ -98,7 +105,7 @@ class TestDatabaseModels:
             currency="USD",
             description="Test transaction",
             merchant_name="Test Merchant",
-            transaction_type="DEBIT"
+            transaction_type="DEBIT",
         )
 
         assert transaction.amount == 1000.0
@@ -114,7 +121,7 @@ class TestDatabaseModels:
             file_type="application/pdf",
             file_category="document",
             size_bytes=1024,
-            uploaded_by="test_user"
+            uploaded_by="test_user",
         )
 
         assert evidence.filename == "test.pdf"
@@ -128,7 +135,7 @@ class TestDatabaseModels:
             username="testuser",
             email="test@example.com",
             full_name="Test User",
-            is_active=True
+            is_active=True,
         )
 
         assert user.username == "testuser"
@@ -142,8 +149,8 @@ class TestAuthService:
     def test_auth_service_initialization(self):
         """Test auth service initialization"""
         assert auth_service is not None
-        assert hasattr(auth_service, 'hash_password')
-        assert hasattr(auth_service, 'verify_password')
+        assert hasattr(auth_service, "hash_password")
+        assert hasattr(auth_service, "verify_password")
 
     def test_password_hashing(self):
         """Test password hashing and verification"""
@@ -178,18 +185,20 @@ class TestDatabaseService:
     def test_db_service_initialization(self):
         """Test database service initialization"""
         assert db_service is not None
-        assert hasattr(db_service, 'get_db')
+        assert hasattr(db_service, "get_db")
 
-    @patch('app.services.database_service.DatabaseService.get_db')
+    @patch("app.services.database_service.DatabaseService.get_db")
     def test_get_user_by_username(self, mock_get_db):
         """Test user retrieval by username"""
         mock_session = MagicMock()
         mock_get_db.return_value.__enter__.return_value = mock_session
 
         mock_user = MagicMock()
-        mock_session.query.return_value.filter.return_value.first.return_value = mock_user
+        mock_session.query.return_value.filter.return_value.first.return_value = (
+            mock_user
+        )
 
-        result = db_service.get_user_by_username('testuser')
+        result = db_service.get_user_by_username("testuser")
 
         assert result == mock_user
         mock_session.query.assert_called_once()
@@ -207,8 +216,8 @@ class TestFraudDetectionService:
     def test_service_initialization(self, fraud_service):
         """Test service initialization"""
         assert fraud_service is not None
-        assert hasattr(fraud_service, 'analyze_case')
-        assert hasattr(fraud_service, 'rule_engine')
+        assert hasattr(fraud_service, "analyze_case")
+        assert hasattr(fraud_service, "rule_engine")
 
     def test_get_case_transactions(self, fraud_service):
         """Test transaction retrieval for case"""
@@ -218,7 +227,9 @@ class TestFraudDetectionService:
         mock_transaction.amount = 1000.0
         mock_transaction.date = "2024-01-01T00:00:00Z"
 
-        fraud_service.db.query.return_value.filter.return_value.order_by.return_value.all.return_value = [mock_transaction]
+        fraud_service.db.query.return_value.filter.return_value.order_by.return_value.all.return_value = [
+            mock_transaction
+        ]
 
         result = fraud_service._get_case_transactions("case123", 90)
 
@@ -232,15 +243,13 @@ class TestMonitoringService:
     def test_service_initialization(self):
         """Test monitoring service initialization"""
         assert monitoring_service is not None
-        assert hasattr(monitoring_service, 'record_error')
-        assert hasattr(monitoring_service, 'get_system_status')
+        assert hasattr(monitoring_service, "record_error")
+        assert hasattr(monitoring_service, "get_system_status")
 
     def test_record_error(self):
         """Test error recording"""
         monitoring_service.record_error(
-            "test_error",
-            "Test error message",
-            {"component": "test"}
+            "test_error", "Test error message", {"component": "test"}
         )
 
         # Error was recorded (logged)
@@ -252,12 +261,12 @@ class TestMonitoringService:
 
         assert isinstance(status, dict)
         # When no performance history exists, returns no_data status
-        if status.get('status') == 'no_data':
-            assert 'status' in status
+        if status.get("status") == "no_data":
+            assert "status" in status
         else:
             # When performance history exists, check for expected metrics
             # In test env, system_metrics might be empty if psutil fails or not run
-            assert 'health_metrics' in status
+            assert "health_metrics" in status
 
     def test_get_error_summary(self):
         """Test error summary retrieval"""
@@ -306,7 +315,7 @@ class TestAPIRouters:
             "email": f"test_{uuid.uuid4().hex[:8]}@example.com",
             "password": "SecurePass123!",
             "full_name": "Test User",
-            "role": "analyst"
+            "role": "analyst",
         }
 
         response = client.post("/api/v1/auth/register", json=user_data)
@@ -320,9 +329,10 @@ class TestMiddleware:
     @pytest.mark.asyncio
     async def test_validation_middleware_large_request(self):
         """Test validation middleware with large request"""
+        import io
+
         from starlette.requests import Request
         from starlette.responses import JSONResponse
-        import io
 
         # Create middleware instance
         middleware = InputValidationMiddleware(MagicMock())
@@ -335,7 +345,9 @@ class TestMiddleware:
         mock_request.body.return_value = large_body
 
         # Should raise HTTPException for request too large
-        async def call_next(r): return JSONResponse({})
+        async def call_next(r):
+            return JSONResponse({})
+
         with pytest.raises(HTTPException) as exc_info:
             await middleware.dispatch(mock_request, call_next)
 
@@ -352,10 +364,14 @@ class TestMiddleware:
         mock_request = MagicMock(spec=Request)
         mock_request.method = "POST"
         mock_request.headers = {"content-type": "application/json"}
-        mock_request.body.return_value = b'{"query": "SELECT * FROM users WHERE id = 1 OR 1=1"}'
+        mock_request.body.return_value = (
+            b'{"query": "SELECT * FROM users WHERE id = 1 OR 1=1"}'
+        )
 
         # Should raise HTTPException for SQL injection
-        async def call_next_sql(r): return JSONResponse({})
+        async def call_next_sql(r):
+            return JSONResponse({})
+
         with pytest.raises(HTTPException) as exc_info:
             await middleware.dispatch(mock_request, call_next_sql)
 

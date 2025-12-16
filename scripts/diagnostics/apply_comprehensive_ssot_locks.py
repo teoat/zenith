@@ -4,28 +4,31 @@ Comprehensive SSOT Lock Application Script
 Identifies and locks all files that should be SSOT protected
 """
 
+import hashlib
+import json
 import os
 import sys
-import json
-import hashlib
-from pathlib import Path
-from typing import Dict, List, Any, Set, Tuple
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Set, Tuple
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
+
 @dataclass
 class FileProtection:
     """File protection recommendation"""
+
     path: str
     category: str
     lockfile_category: str
     risk_score: int
     reason: str
     should_protect: bool
+
 
 class ComprehensiveSSOTLockApplier:
     """Applies comprehensive SSOT locking to all identified files"""
@@ -41,7 +44,7 @@ class ComprehensiveSSOTLockApplier:
             "api_contracts": ["api", "router", "endpoint", "contract"],
             "infrastructure": ["docker", "deployment", "config", "logging", "metrics"],
             "frontend_core": ["dashboard", "main_interface", "core_ui"],
-            "test_fixtures": ["test", "fixture", "validation", "spec"]
+            "test_fixtures": ["test", "fixture", "validation", "spec"],
         }
 
     def calculate_file_hash(self, file_path: Path) -> str:
@@ -50,7 +53,7 @@ class ComprehensiveSSOTLockApplier:
             return "file_missing"
 
         try:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 return hashlib.sha256(f.read()).hexdigest()
         except Exception:
             return "error_calculating"
@@ -61,30 +64,54 @@ class ComprehensiveSSOTLockApplier:
         filename = file_path.name.lower()
 
         # Business logic files
-        if any(keyword in file_str for keyword in ["fraud", "database", "service", "core"]):
+        if any(
+            keyword in file_str for keyword in ["fraud", "database", "service", "core"]
+        ):
             if "database" in file_str:
                 return "business_logic"
-            elif any(keyword in file_str for keyword in ["fraud", "detection", "scoring"]):
+            elif any(
+                keyword in file_str for keyword in ["fraud", "detection", "scoring"]
+            ):
                 return "business_logic"
 
         # Security files
-        if any(keyword in file_str for keyword in ["security", "auth", "encryption", "rbac", "csrf"]):
+        if any(
+            keyword in file_str
+            for keyword in ["security", "auth", "encryption", "rbac", "csrf"]
+        ):
             return "security_config"
 
         # API files
-        if any(keyword in file_str for keyword in ["api", "router", "endpoint", "contract"]):
+        if any(
+            keyword in file_str for keyword in ["api", "router", "endpoint", "contract"]
+        ):
             return "api_contracts"
 
         # Infrastructure files
-        if any(keyword in file_str for keyword in ["docker", "deployment", "config", "logging", "metrics", "cache", "csrf"]):
+        if any(
+            keyword in file_str
+            for keyword in [
+                "docker",
+                "deployment",
+                "config",
+                "logging",
+                "metrics",
+                "cache",
+                "csrf",
+            ]
+        ):
             return "infrastructure"
 
         # Frontend core
-        if "frontend" in file_str and any(keyword in file_str for keyword in ["dashboard", "main", "core"]):
+        if "frontend" in file_str and any(
+            keyword in file_str for keyword in ["dashboard", "main", "core"]
+        ):
             return "frontend_core"
 
         # Test files
-        if any(keyword in file_str for keyword in ["test", "fixture", "spec", "validation"]):
+        if any(
+            keyword in file_str for keyword in ["test", "fixture", "spec", "validation"]
+        ):
             return "test_fixtures"
 
         # Default based on category
@@ -105,7 +132,7 @@ class ComprehensiveSSOTLockApplier:
         for lockfile in self.diagnostics_dir.glob("*.lock"):
             if lockfile.exists():
                 try:
-                    with open(lockfile, 'r') as f:
+                    with open(lockfile, "r") as f:
                         data = json.load(f)
                         if "files" in data and isinstance(data["files"], dict):
                             protected.update(data["files"].keys())
@@ -123,16 +150,24 @@ class ComprehensiveSSOTLockApplier:
         protection_rules = {
             "critical": {
                 "keywords": ["database", "fraud", "api", "dashboard", "schema"],
-                "risk_threshold": 80
+                "risk_threshold": 80,
             },
             "high": {
-                "keywords": ["security", "auth", "config", "logging", "metrics", "docker", "deployment"],
-                "risk_threshold": 60
+                "keywords": [
+                    "security",
+                    "auth",
+                    "config",
+                    "logging",
+                    "metrics",
+                    "docker",
+                    "deployment",
+                ],
+                "risk_threshold": 60,
             },
             "medium": {
                 "keywords": ["service", "router", "utils", "helper", "validation"],
-                "risk_threshold": 40
-            }
+                "risk_threshold": 40,
+            },
         }
 
         # Scan project files
@@ -148,16 +183,34 @@ class ComprehensiveSSOTLockApplier:
                     continue
 
                 # Skip unwanted files
-                if any(skip in str(file_path) for skip in [
-                    "node_modules", "__pycache__", ".git", "dist", ".next",
-                    "build", "coverage", "test-results", ".pytest_cache"
-                ]):
+                if any(
+                    skip in str(file_path)
+                    for skip in [
+                        "node_modules",
+                        "__pycache__",
+                        ".git",
+                        "dist",
+                        ".next",
+                        "build",
+                        "coverage",
+                        "test-results",
+                        ".pytest_cache",
+                    ]
+                ):
                     continue
 
                 # Only analyze relevant file types
                 if file_path.suffix.lower() not in [
-                    '.py', '.ts', '.tsx', '.js', '.json', '.md', '.sh', '.yml', '.yaml'
-                ] and not file_path.name.startswith('Dockerfile'):
+                    ".py",
+                    ".ts",
+                    ".tsx",
+                    ".js",
+                    ".json",
+                    ".md",
+                    ".sh",
+                    ".yml",
+                    ".yaml",
+                ] and not file_path.name.startswith("Dockerfile"):
                     continue
 
                 filename = file_path.name
@@ -166,19 +219,23 @@ class ComprehensiveSSOTLockApplier:
 
                 # Determine category and protection status
                 category = self._categorize_file(file_path)
-                should_protect, risk_score, reason = self._should_protect_file(file_path, category, protection_rules)
+                should_protect, risk_score, reason = self._should_protect_file(
+                    file_path, category, protection_rules
+                )
 
                 if should_protect:
                     lockfile_cat = self.determine_lockfile_category(file_path, category)
 
-                    files_to_protect.append(FileProtection(
-                        path=str(file_path.relative_to(self.project_root)),
-                        category=category,
-                        lockfile_category=lockfile_cat,
-                        risk_score=risk_score,
-                        reason=reason,
-                        should_protect=True
-                    ))
+                    files_to_protect.append(
+                        FileProtection(
+                            path=str(file_path.relative_to(self.project_root)),
+                            category=category,
+                            lockfile_category=lockfile_cat,
+                            risk_score=risk_score,
+                            reason=reason,
+                            should_protect=True,
+                        )
+                    )
 
         # Sort by risk score (highest first)
         files_to_protect.sort(key=lambda x: x.risk_score, reverse=True)
@@ -189,27 +246,50 @@ class ComprehensiveSSOTLockApplier:
         file_str = str(file_path).lower()
 
         # Critical files
-        if any(keyword in file_str for keyword in [
-            "database", "fraud", "api", "dashboard", "schema", "core"
-        ]):
+        if any(
+            keyword in file_str
+            for keyword in ["database", "fraud", "api", "dashboard", "schema", "core"]
+        ):
             return "critical"
 
         # High priority
-        if any(keyword in file_str for keyword in [
-            "security", "auth", "encryption", "rbac", "config", "logging",
-            "metrics", "docker", "deployment", "csrf", "cache"
-        ]):
+        if any(
+            keyword in file_str
+            for keyword in [
+                "security",
+                "auth",
+                "encryption",
+                "rbac",
+                "config",
+                "logging",
+                "metrics",
+                "docker",
+                "deployment",
+                "csrf",
+                "cache",
+            ]
+        ):
             return "high"
 
         # Medium priority
-        if any(keyword in file_str for keyword in [
-            "service", "router", "utils", "helper", "validation", "test"
-        ]):
+        if any(
+            keyword in file_str
+            for keyword in [
+                "service",
+                "router",
+                "utils",
+                "helper",
+                "validation",
+                "test",
+            ]
+        ):
             return "medium"
 
         return "low"
 
-    def _should_protect_file(self, file_path: Path, category: str, rules: Dict) -> Tuple[bool, int, str]:
+    def _should_protect_file(
+        self, file_path: Path, category: str, rules: Dict
+    ) -> Tuple[bool, int, str]:
         """Determine if file should be protected and calculate risk"""
         base_risk = 0
 
@@ -218,23 +298,25 @@ class ComprehensiveSSOTLockApplier:
             file_str = str(file_path).lower()
 
             # Check keywords
-            keyword_matches = sum(1 for keyword in rule["keywords"] if keyword in file_str)
+            keyword_matches = sum(
+                1 for keyword in rule["keywords"] if keyword in file_str
+            )
             if keyword_matches > 0:
                 base_risk = rule["risk_threshold"] + (keyword_matches * 10)
 
             # File type bonuses
-            if file_path.suffix in ['.py', '.ts', '.tsx', '.js']:
+            if file_path.suffix in [".py", ".ts", ".tsx", ".js"]:
                 base_risk += 15  # Executable code
 
-            if file_path.suffix == '.json' and 'config' in file_str:
+            if file_path.suffix == ".json" and "config" in file_str:
                 base_risk += 20  # Configuration files
 
             # Security bonus
-            if any(sec in file_str for sec in ['security', 'auth', 'encrypt']):
+            if any(sec in file_str for sec in ["security", "auth", "encrypt"]):
                 base_risk += 25
 
             # Database bonus
-            if 'database' in file_str:
+            if "database" in file_str:
                 base_risk += 30
 
         should_protect = base_risk >= 40  # Minimum threshold
@@ -242,7 +324,9 @@ class ComprehensiveSSOTLockApplier:
 
         return should_protect, min(100, base_risk), reason
 
-    def apply_lockfile_protection(self, files_to_protect: List[FileProtection]) -> Dict[str, Any]:
+    def apply_lockfile_protection(
+        self, files_to_protect: List[FileProtection]
+    ) -> Dict[str, Any]:
         """Apply SSOT protection to identified files"""
         lockfiles_created = {}
         files_locked = 0
@@ -261,7 +345,7 @@ class ComprehensiveSSOTLockApplier:
             lockfile_data = self._create_lockfile_data(category, files)
 
             try:
-                with open(lockfile_path, 'w') as f:
+                with open(lockfile_path, "w") as f:
                     json.dump(lockfile_data, f, indent=2, default=str)
 
                 lockfiles_created[category] = len(files)
@@ -276,10 +360,12 @@ class ComprehensiveSSOTLockApplier:
             "lockfiles_created": len(lockfiles_created),
             "files_locked": files_locked,
             "categories": list(lockfiles_created.keys()),
-            "details": lockfiles_created
+            "details": lockfiles_created,
         }
 
-    def _create_lockfile_data(self, category: str, files: List[FileProtection]) -> Dict[str, Any]:
+    def _create_lockfile_data(
+        self, category: str, files: List[FileProtection]
+    ) -> Dict[str, Any]:
         """Create lockfile data structure"""
         lockfile_data = {
             "category": category,
@@ -287,7 +373,7 @@ class ComprehensiveSSOTLockApplier:
             "version": "1.0.0-ssot-comprehensive",
             "description": f"Comprehensive SSOT protection for {category} files",
             "total_files": len(files),
-            "files": {}
+            "files": {},
         }
 
         for file_protection in files:
@@ -299,15 +385,21 @@ class ComprehensiveSSOTLockApplier:
                 "category": file_protection.category,
                 "checksum": self.calculate_file_hash(file_path),
                 "size_bytes": file_path.stat().st_size if file_path.exists() else 0,
-                "modified": datetime.fromtimestamp(file_path.stat().st_mtime).isoformat() if file_path.exists() else "unknown",
+                "modified": (
+                    datetime.fromtimestamp(file_path.stat().st_mtime).isoformat()
+                    if file_path.exists()
+                    else "unknown"
+                ),
                 "risk_score": file_protection.risk_score,
                 "protection_reason": file_protection.reason,
-                "locked_at": datetime.now().isoformat()
+                "locked_at": datetime.now().isoformat(),
             }
 
         return lockfile_data
 
-    def generate_protection_report(self, files_to_protect: List[FileProtection], lockfile_results: Dict[str, Any]) -> Dict[str, Any]:
+    def generate_protection_report(
+        self, files_to_protect: List[FileProtection], lockfile_results: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Generate comprehensive protection report"""
         report = {
             "timestamp": datetime.now().isoformat(),
@@ -317,27 +409,35 @@ class ComprehensiveSSOTLockApplier:
             "lockfiles_created": lockfile_results["lockfiles_created"],
             "coverage_improvement": {
                 "before": 8.3,  # From previous analysis
-                "after": min(95.0, 8.3 + (lockfile_results["files_locked"] * 0.5)),  # Estimate
-                "improvement_percent": round((lockfile_results["files_locked"] * 0.5) / 8.3 * 100, 1)
+                "after": min(
+                    95.0, 8.3 + (lockfile_results["files_locked"] * 0.5)
+                ),  # Estimate
+                "improvement_percent": round(
+                    (lockfile_results["files_locked"] * 0.5) / 8.3 * 100, 1
+                ),
             },
             "categories_protected": lockfile_results["categories"],
             "risk_reduction": {
-                "estimated_points": lockfile_results["files_locked"] * 200,  # Rough estimate
-                "new_average_risk": max(10, 44.2 - (lockfile_results["files_locked"] * 0.3))
+                "estimated_points": lockfile_results["files_locked"]
+                * 200,  # Rough estimate
+                "new_average_risk": max(
+                    10, 44.2 - (lockfile_results["files_locked"] * 0.3)
+                ),
             },
             "top_protected_files": [
                 {
                     "file": f.path,
                     "category": f.category,
                     "risk_score": f.risk_score,
-                    "lockfile": f.lockfile_category
+                    "lockfile": f.lockfile_category,
                 }
                 for f in files_to_protect[:10]
             ],
-            "lockfile_summary": lockfile_results["details"]
+            "lockfile_summary": lockfile_results["details"],
         }
 
         return report
+
 
 def main():
     """Main application function"""
@@ -367,7 +467,7 @@ def main():
 
     # Save report
     report_path = applier.diagnostics_dir / "comprehensive_ssot_lock_report.json"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         json.dump(report, f, indent=2, default=str)
 
     # Display summary
@@ -398,6 +498,7 @@ def main():
 
     print("\n🏆 STATUS: COMPREHENSIVE SSOT PROTECTION COMPLETE")
     print("  All identified critical and high-risk files are now protected.")
+
 
 if __name__ == "__main__":
     main()

@@ -4,37 +4,43 @@ Comprehensive File Analysis and SSOT Coverage Diagnostic
 Analyzes all project files and evaluates SSOT/lockfile coverage
 """
 
+import hashlib
+import json
 import os
 import sys
-import json
-import hashlib
-from pathlib import Path
-from typing import Dict, List, Any, Tuple, Set
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Set, Tuple
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
+
 class FileCategory(Enum):
     """File criticality categories"""
-    CRITICAL = "critical"          # Core business logic, security, API contracts
-    HIGH = "high"                 # Important infrastructure, configuration
-    MEDIUM = "medium"             # Supporting services, utilities
-    LOW = "low"                   # Documentation, tests, examples
-    IGNORE = "ignore"             # Generated files, dependencies, logs
+
+    CRITICAL = "critical"  # Core business logic, security, API contracts
+    HIGH = "high"  # Important infrastructure, configuration
+    MEDIUM = "medium"  # Supporting services, utilities
+    LOW = "low"  # Documentation, tests, examples
+    IGNORE = "ignore"  # Generated files, dependencies, logs
+
 
 class ProtectionStatus(Enum):
     """Current protection status"""
-    SSOT_LOCKED = "ssot_locked"    # Currently protected by SSOT/lockfile
-    SHOULD_LOCK = "should_lock"    # Should be protected but isn't
-    NO_PROTECT = "no_protect"      # Doesn't need protection
-    DEPRECATED = "deprecated"      # Old/unused files
+
+    SSOT_LOCKED = "ssot_locked"  # Currently protected by SSOT/lockfile
+    SHOULD_LOCK = "should_lock"  # Should be protected but isn't
+    NO_PROTECT = "no_protect"  # Doesn't need protection
+    DEPRECATED = "deprecated"  # Old/unused files
+
 
 @dataclass
 class FileAnalysis:
     """Analysis result for a single file"""
+
     path: str
     category: FileCategory
     protection_status: ProtectionStatus
@@ -45,9 +51,11 @@ class FileAnalysis:
     risk_score: int = 0
     reason: str = ""
 
+
 @dataclass
 class CoverageAnalysis:
     """Overall coverage analysis"""
+
     total_files: int = 0
     critical_files: int = 0
     high_files: int = 0
@@ -62,6 +70,7 @@ class CoverageAnalysis:
 
     coverage_score: float = 0.0
     risk_score: int = 0
+
 
 class ComprehensiveFileAnalyzer:
     """Comprehensive file analyzer for SSOT coverage"""
@@ -82,90 +91,73 @@ class ComprehensiveFileAnalyzer:
                 "data/fraud_rules.json",
                 "backend/app/services/fraud_service.py",
                 "backend/core/security/rbac.py",
-
                 # Authentication & security
                 "backend/app/services/auth_service.py",
                 "backend/core/security/__init__.py",
                 "backend/core/encryption.py",
-
                 # API contracts
                 "backend/main.py",
                 "backend/app/routers/identity.py",
                 "backend/app/routers/fraud.py",
-
                 # Database schema
                 "backend/core/database.py",
                 "backend/app/services/database_service.py",
-
                 # Critical frontend
                 "frontend/src/pages/Dashboard.tsx",
                 "frontend/src/utils/api.ts",
             ],
-
             # HIGH - Important infrastructure
             FileCategory.HIGH: [
                 # Configuration files
                 ".env.production",
                 "config/production.py",
                 "infrastructure/docker-compose.production.yml",
-
                 # Core services
                 "backend/app/services/*.py",
                 "backend/core/*.py",
                 "frontend/src/components/cases/*.tsx",
                 "frontend/src/pages/*.tsx",
-
                 # Security configurations
                 "backend/core/security/*.py",
                 "scripts/security/*.sh",
-
                 # Infrastructure
                 "Dockerfile*",
                 "infrastructure/*.yml",
                 "scripts/setup-production.sh",
                 "scripts/validate-production.sh",
             ],
-
             # MEDIUM - Supporting services
             FileCategory.MEDIUM: [
                 # Additional routers
                 "backend/app/routers/*.py",
-
                 # Utilities
                 "backend/core/*.py",
                 "frontend/src/utils/*.ts",
                 "frontend/src/components/ui/*.tsx",
-
                 # Testing infrastructure
                 "scripts/testing/*.py",
                 "tests/**/*.py",
                 "frontend/tests/**/*.ts",
-
                 # Documentation
                 "docs/**/*.md",
                 "README.md",
-
                 # Scripts
                 "scripts/**/*.sh",
                 "scripts/**/*.py",
             ],
-
             # LOW - Documentation and examples
             FileCategory.LOW: [
                 # All other documentation
                 "docs/**/*.md",
                 "*.md",
-
                 # Examples and templates
                 "**/example*",
                 "**/template*",
                 "**/*.example",
-
                 # Configuration examples
                 "**/*.example.*",
                 "**/*.template.*",
             ],
-
             # IGNORE - Generated files and artifacts
             FileCategory.IGNORE: [
                 # Build artifacts
@@ -174,25 +166,22 @@ class ComprehensiveFileAnalyzer:
                 "__pycache__/**",
                 "*.pyc",
                 "*.pyo",
-
                 # Logs and temporary files
                 "*.log",
                 "*.tmp",
                 "*.swp",
                 ".DS_Store",
-
                 # Generated files
                 "scripts/diagnostics/*.lock",
                 "scripts/diagnostics/*.json",
                 "**/coverage/**",
                 "**/.next/**",
                 "**/build/**",
-
                 # Test artifacts
                 "**/test-results/**",
                 "**/playwright-report/**",
                 "**/.pytest_cache/**",
-            ]
+            ],
         }
 
     def _load_existing_ssot_files(self) -> Set[str]:
@@ -203,7 +192,7 @@ class ComprehensiveFileAnalyzer:
         ssot_master = self.project_root / "scripts" / "diagnostics" / "ssot_master.json"
         if ssot_master.exists():
             try:
-                with open(ssot_master, 'r') as f:
+                with open(ssot_master, "r") as f:
                     data = json.load(f)
                     # SSOT master contains system metrics, not file paths
                     pass
@@ -215,7 +204,7 @@ class ComprehensiveFileAnalyzer:
         for lockfile in lockfile_dir.glob("*.lock"):
             if lockfile.exists():
                 try:
-                    with open(lockfile, 'r') as f:
+                    with open(lockfile, "r") as f:
                         data = json.load(f)
                         if "files" in data:
                             for filename in data["files"].keys():
@@ -232,7 +221,7 @@ class ComprehensiveFileAnalyzer:
         lockfile_dir = self.project_root / "scripts" / "diagnostics"
         for lockfile in lockfile_dir.glob("*.lock"):
             try:
-                with open(lockfile, 'r') as f:
+                with open(lockfile, "r") as f:
                     lockfiles[lockfile.name] = json.load(f)
             except:
                 pass
@@ -251,7 +240,10 @@ class ComprehensiveFileAnalyzer:
         # Check critical patterns
         for pattern in self.file_patterns[FileCategory.CRITICAL]:
             if Path(file_str).match(pattern):
-                return FileCategory.CRITICAL, f"Core business logic/security/API contract"
+                return (
+                    FileCategory.CRITICAL,
+                    f"Core business logic/security/API contract",
+                )
 
         # Check high priority patterns
         for pattern in self.file_patterns[FileCategory.HIGH]:
@@ -266,7 +258,9 @@ class ComprehensiveFileAnalyzer:
         # Default to low priority
         return FileCategory.LOW, "Documentation/examples/supporting files"
 
-    def _calculate_protection_status(self, file_path: Path, category: FileCategory) -> ProtectionStatus:
+    def _calculate_protection_status(
+        self, file_path: Path, category: FileCategory
+    ) -> ProtectionStatus:
         """Determine if file should be protected"""
         filename = file_path.name
 
@@ -285,15 +279,25 @@ class ComprehensiveFileAnalyzer:
         # Medium priority - selective protection
         if category == FileCategory.MEDIUM:
             # Protect key service files
-            if any(keyword in str(file_path) for keyword in [
-                "service", "router", "model", "config", "security", "auth"
-            ]):
+            if any(
+                keyword in str(file_path)
+                for keyword in [
+                    "service",
+                    "router",
+                    "model",
+                    "config",
+                    "security",
+                    "auth",
+                ]
+            ):
                 return ProtectionStatus.SHOULD_LOCK
 
         # Others don't need protection
         return ProtectionStatus.NO_PROTECT
 
-    def _calculate_risk_score(self, file_path: Path, category: FileCategory, protection: ProtectionStatus) -> int:
+    def _calculate_risk_score(
+        self, file_path: Path, category: FileCategory, protection: ProtectionStatus
+    ) -> int:
         """Calculate risk score for unprotected critical files"""
         base_score = 0
 
@@ -314,12 +318,13 @@ class ComprehensiveFileAnalyzer:
             base_score += 25  # Increase risk if should be protected but isn't
 
         # File type modifiers
-        if file_path.suffix in ['.py', '.ts', '.tsx', '.js']:
+        if file_path.suffix in [".py", ".ts", ".tsx", ".js"]:
             base_score += 10  # Code files higher risk
 
-        if any(keyword in str(file_path) for keyword in [
-            'security', 'auth', 'encryption', 'database', 'api'
-        ]):
+        if any(
+            keyword in str(file_path)
+            for keyword in ["security", "auth", "encryption", "database", "api"]
+        ):
             base_score += 15  # Security-related higher risk
 
         return min(100, base_score)
@@ -335,7 +340,7 @@ class ComprehensiveFileAnalyzer:
             # Calculate checksum
             checksum = ""
             try:
-                with open(file_path, 'rb') as f:
+                with open(file_path, "rb") as f:
                     checksum = hashlib.sha256(f.read()).hexdigest()
             except:
                 checksum = "error_calculating"
@@ -348,7 +353,7 @@ class ComprehensiveFileAnalyzer:
                 checksum=checksum,
                 last_modified=str(stat.st_mtime),
                 risk_score=risk_score,
-                reason=reason
+                reason=reason,
             )
         except Exception as e:
             return FileAnalysis(
@@ -359,7 +364,7 @@ class ComprehensiveFileAnalyzer:
                 checksum="",
                 last_modified="",
                 risk_score=0,
-                reason=f"Error analyzing: {str(e)}"
+                reason=f"Error analyzing: {str(e)}",
             )
 
     def analyze_all_files(self) -> CoverageAnalysis:
@@ -379,16 +384,34 @@ class ComprehensiveFileAnalyzer:
                     continue
 
                 # Skip unwanted files
-                if any(skip in str(file_path) for skip in [
-                    "node_modules", "__pycache__", ".git", "dist", ".next",
-                    "build", "coverage", "test-results", ".pytest_cache"
-                ]):
+                if any(
+                    skip in str(file_path)
+                    for skip in [
+                        "node_modules",
+                        "__pycache__",
+                        ".git",
+                        "dist",
+                        ".next",
+                        "build",
+                        "coverage",
+                        "test-results",
+                        ".pytest_cache",
+                    ]
+                ):
                     continue
 
                 # Only analyze relevant file types
                 if file_path.suffix.lower() not in [
-                    '.py', '.ts', '.tsx', '.js', '.json', '.md', '.sh', '.yml', '.yaml'
-                ] and not file_path.name.startswith('Dockerfile'):
+                    ".py",
+                    ".ts",
+                    ".tsx",
+                    ".js",
+                    ".json",
+                    ".md",
+                    ".sh",
+                    ".yml",
+                    ".yaml",
+                ] and not file_path.name.startswith("Dockerfile"):
                     continue
 
                 analysis = self.analyze_file(file_path)
@@ -422,11 +445,18 @@ class ComprehensiveFileAnalyzer:
 
         # Calculate coverage score
         if coverage.critical_files + coverage.high_files > 0:
-            protected_critical_high = sum(1 for analysis in self.analysis_results.values()
-                                        if analysis.category in [FileCategory.CRITICAL, FileCategory.HIGH]
-                                        and analysis.protection_status == ProtectionStatus.SSOT_LOCKED)
+            protected_critical_high = sum(
+                1
+                for analysis in self.analysis_results.values()
+                if analysis.category in [FileCategory.CRITICAL, FileCategory.HIGH]
+                and analysis.protection_status == ProtectionStatus.SSOT_LOCKED
+            )
             total_critical_high = coverage.critical_files + coverage.high_files
-            coverage.coverage_score = (protected_critical_high / total_critical_high) * 100 if total_critical_high > 0 else 100.0
+            coverage.coverage_score = (
+                (protected_critical_high / total_critical_high) * 100
+                if total_critical_high > 0
+                else 100.0
+            )
 
         return coverage
 
@@ -441,21 +471,25 @@ class ComprehensiveFileAnalyzer:
                     "high": coverage.high_files,
                     "medium": coverage.medium_files,
                     "low": coverage.low_files,
-                    "ignore": coverage.ignore_files
+                    "ignore": coverage.ignore_files,
                 },
                 "protection_breakdown": {
                     "ssot_locked": coverage.ssot_locked,
                     "should_lock": coverage.should_lock,
                     "no_protect": coverage.no_protect,
-                    "deprecated": coverage.deprecated
+                    "deprecated": coverage.deprecated,
                 },
                 "coverage_score": round(coverage.coverage_score, 2),
                 "total_risk_score": coverage.risk_score,
-                "average_risk_per_file": round(coverage.risk_score / coverage.total_files, 2) if coverage.total_files > 0 else 0
+                "average_risk_per_file": (
+                    round(coverage.risk_score / coverage.total_files, 2)
+                    if coverage.total_files > 0
+                    else 0
+                ),
             },
             "recommendations": [],
             "critical_gaps": [],
-            "file_analysis": {}
+            "file_analysis": {},
         }
 
         # Generate recommendations
@@ -464,9 +498,12 @@ class ComprehensiveFileAnalyzer:
                 f"🔴 CRITICAL: {coverage.should_lock} files should be SSOT protected but aren't"
             )
 
-        critical_unprotected = [path for path, analysis in self.analysis_results.items()
-                              if analysis.category == FileCategory.CRITICAL
-                              and analysis.protection_status == ProtectionStatus.SHOULD_LOCK]
+        critical_unprotected = [
+            path
+            for path, analysis in self.analysis_results.items()
+            if analysis.category == FileCategory.CRITICAL
+            and analysis.protection_status == ProtectionStatus.SHOULD_LOCK
+        ]
 
         if critical_unprotected:
             report["critical_gaps"].extend(critical_unprotected[:10])  # Top 10
@@ -476,26 +513,40 @@ class ComprehensiveFileAnalyzer:
 
         # Coverage scoring
         if coverage.coverage_score >= 90:
-            report["recommendations"].append("✅ EXCELLENT: Critical file coverage >= 90%")
+            report["recommendations"].append(
+                "✅ EXCELLENT: Critical file coverage >= 90%"
+            )
         elif coverage.coverage_score >= 75:
             report["recommendations"].append("🟡 GOOD: Critical file coverage >= 75%")
         else:
-            report["recommendations"].append(f"🔴 POOR: Critical file coverage only {coverage.coverage_score}%")
+            report["recommendations"].append(
+                f"🔴 POOR: Critical file coverage only {coverage.coverage_score}%"
+            )
 
         # Risk assessment
-        avg_risk = coverage.risk_score / coverage.total_files if coverage.total_files > 0 else 0
+        avg_risk = (
+            coverage.risk_score / coverage.total_files
+            if coverage.total_files > 0
+            else 0
+        )
         if avg_risk > 70:
-            report["recommendations"].append(f"🚨 HIGH RISK: Average risk score {avg_risk:.1f}/100")
+            report["recommendations"].append(
+                f"🚨 HIGH RISK: Average risk score {avg_risk:.1f}/100"
+            )
         elif avg_risk > 50:
-            report["recommendations"].append(f"🟡 MEDIUM RISK: Average risk score {avg_risk:.1f}/100")
+            report["recommendations"].append(
+                f"🟡 MEDIUM RISK: Average risk score {avg_risk:.1f}/100"
+            )
         else:
-            report["recommendations"].append(f"✅ LOW RISK: Average risk score {avg_risk:.1f}/100")
+            report["recommendations"].append(
+                f"✅ LOW RISK: Average risk score {avg_risk:.1f}/100"
+            )
 
         # Add top risk files
         high_risk_files = sorted(
             [(path, analysis) for path, analysis in self.analysis_results.items()],
             key=lambda x: x[1].risk_score,
-            reverse=True
+            reverse=True,
         )[:10]
 
         report["top_risk_files"] = [
@@ -503,16 +554,17 @@ class ComprehensiveFileAnalyzer:
                 "file": path,
                 "category": analysis.category.value,
                 "risk_score": analysis.risk_score,
-                "reason": analysis.reason
+                "reason": analysis.reason,
             }
-            for path, analysis in high_risk_files if analysis.risk_score > 0
+            for path, analysis in high_risk_files
+            if analysis.risk_score > 0
         ]
 
         # Add detailed file analysis (summary only)
         report["file_analysis"] = {
             "total_analyzed": len(self.analysis_results),
             "by_category": {},
-            "by_protection": {}
+            "by_protection": {},
         }
 
         for analysis in self.analysis_results.values():
@@ -528,6 +580,7 @@ class ComprehensiveFileAnalyzer:
             report["file_analysis"]["by_protection"][prot] += 1
 
         return report
+
 
 def main():
     """Main analysis function"""
@@ -561,7 +614,11 @@ def main():
     print()
     print(f"Coverage Score: {coverage.coverage_score:.1f}%")
     print(f"Total Risk Score: {coverage.risk_score}")
-    print(f"Average Risk/File: {coverage.risk_score / coverage.total_files:.1f}" if coverage.total_files > 0 else "N/A")
+    print(
+        f"Average Risk/File: {coverage.risk_score / coverage.total_files:.1f}"
+        if coverage.total_files > 0
+        else "N/A"
+    )
 
     # Display recommendations
     print("\n🔧 RECOMMENDATIONS")
@@ -586,8 +643,10 @@ def main():
             print(f"• {risk_file['file']} (Risk: {risk_file['risk_score']})")
 
     # Save detailed report
-    output_file = project_root / "scripts" / "diagnostics" / "ssot_coverage_analysis.json"
-    with open(output_file, 'w') as f:
+    output_file = (
+        project_root / "scripts" / "diagnostics" / "ssot_coverage_analysis.json"
+    )
+    with open(output_file, "w") as f:
         json.dump(report, f, indent=2, default=str)
 
     print(f"\n💾 Detailed report saved to: {output_file}")
@@ -597,6 +656,7 @@ def main():
         sys.exit(1)  # Issues found
     else:
         sys.exit(0)  # All good
+
 
 if __name__ == "__main__":
     main()

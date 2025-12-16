@@ -1,9 +1,11 @@
 """Simple vector store shim: provides a local in-memory vector store with
 TF-IDF fallback for environments without a production vector DB.
 """
+
 from typing import List, Tuple
-from sklearn.feature_extraction.text import TfidfVectorizer
+
 import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 class VectorStore:

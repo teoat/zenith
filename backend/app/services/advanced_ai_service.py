@@ -1,21 +1,24 @@
 """
 Advanced AI/ML Service - Federated Learning, Explainable AI, and Automated Model Retraining
 """
+
 import asyncio
-import time
 import json
 import logging
-from typing import Dict, List, Any, Optional, Tuple, Callable
-from datetime import datetime, timedelta
+import os
+import time
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from enum import Enum
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import joblib
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-import joblib
-import os
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
 logger = logging.getLogger(__name__)
+
 
 class ModelType(Enum):
     FRAUD_DETECTION = "fraud_detection"
@@ -23,17 +26,20 @@ class ModelType(Enum):
     RISK_ASSESSMENT = "risk_assessment"
     COMPLIANCE_MONITORING = "compliance_monitoring"
 
+
 class ModelStatus(Enum):
     TRAINING = "training"
     READY = "ready"
     DEPRECATED = "deprecated"
     FAILED = "failed"
 
+
 class FederatedLearningStatus(Enum):
     COLLECTING = "collecting_updates"
     AGGREGATING = "aggregating_models"
     UPDATING = "updating_global_model"
     IDLE = "idle"
+
 
 @dataclass
 class ModelMetrics:
@@ -46,6 +52,7 @@ class ModelMetrics:
     dataset_size: int
     timestamp: datetime
 
+
 @dataclass
 class ModelVersion:
     version: str
@@ -57,6 +64,7 @@ class ModelVersion:
     retired_at: Optional[datetime]
     model_path: str
 
+
 @dataclass
 class FederatedUpdate:
     client_id: str
@@ -64,6 +72,7 @@ class FederatedUpdate:
     local_metrics: ModelMetrics
     sample_count: int
     timestamp: datetime
+
 
 @dataclass
 class ExplainabilityResult:
@@ -74,10 +83,13 @@ class ExplainabilityResult:
     counterfactual_examples: List[Dict[str, Any]]
     bias_analysis: Dict[str, Any]
 
+
 class FederatedLearningCoordinator:
     """Coordinates federated learning across distributed clients"""
 
-    def __init__(self, model_type: ModelType, min_clients: int = 3, aggregation_rounds: int = 5):
+    def __init__(
+        self, model_type: ModelType, min_clients: int = 3, aggregation_rounds: int = 5
+    ):
         self.model_type = model_type
         self.min_clients = min_clients
         self.aggregation_rounds = aggregation_rounds
@@ -97,17 +109,23 @@ class FederatedLearningCoordinator:
         self.client_updates = []
         self.current_round += 1
 
-        logger.info(f"Started federated learning round {self.current_round} for {self.model_type.value}")
+        logger.info(
+            f"Started federated learning round {self.current_round} for {self.model_type.value}"
+        )
         return True
 
     async def submit_client_update(self, update: FederatedUpdate) -> bool:
         """Submit a client model update"""
         if self.status != FederatedLearningStatus.COLLECTING:
-            logger.warning(f"Cannot accept update: current status is {self.status.value}")
+            logger.warning(
+                f"Cannot accept update: current status is {self.status.value}"
+            )
             return False
 
         self.client_updates.append(update)
-        logger.info(f"Received update from client {update.client_id} ({len(self.client_updates)}/{self.min_clients})")
+        logger.info(
+            f"Received update from client {update.client_id} ({len(self.client_updates)}/{self.min_clients})"
+        )
 
         # Check if we have enough updates to aggregate
         if len(self.client_updates) >= self.min_clients:
@@ -166,24 +184,34 @@ class FederatedLearningCoordinator:
     def get_status(self) -> Dict[str, Any]:
         """Get federated learning status"""
         return {
-            'status': self.status.value,
-            'current_round': self.current_round,
-            'clients_submitted': len(self.client_updates),
-            'min_clients_required': self.min_clients,
-            'last_aggregation': self.last_aggregation.isoformat() if self.last_aggregation else None
+            "status": self.status.value,
+            "current_round": self.current_round,
+            "clients_submitted": len(self.client_updates),
+            "min_clients_required": self.min_clients,
+            "last_aggregation": (
+                self.last_aggregation.isoformat() if self.last_aggregation else None
+            ),
         }
+
 
 class ExplainableAI:
     """Provides explainable AI capabilities for model predictions"""
 
     def __init__(self):
         self.feature_names = [
-            'transaction_amount', 'merchant_category', 'location_risk',
-            'time_of_day', 'device_fingerprint', 'user_behavior_score',
-            'account_age_days', 'previous_fraud_count'
+            "transaction_amount",
+            "merchant_category",
+            "location_risk",
+            "time_of_day",
+            "device_fingerprint",
+            "user_behavior_score",
+            "account_age_days",
+            "previous_fraud_count",
         ]
 
-    def explain_prediction(self, model: Any, input_data: Dict[str, Any], prediction: Any) -> ExplainabilityResult:
+    def explain_prediction(
+        self, model: Any, input_data: Dict[str, Any], prediction: Any
+    ) -> ExplainabilityResult:
         """Generate comprehensive explanation for a prediction"""
         try:
             # Calculate feature importance
@@ -207,7 +235,7 @@ class ExplainableAI:
                 feature_importance=feature_importance,
                 decision_path=decision_path,
                 counterfactual_examples=counterfactuals,
-                bias_analysis=bias_analysis
+                bias_analysis=bias_analysis,
             )
 
         except Exception as e:
@@ -218,14 +246,16 @@ class ExplainableAI:
                 feature_importance={},
                 decision_path=["Explanation generation failed"],
                 counterfactual_examples=[],
-                bias_analysis={"error": str(e)}
+                bias_analysis={"error": str(e)},
             )
 
-    def _calculate_feature_importance(self, model: Any, input_data: Dict[str, Any]) -> Dict[str, float]:
+    def _calculate_feature_importance(
+        self, model: Any, input_data: Dict[str, Any]
+    ) -> Dict[str, float]:
         """Calculate feature importance scores"""
         importance = {}
         try:
-            if hasattr(model, 'feature_importances_'):
+            if hasattr(model, "feature_importances_"):
                 # For tree-based models
                 importances = model.feature_importances_
                 for name, imp in zip(self.feature_names, importances):
@@ -241,24 +271,26 @@ class ExplainableAI:
 
         return importance
 
-    def _generate_decision_path(self, model: Any, input_data: Dict[str, Any]) -> List[str]:
+    def _generate_decision_path(
+        self, model: Any, input_data: Dict[str, Any]
+    ) -> List[str]:
         """Generate human-readable decision path"""
         path = []
         try:
             # Simplified decision path for demonstration
-            amount = input_data.get('transaction_amount', 0)
+            amount = input_data.get("transaction_amount", 0)
             if amount > 1000:
                 path.append("High transaction amount detected")
             elif amount > 100:
                 path.append("Moderate transaction amount")
 
-            location_risk = input_data.get('location_risk', 0)
+            location_risk = input_data.get("location_risk", 0)
             if location_risk > 0.8:
                 path.append("High-risk location flagged")
             elif location_risk > 0.5:
                 path.append("Moderate location risk")
 
-            behavior_score = input_data.get('user_behavior_score', 1.0)
+            behavior_score = input_data.get("user_behavior_score", 1.0)
             if behavior_score < 0.3:
                 path.append("Suspicious user behavior pattern")
             elif behavior_score < 0.7:
@@ -272,38 +304,46 @@ class ExplainableAI:
 
         return path
 
-    def _generate_counterfactuals(self, input_data: Dict[str, Any], prediction: Any) -> List[Dict[str, Any]]:
+    def _generate_counterfactuals(
+        self, input_data: Dict[str, Any], prediction: Any
+    ) -> List[Dict[str, Any]]:
         """Generate counterfactual examples"""
         counterfactuals = []
 
         try:
             # Generate "what-if" scenarios
-            base_amount = input_data.get('transaction_amount', 100)
+            base_amount = input_data.get("transaction_amount", 100)
 
             # Lower amount scenario
             lower_amount = base_amount * 0.5
-            counterfactuals.append({
-                'scenario': 'Lower transaction amount',
-                'changes': {'transaction_amount': lower_amount},
-                'predicted_impact': 'Reduces fraud risk by ~30%',
-                'confidence_change': -0.2
-            })
+            counterfactuals.append(
+                {
+                    "scenario": "Lower transaction amount",
+                    "changes": {"transaction_amount": lower_amount},
+                    "predicted_impact": "Reduces fraud risk by ~30%",
+                    "confidence_change": -0.2,
+                }
+            )
 
             # Different location scenario
-            counterfactuals.append({
-                'scenario': 'Verified location',
-                'changes': {'location_risk': 0.1},
-                'predicted_impact': 'Reduces fraud risk by ~25%',
-                'confidence_change': -0.15
-            })
+            counterfactuals.append(
+                {
+                    "scenario": "Verified location",
+                    "changes": {"location_risk": 0.1},
+                    "predicted_impact": "Reduces fraud risk by ~25%",
+                    "confidence_change": -0.15,
+                }
+            )
 
             # Normal behavior scenario
-            counterfactuals.append({
-                'scenario': 'Normal user behavior',
-                'changes': {'user_behavior_score': 0.9},
-                'predicted_impact': 'Reduces fraud risk by ~40%',
-                'confidence_change': -0.3
-            })
+            counterfactuals.append(
+                {
+                    "scenario": "Normal user behavior",
+                    "changes": {"user_behavior_score": 0.9},
+                    "predicted_impact": "Reduces fraud risk by ~40%",
+                    "confidence_change": -0.3,
+                }
+            )
 
         except Exception as e:
             logger.error(f"Failed to generate counterfactuals: {e}")
@@ -313,42 +353,48 @@ class ExplainableAI:
     def _analyze_bias(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """Analyze potential bias in the prediction"""
         bias_analysis = {
-            'detected_biases': [],
-            'fairness_score': 0.95,
-            'protected_attributes': [],
-            'recommendations': []
+            "detected_biases": [],
+            "fairness_score": 0.95,
+            "protected_attributes": [],
+            "recommendations": [],
         }
 
         try:
             # Check for potential geographic bias
-            location_risk = input_data.get('location_risk', 0)
+            location_risk = input_data.get("location_risk", 0)
             if location_risk > 0.9:
-                bias_analysis['detected_biases'].append('Potential geographic bias')
-                bias_analysis['recommendations'].append('Review location-based risk scoring')
+                bias_analysis["detected_biases"].append("Potential geographic bias")
+                bias_analysis["recommendations"].append(
+                    "Review location-based risk scoring"
+                )
 
             # Check for amount-based bias
-            amount = input_data.get('transaction_amount', 0)
+            amount = input_data.get("transaction_amount", 0)
             if amount > 5000:
-                bias_analysis['detected_biases'].append('High-value transaction bias')
-                bias_analysis['recommendations'].append('Ensure consistent risk assessment across transaction values')
+                bias_analysis["detected_biases"].append("High-value transaction bias")
+                bias_analysis["recommendations"].append(
+                    "Ensure consistent risk assessment across transaction values"
+                )
 
             # Overall fairness assessment
-            if not bias_analysis['detected_biases']:
-                bias_analysis['recommendations'].append('No significant bias detected')
+            if not bias_analysis["detected_biases"]:
+                bias_analysis["recommendations"].append("No significant bias detected")
 
         except Exception as e:
-            bias_analysis['error'] = str(e)
+            bias_analysis["error"] = str(e)
 
         return bias_analysis
 
-    def _calculate_prediction_confidence(self, model: Any, input_data: Dict[str, Any]) -> float:
+    def _calculate_prediction_confidence(
+        self, model: Any, input_data: Dict[str, Any]
+    ) -> float:
         """Calculate confidence score for the prediction"""
         try:
             # Simplified confidence calculation
             confidence_factors = []
 
             # Amount factor
-            amount = input_data.get('transaction_amount', 100)
+            amount = input_data.get("transaction_amount", 100)
             if amount < 50:
                 confidence_factors.append(0.9)
             elif amount < 500:
@@ -357,11 +403,11 @@ class ExplainableAI:
                 confidence_factors.append(0.5)
 
             # Location factor
-            location_risk = input_data.get('location_risk', 0.5)
+            location_risk = input_data.get("location_risk", 0.5)
             confidence_factors.append(1.0 - location_risk)
 
             # Behavior factor
-            behavior = input_data.get('user_behavior_score', 0.5)
+            behavior = input_data.get("user_behavior_score", 0.5)
             confidence_factors.append(behavior)
 
             # Average confidence
@@ -370,6 +416,7 @@ class ExplainableAI:
         except:
             return 0.5
 
+
 class AutomatedModelRetrainer:
     """Automated model retraining and versioning system"""
 
@@ -377,17 +424,19 @@ class AutomatedModelRetrainer:
         self.model_dir = model_dir
         self.models: Dict[str, ModelVersion] = {}
         self.retraining_triggers = {
-            'accuracy_drop': 0.05,  # Retrain if accuracy drops by 5%
-            'new_data_threshold': 1000,  # Retrain after 1000 new samples
-            'time_based': timedelta(days=7),  # Retrain weekly
-            'performance_degradation': 0.1  # Retrain if performance degrades by 10%
+            "accuracy_drop": 0.05,  # Retrain if accuracy drops by 5%
+            "new_data_threshold": 1000,  # Retrain after 1000 new samples
+            "time_based": timedelta(days=7),  # Retrain weekly
+            "performance_degradation": 0.1,  # Retrain if performance degrades by 10%
         }
         self.active_models: Dict[ModelType, ModelVersion] = {}
 
         # Ensure model directory exists
         os.makedirs(model_dir, exist_ok=True)
 
-    async def train_new_model(self, model_type: ModelType, training_data: Dict[str, Any]) -> ModelVersion:
+    async def train_new_model(
+        self, model_type: ModelType, training_data: Dict[str, Any]
+    ) -> ModelVersion:
         """Train a new model version"""
         version = f"{model_type.value}_v{int(time.time())}"
 
@@ -417,7 +466,7 @@ class AutomatedModelRetrainer:
                 auc_roc=0.85,  # Mock AUC
                 training_time=time.time() - start_time,
                 dataset_size=len(X_train),
-                timestamp=datetime.now()
+                timestamp=datetime.now(),
             )
 
             # Save model
@@ -433,7 +482,7 @@ class AutomatedModelRetrainer:
                 created_at=datetime.now(),
                 deployed_at=None,
                 retired_at=None,
-                model_path=model_path
+                model_path=model_path,
             )
 
             self.models[version] = model_version
@@ -452,7 +501,7 @@ class AutomatedModelRetrainer:
                 created_at=datetime.now(),
                 deployed_at=None,
                 retired_at=None,
-                model_path=""
+                model_path="",
             )
             self.models[version] = failed_version
             return failed_version
@@ -481,7 +530,7 @@ class AutomatedModelRetrainer:
     def check_retraining_needed(self, model_type: ModelType) -> Dict[str, Any]:
         """Check if retraining is needed for a model type"""
         if model_type not in self.active_models:
-            return {'needed': True, 'reason': 'No active model'}
+            return {"needed": True, "reason": "No active model"}
 
         active_model = self.active_models[model_type]
         current_time = datetime.now()
@@ -489,25 +538,30 @@ class AutomatedModelRetrainer:
         reasons = []
 
         # Time-based retraining
-        if current_time - active_model.created_at > self.retraining_triggers['time_based']:
-            reasons.append('Scheduled retraining due')
+        if (
+            current_time - active_model.created_at
+            > self.retraining_triggers["time_based"]
+        ):
+            reasons.append("Scheduled retraining due")
 
         # Performance degradation (mock check)
         if active_model.metrics.accuracy < 0.8:  # Threshold for retraining
-            reasons.append('Performance degradation detected')
+            reasons.append("Performance degradation detected")
 
         # New data threshold (mock check)
         # In real implementation, this would check actual data volume
-        reasons.append('New data available for training')
+        reasons.append("New data available for training")
 
         return {
-            'needed': len(reasons) > 0,
-            'reasons': reasons,
-            'current_model_version': active_model.version,
-            'model_age_days': (current_time - active_model.created_at).days
+            "needed": len(reasons) > 0,
+            "reasons": reasons,
+            "current_model_version": active_model.version,
+            "model_age_days": (current_time - active_model.created_at).days,
         }
 
-    def get_model_versions(self, model_type: Optional[ModelType] = None) -> List[ModelVersion]:
+    def get_model_versions(
+        self, model_type: Optional[ModelType] = None
+    ) -> List[ModelVersion]:
         """Get all model versions, optionally filtered by type"""
         versions = list(self.models.values())
         if model_type:
@@ -517,6 +571,7 @@ class AutomatedModelRetrainer:
     def get_active_model(self, model_type: ModelType) -> Optional[ModelVersion]:
         """Get the currently active model for a type"""
         return self.active_models.get(model_type)
+
 
 class AdvancedAIService:
     """Main service coordinating advanced AI/ML features"""
@@ -528,9 +583,13 @@ class AdvancedAIService:
 
         # Initialize federated learning coordinators
         for model_type in ModelType:
-            self.federated_coordinators[model_type] = FederatedLearningCoordinator(model_type)
+            self.federated_coordinators[model_type] = FederatedLearningCoordinator(
+                model_type
+            )
 
-    async def explain_prediction(self, model_type: ModelType, input_data: Dict[str, Any], prediction: Any) -> ExplainabilityResult:
+    async def explain_prediction(
+        self, model_type: ModelType, input_data: Dict[str, Any], prediction: Any
+    ) -> ExplainabilityResult:
         """Get explainable AI analysis for a prediction"""
         # Get active model for explanation
         active_model = self.model_retrainer.get_active_model(model_type)
@@ -551,7 +610,9 @@ class AdvancedAIService:
         coordinator = self.federated_coordinators[model_type]
         return await coordinator.start_federated_round()
 
-    async def submit_federated_update(self, model_type: ModelType, update: FederatedUpdate) -> bool:
+    async def submit_federated_update(
+        self, model_type: ModelType, update: FederatedUpdate
+    ) -> bool:
         """Submit a federated learning update"""
         coordinator = self.federated_coordinators[model_type]
         return await coordinator.submit_client_update(update)
@@ -561,18 +622,24 @@ class AdvancedAIService:
         coordinator = self.federated_coordinators[model_type]
         return coordinator.get_status()
 
-    async def retrain_model(self, model_type: ModelType, training_data: Dict[str, Any]) -> ModelVersion:
+    async def retrain_model(
+        self, model_type: ModelType, training_data: Dict[str, Any]
+    ) -> ModelVersion:
         """Retrain a model with new data"""
         logger.info(f"Starting retraining for {model_type.value}")
 
         # Train new model
-        new_version = await self.model_retrainer.train_new_model(model_type, training_data)
+        new_version = await self.model_retrainer.train_new_model(
+            model_type, training_data
+        )
 
         if new_version.status == ModelStatus.READY:
             # Compare with current model
             current_model = self.model_retrainer.get_active_model(model_type)
             if current_model:
-                improvement = new_version.metrics.accuracy - current_model.metrics.accuracy
+                improvement = (
+                    new_version.metrics.accuracy - current_model.metrics.accuracy
+                )
                 logger.info(f"Model improvement: {improvement:.3f}")
 
                 # Auto-deploy if significant improvement
@@ -580,7 +647,9 @@ class AdvancedAIService:
                     await self.model_retrainer.deploy_model(new_version.version)
                     logger.info(f"Auto-deployed improved model {new_version.version}")
                 else:
-                    logger.info(f"New model {new_version.version} ready but not deployed (insufficient improvement)")
+                    logger.info(
+                        f"New model {new_version.version} ready but not deployed (insufficient improvement)"
+                    )
             else:
                 # Deploy first model
                 await self.model_retrainer.deploy_model(new_version.version)
@@ -592,67 +661,78 @@ class AdvancedAIService:
         """Check retraining status for all model types"""
         results = {}
         for model_type in ModelType:
-            results[model_type.value] = self.model_retrainer.check_retraining_needed(model_type)
+            results[model_type.value] = self.model_retrainer.check_retraining_needed(
+                model_type
+            )
         return results
 
     async def run_automated_retraining_cycle(self) -> Dict[str, Any]:
         """Run automated retraining for models that need it"""
         results = {
-            'models_checked': 0,
-            'models_retrained': 0,
-            'models_deployed': 0,
-            'errors': []
+            "models_checked": 0,
+            "models_retrained": 0,
+            "models_deployed": 0,
+            "errors": [],
         }
 
         for model_type in ModelType:
-            results['models_checked'] += 1
+            results["models_checked"] += 1
 
             try:
-                retraining_check = self.model_retrainer.check_retraining_needed(model_type)
+                retraining_check = self.model_retrainer.check_retraining_needed(
+                    model_type
+                )
 
-                if retraining_check['needed']:
-                    logger.info(f"Retraining needed for {model_type.value}: {retraining_check['reasons']}")
+                if retraining_check["needed"]:
+                    logger.info(
+                        f"Retraining needed for {model_type.value}: {retraining_check['reasons']}"
+                    )
 
                     # Mock training data - in real implementation, this would fetch actual data
                     training_data = {
-                        'features': np.random.rand(1000, 8),
-                        'labels': np.random.randint(0, 2, 1000)
+                        "features": np.random.rand(1000, 8),
+                        "labels": np.random.randint(0, 2, 1000),
                     }
 
                     new_version = await self.retrain_model(model_type, training_data)
-                    results['models_retrained'] += 1
+                    results["models_retrained"] += 1
 
                     if new_version.status == ModelStatus.READY:
                         active_model = self.model_retrainer.get_active_model(model_type)
                         if active_model and active_model.version == new_version.version:
-                            results['models_deployed'] += 1
+                            results["models_deployed"] += 1
 
             except Exception as e:
                 error_msg = f"Failed to retrain {model_type.value}: {e}"
                 logger.error(error_msg)
-                results['errors'].append(error_msg)
+                results["errors"].append(error_msg)
 
         return results
 
     def get_ai_system_status(self) -> Dict[str, Any]:
         """Get comprehensive AI system status"""
         return {
-            'active_models': {
+            "active_models": {
                 model_type.value: {
-                    'version': model.version if model else None,
-                    'deployed_at': model.deployed_at.isoformat() if model and model.deployed_at else None,
-                    'accuracy': model.metrics.accuracy if model else None
+                    "version": model.version if model else None,
+                    "deployed_at": (
+                        model.deployed_at.isoformat()
+                        if model and model.deployed_at
+                        else None
+                    ),
+                    "accuracy": model.metrics.accuracy if model else None,
                 }
                 for model_type, model in self.model_retrainer.active_models.items()
             },
-            'federated_learning': {
+            "federated_learning": {
                 model_type.value: coordinator.get_status()
                 for model_type, coordinator in self.federated_coordinators.items()
             },
-            'retraining_status': self.check_all_models_retraining(),
-            'total_model_versions': len(self.model_retrainer.models),
-            'model_directory': self.model_retrainer.model_dir
+            "retraining_status": self.check_all_models_retraining(),
+            "total_model_versions": len(self.model_retrainer.models),
+            "model_directory": self.model_retrainer.model_dir,
         }
+
 
 # Global instance
 advanced_ai_service = AdvancedAIService()

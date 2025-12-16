@@ -3,15 +3,16 @@ Fraud Rules Engine API Router
 Provides endpoints for managing and using fraud detection rules
 """
 
-from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
-from datetime import datetime, timezone
 import logging
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from core.database import get_db
 from app.services.fraud_rules_engine import get_fraud_engine
+from core.database import get_db
 
 logger = logging.getLogger(__name__)
 
@@ -23,16 +24,21 @@ router = APIRouter(
 
 # Request/Response Models
 
+
 class RuleConditionModel(BaseModel):
     field: str = Field(..., description="Field to evaluate")
     operator: str = Field(..., description="Comparison operator")
     value: Any = Field(..., description="Value to compare against")
-    case_sensitive: bool = Field(False, description="Case sensitivity for string comparisons")
+    case_sensitive: bool = Field(
+        False, description="Case sensitivity for string comparisons"
+    )
     description: str = Field("", description="Human-readable description")
+
 
 class AlertUpdate(BaseModel):
     status: str = Field(..., description="New status (approved, rejected, escalated)")
     note: Optional[str] = Field(None, description="Optional reasoning note")
+
 
 class CreateRuleRequest(BaseModel):
     name: str = Field(..., description="Rule name")
@@ -43,8 +49,11 @@ class CreateRuleRequest(BaseModel):
     severity: str = Field("medium", description="Rule severity level")
     enabled: bool = Field(True, description="Whether rule is enabled")
     tags: List[str] = Field([], description="Rule tags")
-    confidence_threshold: float = Field(0.8, description="Confidence threshold for triggering")
+    confidence_threshold: float = Field(
+        0.8, description="Confidence threshold for triggering"
+    )
     action: str = Field("flag", description="Action to take when rule triggers")
+
 
 class UpdateRuleRequest(BaseModel):
     name: Optional[str] = None
@@ -56,6 +65,7 @@ class UpdateRuleRequest(BaseModel):
     tags: Optional[List[str]] = None
     confidence_threshold: Optional[float] = None
     action: Optional[str] = None
+
 
 class RuleResponse(BaseModel):
     id: str
@@ -74,11 +84,16 @@ class RuleResponse(BaseModel):
     confidence_threshold: float
     action: str
 
+
 class EvaluateTransactionRequest(BaseModel):
-    transaction_data: Dict[str, Any] = Field(..., description="Transaction data to evaluate")
+    transaction_data: Dict[str, Any] = Field(
+        ..., description="Transaction data to evaluate"
+    )
+
 
 class EvaluateCaseRequest(BaseModel):
     case_data: Dict[str, Any] = Field(..., description="Case data to evaluate")
+
 
 class EvaluationResult(BaseModel):
     triggered: bool
@@ -90,6 +105,7 @@ class EvaluationResult(BaseModel):
     matched_conditions: Optional[int] = None
     total_conditions: Optional[int] = None
 
+
 class CaseEvaluationResult(BaseModel):
     case_id: Optional[str] = None
     total_transactions: int
@@ -100,11 +116,16 @@ class CaseEvaluationResult(BaseModel):
     recommendations: List[str]
     error: Optional[str] = None
 
+
 class ImportRulesRequest(BaseModel):
     rules: List[Dict[str, Any]] = Field(..., description="Rules to import")
 
+
 class ExportRulesRequest(BaseModel):
-    rule_ids: Optional[List[str]] = Field(None, description="Specific rule IDs to export")
+    rule_ids: Optional[List[str]] = Field(
+        None, description="Specific rule IDs to export"
+    )
+
 
 class EngineStats(BaseModel):
     total_evaluations: int
@@ -118,44 +139,47 @@ class EngineStats(BaseModel):
     rules_by_severity: Dict[str, int]
     rules_by_type: Dict[str, int]
 
+
 # API Endpoints
+
 
 @router.get("/alerts", response_model=List[Dict[str, Any]])
 async def get_fraud_alerts(
     status: Optional[str] = None,
     severity: Optional[str] = None,
     limit: int = 50,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Get list of fraud alerts.
     """
     from core.database import FraudAlert
-    
+
     query = db.query(FraudAlert)
-    
-    if status and status != 'all':
+
+    if status and status != "all":
         query = query.filter(FraudAlert.status == status)
-    
-    if severity and severity != 'all':
+
+    if severity and severity != "all":
         query = query.filter(FraudAlert.severity == severity)
-        
+
     alerts = query.order_by(FraudAlert.created_at.desc()).limit(limit).all()
-    
+
     return [
         {
             "id": alert.id,
             "caseId": alert.case_id,
-            "title": alert.rule_name, # Mapping rule name to title
+            "title": alert.rule_name,  # Mapping rule name to title
             "riskScore": int(alert.risk_score),
-            "priority": alert.severity, # Critical/High etc
+            "priority": alert.severity,  # Critical/High etc
             "status": alert.status,
             "createdAt": alert.created_at.isoformat() if alert.created_at else None,
             "description": alert.description,
-            "assignee": alert.assigned_to
+            "assignee": alert.assigned_to,
         }
         for alert in alerts
     ]
+
 
 @router.get("/templates", response_model=Dict[str, Dict[str, Any]])
 async def get_rule_templates():
@@ -166,11 +190,14 @@ async def get_rule_templates():
     for creating custom fraud detection rules.
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
         return engine.get_rule_templates()
     except Exception as e:
         logger.error(f"Failed to get rule templates: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get templates: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get templates: {str(e)}"
+        )
+
 
 @router.get("/", response_model=List[RuleResponse])
 async def list_rules():
@@ -180,33 +207,34 @@ async def list_rules():
     Returns all configured rules with their current status and statistics.
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
         rules = engine.get_rules()
 
         # Convert to response format
         return [
             RuleResponse(
-                id=rule['id'],
-                name=rule['name'],
-                description=rule['description'],
-                type=rule['type'],
-                conditions=rule['conditions'],
-                logical_operator=rule['logical_operator'],
-                severity=rule['severity'],
-                enabled=rule['enabled'],
-                tags=rule['tags'],
-                created_at=rule['created_at'],
-                updated_at=rule['updated_at'],
-                trigger_count=rule['trigger_count'],
-                last_triggered=rule['last_triggered'],
-                confidence_threshold=rule['confidence_threshold'],
-                action=rule['action']
+                id=rule["id"],
+                name=rule["name"],
+                description=rule["description"],
+                type=rule["type"],
+                conditions=rule["conditions"],
+                logical_operator=rule["logical_operator"],
+                severity=rule["severity"],
+                enabled=rule["enabled"],
+                tags=rule["tags"],
+                created_at=rule["created_at"],
+                updated_at=rule["updated_at"],
+                trigger_count=rule["trigger_count"],
+                last_triggered=rule["last_triggered"],
+                confidence_threshold=rule["confidence_threshold"],
+                action=rule["action"],
             )
             for rule in rules
         ]
     except Exception as e:
         logger.error(f"Failed to list rules: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to list rules: {str(e)}")
+
 
 @router.get("/{rule_id}", response_model=RuleResponse)
 async def get_rule(rule_id: str):
@@ -217,7 +245,7 @@ async def get_rule(rule_id: str):
     its conditions, statistics, and configuration.
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
         rule = engine.get_rule(rule_id)
 
         if not rule:
@@ -230,6 +258,7 @@ async def get_rule(rule_id: str):
         logger.error(f"Failed to get rule {rule_id}: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get rule: {str(e)}")
 
+
 @router.post("/", response_model=RuleResponse)
 async def create_rule(request: CreateRuleRequest):
     """
@@ -240,13 +269,13 @@ async def create_rule(request: CreateRuleRequest):
     with logical operators).
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
 
         # Convert request to dict
         rule_data = request.model_dump()
 
         # Convert conditions to dict format
-        rule_data['conditions'] = [cond.model_dump() for cond in request.conditions]
+        rule_data["conditions"] = [cond.model_dump() for cond in request.conditions]
 
         rule = await engine.create_rule(rule_data)
 
@@ -263,13 +292,16 @@ async def create_rule(request: CreateRuleRequest):
             created_at=rule.created_at.isoformat(),
             updated_at=rule.updated_at.isoformat(),
             trigger_count=rule.trigger_count,
-            last_triggered=rule.last_triggered.isoformat() if rule.last_triggered else None,
+            last_triggered=(
+                rule.last_triggered.isoformat() if rule.last_triggered else None
+            ),
             confidence_threshold=rule.confidence_threshold,
-            action=rule.action
+            action=rule.action,
         )
     except Exception as e:
         logger.error(f"Failed to create rule: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to create rule: {str(e)}")
+
 
 @router.put("/{rule_id}", response_model=RuleResponse)
 async def update_rule(rule_id: str, request: UpdateRuleRequest):
@@ -280,14 +312,16 @@ async def update_rule(rule_id: str, request: UpdateRuleRequest):
     Note: Default rules cannot be modified.
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
 
         # Convert request to dict, excluding None values
         updates = request.model_dump(exclude_unset=True)
 
         # Convert conditions if provided
-        if 'conditions' in updates and updates['conditions']:
-            updates['conditions'] = [cond.model_dump() for cond in updates['conditions']]
+        if "conditions" in updates and updates["conditions"]:
+            updates["conditions"] = [
+                cond.model_dump() for cond in updates["conditions"]
+            ]
 
         rule = await engine.update_rule(rule_id, updates)
 
@@ -307,15 +341,18 @@ async def update_rule(rule_id: str, request: UpdateRuleRequest):
             created_at=rule.created_at.isoformat(),
             updated_at=rule.updated_at.isoformat(),
             trigger_count=rule.trigger_count,
-            last_triggered=rule.last_triggered.isoformat() if rule.last_triggered else None,
+            last_triggered=(
+                rule.last_triggered.isoformat() if rule.last_triggered else None
+            ),
             confidence_threshold=rule.confidence_threshold,
-            action=rule.action
+            action=rule.action,
         )
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Failed to update rule {rule_id}: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to update rule: {str(e)}")
+
 
 @router.delete("/{rule_id}")
 async def delete_rule(rule_id: str):
@@ -326,12 +363,14 @@ async def delete_rule(rule_id: str):
     Default rules cannot be deleted.
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
 
         success = await engine.delete_rule(rule_id)
 
         if not success:
-            raise HTTPException(status_code=404, detail="Rule not found or cannot be deleted")
+            raise HTTPException(
+                status_code=404, detail="Rule not found or cannot be deleted"
+            )
 
         return {"success": True, "message": f"Rule {rule_id} deleted successfully"}
     except HTTPException:
@@ -340,40 +379,43 @@ async def delete_rule(rule_id: str):
         logger.error(f"Failed to delete rule {rule_id}: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to delete rule: {str(e)}")
 
+
 class EvaluationResponse(BaseModel):
     transaction_id: Optional[str]
     risk_score: float
     triggered_rules: List[Dict[str, Any]]
     timestamp: datetime
 
+
 @router.post("/evaluate", response_model=EvaluationResponse)
 async def evaluate_transaction(
-    request: EvaluateTransactionRequest,
-    db: Session = Depends(get_db)
+    request: EvaluateTransactionRequest, db: Session = Depends(get_db)
 ):
     """Evaluate a transaction against all active rules"""
     try:
-        engine = await get_fraud_engine()
-        results = await engine.evaluate_transaction(request.transaction_data, db) # Pass DB for persistence
-        
-        triggered_rules = [r for r in results if r.get('triggered', False)]
-        risk_score = sum(r.get('risk_score', 0) for r in triggered_rules)
-        
+        engine = get_fraud_engine()
+        results = await engine.evaluate_transaction(
+            request.transaction_data, db
+        )  # Pass DB for persistence
+
+        triggered_rules = [r for r in results if r.get("triggered", False)]
+        risk_score = sum(r.get("risk_score", 0) for r in triggered_rules)
+
         return {
-            "transaction_id": request.transaction_data.get('id'),
+            "transaction_id": request.transaction_data.get("id"),
             "risk_score": risk_score,
             "triggered_rules": triggered_rules,
-            "timestamp": datetime.now()
+            "timestamp": datetime.now(),
         }
     except Exception as e:
         logger.error(f"Error evaluating transaction: {e}")
-        raise HTTPException(status_code=500, detail=f"Error evaluating transaction: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error evaluating transaction: {str(e)}"
+        )
+
 
 @router.post("/evaluate/case", response_model=CaseEvaluationResult)
-async def evaluate_case(
-    request: EvaluateCaseRequest,
-    db: Session = Depends(get_db)
-):
+async def evaluate_case(request: EvaluateCaseRequest, db: Session = Depends(get_db)):
     """
     Evaluate an entire case for fraud patterns.
 
@@ -382,7 +424,7 @@ async def evaluate_case(
     overall risk scores.
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
 
         result = await engine.evaluate_case(request.case_data, db)
 
@@ -390,6 +432,7 @@ async def evaluate_case(
     except Exception as e:
         logger.error(f"Case evaluation failed: {e}")
         raise HTTPException(status_code=500, detail=f"Case evaluation failed: {str(e)}")
+
 
 @router.post("/import")
 async def import_rules(request: ImportRulesRequest):
@@ -400,18 +443,19 @@ async def import_rules(request: ImportRulesRequest):
     Useful for sharing rule sets between environments.
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
 
         imported_count = await engine.import_rules(request.rules)
 
         return {
             "success": True,
             "message": f"Successfully imported {imported_count} rules",
-            "imported_count": imported_count
+            "imported_count": imported_count,
         }
     except Exception as e:
         logger.error(f"Rule import failed: {e}")
         raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
+
 
 @router.post("/export", response_model=List[Dict[str, Any]])
 async def export_rules(request: ExportRulesRequest = None):
@@ -425,7 +469,7 @@ async def export_rules(request: ExportRulesRequest = None):
         if request is None:
             request = ExportRulesRequest()
 
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
 
         rules = await engine.export_rules(request.rule_ids)
 
@@ -433,6 +477,7 @@ async def export_rules(request: ExportRulesRequest = None):
     except Exception as e:
         logger.error(f"Rule export failed: {e}")
         raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
+
 
 @router.get("/stats", response_model=EngineStats)
 async def get_engine_stats():
@@ -443,7 +488,7 @@ async def get_engine_stats():
     evaluation metrics, and system health.
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
         stats = engine.get_stats()
 
         return EngineStats(**stats)
@@ -451,11 +496,9 @@ async def get_engine_stats():
         logger.error(f"Failed to get engine stats: {e}")
         raise HTTPException(status_code=500, detail=f"Stats retrieval failed: {str(e)}")
 
+
 @router.post("/test-rule")
-async def test_rule(
-    rule_id: str,
-    test_data: Dict[str, Any]
-):
+async def test_rule(rule_id: str, test_data: Dict[str, Any]):
     """
     Test a specific rule against sample data.
 
@@ -463,7 +506,7 @@ async def test_rule(
     Useful for rule development and validation.
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
 
         rule = engine.get_rule(rule_id)
         if not rule:
@@ -474,15 +517,15 @@ async def test_rule(
 
         test_rule = FraudRule(
             id="test_rule",
-            name=rule['name'],
-            description=rule['description'],
-            type=rule['type'],
-            conditions=[RuleCondition(**cond) for cond in rule['conditions']],
-            logical_operator=rule['logical_operator'],
-            severity=rule['severity'],
+            name=rule["name"],
+            description=rule["description"],
+            type=rule["type"],
+            conditions=[RuleCondition(**cond) for cond in rule["conditions"]],
+            logical_operator=rule["logical_operator"],
+            severity=rule["severity"],
             enabled=True,
-            confidence_threshold=rule['confidence_threshold'],
-            action=rule['action']
+            confidence_threshold=rule["confidence_threshold"],
+            action=rule["action"],
         )
 
         result = test_rule.evaluate(test_data)
@@ -491,13 +534,14 @@ async def test_rule(
             "success": True,
             "rule_id": rule_id,
             "test_data": test_data,
-            "result": result
+            "result": result,
         }
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Rule testing failed: {e}")
         raise HTTPException(status_code=500, detail=f"Rule testing failed: {str(e)}")
+
 
 # Health check endpoint for fraud rules engine
 @router.get("/health")
@@ -506,7 +550,7 @@ async def fraud_engine_health_check():
     Health check for fraud rules engine components
     """
     try:
-        engine = await get_fraud_engine()
+        engine = get_fraud_engine()
 
         health_status = {
             "service": "fraud-rules-engine",
@@ -515,18 +559,18 @@ async def fraud_engine_health_check():
             "components": {
                 "rules_storage": {
                     "status": "healthy",
-                    "rules_count": len(engine.rules)
+                    "rules_count": len(engine.rules),
                 },
                 "rule_evaluation": {
                     "status": "healthy",
-                    "total_evaluations": engine.stats['total_evaluations']
+                    "total_evaluations": engine.stats["total_evaluations"],
                 },
                 "rule_templates": {
                     "status": "healthy",
-                    "templates_count": len(engine.rule_templates)
-                }
+                    "templates_count": len(engine.rule_templates),
+                },
             },
-            "stats": engine.get_stats()
+            "stats": engine.get_stats(),
         }
 
         return health_status
@@ -536,51 +580,67 @@ async def fraud_engine_health_check():
             "service": "fraud-rules-engine",
             "status": "unhealthy",
             "error": str(e),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
+
 @router.put("/alerts/{alert_id}", response_model=Dict[str, Any])
-async def update_alert_status(alert_id: str, update: AlertUpdate, db: Session = Depends(get_db)):
+async def update_alert_status(
+    alert_id: str, update: AlertUpdate, db: Session = Depends(get_db)
+):
     """
     Update the status of a fraud alert.
     """
     from core.database import FraudAlert
-    
+
     alert = db.query(FraudAlert).filter(FraudAlert.id == alert_id).first()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found")
-        
+
     alert.status = update.status
     # In a real app, we would log the note and the user who made the change
-    # alert.notes.append(update.note) 
-    
+    # alert.notes.append(update.note)
+
     db.commit()
     db.refresh(alert)
-    
+
     return {
         "id": alert.id,
         "status": alert.status,
-        "updatedAt": alert.updated_at.isoformat() if alert.updated_at else datetime.now(timezone.utc).isoformat()
+        "updatedAt": (
+            alert.updated_at.isoformat()
+            if alert.updated_at
+            else datetime.now(timezone.utc).isoformat()
+        ),
     }
+
 
 """
 Fraud Detection API Router
 Endpoints for rule management and transaction evaluation
 """
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
 
 from app.services.fraud.rule_engine import (
-    RuleEngine, FraudRule, VelocityRule, AmountThresholdRule, 
-    GeographicAnomalyRule, RuleType, RiskLevel, create_default_rules
+    AmountThresholdRule,
+    FraudRule,
+    GeographicAnomalyRule,
+    RiskLevel,
+    RuleEngine,
+    RuleType,
+    VelocityRule,
+    create_default_rules,
 )
 
 router = APIRouter()
 
 # Global rule engine instance
 fraud_engine = create_default_rules()
+
 
 # Request/Response Models
 class TransactionEvaluationRequest(BaseModel):
@@ -593,14 +653,17 @@ class TransactionEvaluationRequest(BaseModel):
     merchant: Optional[str] = None
     category: Optional[str] = None
 
+
 class ContextData(BaseModel):
     recent_transactions: List[Dict[str, Any]] = []
     last_transaction: Optional[Dict[str, Any]] = None
     account_history: Optional[Dict[str, Any]] = None
 
+
 class EvaluationRequest(BaseModel):
     transaction: TransactionEvaluationRequest
     context: Optional[ContextData] = None
+
 
 class RuleCreateRequest(BaseModel):
     rule_type: str
@@ -609,28 +672,30 @@ class RuleCreateRequest(BaseModel):
     risk_level: str
     parameters: Dict[str, Any]
 
-@router.post('/evaluate')
+
+@router.post("/evaluate")
 async def evaluate_transaction(request: EvaluationRequest):
     """
     Evaluate a transaction for fraud
-    
+
     Returns fraud risk assessment and recommendations
     """
     try:
         transaction_dict = request.transaction.dict()
         context_dict = request.context.dict() if request.context else {}
-        
+
         result = fraud_engine.evaluate_transaction(transaction_dict, context_dict)
-        
+
         return {
             "transaction_id": request.transaction.transaction_id,
             **result,
-            "evaluated_at": datetime.utcnow().isoformat()
+            "evaluated_at": datetime.utcnow().isoformat(),
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Evaluation failed: {str(e)}")
 
-@router.get('/rules')
+
+@router.get("/rules")
 async def list_rules():
     """Get all fraud detection rules"""
     return {
@@ -643,20 +708,21 @@ async def list_rules():
                 "risk_level": rule.risk_level.value,
                 "enabled": rule.enabled,
                 "triggered_count": rule.triggered_count,
-                "created_at": rule.created_at.isoformat()
+                "created_at": rule.created_at.isoformat(),
             }
             for rule in fraud_engine.rules
         ],
-        "total_count": len(fraud_engine.rules)
+        "total_count": len(fraud_engine.rules),
     }
 
-@router.get('/rules/{rule_id}')
+
+@router.get("/rules/{rule_id}")
 async def get_rule(rule_id: str):
     """Get specific rule details"""
     rule = fraud_engine.get_rule(rule_id)
     if not rule:
         raise HTTPException(status_code=404, detail=f"Rule {rule_id} not found")
-    
+
     return {
         "rule_id": rule.rule_id,
         "name": rule.name,
@@ -665,58 +731,62 @@ async def get_rule(rule_id: str):
         "risk_level": rule.risk_level.value,
         "enabled": rule.enabled,
         "triggered_count": rule.triggered_count,
-        "created_at": rule.created_at.isoformat()
+        "created_at": rule.created_at.isoformat(),
     }
 
-@router.patch('/rules/{rule_id}/toggle')
+
+@router.patch("/rules/{rule_id}/toggle")
 async def toggle_rule(rule_id: str):
     """Enable or disable a rule"""
     rule = fraud_engine.get_rule(rule_id)
     if not rule:
         raise HTTPException(status_code=404, detail=f"Rule {rule_id} not found")
-    
+
     rule.enabled = not rule.enabled
-    
+
     return {
         "rule_id": rule_id,
         "enabled": rule.enabled,
-        "message": f"Rule {'enabled' if rule.enabled else 'disabled'}"
+        "message": f"Rule {'enabled' if rule.enabled else 'disabled'}",
     }
 
-@router.post('/rules')
+
+@router.post("/rules")
 async def create_rule(request: RuleCreateRequest):
     """Create a new fraud detection rule"""
     try:
         rule_type = RuleType(request.rule_type)
         risk_level = RiskLevel(request.risk_level)
-        
+
         # Create rule based on type
         if rule_type == RuleType.VELOCITY:
             rule = VelocityRule(
                 rule_id=f"VEL{len([r for r in fraud_engine.rules if r.rule_type == RuleType.VELOCITY]) + 1:03d}",
-                max_transactions=request.parameters.get('max_transactions', 5),
-                time_window_minutes=request.parameters.get('time_window_minutes', 5),
-                risk_level=risk_level
+                max_transactions=request.parameters.get("max_transactions", 5),
+                time_window_minutes=request.parameters.get("time_window_minutes", 5),
+                risk_level=risk_level,
             )
         elif rule_type == RuleType.AMOUNT:
             rule = AmountThresholdRule(
                 rule_id=f"AMT{len([r for r in fraud_engine.rules if r.rule_type == RuleType.AMOUNT]) + 1:03d}",
-                threshold_amount=request.parameters.get('threshold_amount', 10000.0),
-                currency=request.parameters.get('currency', 'USD'),
-                risk_level=risk_level
+                threshold_amount=request.parameters.get("threshold_amount", 10000.0),
+                currency=request.parameters.get("currency", "USD"),
+                risk_level=risk_level,
             )
         elif rule_type == RuleType.GEOGRAPHIC:
             rule = GeographicAnomalyRule(
                 rule_id=f"GEO{len([r for r in fraud_engine.rules if r.rule_type == RuleType.GEOGRAPHIC]) + 1:03d}",
-                max_distance_km=request.parameters.get('max_distance_km', 500),
-                min_time_hours=request.parameters.get('min_time_hours', 1),
-                risk_level=risk_level
+                max_distance_km=request.parameters.get("max_distance_km", 500),
+                min_time_hours=request.parameters.get("min_time_hours", 1),
+                risk_level=risk_level,
             )
         else:
-            raise HTTPException(status_code=400, detail=f"Unsupported rule type: {rule_type}")
-        
+            raise HTTPException(
+                status_code=400, detail=f"Unsupported rule type: {rule_type}"
+            )
+
         fraud_engine.add_rule(rule)
-        
+
         return {
             "rule_id": rule.rule_id,
             "message": "Rule created successfully",
@@ -724,59 +794,63 @@ async def create_rule(request: RuleCreateRequest):
                 "rule_id": rule.rule_id,
                 "name": rule.name,
                 "rule_type": rule.rule_type.value,
-                "risk_level": rule.risk_level.value
-            }
+                "risk_level": rule.risk_level.value,
+            },
         }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create rule: {str(e)}")
 
-@router.delete('/rules/{rule_id}')
+
+@router.delete("/rules/{rule_id}")
 async def delete_rule(rule_id: str):
     """Delete a fraud detection rule"""
     rule = fraud_engine.get_rule(rule_id)
     if not rule:
         raise HTTPException(status_code=404, detail=f"Rule {rule_id} not found")
-    
-    fraud_engine.remove_rule(rule_id)
-    
-    return {
-        "rule_id": rule_id,
-        "message": "Rule deleted successfully"
-    }
 
-@router.get('/stats')
+    fraud_engine.remove_rule(rule_id)
+
+    return {"rule_id": rule_id, "message": "Rule deleted successfully"}
+
+
+@router.get("/stats")
 async def get_engine_stats():
     """Get fraud detection engine statistics"""
     return fraud_engine.get_stats()
 
-@router.post('/batch-evaluate')
+
+@router.post("/batch-evaluate")
 async def batch_evaluate_transactions(transactions: List[EvaluationRequest]):
     results = []
-    
+
     for request in transactions:
         try:
             transaction_dict = request.transaction.dict()
             context_dict = request.context.dict() if request.context else {}
-            
+
             result = fraud_engine.evaluate_transaction(transaction_dict, context_dict)
-            
-            results.append({
-                "transaction_id": request.transaction.transaction_id,
-                "success": True,
-                **result
-            })
+
+            results.append(
+                {
+                    "transaction_id": request.transaction.transaction_id,
+                    "success": True,
+                    **result,
+                }
+            )
         except Exception as e:
-            results.append({
-                "transaction_id": request.transaction.transaction_id,
-                "success": False,
-                "error": str(e)
-            })
-    
+            results.append(
+                {
+                    "transaction_id": request.transaction.transaction_id,
+                    "success": False,
+                    "error": str(e),
+                }
+            )
+
     return {
         "total_evaluated": len(results),
         "successful": sum(1 for r in results if r["success"]),
         "failed": sum(1 for r in results if not r["success"]),
-        "results": results
+        "results": results,
     }

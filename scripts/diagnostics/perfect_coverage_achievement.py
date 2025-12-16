@@ -4,17 +4,18 @@ Final 100% SSOT Coverage Investigation and Protection
 Identifies and protects the final remaining files to achieve perfect coverage
 """
 
+import hashlib
+import json
 import os
 import sys
-import json
-import hashlib
-from pathlib import Path
-from typing import Dict, List, Any, Set
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Set
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
+
 
 class PerfectCoverageInvestigator:
     """Investigator for achieving 100% SSOT coverage"""
@@ -34,7 +35,7 @@ class PerfectCoverageInvestigator:
         for lockfile in self.diagnostics_dir.glob("*.lock"):
             if lockfile.exists():
                 try:
-                    with open(lockfile, 'r') as f:
+                    with open(lockfile, "r") as f:
                         data = json.load(f)
                         if "files" in data and isinstance(data["files"], dict):
                             protected.update(data["files"].keys())
@@ -60,16 +61,34 @@ class PerfectCoverageInvestigator:
                     continue
 
                 # Skip unwanted files
-                if any(skip in str(file_path) for skip in [
-                    "node_modules", "__pycache__", ".git", "dist", ".next",
-                    "build", "coverage", "test-results", ".pytest_cache"
-                ]):
+                if any(
+                    skip in str(file_path)
+                    for skip in [
+                        "node_modules",
+                        "__pycache__",
+                        ".git",
+                        "dist",
+                        ".next",
+                        "build",
+                        "coverage",
+                        "test-results",
+                        ".pytest_cache",
+                    ]
+                ):
                     continue
 
                 # Only analyze relevant file types
                 if file_path.suffix.lower() not in [
-                    '.py', '.ts', '.tsx', '.js', '.json', '.md', '.sh', '.yml', '.yaml'
-                ] and not file_path.name.startswith('Dockerfile'):
+                    ".py",
+                    ".ts",
+                    ".tsx",
+                    ".js",
+                    ".json",
+                    ".md",
+                    ".sh",
+                    ".yml",
+                    ".yaml",
+                ] and not file_path.name.startswith("Dockerfile"):
                     continue
 
                 filename = file_path.name
@@ -77,19 +96,25 @@ class PerfectCoverageInvestigator:
                     continue  # Already protected
 
                 # Check if this file should be protected based on comprehensive criteria
-                protection_analysis = self._analyze_file_for_perfect_protection(file_path)
+                protection_analysis = self._analyze_file_for_perfect_protection(
+                    file_path
+                )
                 if protection_analysis["should_protect"]:
-                    remaining_files.append({
-                        "path": str(file_path.relative_to(self.project_root)),
-                        "filename": filename,
-                        "category": protection_analysis["category"],
-                        "risk_score": protection_analysis["risk_score"],
-                        "protection_reason": protection_analysis["reason"],
-                        "business_impact": protection_analysis["business_impact"],
-                        "security_impact": protection_analysis["security_impact"],
-                        "file_size": file_path.stat().st_size,
-                        "last_modified": datetime.fromtimestamp(file_path.stat().st_mtime).isoformat()
-                    })
+                    remaining_files.append(
+                        {
+                            "path": str(file_path.relative_to(self.project_root)),
+                            "filename": filename,
+                            "category": protection_analysis["category"],
+                            "risk_score": protection_analysis["risk_score"],
+                            "protection_reason": protection_analysis["reason"],
+                            "business_impact": protection_analysis["business_impact"],
+                            "security_impact": protection_analysis["security_impact"],
+                            "file_size": file_path.stat().st_size,
+                            "last_modified": datetime.fromtimestamp(
+                                file_path.stat().st_mtime
+                            ).isoformat(),
+                        }
+                    )
 
         # Sort by risk score (highest first)
         remaining_files.sort(key=lambda x: x["risk_score"], reverse=True)
@@ -104,76 +129,152 @@ class PerfectCoverageInvestigator:
         protection_criteria = {
             # Critical infrastructure and security
             "database_schema": {
-                "keywords": ["database", "schema", "migration", "model", "table", "sql"],
+                "keywords": [
+                    "database",
+                    "schema",
+                    "migration",
+                    "model",
+                    "table",
+                    "sql",
+                ],
                 "risk_multiplier": 3.0,
                 "business_impact": "Data integrity and system reliability",
-                "security_impact": "Data breach prevention and integrity"
+                "security_impact": "Data breach prevention and integrity",
             },
             "security_core": {
-                "keywords": ["security", "auth", "encrypt", "decrypt", "token", "jwt", "oauth", "rbac"],
+                "keywords": [
+                    "security",
+                    "auth",
+                    "encrypt",
+                    "decrypt",
+                    "token",
+                    "jwt",
+                    "oauth",
+                    "rbac",
+                ],
                 "risk_multiplier": 3.0,
                 "business_impact": "System access control and authentication",
-                "security_impact": "Unauthorized access prevention and data protection"
+                "security_impact": "Unauthorized access prevention and data protection",
             },
             "api_critical": {
-                "keywords": ["api", "endpoint", "router", "handler", "middleware", "contract"],
+                "keywords": [
+                    "api",
+                    "endpoint",
+                    "router",
+                    "handler",
+                    "middleware",
+                    "contract",
+                ],
                 "risk_multiplier": 2.8,
                 "business_impact": "System integration and API functionality",
-                "security_impact": "API abuse prevention and secure communication"
+                "security_impact": "API abuse prevention and secure communication",
             },
             "business_core": {
-                "keywords": ["fraud", "detection", "scoring", "algorithm", "engine", "processor"],
+                "keywords": [
+                    "fraud",
+                    "detection",
+                    "scoring",
+                    "algorithm",
+                    "engine",
+                    "processor",
+                ],
                 "risk_multiplier": 2.9,
                 "business_impact": "Core fraud detection functionality",
-                "security_impact": "Financial crime prevention and detection"
+                "security_impact": "Financial crime prevention and detection",
             },
             "infrastructure_critical": {
-                "keywords": ["docker", "container", "deployment", "build", "ci", "cd", "pipeline"],
+                "keywords": [
+                    "docker",
+                    "container",
+                    "deployment",
+                    "build",
+                    "ci",
+                    "cd",
+                    "pipeline",
+                ],
                 "risk_multiplier": 2.5,
                 "business_impact": "Deployment and operational reliability",
-                "security_impact": "Infrastructure security and integrity"
+                "security_impact": "Infrastructure security and integrity",
             },
             "configuration_system": {
-                "keywords": ["config", "settings", "env", "environment", "constants", "variables"],
+                "keywords": [
+                    "config",
+                    "settings",
+                    "env",
+                    "environment",
+                    "constants",
+                    "variables",
+                ],
                 "risk_multiplier": 2.3,
                 "business_impact": "System behavior and configuration management",
-                "security_impact": "Configuration tampering prevention"
+                "security_impact": "Configuration tampering prevention",
             },
             "frontend_security": {
-                "keywords": ["auth", "security", "validation", "sanitize", "csrf", "xss"],
+                "keywords": [
+                    "auth",
+                    "security",
+                    "validation",
+                    "sanitize",
+                    "csrf",
+                    "xss",
+                ],
                 "risk_multiplier": 2.4,
                 "business_impact": "User interface security and validation",
-                "security_impact": "Client-side attack prevention"
+                "security_impact": "Client-side attack prevention",
             },
             "monitoring_critical": {
                 "keywords": ["monitor", "alert", "audit", "log", "trace", "metrics"],
                 "risk_multiplier": 2.2,
                 "business_impact": "System observability and monitoring",
-                "security_impact": "Security monitoring and incident detection"
+                "security_impact": "Security monitoring and incident detection",
             },
             "testing_security": {
-                "keywords": ["security", "penetration", "vulnerability", "compliance", "audit"],
+                "keywords": [
+                    "security",
+                    "penetration",
+                    "vulnerability",
+                    "compliance",
+                    "audit",
+                ],
                 "risk_multiplier": 2.1,
                 "business_impact": "Security testing and validation",
-                "security_impact": "Vulnerability detection and prevention"
-            }
+                "security_impact": "Vulnerability detection and prevention",
+            },
         }
 
         # Check against all criteria
         matches = []
         for category, criteria in protection_criteria.items():
-            keyword_matches = sum(1 for keyword in criteria["keywords"] if keyword in file_str)
+            keyword_matches = sum(
+                1 for keyword in criteria["keywords"] if keyword in file_str
+            )
             if keyword_matches > 0:
                 matches.append((category, criteria, keyword_matches))
 
         if not matches:
             # Additional checks for files that might be critical
-            if any(indicator in file_str for indicator in [
-                "password", "secret", "key", "token", "credential",
-                "admin", "root", "sudo", "privilege",
-                "payment", "financial", "transaction", "money",
-                "personal", "private", "sensitive", "confidential"
-            ]):
+            if any(
+                indicator in file_str
+                for indicator in [
+                    "password",
+                    "secret",
+                    "key",
+                    "token",
+                    "credential",
+                    "admin",
+                    "root",
+                    "sudo",
+                    "privilege",
+                    "payment",
+                    "financial",
+                    "transaction",
+                    "money",
+                    "personal",
+                    "private",
+                    "sensitive",
+                    "confidential",
+                ]
+            ):
                 # Security-sensitive content
                 return {
                     "should_protect": True,
@@ -181,7 +282,7 @@ class PerfectCoverageInvestigator:
                     "risk_score": 100,
                     "reason": "Contains security-sensitive content or keywords",
                     "business_impact": "Security and compliance requirements",
-                    "security_impact": "Prevention of security breaches and data exposure"
+                    "security_impact": "Prevention of security breaches and data exposure",
                 }
 
             # Check file size - larger files often more critical
@@ -192,7 +293,7 @@ class PerfectCoverageInvestigator:
                     "risk_score": 85,
                     "reason": "Large file likely containing critical system logic",
                     "business_impact": "Core system functionality",
-                    "security_impact": "System integrity and reliability"
+                    "security_impact": "System integrity and reliability",
                 }
 
             return {
@@ -201,7 +302,7 @@ class PerfectCoverageInvestigator:
                 "risk_score": 0,
                 "reason": "Does not meet critical protection criteria",
                 "business_impact": "N/A",
-                "security_impact": "N/A"
+                "security_impact": "N/A",
             }
 
         # Use the best match
@@ -209,7 +310,10 @@ class PerfectCoverageInvestigator:
         category, criteria, keyword_count = best_match
 
         base_risk = 70  # High base risk for perfect coverage
-        risk_score = min(100, int(base_risk * criteria["risk_multiplier"] * (1 + keyword_count * 0.15)))
+        risk_score = min(
+            100,
+            int(base_risk * criteria["risk_multiplier"] * (1 + keyword_count * 0.15)),
+        )
 
         return {
             "should_protect": True,
@@ -217,15 +321,22 @@ class PerfectCoverageInvestigator:
             "risk_score": risk_score,
             "reason": f"Matches {keyword_count} keywords in {category} category",
             "business_impact": criteria["business_impact"],
-            "security_impact": criteria["security_impact"]
+            "security_impact": criteria["security_impact"],
         }
 
-    def apply_perfect_protection(self, remaining_files: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def apply_perfect_protection(
+        self, remaining_files: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """Apply perfect protection to remaining files"""
         if not remaining_files:
-            return {"message": "No files need additional protection", "perfect_coverage_achieved": True}
+            return {
+                "message": "No files need additional protection",
+                "perfect_coverage_achieved": True,
+            }
 
-        print(f"Applying perfect protection to {len(remaining_files)} remaining files...")
+        print(
+            f"Applying perfect protection to {len(remaining_files)} remaining files..."
+        )
 
         # Create a perfect coverage lockfile
         perfect_lockfile = self.diagnostics_dir / "perfect_coverage.lock"
@@ -238,7 +349,7 @@ class PerfectCoverageInvestigator:
             "total_files": len(remaining_files),
             "coverage_achievement": "100.0%",
             "perfect_protection_level": "maximum",
-            "files": {}
+            "files": {},
         }
 
         total_protection_value = 0
@@ -258,22 +369,25 @@ class PerfectCoverageInvestigator:
                 "business_impact": file_info["business_impact"],
                 "security_impact": file_info["security_impact"],
                 "perfect_protection_level": "maximum",
-                "protected_at": datetime.now().isoformat()
+                "protected_at": datetime.now().isoformat(),
             }
 
-            total_protection_value += file_info["risk_score"] * 10  # Enhanced value calculation
+            total_protection_value += (
+                file_info["risk_score"] * 10
+            )  # Enhanced value calculation
 
         # Add metadata
         lockfile_data["metadata"] = {
             "total_protection_value": total_protection_value,
-            "average_risk_score": sum(f["risk_score"] for f in remaining_files) / len(remaining_files),
+            "average_risk_score": sum(f["risk_score"] for f in remaining_files)
+            / len(remaining_files),
             "perfect_coverage_timestamp": datetime.now().isoformat(),
             "coverage_achievement": "100.0%",
-            "system_integrity_level": "perfect"
+            "system_integrity_level": "perfect",
         }
 
         try:
-            with open(perfect_lockfile, 'w') as f:
+            with open(perfect_lockfile, "w") as f:
                 json.dump(lockfile_data, f, indent=2, default=str)
 
             return {
@@ -282,13 +396,13 @@ class PerfectCoverageInvestigator:
                 "total_protection_value": total_protection_value,
                 "perfect_coverage_achieved": True,
                 "final_coverage_score": 100.0,
-                "system_integrity_level": "perfect"
+                "system_integrity_level": "perfect",
             }
 
         except Exception as e:
             return {
                 "error": f"Failed to create perfect coverage lockfile: {str(e)}",
-                "perfect_coverage_achieved": False
+                "perfect_coverage_achieved": False,
             }
 
     def calculate_file_hash(self, file_path: Path) -> str:
@@ -297,13 +411,14 @@ class PerfectCoverageInvestigator:
             return "file_missing"
 
         try:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 return hashlib.sha256(f.read()).hexdigest()
         except Exception:
             return "error_calculating"
 
-    def generate_perfection_report(self, remaining_files: List[Dict[str, Any]],
-                                 protection_results: Dict[str, Any]) -> Dict[str, Any]:
+    def generate_perfection_report(
+        self, remaining_files: List[Dict[str, Any]], protection_results: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Generate comprehensive perfection achievement report"""
         total_files_investigated = len(remaining_files)
         total_protection_value = sum(f["risk_score"] * 10 for f in remaining_files)
@@ -321,7 +436,9 @@ class PerfectCoverageInvestigator:
             "final_risk_score": final_risk_score,
             "perfect_achievement_score": perfect_achievement_score,
             "files_investigated": total_files_investigated,
-            "perfect_protections_applied": protection_results.get("files_perfectly_protected", 0),
+            "perfect_protections_applied": protection_results.get(
+                "files_perfectly_protected", 0
+            ),
             "total_protection_value_achieved": total_protection_value,
             "system_integrity_level": "perfect",
             "coverage_progression": {
@@ -329,20 +446,20 @@ class PerfectCoverageInvestigator:
                 "after_phase1": 64.8,
                 "after_phase2": 98.6,
                 "final_perfect": 100.0,
-                "total_improvement": "+91.7 percentage points (+1,106% improvement)"
+                "total_improvement": "+91.7 percentage points (+1,106% improvement)",
             },
             "risk_reduction_achievement": {
                 "initial_risk": 49830,
                 "final_risk": 0,
                 "total_risk_eliminated": 49830,
-                "risk_reduction_percentage": 100.0
+                "risk_reduction_percentage": 100.0,
             },
             "perfection_metrics": {
                 "coverage_perfection": "100.0%",
                 "vulnerability_elimination": "100%",
                 "system_integrity": "perfect",
                 "enterprise_readiness": "maximum",
-                "compliance_level": "perfect"
+                "compliance_level": "perfect",
             },
             "final_remaining_files": [
                 {
@@ -352,14 +469,15 @@ class PerfectCoverageInvestigator:
                     "protection_value": f["risk_score"] * 10,
                     "business_impact": f["business_impact"],
                     "security_impact": f["security_impact"],
-                    "perfection_status": "perfectly_protected"
+                    "perfection_status": "perfectly_protected",
                 }
                 for f in remaining_files
             ],
-            "perfect_protection_results": protection_results
+            "perfect_protection_results": protection_results,
         }
 
         return report
+
 
 def main():
     """Main perfect coverage achievement function"""
@@ -378,7 +496,9 @@ def main():
         print("\n🎯 Final Files for Perfect Protection:")
         for i, file_info in enumerate(remaining_files, 1):
             print(f"{i}. {file_info['path']}")
-            print(f"   Category: {file_info['category']} | Risk: {file_info['risk_score']} | Value: {file_info['risk_score'] * 10}")
+            print(
+                f"   Category: {file_info['category']} | Risk: {file_info['risk_score']} | Value: {file_info['risk_score'] * 10}"
+            )
             print(f"   Business Impact: {file_info['business_impact']}")
             print(f"   Security Impact: {file_info['security_impact']}")
 
@@ -388,11 +508,15 @@ def main():
 
     # Phase 3: Generate perfection report
     print("\n📊 Generating perfection achievement report...")
-    report = investigator.generate_perfection_report(remaining_files, protection_results)
+    report = investigator.generate_perfection_report(
+        remaining_files, protection_results
+    )
 
     # Save report
-    report_path = investigator.diagnostics_dir / "perfect_coverage_achievement_report.json"
-    with open(report_path, 'w') as f:
+    report_path = (
+        investigator.diagnostics_dir / "perfect_coverage_achievement_report.json"
+    )
+    with open(report_path, "w") as f:
         json.dump(report, f, indent=2, default=str)
 
     # Display final results
@@ -401,7 +525,9 @@ def main():
     print("=" * 50)
 
     print(f"🔬 Files Investigated: {len(remaining_files)}")
-    print(f"🎯 Perfectly Protected: {protection_results.get('files_perfectly_protected', 0)}")
+    print(
+        f"🎯 Perfectly Protected: {protection_results.get('files_perfectly_protected', 0)}"
+    )
     print(f"📊 Final Coverage Score: {report['final_coverage_score']}%")
     print(f"🛡️ Final Risk Score: {report['final_risk_score']}")
     print(f"💎 Total Protection Value: {report['total_protection_value_achieved']:,}")
@@ -416,11 +542,15 @@ def main():
     print("\n⚠️ Risk Elimination:")
     print(f"  Initial Risk: {report['risk_reduction_achievement']['initial_risk']:,}")
     print(f"  Final Risk: {report['risk_reduction_achievement']['final_risk']}")
-    print(f"  Risk Eliminated: {report['risk_reduction_achievement']['total_risk_eliminated']:,}")
-    print(f"  Reduction: {report['risk_reduction_achievement']['risk_reduction_percentage']}%")
+    print(
+        f"  Risk Eliminated: {report['risk_reduction_achievement']['total_risk_eliminated']:,}"
+    )
+    print(
+        f"  Reduction: {report['risk_reduction_achievement']['risk_reduction_percentage']}%"
+    )
 
     print("\n🏆 Perfection Metrics:")
-    for metric, value in report['perfection_metrics'].items():
+    for metric, value in report["perfection_metrics"].items():
         print(f"  {metric.title()}: {value}")
 
     print("\n🔍 Verification:")
@@ -435,6 +565,7 @@ def main():
     print("  System integrity level: PERFECT")
     print("  Enterprise security level: MAXIMUM")
     print("  Production readiness: COMPLETE")
+
 
 if __name__ == "__main__":
     main()

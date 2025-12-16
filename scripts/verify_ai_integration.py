@@ -1,11 +1,12 @@
-import sys
-import os
 import asyncio
-from fastapi.testclient import TestClient
+import os
+import sys
 from datetime import datetime, timezone
 
+from fastapi.testclient import TestClient
+
 # Add backend to path
-backend_path = os.path.join(os.getcwd(), 'backend')
+backend_path = os.path.join(os.getcwd(), "backend")
 sys.path.append(backend_path)
 
 try:
@@ -16,9 +17,10 @@ except ImportError:
 
 client = TestClient(app)
 
+
 def verify_integration():
     print("🚀 Verifying AI Service Integration...")
-    
+
     # 1. Check AI Router Mount
     print("\n1. Checking AI Router Mounting...")
     response = client.get("/api/v1/ai/models/status")
@@ -34,11 +36,10 @@ def verify_integration():
     # 2. Check Chat Endpoint (Mocking Auth)
     print("\n2. Checking Chat Endpoint Structure...")
     # Note: 401 (Auth) or 403 (CSRF) confirms the endpoint exists vs 404.
-    response = client.post("/api/v1/ai/chat", json={
-        "message": "Hello", 
-        "persona": "frenly"
-    })
-    
+    response = client.post(
+        "/api/v1/ai/chat", json={"message": "Hello", "persona": "frenly"}
+    )
+
     if response.status_code == 401:
         print("✅ Chat endpoint exists (returned 401 Unauthorized)")
     elif response.status_code == 403:
@@ -55,22 +56,25 @@ def verify_integration():
     print("\n3. Checking WebSocket Route...")
     try:
         # WebSockets might also hit CSRF/Auth middlewares
-        with client.websocket_connect("/api/v1/communication/sync/ws/test_user") as websocket:
+        with client.websocket_connect(
+            "/api/v1/communication/sync/ws/test_user"
+        ) as websocket:
             print("✅ WebSocket connection accepted")
             websocket.close()
     except Exception as e:
         print(f"ℹ️ WebSocket check result: {str(e)}")
         # If we get 403, the route exists but rejected us. 404 means missing.
         if "403" in str(e):
-             print("✅ WebSocket route exists (returned 403 Forbidden)")
+            print("✅ WebSocket route exists (returned 403 Forbidden)")
         elif "404" in str(e):
-             print("❌ WebSocket route 404")
-             return False
+            print("❌ WebSocket route 404")
+            return False
         else:
-             # Assume success or other error means it tried to connect
-             print("✅ WebSocket route exists (connection attempted)")
+            # Assume success or other error means it tried to connect
+            print("✅ WebSocket route exists (connection attempted)")
 
     return True
+
 
 if __name__ == "__main__":
     success = verify_integration()

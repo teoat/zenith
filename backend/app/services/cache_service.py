@@ -1,22 +1,24 @@
 # backend/services/cache_manager.py
 import asyncio
-import json
 import hashlib
+import json
+import logging
+import threading
 import time
-from typing import Any, Dict, Optional, Callable, Awaitable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-import threading
-import logging
+from typing import Any, Awaitable, Callable, Dict, Optional
 
 try:
     import redis
+
     HAS_REDIS = True
 except ImportError:
     HAS_REDIS = False
     redis = None
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class CacheEntry:
@@ -27,6 +29,7 @@ class CacheEntry:
     access_count: int = 0
     last_accessed: Optional[datetime] = None
     size_bytes: int = 0
+
 
 class CacheMetrics:
     def __init__(self):
@@ -42,14 +45,15 @@ class CacheMetrics:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            'hits': self.hits,
-            'misses': self.misses,
-            'evictions': self.evictions,
-            'sets': self.sets,
-            'deletes': self.deletes,
-            'hit_rate': self.hit_rate(),
-            'total_requests': self.hits + self.misses
+            "hits": self.hits,
+            "misses": self.misses,
+            "evictions": self.evictions,
+            "sets": self.sets,
+            "deletes": self.deletes,
+            "hit_rate": self.hit_rate(),
+            "total_requests": self.hits + self.misses,
         }
+
 
 class MultiLayerCache:
     """
@@ -59,8 +63,14 @@ class MultiLayerCache:
     L3: Redis (persistent, shared across instances)
     """
 
-    def __init__(self, max_memory_entries: int = 1000, default_ttl_seconds: int = 300,
-                 redis_host: str = 'localhost', redis_port: int = 6379, redis_db: int = 0):
+    def __init__(
+        self,
+        max_memory_entries: int = 1000,
+        default_ttl_seconds: int = 300,
+        redis_host: str = "localhost",
+        redis_port: int = 6379,
+        redis_db: int = 0,
+    ):
         self.l1_cache: Dict[str, CacheEntry] = {}  # L1: Fast memory cache
         self.l2_cache: Dict[str, CacheEntry] = {}  # L2: Larger memory cache
         self.max_l1_entries = max_memory_entries // 4  # 25% for L1
@@ -91,14 +101,16 @@ class MultiLayerCache:
                 db=self.redis_db,
                 decode_responses=False,  # We'll handle serialization
                 socket_connect_timeout=5,
-                socket_timeout=5
+                socket_timeout=5,
                 # retry_on_timeout=True # Deprecated
             )
             # Test connection
             self.redis_client.ping()
             logger.info("Redis cache layer initialized")
         except Exception as e:
-            logger.warning(f"Redis initialization failed: {e}. Continuing with memory-only cache.")
+            logger.warning(
+                f"Redis initialization failed: {e}. Continuing with memory-only cache."
+            )
             self.redis_client = None
 
     def _redis_available(self) -> bool:
@@ -132,9 +144,9 @@ class MultiLayerCache:
     def _calculate_size(self, value: Any) -> int:
         """Calculate approximate memory size of value"""
         try:
-            return len(json.dumps(value, default=str).encode('utf-8'))
+            return len(json.dumps(value, default=str).encode("utf-8"))
         except:
-            return len(str(value).encode('utf-8'))
+            return len(str(value).encode("utf-8"))
 
     def _is_expired(self, entry: CacheEntry) -> bool:
         """Check if cache entry is expired"""
@@ -146,7 +158,9 @@ class MultiLayerCache:
             return
 
         # Sort by last accessed time (oldest first)
-        entries = sorted(cache.items(), key=lambda x: x[1].last_accessed or x[1].created_at)
+        entries = sorted(
+            cache.items(), key=lambda x: x[1].last_accessed or x[1].created_at
+        )
         to_evict = len(cache) - max_entries
 
         for key, _ in entries[:to_evict]:
@@ -169,10 +183,13 @@ class MultiLayerCache:
                 del self.l2_cache[key]
 
             if expired_l1 or expired_l2:
-                logger.debug(f"Cleaned up {len(expired_l1)} L1 and {len(expired_l2)} L2 expired entries")
+                logger.debug(
+                    f"Cleaned up {len(expired_l1)} L1 and {len(expired_l2)} L2 expired entries"
+                )
 
     def _start_cleanup_task(self):
         """Start background cleanup task"""
+
         def cleanup_worker():
             while True:
                 try:
@@ -223,7 +240,9 @@ class MultiLayerCache:
                     redis_key = f"{namespace}:{cache_key}"
                     redis_value = self.redis_client.get(redis_key)
                     if redis_value:
-                        value = self._deserialize_from_redis(redis_value.decode('utf-8'))
+                        value = self._deserialize_from_redis(
+                            redis_value.decode("utf-8")
+                        )
                         if value is not None:
                             self.metrics.hits += 1
 
@@ -233,7 +252,7 @@ class MultiLayerCache:
                                 value=value,
                                 created_at=datetime.now(),
                                 expires_at=None,  # Redis handles TTL
-                                size_bytes=self._calculate_size(value)
+                                size_bytes=self._calculate_size(value),
                             )
 
                             with self.lock:
@@ -250,10 +269,14 @@ class MultiLayerCache:
             self.metrics.misses += 1
             return None
 
-    def set(self, namespace: str, key: Any, value: Any, ttl_seconds: Optional[int] = None) -> bool:
+    def set(
+        self, namespace: str, key: Any, value: Any, ttl_seconds: Optional[int] = None
+    ) -> bool:
         """Set value in cache"""
         cache_key = self._generate_key(namespace, key)
-        expires_at = datetime.now() + timedelta(seconds=ttl_seconds) if ttl_seconds else None
+        expires_at = (
+            datetime.now() + timedelta(seconds=ttl_seconds) if ttl_seconds else None
+        )
         size_bytes = self._calculate_size(value)
 
         entry = CacheEntry(
@@ -261,7 +284,7 @@ class MultiLayerCache:
             value=value,
             created_at=datetime.now(),
             expires_at=expires_at,
-            size_bytes=size_bytes
+            size_bytes=size_bytes,
         )
 
         with self.lock:
@@ -279,7 +302,9 @@ class MultiLayerCache:
                     redis_key = f"{namespace}:{cache_key}"
                     serialized_value = self._serialize_for_redis(value)
                     if ttl_seconds:
-                        self.redis_client.setex(redis_key, ttl_seconds, serialized_value)
+                        self.redis_client.setex(
+                            redis_key, ttl_seconds, serialized_value
+                        )
                     else:
                         self.redis_client.set(redis_key, serialized_value)
                 except Exception as e:
@@ -320,13 +345,17 @@ class MultiLayerCache:
             cleared = 0
 
             # Clear from L1
-            to_remove_l1 = [k for k in self.l1_cache.keys() if k.startswith(f"{namespace}:")]
+            to_remove_l1 = [
+                k for k in self.l1_cache.keys() if k.startswith(f"{namespace}:")
+            ]
             for key in to_remove_l1:
                 del self.l1_cache[key]
                 cleared += 1
 
             # Clear from L2
-            to_remove_l2 = [k for k in self.l2_cache.keys() if k.startswith(f"{namespace}:")]
+            to_remove_l2 = [
+                k for k in self.l2_cache.keys() if k.startswith(f"{namespace}:")
+            ]
             for key in to_remove_l2:
                 del self.l2_cache[key]
                 cleared += 1
@@ -355,42 +384,49 @@ class MultiLayerCache:
     def get_stats(self) -> Dict[str, Any]:
         """Get comprehensive cache statistics"""
         stats = {
-            'l1_cache': {
-                'entries': len(self.l1_cache),
-                'max_entries': self.max_l1_entries,
-                'utilization': len(self.l1_cache) / self.max_l1_entries if self.max_l1_entries > 0 else 0
+            "l1_cache": {
+                "entries": len(self.l1_cache),
+                "max_entries": self.max_l1_entries,
+                "utilization": (
+                    len(self.l1_cache) / self.max_l1_entries
+                    if self.max_l1_entries > 0
+                    else 0
+                ),
             },
-            'l2_cache': {
-                'entries': len(self.l2_cache),
-                'max_entries': self.max_l2_entries,
-                'utilization': len(self.l2_cache) / self.max_l2_entries if self.max_l2_entries > 0 else 0
+            "l2_cache": {
+                "entries": len(self.l2_cache),
+                "max_entries": self.max_l2_entries,
+                "utilization": (
+                    len(self.l2_cache) / self.max_l2_entries
+                    if self.max_l2_entries > 0
+                    else 0
+                ),
             },
-            'metrics': self.metrics.to_dict(),
-            'total_size_bytes': sum(e.size_bytes for e in self.l1_cache.values()) + sum(e.size_bytes for e in self.l2_cache.values())
+            "metrics": self.metrics.to_dict(),
+            "total_size_bytes": sum(e.size_bytes for e in self.l1_cache.values())
+            + sum(e.size_bytes for e in self.l2_cache.values()),
         }
 
         # Add Redis stats if available
         if self._redis_available():
             try:
                 redis_info = self.redis_client.info()
-                stats['l3_cache'] = {
-                    'available': True,
-                    'db_size': self.redis_client.dbsize(),
-                    'memory_used': redis_info.get('used_memory_human', 'N/A'),
-                    'connected_clients': redis_info.get('connected_clients', 0)
+                stats["l3_cache"] = {
+                    "available": True,
+                    "db_size": self.redis_client.dbsize(),
+                    "memory_used": redis_info.get("used_memory_human", "N/A"),
+                    "connected_clients": redis_info.get("connected_clients", 0),
                 }
             except Exception as e:
-                stats['l3_cache'] = {
-                    'available': False,
-                    'error': str(e)
-                }
+                stats["l3_cache"] = {"available": False, "error": str(e)}
         else:
-            stats['l3_cache'] = {
-                'available': False,
-                'reason': 'Redis not installed or not available'
+            stats["l3_cache"] = {
+                "available": False,
+                "reason": "Redis not installed or not available",
             }
 
         return stats
+
 
 class CachedFunction:
     """Decorator for caching function results"""
@@ -403,11 +439,7 @@ class CachedFunction:
     def __call__(self, func: Callable) -> Callable:
         async def async_wrapper(*args, **kwargs):
             # Create cache key from function name and arguments
-            key_data = {
-                'function': func.__name__,
-                'args': args,
-                'kwargs': kwargs
-            }
+            key_data = {"function": func.__name__, "args": args, "kwargs": kwargs}
 
             # Try cache first
             cached_result = self.cache.get(self.namespace, key_data)
@@ -424,11 +456,7 @@ class CachedFunction:
 
         def sync_wrapper(*args, **kwargs):
             # Create cache key from function name and arguments
-            key_data = {
-                'function': func.__name__,
-                'args': args,
-                'kwargs': kwargs
-            }
+            key_data = {"function": func.__name__, "args": args, "kwargs": kwargs}
 
             # Try cache first
             cached_result = self.cache.get(self.namespace, key_data)
@@ -448,21 +476,26 @@ class CachedFunction:
         else:
             return sync_wrapper
 
+
 # Create singleton cache instance
 cache_manager = MultiLayerCache(max_memory_entries=2000, default_ttl_seconds=300)
+
 
 # Export convenience functions
 def cached(namespace: str, ttl_seconds: int = 300):
     """Decorator for caching function results"""
     return CachedFunction(cache_manager, namespace, ttl_seconds)
 
+
 def get_cache_stats():
     """Get cache statistics"""
     return cache_manager.get_stats()
 
+
 def clear_cache_namespace(namespace: str):
     """Clear all cache entries in a namespace"""
     return cache_manager.clear_namespace(namespace)
+
 
 def clear_all_cache():
     """Clear all cache entries"""

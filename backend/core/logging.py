@@ -1,9 +1,11 @@
-import logging
 import json
+import json
+import logging
+import os
 import sys
 from datetime import datetime, timezone
-from typing import Dict, Any, Optional
-import os
+from pathlib import Path
+from typing import Any, Dict, Optional
 
 
 class JSONFormatter(logging.Formatter):
@@ -36,29 +38,56 @@ class JSONFormatter(logging.Formatter):
         return json.dumps(log_entry, default=str)
 
 
-def setup_logging(level: str = "INFO", format_type: str = "json", log_file: Optional[str] = None) -> logging.Logger:
+def setup_logging(
+    level: str = "INFO",
+    format_type: str = "json",
+    log_file: Optional[str] = None,
+    max_file_size: int = 10 * 1024 * 1024,  # 10MB
+    backup_count: int = 5,
+    enable_console: bool = True,
+    enable_file: bool = True
+) -> logging.Logger:
+    """Enhanced logging setup with better configuration options"""
+
+    # Convert string level to numeric
     numeric_level = getattr(logging, level.upper(), logging.INFO)
+
+    # Get or create logger
     logger = logging.getLogger("378x492")
     logger.setLevel(numeric_level)
 
+    # Clear existing handlers
     for h in list(logger.handlers):
         logger.removeHandler(h)
 
-    if format_type == "json":
+    # Create formatter
+    if format_type.lower() == "json":
         formatter = JSONFormatter()
     else:
-        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(module)s:%(lineno)d - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
+        )
 
-    console = logging.StreamHandler(sys.stdout)
-    console.setLevel(numeric_level)
-    console.setFormatter(formatter)
-    logger.addHandler(console)
+    # Console handler
+    if enable_console:
+        console = logging.StreamHandler(sys.stdout)
+        console.setLevel(numeric_level)
+        console.setFormatter(formatter)
+        logger.addHandler(console)
 
-    if log_file:
-        log_dir = os.path.dirname(log_file)
-        if log_dir and not os.path.exists(log_dir):
-            os.makedirs(log_dir, exist_ok=True)
-        fh = logging.FileHandler(log_file)
+    # File handler with rotation
+    if enable_file and log_file:
+        log_path = Path(log_file)
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+
+        from logging.handlers import RotatingFileHandler
+        fh = RotatingFileHandler(
+            log_file,
+            maxBytes=max_file_size,
+            backupCount=backup_count,
+            encoding='utf-8'
+        )
         fh.setLevel(numeric_level)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
@@ -67,10 +96,26 @@ def setup_logging(level: str = "INFO", format_type: str = "json", log_file: Opti
     return logger
 
 
-logger = setup_logging(level=os.getenv("LOG_LEVEL", "INFO"), format_type=os.getenv("LOG_FORMAT", "json"), log_file=os.getenv("LOG_FILE"))
+# Environment-based logging configuration
+logger = setup_logging(
+    level=os.getenv("LOG_LEVEL", "WARNING"),  # Default to WARNING for production
+    format_type=os.getenv("LOG_FORMAT", "json"),
+    log_file=os.getenv("LOG_FILE", "logs/fraud_detection.log"),
+    max_file_size=int(os.getenv("LOG_MAX_SIZE_MB", "10")) * 1024 * 1024,
+    backup_count=int(os.getenv("LOG_BACKUP_COUNT", "5")),
+    enable_console=os.getenv("LOG_CONSOLE", "true").lower() == "true",
+    enable_file=os.getenv("LOG_FILE_ENABLED", "true").lower() == "true"
+)
 
 
-def log_request(request_id: str, method: str, path: str, status_code: int, duration: float, user_id: Optional[str] = None):
+def log_request(
+    request_id: str,
+    method: str,
+    path: str,
+    status_code: int,
+    duration: float,
+    user_id: Optional[str] = None,
+):
     """Log HTTP request details (single call to module logger)."""
     extra_fields = {
         "request_id": request_id,
@@ -85,8 +130,8 @@ def log_request(request_id: str, method: str, path: str, status_code: int, durat
     # Prefer calling the attribute on the imported module object so tests
     # that patch `core.logging.logger` are observed reliably.
     try:
-        core_mod = sys.modules.get('core.logging')
-        if core_mod and hasattr(core_mod, 'logger'):
+        core_mod = sys.modules.get("core.logging")
+        if core_mod and hasattr(core_mod, "logger"):
             try:
                 core_mod.logger.info("HTTP request", extra=extra_fields)
                 return
@@ -104,15 +149,20 @@ def log_request(request_id: str, method: str, path: str, status_code: int, durat
             pass
 
 
-def log_error(error_type: str, message: str, details: Optional[Dict[str, Any]] = None, user_id: Optional[str] = None):
+def log_error(
+    error_type: str,
+    message: str,
+    details: Optional[Dict[str, Any]] = None,
+    user_id: Optional[str] = None,
+):
     """Log application errors."""
     extra_fields = {"error_type": error_type, "details": details or {}}
     if user_id:
         extra_fields["user_id"] = user_id
 
     try:
-        core_mod = sys.modules.get('core.logging')
-        if core_mod and hasattr(core_mod, 'logger'):
+        core_mod = sys.modules.get("core.logging")
+        if core_mod and hasattr(core_mod, "logger"):
             try:
                 core_mod.logger.error(message, extra=extra_fields)
                 return
@@ -130,17 +180,26 @@ def log_error(error_type: str, message: str, details: Optional[Dict[str, Any]] =
             pass
 
 
-def log_security_event(event_type: str, user_id: Optional[str] = None, ip_address: Optional[str] = None, details: Optional[Dict[str, Any]] = None):
+def log_security_event(
+    event_type: str,
+    user_id: Optional[str] = None,
+    ip_address: Optional[str] = None,
+    details: Optional[Dict[str, Any]] = None,
+):
     """Log security-related events."""
-    extra_fields = {"event_type": event_type, "security_event": True, "details": details or {}}
+    extra_fields = {
+        "event_type": event_type,
+        "security_event": True,
+        "details": details or {},
+    }
     if user_id:
         extra_fields["user_id"] = user_id
     if ip_address:
         extra_fields["ip_address"] = ip_address
 
     try:
-        core_mod = sys.modules.get('core.logging')
-        if core_mod and hasattr(core_mod, 'logger'):
+        core_mod = sys.modules.get("core.logging")
+        if core_mod and hasattr(core_mod, "logger"):
             try:
                 core_mod.logger.warning("Security event", extra=extra_fields)
                 return
@@ -158,12 +217,19 @@ def log_security_event(event_type: str, user_id: Optional[str] = None, ip_addres
             pass
 
 
-def log_performance(metric_name: str, value: float, tags: Optional[Dict[str, Any]] = None):
+def log_performance(
+    metric_name: str, value: float, tags: Optional[Dict[str, Any]] = None
+):
     """Log performance metrics."""
-    extra_fields = {"metric_name": metric_name, "metric_value": value, "performance_metric": True, "tags": tags or {}}
+    extra_fields = {
+        "metric_name": metric_name,
+        "metric_value": value,
+        "performance_metric": True,
+        "tags": tags or {},
+    }
     try:
-        core_mod = sys.modules.get('core.logging')
-        if core_mod and hasattr(core_mod, 'logger'):
+        core_mod = sys.modules.get("core.logging")
+        if core_mod and hasattr(core_mod, "logger"):
             try:
                 core_mod.logger.info("Performance metric", extra=extra_fields)
                 return
@@ -179,3 +245,48 @@ def log_performance(metric_name: str, value: float, tags: Optional[Dict[str, Any
             logging.getLogger("378x492").info("Performance metric", extra=extra_fields)
         except Exception:
             pass
+
+
+def configure_environment_logging():
+    """Configure logging based on environment (development vs production)"""
+    env = os.getenv("ENVIRONMENT", "development").lower()
+
+    if env == "development":
+        # Development: more verbose, console only, human-readable
+        setup_logging(
+            level="DEBUG",
+            format_type="text",
+            enable_console=True,
+            enable_file=False
+        )
+    elif env == "testing":
+        # Testing: capture all logs, minimal output, structured
+        setup_logging(
+            level="DEBUG",
+            format_type="json",
+            log_file="logs/test.log",
+            enable_console=False,
+            enable_file=True
+        )
+    elif env == "staging":
+        # Staging: balanced logging, both console and file
+        setup_logging(
+            level="INFO",
+            format_type="json",
+            log_file="logs/staging.log",
+            enable_console=True,
+            enable_file=True
+        )
+    else:  # production
+        # Production: minimal, structured logging, file only
+        setup_logging(
+            level="WARNING",
+            format_type="json",
+            log_file="logs/production.log",
+            enable_console=False,
+            enable_file=True
+        )
+
+
+# Initialize with environment-based configuration
+configure_environment_logging()

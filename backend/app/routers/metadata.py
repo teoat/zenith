@@ -6,13 +6,14 @@ Exposes EXIF-like metadata extraction for documents.
 
 from pathlib import Path
 from typing import Optional
-from fastapi import APIRouter, UploadFile, File, HTTPException
+
+from fastapi import APIRouter, File, HTTPException, UploadFile
 from pydantic import BaseModel
 
 from app.services.metadata_extraction_service import (
-    metadata_service,
     DocumentMetadata,
-    ForensicFlags
+    ForensicFlags,
+    metadata_service,
 )
 
 router = APIRouter(prefix="/metadata", tags=["metadata"])
@@ -20,12 +21,14 @@ router = APIRouter(prefix="/metadata", tags=["metadata"])
 
 class ComparisonRequest(BaseModel):
     """Request to compare two document metadata sets."""
+
     doc_a_id: str
     doc_b_id: str
 
 
 class ComparisonResponse(BaseModel):
     """Document comparison result."""
+
     hash_match: bool
     discrepancies: list
     tamper_indicators: list
@@ -48,7 +51,7 @@ async def extract_metadata(file: UploadFile = File(...)):
     temp_path = Path(f"/tmp/{file.filename}")
     try:
         contents = await file.read()
-        with open(temp_path, 'wb') as f:
+        with open(temp_path, "wb") as f:
             f.write(contents)
 
         # Extract metadata
@@ -80,7 +83,7 @@ async def get_file_hash(file_id: str):
         "file_id": file_id,
         "md5": "mocked_md5_hash",
         "sha256": "mocked_sha256_hash",
-        "verified_at": "2024-12-10T12:00:00Z"
+        "verified_at": "2024-12-10T12:00:00Z",
     }
 
 
@@ -104,21 +107,21 @@ async def compare_documents(request: ComparisonRequest):
                 "field": "content_hash",
                 "doc_a": "a3f9b2...",
                 "doc_b": "c7d2e1...",
-                "severity": "high"
+                "severity": "high",
             },
             {
                 "field": "author",
                 "doc_a": "John Smith",
                 "doc_b": "J. Smith",
-                "severity": "medium"
-            }
+                "severity": "medium",
+            },
         ],
         tamper_indicators=[
             "Content modified between versions",
             "Author name shortened",
-            "Different software used"
+            "Different software used",
         ],
-        risk_score=75.0
+        risk_score=75.0,
     )
 
 
@@ -136,7 +139,7 @@ async def forensic_scan(file: UploadFile = File(...)):
     temp_path = Path(f"/tmp/{file.filename}")
     try:
         contents = await file.read()
-        with open(temp_path, 'wb') as f:
+        with open(temp_path, "wb") as f:
             f.write(contents)
 
         # Extract and analyze
@@ -161,7 +164,9 @@ async def get_supported_types():
             {"mime": "image/jpeg", "extensions": [".jpg", ".jpeg"]},
             {"mime": "image/png", "extensions": [".png"]},
             {"mime": "image/tiff", "extensions": [".tif", ".tiff"]},
-            {"mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-             "extensions": [".docx"]},
+            {
+                "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "extensions": [".docx"],
+            },
         ]
     }

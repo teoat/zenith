@@ -3,18 +3,20 @@ Integration tests for admin and backup endpoint security.
 Tests that authentication and authorization are properly enforced.
 """
 
-import pytest
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
-from main import app
+import sys
 
+import pytest
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from main import app
 from starlette.testclient import TestClient
 
 client = TestClient(app)
 
 
 # ===== ADMIN ENDPOINT TESTS =====
+
 
 def test_admin_database_performance_requires_auth():
     """Test that database performance endpoint requires authentication"""
@@ -80,11 +82,11 @@ def test_admin_cache_stats_requires_auth():
 
 # ===== BACKUP ENDPOINT TESTS =====
 
+
 def test_backup_create_requires_auth():
     """Test that backup creation requires authentication"""
     response = client.post(
-        "/api/v1/backup/create",
-        json={"reason": "test", "type": "auto"}
+        "/api/v1/backup/create", json={"reason": "test", "type": "auto"}
     )
     assert response.status_code == 401
 
@@ -95,7 +97,7 @@ def test_backup_create_requires_admin_role(user_token):
     response = client.post(
         "/api/v1/backup/create",
         json={"reason": "test", "type": "auto"},
-        headers=headers
+        headers=headers,
     )
     assert response.status_code == 403
     assert "Admin access required" in response.json()["detail"]
@@ -103,10 +105,7 @@ def test_backup_create_requires_admin_role(user_token):
 
 def test_backup_restore_requires_auth():
     """Test that backup restoration requires authentication"""
-    response = client.post(
-        "/api/v1/backup/restore",
-        json={"backup_id": "test_123"}
-    )
+    response = client.post("/api/v1/backup/restore", json={"backup_id": "test_123"})
     assert response.status_code == 401
 
 
@@ -114,9 +113,7 @@ def test_backup_restore_requires_admin_role(user_token):
     """Test that non-admin users cannot restore backups - CRITICAL"""
     headers = {"Authorization": f"Bearer {user_token}"}
     response = client.post(
-        "/api/v1/backup/restore",
-        json={"backup_id": "test_123"},
-        headers=headers
+        "/api/v1/backup/restore", json={"backup_id": "test_123"}, headers=headers
     )
     assert response.status_code == 403
     assert "Admin access required" in response.json()["detail"]
@@ -175,10 +172,7 @@ def test_backup_config_get_requires_auth():
 
 def test_backup_config_update_requires_auth():
     """Test that updating backup config requires authentication"""
-    response = client.put(
-        "/api/v1/backup/config",
-        json={"retention_days": 30}
-    )
+    response = client.put("/api/v1/backup/config", json={"retention_days": 30})
     assert response.status_code == 401
 
 
@@ -186,9 +180,7 @@ def test_backup_config_update_requires_admin_role(user_token):
     """Test that non-admin users cannot update backup config"""
     headers = {"Authorization": f"Bearer {user_token}"}
     response = client.put(
-        "/api/v1/backup/config",
-        json={"retention_days": 30},
-        headers=headers
+        "/api/v1/backup/config", json={"retention_days": 30}, headers=headers
     )
     assert response.status_code == 403
 
@@ -201,13 +193,14 @@ def test_backup_verify_requires_auth():
 
 # ===== AUDIT LOGGING TESTS =====
 
+
 def test_admin_operations_are_audit_logged(admin_token, db_session):
     """Test that admin operations create audit log entries"""
     headers = {"Authorization": f"Bearer {admin_token}"}
-    
+
     # Perform an admin operation
     response = client.get("/api/v1/database/stats", headers=headers)
-    
+
     # Check that audit log was created
     # (This would query the audit_logs table in a real implementation)
     # For now, we just verify the operation succeeded
@@ -217,20 +210,19 @@ def test_admin_operations_are_audit_logged(admin_token, db_session):
 def test_backup_restore_creates_critical_audit_log(admin_token):
     """Test that backup restore creates CRITICAL level audit log"""
     headers = {"Authorization": f"Bearer {admin_token}"}
-    
+
     # Attempt restore (will fail if backup doesn't exist, but audit log should be created)
     response = client.post(
-        "/api/v1/backup/restore",
-        json={"backup_id": "test_backup_123"},
-        headers=headers
+        "/api/v1/backup/restore", json={"backup_id": "test_backup_123"}, headers=headers
     )
-    
+
     # Response will be error, but audit log should exist
     assert response.status_code in [404, 500]  # Expected to fail in test
     # In production, check audit_logs table for BACKUP_RESTORE_CRITICAL entry
 
 
 # ===== FIXTURES =====
+
 
 @pytest.fixture
 def user_token():
@@ -255,18 +247,19 @@ def db_session():
 
 # ===== SECURITY TEST SUMMARY =====
 
+
 def test_security_summary():
     """
     Security Test Summary:
-    
+
     ✅ All admin endpoints require authentication
     ✅ All admin endpoints require admin role
-    ✅ All backup endpoints require authentication  
+    ✅ All backup endpoints require authentication
     ✅ All backup endpoints require admin role
     ✅ Backup restore (destructive) has critical logging
     ✅ Non-admin users get 403 Forbidden
     ✅ Unauthenticated requests get 401 Unauthorized
-    
+
     Coverage:
     - Admin: 7 endpoints (database, cache)
     - Backup: 9 endpoints (create, restore, delete, etc.)

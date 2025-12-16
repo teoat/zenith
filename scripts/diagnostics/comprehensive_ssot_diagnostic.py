@@ -4,18 +4,19 @@ Comprehensive SSOT and Lockfile Diagnostic Suite for 378x492 Fraud Detection Pla
 Diagnoses all critical files to ensure they are error-free and properly locked
 """
 
-import os
-import sys
-import json
 import hashlib
+import json
+import os
 import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Tuple
+from typing import Any, Dict, List, Tuple
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
+
 
 class SSOTDiagnosticSuite:
     """Comprehensive diagnostic suite for SSOT and lockfile validation"""
@@ -29,7 +30,7 @@ class SSOTDiagnosticSuite:
             "overall_status": "unknown",
             "categories": {},
             "recommendations": [],
-            "critical_issues": []
+            "critical_issues": [],
         }
 
     def calculate_file_hash(self, file_path: Path) -> str:
@@ -38,7 +39,7 @@ class SSOTDiagnosticSuite:
             return "file_missing"
 
         try:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 return hashlib.sha256(f.read()).hexdigest()
         except Exception as e:
             return f"error: {str(e)}"
@@ -49,7 +50,7 @@ class SSOTDiagnosticSuite:
             return False, "File does not exist"
 
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 json.load(f)
             return True, "Valid JSON"
         except json.JSONDecodeError as e:
@@ -63,8 +64,8 @@ class SSOTDiagnosticSuite:
             return False, "File does not exist"
 
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                compile(f.read(), str(file_path), 'exec')
+            with open(file_path, "r", encoding="utf-8") as f:
+                compile(f.read(), str(file_path), "exec")
             return True, "Valid Python syntax"
         except SyntaxError as e:
             return False, f"Python syntax error: {str(e)}"
@@ -77,14 +78,14 @@ class SSOTDiagnosticSuite:
             return False, "File does not exist"
 
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
 
             # Basic validation - check for obvious syntax issues
-            if content.count('{') != content.count('}'):
+            if content.count("{") != content.count("}"):
                 return False, "Unmatched braces"
 
-            if content.count('(') != content.count(')'):
+            if content.count("(") != content.count(")"):
                 return False, "Unmatched parentheses"
 
             return True, "Basic TypeScript validation passed"
@@ -99,10 +100,10 @@ class SSOTDiagnosticSuite:
         try:
             # Use bash -n for syntax checking
             result = subprocess.run(
-                ['bash', '-n', str(file_path)],
+                ["bash", "-n", str(file_path)],
                 capture_output=True,
                 text=True,
-                timeout=10
+                timeout=10,
             )
 
             if result.returncode == 0:
@@ -122,7 +123,7 @@ class SSOTDiagnosticSuite:
             "file": "ssot_master.json",
             "status": "unknown",
             "issues": [],
-            "recommendations": []
+            "recommendations": [],
         }
 
         # Check file existence
@@ -141,7 +142,7 @@ class SSOTDiagnosticSuite:
 
         # Load and analyze content
         try:
-            with open(ssot_file, 'r') as f:
+            with open(ssot_file, "r") as f:
                 data = json.load(f)
 
             # Check required fields
@@ -152,13 +153,17 @@ class SSOTDiagnosticSuite:
                     missing_fields.append(field)
 
             if missing_fields:
-                result["issues"].append(f"Missing required SSOT entries: {missing_fields}")
+                result["issues"].append(
+                    f"Missing required SSOT entries: {missing_fields}"
+                )
                 result["recommendations"].append("Add missing SSOT entries")
 
             # Check data integrity
             entries_count = len(data)
             if entries_count < 10:
-                result["issues"].append(f"SSOT has only {entries_count} entries, expected > 10")
+                result["issues"].append(
+                    f"SSOT has only {entries_count} entries, expected > 10"
+                )
 
             # Check for infinite values (as per system design)
             infinite_values = 0
@@ -167,7 +172,9 @@ class SSOTDiagnosticSuite:
                     infinite_values += 1
 
             if infinite_values < 5:
-                result["issues"].append(f"Only {infinite_values} infinite values found, expected > 5")
+                result["issues"].append(
+                    f"Only {infinite_values} infinite values found, expected > 5"
+                )
 
             if not result["issues"]:
                 result["status"] = "healthy"
@@ -190,7 +197,7 @@ class SSOTDiagnosticSuite:
             "security_config.lock": "security_config",
             "api_contracts.lock": "api_contracts",
             "test_fixtures.lock": "test_fixtures",
-            "infrastructure.lock": "infrastructure"
+            "infrastructure.lock": "infrastructure",
         }
 
         result = {
@@ -202,8 +209,8 @@ class SSOTDiagnosticSuite:
                 "present": 0,
                 "valid": 0,
                 "corrupted": 0,
-                "missing": 0
-            }
+                "missing": 0,
+            },
         }
 
         for lockfile_name, category in lockfiles.items():
@@ -212,7 +219,7 @@ class SSOTDiagnosticSuite:
                 "file": lockfile_name,
                 "category": category,
                 "status": "unknown",
-                "issues": []
+                "issues": [],
             }
 
             if not lockfile_path.exists():
@@ -252,30 +259,24 @@ class SSOTDiagnosticSuite:
             "data/fraud_rules.json": ("json", "fraud_rules"),
             "backend/app/services/fraud_service.py": ("python", "fraud_service"),
             "backend/core/security/rbac.py": ("python", "rbac"),
-
             # Database and schemas
             "backend/core/database.py": ("python", "database_schema"),
             "backend/app/services/database_service.py": ("python", "database_service"),
-
             # Authentication & security
             "backend/app/services/auth_service.py": ("python", "auth_service"),
             "backend/core/security/__init__.py": ("python", "security_framework"),
-
             # API contracts
             "backend/main.py": ("python", "api_gateway"),
             "backend/app/routers/identity.py": ("python", "identity_api"),
-
             # Frontend core
             "frontend/src/pages/Dashboard.tsx": ("typescript", "dashboard"),
             "frontend/src/utils/api.ts": ("typescript", "api_client"),
-
             # Configuration
             ".env.production": ("text", "production_env"),
             "Dockerfile": ("dockerfile", "container_spec"),
-
             # Scripts
             "scripts/setup-production.sh": ("shell", "production_setup"),
-            "scripts/validate-production.sh": ("shell", "production_validation")
+            "scripts/validate-production.sh": ("shell", "production_validation"),
         }
 
         result = {
@@ -287,8 +288,8 @@ class SSOTDiagnosticSuite:
                 "present": 0,
                 "valid": 0,
                 "invalid": 0,
-                "missing": 0
-            }
+                "missing": 0,
+            },
         }
 
         for file_path_str, (file_type, description) in critical_files.items():
@@ -298,7 +299,7 @@ class SSOTDiagnosticSuite:
                 "type": file_type,
                 "description": description,
                 "status": "unknown",
-                "issues": []
+                "issues": [],
             }
 
             if not file_path.exists():
@@ -319,7 +320,7 @@ class SSOTDiagnosticSuite:
                 else:
                     # For other file types, just check if readable
                     try:
-                        with open(file_path, 'r') as f:
+                        with open(file_path, "r") as f:
                             f.read(1024)  # Read first 1KB
                         is_valid, message = True, "File readable"
                     except Exception as e:
@@ -352,31 +353,43 @@ class SSOTDiagnosticSuite:
         # Check SSOT master
         ssot_result = self.results["categories"].get("ssot_master", {})
         if ssot_result.get("status") == "critical":
-            recommendations.append("🔴 CRITICAL: Regenerate SSOT master file - system integrity compromised")
+            recommendations.append(
+                "🔴 CRITICAL: Regenerate SSOT master file - system integrity compromised"
+            )
         elif ssot_result.get("status") == "warning":
             recommendations.append("🟡 WARNING: Review and update SSOT master entries")
 
         # Check lockfiles
         lockfiles_result = self.results["categories"].get("lockfiles", {})
         if lockfiles_result.get("summary", {}).get("missing", 0) > 0:
-            recommendations.append(f"🔴 CRITICAL: {lockfiles_result['summary']['missing']} lockfiles missing - regenerate all lockfiles")
+            recommendations.append(
+                f"🔴 CRITICAL: {lockfiles_result['summary']['missing']} lockfiles missing - regenerate all lockfiles"
+            )
         if lockfiles_result.get("summary", {}).get("corrupted", 0) > 0:
-            recommendations.append(f"🟡 WARNING: {lockfiles_result['summary']['corrupted']} lockfiles corrupted - verify and regenerate")
+            recommendations.append(
+                f"🟡 WARNING: {lockfiles_result['summary']['corrupted']} lockfiles corrupted - verify and regenerate"
+            )
 
         # Check critical files
         critical_result = self.results["categories"].get("critical_files", {})
         if critical_result.get("summary", {}).get("missing", 0) > 0:
-            recommendations.append(f"🔴 CRITICAL: {critical_result['summary']['missing']} critical files missing - restore from backups")
+            recommendations.append(
+                f"🔴 CRITICAL: {critical_result['summary']['missing']} critical files missing - restore from backups"
+            )
         if critical_result.get("summary", {}).get("invalid", 0) > 0:
-            recommendations.append(f"🟡 WARNING: {critical_result['summary']['invalid']} critical files invalid - fix syntax errors")
+            recommendations.append(
+                f"🟡 WARNING: {critical_result['summary']['invalid']} critical files invalid - fix syntax errors"
+            )
 
         # General recommendations
-        recommendations.extend([
-            "✅ INFO: Run 'scripts/diagnostics/manage_ssot_lockfiles.sh generate' to create missing lockfiles",
-            "✅ INFO: Run 'scripts/diagnostics/manage_ssot_lockfiles.sh verify' to verify integrity",
-            "✅ INFO: Schedule daily lockfile verification in CI/CD pipeline",
-            "✅ INFO: Implement automated SSOT backup and recovery procedures"
-        ])
+        recommendations.extend(
+            [
+                "✅ INFO: Run 'scripts/diagnostics/manage_ssot_lockfiles.sh generate' to create missing lockfiles",
+                "✅ INFO: Run 'scripts/diagnostics/manage_ssot_lockfiles.sh verify' to verify integrity",
+                "✅ INFO: Schedule daily lockfile verification in CI/CD pipeline",
+                "✅ INFO: Implement automated SSOT backup and recovery procedures",
+            ]
+        )
 
         self.results["recommendations"] = recommendations
 
@@ -418,8 +431,8 @@ class SSOTDiagnosticSuite:
         status_colors = {
             "healthy": "\033[0;32m",  # Green
             "warning": "\033[1;33m",  # Yellow
-            "critical": "\033[0;31m", # Red
-            "unknown": "\033[0;37m"   # White
+            "critical": "\033[0;31m",  # Red
+            "unknown": "\033[0;37m",  # White
         }
         NC = "\033[0m"
 
@@ -453,8 +466,15 @@ class SSOTDiagnosticSuite:
         for category, data in self.results["categories"].items():
             if "files" in data:
                 for file_data in data["files"].values():
-                    if file_data.get("status") in ["critical", "missing", "corrupted", "invalid"]:
-                        critical_issues.append(f"{file_data['file']} ({file_data['status']})")
+                    if file_data.get("status") in [
+                        "critical",
+                        "missing",
+                        "corrupted",
+                        "invalid",
+                    ]:
+                        critical_issues.append(
+                            f"{file_data['file']} ({file_data['status']})"
+                        )
 
         if critical_issues:
             print("\n🚨 CRITICAL ISSUES:")
@@ -471,7 +491,7 @@ class SSOTDiagnosticSuite:
 
         output_path = self.diagnostics_dir / output_file
 
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(self.results, f, indent=2, default=str)
 
         print(f"\n💾 Report saved to: {output_path}")
@@ -503,6 +523,7 @@ def main():
     except Exception as e:
         print(f"❌ Diagnostic suite failed: {str(e)}")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
 

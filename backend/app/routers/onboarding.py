@@ -2,17 +2,16 @@
 DEPRECATED: This module is deprecated. The functionality has been consolidated into backend/app/routers/identity.py.
 Please use the onboarding endpoints provided in backend/app/routers/identity.py instead.
 """
-from fastapi import APIRouter, Body, HTTPException, Depends
+
+import uuid
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, Body, Depends, HTTPException
 from pydantic import BaseModel, EmailStr
-from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
-from datetime import datetime, timezone
-import uuid
-from datetime import datetime, timezone
-import uuid
 
 from core.database import RookieChecklist, get_db
-from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="", tags=["onboarding"])
 

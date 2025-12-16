@@ -33,14 +33,14 @@ async def test_rag_integration():
     print("\n🔍 Analyzing Case...")
     # Specifically call the new context analysis
     result = await ai.analyze_case(case_data, 'typology_context')
-    
+
     print("\n📊 Analysis Result:")
     print(json.dumps(result, indent=2))
 
     # Assertions
     insights = result.get('insights', [])
     matches = result.get('typology_matches', [])
-    
+
     if any("Integration" in i for i in insights) or any("Integration" in m.get('metadata', {}).get('filename', '') for m in matches):
         print("\n✅ SUCCESS: Integration Typology detected via RAG!")
     else:

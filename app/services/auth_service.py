@@ -15,7 +15,7 @@ except ImportError:
     from typing import Optional, Dict, Any
     from datetime import datetime
     import uuid
-    
+
     @dataclass
     class User:
         id: str
@@ -23,39 +23,39 @@ except ImportError:
         email: str
         full_name: str = ""
         role: str = "analyst"
-    
+
     class AuthService:
         def __init__(self):
             self._users = {}
-        
+
         def authenticate_user(self, username: str, password: str) -> Optional[User]:
             for u in self._users.values():
                 if u.username == username:
                     return u
             return None
-        
+
         def get_current_user(self, credentials=None):
             """Stub get_current_user for compatibility"""
             return None
-        
+
         def create_access_token(self, payload: Dict[str, Any]) -> str:
             return f"access-{payload.get('sub')}-{int(datetime.utcnow().timestamp())}"
-        
+
         def create_refresh_token(self, user_id: str) -> str:
             return f"refresh-{user_id}-{int(datetime.utcnow().timestamp())}"
-        
+
         def get_user_by_username(self, username: str) -> Optional[User]:
             for u in self._users.values():
                 if u.username == username:
                     return u
             return None
-        
+
         def get_user_by_email(self, email: str) -> Optional[User]:
             for u in self._users.values():
                 if u.email == email:
                     return u
             return None
-        
+
         def create_user(self, user_data) -> User:
             user_id = str(uuid.uuid4())
             user = User(
@@ -67,7 +67,7 @@ except ImportError:
             )
             self._users[user_id] = user
             return user
-    
+
     auth_service = AuthService()
     db_service = None
 

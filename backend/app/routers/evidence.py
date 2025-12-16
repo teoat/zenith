@@ -1,19 +1,30 @@
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, Request, Query
-from fastapi.responses import FileResponse
-from typing import Optional, List, Dict
-from sqlalchemy.orm import Session
-from sqlalchemy import text
-from datetime import datetime
 import json
-import uuid
-import os
 import logging
+import os
+import uuid
 from dataclasses import asdict
+from datetime import datetime
+from typing import Dict, List, Optional
 
-from core.database import get_db, Case, User
-from app.services.search_service import evidence_search_index
-from app.services.evidence_service import evidence_processor
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    Request,
+    UploadFile,
+)
+from fastapi.responses import FileResponse
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
 from app.services.auth_service import auth_service
+from app.services.evidence_service import evidence_processor
+from app.services.search_service import evidence_search_index
+from core.database import Case, User, get_db
+
 # Provide a module-level alias `evidence_service` so tests can patch it
 try:
     from app.services.evidence_service import evidence_service
@@ -21,21 +32,31 @@ except Exception:
     evidence_service = None
 
 # ---- Test placeholders (allow tests to patch module-level dependencies) ----
-if 'get_current_user' not in globals():
+if "get_current_user" not in globals():
     try:
         get_current_user = auth_service.get_current_user
     except Exception:
+
         def get_current_user(*args, **kwargs):
             return None
 
-if 'require_permission' not in globals():
+
+if "require_permission" not in globals():
+
     def require_permission(*args, **kwargs):
         def _dep(*a, **k):
             return None
+
         return _dep
 
+
 # Ensure common service aliases exist for tests that patch them
-for _svc in ('evidence_service', 'fraud_service', 'notification_system', 'case_service'):
+for _svc in (
+    "evidence_service",
+    "fraud_service",
+    "notification_system",
+    "case_service",
+):
     if _svc not in globals():
         globals()[_svc] = None
 
@@ -45,16 +66,17 @@ router = APIRouter()
 
 # ===== EVIDENCE ENDPOINTS =====
 
+
 @router.get("/evidence")
 async def get_evidence(
     case_id: Optional[str] = Query(None, description="Filter by case ID"),
     file_type: Optional[str] = Query(None, description="Filter by file type"),
     limit: int = Query(100, description="Maximum number of results"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Get list of evidence items
-    
+
     Args:
         case_id: Filter by case ID
         file_type: Filter by file type
@@ -70,40 +92,45 @@ async def get_evidence(
             FROM evidence WHERE 1=1
         """
         params = {}
-        
+
         if case_id:
             query += " AND case_id = :case_id"
             params["case_id"] = case_id
-            
+
         if file_type:
             query += " AND file_type = :file_type"
             params["file_type"] = file_type
-            
+
         query += " ORDER BY uploaded_at DESC LIMIT :limit"
         params["limit"] = limit
-        
+
         result = db.execute(text(query), params)
         rows = result.fetchall()
-        
+
         evidence_list = []
         for row in rows:
             # Map row to dictionary - adapt based on actual columns in DB
-            evidence_list.append({
-                "id": row.id,
-                "caseId": row.case_id,
-                "fileName": row.filename,
-                "fileType": row.file_type,
-                "sizeBytes": row.size_bytes,
-                "uploadedAt": row.uploaded_at.isoformat() if row.uploaded_at else None,
-                "filePath": row.file_path,
-                "ocrText": row.extracted_text
-            })
-            
+            evidence_list.append(
+                {
+                    "id": row.id,
+                    "caseId": row.case_id,
+                    "fileName": row.filename,
+                    "fileType": row.file_type,
+                    "sizeBytes": row.size_bytes,
+                    "uploadedAt": (
+                        row.uploaded_at.isoformat() if row.uploaded_at else None
+                    ),
+                    "filePath": row.file_path,
+                    "ocrText": row.extracted_text,
+                }
+            )
+
         return evidence_list
-        
+
     except Exception as e:
         logger.error(f"Failed to get evidence: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to get evidence: {str(e)}")
+
 
 @router.get("/evidence/{evidence_id}/download")
 async def download_evidence(evidence_id: str, db: Session = Depends(get_db)):
@@ -111,19 +138,21 @@ async def download_evidence(evidence_id: str, db: Session = Depends(get_db)):
     try:
         query = "SELECT file_path, original_filename, file_type FROM evidence WHERE id = :id"
         result = db.execute(text(query), {"id": evidence_id}).fetchone()
-        
+
         if not result:
             raise HTTPException(status_code=404, detail="Evidence not found")
-            
+
         file_path = result.file_path
         filename = result.original_filename
-        
-        # Security check: Ensure path is within allowed directory? 
+
+        # Security check: Ensure path is within allowed directory?
         # For now, simplistic check
         if not file_path or not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="File not found on server")
-            
-        return FileResponse(path=file_path, filename=filename, media_type='application/octet-stream')
+
+        return FileResponse(
+            path=file_path, filename=filename, media_type="application/octet-stream"
+        )
     except HTTPException:
         raise
     except Exception as e:
@@ -133,7 +162,7 @@ async def download_evidence(evidence_id: str, db: Session = Depends(get_db)):
 
 @router.get("/evidence/processing/metrics")
 async def get_evidence_processing_metrics(
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """Get evidence processing performance metrics"""
     try:
@@ -142,9 +171,10 @@ async def get_evidence_processing_metrics(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.post("/evidence/processing/cleanup")
 async def cleanup_evidence_processor(
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """Clean up evidence processor resources"""
     try:
@@ -153,6 +183,7 @@ async def cleanup_evidence_processor(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.post("/evidence/upload")
 async def upload_evidence(
     request: Request,
@@ -160,7 +191,7 @@ async def upload_evidence(
     file: UploadFile = File(...),
     description: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),  # JSON string of tags
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Upload and process evidence file for a case
@@ -192,17 +223,17 @@ async def upload_evidence(
         UPLOAD_DIR = "uploads"
         if not os.path.exists(UPLOAD_DIR):
             os.makedirs(UPLOAD_DIR)
-            
+
         file_ext = os.path.splitext(file.filename)[1]
         unique_filename = f"{uuid.uuid4()}{file_ext}"
         saved_file_path = os.path.join(UPLOAD_DIR, unique_filename)
-        
+
         # Write content
         content = await file.read()
         with open(saved_file_path, "wb") as f:
             f.write(content)
-            
-        temp_file_path = saved_file_path # usage in rest of function
+
+        temp_file_path = saved_file_path  # usage in rest of function
 
         try:
             # Perform multi-modal analysis
@@ -212,8 +243,8 @@ async def upload_evidence(
                 {
                     "filename": file.filename,
                     "enable_ocr": True,
-                    "enable_forensics": True
-                }
+                    "enable_forensics": True,
+                },
             )
 
             # Create evidence record
@@ -225,26 +256,32 @@ async def upload_evidence(
                 "original_filename": file.filename,
                 "file_path": temp_file_path,  # Will be moved to secure storage
                 "file_type": analysis_result.file_type,
-                "file_category": _determine_file_category(file.filename, analysis_result.file_type),
+                "file_category": _determine_file_category(
+                    file.filename, analysis_result.file_type
+                ),
                 "size_bytes": len(content),
                 "uploaded_at": datetime.now(),
-                "uploaded_by": getattr(request.state, 'user_id', None) or "system",
+                "uploaded_by": getattr(request.state, "user_id", None) or "system",
                 "processing_status": "completed",
                 "extracted_text": analysis_result.extracted_text or "",
                 "key_entities": analysis_result.key_entities or [],
                 "sentiment_score": analysis_result.sentiment_score,
                 "quality_score": analysis_result.quality_score,
                 "evidence_metadata": {
-                    "multimodal_analysis": {}, # analysis_result.metadata doesn't exist on dataclass?
-                    "forensic_result": asdict(analysis_result.forensic_result) if analysis_result.forensic_result else None
+                    "multimodal_analysis": {},  # analysis_result.metadata doesn't exist on dataclass?
+                    "forensic_result": (
+                        asdict(analysis_result.forensic_result)
+                        if analysis_result.forensic_result
+                        else None
+                    ),
                 },
-                "tags": evidence_tags
+                "tags": evidence_tags,
             }
-
 
             # Save to database using named parameters
             db.execute(
-                text("""
+                text(
+                    """
                     INSERT INTO evidence (
                         id, case_id, filename, original_filename, file_path, file_type,
                         file_category, size_bytes, uploaded_at, uploaded_by, processing_status,
@@ -256,7 +293,8 @@ async def upload_evidence(
                         :extracted_text, :key_entities, :sentiment_score, :quality_score,
                         :evidence_metadata, :tags
                     )
-                """),
+                """
+                ),
                 {
                     "id": evidence_record["id"],
                     "case_id": evidence_record["case_id"],
@@ -270,12 +308,16 @@ async def upload_evidence(
                     "uploaded_by": evidence_record["uploaded_by"],
                     "processing_status": evidence_record["processing_status"],
                     "extracted_text": evidence_record["extracted_text"],
-                    "key_entities": json.dumps(evidence_record["key_entities"], default=str),
+                    "key_entities": json.dumps(
+                        evidence_record["key_entities"], default=str
+                    ),
                     "sentiment_score": evidence_record["sentiment_score"],
                     "quality_score": evidence_record["quality_score"],
-                    "evidence_metadata": json.dumps(evidence_record["evidence_metadata"], default=str),
-                    "tags": json.dumps(evidence_record["tags"], default=str)
-                }
+                    "evidence_metadata": json.dumps(
+                        evidence_record["evidence_metadata"], default=str
+                    ),
+                    "tags": json.dumps(evidence_record["tags"], default=str),
+                },
             )
             db.commit()
 
@@ -306,8 +348,8 @@ async def upload_evidence(
                     "keyEntitiesCount": len(analysis_result.key_entities or []),
                     "sentimentScore": analysis_result.sentiment_score,
                     "qualityScore": analysis_result.quality_score,
-                    "fileType": analysis_result.file_type
-                }
+                    "fileType": analysis_result.file_type,
+                },
             }
 
         except Exception as analysis_error:
@@ -315,17 +357,27 @@ async def upload_evidence(
             # Still create evidence record but mark as failed
             evidence_id = str(uuid.uuid4())
             db.execute(
-                text("""
+                text(
+                    """
                     INSERT INTO evidence (
                         id, case_id, filename, original_filename, file_path, file_type,
                         size_bytes, uploaded_at, uploaded_by, processing_status, evidence_metadata
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """),
+                """
+                ),
                 (
-                    evidence_id, case_id, file.filename, file.filename, temp_file_path,
-                    file.content_type or "unknown", len(content), datetime.now(),
-                    "system", "failed", json.dumps({"error": str(analysis_error)})
-                )
+                    evidence_id,
+                    case_id,
+                    file.filename,
+                    file.filename,
+                    temp_file_path,
+                    file.content_type or "unknown",
+                    len(content),
+                    datetime.now(),
+                    "system",
+                    "failed",
+                    json.dumps({"error": str(analysis_error)}),
+                ),
             )
             db.commit()
 
@@ -337,7 +389,7 @@ async def upload_evidence(
 
             raise HTTPException(
                 status_code=500,
-                detail=f"Evidence uploaded but processing failed: {str(analysis_error)}"
+                detail=f"Evidence uploaded but processing failed: {str(analysis_error)}",
             )
 
     except HTTPException:
@@ -346,21 +398,29 @@ async def upload_evidence(
         logger.error(f"Evidence upload failed: {e}")
         raise HTTPException(status_code=500, detail=f"Evidence upload failed: {str(e)}")
 
+
 def _determine_file_category(filename: str, mime_type: str) -> str:
     """Determine file category based on filename and MIME type"""
-    ext = filename.lower().split('.')[-1] if '.' in filename else ''
+    ext = filename.lower().split(".")[-1] if "." in filename else ""
 
-    if mime_type.startswith('image/') or ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff']:
-        return 'image'
-    elif mime_type.startswith('video/') or ext in ['mp4', 'avi', 'mov', 'wmv']:
-        return 'video'
-    elif mime_type.startswith('audio/') or ext in ['mp3', 'wav', 'flac', 'aac']:
-        return 'audio'
-    elif mime_type == 'application/pdf' or ext == 'pdf':
-        return 'document'
-    elif ext in ['doc', 'docx', 'txt', 'rtf', 'odt']:
-        return 'document'
-    elif ext in ['xls', 'xlsx', 'csv', 'ods']:
-        return 'spreadsheet'
+    if mime_type.startswith("image/") or ext in [
+        "jpg",
+        "jpeg",
+        "png",
+        "gif",
+        "bmp",
+        "tiff",
+    ]:
+        return "image"
+    elif mime_type.startswith("video/") or ext in ["mp4", "avi", "mov", "wmv"]:
+        return "video"
+    elif mime_type.startswith("audio/") or ext in ["mp3", "wav", "flac", "aac"]:
+        return "audio"
+    elif mime_type == "application/pdf" or ext == "pdf":
+        return "document"
+    elif ext in ["doc", "docx", "txt", "rtf", "odt"]:
+        return "document"
+    elif ext in ["xls", "xlsx", "csv", "ods"]:
+        return "spreadsheet"
     else:
-        return 'other'
+        return "other"

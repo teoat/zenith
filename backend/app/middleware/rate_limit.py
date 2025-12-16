@@ -1,9 +1,11 @@
-from fastapi import Request, HTTPException
-from collections import defaultdict
-import time
 import logging
+import time
+from collections import defaultdict
+
+from fastapi import HTTPException, Request
 
 logger = logging.getLogger(__name__)
+
 
 class RateLimiter:
     def __init__(self, requests_per_minute: int = 100, burst_limit: int = 20):
@@ -22,21 +24,23 @@ class RateLimiter:
 
         # Clean old requests
         self.requests[client_ip] = [
-            req_time for req_time in self.requests[client_ip]
-            if req_time > window_start
+            req_time for req_time in self.requests[client_ip] if req_time > window_start
         ]
 
         request_count = len(self.requests[client_ip])
 
         # Check burst limit (requests in last 10 seconds)
         burst_window = current_time - 10
-        burst_count = sum(1 for req_time in self.requests[client_ip] if req_time > burst_window)
+        burst_count = sum(
+            1 for req_time in self.requests[client_ip] if req_time > burst_window
+        )
 
         if burst_count >= self.burst_limit:
             # Temporary block for burst abuse
             self.blocked_ips.add(client_ip)
             # Auto-unblock after 5 minutes
             import threading
+
             timer = threading.Timer(300, lambda: self.blocked_ips.discard(client_ip))
             timer.start()
             logger.warning(f"IP {client_ip} temporarily blocked for burst abuse")
@@ -51,8 +55,10 @@ class RateLimiter:
         self.requests[client_ip].append(current_time)
         return True
 
+
 # Global rate limiter instance
 rate_limiter = RateLimiter(requests_per_minute=100)  # 100 requests per minute
+
 
 async def rate_limit_middleware(request: Request, call_next):
     """Rate limiting middleware"""
@@ -61,8 +67,7 @@ async def rate_limit_middleware(request: Request, call_next):
     if not rate_limiter.is_allowed(client_ip):
         logger.warning(f"Rate limit exceeded for IP: {client_ip}")
         raise HTTPException(
-            status_code=429,
-            detail="Too many requests. Please try again later."
+            status_code=429, detail="Too many requests. Please try again later."
         )
 
     response = await call_next(request)

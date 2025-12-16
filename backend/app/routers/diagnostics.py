@@ -1,13 +1,17 @@
+import logging
+from typing import Any, Dict
+
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.services.core.auth_service import auth_service
+from app.services.core.implementation_pipeline_service import pipeline_service
+from app.services.core.investigation_workflow_service import investigation_service
+from app.services.core.orchestration_notification_service import (
+    orchestration_notification_service,
+)
+from app.services.core.sync_protocol_service import sync_protocol_service
 from app.services.diagnostics.diagnostic_service import DiagnosticService
 from app.services.scoring.automated_scoring_system import scoring_system
-from app.services.core.sync_protocol_service import sync_protocol_service
-from app.services.core.investigation_workflow_service import investigation_service
-from app.services.core.implementation_pipeline_service import pipeline_service
-from app.services.core.orchestration_notification_service import orchestration_notification_service
-from app.services.core.auth_service import auth_service
-from typing import Dict, Any
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +20,9 @@ get_current_user = auth_service.get_current_user
 
 router = APIRouter(prefix="/diagnostics", tags=["diagnostics"])
 
+
 @router.get("/health")
-async def get_system_health(current_user = Depends(get_current_user)):
+async def get_system_health(current_user=Depends(get_current_user)):
     """
     Get comprehensive system health diagnostics.
     """
@@ -29,8 +34,9 @@ async def get_system_health(current_user = Depends(get_current_user)):
         logger.error(f"Diagnostic service error: {e}")
         raise HTTPException(status_code=500, detail="Diagnostic service unavailable")
 
+
 @router.get("/ai-ml-performance")
-async def get_ai_ml_diagnostics(current_user = Depends(get_current_user)):
+async def get_ai_ml_diagnostics(current_user=Depends(get_current_user)):
     """
     Get AI/ML performance diagnostics.
     """
@@ -41,8 +47,9 @@ async def get_ai_ml_diagnostics(current_user = Depends(get_current_user)):
         logger.error(f"AI/ML diagnostics error: {e}")
         raise HTTPException(status_code=500, detail="AI/ML diagnostics unavailable")
 
+
 @router.get("/data-quality")
-async def get_data_quality_diagnostics(current_user = Depends(get_current_user)):
+async def get_data_quality_diagnostics(current_user=Depends(get_current_user)):
     """
     Get data quality diagnostics.
     """
@@ -51,10 +58,13 @@ async def get_data_quality_diagnostics(current_user = Depends(get_current_user))
         return await diagnostic_service.diagnose_data_quality()
     except Exception as e:
         logger.error(f"Data quality diagnostics error: {e}")
-        raise HTTPException(status_code=500, detail="Data quality diagnostics unavailable")
+        raise HTTPException(
+            status_code=500, detail="Data quality diagnostics unavailable"
+        )
+
 
 @router.get("/user-experience")
-async def get_user_experience_diagnostics(current_user = Depends(get_current_user)):
+async def get_user_experience_diagnostics(current_user=Depends(get_current_user)):
     """
     Get user experience diagnostics.
     """
@@ -63,10 +73,13 @@ async def get_user_experience_diagnostics(current_user = Depends(get_current_use
         return await diagnostic_service.diagnose_user_experience()
     except Exception as e:
         logger.error(f"User experience diagnostics error: {e}")
-        raise HTTPException(status_code=500, detail="User experience diagnostics unavailable")
+        raise HTTPException(
+            status_code=500, detail="User experience diagnostics unavailable"
+        )
+
 
 @router.get("/scalability")
-async def get_scalability_diagnostics(current_user = Depends(get_current_user)):
+async def get_scalability_diagnostics(current_user=Depends(get_current_user)):
     """
     Get scalability diagnostics.
     """
@@ -75,10 +88,13 @@ async def get_scalability_diagnostics(current_user = Depends(get_current_user)):
         return await diagnostic_service.diagnose_scalability()
     except Exception as e:
         logger.error(f"Scalability diagnostics error: {e}")
-        raise HTTPException(status_code=500, detail="Scalability diagnostics unavailable")
+        raise HTTPException(
+            status_code=500, detail="Scalability diagnostics unavailable"
+        )
+
 
 @router.get("/compliance")
-async def get_compliance_diagnostics(current_user = Depends(get_current_user)):
+async def get_compliance_diagnostics(current_user=Depends(get_current_user)):
     """
     Get compliance diagnostics.
     """
@@ -87,10 +103,13 @@ async def get_compliance_diagnostics(current_user = Depends(get_current_user)):
         return await diagnostic_service.diagnose_compliance()
     except Exception as e:
         logger.error(f"Compliance diagnostics error: {e}")
-        raise HTTPException(status_code=500, detail="Compliance diagnostics unavailable")
+        raise HTTPException(
+            status_code=500, detail="Compliance diagnostics unavailable"
+        )
+
 
 @router.get("/integration-health")
-async def get_integration_health_diagnostics(current_user = Depends(get_current_user)):
+async def get_integration_health_diagnostics(current_user=Depends(get_current_user)):
     """
     Get integration health diagnostics.
     """
@@ -99,10 +118,13 @@ async def get_integration_health_diagnostics(current_user = Depends(get_current_
         return await diagnostic_service.diagnose_integration_health()
     except Exception as e:
         logger.error(f"Integration health diagnostics error: {e}")
-        raise HTTPException(status_code=500, detail="Integration health diagnostics unavailable")
+        raise HTTPException(
+            status_code=500, detail="Integration health diagnostics unavailable"
+        )
+
 
 @router.get("/business-impact")
-async def get_business_impact_diagnostics(current_user = Depends(get_current_user)):
+async def get_business_impact_diagnostics(current_user=Depends(get_current_user)):
     """
     Get business impact diagnostics.
     """
@@ -111,10 +133,13 @@ async def get_business_impact_diagnostics(current_user = Depends(get_current_use
         return await diagnostic_service.diagnose_business_impact()
     except Exception as e:
         logger.error(f"Business impact diagnostics error: {e}")
-        raise HTTPException(status_code=500, detail="Business impact diagnostics unavailable")
+        raise HTTPException(
+            status_code=500, detail="Business impact diagnostics unavailable"
+        )
+
 
 @router.post("/scoring/run")
-async def run_scoring_cycle(current_user = Depends(get_current_user)):
+async def run_scoring_cycle(current_user=Depends(get_current_user)):
     """
     Manually trigger a scoring cycle.
     """
@@ -125,8 +150,11 @@ async def run_scoring_cycle(current_user = Depends(get_current_user)):
         logger.error(f"Scoring cycle error: {e}")
         raise HTTPException(status_code=500, detail="Scoring cycle failed")
 
+
 @router.get("/scoring/history")
-async def get_scoring_history(days_back: int = 30, current_user = Depends(get_current_user)):
+async def get_scoring_history(
+    days_back: int = 30, current_user=Depends(get_current_user)
+):
     """
     Get historical scoring data.
     """
@@ -135,10 +163,13 @@ async def get_scoring_history(days_back: int = 30, current_user = Depends(get_cu
         return history
     except Exception as e:
         logger.error(f"Scoring history error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve scoring history")
+        raise HTTPException(
+            status_code=500, detail="Failed to retrieve scoring history"
+        )
+
 
 @router.get("/scoring/current")
-async def get_current_scoring(current_user = Depends(get_current_user)):
+async def get_current_scoring(current_user=Depends(get_current_user)):
     """
     Get current scoring status and latest results.
     """
@@ -150,8 +181,9 @@ async def get_current_scoring(current_user = Depends(get_current_user)):
         logger.error(f"Current scoring error: {e}")
         raise HTTPException(status_code=500, detail="Failed to get current scoring")
 
+
 @router.get("/sync/status")
-async def get_sync_status(current_user = Depends(get_current_user)):
+async def get_sync_status(current_user=Depends(get_current_user)):
     """
     Get synchronization status across all protocols.
     """
@@ -162,8 +194,11 @@ async def get_sync_status(current_user = Depends(get_current_user)):
         logger.error(f"Sync status error: {e}")
         raise HTTPException(status_code=500, detail="Failed to get sync status")
 
+
 @router.post("/sync/trigger/{protocol_name}/{action}")
-async def trigger_sync_action(protocol_name: str, action: str, current_user = Depends(get_current_user)):
+async def trigger_sync_action(
+    protocol_name: str, action: str, current_user=Depends(get_current_user)
+):
     """
     Trigger a synchronization action.
     """
@@ -174,8 +209,9 @@ async def trigger_sync_action(protocol_name: str, action: str, current_user = De
         logger.error(f"Sync action error: {e}")
         raise HTTPException(status_code=500, detail="Failed to trigger sync action")
 
+
 @router.get("/sync/history")
-async def get_sync_history(limit: int = 50, current_user = Depends(get_current_user)):
+async def get_sync_history(limit: int = 50, current_user=Depends(get_current_user)):
     """
     Get synchronization history.
     """
@@ -186,8 +222,9 @@ async def get_sync_history(limit: int = 50, current_user = Depends(get_current_u
         logger.error(f"Sync history error: {e}")
         raise HTTPException(status_code=500, detail="Failed to get sync history")
 
+
 @router.post("/investigation/check-triggers")
-async def check_investigation_triggers(current_user = Depends(get_current_user)):
+async def check_investigation_triggers(current_user=Depends(get_current_user)):
     """
     Check investigation triggers against current diagnostics.
     """
@@ -202,21 +239,23 @@ async def check_investigation_triggers(current_user = Depends(get_current_user))
         started_investigations = []
         for trigger in triggered:
             investigation_id = await investigation_service.start_investigation(trigger)
-            started_investigations.append({
-                "investigation_id": investigation_id,
-                "trigger": trigger
-            })
+            started_investigations.append(
+                {"investigation_id": investigation_id, "trigger": trigger}
+            )
 
         return {
             "triggers_checked": len(triggered),
-            "investigations_started": started_investigations
+            "investigations_started": started_investigations,
         }
     except Exception as e:
         logger.error(f"Investigation trigger check error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to check investigation triggers")
+        raise HTTPException(
+            status_code=500, detail="Failed to check investigation triggers"
+        )
+
 
 @router.get("/investigation/active")
-async def get_active_investigations(current_user = Depends(get_current_user)):
+async def get_active_investigations(current_user=Depends(get_current_user)):
     """
     Get all active investigations.
     """
@@ -225,10 +264,15 @@ async def get_active_investigations(current_user = Depends(get_current_user)):
         return {"active_investigations": active}
     except Exception as e:
         logger.error(f"Active investigations error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get active investigations")
+        raise HTTPException(
+            status_code=500, detail="Failed to get active investigations"
+        )
+
 
 @router.get("/investigation/{investigation_id}")
-async def get_investigation_status(investigation_id: str, current_user = Depends(get_current_user)):
+async def get_investigation_status(
+    investigation_id: str, current_user=Depends(get_current_user)
+):
     """
     Get status of a specific investigation.
     """
@@ -242,10 +286,15 @@ async def get_investigation_status(investigation_id: str, current_user = Depends
         raise
     except Exception as e:
         logger.error(f"Investigation status error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get investigation status")
+        raise HTTPException(
+            status_code=500, detail="Failed to get investigation status"
+        )
+
 
 @router.get("/investigation/history")
-async def get_investigation_history(limit: int = 50, current_user = Depends(get_current_user)):
+async def get_investigation_history(
+    limit: int = 50, current_user=Depends(get_current_user)
+):
     """
     Get investigation history.
     """
@@ -254,26 +303,32 @@ async def get_investigation_history(limit: int = 50, current_user = Depends(get_
         return {"history": history}
     except Exception as e:
         logger.error(f"Investigation history error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get investigation history")
+        raise HTTPException(
+            status_code=500, detail="Failed to get investigation history"
+        )
+
 
 @router.post("/pipeline/create")
 async def create_implementation_pipeline(
     implementation_type: str,
     parameters: Dict[str, Any] = None,
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user),
 ):
     """
     Create a new implementation pipeline.
     """
     try:
-        pipeline_id = await pipeline_service.create_pipeline(implementation_type, parameters)
+        pipeline_id = await pipeline_service.create_pipeline(
+            implementation_type, parameters
+        )
         return {"pipeline_id": pipeline_id, "status": "created"}
     except Exception as e:
         logger.error(f"Pipeline creation error: {e}")
         raise HTTPException(status_code=500, detail="Failed to create pipeline")
 
+
 @router.post("/pipeline/{pipeline_id}/execute")
-async def execute_pipeline(pipeline_id: str, current_user = Depends(get_current_user)):
+async def execute_pipeline(pipeline_id: str, current_user=Depends(get_current_user)):
     """
     Execute an implementation pipeline.
     """
@@ -284,8 +339,9 @@ async def execute_pipeline(pipeline_id: str, current_user = Depends(get_current_
         logger.error(f"Pipeline execution error: {e}")
         raise HTTPException(status_code=500, detail="Failed to execute pipeline")
 
+
 @router.get("/pipeline/active")
-async def get_active_pipelines(current_user = Depends(get_current_user)):
+async def get_active_pipelines(current_user=Depends(get_current_user)):
     """
     Get all active implementation pipelines.
     """
@@ -296,8 +352,9 @@ async def get_active_pipelines(current_user = Depends(get_current_user)):
         logger.error(f"Active pipelines error: {e}")
         raise HTTPException(status_code=500, detail="Failed to get active pipelines")
 
+
 @router.get("/pipeline/{pipeline_id}")
-async def get_pipeline_status(pipeline_id: str, current_user = Depends(get_current_user)):
+async def get_pipeline_status(pipeline_id: str, current_user=Depends(get_current_user)):
     """
     Get status of a specific pipeline.
     """
@@ -313,8 +370,9 @@ async def get_pipeline_status(pipeline_id: str, current_user = Depends(get_curre
         logger.error(f"Pipeline status error: {e}")
         raise HTTPException(status_code=500, detail="Failed to get pipeline status")
 
+
 @router.post("/pipeline/{pipeline_id}/cancel")
-async def cancel_pipeline(pipeline_id: str, current_user = Depends(get_current_user)):
+async def cancel_pipeline(pipeline_id: str, current_user=Depends(get_current_user)):
     """
     Cancel an active pipeline.
     """
@@ -325,8 +383,11 @@ async def cancel_pipeline(pipeline_id: str, current_user = Depends(get_current_u
         logger.error(f"Pipeline cancellation error: {e}")
         raise HTTPException(status_code=500, detail="Failed to cancel pipeline")
 
+
 @router.post("/pipeline/{pipeline_id}/approve/{step_index}")
-async def approve_pipeline_step(pipeline_id: str, step_index: int, current_user = Depends(get_current_user)):
+async def approve_pipeline_step(
+    pipeline_id: str, step_index: int, current_user=Depends(get_current_user)
+):
     """
     Approve a pending pipeline step.
     """
@@ -337,8 +398,9 @@ async def approve_pipeline_step(pipeline_id: str, step_index: int, current_user 
         logger.error(f"Step approval error: {e}")
         raise HTTPException(status_code=500, detail="Failed to approve step")
 
+
 @router.post("/notifications/check-alerts")
-async def check_alerts(current_user = Depends(get_current_user)):
+async def check_alerts(current_user=Depends(get_current_user)):
     """
     Check for alerts and send notifications.
     """
@@ -354,8 +416,11 @@ async def check_alerts(current_user = Depends(get_current_user)):
         logger.error(f"Alert checking error: {e}")
         raise HTTPException(status_code=500, detail="Failed to check alerts")
 
+
 @router.get("/notifications/recent")
-async def get_recent_notifications(limit: int = 50, current_user = Depends(get_current_user)):
+async def get_recent_notifications(
+    limit: int = 50, current_user=Depends(get_current_user)
+):
     """
     Get recent notifications and alerts.
     """
@@ -364,4 +429,6 @@ async def get_recent_notifications(limit: int = 50, current_user = Depends(get_c
         return {"notifications": notifications}
     except Exception as e:
         logger.error(f"Recent notifications error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get recent notifications")
+        raise HTTPException(
+            status_code=500, detail="Failed to get recent notifications"
+        )

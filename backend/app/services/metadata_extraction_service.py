@@ -9,18 +9,21 @@ import hashlib
 import mimetypes
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
 
 
 class DocumentHash(BaseModel):
     """File hash for chain of custody."""
+
     md5: str
     sha256: str
 
 
 class CreationContext(BaseModel):
     """Creation metadata similar to EXIF."""
+
     date: Optional[str] = None
     timezone: Optional[str] = None
     software: Optional[str] = None
@@ -30,6 +33,7 @@ class CreationContext(BaseModel):
 
 class ModificationEvent(BaseModel):
     """Single modification event."""
+
     date: str
     action: str
     details: Optional[str] = None
@@ -37,6 +41,7 @@ class ModificationEvent(BaseModel):
 
 class ModificationHistory(BaseModel):
     """Document modification history."""
+
     last_date: Optional[str] = None
     count: int = 0
     history: List[ModificationEvent] = []
@@ -44,6 +49,7 @@ class ModificationHistory(BaseModel):
 
 class GeoLocation(BaseModel):
     """Geographic location if available."""
+
     lat: Optional[float] = None
     lng: Optional[float] = None
     accuracy: Optional[float] = None
@@ -52,6 +58,7 @@ class GeoLocation(BaseModel):
 
 class PrintMetadata(BaseModel):
     """Print/scan metadata."""
+
     printer_name: Optional[str] = None
     print_date: Optional[str] = None
     copies: Optional[int] = None
@@ -59,6 +66,7 @@ class PrintMetadata(BaseModel):
 
 class PDFMetadata(BaseModel):
     """PDF-specific metadata."""
+
     producer: Optional[str] = None
     version: Optional[str] = None
     pages: Optional[int] = None
@@ -68,6 +76,7 @@ class PDFMetadata(BaseModel):
 
 class CameraMetadata(BaseModel):
     """Camera EXIF data."""
+
     make: Optional[str] = None
     model: Optional[str] = None
     exposure: Optional[str] = None
@@ -76,6 +85,7 @@ class CameraMetadata(BaseModel):
 
 class ImageMetadata(BaseModel):
     """Image-specific EXIF metadata."""
+
     width: Optional[int] = None
     height: Optional[int] = None
     color_space: Optional[str] = None
@@ -85,6 +95,7 @@ class ImageMetadata(BaseModel):
 
 class ForensicFlags(BaseModel):
     """Forensic analysis flags."""
+
     tamper_likelihood: float = 0.0  # 0-100%
     anomalies: List[str] = []
     signature_valid: Optional[bool] = None
@@ -93,6 +104,7 @@ class ForensicFlags(BaseModel):
 
 class DocumentMetadata(BaseModel):
     """Complete document metadata schema."""
+
     id: str
     filename: str
     filetype: str
@@ -114,11 +126,11 @@ class MetadataExtractionService:
 
     def __init__(self):
         self.supported_types = {
-            'application/pdf': self._extract_pdf_metadata,
-            'image/jpeg': self._extract_image_metadata,
-            'image/png': self._extract_image_metadata,
-            'image/tiff': self._extract_image_metadata,
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': self._extract_docx_metadata,
+            "application/pdf": self._extract_pdf_metadata,
+            "image/jpeg": self._extract_image_metadata,
+            "image/png": self._extract_image_metadata,
+            "image/tiff": self._extract_image_metadata,
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": self._extract_docx_metadata,
         }
 
     def calculate_hash(self, file_path: Path) -> DocumentHash:
@@ -126,15 +138,12 @@ class MetadataExtractionService:
         md5_hash = hashlib.md5()
         sha256_hash = hashlib.sha256()
 
-        with open(file_path, 'rb') as f:
-            for chunk in iter(lambda: f.read(4096), b''):
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
                 md5_hash.update(chunk)
                 sha256_hash.update(chunk)
 
-        return DocumentHash(
-            md5=md5_hash.hexdigest(),
-            sha256=sha256_hash.hexdigest()
-        )
+        return DocumentHash(md5=md5_hash.hexdigest(), sha256=sha256_hash.hexdigest())
 
     def extract_metadata(self, file_path: Path) -> DocumentMetadata:
         """
@@ -158,17 +167,16 @@ class MetadataExtractionService:
         metadata = DocumentMetadata(
             id=file_hash.sha256[:16],
             filename=file_path.name,
-            filetype=mime_type or 'application/octet-stream',
+            filetype=mime_type or "application/octet-stream",
             size=stat.st_size,
             hash=file_hash,
             created=CreationContext(
                 date=datetime.fromtimestamp(stat.st_ctime).isoformat(),
             ),
             modified=ModificationHistory(
-                last_date=datetime.fromtimestamp(stat.st_mtime).isoformat(),
-                count=1
+                last_date=datetime.fromtimestamp(stat.st_mtime).isoformat(), count=1
             ),
-            forensic=ForensicFlags()
+            forensic=ForensicFlags(),
         )
 
         # Type-specific extraction
@@ -183,12 +191,12 @@ class MetadataExtractionService:
         # In production, use PyPDF2 or pdf-lib
         # This is a placeholder implementation
         return {
-            'pdf': PDFMetadata(
-                producer='Extracted PDF Producer',
-                version='1.7',
+            "pdf": PDFMetadata(
+                producer="Extracted PDF Producer",
+                version="1.7",
                 pages=1,
                 encrypted=False,
-                permissions=['print', 'copy']
+                permissions=["print", "copy"],
             )
         }
 
@@ -197,15 +205,12 @@ class MetadataExtractionService:
         # In production, use Pillow or exifread
         # This is a placeholder implementation
         return {
-            'image': ImageMetadata(
+            "image": ImageMetadata(
                 width=1920,
                 height=1080,
-                color_space='sRGB',
+                color_space="sRGB",
                 dpi=72,
-                camera=CameraMetadata(
-                    make='Unknown',
-                    model='Unknown'
-                )
+                camera=CameraMetadata(make="Unknown", model="Unknown"),
             )
         }
 
@@ -214,16 +219,13 @@ class MetadataExtractionService:
         # In production, use python-docx
         # This is a placeholder implementation
         return {
-            'created': CreationContext(
-                software='Microsoft Word',
-                author='Document Author'
+            "created": CreationContext(
+                software="Microsoft Word", author="Document Author"
             )
         }
 
     def _merge_metadata(
-        self,
-        base: DocumentMetadata,
-        additional: Dict[str, Any]
+        self, base: DocumentMetadata, additional: Dict[str, Any]
     ) -> DocumentMetadata:
         """Merge additional metadata into base."""
         data = base.model_dump()
@@ -236,9 +238,7 @@ class MetadataExtractionService:
         return DocumentMetadata(**data)
 
     def compare_documents(
-        self,
-        doc_a: DocumentMetadata,
-        doc_b: DocumentMetadata
+        self, doc_a: DocumentMetadata, doc_b: DocumentMetadata
     ) -> Dict[str, Any]:
         """
         Compare two documents and detect discrepancies.
@@ -253,32 +253,38 @@ class MetadataExtractionService:
 
         # Compare hashes
         if doc_a.hash.sha256 != doc_b.hash.sha256:
-            discrepancies.append({
-                'field': 'content_hash',
-                'doc_a': doc_a.hash.sha256[:16] + '...',
-                'doc_b': doc_b.hash.sha256[:16] + '...',
-                'severity': 'high'
-            })
-            tamper_indicators.append('Content modified between versions')
+            discrepancies.append(
+                {
+                    "field": "content_hash",
+                    "doc_a": doc_a.hash.sha256[:16] + "...",
+                    "doc_b": doc_b.hash.sha256[:16] + "...",
+                    "severity": "high",
+                }
+            )
+            tamper_indicators.append("Content modified between versions")
 
         # Compare authors
         if doc_a.created.author != doc_b.created.author:
-            discrepancies.append({
-                'field': 'author',
-                'doc_a': doc_a.created.author,
-                'doc_b': doc_b.created.author,
-                'severity': 'medium'
-            })
-            tamper_indicators.append('Author name changed')
+            discrepancies.append(
+                {
+                    "field": "author",
+                    "doc_a": doc_a.created.author,
+                    "doc_b": doc_b.created.author,
+                    "severity": "medium",
+                }
+            )
+            tamper_indicators.append("Author name changed")
 
         # Compare software
         if doc_a.created.software != doc_b.created.software:
-            discrepancies.append({
-                'field': 'software',
-                'doc_a': doc_a.created.software,
-                'doc_b': doc_b.created.software,
-                'severity': 'medium'
-            })
+            discrepancies.append(
+                {
+                    "field": "software",
+                    "doc_a": doc_a.created.software,
+                    "doc_b": doc_b.created.software,
+                    "severity": "medium",
+                }
+            )
             tamper_indicators.append('Different software used for "same" document')
 
         # Check modification timing
@@ -287,14 +293,14 @@ class MetadataExtractionService:
             b_date = datetime.fromisoformat(doc_b.modified.last_date)
             if (b_date - a_date).days > 1:
                 tamper_indicators.append(
-                    f'Modified {(b_date - a_date).days} days after original'
+                    f"Modified {(b_date - a_date).days} days after original"
                 )
 
         return {
-            'hash_match': doc_a.hash.sha256 == doc_b.hash.sha256,
-            'discrepancies': discrepancies,
-            'tamper_indicators': tamper_indicators,
-            'risk_score': len(tamper_indicators) * 25  # 0-100
+            "hash_match": doc_a.hash.sha256 == doc_b.hash.sha256,
+            "discrepancies": discrepancies,
+            "tamper_indicators": tamper_indicators,
+            "risk_score": len(tamper_indicators) * 25,  # 0-100
         }
 
     def detect_tampering(self, metadata: DocumentMetadata) -> ForensicFlags:
@@ -312,26 +318,26 @@ class MetadataExtractionService:
             modified = datetime.fromisoformat(metadata.modified.last_date)
 
             if modified < created:
-                anomalies.append('modification_before_creation')
+                anomalies.append("modification_before_creation")
                 tamper_likelihood += 30
 
         # Check for suspicious software
         if metadata.created.software:
-            suspicious_editors = ['photoshop', 'gimp', 'acrobat pro']
+            suspicious_editors = ["photoshop", "gimp", "acrobat pro"]
             if any(s in metadata.created.software.lower() for s in suspicious_editors):
-                anomalies.append('editing_software_detected')
+                anomalies.append("editing_software_detected")
                 tamper_likelihood += 15
 
         # Check for missing expected metadata
         if not metadata.created.author:
-            anomalies.append('missing_author')
+            anomalies.append("missing_author")
             tamper_likelihood += 10
 
         return ForensicFlags(
             tamper_likelihood=min(tamper_likelihood, 100),
             anomalies=anomalies,
             signature_valid=None,  # Requires digital signature check
-            ocr_confidence=None  # Requires OCR analysis
+            ocr_confidence=None,  # Requires OCR analysis
         )
 
 

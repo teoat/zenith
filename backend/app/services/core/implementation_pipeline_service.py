@@ -5,14 +5,15 @@ Manages automated fixes and change management pipelines.
 """
 
 import asyncio
+import json
 import logging
-from typing import Dict, List, Any, Optional
+import subprocess
 from datetime import datetime, timedelta
 from enum import Enum
-import subprocess
-import json
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
+
 
 class PipelineStatus(Enum):
     PENDING = "pending"
@@ -21,12 +22,14 @@ class PipelineStatus(Enum):
     FAILED = "failed"
     CANCELLED = "cancelled"
 
+
 class ImplementationType(Enum):
     DATABASE_OPTIMIZATION = "database_optimization"
     AUDIT_LOGGING_FIX = "audit_logging_fix"
     TEST_COVERAGE_IMPROVEMENT = "test_coverage_improvement"
     SECURITY_PATCH = "security_patch"
     PERFORMANCE_OPTIMIZATION = "performance_optimization"
+
 
 class ImplementationPipelineService:
     """Service for managing automated implementation pipelines."""
@@ -46,30 +49,30 @@ class ImplementationPipelineService:
                         "name": "analyze_slow_queries",
                         "description": "Identify and analyze slow database queries",
                         "automated": True,
-                        "estimated_duration": 300  # seconds
+                        "estimated_duration": 300,  # seconds
                     },
                     {
                         "name": "create_indexes",
                         "description": "Create missing database indexes",
                         "automated": True,
                         "requires_approval": True,
-                        "estimated_duration": 600
+                        "estimated_duration": 600,
                     },
                     {
                         "name": "optimize_queries",
                         "description": "Rewrite and optimize slow queries",
                         "automated": False,
-                        "estimated_duration": 3600
+                        "estimated_duration": 3600,
                     },
                     {
                         "name": "validate_performance",
                         "description": "Validate performance improvements",
                         "automated": True,
-                        "estimated_duration": 300
-                    }
+                        "estimated_duration": 300,
+                    },
                 ],
                 "rollback_supported": True,
-                "risk_level": "low"
+                "risk_level": "low",
             },
             "audit_logging_fix": {
                 "name": "Audit Logging Implementation",
@@ -78,23 +81,23 @@ class ImplementationPipelineService:
                         "name": "assess_coverage",
                         "description": "Assess current audit logging coverage",
                         "automated": True,
-                        "estimated_duration": 180
+                        "estimated_duration": 180,
                     },
                     {
                         "name": "implement_request_logging",
                         "description": "Implement comprehensive request logging",
                         "automated": True,
-                        "estimated_duration": 900
+                        "estimated_duration": 900,
                     },
                     {
                         "name": "validate_compliance",
                         "description": "Validate compliance requirements are met",
                         "automated": True,
-                        "estimated_duration": 300
-                    }
+                        "estimated_duration": 300,
+                    },
                 ],
                 "rollback_supported": False,
-                "risk_level": "medium"
+                "risk_level": "medium",
             },
             "test_coverage_improvement": {
                 "name": "Test Coverage Enhancement",
@@ -103,27 +106,29 @@ class ImplementationPipelineService:
                         "name": "analyze_coverage_gaps",
                         "description": "Analyze current test coverage gaps",
                         "automated": True,
-                        "estimated_duration": 300
+                        "estimated_duration": 300,
                     },
                     {
                         "name": "generate_test_cases",
                         "description": "Generate missing test cases",
                         "automated": False,
-                        "estimated_duration": 7200
+                        "estimated_duration": 7200,
                     },
                     {
                         "name": "run_test_suite",
                         "description": "Run complete test suite validation",
                         "automated": True,
-                        "estimated_duration": 600
-                    }
+                        "estimated_duration": 600,
+                    },
                 ],
                 "rollback_supported": True,
-                "risk_level": "low"
-            }
+                "risk_level": "low",
+            },
         }
 
-    async def create_pipeline(self, implementation_type: str, parameters: Dict[str, Any] = None) -> str:
+    async def create_pipeline(
+        self, implementation_type: str, parameters: Dict[str, Any] = None
+    ) -> str:
         """Create a new implementation pipeline."""
         if implementation_type not in self.pipeline_templates:
             raise ValueError(f"Unknown implementation type: {implementation_type}")
@@ -145,7 +150,9 @@ class ImplementationPipelineService:
             "results": [],
             "rollback_supported": template["rollback_supported"],
             "risk_level": template["risk_level"],
-            "estimated_completion": self._calculate_estimated_completion(template["steps"])
+            "estimated_completion": self._calculate_estimated_completion(
+                template["steps"]
+            ),
         }
 
         # Initialize step statuses
@@ -202,7 +209,9 @@ class ImplementationPipelineService:
             self.pipeline_history.append(pipeline)
             del self.active_pipelines[pipeline_id]
 
-            logger.info(f"Pipeline {pipeline_id} completed with status: {pipeline['status']}")
+            logger.info(
+                f"Pipeline {pipeline_id} completed with status: {pipeline['status']}"
+            )
 
         except Exception as e:
             pipeline["status"] = PipelineStatus.FAILED.value
@@ -211,7 +220,9 @@ class ImplementationPipelineService:
 
         return pipeline
 
-    async def _execute_step(self, pipeline: Dict[str, Any], step: Dict[str, Any], step_index: int):
+    async def _execute_step(
+        self, pipeline: Dict[str, Any], step: Dict[str, Any], step_index: int
+    ):
         """Execute a single pipeline step."""
         step["status"] = PipelineStatus.RUNNING.value
         step["started_at"] = datetime.now().isoformat()
@@ -227,7 +238,9 @@ class ImplementationPipelineService:
                 return
 
             # Execute the step based on its name
-            result = await self._execute_step_action(pipeline["type"], step["name"], pipeline["parameters"])
+            result = await self._execute_step_action(
+                pipeline["type"], step["name"], pipeline["parameters"]
+            )
 
             step["status"] = PipelineStatus.SUCCESS.value
             step["result"] = result
@@ -240,7 +253,9 @@ class ImplementationPipelineService:
         finally:
             step["completed_at"] = datetime.now().isoformat()
 
-    async def _execute_step_action(self, pipeline_type: str, step_name: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_step_action(
+        self, pipeline_type: str, step_name: str, parameters: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Execute the actual action for a step."""
         if pipeline_type == "database_optimization":
             return await self._execute_database_step(step_name, parameters)
@@ -251,70 +266,80 @@ class ImplementationPipelineService:
         else:
             return {"message": f"Step {step_name} executed (simulated)"}
 
-    async def _execute_database_step(self, step_name: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_database_step(
+        self, step_name: str, parameters: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Execute database optimization steps."""
         if step_name == "analyze_slow_queries":
             # Simulate query analysis
             return {
                 "queries_analyzed": 15,
                 "slow_queries_found": 3,
-                "optimization_potential": "35%"
+                "optimization_potential": "35%",
             }
         elif step_name == "create_indexes":
             # Simulate index creation
             return {
                 "indexes_created": 5,
                 "estimated_improvement": "40%",
-                "rollback_available": True
+                "rollback_available": True,
             }
         elif step_name == "validate_performance":
             # Simulate performance validation
             return {
                 "performance_improved": "32%",
                 "queries_optimized": 3,
-                "validation_passed": True
+                "validation_passed": True,
             }
         else:
             return {"message": "Database step executed"}
 
-    async def _execute_audit_step(self, step_name: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_audit_step(
+        self, step_name: str, parameters: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Execute audit logging steps."""
         if step_name == "assess_coverage":
             return {
                 "current_coverage": "0%",
-                "required_operations": ["authentication", "data_modification", "admin_operations"],
-                "assessment_complete": True
+                "required_operations": [
+                    "authentication",
+                    "data_modification",
+                    "admin_operations",
+                ],
+                "assessment_complete": True,
             }
         elif step_name == "implement_request_logging":
             return {
                 "middleware_updated": True,
                 "logging_integrated": True,
-                "test_events_logged": 5
+                "test_events_logged": 5,
             }
         elif step_name == "validate_compliance":
             return {
                 "compliance_score": "98%",
                 "audit_events_logged": 150,
-                "validation_passed": True
+                "validation_passed": True,
             }
         else:
             return {"message": "Audit step executed"}
 
-    async def _execute_test_step(self, step_name: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_test_step(
+        self, step_name: str, parameters: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Execute test coverage steps."""
         if step_name == "analyze_coverage_gaps":
             return {
                 "current_coverage": "87%",
                 "target_coverage": "90%",
                 "missing_tests": 12,
-                "high_priority_gaps": ["api_endpoints", "error_handling"]
+                "high_priority_gaps": ["api_endpoints", "error_handling"],
             }
         elif step_name == "run_test_suite":
             return {
                 "tests_run": 245,
                 "tests_passed": 238,
                 "coverage_achieved": "91%",
-                "validation_passed": True
+                "validation_passed": True,
             }
         else:
             return {"message": "Test step executed"}
@@ -375,6 +400,7 @@ class ImplementationPipelineService:
         asyncio.create_task(self.execute_pipeline(pipeline_id))
 
         return True
+
 
 # Global implementation pipeline service instance
 pipeline_service = ImplementationPipelineService()

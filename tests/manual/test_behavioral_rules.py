@@ -44,7 +44,7 @@ async def test_behavioral_rules():
     else:
         print("❌ Ghost Employee Failed: FAIL")
         print(alerts)
-    
+
     # Test 3: Elder Exploitation
     print("\n[Test 3] Elder Exploitation Pattern")
     elder_case = {

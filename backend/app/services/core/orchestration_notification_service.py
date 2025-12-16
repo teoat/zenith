@@ -5,16 +5,17 @@ Manages alerts and notifications for system events.
 """
 
 import asyncio
-import logging
-from typing import Dict, List, Any, Optional
-from datetime import datetime, timedelta
-from enum import Enum
 import json
+import logging
 import smtplib
-from email.mime.text import MIMEText
+from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from enum import Enum
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
+
 
 class NotificationChannel(Enum):
     EMAIL = "email"
@@ -22,11 +23,13 @@ class NotificationChannel(Enum):
     WEBHOOK = "webhook"
     DASHBOARD = "dashboard"
 
+
 class NotificationPriority(Enum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
+
 
 class OrchestrationNotificationService:
     """Service for managing system orchestration notifications and alerts."""
@@ -44,22 +47,19 @@ class OrchestrationNotificationService:
                 "smtp_server": "smtp.gmail.com",
                 "smtp_port": 587,
                 "sender_email": "system@frauddetection.com",
-                "recipients": ["admin@frauddetection.com", "devops@frauddetection.com"]
+                "recipients": ["admin@frauddetection.com", "devops@frauddetection.com"],
             },
             "slack": {
                 "enabled": False,
                 "webhook_url": "https://hooks.slack.com/services/...",
-                "channel": "#system-alerts"
+                "channel": "#system-alerts",
             },
             "webhook": {
                 "enabled": False,
                 "url": "https://api.pagerduty.com/webhooks",
-                "headers": {"Authorization": "Token token=..."}
+                "headers": {"Authorization": "Token token=..."},
             },
-            "dashboard": {
-                "enabled": True,
-                "persistent_alerts": True
-            }
+            "dashboard": {"enabled": True, "persistent_alerts": True},
         }
 
     def _initialize_alert_rules(self) -> Dict[str, Dict[str, Any]]:
@@ -70,34 +70,34 @@ class OrchestrationNotificationService:
                 "threshold": 0.05,  # 5% drop
                 "channels": ["email", "dashboard"],
                 "priority": NotificationPriority.HIGH.value,
-                "cooldown_minutes": 60
+                "cooldown_minutes": 60,
             },
             "critical_issue": {
                 "enabled": True,
                 "keywords": ["critical", "security", "data_integrity"],
                 "channels": ["email", "slack"],
                 "priority": NotificationPriority.CRITICAL.value,
-                "immediate": True
+                "immediate": True,
             },
             "system_degradation": {
                 "enabled": True,
                 "threshold": 0.8,  # Below 80% health
                 "channels": ["email", "dashboard"],
                 "priority": NotificationPriority.MEDIUM.value,
-                "cooldown_minutes": 30
+                "cooldown_minutes": 30,
             },
             "pipeline_failure": {
                 "enabled": True,
                 "channels": ["email", "dashboard"],
                 "priority": NotificationPriority.HIGH.value,
-                "immediate": True
+                "immediate": True,
             },
             "sync_failure": {
                 "enabled": True,
                 "channels": ["email"],
                 "priority": NotificationPriority.MEDIUM.value,
-                "cooldown_minutes": 15
-            }
+                "cooldown_minutes": 15,
+            },
         }
 
     async def check_and_send_alerts(self, system_data: Dict[str, Any]):
@@ -122,7 +122,9 @@ class OrchestrationNotificationService:
         for alert in alerts_to_send:
             await self.send_notification(alert)
 
-    def _check_score_drop_alert(self, system_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def _check_score_drop_alert(
+        self, system_data: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """Check for score drop alerts."""
         rule = self.alert_rules["score_drop"]
         if not rule["enabled"]:
@@ -142,15 +144,17 @@ class OrchestrationNotificationService:
                 "details": {
                     "current_score": overall_score,
                     "threshold": threshold,
-                    "affected_dimensions": self._get_affected_dimensions(system_data)
+                    "affected_dimensions": self._get_affected_dimensions(system_data),
                 },
                 "channels": rule["channels"],
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
 
         return None
 
-    def _check_critical_issue_alerts(self, system_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _check_critical_issue_alerts(
+        self, system_data: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Check for critical issue alerts."""
         rule = self.alert_rules["critical_issue"]
         if not rule["enabled"]:
@@ -167,23 +171,27 @@ class OrchestrationNotificationService:
             alerts_list = dimension_data.get("alerts", [])
             for alert in alerts_list:
                 if any(keyword.lower() in alert.lower() for keyword in keywords):
-                    alerts.append({
-                        "type": "critical_issue",
-                        "priority": rule["priority"],
-                        "title": "Critical System Issue Alert",
-                        "message": f"Critical issue detected in {dimension_name}: {alert}",
-                        "details": {
-                            "dimension": dimension_name,
-                            "issue": alert,
-                            "severity": "critical"
-                        },
-                        "channels": rule["channels"],
-                        "timestamp": datetime.now().isoformat()
-                    })
+                    alerts.append(
+                        {
+                            "type": "critical_issue",
+                            "priority": rule["priority"],
+                            "title": "Critical System Issue Alert",
+                            "message": f"Critical issue detected in {dimension_name}: {alert}",
+                            "details": {
+                                "dimension": dimension_name,
+                                "issue": alert,
+                                "severity": "critical",
+                            },
+                            "channels": rule["channels"],
+                            "timestamp": datetime.now().isoformat(),
+                        }
+                    )
 
         return alerts
 
-    def _check_system_degradation_alert(self, system_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def _check_system_degradation_alert(
+        self, system_data: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """Check for system degradation alerts."""
         rule = self.alert_rules["system_degradation"]
         if not rule["enabled"]:
@@ -201,10 +209,14 @@ class OrchestrationNotificationService:
                 "details": {
                     "current_score": overall_score,
                     "threshold": threshold,
-                    "recommendations": ["Review recent changes", "Check system resources", "Run diagnostics"]
+                    "recommendations": [
+                        "Review recent changes",
+                        "Check system resources",
+                        "Run diagnostics",
+                    ],
                 },
                 "channels": rule["channels"],
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
 
         return None
@@ -259,9 +271,9 @@ class OrchestrationNotificationService:
 
         try:
             msg = MIMEMultipart()
-            msg['From'] = channel_config["sender_email"]
-            msg['To'] = ", ".join(channel_config["recipients"])
-            msg['Subject'] = f"[{alert['priority'].upper()}] {alert['title']}"
+            msg["From"] = channel_config["sender_email"]
+            msg["To"] = ", ".join(channel_config["recipients"])
+            msg["Subject"] = f"[{alert['priority'].upper()}] {alert['title']}"
 
             body = f"""
 System Alert Notification
@@ -279,7 +291,7 @@ Details:
 This is an automated notification from the System Orchestration Framework.
             """
 
-            msg.attach(MIMEText(body, 'plain'))
+            msg.attach(MIMEText(body, "plain"))
 
             # In a real implementation, you would configure SMTP properly
             # server = smtplib.SMTP(channel_config["smtp_server"], channel_config["smtp_port"])
@@ -321,7 +333,9 @@ This is an automated notification from the System Orchestration Framework.
         """Get recent alerts."""
         return self.notification_history[-limit:]
 
-    def configure_channel(self, channel_name: str, config: Dict[str, Any]) -> Dict[str, Any]:
+    def configure_channel(
+        self, channel_name: str, config: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Configure a notification channel."""
         if channel_name not in self.notification_channels:
             raise ValueError(f"Unknown channel: {channel_name}")
@@ -329,13 +343,16 @@ This is an automated notification from the System Orchestration Framework.
         self.notification_channels[channel_name].update(config)
         return self.notification_channels[channel_name]
 
-    def configure_alert_rule(self, rule_name: str, config: Dict[str, Any]) -> Dict[str, Any]:
+    def configure_alert_rule(
+        self, rule_name: str, config: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Configure an alert rule."""
         if rule_name not in self.alert_rules:
             raise ValueError(f"Unknown alert rule: {rule_name}")
 
         self.alert_rules[rule_name].update(config)
         return self.alert_rules[rule_name]
+
 
 # Global orchestration notification service instance
 orchestration_notification_service = OrchestrationNotificationService()

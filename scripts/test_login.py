@@ -3,14 +3,16 @@
 Test login endpoint directly
 """
 
-import sys
 import os
+import sys
 
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fastapi.testclient import TestClient
+
 from backend.main import app
+
 
 def test_login_direct():
     """Test login using TestClient"""
@@ -19,8 +21,7 @@ def test_login_direct():
 
         # Test login
         response = client.post(
-            "/api/v1/auth/login",
-            json={"username": "admin", "password": "admin123"}
+            "/api/v1/auth/login", json={"username": "admin", "password": "admin123"}
         )
 
         print(f"Status Code: {response.status_code}")
@@ -37,7 +38,9 @@ def test_login_direct():
     except Exception as e:
         print(f"Error: {e}")
         import traceback
+
         traceback.print_exc()
+
 
 if __name__ == "__main__":
     test_login_direct()

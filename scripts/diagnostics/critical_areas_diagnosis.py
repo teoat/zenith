@@ -7,20 +7,22 @@ Comprehensive analysis with scoring for the most critical diagnostic areas
 import asyncio
 import json
 import logging
-import time
 import random
-from typing import Dict, List, Any, Optional, Tuple
+import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
+
 
 class Severity(Enum):
     CRITICAL = "CRITICAL"
     HIGH = "HIGH"
     MEDIUM = "MEDIUM"
     LOW = "LOW"
+
 
 class InvestigationPhase(Enum):
     INITIAL_ASSESSMENT = "INITIAL_ASSESSMENT"
@@ -29,9 +31,11 @@ class InvestigationPhase(Enum):
     REMEDIATION_PLANNING = "REMEDIATION_PLANNING"
     FINAL_SCORING = "FINAL_SCORING"
 
+
 @dataclass
 class DiagnosticScore:
     """Comprehensive diagnostic scoring"""
+
     overall_score: float  # 0-100
     category_score: float  # 0-100
     severity_score: float  # 0-100
@@ -45,9 +49,11 @@ class DiagnosticScore:
     critical_issues: int
     remediation_effort: str
 
+
 @dataclass
 class InvestigationResult:
     """Comprehensive investigation result"""
+
     area_name: str
     phase: InvestigationPhase
     timestamp: datetime
@@ -56,6 +62,7 @@ class InvestigationResult:
     recommendations: List[str]
     evidence: Dict[str, Any]
     next_steps: List[str]
+
 
 class CriticalAreasInvestigator:
     """Comprehensive investigator for critical diagnostic areas"""
@@ -67,7 +74,7 @@ class CriticalAreasInvestigator:
             "network_security",
             "incident_response",
             "data_pipeline_health",
-            "third_party_risk"
+            "third_party_risk",
         ]
 
     async def conduct_complete_investigation(self) -> Dict[str, Any]:
@@ -80,7 +87,7 @@ class CriticalAreasInvestigator:
             "investigation_started": datetime.now().isoformat(),
             "critical_areas_investigated": len(self.critical_areas),
             "phases_completed": 5,
-            "areas": {}
+            "areas": {},
         }
 
         for area in self.critical_areas:
@@ -98,12 +105,16 @@ class CriticalAreasInvestigator:
                 "phases_executed": len(area_results),
                 "final_scores": final_scores,
                 "critical_findings": sum(len(r.findings) for r in area_results),
-                "recommendations_count": sum(len(r.recommendations) for r in area_results),
+                "recommendations_count": sum(
+                    len(r.recommendations) for r in area_results
+                ),
                 "risk_assessment": final_scores.risk_level,
-                "priority_level": final_scores.priority
+                "priority_level": final_scores.priority,
             }
 
-            print(f"   ✅ Investigation Complete - Final Score: {final_scores.overall_score:.1f}% ({final_scores.grade})")
+            print(
+                f"   ✅ Investigation Complete - Final Score: {final_scores.overall_score:.1f}% ({final_scores.grade})"
+            )
             print(f"   🚨 Risk Level: {final_scores.risk_level}")
             print(f"   🎯 Priority: {final_scores.priority}")
 
@@ -159,34 +170,50 @@ class CriticalAreasInvestigator:
             # Simulate detection
             detected = random.random() > 0.3  # 70% detection rate
             if detected:
-                findings.append({
-                    "issue": issue["title"],
-                    "severity": issue["severity"],
-                    "description": issue["description"],
-                    "initial_confidence": random.uniform(0.7, 0.95),
-                    "evidence_type": "automated_scan"
-                })
+                findings.append(
+                    {
+                        "issue": issue["title"],
+                        "severity": issue["severity"],
+                        "description": issue["description"],
+                        "initial_confidence": random.uniform(0.7, 0.95),
+                        "evidence_type": "automated_scan",
+                    }
+                )
 
         # Initial recommendations
-        recommendations.extend([
-            f"Conduct detailed analysis of {area_name.replace('_', ' ')} implementation",
-            "Review current policies and procedures",
-            "Assess compliance with industry standards",
-            "Identify immediate remediation opportunities"
-        ])
+        recommendations.extend(
+            [
+                f"Conduct detailed analysis of {area_name.replace('_', ' ')} implementation",
+                "Review current policies and procedures",
+                "Assess compliance with industry standards",
+                "Identify immediate remediation opportunities",
+            ]
+        )
 
         return InvestigationResult(
             area_name=area_name,
             phase=InvestigationPhase.INITIAL_ASSESSMENT,
             timestamp=datetime.now(),
-            scores=self.calculate_phase_score(findings, InvestigationPhase.INITIAL_ASSESSMENT),
+            scores=self.calculate_phase_score(
+                findings, InvestigationPhase.INITIAL_ASSESSMENT
+            ),
             findings=findings,
             recommendations=recommendations,
-            evidence={"scan_type": "automated", "coverage": "70%", "false_positives": "estimated_15%"},
-            next_steps=["Proceed to deep analysis", "Gather additional evidence", "Interview stakeholders"]
+            evidence={
+                "scan_type": "automated",
+                "coverage": "70%",
+                "false_positives": "estimated_15%",
+            },
+            next_steps=[
+                "Proceed to deep analysis",
+                "Gather additional evidence",
+                "Interview stakeholders",
+            ],
         )
 
-    async def deep_analysis(self, area_name: str, phase1_result: InvestigationResult) -> InvestigationResult:
+    async def deep_analysis(
+        self, area_name: str, phase1_result: InvestigationResult
+    ) -> InvestigationResult:
         """Phase 2: Deep analysis building on initial assessment"""
 
         findings = []
@@ -198,13 +225,17 @@ class CriticalAreasInvestigator:
             # Simulate deep analysis
             deep_analysis = await self.perform_deep_analysis(finding, area_name)
 
-            findings.append({
-                **finding,
-                "deep_analysis": deep_analysis,
-                "root_cause_identified": deep_analysis["root_cause"] is not None,
-                "impact_assessment": deep_analysis["impact"],
-                "compliance_violation": deep_analysis.get("compliance_issue", False)
-            })
+            findings.append(
+                {
+                    **finding,
+                    "deep_analysis": deep_analysis,
+                    "root_cause_identified": deep_analysis["root_cause"] is not None,
+                    "impact_assessment": deep_analysis["impact"],
+                    "compliance_violation": deep_analysis.get(
+                        "compliance_issue", False
+                    ),
+                }
+            )
 
         # Evidence collection
         evidence = {
@@ -212,29 +243,39 @@ class CriticalAreasInvestigator:
             "documents_reviewed": random.randint(10, 25),
             "system_logs_analyzed": random.randint(50, 200),
             "compliance_frameworks_checked": ["NIST", "ISO27001", "GDPR", "SOX"],
-            "testing_coverage": "85%"
+            "testing_coverage": "85%",
         }
 
-        recommendations.extend([
-            "Implement automated monitoring and alerting",
-            "Establish governance and oversight committees",
-            "Develop comprehensive training programs",
-            "Create detailed remediation roadmaps",
-            "Set up continuous compliance monitoring"
-        ])
+        recommendations.extend(
+            [
+                "Implement automated monitoring and alerting",
+                "Establish governance and oversight committees",
+                "Develop comprehensive training programs",
+                "Create detailed remediation roadmaps",
+                "Set up continuous compliance monitoring",
+            ]
+        )
 
         return InvestigationResult(
             area_name=area_name,
             phase=InvestigationPhase.DEEP_ANALYSIS,
             timestamp=datetime.now(),
-            scores=self.calculate_phase_score(findings, InvestigationPhase.DEEP_ANALYSIS),
+            scores=self.calculate_phase_score(
+                findings, InvestigationPhase.DEEP_ANALYSIS
+            ),
             findings=findings,
             recommendations=recommendations,
             evidence=evidence,
-            next_steps=["Develop testing scenarios", "Validate findings", "Begin remediation planning"]
+            next_steps=[
+                "Develop testing scenarios",
+                "Validate findings",
+                "Begin remediation planning",
+            ],
         )
 
-    async def testing_validation(self, area_name: str, phase2_result: InvestigationResult) -> InvestigationResult:
+    async def testing_validation(
+        self, area_name: str, phase2_result: InvestigationResult
+    ) -> InvestigationResult:
         """Phase 3: Testing and validation of findings"""
 
         findings = []
@@ -245,24 +286,32 @@ class CriticalAreasInvestigator:
             # Simulate testing validation
             validation_result = await self.validate_finding(finding, area_name)
 
-            findings.append({
-                **finding,
-                "validation_result": validation_result,
-                "confirmed": validation_result["confirmed"],
-                "severity_confirmed": validation_result["severity"] == finding["severity"],
-                "test_coverage": validation_result["test_coverage"]
-            })
+            findings.append(
+                {
+                    **finding,
+                    "validation_result": validation_result,
+                    "confirmed": validation_result["confirmed"],
+                    "severity_confirmed": validation_result["severity"]
+                    == finding["severity"],
+                    "test_coverage": validation_result["test_coverage"],
+                }
+            )
 
         # Comprehensive testing evidence
         evidence = {
             "tests_executed": random.randint(20, 50),
-            "test_scenarios": ["positive_testing", "negative_testing", "edge_cases", "stress_testing"],
+            "test_scenarios": [
+                "positive_testing",
+                "negative_testing",
+                "edge_cases",
+                "stress_testing",
+            ],
             "automation_coverage": "75%",
             "manual_validation": "25%",
             "false_positives_identified": random.randint(1, 3),
             "test_environments": ["development", "staging", "production_simulation"],
             "performance_impact": "minimal",
-            "system_stability": "maintained"
+            "system_stability": "maintained",
         }
 
         recommendations = [
@@ -270,24 +319,34 @@ class CriticalAreasInvestigator:
             "Establish test environment management",
             "Create test data management strategies",
             "Develop performance testing frameworks",
-            "Set up automated regression testing"
+            "Set up automated regression testing",
         ]
 
         return InvestigationResult(
             area_name=area_name,
             phase=InvestigationPhase.TESTING_VALIDATION,
             timestamp=datetime.now(),
-            scores=self.calculate_phase_score(findings, InvestigationPhase.TESTING_VALIDATION),
+            scores=self.calculate_phase_score(
+                findings, InvestigationPhase.TESTING_VALIDATION
+            ),
             findings=findings,
             recommendations=recommendations,
             evidence=evidence,
-            next_steps=["Finalize remediation plans", "Calculate implementation costs", "Develop timelines"]
+            next_steps=[
+                "Finalize remediation plans",
+                "Calculate implementation costs",
+                "Develop timelines",
+            ],
         )
 
-    async def remediation_planning(self, area_name: str, phase3_result: InvestigationResult) -> InvestigationResult:
+    async def remediation_planning(
+        self, area_name: str, phase3_result: InvestigationResult
+    ) -> InvestigationResult:
         """Phase 4: Remediation planning based on validated findings"""
 
-        confirmed_findings = [f for f in phase3_result.findings if f["validation_result"]["confirmed"]]
+        confirmed_findings = [
+            f for f in phase3_result.findings if f["validation_result"]["confirmed"]
+        ]
 
         recommendations = []
         remediation_plan = {
@@ -297,7 +356,7 @@ class CriticalAreasInvestigator:
             "estimated_costs": {},
             "resource_requirements": {},
             "timeline": {},
-            "success_metrics": []
+            "success_metrics": [],
         }
 
         # Plan remediation for each confirmed finding
@@ -317,7 +376,7 @@ class CriticalAreasInvestigator:
             "immediate": random.randint(50000, 150000),
             "short_term": random.randint(200000, 500000),
             "long_term": random.randint(500000, 1000000),
-            "total": random.randint(750000, 1650000)
+            "total": random.randint(750000, 1650000),
         }
 
         # Resource requirements
@@ -326,21 +385,29 @@ class CriticalAreasInvestigator:
             "fte_security_experts": random.randint(1, 3),
             "fte_compliance_officers": random.randint(1, 2),
             "external_consultants": random.randint(0, 2),
-            "estimated_duration_months": random.randint(6, 18)
+            "estimated_duration_months": random.randint(6, 18),
         }
 
         return InvestigationResult(
             area_name=area_name,
             phase=InvestigationPhase.REMEDIATION_PLANNING,
             timestamp=datetime.now(),
-            scores=self.calculate_phase_score(confirmed_findings, InvestigationPhase.REMEDIATION_PLANNING),
+            scores=self.calculate_phase_score(
+                confirmed_findings, InvestigationPhase.REMEDIATION_PLANNING
+            ),
             findings=confirmed_findings,
             recommendations=recommendations,
             evidence={"remediation_plan": remediation_plan},
-            next_steps=["Execute immediate actions", "Begin short-term fixes", "Plan long-term improvements"]
+            next_steps=[
+                "Execute immediate actions",
+                "Begin short-term fixes",
+                "Plan long-term improvements",
+            ],
         )
 
-    async def final_scoring(self, area_name: str, all_results: List[InvestigationResult]) -> InvestigationResult:
+    async def final_scoring(
+        self, area_name: str, all_results: List[InvestigationResult]
+    ) -> InvestigationResult:
         """Phase 5: Final comprehensive scoring"""
 
         # Aggregate all findings across phases
@@ -358,19 +425,23 @@ class CriticalAreasInvestigator:
             "Develop training and awareness programs for staff",
             "Create governance framework for ongoing compliance",
             "Set up automated reporting and alerting systems",
-            "Conduct regular independent audits and assessments"
+            "Conduct regular independent audits and assessments",
         ]
 
         # Evidence summary
         evidence = {
             "phases_completed": len(all_results),
             "total_findings": len(all_findings),
-            "confirmed_issues": len([f for f in all_findings if f.get("confirmed", False)]),
-            "critical_findings": len([f for f in all_findings if f.get("severity") == "CRITICAL"]),
+            "confirmed_issues": len(
+                [f for f in all_findings if f.get("confirmed", False)]
+            ),
+            "critical_findings": len(
+                [f for f in all_findings if f.get("severity") == "CRITICAL"]
+            ),
             "remediation_planned": True,
             "cost_benefit_analysis": "completed",
             "implementation_roadmap": "developed",
-            "success_metrics": "defined"
+            "success_metrics": "defined",
         }
 
         return InvestigationResult(
@@ -381,10 +452,16 @@ class CriticalAreasInvestigator:
             findings=all_findings,
             recommendations=recommendations,
             evidence=evidence,
-            next_steps=["Begin remediation execution", "Monitor progress", "Conduct follow-up assessments"]
+            next_steps=[
+                "Begin remediation execution",
+                "Monitor progress",
+                "Conduct follow-up assessments",
+            ],
         )
 
-    def calculate_phase_score(self, findings: List[Dict], phase: InvestigationPhase) -> DiagnosticScore:
+    def calculate_phase_score(
+        self, findings: List[Dict], phase: InvestigationPhase
+    ) -> DiagnosticScore:
         """Calculate diagnostic score for a specific phase"""
 
         # Base scoring logic
@@ -411,12 +488,24 @@ class CriticalAreasInvestigator:
             phase_multiplier = 1.0
 
         # Calculate category scores
-        category_score = max(0, base_score - (critical_issues * 15) - (high_issues * 8) - (medium_issues * 4))
-        severity_score = min(100, 100 - (critical_issues * 20) - (high_issues * 10) - (medium_issues * 5))
-        risk_score = min(100, 100 - (critical_issues * 25) - (high_issues * 12) - (medium_issues * 6))
+        category_score = max(
+            0,
+            base_score
+            - (critical_issues * 15)
+            - (high_issues * 8)
+            - (medium_issues * 4),
+        )
+        severity_score = min(
+            100, 100 - (critical_issues * 20) - (high_issues * 10) - (medium_issues * 5)
+        )
+        risk_score = min(
+            100, 100 - (critical_issues * 25) - (high_issues * 12) - (medium_issues * 6)
+        )
 
         # Overall score calculation
-        overall_score = (category_score * 0.3 + severity_score * 0.3 + risk_score * 0.4) * phase_multiplier
+        overall_score = (
+            category_score * 0.3 + severity_score * 0.3 + risk_score * 0.4
+        ) * phase_multiplier
         overall_score = max(0, min(100, overall_score))
 
         # Determine grade
@@ -462,17 +551,23 @@ class CriticalAreasInvestigator:
             category_score=round(category_score, 1),
             severity_score=round(severity_score, 1),
             risk_score=round(risk_score, 1),
-            compliance_score=round(severity_score * 0.9, 1),  # Slightly lower for compliance
+            compliance_score=round(
+                severity_score * 0.9, 1
+            ),  # Slightly lower for compliance
             maturity_score=round(overall_score * 0.8, 1),  # Maturity typically lags
             grade=grade,
             risk_level=risk_level,
             priority=priority,
             findings_count=findings_count,
             critical_issues=critical_issues,
-            remediation_effort=self.calculate_remediation_effort(critical_issues, high_issues, medium_issues)
+            remediation_effort=self.calculate_remediation_effort(
+                critical_issues, high_issues, medium_issues
+            ),
         )
 
-    def calculate_final_scores(self, results: List[InvestigationResult]) -> DiagnosticScore:
+    def calculate_final_scores(
+        self, results: List[InvestigationResult]
+    ) -> DiagnosticScore:
         """Calculate final comprehensive scores across all phases"""
 
         # Aggregate all findings
@@ -486,7 +581,7 @@ class CriticalAreasInvestigator:
             InvestigationPhase.DEEP_ANALYSIS: 0.2,
             InvestigationPhase.TESTING_VALIDATION: 0.3,
             InvestigationPhase.REMEDIATION_PLANNING: 0.2,
-            InvestigationPhase.FINAL_SCORING: 0.2
+            InvestigationPhase.FINAL_SCORING: 0.2,
         }
 
         weighted_scores = []
@@ -500,16 +595,20 @@ class CriticalAreasInvestigator:
         final_diagnostic = DiagnosticScore(
             overall_score=round(final_score, 1),
             category_score=round(final_score * 0.95, 1),  # Slightly adjusted
-            severity_score=round(final_score * 0.9, 1),   # More conservative
-            risk_score=round(final_score * 0.85, 1),      # Conservative risk assessment
+            severity_score=round(final_score * 0.9, 1),  # More conservative
+            risk_score=round(final_score * 0.85, 1),  # Conservative risk assessment
             compliance_score=round(final_score * 0.88, 1),
             maturity_score=round(final_score * 0.75, 1),  # Maturity typically lower
             grade=self.calculate_grade(final_score),
             risk_level=self.calculate_risk_level(final_score, all_findings),
             priority=self.calculate_priority(final_score, all_findings),
             findings_count=len(all_findings),
-            critical_issues=len([f for f in all_findings if f.get("severity") == "CRITICAL"]),
-            remediation_effort=self.calculate_remediation_effort_from_findings(all_findings)
+            critical_issues=len(
+                [f for f in all_findings if f.get("severity") == "CRITICAL"]
+            ),
+            remediation_effort=self.calculate_remediation_effort_from_findings(
+                all_findings
+            ),
         )
 
         return final_diagnostic
@@ -555,12 +654,14 @@ class CriticalAreasInvestigator:
             "CRITICAL": "IMMEDIATE",
             "HIGH": "URGENT",
             "MEDIUM": "HIGH",
-            "LOW": "MEDIUM"
+            "LOW": "MEDIUM",
         }
 
         return priority_map.get(risk_level, "MEDIUM")
 
-    def calculate_remediation_effort(self, critical: int, high: int, medium: int) -> str:
+    def calculate_remediation_effort(
+        self, critical: int, high: int, medium: int
+    ) -> str:
         """Calculate remediation effort"""
         total_weighted = critical * 4 + high * 2 + medium * 1
 
@@ -586,49 +687,131 @@ class CriticalAreasInvestigator:
         assessments = {
             "ai_ml_governance": {
                 "issues": [
-                    {"title": "Model Bias Detection", "severity": "CRITICAL", "description": "Algorithmic bias in fraud detection models"},
-                    {"title": "Model Explainability", "severity": "HIGH", "description": "Lack of model transparency"},
-                    {"title": "Model Lifecycle Management", "severity": "HIGH", "description": "Poor model versioning and retirement"},
-                    {"title": "Model Performance Monitoring", "severity": "MEDIUM", "description": "Insufficient drift detection"}
+                    {
+                        "title": "Model Bias Detection",
+                        "severity": "CRITICAL",
+                        "description": "Algorithmic bias in fraud detection models",
+                    },
+                    {
+                        "title": "Model Explainability",
+                        "severity": "HIGH",
+                        "description": "Lack of model transparency",
+                    },
+                    {
+                        "title": "Model Lifecycle Management",
+                        "severity": "HIGH",
+                        "description": "Poor model versioning and retirement",
+                    },
+                    {
+                        "title": "Model Performance Monitoring",
+                        "severity": "MEDIUM",
+                        "description": "Insufficient drift detection",
+                    },
                 ]
             },
             "network_security": {
                 "issues": [
-                    {"title": "DDoS Protection", "severity": "CRITICAL", "description": "Inadequate DDoS mitigation"},
-                    {"title": "Traffic Anomaly Detection", "severity": "HIGH", "description": "Poor network traffic monitoring"},
-                    {"title": "TLS Configuration", "severity": "HIGH", "description": "Weak TLS/SSL settings"},
-                    {"title": "Network Segmentation", "severity": "MEDIUM", "description": "Insufficient network isolation"}
+                    {
+                        "title": "DDoS Protection",
+                        "severity": "CRITICAL",
+                        "description": "Inadequate DDoS mitigation",
+                    },
+                    {
+                        "title": "Traffic Anomaly Detection",
+                        "severity": "HIGH",
+                        "description": "Poor network traffic monitoring",
+                    },
+                    {
+                        "title": "TLS Configuration",
+                        "severity": "HIGH",
+                        "description": "Weak TLS/SSL settings",
+                    },
+                    {
+                        "title": "Network Segmentation",
+                        "severity": "MEDIUM",
+                        "description": "Insufficient network isolation",
+                    },
                 ]
             },
             "incident_response": {
                 "issues": [
-                    {"title": "IR Plan Completeness", "severity": "CRITICAL", "description": "Outdated or incomplete IR procedures"},
-                    {"title": "Detection Speed", "severity": "HIGH", "description": "Slow incident detection"},
-                    {"title": "Communication Protocols", "severity": "MEDIUM", "description": "Poor incident communication"},
-                    {"title": "Post-Incident Analysis", "severity": "LOW", "description": "Weak lessons learned process"}
+                    {
+                        "title": "IR Plan Completeness",
+                        "severity": "CRITICAL",
+                        "description": "Outdated or incomplete IR procedures",
+                    },
+                    {
+                        "title": "Detection Speed",
+                        "severity": "HIGH",
+                        "description": "Slow incident detection",
+                    },
+                    {
+                        "title": "Communication Protocols",
+                        "severity": "MEDIUM",
+                        "description": "Poor incident communication",
+                    },
+                    {
+                        "title": "Post-Incident Analysis",
+                        "severity": "LOW",
+                        "description": "Weak lessons learned process",
+                    },
                 ]
             },
             "data_pipeline_health": {
                 "issues": [
-                    {"title": "ETL Reliability", "severity": "HIGH", "description": "Frequent ETL job failures"},
-                    {"title": "Data Lineage Tracking", "severity": "MEDIUM", "description": "Poor data lineage visibility"},
-                    {"title": "Data Quality Monitoring", "severity": "MEDIUM", "description": "Insufficient quality validation"},
-                    {"title": "Pipeline Performance", "severity": "LOW", "description": "Slow data processing"}
+                    {
+                        "title": "ETL Reliability",
+                        "severity": "HIGH",
+                        "description": "Frequent ETL job failures",
+                    },
+                    {
+                        "title": "Data Lineage Tracking",
+                        "severity": "MEDIUM",
+                        "description": "Poor data lineage visibility",
+                    },
+                    {
+                        "title": "Data Quality Monitoring",
+                        "severity": "MEDIUM",
+                        "description": "Insufficient quality validation",
+                    },
+                    {
+                        "title": "Pipeline Performance",
+                        "severity": "LOW",
+                        "description": "Slow data processing",
+                    },
                 ]
             },
             "third_party_risk": {
                 "issues": [
-                    {"title": "Vendor Security Assessments", "severity": "HIGH", "description": "Inadequate vendor evaluation"},
-                    {"title": "Contract Compliance", "severity": "MEDIUM", "description": "Poor contract monitoring"},
-                    {"title": "Subprocessor Management", "severity": "MEDIUM", "description": "Lack of subprocessor visibility"},
-                    {"title": "Vendor Incident Response", "severity": "LOW", "description": "Weak vendor incident handling"}
+                    {
+                        "title": "Vendor Security Assessments",
+                        "severity": "HIGH",
+                        "description": "Inadequate vendor evaluation",
+                    },
+                    {
+                        "title": "Contract Compliance",
+                        "severity": "MEDIUM",
+                        "description": "Poor contract monitoring",
+                    },
+                    {
+                        "title": "Subprocessor Management",
+                        "severity": "MEDIUM",
+                        "description": "Lack of subprocessor visibility",
+                    },
+                    {
+                        "title": "Vendor Incident Response",
+                        "severity": "LOW",
+                        "description": "Weak vendor incident handling",
+                    },
                 ]
-            }
+            },
         }
 
         return assessments.get(area_name, {"issues": []})
 
-    async def perform_deep_analysis(self, finding: Dict, area_name: str) -> Dict[str, Any]:
+    async def perform_deep_analysis(
+        self, finding: Dict, area_name: str
+    ) -> Dict[str, Any]:
         """Perform deep analysis of a finding"""
         await asyncio.sleep(0.1)  # Simulate analysis time
 
@@ -638,7 +821,10 @@ class CriticalAreasInvestigator:
             "compliance_issue": random.random() > 0.6,
             "affected_systems": ["core_platform", "external_integrations"],
             "likelihood": random.uniform(0.3, 0.9),
-            "recommendations": ["Implement automated monitoring", "Enhance security controls"]
+            "recommendations": [
+                "Implement automated monitoring",
+                "Enhance security controls",
+            ],
         }
 
     async def validate_finding(self, finding: Dict, area_name: str) -> Dict[str, Any]:
@@ -650,41 +836,71 @@ class CriticalAreasInvestigator:
             "severity": finding["severity"],
             "test_coverage": "85%",
             "evidence_strength": "STRONG",
-            "false_positive_probability": random.uniform(0.05, 0.15)
+            "false_positive_probability": random.uniform(0.05, 0.15),
         }
 
-    async def create_remediation_plan(self, finding: Dict, area_name: str) -> Dict[str, Any]:
+    async def create_remediation_plan(
+        self, finding: Dict, area_name: str
+    ) -> Dict[str, Any]:
         """Create remediation plan for a finding"""
         await asyncio.sleep(0.03)  # Simulate planning time
 
         severity = finding["severity"]
         if severity == "CRITICAL":
             timeline = "immediate"
-            actions = ["Immediate security patch", "Emergency incident response", "Full system audit"]
+            actions = [
+                "Immediate security patch",
+                "Emergency incident response",
+                "Full system audit",
+            ]
         elif severity == "HIGH":
             timeline = "short_term"
-            actions = ["Security enhancement", "Monitoring improvement", "Process optimization"]
+            actions = [
+                "Security enhancement",
+                "Monitoring improvement",
+                "Process optimization",
+            ]
         else:
             timeline = "long_term"
-            actions = ["System improvement", "Process enhancement", "Monitoring upgrade"]
+            actions = [
+                "System improvement",
+                "Process enhancement",
+                "Monitoring upgrade",
+            ]
 
         return {
             "timeline": timeline,
             "actions": actions,
             "estimated_cost": random.randint(10000, 50000),
             "required_resources": ["security_team", "development_team"],
-            "success_criteria": ["Issue resolved", "Monitoring implemented", "Testing completed"]
+            "success_criteria": [
+                "Issue resolved",
+                "Monitoring implemented",
+                "Testing completed",
+            ],
         }
 
-    async def generate_master_report(self, areas_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def generate_master_report(
+        self, areas_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Generate comprehensive master report"""
 
         # Aggregate all results
-        total_findings = sum(len(result.findings) for results in self.results.values() for result in results)
-        total_critical = sum(sum(1 for f in result.findings if f.get("severity") == "CRITICAL")
-                           for results in self.results.values() for result in results)
-        total_high = sum(sum(1 for f in result.findings if f.get("severity") == "HIGH")
-                        for results in self.results.values() for result in results)
+        total_findings = sum(
+            len(result.findings)
+            for results in self.results.values()
+            for result in results
+        )
+        total_critical = sum(
+            sum(1 for f in result.findings if f.get("severity") == "CRITICAL")
+            for results in self.results.values()
+            for result in results
+        )
+        total_high = sum(
+            sum(1 for f in result.findings if f.get("severity") == "HIGH")
+            for results in self.results.values()
+            for result in results
+        )
 
         # Overall scoring - get the final scores from the last result in each area
         area_scores = []
@@ -703,15 +919,26 @@ class CriticalAreasInvestigator:
             "overall_assessment": {
                 "average_score": round(overall_average, 1),
                 "grade": self.calculate_grade(overall_average),
-                "risk_level": "CRITICAL" if critical_areas > 0 else "HIGH" if high_risk_areas > 1 else "MEDIUM",
-                "priority": "IMMEDIATE" if critical_areas > 0 else "URGENT" if high_risk_areas > 1 else "HIGH"
+                "risk_level": (
+                    "CRITICAL"
+                    if critical_areas > 0
+                    else "HIGH" if high_risk_areas > 1 else "MEDIUM"
+                ),
+                "priority": (
+                    "IMMEDIATE"
+                    if critical_areas > 0
+                    else "URGENT" if high_risk_areas > 1 else "HIGH"
+                ),
             },
             "findings_summary": {
                 "total_findings": total_findings,
                 "critical_findings": total_critical,
                 "high_findings": total_high,
-                "confirmed_findings": sum(sum(1 for f in result.findings if f.get("confirmed", False))
-                                        for results in self.results.values() for result in results)
+                "confirmed_findings": sum(
+                    sum(1 for f in result.findings if f.get("confirmed", False))
+                    for results in self.results.values()
+                    for result in results
+                ),
             },
             "area_performance": {
                 area: {
@@ -719,8 +946,9 @@ class CriticalAreasInvestigator:
                     "grade": data["final_scores"].grade,
                     "risk": data["final_scores"].risk_level,
                     "priority": data["final_scores"].priority,
-                    "critical_findings": data["critical_findings"]
-                } for area, data in areas_data.items()
+                    "critical_findings": data["critical_findings"],
+                }
+                for area, data in areas_data.items()
             },
             "recommendations": [
                 "Implement immediate remediation for all CRITICAL findings",
@@ -732,14 +960,14 @@ class CriticalAreasInvestigator:
                 "Implement automated alerting and incident response",
                 "Create detailed runbooks and procedures",
                 "Develop staff training and awareness programs",
-                "Set up performance monitoring and KPI tracking"
+                "Set up performance monitoring and KPI tracking",
             ],
             "implementation_roadmap": {
                 "phase_1_immediate": "Address all CRITICAL findings within 30 days",
                 "phase_2_short_term": "Resolve HIGH priority issues within 90 days",
                 "phase_3_medium_term": "Complete MEDIUM priority improvements within 180 days",
                 "phase_4_long_term": "Implement LOW priority enhancements within 365 days",
-                "phase_5_continuous": "Establish ongoing monitoring and improvement processes"
+                "phase_5_continuous": "Establish ongoing monitoring and improvement processes",
             },
             "success_metrics": [
                 "Zero CRITICAL security vulnerabilities",
@@ -749,11 +977,12 @@ class CriticalAreasInvestigator:
                 "Complete audit trails and monitoring coverage",
                 "Zero data breaches or security incidents",
                 "Full traceability and accountability",
-                "Continuous improvement and adaptation"
-            ]
+                "Continuous improvement and adaptation",
+            ],
         }
 
         return master_report
+
 
 async def main():
     investigator = CriticalAreasInvestigator()
@@ -767,7 +996,9 @@ async def main():
 
     assessment = master_report["overall_assessment"]
     print("\n📊 OVERALL ASSESSMENT:")
-    print(f"   Average Score: {assessment['average_score']:.1f}% ({assessment['grade']})")
+    print(
+        f"   Average Score: {assessment['average_score']:.1f}% ({assessment['grade']})"
+    )
     print(f"   Risk Level: {assessment['risk_level']}")
     print(f"   Priority: {assessment['priority']}")
 
@@ -780,8 +1011,10 @@ async def main():
 
     print("\n📈 AREA PERFORMANCE:")
     for area, performance in master_report["area_performance"].items():
-        area_name = area.replace('_', ' ').title()
-        print(f"   {area_name}: {performance['score']:.1f}% ({performance['grade']}) - {performance['risk']} - {performance['priority']}")
+        area_name = area.replace("_", " ").title()
+        print(
+            f"   {area_name}: {performance['score']:.1f}% ({performance['grade']}) - {performance['risk']} - {performance['priority']}"
+        )
 
     print("\n🛠️ TOP RECOMMENDATIONS:")
     for i, rec in enumerate(master_report["recommendations"][:5], 1):
@@ -790,18 +1023,21 @@ async def main():
     print("\n📅 IMPLEMENTATION ROADMAP:")
     roadmap = master_report["implementation_roadmap"]
     for phase, description in roadmap.items():
-        phase_name = phase.replace('_', ' ').title()
+        phase_name = phase.replace("_", " ").title()
         print(f"   {phase_name}: {description}")
 
     # Save comprehensive report
-    with open('critical_areas_diagnosis_report.json', 'w') as f:
+    with open("critical_areas_diagnosis_report.json", "w") as f:
         json.dump(master_report, f, indent=2, default=str)
 
-    print("\n💾 Complete diagnosis report saved to: critical_areas_diagnosis_report.json")
+    print(
+        "\n💾 Complete diagnosis report saved to: critical_areas_diagnosis_report.json"
+    )
     print("\n✨ CRITICAL AREAS COMPREHENSIVE DIAGNOSIS COMPLETED")
     print("   All 5 critical areas thoroughly investigated with detailed scoring")
     print("   Implementation roadmap and remediation plans established")
     print("   Continuous monitoring framework recommended")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

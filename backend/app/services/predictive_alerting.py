@@ -4,21 +4,24 @@ AI-powered anomaly detection and intelligent alert management for system monitor
 """
 
 import asyncio
-import numpy as np
-from typing import Dict, List, Any, Optional, Tuple
-from datetime import datetime, timedelta
+import json
 import logging
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from enum import Enum
-import json
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 
 logger = logging.getLogger(__name__)
+
 
 class AlertSeverity(Enum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
+
 
 class AlertType(Enum):
     PERFORMANCE_DEGRADATION = "performance_degradation"
@@ -28,9 +31,11 @@ class AlertType(Enum):
     PREDICTIVE_FAILURE = "predictive_failure"
     CAPACITY_WARNING = "capacity_warning"
 
+
 @dataclass
 class Alert:
     """Intelligent alert with predictive insights"""
+
     id: str
     type: AlertType
     severity: AlertSeverity
@@ -45,13 +50,16 @@ class Alert:
     acknowledged: bool = False
     resolved: bool = False
 
+
 @dataclass
 class MetricData:
     """Time-series metric data"""
+
     name: str
     values: List[float]
     timestamps: List[datetime]
     metadata: Dict[str, Any]
+
 
 class PredictiveAlertingEngine:
     """AI-powered predictive alerting system"""
@@ -65,12 +73,20 @@ class PredictiveAlertingEngine:
     def _initialize_thresholds(self) -> Dict[str, Dict[str, float]]:
         """Initialize adaptive anomaly detection thresholds"""
         return {
-            'cpu_usage': {'warning': 70.0, 'critical': 90.0, 'trend_threshold': 5.0},
-            'memory_usage': {'warning': 80.0, 'critical': 95.0, 'trend_threshold': 3.0},
-            'response_time': {'warning': 500.0, 'critical': 2000.0, 'trend_threshold': 100.0},
-            'error_rate': {'warning': 0.05, 'critical': 0.15, 'trend_threshold': 0.02},
-            'disk_usage': {'warning': 85.0, 'critical': 95.0, 'trend_threshold': 2.0},
-            'network_latency': {'warning': 100.0, 'critical': 500.0, 'trend_threshold': 50.0}
+            "cpu_usage": {"warning": 70.0, "critical": 90.0, "trend_threshold": 5.0},
+            "memory_usage": {"warning": 80.0, "critical": 95.0, "trend_threshold": 3.0},
+            "response_time": {
+                "warning": 500.0,
+                "critical": 2000.0,
+                "trend_threshold": 100.0,
+            },
+            "error_rate": {"warning": 0.05, "critical": 0.15, "trend_threshold": 0.02},
+            "disk_usage": {"warning": 85.0, "critical": 95.0, "trend_threshold": 2.0},
+            "network_latency": {
+                "warning": 100.0,
+                "critical": 500.0,
+                "trend_threshold": 50.0,
+            },
         }
 
     async def analyze_metrics(self, metrics: Dict[str, Any]) -> List[Alert]:
@@ -105,7 +121,9 @@ class PredictiveAlertingEngine:
 
         return alerts
 
-    async def _analyze_metric(self, metric_name: str, current_value: float) -> Optional[Alert]:
+    async def _analyze_metric(
+        self, metric_name: str, current_value: float
+    ) -> Optional[Alert]:
         """Analyze individual metric for anomalies"""
         if metric_name not in self.anomaly_thresholds:
             return None
@@ -135,51 +153,54 @@ class PredictiveAlertingEngine:
         time_to_impact = None
 
         # Performance degradation detection
-        if metric_name in ['response_time', 'cpu_usage', 'memory_usage']:
-            if z_score > 3.0 or current_value > thresholds['critical']:
+        if metric_name in ["response_time", "cpu_usage", "memory_usage"]:
+            if z_score > 3.0 or current_value > thresholds["critical"]:
                 severity = AlertSeverity.CRITICAL
                 predicted_impact = f"System performance severely degraded. {metric_name} at {current_value}"
                 recommended_actions = [
                     f"Scale {metric_name.split('_')[0]} resources immediately",
                     "Review recent code deployments",
-                    "Check for memory leaks or resource contention"
+                    "Check for memory leaks or resource contention",
                 ]
                 confidence_score = min(0.95, z_score / 5.0)
                 time_to_impact = timedelta(minutes=30)
 
-            elif z_score > 2.0 or current_value > thresholds['warning']:
+            elif z_score > 2.0 or current_value > thresholds["warning"]:
                 severity = AlertSeverity.HIGH
                 predicted_impact = f"Performance degradation detected in {metric_name}"
                 recommended_actions = [
                     f"Monitor {metric_name} closely",
                     "Prepare scaling resources",
-                    "Review application logs"
+                    "Review application logs",
                 ]
                 confidence_score = min(0.85, z_score / 4.0)
                 time_to_impact = timedelta(hours=2)
 
         # Error rate analysis
-        elif metric_name == 'error_rate':
-            if current_value > thresholds['critical']:
+        elif metric_name == "error_rate":
+            if current_value > thresholds["critical"]:
                 severity = AlertSeverity.CRITICAL
                 predicted_impact = f"Critical error rate spike: {current_value:.1%}"
                 recommended_actions = [
                     "Immediate investigation required",
                     "Check application health",
-                    "Review error logs and stack traces"
+                    "Review error logs and stack traces",
                 ]
                 confidence_score = 0.9
                 time_to_impact = timedelta(minutes=15)
 
         # Resource exhaustion prediction
-        elif metric_name in ['disk_usage', 'memory_usage']:
-            if trend > thresholds['trend_threshold'] and current_value > thresholds['warning']:
+        elif metric_name in ["disk_usage", "memory_usage"]:
+            if (
+                trend > thresholds["trend_threshold"]
+                and current_value > thresholds["warning"]
+            ):
                 severity = AlertSeverity.MEDIUM
                 predicted_impact = f"{metric_name} trending toward exhaustion"
                 recommended_actions = [
                     f"Monitor {metric_name} growth rate",
                     "Plan capacity expansion",
-                    "Implement data cleanup if applicable"
+                    "Implement data cleanup if applicable",
                 ]
                 confidence_score = min(0.8, trend_magnitude / 10.0)
                 time_to_impact = timedelta(days=7)
@@ -195,18 +216,18 @@ class PredictiveAlertingEngine:
                 title=f"{severity.value.title()} {metric_name.replace('_', ' ')} Alert",
                 description=f"Detected anomaly in {metric_name}: current value {current_value}, z-score {z_score:.2f}",
                 metrics={
-                    'metric_name': metric_name,
-                    'current_value': current_value,
-                    'z_score': z_score,
-                    'trend': trend,
-                    'mean': mean,
-                    'std': std
+                    "metric_name": metric_name,
+                    "current_value": current_value,
+                    "z_score": z_score,
+                    "trend": trend,
+                    "mean": mean,
+                    "std": std,
                 },
                 predicted_impact=predicted_impact,
                 recommended_actions=recommended_actions,
                 confidence_score=confidence_score,
                 time_to_impact=time_to_impact,
-                created_at=datetime.now()
+                created_at=datetime.now(),
             )
 
         return None
@@ -216,61 +237,69 @@ class PredictiveAlertingEngine:
         alerts = []
 
         # Memory leak detection
-        if 'memory_usage' in metrics and 'response_time' in metrics:
+        if "memory_usage" in metrics and "response_time" in metrics:
             memory_trend = self._calculate_trend(
-                self.metrics_history.get('memory_usage', MetricData('memory_usage', [], [], {})).values[-10:]
+                self.metrics_history.get(
+                    "memory_usage", MetricData("memory_usage", [], [], {})
+                ).values[-10:]
             )
             response_trend = self._calculate_trend(
-                self.metrics_history.get('response_time', MetricData('response_time', [], [], {})).values[-10:]
+                self.metrics_history.get(
+                    "response_time", MetricData("response_time", [], [], {})
+                ).values[-10:]
             )
 
             if memory_trend > 2.0 and response_trend > 50.0:
-                alerts.append(Alert(
-                    id=f"memory_leak_{int(datetime.now().timestamp())}",
-                    type=AlertType.PREDICTIVE_FAILURE,
-                    severity=AlertSeverity.HIGH,
-                    title="Potential Memory Leak Detected",
-                    description="Correlated memory growth and response time degradation",
-                    metrics={
-                        'memory_trend': memory_trend,
-                        'response_trend': response_trend,
-                        'correlation': self._calculate_correlation(
-                            self.metrics_history['memory_usage'].values[-20:],
-                            self.metrics_history['response_time'].values[-20:]
-                        )
-                    },
-                    predicted_impact="Progressive performance degradation leading to service unavailability",
-                    recommended_actions=[
-                        "Profile memory usage patterns",
-                        "Review recent code changes for memory leaks",
-                        "Implement memory monitoring and alerts",
-                        "Consider application restart if leak confirmed"
-                    ],
-                    confidence_score=0.85,
-                    time_to_impact=timedelta(hours=24),
-                    created_at=datetime.now()
-                ))
+                alerts.append(
+                    Alert(
+                        id=f"memory_leak_{int(datetime.now().timestamp())}",
+                        type=AlertType.PREDICTIVE_FAILURE,
+                        severity=AlertSeverity.HIGH,
+                        title="Potential Memory Leak Detected",
+                        description="Correlated memory growth and response time degradation",
+                        metrics={
+                            "memory_trend": memory_trend,
+                            "response_trend": response_trend,
+                            "correlation": self._calculate_correlation(
+                                self.metrics_history["memory_usage"].values[-20:],
+                                self.metrics_history["response_time"].values[-20:],
+                            ),
+                        },
+                        predicted_impact="Progressive performance degradation leading to service unavailability",
+                        recommended_actions=[
+                            "Profile memory usage patterns",
+                            "Review recent code changes for memory leaks",
+                            "Implement memory monitoring and alerts",
+                            "Consider application restart if leak confirmed",
+                        ],
+                        confidence_score=0.85,
+                        time_to_impact=timedelta(hours=24),
+                        created_at=datetime.now(),
+                    )
+                )
 
         # Capacity planning alerts
         if self._detect_capacity_trend(metrics):
-            alerts.append(Alert(
-                id=f"capacity_planning_{int(datetime.now().timestamp())}",
-                type=AlertType.CAPACITY_WARNING,
-                severity=AlertSeverity.MEDIUM,
-                title="Capacity Planning Required",
-                description="System resources trending toward limits",
-                metrics=metrics,
-                predicted_impact="Potential service degradation under peak load",
-                recommended_actions=[
-                    "Review current capacity utilization",
-                    "Plan infrastructure scaling",
-                    "Optimize resource-intensive operations",
-                    "Implement auto-scaling if applicable"
-                ],
-                confidence_score=0.75,
-                time_to_impact=timedelta(days=30),
-                created_at=datetime.now()
-            ))
+            alerts.append(
+                Alert(
+                    id=f"capacity_planning_{int(datetime.now().timestamp())}",
+                    type=AlertType.CAPACITY_WARNING,
+                    severity=AlertSeverity.MEDIUM,
+                    title="Capacity Planning Required",
+                    description="System resources trending toward limits",
+                    metrics=metrics,
+                    predicted_impact="Potential service degradation under peak load",
+                    recommended_actions=[
+                        "Review current capacity utilization",
+                        "Plan infrastructure scaling",
+                        "Optimize resource-intensive operations",
+                        "Implement auto-scaling if applicable",
+                    ],
+                    confidence_score=0.75,
+                    time_to_impact=timedelta(days=30),
+                    created_at=datetime.now(),
+                )
+            )
 
         return alerts
 
@@ -283,27 +312,31 @@ class PredictiveAlertingEngine:
         slope, _ = np.polyfit(x, values, 1)
         return slope
 
-    def _calculate_correlation(self, series1: List[float], series2: List[float]) -> float:
+    def _calculate_correlation(
+        self, series1: List[float], series2: List[float]
+    ) -> float:
         """Calculate Pearson correlation coefficient"""
         if len(series1) != len(series2) or len(series1) < 2:
             return 0.0
 
         return np.corrcoef(series1, series2)[0, 1]
 
-    def _classify_alert_type(self, metric_name: str, severity: AlertSeverity) -> AlertType:
+    def _classify_alert_type(
+        self, metric_name: str, severity: AlertSeverity
+    ) -> AlertType:
         """Classify alert type based on metric and severity"""
-        if metric_name in ['cpu_usage', 'memory_usage', 'response_time']:
+        if metric_name in ["cpu_usage", "memory_usage", "response_time"]:
             return AlertType.PERFORMANCE_DEGRADATION
-        elif metric_name == 'error_rate':
+        elif metric_name == "error_rate":
             return AlertType.ERROR_SPIKE
-        elif metric_name in ['disk_usage']:
+        elif metric_name in ["disk_usage"]:
             return AlertType.RESOURCE_EXHAUSTION
         else:
             return AlertType.SECURITY_ANOMALY
 
     def _detect_capacity_trend(self, metrics: Dict[str, Any]) -> bool:
         """Detect if system is trending toward capacity limits"""
-        capacity_indicators = ['cpu_usage', 'memory_usage', 'disk_usage']
+        capacity_indicators = ["cpu_usage", "memory_usage", "disk_usage"]
         trending_toward_limit = 0
 
         for indicator in capacity_indicators:
@@ -325,10 +358,7 @@ class PredictiveAlertingEngine:
             if isinstance(value, (int, float)):
                 if metric_name not in self.metrics_history:
                     self.metrics_history[metric_name] = MetricData(
-                        name=metric_name,
-                        values=[],
-                        timestamps=[],
-                        metadata={}
+                        name=metric_name, values=[], timestamps=[], metadata={}
                     )
 
                 history = self.metrics_history[metric_name]
@@ -342,10 +372,7 @@ class PredictiveAlertingEngine:
 
     def get_active_alerts(self) -> List[Alert]:
         """Get all active (unresolved) alerts"""
-        return [
-            alert for alert in self.alerts.values()
-            if not alert.resolved
-        ]
+        return [alert for alert in self.alerts.values() if not alert.resolved]
 
     def acknowledge_alert(self, alert_id: str) -> bool:
         """Acknowledge an alert"""
@@ -367,13 +394,20 @@ class PredictiveAlertingEngine:
         severity_counts = {}
 
         for alert in active_alerts:
-            severity_counts[alert.severity.value] = severity_counts.get(alert.severity.value, 0) + 1
+            severity_counts[alert.severity.value] = (
+                severity_counts.get(alert.severity.value, 0) + 1
+            )
 
         return {
-            'total_active': len(active_alerts),
-            'by_severity': severity_counts,
-            'most_critical': max(active_alerts, key=lambda x: x.severity.value) if active_alerts else None
+            "total_active": len(active_alerts),
+            "by_severity": severity_counts,
+            "most_critical": (
+                max(active_alerts, key=lambda x: x.severity.value)
+                if active_alerts
+                else None
+            ),
         }
+
 
 # Global instance
 predictive_alerting = PredictiveAlertingEngine()

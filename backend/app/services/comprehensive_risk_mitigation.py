@@ -5,17 +5,18 @@ Advanced risk management with predictive mitigation and automated response
 """
 
 import asyncio
-import time
 import json
 import logging
-from typing import Dict, List, Any, Optional, Tuple, Callable
-from dataclasses import dataclass, field
-from enum import Enum
-from datetime import datetime, timedelta
 import statistics
+import time
 from collections import defaultdict
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
+from enum import Enum
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
+
 
 class RiskCategory(Enum):
     BUSINESS = "business"
@@ -25,11 +26,13 @@ class RiskCategory(Enum):
     SECURITY = "security"
     FINANCIAL = "financial"
 
+
 class RiskSeverity(Enum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
+
 
 class MitigationStatus(Enum):
     IDENTIFIED = "identified"
@@ -39,9 +42,11 @@ class MitigationStatus(Enum):
     RESOLVED = "resolved"
     FAILED = "failed"
 
+
 @dataclass
 class Risk:
     """Comprehensive risk representation"""
+
     risk_id: str
     title: str
     description: str
@@ -57,9 +62,11 @@ class Risk:
     indicators: List[str]
     status: MitigationStatus = MitigationStatus.IDENTIFIED
 
+
 @dataclass
 class MitigationAction:
     """Risk mitigation action"""
+
     action_id: str
     risk_id: str
     title: str
@@ -75,15 +82,18 @@ class MitigationAction:
     effectiveness_score: Optional[float] = None
     dependencies: List[str] = field(default_factory=list)
 
+
 @dataclass
 class RiskMetrics:
     """Risk management performance metrics"""
+
     total_risks_identified: int
     risks_mitigated: int
     average_mitigation_time: float
     risk_reduction_percentage: float
     prevention_effectiveness: float
     incident_response_time: float
+
 
 class ComprehensiveRiskMitigationFramework:
     """Advanced risk mitigation with predictive capabilities"""
@@ -102,56 +112,96 @@ class ComprehensiveRiskMitigationFramework:
     def _initialize_risk_templates(self):
         """Initialize common risk templates for rapid identification"""
         self.risk_patterns = {
-            'technical_debt': {
-                'category': RiskCategory.TECHNICAL,
-                'severity': RiskSeverity.HIGH,
-                'indicators': ['code_complexity > 50', 'test_coverage < 80%', 'technical_debt_ratio > 0.2'],
-                'automated_mitigations': ['schedule_refactoring_sprint', 'increase_test_coverage', 'code_review_enhancement']
+            "technical_debt": {
+                "category": RiskCategory.TECHNICAL,
+                "severity": RiskSeverity.HIGH,
+                "indicators": [
+                    "code_complexity > 50",
+                    "test_coverage < 80%",
+                    "technical_debt_ratio > 0.2",
+                ],
+                "automated_mitigations": [
+                    "schedule_refactoring_sprint",
+                    "increase_test_coverage",
+                    "code_review_enhancement",
+                ],
             },
-            'scalability_concern': {
-                'category': RiskCategory.TECHNICAL,
-                'severity': RiskSeverity.CRITICAL,
-                'indicators': ['response_time > 2s', 'error_rate > 0.05', 'resource_utilization > 90%'],
-                'automated_mitigations': ['scale_infrastructure', 'optimize_queries', 'implement_caching']
+            "scalability_concern": {
+                "category": RiskCategory.TECHNICAL,
+                "severity": RiskSeverity.CRITICAL,
+                "indicators": [
+                    "response_time > 2s",
+                    "error_rate > 0.05",
+                    "resource_utilization > 90%",
+                ],
+                "automated_mitigations": [
+                    "scale_infrastructure",
+                    "optimize_queries",
+                    "implement_caching",
+                ],
             },
-            'security_vulnerability': {
-                'category': RiskCategory.SECURITY,
-                'severity': RiskSeverity.CRITICAL,
-                'indicators': ['unpatched_dependencies', 'weak_authentication', 'data_exposure_risk'],
-                'automated_mitigations': ['apply_security_patches', 'strengthen_authentication', 'encrypt_sensitive_data']
+            "security_vulnerability": {
+                "category": RiskCategory.SECURITY,
+                "severity": RiskSeverity.CRITICAL,
+                "indicators": [
+                    "unpatched_dependencies",
+                    "weak_authentication",
+                    "data_exposure_risk",
+                ],
+                "automated_mitigations": [
+                    "apply_security_patches",
+                    "strengthen_authentication",
+                    "encrypt_sensitive_data",
+                ],
             },
-            'business_continuity': {
-                'category': RiskCategory.BUSINESS,
-                'severity': RiskSeverity.HIGH,
-                'indicators': ['single_point_failure', 'backup_not_tested', 'disaster_recovery_plan_outdated'],
-                'automated_mitigations': ['implement_redundancy', 'test_backup_systems', 'update_recovery_plans']
+            "business_continuity": {
+                "category": RiskCategory.BUSINESS,
+                "severity": RiskSeverity.HIGH,
+                "indicators": [
+                    "single_point_failure",
+                    "backup_not_tested",
+                    "disaster_recovery_plan_outdated",
+                ],
+                "automated_mitigations": [
+                    "implement_redundancy",
+                    "test_backup_systems",
+                    "update_recovery_plans",
+                ],
             },
-            'compliance_violation': {
-                'category': RiskCategory.COMPLIANCE,
-                'severity': RiskSeverity.HIGH,
-                'indicators': ['gdpr_violation', 'audit_findings', 'regulatory_changes'],
-                'automated_mitigations': ['conduct_compliance_audit', 'implement_controls', 'train_staff']
-            }
+            "compliance_violation": {
+                "category": RiskCategory.COMPLIANCE,
+                "severity": RiskSeverity.HIGH,
+                "indicators": [
+                    "gdpr_violation",
+                    "audit_findings",
+                    "regulatory_changes",
+                ],
+                "automated_mitigations": [
+                    "conduct_compliance_audit",
+                    "implement_controls",
+                    "train_staff",
+                ],
+            },
         }
 
     def _setup_predictive_monitoring(self):
         """Setup predictive risk monitoring"""
         self.monitoring_alerts = {
-            'technical_debt_monitor': self._monitor_technical_debt,
-            'performance_monitor': self._monitor_performance_risks,
-            'security_monitor': self._monitor_security_threats,
-            'compliance_monitor': self._monitor_compliance_risks,
-            'business_monitor': self._monitor_business_risks
+            "technical_debt_monitor": self._monitor_technical_debt,
+            "performance_monitor": self._monitor_performance_risks,
+            "security_monitor": self._monitor_security_threats,
+            "compliance_monitor": self._monitor_compliance_risks,
+            "business_monitor": self._monitor_business_risks,
         }
 
     def _initialize_automated_responses(self):
         """Initialize automated risk response templates"""
         self.automated_responses = {
-            'scale_infrastructure': self._auto_scale_infrastructure,
-            'apply_security_patches': self._auto_apply_security_patches,
-            'optimize_performance': self._auto_optimize_performance,
-            'backup_verification': self._auto_verify_backups,
-            'incident_response': self._auto_initiate_incident_response
+            "scale_infrastructure": self._auto_scale_infrastructure,
+            "apply_security_patches": self._auto_apply_security_patches,
+            "optimize_performance": self._auto_optimize_performance,
+            "backup_verification": self._auto_verify_backups,
+            "incident_response": self._auto_initiate_incident_response,
         }
 
     async def identify_risk(self, risk_data: Dict[str, Any]) -> Risk:
@@ -159,8 +209,8 @@ class ComprehensiveRiskMitigationFramework:
         risk_id = f"risk_{int(time.time())}_{risk_data['category']}"
 
         # Calculate risk score
-        probability = risk_data.get('probability', 0.5)
-        impact = risk_data.get('impact', 0.5)
+        probability = risk_data.get("probability", 0.5)
+        impact = risk_data.get("impact", 0.5)
         risk_score = probability * impact
 
         # Determine severity based on risk score
@@ -175,18 +225,18 @@ class ComprehensiveRiskMitigationFramework:
 
         risk = Risk(
             risk_id=risk_id,
-            title=risk_data['title'],
-            description=risk_data['description'],
-            category=RiskCategory(risk_data['category']),
+            title=risk_data["title"],
+            description=risk_data["description"],
+            category=RiskCategory(risk_data["category"]),
             severity=severity,
             probability=probability,
             impact=impact,
             risk_score=risk_score,
             identified_at=datetime.now(),
-            identified_by=risk_data.get('identified_by', 'system'),
-            affected_systems=risk_data.get('affected_systems', []),
-            triggers=risk_data.get('triggers', []),
-            indicators=risk_data.get('indicators', [])
+            identified_by=risk_data.get("identified_by", "system"),
+            affected_systems=risk_data.get("affected_systems", []),
+            triggers=risk_data.get("triggers", []),
+            indicators=risk_data.get("indicators", []),
         )
 
         self.risks[risk_id] = risk
@@ -204,7 +254,7 @@ class ComprehensiveRiskMitigationFramework:
         # Identify applicable mitigation templates
         applicable_templates = []
         for pattern_name, pattern in self.risk_patterns.items():
-            if pattern['category'] == risk.category:
+            if pattern["category"] == risk.category:
                 applicable_templates.append(pattern)
 
         # Create mitigation actions
@@ -222,7 +272,7 @@ class ComprehensiveRiskMitigationFramework:
                 estimated_cost=self._estimate_mitigation_cost(risk, template),
                 timeline_days=self._estimate_timeline(risk.severity),
                 status=MitigationStatus.PLANNED,
-                created_at=datetime.now()
+                created_at=datetime.now(),
             )
 
             self.mitigation_actions[action_id] = mitigation_action
@@ -233,7 +283,7 @@ class ComprehensiveRiskMitigationFramework:
             RiskSeverity.LOW: 1000,
             RiskSeverity.MEDIUM: 5000,
             RiskSeverity.HIGH: 15000,
-            RiskSeverity.CRITICAL: 50000
+            RiskSeverity.CRITICAL: 50000,
         }
 
         base_cost = base_costs.get(risk.severity, 5000)
@@ -254,7 +304,7 @@ class ComprehensiveRiskMitigationFramework:
             RiskSeverity.LOW: 30,
             RiskSeverity.MEDIUM: 14,
             RiskSeverity.HIGH: 7,
-            RiskSeverity.CRITICAL: 3
+            RiskSeverity.CRITICAL: 3,
         }
         return timelines.get(severity, 14)
 
@@ -271,12 +321,12 @@ class ComprehensiveRiskMitigationFramework:
             risk = self.risks[action.risk_id]
             pattern = None
             for p in self.risk_patterns.values():
-                if p['category'] == risk.category:
+                if p["category"] == risk.category:
                     pattern = p
                     break
 
-            if pattern and pattern['automated_mitigations']:
-                mitigation_type = pattern['automated_mitigations'][0]
+            if pattern and pattern["automated_mitigations"]:
+                mitigation_type = pattern["automated_mitigations"][0]
                 if mitigation_type in self.automated_responses:
                     success = await self.automated_responses[mitigation_type](action)
                 else:
@@ -330,17 +380,19 @@ class ComprehensiveRiskMitigationFramework:
 
         # Check code complexity (simplified)
         if random.random() > 0.7:  # Simulate detection
-            risks.append({
-                'title': 'High Code Complexity Detected',
-                'description': 'Code complexity exceeds recommended thresholds',
-                'category': 'technical',
-                'probability': 0.8,
-                'impact': 0.7,
-                'affected_systems': ['core_engine'],
-                'triggers': ['code_complexity > 50'],
-                'indicators': ['cyclomatic_complexity_avg > 15'],
-                'identified_by': 'automated_monitor'
-            })
+            risks.append(
+                {
+                    "title": "High Code Complexity Detected",
+                    "description": "Code complexity exceeds recommended thresholds",
+                    "category": "technical",
+                    "probability": 0.8,
+                    "impact": 0.7,
+                    "affected_systems": ["core_engine"],
+                    "triggers": ["code_complexity > 50"],
+                    "indicators": ["cyclomatic_complexity_avg > 15"],
+                    "identified_by": "automated_monitor",
+                }
+            )
 
         return risks
 
@@ -350,17 +402,19 @@ class ComprehensiveRiskMitigationFramework:
 
         # Check response times (simplified)
         if random.random() > 0.8:  # Simulate detection
-            risks.append({
-                'title': 'Performance Degradation Risk',
-                'description': 'Response times exceeding acceptable thresholds',
-                'category': 'technical',
-                'probability': 0.6,
-                'impact': 0.8,
-                'affected_systems': ['api_gateway', 'database'],
-                'triggers': ['response_time > 2s'],
-                'indicators': ['p95_response_time > 2.5'],
-                'identified_by': 'automated_monitor'
-            })
+            risks.append(
+                {
+                    "title": "Performance Degradation Risk",
+                    "description": "Response times exceeding acceptable thresholds",
+                    "category": "technical",
+                    "probability": 0.6,
+                    "impact": 0.8,
+                    "affected_systems": ["api_gateway", "database"],
+                    "triggers": ["response_time > 2s"],
+                    "indicators": ["p95_response_time > 2.5"],
+                    "identified_by": "automated_monitor",
+                }
+            )
 
         return risks
 
@@ -369,17 +423,19 @@ class ComprehensiveRiskMitigationFramework:
         risks = []
 
         if random.random() > 0.9:  # Rare but critical
-            risks.append({
-                'title': 'Potential Security Vulnerability',
-                'description': 'Unpatched security vulnerability detected',
-                'category': 'security',
-                'probability': 0.9,
-                'impact': 0.9,
-                'affected_systems': ['authentication', 'api_endpoints'],
-                'triggers': ['vulnerability_scan_failed'],
-                'indicators': ['cve_detected', 'unpatched_dependencies'],
-                'identified_by': 'security_scanner'
-            })
+            risks.append(
+                {
+                    "title": "Potential Security Vulnerability",
+                    "description": "Unpatched security vulnerability detected",
+                    "category": "security",
+                    "probability": 0.9,
+                    "impact": 0.9,
+                    "affected_systems": ["authentication", "api_endpoints"],
+                    "triggers": ["vulnerability_scan_failed"],
+                    "indicators": ["cve_detected", "unpatched_dependencies"],
+                    "identified_by": "security_scanner",
+                }
+            )
 
         return risks
 
@@ -388,17 +444,19 @@ class ComprehensiveRiskMitigationFramework:
         risks = []
 
         if random.random() > 0.85:
-            risks.append({
-                'title': 'Compliance Gap Identified',
-                'description': 'Potential GDPR compliance issue detected',
-                'category': 'compliance',
-                'probability': 0.7,
-                'impact': 0.6,
-                'affected_systems': ['data_processing', 'user_management'],
-                'triggers': ['audit_finding'],
-                'indicators': ['data_retention_violation'],
-                'identified_by': 'compliance_monitor'
-            })
+            risks.append(
+                {
+                    "title": "Compliance Gap Identified",
+                    "description": "Potential GDPR compliance issue detected",
+                    "category": "compliance",
+                    "probability": 0.7,
+                    "impact": 0.6,
+                    "affected_systems": ["data_processing", "user_management"],
+                    "triggers": ["audit_finding"],
+                    "indicators": ["data_retention_violation"],
+                    "identified_by": "compliance_monitor",
+                }
+            )
 
         return risks
 
@@ -407,17 +465,19 @@ class ComprehensiveRiskMitigationFramework:
         risks = []
 
         if random.random() > 0.8:
-            risks.append({
-                'title': 'Business Continuity Risk',
-                'description': 'Single point of failure in critical business process',
-                'category': 'business',
-                'probability': 0.5,
-                'impact': 0.8,
-                'affected_systems': ['payment_processing', 'user_authentication'],
-                'triggers': ['redundancy_check_failed'],
-                'indicators': ['single_point_failure'],
-                'identified_by': 'business_monitor'
-            })
+            risks.append(
+                {
+                    "title": "Business Continuity Risk",
+                    "description": "Single point of failure in critical business process",
+                    "category": "business",
+                    "probability": 0.5,
+                    "impact": 0.8,
+                    "affected_systems": ["payment_processing", "user_authentication"],
+                    "triggers": ["redundancy_check_failed"],
+                    "indicators": ["single_point_failure"],
+                    "identified_by": "business_monitor",
+                }
+            )
 
         return risks
 
@@ -433,7 +493,9 @@ class ComprehensiveRiskMitigationFramework:
                     action.status = MitigationStatus.RESOLVED
                     risk = self.risks[action.risk_id]
                     risk.status = MitigationStatus.RESOLVED
-                    logger.info(f"Mitigation resolved: {action.action_id} (Effectiveness: {effectiveness:.2f})")
+                    logger.info(
+                        f"Mitigation resolved: {action.action_id} (Effectiveness: {effectiveness:.2f})"
+                    )
 
     # Automated response implementations
     async def _auto_scale_infrastructure(self, action: MitigationAction) -> bool:
@@ -464,32 +526,44 @@ class ComprehensiveRiskMitigationFramework:
 
     async def _manual_mitigation_fallback(self, action: MitigationAction) -> bool:
         """Fallback to manual mitigation process"""
-        logger.info(f"Initiating manual mitigation process for action: {action.action_id}")
+        logger.info(
+            f"Initiating manual mitigation process for action: {action.action_id}"
+        )
         # In production, this would create tickets, send notifications, etc.
         return random.random() > 0.3  # 70% success rate for manual processes
 
     def get_risk_dashboard(self) -> Dict[str, Any]:
         """Get comprehensive risk dashboard"""
         total_risks = len(self.risks)
-        mitigated_risks = len([r for r in self.risks.values() if r.status == MitigationStatus.RESOLVED])
-        critical_risks = len([r for r in self.risks.values() if r.severity == RiskSeverity.CRITICAL])
+        mitigated_risks = len(
+            [r for r in self.risks.values() if r.status == MitigationStatus.RESOLVED]
+        )
+        critical_risks = len(
+            [r for r in self.risks.values() if r.severity == RiskSeverity.CRITICAL]
+        )
 
         mitigation_actions = list(self.mitigation_actions.values())
-        avg_mitigation_time = statistics.mean([
-            (a.completed_at - a.created_at).days
-            for a in mitigation_actions
-            if a.completed_at
-        ]) if mitigation_actions else 0
+        avg_mitigation_time = (
+            statistics.mean(
+                [
+                    (a.completed_at - a.created_at).days
+                    for a in mitigation_actions
+                    if a.completed_at
+                ]
+            )
+            if mitigation_actions
+            else 0
+        )
 
         return {
-            'total_risks': total_risks,
-            'mitigated_risks': mitigated_risks,
-            'mitigation_rate': mitigated_risks / total_risks if total_risks > 0 else 0,
-            'critical_risks': critical_risks,
-            'average_mitigation_time_days': avg_mitigation_time,
-            'risks_by_category': self._get_risks_by_category(),
-            'risks_by_severity': self._get_risks_by_severity(),
-            'top_risks': self._get_top_risks()
+            "total_risks": total_risks,
+            "mitigated_risks": mitigated_risks,
+            "mitigation_rate": mitigated_risks / total_risks if total_risks > 0 else 0,
+            "critical_risks": critical_risks,
+            "average_mitigation_time_days": avg_mitigation_time,
+            "risks_by_category": self._get_risks_by_category(),
+            "risks_by_severity": self._get_risks_by_severity(),
+            "top_risks": self._get_top_risks(),
         }
 
     def _get_risks_by_category(self) -> Dict[str, int]:
@@ -508,17 +582,21 @@ class ComprehensiveRiskMitigationFramework:
 
     def _get_top_risks(self) -> List[Dict[str, Any]]:
         """Get top 5 risks by score"""
-        sorted_risks = sorted(self.risks.values(), key=lambda r: r.risk_score, reverse=True)
+        sorted_risks = sorted(
+            self.risks.values(), key=lambda r: r.risk_score, reverse=True
+        )
         return [
             {
-                'risk_id': r.risk_id,
-                'title': r.title,
-                'score': r.risk_score,
-                'severity': r.severity.value,
-                'category': r.category.value,
-                'status': r.status.value
-            } for r in sorted_risks[:5]
+                "risk_id": r.risk_id,
+                "title": r.title,
+                "score": r.risk_score,
+                "severity": r.severity.value,
+                "category": r.category.value,
+                "status": r.status.value,
+            }
+            for r in sorted_risks[:5]
         ]
+
 
 # Global instance
 comprehensive_risk_mitigation = ComprehensiveRiskMitigationFramework()

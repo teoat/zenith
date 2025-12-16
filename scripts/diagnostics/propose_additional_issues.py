@@ -6,13 +6,15 @@ Comprehensive list of potential issues for fraud detection platform diagnosis
 
 import asyncio
 import json
-from typing import Dict, List, Any
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, Dict, List
+
 
 @dataclass
 class DiagnosticIssue:
     """Represents a diagnostic issue to investigate"""
+
     category: str
     severity: str
     title: str
@@ -21,6 +23,7 @@ class DiagnosticIssue:
     investigation_methods: List[str]
     estimated_effort: str
     priority: str
+
 
 class AdditionalDiagnosticsProposer:
     """Proposes additional diagnostic issues to investigate"""
@@ -33,7 +36,7 @@ class AdditionalDiagnosticsProposer:
         """Generate comprehensive list of diagnostic issues"""
 
         # Security Issues
-        self.proposed_issues['security'] = [
+        self.proposed_issues["security"] = [
             DiagnosticIssue(
                 category="Security",
                 severity="Critical",
@@ -44,10 +47,10 @@ class AdditionalDiagnosticsProposer:
                     "Analyze rate limiting implementation",
                     "Test bypass techniques (header manipulation, IP spoofing)",
                     "Review authentication bypass scenarios",
-                    "Check for race conditions in rate limiting"
+                    "Check for race conditions in rate limiting",
                 ],
                 estimated_effort="High",
-                priority="High"
+                priority="High",
             ),
             DiagnosticIssue(
                 category="Security",
@@ -59,10 +62,10 @@ class AdditionalDiagnosticsProposer:
                     "Audit key lifecycle management",
                     "Check key storage security (HSM usage)",
                     "Verify key rotation policies",
-                    "Test key access control mechanisms"
+                    "Test key access control mechanisms",
                 ],
                 estimated_effort="Medium",
-                priority="High"
+                priority="High",
             ),
             DiagnosticIssue(
                 category="Security",
@@ -74,15 +77,15 @@ class AdditionalDiagnosticsProposer:
                     "Run automated vulnerability scanners",
                     "Check dependency version compatibility",
                     "Review dependency update policies",
-                    "Analyze supply chain attack vectors"
+                    "Analyze supply chain attack vectors",
                 ],
                 estimated_effort="Medium",
-                priority="High"
-            )
+                priority="High",
+            ),
         ]
 
         # Performance Issues
-        self.proposed_issues['performance'] = [
+        self.proposed_issues["performance"] = [
             DiagnosticIssue(
                 category="Performance",
                 severity="High",
@@ -93,10 +96,10 @@ class AdditionalDiagnosticsProposer:
                     "Implement memory profiling tools",
                     "Monitor memory usage patterns over time",
                     "Analyze garbage collection efficiency",
-                    "Check for object retention issues"
+                    "Check for object retention issues",
                 ],
                 estimated_effort="High",
-                priority="Medium"
+                priority="Medium",
             ),
             DiagnosticIssue(
                 category="Performance",
@@ -108,10 +111,10 @@ class AdditionalDiagnosticsProposer:
                     "Enable query performance monitoring",
                     "Analyze slow query logs",
                     "Check index usage and effectiveness",
-                    "Review query execution plans"
+                    "Review query execution plans",
                 ],
                 estimated_effort="Medium",
-                priority="Medium"
+                priority="Medium",
             ),
             DiagnosticIssue(
                 category="Performance",
@@ -123,15 +126,15 @@ class AdditionalDiagnosticsProposer:
                     "Audit cache invalidation logic",
                     "Test cache consistency scenarios",
                     "Monitor cache hit/miss ratios",
-                    "Check cache key collision issues"
+                    "Check cache key collision issues",
                 ],
                 estimated_effort="Medium",
-                priority="Low"
-            )
+                priority="Low",
+            ),
         ]
 
         # Data Quality Issues
-        self.proposed_issues['data_quality'] = [
+        self.proposed_issues["data_quality"] = [
             DiagnosticIssue(
                 category="Data Quality",
                 severity="High",
@@ -142,10 +145,10 @@ class AdditionalDiagnosticsProposer:
                     "Implement data consistency checks",
                     "Audit data synchronization mechanisms",
                     "Test eventual consistency scenarios",
-                    "Check for data race conditions"
+                    "Check for data race conditions",
                 ],
                 estimated_effort="High",
-                priority="High"
+                priority="High",
             ),
             DiagnosticIssue(
                 category="Data Quality",
@@ -157,10 +160,10 @@ class AdditionalDiagnosticsProposer:
                     "Audit data retention schedules",
                     "Check automated deletion mechanisms",
                     "Verify GDPR/CCPA compliance",
-                    "Analyze data lifecycle management"
+                    "Analyze data lifecycle management",
                 ],
                 estimated_effort="Medium",
-                priority="Medium"
+                priority="Medium",
             ),
             DiagnosticIssue(
                 category="Data Quality",
@@ -172,15 +175,15 @@ class AdditionalDiagnosticsProposer:
                     "Review schema migration procedures",
                     "Test backward compatibility",
                     "Check for zero-downtime migrations",
-                    "Audit schema versioning"
+                    "Audit schema versioning",
                 ],
                 estimated_effort="Medium",
-                priority="Low"
-            )
+                priority="Low",
+            ),
         ]
 
         # Compliance Issues
-        self.proposed_issues['compliance'] = [
+        self.proposed_issues["compliance"] = [
             DiagnosticIssue(
                 category="Compliance",
                 severity="Critical",
@@ -191,10 +194,10 @@ class AdditionalDiagnosticsProposer:
                     "Conduct privacy impact assessment",
                     "Audit data collection practices",
                     "Check consent management systems",
-                    "Review data subject rights implementation"
+                    "Review data subject rights implementation",
                 ],
                 estimated_effort="High",
-                priority="Critical"
+                priority="Critical",
             ),
             DiagnosticIssue(
                 category="Compliance",
@@ -206,15 +209,15 @@ class AdditionalDiagnosticsProposer:
                     "Audit logging completeness checks",
                     "Test audit trail integrity",
                     "Verify tamper-proof mechanisms",
-                    "Check audit data retention"
+                    "Check audit data retention",
                 ],
                 estimated_effort="Medium",
-                priority="High"
-            )
+                priority="High",
+            ),
         ]
 
         # Integration Issues
-        self.proposed_issues['integration'] = [
+        self.proposed_issues["integration"] = [
             DiagnosticIssue(
                 category="Integration",
                 severity="High",
@@ -225,10 +228,10 @@ class AdditionalDiagnosticsProposer:
                     "Implement API health monitoring",
                     "Test API failover scenarios",
                     "Check rate limiting handling",
-                    "Audit API error handling"
+                    "Audit API error handling",
                 ],
                 estimated_effort="Medium",
-                priority="Medium"
+                priority="Medium",
             ),
             DiagnosticIssue(
                 category="Integration",
@@ -240,15 +243,15 @@ class AdditionalDiagnosticsProposer:
                     "Monitor queue depths and processing times",
                     "Check message ordering guarantees",
                     "Test queue failover scenarios",
-                    "Analyze message throughput bottlenecks"
+                    "Analyze message throughput bottlenecks",
                 ],
                 estimated_effort="Medium",
-                priority="Low"
-            )
+                priority="Low",
+            ),
         ]
 
         # User Experience Issues
-        self.proposed_issues['user_experience'] = [
+        self.proposed_issues["user_experience"] = [
             DiagnosticIssue(
                 category="User Experience",
                 severity="Medium",
@@ -259,10 +262,10 @@ class AdditionalDiagnosticsProposer:
                     "Audit error message content",
                     "Check for stack trace exposure",
                     "Test error handling in various scenarios",
-                    "Review logging vs user-facing messages"
+                    "Review logging vs user-facing messages",
                 ],
                 estimated_effort="Low",
-                priority="Medium"
+                priority="Medium",
             ),
             DiagnosticIssue(
                 category="User Experience",
@@ -274,15 +277,15 @@ class AdditionalDiagnosticsProposer:
                     "Run accessibility audit tools",
                     "Test with screen readers",
                     "Check keyboard navigation",
-                    "Review color contrast ratios"
+                    "Review color contrast ratios",
                 ],
                 estimated_effort="Medium",
-                priority="Low"
-            )
+                priority="Low",
+            ),
         ]
 
         # Development Process Issues
-        self.proposed_issues['development_process'] = [
+        self.proposed_issues["development_process"] = [
             DiagnosticIssue(
                 category="Development Process",
                 severity="Medium",
@@ -293,10 +296,10 @@ class AdditionalDiagnosticsProposer:
                     "Analyze test coverage reports",
                     "Identify untested code paths",
                     "Check integration test completeness",
-                    "Review test quality metrics"
+                    "Review test quality metrics",
                 ],
                 estimated_effort="Medium",
-                priority="Medium"
+                priority="Medium",
             ),
             DiagnosticIssue(
                 category="Development Process",
@@ -308,15 +311,15 @@ class AdditionalDiagnosticsProposer:
                     "Audit code review checklists",
                     "Analyze review completion rates",
                     "Check review feedback quality",
-                    "Monitor post-review defect rates"
+                    "Monitor post-review defect rates",
                 ],
                 estimated_effort="Medium",
-                priority="Low"
-            )
+                priority="Low",
+            ),
         ]
 
         # Business Logic Issues
-        self.proposed_issues['business_logic'] = [
+        self.proposed_issues["business_logic"] = [
             DiagnosticIssue(
                 category="Business Logic",
                 severity="Critical",
@@ -327,10 +330,10 @@ class AdditionalDiagnosticsProposer:
                     "Analyze false positive/negative rates",
                     "Test rule effectiveness with historical data",
                     "Check rule conflict resolution",
-                    "Validate rule business logic accuracy"
+                    "Validate rule business logic accuracy",
                 ],
                 estimated_effort="High",
-                priority="Critical"
+                priority="Critical",
             ),
             DiagnosticIssue(
                 category="Business Logic",
@@ -342,15 +345,15 @@ class AdditionalDiagnosticsProposer:
                     "Implement model performance monitoring",
                     "Check for concept drift detection",
                     "Test model recalibration procedures",
-                    "Audit model update frequency"
+                    "Audit model update frequency",
                 ],
                 estimated_effort="High",
-                priority="High"
-            )
+                priority="High",
+            ),
         ]
 
         # Infrastructure Issues
-        self.proposed_issues['infrastructure'] = [
+        self.proposed_issues["infrastructure"] = [
             DiagnosticIssue(
                 category="Infrastructure",
                 severity="High",
@@ -361,10 +364,10 @@ class AdditionalDiagnosticsProposer:
                     "Scan container images for vulnerabilities",
                     "Audit container runtime security",
                     "Check orchestration security configurations",
-                    "Test container isolation mechanisms"
+                    "Test container isolation mechanisms",
                 ],
                 estimated_effort="Medium",
-                priority="High"
+                priority="High",
             ),
             DiagnosticIssue(
                 category="Infrastructure",
@@ -376,11 +379,11 @@ class AdditionalDiagnosticsProposer:
                     "Audit network segmentation rules",
                     "Test firewall configurations",
                     "Check zero-trust network policies",
-                    "Verify network access controls"
+                    "Verify network access controls",
                 ],
                 estimated_effort="Medium",
-                priority="Medium"
-            )
+                priority="Medium",
+            ),
         ]
 
     def get_all_proposed_issues(self) -> Dict[str, List[DiagnosticIssue]]:
@@ -391,14 +394,18 @@ class AdditionalDiagnosticsProposer:
         """Get issues filtered by priority"""
         issues = []
         for category_issues in self.proposed_issues.values():
-            issues.extend([issue for issue in category_issues if issue.priority == priority])
+            issues.extend(
+                [issue for issue in category_issues if issue.priority == priority]
+            )
         return issues
 
     def get_issues_by_severity(self, severity: str) -> List[DiagnosticIssue]:
         """Get issues filtered by severity"""
         issues = []
         for category_issues in self.proposed_issues.values():
-            issues.extend([issue for issue in category_issues if issue.severity == severity])
+            issues.extend(
+                [issue for issue in category_issues if issue.severity == severity]
+            )
         return issues
 
     def get_issues_by_category(self, category: str) -> List[DiagnosticIssue]:
@@ -408,45 +415,47 @@ class AdditionalDiagnosticsProposer:
     def generate_investigation_plan(self) -> Dict[str, Any]:
         """Generate a comprehensive investigation plan"""
         plan = {
-            "total_issues_proposed": sum(len(issues) for issues in self.proposed_issues.values()),
+            "total_issues_proposed": sum(
+                len(issues) for issues in self.proposed_issues.values()
+            ),
             "categories_covered": len(self.proposed_issues),
             "priority_breakdown": {
                 "Critical": len(self.get_issues_by_priority("Critical")),
                 "High": len(self.get_issues_by_priority("High")),
                 "Medium": len(self.get_issues_by_priority("Medium")),
-                "Low": len(self.get_issues_by_priority("Low"))
+                "Low": len(self.get_issues_by_priority("Low")),
             },
             "severity_breakdown": {
                 "Critical": len(self.get_issues_by_severity("Critical")),
                 "High": len(self.get_issues_by_severity("High")),
                 "Medium": len(self.get_issues_by_severity("Medium")),
-                "Low": len(self.get_issues_by_severity("Low"))
+                "Low": len(self.get_issues_by_severity("Low")),
             },
             "investigation_phases": [
                 {
                     "phase": "Phase 1: Critical Security & Business Logic",
                     "duration": "2-3 weeks",
                     "focus": "Address critical security vulnerabilities and business logic accuracy issues",
-                    "issues": len(self.get_issues_by_severity("Critical"))
+                    "issues": len(self.get_issues_by_severity("Critical")),
                 },
                 {
                     "phase": "Phase 2: High Priority Issues",
                     "duration": "3-4 weeks",
                     "focus": "Resolve high-impact performance, integration, and compliance issues",
-                    "issues": len(self.get_issues_by_priority("High"))
+                    "issues": len(self.get_issues_by_priority("High")),
                 },
                 {
                     "phase": "Phase 3: Medium Priority Optimization",
                     "duration": "2-3 weeks",
                     "focus": "Address remaining medium-priority issues and optimizations",
-                    "issues": len(self.get_issues_by_priority("Medium"))
+                    "issues": len(self.get_issues_by_priority("Medium")),
                 },
                 {
                     "phase": "Phase 4: Low Priority Polish",
                     "duration": "1-2 weeks",
                     "focus": "Final polish and low-priority issue resolution",
-                    "issues": len(self.get_issues_by_priority("Low"))
-                }
+                    "issues": len(self.get_issues_by_priority("Low")),
+                },
             ],
             "recommended_tools": [
                 "Static Application Security Testing (SAST) tools",
@@ -457,7 +466,7 @@ class AdditionalDiagnosticsProposer:
                 "Container security scanners",
                 "Accessibility testing tools",
                 "Load testing tools",
-                "Chaos engineering tools"
+                "Chaos engineering tools",
             ],
             "success_metrics": [
                 "Zero critical security vulnerabilities",
@@ -465,11 +474,12 @@ class AdditionalDiagnosticsProposer:
                 "Improved fraud detection accuracy",
                 "Enhanced system performance",
                 "Full compliance achievement",
-                "Zero data breaches during investigation"
-            ]
+                "Zero data breaches during investigation",
+            ],
         }
 
         return plan
+
 
 async def main():
     proposer = AdditionalDiagnosticsProposer()
@@ -488,13 +498,13 @@ async def main():
     # Priority Breakdown
     plan = proposer.generate_investigation_plan()
     print("🎯 PRIORITY BREAKDOWN:")
-    for priority, count in plan['priority_breakdown'].items():
+    for priority, count in plan["priority_breakdown"].items():
         print(f"   {priority}: {count} issues")
     print()
 
     # Severity Breakdown
     print("🚨 SEVERITY BREAKDOWN:")
-    for severity, count in plan['severity_breakdown'].items():
+    for severity, count in plan["severity_breakdown"].items():
         print(f"   {severity}: {count} issues")
     print()
 
@@ -510,12 +520,14 @@ async def main():
     for i, issue in enumerate(critical_issues, 1):
         print(f"   {i}. {issue.title}")
         print(f"      Impact: {issue.impact}")
-        print(f"      Investigation Methods: {len(issue.investigation_methods)} methods")
+        print(
+            f"      Investigation Methods: {len(issue.investigation_methods)} methods"
+        )
     print()
 
     # Investigation Plan
     print("📅 INVESTIGATION PLAN:")
-    for phase in plan['investigation_phases']:
+    for phase in plan["investigation_phases"]:
         print(f"   {phase['phase']} ({phase['duration']})")
         print(f"      Focus: {phase['focus']}")
         print(f"      Issues: {phase['issues']}")
@@ -523,12 +535,12 @@ async def main():
 
     # Recommendations
     print("🛠️ RECOMMENDED TOOLS:")
-    for tool in plan['recommended_tools']:
+    for tool in plan["recommended_tools"]:
         print(f"   • {tool}")
     print()
 
     print("📊 SUCCESS METRICS:")
-    for metric in plan['success_metrics']:
+    for metric in plan["success_metrics"]:
         print(f"   • {metric}")
     print()
 
@@ -545,13 +557,15 @@ async def main():
                     "impact": issue.impact,
                     "investigation_methods": issue.investigation_methods,
                     "estimated_effort": issue.estimated_effort,
-                    "priority": issue.priority
-                } for issue in issues
-            ] for category, issues in all_issues.items()
-        }
+                    "priority": issue.priority,
+                }
+                for issue in issues
+            ]
+            for category, issues in all_issues.items()
+        },
     }
 
-    with open('additional_diagnostic_issues.json', 'w') as f:
+    with open("additional_diagnostic_issues.json", "w") as f:
         json.dump(report, f, indent=2)
 
     print("💾 Detailed report saved to: additional_diagnostic_issues.json")
@@ -561,6 +575,7 @@ async def main():
     print("   of potential problems in fraud detection platforms. Starting with")
     print("   critical security and business logic issues, then progressing")
     print("   through high-priority performance and compliance concerns.")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

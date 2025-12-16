@@ -1,13 +1,16 @@
 """Unit tests for API routers"""
+
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
 from fastapi import HTTPException
+from main import app
+from starlette.testclient import TestClient
+
+from app.routers.analytics import router as analytics_router
 from app.routers.cases import router as cases_router
 from app.routers.evidence import router as evidence_router
 from app.routers.fraud import router as fraud_router
-from app.routers.analytics import router as analytics_router
-from starlette.testclient import TestClient
-from main import app
 
 
 class TestCasesRouter:
@@ -16,7 +19,7 @@ class TestCasesRouter:
     @pytest.fixture
     def mock_db_service(self):
         """Mock database service"""
-        with patch('app.routers.cases.db_service') as mock:
+        with patch("app.routers.cases.db_service") as mock:
             yield mock
 
     def test_get_cases_unauthorized(self, client, mock_db_service):
@@ -25,7 +28,7 @@ class TestCasesRouter:
         # Should return 401 or 403 depending on auth setup
         assert response.status_code in [200, 401, 403, 404]
 
-    @patch('app.routers.cases.get_current_user')
+    @patch("app.routers.cases.get_current_user")
     def test_get_cases_authorized(self, mock_get_user, client, mock_db_service):
         """Test getting cases with authentication"""
         # Mock authenticated user
@@ -35,12 +38,12 @@ class TestCasesRouter:
 
         # Mock database response
         mock_db_service.get_cases_paginated.return_value = {
-            'items': [],
-            'cases': [],
-            'total': 0,
-            'page': 1,
-            'per_page': 20,
-            'total_pages': 0
+            "items": [],
+            "cases": [],
+            "total": 0,
+            "page": 1,
+            "per_page": 20,
+            "total_pages": 0,
         }
 
         response = client.get("/api/v1/cases/")
@@ -49,8 +52,8 @@ class TestCasesRouter:
         # but we're testing the router logic
         assert response.status_code in [200, 401, 403]
 
-    @patch('app.routers.cases.get_current_user')
-    @patch('app.routers.cases.require_permission')
+    @patch("app.routers.cases.get_current_user")
+    @patch("app.routers.cases.require_permission")
     def test_create_case(self, mock_permission, mock_get_user, client, mock_db_service):
         """Test case creation"""
         # Mock user and permissions
@@ -67,7 +70,7 @@ class TestCasesRouter:
         case_data = {
             "title": "Test Case",
             "description": "Test description",
-            "priority": "high"
+            "priority": "high",
         }
 
         response = client.post("/api/v1/cases/", json=case_data)
@@ -81,10 +84,10 @@ class TestEvidenceRouter:
     @pytest.fixture
     def mock_evidence_service(self):
         """Mock evidence service"""
-        with patch('app.routers.evidence.evidence_service') as mock:
+        with patch("app.routers.evidence.evidence_service") as mock:
             yield mock
 
-    @patch('app.routers.evidence.get_current_user')
+    @patch("app.routers.evidence.get_current_user")
     def test_get_evidence(self, mock_get_user, client, mock_evidence_service):
         """Test evidence retrieval"""
         mock_user = MagicMock()
@@ -96,8 +99,10 @@ class TestEvidenceRouter:
 
         assert response.status_code in [200, 401, 403]
 
-    @patch('app.routers.evidence.get_current_user')
-    def test_upload_evidence(self, mock_get_user, client, mock_evidence_service, db_session):
+    @patch("app.routers.evidence.get_current_user")
+    def test_upload_evidence(
+        self, mock_get_user, client, mock_evidence_service, db_session
+    ):
         """Test evidence upload"""
         mock_user = MagicMock()
         mock_get_user.return_value = mock_user
@@ -105,6 +110,7 @@ class TestEvidenceRouter:
 
         # Create test case in DB
         from core.database import Case
+
         test_case = Case(id="case123", title="Test Case")
         db_session.add(test_case)
         db_session.commit()
@@ -113,9 +119,11 @@ class TestEvidenceRouter:
         files = {"file": ("test.pdf", b"test content", "application/pdf")}
         data = {"case_id": "case123"}
 
-        response = client.post("/api/v1/evidence/evidence/upload", files=files, data=data)
+        response = client.post(
+            "/api/v1/evidence/evidence/upload", files=files, data=data
+        )
 
-        # 404/500 might happen if dependencies (multimodal) fail despite mocks, 
+        # 404/500 might happen if dependencies (multimodal) fail despite mocks,
         # but now case exists so 404 is less likely unless it's a different 404.
         # But wait, endpoint imports multimodal_analyzer which we just instantiated.
         # If imports succeed, it runs logic.
@@ -128,10 +136,10 @@ class TestFraudRouter:
     @pytest.fixture
     def mock_fraud_service(self):
         """Mock fraud service"""
-        with patch('app.routers.fraud.fraud_service') as mock:
+        with patch("app.routers.fraud.fraud_service") as mock:
             yield mock
 
-    @patch('app.routers.fraud.get_current_user')
+    @patch("app.routers.fraud.get_current_user")
     def test_analyze_case(self, mock_get_user, client, mock_fraud_service):
         """Test case fraud analysis"""
         mock_user = MagicMock()
@@ -143,7 +151,7 @@ class TestFraudRouter:
 
         assert response.status_code in [200, 401, 403]
 
-    @patch('app.routers.fraud.get_current_user')
+    @patch("app.routers.fraud.get_current_user")
     def test_get_fraud_alerts(self, mock_get_user, client, mock_fraud_service):
         """Test fraud alerts retrieval"""
         mock_user = MagicMock()
@@ -162,10 +170,10 @@ class TestAnalyticsRouter:
     @pytest.fixture
     def mock_db_service(self):
         """Mock database service"""
-        with patch('app.routers.analytics.db_service') as mock:
+        with patch("app.routers.analytics.db_service") as mock:
             yield mock
 
-    @patch('app.routers.analytics.get_current_user')
+    @patch("app.routers.analytics.get_current_user")
     def test_get_case_analytics(self, mock_get_user, client, mock_db_service):
         """Test case analytics retrieval"""
         mock_user = MagicMock()
@@ -174,14 +182,14 @@ class TestAnalyticsRouter:
         mock_db_service.get_case_analytics.return_value = {
             "total_cases": 100,
             "open_cases": 50,
-            "closed_cases": 50
+            "closed_cases": 50,
         }
 
         response = client.get("/api/v1/analytics/cases")
 
         assert response.status_code in [200, 401, 403]
 
-    @patch('app.routers.analytics.get_current_user')
+    @patch("app.routers.analytics.get_current_user")
     def test_get_transaction_analytics(self, mock_get_user, client, mock_db_service):
         """Test transaction analytics retrieval"""
         mock_user = MagicMock()
@@ -190,7 +198,7 @@ class TestAnalyticsRouter:
         mock_db_service.get_transaction_aggregates.return_value = {
             "total_transactions": 1000,
             "total_amount": 50000.0,
-            "avg_amount": 50.0
+            "avg_amount": 50.0,
         }
 
         response = client.get("/api/v1/analytics/transactions")
@@ -227,6 +235,8 @@ class TestAPIRouterIntegration:
 
     def test_cors_headers(self, client):
         """Test CORS headers are present"""
-        response = client.options("/health", headers={"Origin": "http://localhost:5173"})
+        response = client.options(
+            "/health", headers={"Origin": "http://localhost:5173"}
+        )
         # CORS headers should be present in development
         assert "access-control-allow-origin" in response.headers

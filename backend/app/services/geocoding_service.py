@@ -2,28 +2,33 @@
 Geocoding service for converting location names to coordinates.
 Provides both online API and offline fallback geocoding capabilities.
 """
+
 import asyncio
+
 try:
     import aiohttp
 except Exception:
     aiohttp = None
-import sqlite3
 import json
 import logging
-from typing import Dict, List, Optional, Tuple
+import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class Location:
     """Represents a geographic location with coordinates."""
+
     latitude: float
     longitude: float
     city: str
     country: str
     confidence: float = 1.0
+
 
 class GeocodingService:
     """Service for geocoding location names to coordinates."""
@@ -46,7 +51,8 @@ class GeocodingService:
     def _init_cache_db(self):
         """Initialize the geocoding cache database."""
         with sqlite3.connect(self.cache_db_path) as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS geocoding_cache (
                     location_key TEXT PRIMARY KEY,
                     latitude REAL,
@@ -56,35 +62,47 @@ class GeocodingService:
                     confidence REAL,
                     cached_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            """)
-            conn.execute("""
+            """
+            )
+            conn.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_location_key
                 ON geocoding_cache(location_key)
-            """)
+            """
+            )
 
     def _load_fallback_locations(self) -> Dict[str, Location]:
         """Load fallback location data for common cities/countries."""
         return {
             # Major cities
-            "new york, united states": Location(40.7128, -74.0060, "New York", "United States"),
-            "london, united kingdom": Location(51.5074, -0.1278, "London", "United Kingdom"),
+            "new york, united states": Location(
+                40.7128, -74.0060, "New York", "United States"
+            ),
+            "london, united kingdom": Location(
+                51.5074, -0.1278, "London", "United Kingdom"
+            ),
             "tokyo, japan": Location(35.6762, 139.6503, "Tokyo", "Japan"),
             "paris, france": Location(48.8566, 2.3522, "Paris", "France"),
             "sydney, australia": Location(-33.8688, 151.2093, "Sydney", "Australia"),
-            "singapore, singapore": Location(1.3521, 103.8198, "Singapore", "Singapore"),
+            "singapore, singapore": Location(
+                1.3521, 103.8198, "Singapore", "Singapore"
+            ),
             "hong kong, china": Location(22.3193, 114.1694, "Hong Kong", "China"),
             "shanghai, china": Location(31.2304, 121.4737, "Shanghai", "China"),
             "beijing, china": Location(39.9042, 116.4074, "Beijing", "China"),
             "mumbai, india": Location(19.0760, 72.8777, "Mumbai", "India"),
             "delhi, india": Location(28.7041, 77.1025, "Delhi", "India"),
             "bangalore, india": Location(12.9716, 77.5946, "Bangalore", "India"),
-
             # Countries (capital cities as fallback)
-            "united states": Location(39.8283, -98.5795, "Washington DC", "United States", 0.5),
+            "united states": Location(
+                39.8283, -98.5795, "Washington DC", "United States", 0.5
+            ),
             "china": Location(35.8617, 104.1954, "Beijing", "China", 0.5),
             "india": Location(20.5937, 78.9629, "Delhi", "India", 0.5),
             "japan": Location(36.2048, 138.2529, "Tokyo", "Japan", 0.5),
-            "united kingdom": Location(55.3781, -3.4360, "London", "United Kingdom", 0.5),
+            "united kingdom": Location(
+                55.3781, -3.4360, "London", "United Kingdom", 0.5
+            ),
             "france": Location(46.2276, 2.2137, "Paris", "France", 0.5),
             "germany": Location(51.1657, 10.4515, "Berlin", "Germany", 0.5),
             "australia": Location(-25.2744, 133.7751, "Canberra", "Australia", 0.5),
@@ -145,11 +163,14 @@ class GeocodingService:
         """Retrieve location from cache."""
         try:
             with sqlite3.connect(self.cache_db_path) as conn:
-                cursor = conn.execute("""
+                cursor = conn.execute(
+                    """
                     SELECT latitude, longitude, city, country, confidence
                     FROM geocoding_cache
                     WHERE location_key = ?
-                """, (location_key,))
+                """,
+                    (location_key,),
+                )
 
                 row = cursor.fetchone()
                 if row:
@@ -158,7 +179,7 @@ class GeocodingService:
                         longitude=row[1],
                         city=row[2],
                         country=row[3],
-                        confidence=row[4]
+                        confidence=row[4],
                     )
         except Exception as e:
             logger.error(f"Error reading from geocoding cache: {e}")
@@ -169,18 +190,21 @@ class GeocodingService:
         """Cache location in database."""
         try:
             with sqlite3.connect(self.cache_db_path) as conn:
-                conn.execute("""
+                conn.execute(
+                    """
                     INSERT OR REPLACE INTO geocoding_cache
                     (location_key, latitude, longitude, city, country, confidence)
                     VALUES (?, ?, ?, ?, ?, ?)
-                """, (
-                    location_key,
-                    location.latitude,
-                    location.longitude,
-                    location.city,
-                    location.country,
-                    location.confidence
-                ))
+                """,
+                    (
+                        location_key,
+                        location.latitude,
+                        location.longitude,
+                        location.city,
+                        location.country,
+                        location.confidence,
+                    ),
+                )
                 conn.commit()
         except Exception as e:
             logger.error(f"Error caching location: {e}")
@@ -192,17 +216,12 @@ class GeocodingService:
         # Try OpenStreetMap Nominatim (no API key required)
         try:
             async with aiohttp.ClientSession() as session:
-                params = {
-                    'q': query,
-                    'format': 'json',
-                    'limit': 1,
-                    'addressdetails': 1
-                }
+                params = {"q": query, "format": "json", "limit": 1, "addressdetails": 1}
 
                 async with session.get(
                     "https://nominatim.openstreetmap.org/search",
                     params=params,
-                    headers={'User-Agent': 'FraudDetectionApp/1.0'}
+                    headers={"User-Agent": "FraudDetectionApp/1.0"},
                 ) as response:
 
                     if response.status == 200:
@@ -210,18 +229,20 @@ class GeocodingService:
                         if data:
                             result = data[0]
                             return Location(
-                                latitude=float(result['lat']),
-                                longitude=float(result['lon']),
+                                latitude=float(result["lat"]),
+                                longitude=float(result["lon"]),
                                 city=city,
                                 country=country,
-                                confidence=0.9  # High confidence for OSM
+                                confidence=0.9,  # High confidence for OSM
                             )
         except Exception as e:
             logger.warning(f"OpenStreetMap geocoding failed: {e}")
 
         return None
 
-    async def batch_geocode(self, locations: List[Tuple[str, str]]) -> Dict[Tuple[str, str], Optional[Location]]:
+    async def batch_geocode(
+        self, locations: List[Tuple[str, str]]
+    ) -> Dict[Tuple[str, str], Optional[Location]]:
         """
         Geocode multiple locations in batch.
 
@@ -236,13 +257,10 @@ class GeocodingService:
         # Process in batches to avoid overwhelming APIs
         batch_size = 10
         for i in range(0, len(locations), batch_size):
-            batch = locations[i:i + batch_size]
+            batch = locations[i : i + batch_size]
 
             # Create tasks for concurrent processing
-            tasks = [
-                self.geocode_location(city, country)
-                for city, country in batch
-            ]
+            tasks = [self.geocode_location(city, country) for city, country in batch]
 
             batch_results = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -286,7 +304,9 @@ class GeocodingService:
 geocoding_service = GeocodingService()
 
 
-async def geocode_transaction_location(city: str, country: str) -> Optional[Dict[str, float]]:
+async def geocode_transaction_location(
+    city: str, country: str
+) -> Optional[Dict[str, float]]:
     """
     Convenience function to geocode a transaction location.
 
@@ -295,8 +315,5 @@ async def geocode_transaction_location(city: str, country: str) -> Optional[Dict
     """
     location = await geocoding_service.geocode_location(city, country)
     if location:
-        return {
-            'lat': location.latitude,
-            'lng': location.longitude
-        }
+        return {"lat": location.latitude, "lng": location.longitude}
     return None

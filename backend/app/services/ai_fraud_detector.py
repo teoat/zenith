@@ -1,15 +1,17 @@
-from typing import List, Dict, Any, Optional, Tuple
+import logging
+import os
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Tuple
+
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import IsolationForest
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-import joblib
-import os
-from datetime import datetime, timedelta
-import logging
+from sklearn.preprocessing import StandardScaler
 
 logger = logging.getLogger(__name__)
+
 
 class AIFraudDetector:
     def __init__(self, model_path: str = "models/isolation_forest.pkl"):
@@ -18,9 +20,16 @@ class AIFraudDetector:
         self.scaler = None
         self.is_trained = False
         self.feature_names = [
-            'amount', 'hour_of_day', 'day_of_week', 'is_weekend',
-            'amount_zscore', 'velocity_ratio', 'merchant_frequency',
-            'category_risk', 'geographic_risk', 'time_anomaly'
+            "amount",
+            "hour_of_day",
+            "day_of_week",
+            "is_weekend",
+            "amount_zscore",
+            "velocity_ratio",
+            "merchant_frequency",
+            "category_risk",
+            "geographic_risk",
+            "time_anomaly",
         ]
 
         # Ensure models directory exists
@@ -34,8 +43,8 @@ class AIFraudDetector:
         try:
             if os.path.exists(self.model_path):
                 model_data = joblib.load(self.model_path)
-                self.model = model_data['model']
-                self.scaler = model_data['scaler']
+                self.model = model_data["model"]
+                self.scaler = model_data["scaler"]
                 self.is_trained = True
                 logger.info("Loaded existing AI fraud detection model")
             else:
@@ -44,15 +53,17 @@ class AIFraudDetector:
             logger.error(f"Failed to load model: {e}")
             self.is_trained = False
 
-    def _extract_features(self, transaction: Dict[str, Any], historical_data: List[Dict[str, Any]] = None) -> np.ndarray:
+    def _extract_features(
+        self, transaction: Dict[str, Any], historical_data: List[Dict[str, Any]] = None
+    ) -> np.ndarray:
         """Extract features for AI analysis"""
-        amount = float(transaction.get('amount', 0))
-        timestamp = transaction.get('timestamp') or transaction.get('date')
+        amount = float(transaction.get("amount", 0))
+        timestamp = transaction.get("timestamp") or transaction.get("date")
 
         # Parse timestamp
         if isinstance(timestamp, str):
             try:
-                timestamp = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
             except:
                 timestamp = datetime.now()
         elif not isinstance(timestamp, datetime):
@@ -70,7 +81,7 @@ class AIFraudDetector:
 
         if historical_data:
             # Amount statistics
-            amounts = [float(tx.get('amount', 0)) for tx in historical_data]
+            amounts = [float(tx.get("amount", 0)) for tx in historical_data]
             if amounts:
                 mean_amount = np.mean(amounts)
                 std_amount = np.std(amounts) or 1.0
@@ -78,29 +89,47 @@ class AIFraudDetector:
 
             # Velocity analysis (transactions in last 24 hours)
             recent_cutoff = timestamp - timedelta(hours=24)
-            recent_count = sum(1 for tx in historical_data
-                             if self._parse_timestamp(tx.get('timestamp') or tx.get('date')) >= recent_cutoff)
+            recent_count = sum(
+                1
+                for tx in historical_data
+                if self._parse_timestamp(tx.get("timestamp") or tx.get("date"))
+                >= recent_cutoff
+            )
             velocity_ratio = recent_count / max(1, len(historical_data))
 
             # Merchant frequency
-            merchant = transaction.get('merchant_name', '')
+            merchant = transaction.get("merchant_name", "")
             if merchant:
-                merchant_count = sum(1 for tx in historical_data
-                                   if tx.get('merchant_name', '') == merchant)
+                merchant_count = sum(
+                    1
+                    for tx in historical_data
+                    if tx.get("merchant_name", "") == merchant
+                )
                 merchant_frequency = merchant_count / max(1, len(historical_data))
 
         # Category risk (simplified)
-        category = transaction.get('category', '').lower()
+        category = transaction.get("category", "").lower()
         category_risk = 0.0
-        if 'cash' in category or 'wire' in category:
+        if "cash" in category or "wire" in category:
             category_risk = 0.8
-        elif 'gambling' in category or 'crypto' in category:
+        elif "gambling" in category or "crypto" in category:
             category_risk = 0.6
 
         # Geographic risk
-        country = transaction.get('country', '').upper()
+        country = transaction.get("country", "").upper()
         geographic_risk = 0.0
-        high_risk_countries = {'NG', 'VN', 'PK', 'BD', 'KE', 'GH', 'SN', 'MA', 'TN', 'DZ'}
+        high_risk_countries = {
+            "NG",
+            "VN",
+            "PK",
+            "BD",
+            "KE",
+            "GH",
+            "SN",
+            "MA",
+            "TN",
+            "DZ",
+        }
         if country in high_risk_countries:
             geographic_risk = 0.9
 
@@ -109,11 +138,20 @@ class AIFraudDetector:
         if hour_of_day < 6 or hour_of_day > 22:
             time_anomaly = 0.7
 
-        features = np.array([
-            amount, hour_of_day, day_of_week, is_weekend,
-            amount_zscore, velocity_ratio, merchant_frequency,
-            category_risk, geographic_risk, time_anomaly
-        ]).reshape(1, -1)
+        features = np.array(
+            [
+                amount,
+                hour_of_day,
+                day_of_week,
+                is_weekend,
+                amount_zscore,
+                velocity_ratio,
+                merchant_frequency,
+                category_risk,
+                geographic_risk,
+                time_anomaly,
+            ]
+        ).reshape(1, -1)
 
         return features
 
@@ -123,12 +161,14 @@ class AIFraudDetector:
             return timestamp
         if isinstance(timestamp, str):
             try:
-                return datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                return datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
             except:
                 pass
         return datetime.now()
 
-    def train_model(self, training_data: List[Dict[str, Any]], contamination: float = 0.1) -> Dict[str, Any]:
+    def train_model(
+        self, training_data: List[Dict[str, Any]], contamination: float = 0.1
+    ) -> Dict[str, Any]:
         """Train the Isolation Forest model"""
         logger.info(f"Training AI model with {len(training_data)} transactions")
 
@@ -149,10 +189,7 @@ class AIFraudDetector:
 
         # Train Isolation Forest
         self.model = IsolationForest(
-            n_estimators=100,
-            contamination=contamination,
-            random_state=42,
-            n_jobs=-1
+            n_estimators=100, contamination=contamination, random_state=42, n_jobs=-1
         )
 
         # Fit the model
@@ -160,11 +197,11 @@ class AIFraudDetector:
 
         # Save the model
         model_data = {
-            'model': self.model,
-            'scaler': self.scaler,
-            'feature_names': self.feature_names,
-            'trained_at': datetime.now().isoformat(),
-            'training_samples': len(training_data)
+            "model": self.model,
+            "scaler": self.scaler,
+            "feature_names": self.feature_names,
+            "trained_at": datetime.now().isoformat(),
+            "training_samples": len(training_data),
         }
 
         joblib.dump(model_data, self.model_path)
@@ -173,20 +210,22 @@ class AIFraudDetector:
         logger.info("AI model training completed")
 
         return {
-            'status': 'success',
-            'training_samples': len(training_data),
-            'contamination': contamination,
-            'feature_count': len(self.feature_names)
+            "status": "success",
+            "training_samples": len(training_data),
+            "contamination": contamination,
+            "feature_count": len(self.feature_names),
         }
 
-    def predict_fraud_score(self, transaction: Dict[str, Any], historical_data: List[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def predict_fraud_score(
+        self, transaction: Dict[str, Any], historical_data: List[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Predict fraud score for a transaction"""
         if not self.is_trained:
             return {
-                'score': 50.0,  # Neutral score when no model
-                'confidence': 0.0,
-                'is_fraud': False,
-                'explanation': 'Model not trained'
+                "score": 50.0,  # Neutral score when no model
+                "confidence": 0.0,
+                "is_fraud": False,
+                "explanation": "Model not trained",
             }
 
         try:
@@ -213,20 +252,20 @@ class AIFraudDetector:
             explanation = self._generate_explanation(features[0], fraud_score)
 
             return {
-                'score': round(fraud_score, 2),
-                'confidence': round(confidence, 2),
-                'is_fraud': is_fraud,
-                'explanation': explanation,
-                'anomaly_score': round(anomaly_score, 4)
+                "score": round(fraud_score, 2),
+                "confidence": round(confidence, 2),
+                "is_fraud": is_fraud,
+                "explanation": explanation,
+                "anomaly_score": round(anomaly_score, 4),
             }
 
         except Exception as e:
             logger.error(f"AI prediction failed: {e}")
             return {
-                'score': 50.0,
-                'confidence': 0.0,
-                'is_fraud': False,
-                'explanation': f'Prediction error: {str(e)}'
+                "score": 50.0,
+                "confidence": 0.0,
+                "is_fraud": False,
+                "explanation": f"Prediction error: {str(e)}",
             }
 
     def _generate_explanation(self, features: np.ndarray, score: float) -> str:
@@ -243,22 +282,26 @@ class AIFraudDetector:
             explanations.append("Low fraud risk")
 
         # Feature-specific explanations
-        if feature_values['amount_zscore'] > 2:
-            explanations.append("Transaction amount significantly deviates from historical pattern")
+        if feature_values["amount_zscore"] > 2:
+            explanations.append(
+                "Transaction amount significantly deviates from historical pattern"
+            )
 
-        if feature_values['velocity_ratio'] > 0.5:
-            explanations.append("High transaction velocity compared to historical activity")
+        if feature_values["velocity_ratio"] > 0.5:
+            explanations.append(
+                "High transaction velocity compared to historical activity"
+            )
 
-        if feature_values['merchant_frequency'] < 0.1:
+        if feature_values["merchant_frequency"] < 0.1:
             explanations.append("First-time merchant interaction")
 
-        if feature_values['geographic_risk'] > 0.5:
+        if feature_values["geographic_risk"] > 0.5:
             explanations.append("Transaction involves high-risk geographic location")
 
-        if feature_values['time_anomaly'] > 0.5:
+        if feature_values["time_anomaly"] > 0.5:
             explanations.append("Transaction occurred during unusual hours")
 
-        if feature_values['category_risk'] > 0.5:
+        if feature_values["category_risk"] > 0.5:
             explanations.append("Transaction category associated with higher risk")
 
         return "; ".join(explanations)
@@ -266,14 +309,14 @@ class AIFraudDetector:
     def get_model_info(self) -> Dict[str, Any]:
         """Get information about the trained model"""
         if not self.is_trained:
-            return {'status': 'not_trained'}
+            return {"status": "not_trained"}
 
         return {
-            'status': 'trained',
-            'feature_count': len(self.feature_names),
-            'features': self.feature_names,
-            'model_type': 'IsolationForest',
-            'is_trained': self.is_trained
+            "status": "trained",
+            "feature_count": len(self.feature_names),
+            "features": self.feature_names,
+            "model_type": "IsolationForest",
+            "is_trained": self.is_trained,
         }
 
     def retrain_model(self, new_data: List[Dict[str, Any]]) -> Dict[str, Any]:

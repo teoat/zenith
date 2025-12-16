@@ -4,16 +4,17 @@ Quick Diagnostic Assessment Script
 Performs rapid assessment of key diagnostic areas
 """
 
-import os
-import sys
 import json
+import os
 import subprocess
-from pathlib import Path
+import sys
 from datetime import datetime
+from pathlib import Path
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
+
 
 class QuickDiagnosticAssessor:
     """Rapid assessment of critical diagnostic areas"""
@@ -35,18 +36,29 @@ class QuickDiagnosticAssessor:
         for pattern in secret_patterns:
             try:
                 result = subprocess.run(
-                    ["grep", "-r", "-i", pattern, str(self.backend_dir), "--include=*.py"],
-                    capture_output=True, text=True, timeout=30
+                    [
+                        "grep",
+                        "-r",
+                        "-i",
+                        pattern,
+                        str(self.backend_dir),
+                        "--include=*.py",
+                    ],
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
                 )
                 if result.returncode == 0 and result.stdout.strip():
-                    lines = len(result.stdout.strip().split('\n'))
-                    issues.append(f"Potential {pattern} references: {lines} instances found")
+                    lines = len(result.stdout.strip().split("\n"))
+                    issues.append(
+                        f"Potential {pattern} references: {lines} instances found"
+                    )
             except:
                 pass
 
         # Check for debug mode in production
         try:
-            with open(self.backend_dir / "main.py", 'r') as f:
+            with open(self.backend_dir / "main.py", "r") as f:
                 content = f.read()
                 if "debug=True" in content.lower() or "DEBUG = True" in content:
                     issues.append("Debug mode potentially enabled in production code")
@@ -56,7 +68,7 @@ class QuickDiagnosticAssessor:
         self.results["security_vulnerabilities"] = {
             "status": "issues_found" if issues else "clean",
             "issues": issues,
-            "recommendation": "Run full security audit with professional tools"
+            "recommendation": "Run full security audit with professional tools",
         }
 
     def run_performance_check(self):
@@ -68,25 +80,27 @@ class QuickDiagnosticAssessor:
         # Check for inefficient patterns
         inefficient_patterns = [
             "SELECT \* FROM",  # Select all queries
-            "\.all\(\)",       # Loading all records
-            "print\(",         # Debug prints in production
+            "\.all\(\)",  # Loading all records
+            "print\(",  # Debug prints in production
         ]
 
         for pattern in inefficient_patterns:
             try:
                 result = subprocess.run(
                     ["grep", "-r", pattern, str(self.backend_dir), "--include=*.py"],
-                    capture_output=True, text=True, timeout=30
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
                 )
                 if result.returncode == 0 and result.stdout.strip():
-                    lines = len(result.stdout.strip().split('\n'))
+                    lines = len(result.stdout.strip().split("\n"))
                     issues.append(f"Inefficient pattern '{pattern}': {lines} instances")
             except:
                 pass
 
         # Check for missing indexes (basic check)
         try:
-            with open(self.backend_dir / "core" / "database.py", 'r') as f:
+            with open(self.backend_dir / "core" / "database.py", "r") as f:
                 content = f.read()
                 if "index=True" not in content:
                     issues.append("Potential missing database indexes")
@@ -96,7 +110,7 @@ class QuickDiagnosticAssessor:
         self.results["performance_issues"] = {
             "status": "issues_found" if issues else "optimal",
             "issues": issues,
-            "recommendation": "Implement APM monitoring and database optimization"
+            "recommendation": "Implement APM monitoring and database optimization",
         }
 
     def run_code_quality_check(self):
@@ -107,7 +121,13 @@ class QuickDiagnosticAssessor:
 
         # Count Python files
         py_files = list(self.backend_dir.rglob("*.py"))
-        total_py_files = len([f for f in py_files if not any(skip in str(f) for skip in ["__pycache__", "venv"])])
+        total_py_files = len(
+            [
+                f
+                for f in py_files
+                if not any(skip in str(f) for skip in ["__pycache__", "venv"])
+            ]
+        )
 
         # Check for basic quality issues
         long_functions = 0
@@ -115,7 +135,7 @@ class QuickDiagnosticAssessor:
 
         for py_file in py_files[:20]:  # Check first 20 files
             try:
-                with open(py_file, 'r') as f:
+                with open(py_file, "r") as f:
                     lines = f.readlines()
                     content = f.read()
 
@@ -123,10 +143,10 @@ class QuickDiagnosticAssessor:
                     in_function = False
                     func_lines = 0
                     for line in lines:
-                        if line.strip().startswith('def '):
+                        if line.strip().startswith("def "):
                             in_function = True
                             func_lines = 0
-                        elif in_function and line.strip() and not line.startswith(' '):
+                        elif in_function and line.strip() and not line.startswith(" "):
                             if func_lines > 50:  # Long function
                                 long_functions += 1
                             in_function = False
@@ -134,7 +154,11 @@ class QuickDiagnosticAssessor:
                             func_lines += 1
 
                     # Check for docstrings
-                    if 'def ' in content and '"""' not in content and "'''" not in content:
+                    if (
+                        "def " in content
+                        and '"""' not in content
+                        and "'''" not in content
+                    ):
                         missing_docstrings += 1
 
             except:
@@ -151,9 +175,9 @@ class QuickDiagnosticAssessor:
             "metrics": {
                 "python_files": total_py_files,
                 "long_functions": long_functions,
-                "missing_docstrings": missing_docstrings
+                "missing_docstrings": missing_docstrings,
             },
-            "recommendation": "Implement code quality tools and review processes"
+            "recommendation": "Implement code quality tools and review processes",
         }
 
     def run_testing_coverage_check(self):
@@ -163,7 +187,9 @@ class QuickDiagnosticAssessor:
         issues = []
 
         # Check for test files
-        test_files = list(self.backend_dir.rglob("test_*.py")) + list(self.backend_dir.rglob("*_test.py"))
+        test_files = list(self.backend_dir.rglob("test_*.py")) + list(
+            self.backend_dir.rglob("*_test.py")
+        )
         test_files_count = len(test_files)
 
         # Check test directory
@@ -187,9 +213,9 @@ class QuickDiagnosticAssessor:
             "metrics": {
                 "test_files_found": test_files_count,
                 "test_directory_exists": (self.backend_dir / "tests").exists(),
-                "test_config_exists": pytest_ini.exists() or setup_cfg.exists()
+                "test_config_exists": pytest_ini.exists() or setup_cfg.exists(),
             },
-            "recommendation": "Implement comprehensive test suite with CI/CD integration"
+            "recommendation": "Implement comprehensive test suite with CI/CD integration",
         }
 
     def run_dependency_check(self):
@@ -201,7 +227,7 @@ class QuickDiagnosticAssessor:
         # Check requirements files
         requirements_files = [
             self.backend_dir / "requirements.txt",
-            self.project_root / "requirements-dev.txt"
+            self.project_root / "requirements-dev.txt",
         ]
 
         existing_reqs = [f for f in requirements_files if f.exists()]
@@ -211,7 +237,7 @@ class QuickDiagnosticAssessor:
         # Check for outdated practices
         for req_file in existing_reqs:
             try:
-                with open(req_file, 'r') as f:
+                with open(req_file, "r") as f:
                     content = f.read()
                     if "==" not in content and ">=" not in content:
                         issues.append(f"Loose version constraints in {req_file.name}")
@@ -222,7 +248,7 @@ class QuickDiagnosticAssessor:
         package_json = self.frontend_dir / "package.json"
         if package_json.exists():
             try:
-                with open(package_json, 'r') as f:
+                with open(package_json, "r") as f:
                     data = json.load(f)
                     deps = data.get("dependencies", {})
                     dev_deps = data.get("devDependencies", {})
@@ -238,7 +264,7 @@ class QuickDiagnosticAssessor:
         self.results["dependency_management"] = {
             "status": "needs_attention" if issues else "well_managed",
             "issues": issues,
-            "recommendation": "Audit dependencies for vulnerabilities and update management practices"
+            "recommendation": "Audit dependencies for vulnerabilities and update management practices",
         }
 
     def generate_assessment_report(self):
@@ -250,26 +276,54 @@ class QuickDiagnosticAssessor:
             "assessed_areas": list(self.results.keys()),
             "summary": {
                 "total_areas_assessed": len(self.results),
-                "areas_with_issues": len([r for r in self.results.values() if r["status"] not in ["clean", "optimal", "good", "adequate", "well_managed"]]),
-                "clean_areas": len([r for r in self.results.values() if r["status"] in ["clean", "optimal", "good", "adequate", "well_managed"]]),
-                "total_issues_found": sum(len(r.get("issues", [])) for r in self.results.values())
+                "areas_with_issues": len(
+                    [
+                        r
+                        for r in self.results.values()
+                        if r["status"]
+                        not in ["clean", "optimal", "good", "adequate", "well_managed"]
+                    ]
+                ),
+                "clean_areas": len(
+                    [
+                        r
+                        for r in self.results.values()
+                        if r["status"]
+                        in ["clean", "optimal", "good", "adequate", "well_managed"]
+                    ]
+                ),
+                "total_issues_found": sum(
+                    len(r.get("issues", [])) for r in self.results.values()
+                ),
             },
             "detailed_results": self.results,
-            "priority_actions": []
+            "priority_actions": [],
         }
 
         # Generate priority actions
         for area, result in self.results.items():
-            if result["status"] not in ["clean", "optimal", "good", "adequate", "well_managed"]:
-                report["priority_actions"].append({
-                    "area": area,
-                    "priority": "HIGH" if len(result.get("issues", [])) > 2 else "MEDIUM",
-                    "issues_count": len(result.get("issues", [])),
-                    "recommendation": result.get("recommendation", "")
-                })
+            if result["status"] not in [
+                "clean",
+                "optimal",
+                "good",
+                "adequate",
+                "well_managed",
+            ]:
+                report["priority_actions"].append(
+                    {
+                        "area": area,
+                        "priority": (
+                            "HIGH" if len(result.get("issues", [])) > 2 else "MEDIUM"
+                        ),
+                        "issues_count": len(result.get("issues", [])),
+                        "recommendation": result.get("recommendation", ""),
+                    }
+                )
 
         # Sort by priority
-        report["priority_actions"].sort(key=lambda x: (x["priority"] == "HIGH", x["issues_count"]), reverse=True)
+        report["priority_actions"].sort(
+            key=lambda x: (x["priority"] == "HIGH", x["issues_count"]), reverse=True
+        )
 
         return report
 
@@ -301,7 +355,7 @@ class QuickDiagnosticAssessor:
             "issues_found": "⚠️",
             "needs_improvement": "🟡",
             "inadequate": "🟡",
-            "needs_attention": "🟡"
+            "needs_attention": "🟡",
         }
 
         for area, result in self.results.items():
@@ -315,14 +369,21 @@ class QuickDiagnosticAssessor:
         print(f"  Areas with Issues: {report['summary']['areas_with_issues']}")
         print(f"  Total Issues: {report['summary']['total_issues_found']}")
 
-        print("
-🎯 PRIORITY ACTIONS"        for action in report["priority_actions"][:5]:  # Top 5
+        print("🎯 PRIORITY ACTIONS")
+        for action in report["priority_actions"][:5]:  # Top 5
             priority_emoji = "🔴" if action["priority"] == "HIGH" else "🟡"
-            print(f"  {priority_emoji} {action['area'].replace('_', ' ').title()}: {action['issues_count']} issues")
+            print(
+                f"  {priority_emoji} {action['area'].replace('_', ' ').title()}: {action['issues_count']} issues"
+            )
 
         # Save report
-        report_path = self.project_root / "scripts" / "diagnostics" / "quick_diagnostic_assessment.json"
-        with open(report_path, 'w') as f:
+        report_path = (
+            self.project_root
+            / "scripts"
+            / "diagnostics"
+            / "quick_diagnostic_assessment.json"
+        )
+        with open(report_path, "w") as f:
             json.dump(report, f, indent=2, default=str)
 
         print(f"\n💾 Detailed report saved to: {report_path}")
@@ -337,6 +398,7 @@ class QuickDiagnosticAssessor:
 
         return report
 
+
 def main():
     """Main assessment function"""
     assessor = QuickDiagnosticAssessor()
@@ -350,6 +412,7 @@ def main():
         sys.exit(1)  # Minor issues
     else:
         sys.exit(2)  # Major issues
+
 
 if __name__ == "__main__":
     main()

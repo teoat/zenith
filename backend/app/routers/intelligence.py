@@ -8,19 +8,20 @@ Provides:
 - Risk scoring
 """
 
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Request
-from typing import List, Dict, Any
 from datetime import datetime
+from typing import Any, Dict, List
+
+from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
 from pydantic import BaseModel
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
 from app.services.intelligence import (
-    FraudDetectionEngine, 
-    Transaction, 
+    ExtractedEvidence,
     FraudAlert,
+    FraudDetectionEngine,
     MultiModalProcessor,
-    ExtractedEvidence
+    Transaction,
 )
 
 router = APIRouter(prefix="/intelligence", tags=["intelligence"])
@@ -81,17 +82,18 @@ class EvidenceResponse(BaseModel):
 
 # Endpoints
 
+
 @router.post("/fraud/analyze", response_model=List[FraudAlertResponse])
 @limiter.limit("10/minute")  # Limit to 10 requests per minute
 async def analyze_fraud(request: Request, fraud_request: FraudAnalysisRequest):
     """
     Analyze transactions for fraud patterns
-    
+
     Detects:
     - Structuring (transactions split to avoid reporting)
     - Velocity (too many transactions too fast)
     - Round trips (circular money flow)
-    
+
     Rate limit: 10 requests per minute
     """
     # Convert to Transaction objects
@@ -104,17 +106,17 @@ async def analyze_fraud(request: Request, fraud_request: FraudAnalysisRequest):
             destination_account=tx.destination_account,
             description=tx.description,
             merchant=tx.merchant,
-            category=tx.category
+            category=tx.category,
         )
         for tx in fraud_request.transactions
     ]
-    
+
     # Run fraud detection with validation
     try:
         alerts = fraud_engine.analyze_transactions(transactions)
     except (ValueError, TypeError) as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     # Convert to response format
     return [
         FraudAlertResponse(
@@ -125,7 +127,7 @@ async def analyze_fraud(request: Request, fraud_request: FraudAnalysisRequest):
             transactions=alert.transactions,
             description=alert.description,
             detected_at=alert.detected_at,
-            details=alert.details
+            details=alert.details,
         )
         for alert in alerts
     ]
@@ -134,7 +136,7 @@ async def analyze_fraud(request: Request, fraud_request: FraudAnalysisRequest):
 @router.post("/fraud/risk-score/{account}", response_model=RiskScoreResponse)
 async def calculate_risk_score(account: str, request: FraudAnalysisRequest):
     """Calculate overall risk score for an account"""
-    
+
     transactions = [
         Transaction(
             id=tx.id,
@@ -144,30 +146,28 @@ async def calculate_risk_score(account: str, request: FraudAnalysisRequest):
             destination_account=tx.destination_account,
             description=tx.description,
             merchant=tx.merchant,
-            category=tx.category
+            category=tx.category,
         )
         for tx in request.transactions
     ]
-    
+
     # Calculate risk
     risk_score = fraud_engine.calculate_overall_risk(account, transactions)
-    
+
     # Get alerts for this account
     alerts = fraud_engine.analyze_transactions(transactions)
     account_alerts = [
-        a for a in alerts 
-        if account in str(a.details) or account in a.transactions
+        a for a in alerts if account in str(a.details) or account in a.transactions
     ]
-    
+
     fraud_types = list(set(a.fraud_type.value for a in account_alerts))
-    
+
     return RiskScoreResponse(
         account=account,
         risk_score=risk_score,
         alert_count=len(account_alerts),
-        fraud_types_detected=fraud_types
+        fraud_types_detected=fraud_types,
     )
-
 
 
 @router.post("/evidence/process", response_model=EvidenceResponse)
@@ -175,34 +175,36 @@ async def calculate_risk_score(account: str, request: FraudAnalysisRequest):
 async def process_evidence(request: Request, file: UploadFile = File(...)):
     """
     Process uploaded evidence file
-    
+
     Supports:
     - PDF documents (text extraction + OCR)
     - Images (OCR + metadata + forensics)
     - Text files
-    
+
     Rate limit: 5 requests per minute
     """
     try:
         # Save temporarily
-        import tempfile
         import os
-        
-        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp_file:
+        import tempfile
+
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=os.path.splitext(file.filename)[1]
+        ) as tmp_file:
             content = await file.read()
             tmp_file.write(content)
             tmp_path = tmp_file.name
-        
+
         try:
             # Process file
             evidence = evidence_processor.process_file(tmp_path, file_id=file.filename)
-            
+
             # Check for suspicious indicators
             has_suspicious = False
             if evidence.image_analysis:
-                forensics = evidence.image_analysis.get('forensics', {})
-                has_suspicious = forensics.get('risk_level') in ('high', 'medium')
-            
+                forensics = evidence.image_analysis.get("forensics", {})
+                has_suspicious = forensics.get("risk_level") in ("high", "medium")
+
             return EvidenceResponse(
                 file_id=evidence.file_id,
                 filename=evidence.filename,
@@ -212,12 +214,12 @@ async def process_evidence(request: Request, file: UploadFile = File(...)):
                 ocr_confidence=evidence.ocr_confidence,
                 metadata=evidence.metadata,
                 processed_at=evidence.processed_at,
-                has_suspicious_indicators=has_suspicious
+                has_suspicious_indicators=has_suspicious,
             )
         finally:
             # Clean up temp file
             os.unlink(tmp_path)
-            
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -227,17 +229,21 @@ async def process_evidence(request: Request, file: UploadFile = File(...)):
 @router.get("/evidence/search")
 async def search_evidence(query: str) -> List[Dict[str, Any]]:
     """Search processed evidence files"""
-    
+
     results = evidence_processor.search(query)
-    
+
     return [
         {
             "file_id": e.file_id,
             "filename": e.filename,
             "file_type": e.file_type,
-            "snippet": e.extracted_text[:200] + "..." if len(e.extracted_text) > 200 else e.extracted_text,
+            "snippet": (
+                e.extracted_text[:200] + "..."
+                if len(e.extracted_text) > 200
+                else e.extracted_text
+            ),
             "ocr_confidence": e.ocr_confidence,
-            "processed_at": e.processed_at.isoformat()
+            "processed_at": e.processed_at.isoformat(),
         }
         for e in results
     ]
@@ -257,5 +263,5 @@ async def health_check():
         "fraud_engine": "operational",
         "evidence_processor": "operational",
         "processed_files": len(evidence_processor.processed_files),
-        "fraud_alerts": len(fraud_engine.alerts)
+        "fraud_alerts": len(fraud_engine.alerts),
     }

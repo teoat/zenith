@@ -6,19 +6,21 @@ This avoids heavy dependencies like Torch/Transformers while offering
 significantly better performance than simple keyword matching.
 """
 
-from typing import List, Dict, Tuple, Any
+import logging
+from typing import Any, Dict, List, Tuple
+
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
-import logging
 
 logger = logging.getLogger(__name__)
+
 
 class LocalRAGEngine:
     def __init__(self):
         self.documents: Dict[str, str] = {}
         self.doc_ids: List[str] = []
-        self.vectorizer = TfidfVectorizer(stop_words='english')
+        self.vectorizer = TfidfVectorizer(stop_words="english")
         self.tfidf_matrix = None
         self._is_dirty = False
 
@@ -67,26 +69,33 @@ class LocalRAGEngine:
             return []
 
         # argsort returns indices of elements from low to high, so we take last k and reverse
-        related_docs_indices = cosine_similarities.argsort()[:-k-1:-1]
+        related_docs_indices = cosine_similarities.argsort()[: -k - 1 : -1]
 
         results = []
         for idx in related_docs_indices:
             score = float(cosine_similarities[idx])
             if score > 0.05:  # Filter out totally irrelevant results
                 doc_id = self.doc_ids[idx]
-                results.append({
-                    "id": doc_id,
-                    "text": self.documents[doc_id],
-                    "score": round(score, 4)
-                })
+                results.append(
+                    {
+                        "id": doc_id,
+                        "text": self.documents[doc_id],
+                        "score": round(score, 4),
+                    }
+                )
 
         return results
 
     def get_stats(self):
         return {
             "total_documents": len(self.doc_ids),
-            "vocabulary_size": len(self.vectorizer.vocabulary_) if hasattr(self.vectorizer, 'vocabulary_') else 0
+            "vocabulary_size": (
+                len(self.vectorizer.vocabulary_)
+                if hasattr(self.vectorizer, "vocabulary_")
+                else 0
+            ),
         }
+
 
 # Global instance
 rag_engine = LocalRAGEngine()

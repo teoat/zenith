@@ -3,7 +3,8 @@ Role-Based Access Control (RBAC) for 378x492 Fraud Detection Platform
 """
 
 from enum import Enum
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 
 class Permission(str, Enum):
     # Case permissions
@@ -31,6 +32,7 @@ class Permission(str, Enum):
     VIEW_REPORTS = "view_reports"
     MANAGE_SYSTEM = "manage_system"
     VIEW_AUDIT = "view_audit"
+
 
 # Role definitions
 ROLE_PERMISSIONS: Dict[str, List[str]] = {
@@ -104,11 +106,13 @@ ROLE_PERMISSIONS: Dict[str, List[str]] = {
     ],
 }
 
+
 def has_permission(user_role: str, permission: str) -> bool:
     """Check if a user role has a specific permission"""
     if user_role not in ROLE_PERMISSIONS:
         return False
     return permission in ROLE_PERMISSIONS[user_role]
+
 
 def get_role_permissions(role: str) -> List[str]:
     """Get all permissions for a role"""

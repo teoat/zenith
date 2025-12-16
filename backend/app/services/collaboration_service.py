@@ -6,18 +6,20 @@ Provides WebSocket-based real-time collaboration for investigation workflows
 import asyncio
 import json
 import logging
-from typing import Dict, List, Any, Optional, Callable, Set, TYPE_CHECKING
+import queue
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set
+
 import websockets
 from websockets.server import ServerConnection
-import threading
-import queue
-from concurrent.futures import ThreadPoolExecutor
 
 # Type alias for WebSocket connection (modern API)
 WebSocketConnection = ServerConnection
 
 logger = logging.getLogger(__name__)
+
 
 class CollaborationManager:
     """
@@ -36,13 +38,13 @@ class CollaborationManager:
 
         # Message handlers
         self.message_handlers: Dict[str, Callable] = {
-            'join_session': self.handle_join_session,
-            'leave_session': self.handle_leave_session,
-            'cursor_update': self.handle_cursor_update,
-            'entity_select': self.handle_entity_select,
-            'entity_update': self.handle_entity_update,
-            'chat_message': self.handle_chat_message,
-            'ping': self.handle_ping
+            "join_session": self.handle_join_session,
+            "leave_session": self.handle_leave_session,
+            "cursor_update": self.handle_cursor_update,
+            "entity_select": self.handle_entity_select,
+            "entity_update": self.handle_entity_update,
+            "chat_message": self.handle_chat_message,
+            "ping": self.handle_ping,
         }
 
         logger.info("Collaboration Manager initialized")
@@ -56,7 +58,7 @@ class CollaborationManager:
                 self.host,
                 self.port,
                 ping_interval=30,
-                ping_timeout=10
+                ping_timeout=10,
             )
 
             logger.info(f"WebSocket server started on ws://{self.host}:{self.port}")
@@ -86,8 +88,12 @@ class CollaborationManager:
         """Handle incoming WebSocket connections"""
         try:
             # Extract session ID from path (e.g., /ws/session/123)
-            path_parts = path.strip('/').split('/')
-            if len(path_parts) >= 3 and path_parts[0] == 'ws' and path_parts[1] == 'session':
+            path_parts = path.strip("/").split("/")
+            if (
+                len(path_parts) >= 3
+                and path_parts[0] == "ws"
+                and path_parts[1] == "session"
+            ):
                 session_id = path_parts[2]
             else:
                 await websocket.close(1008, "Invalid session path")
@@ -105,45 +111,61 @@ class CollaborationManager:
                 self.session_participants[session_id] = {}
 
             self.session_participants[session_id][participant_id] = {
-                'id': participant_id,
-                'joined_at': datetime.now().isoformat(),
-                'last_activity': datetime.now().isoformat(),
-                'cursor': None,
-                'selected_entity': None,
-                'status': 'active'
+                "id": participant_id,
+                "joined_at": datetime.now().isoformat(),
+                "last_activity": datetime.now().isoformat(),
+                "cursor": None,
+                "selected_entity": None,
+                "status": "active",
             }
 
             logger.info(f"Participant {participant_id} joined session {session_id}")
 
             # Broadcast participant joined
-            await self.broadcast_to_session(session_id, {
-                'type': 'participant_joined',
-                'participant': self.session_participants[session_id][participant_id],
-                'participants': list(self.session_participants[session_id].values())
-            }, exclude=websocket)
+            await self.broadcast_to_session(
+                session_id,
+                {
+                    "type": "participant_joined",
+                    "participant": self.session_participants[session_id][
+                        participant_id
+                    ],
+                    "participants": list(
+                        self.session_participants[session_id].values()
+                    ),
+                },
+                exclude=websocket,
+            )
 
             # Send current session state
-            await websocket.send(json.dumps({
-                'type': 'session_state',
-                'participants': list(self.session_participants[session_id].values())
-            }))
+            await websocket.send(
+                json.dumps(
+                    {
+                        "type": "session_state",
+                        "participants": list(
+                            self.session_participants[session_id].values()
+                        ),
+                    }
+                )
+            )
 
             # Handle messages
             async for message in websocket:
                 try:
                     data = json.loads(message)
-                    await self.handle_message(session_id, participant_id, data, websocket)
+                    await self.handle_message(
+                        session_id, participant_id, data, websocket
+                    )
                 except json.JSONDecodeError:
-                    await websocket.send(json.dumps({
-                        'type': 'error',
-                        'message': 'Invalid JSON message'
-                    }))
+                    await websocket.send(
+                        json.dumps({"type": "error", "message": "Invalid JSON message"})
+                    )
                 except Exception as e:
                     logger.error(f"Error handling message: {e}")
-                    await websocket.send(json.dumps({
-                        'type': 'error',
-                        'message': 'Internal server error'
-                    }))
+                    await websocket.send(
+                        json.dumps(
+                            {"type": "error", "message": "Internal server error"}
+                        )
+                    )
 
         except Exception as e:
             logger.error(f"Connection handler error: {e}")
@@ -157,11 +179,16 @@ class CollaborationManager:
                         del self.session_participants[session_id][participant_id]
 
                 # Broadcast participant left
-                await self.broadcast_to_session(session_id, {
-                    'type': 'participant_left',
-                    'participant_id': participant_id,
-                    'participants': list(self.session_participants.get(session_id, {}).values())
-                })
+                await self.broadcast_to_session(
+                    session_id,
+                    {
+                        "type": "participant_left",
+                        "participant_id": participant_id,
+                        "participants": list(
+                            self.session_participants.get(session_id, {}).values()
+                        ),
+                    },
+                )
 
                 # Clean up empty sessions
                 if not self.active_connections[session_id]:
@@ -169,10 +196,15 @@ class CollaborationManager:
                     if session_id in self.session_participants:
                         del self.session_participants[session_id]
 
-    async def handle_message(self, session_id: str, participant_id: str,
-                           data: Dict[str, Any], websocket: WebSocketConnection):
+    async def handle_message(
+        self,
+        session_id: str,
+        participant_id: str,
+        data: Dict[str, Any],
+        websocket: WebSocketConnection,
+    ):
         """Handle incoming messages"""
-        message_type = data.get('type', '')
+        message_type = data.get("type", "")
 
         if message_type in self.message_handlers:
             try:
@@ -181,119 +213,191 @@ class CollaborationManager:
                 )
             except Exception as e:
                 logger.error(f"Message handler error for {message_type}: {e}")
-                await websocket.send(json.dumps({
-                    'type': 'error',
-                    'message': f'Error processing {message_type}'
-                }))
+                await websocket.send(
+                    json.dumps(
+                        {"type": "error", "message": f"Error processing {message_type}"}
+                    )
+                )
         else:
-            await websocket.send(json.dumps({
-                'type': 'error',
-                'message': f'Unknown message type: {message_type}'
-            }))
+            await websocket.send(
+                json.dumps(
+                    {
+                        "type": "error",
+                        "message": f"Unknown message type: {message_type}",
+                    }
+                )
+            )
 
-    async def handle_join_session(self, session_id: str, participant_id: str,
-                                data: Dict[str, Any], websocket: WebSocketConnection):
+    async def handle_join_session(
+        self,
+        session_id: str,
+        participant_id: str,
+        data: Dict[str, Any],
+        websocket: WebSocketConnection,
+    ):
         """Handle session join"""
         # Update participant info
-        if session_id in self.session_participants and participant_id in self.session_participants[session_id]:
+        if (
+            session_id in self.session_participants
+            and participant_id in self.session_participants[session_id]
+        ):
             participant = self.session_participants[session_id][participant_id]
-            participant.update({
-                'name': data.get('name', f'User {participant_id}'),
-                'role': data.get('role', 'investigator'),
-                'color': data.get('color', '#3b82f6'),
-                'last_activity': datetime.now().isoformat()
-            })
+            participant.update(
+                {
+                    "name": data.get("name", f"User {participant_id}"),
+                    "role": data.get("role", "investigator"),
+                    "color": data.get("color", "#3b82f6"),
+                    "last_activity": datetime.now().isoformat(),
+                }
+            )
 
-        await websocket.send(json.dumps({
-            'type': 'join_success',
-            'session_id': session_id,
-            'participant_id': participant_id
-        }))
+        await websocket.send(
+            json.dumps(
+                {
+                    "type": "join_success",
+                    "session_id": session_id,
+                    "participant_id": participant_id,
+                }
+            )
+        )
 
-    async def handle_leave_session(self, session_id: str, participant_id: str,
-                                 data: Dict[str, Any], websocket: WebSocketConnection):
+    async def handle_leave_session(
+        self,
+        session_id: str,
+        participant_id: str,
+        data: Dict[str, Any],
+        websocket: WebSocketConnection,
+    ):
         """Handle session leave"""
         # Participant cleanup is handled in connection close
-        await websocket.send(json.dumps({
-            'type': 'leave_success'
-        }))
+        await websocket.send(json.dumps({"type": "leave_success"}))
 
-    async def handle_cursor_update(self, session_id: str, participant_id: str,
-                                 data: Dict[str, Any], websocket: WebSocketConnection):
+    async def handle_cursor_update(
+        self,
+        session_id: str,
+        participant_id: str,
+        data: Dict[str, Any],
+        websocket: WebSocketConnection,
+    ):
         """Handle cursor position updates"""
-        if session_id in self.session_participants and participant_id in self.session_participants[session_id]:
+        if (
+            session_id in self.session_participants
+            and participant_id in self.session_participants[session_id]
+        ):
             participant = self.session_participants[session_id][participant_id]
-            participant['cursor'] = {
-                'x': data.get('x', 0),
-                'y': data.get('y', 0),
-                'timestamp': datetime.now().isoformat()
+            participant["cursor"] = {
+                "x": data.get("x", 0),
+                "y": data.get("y", 0),
+                "timestamp": datetime.now().isoformat(),
             }
-            participant['last_activity'] = datetime.now().isoformat()
+            participant["last_activity"] = datetime.now().isoformat()
 
         # Broadcast cursor update to other participants
-        await self.broadcast_to_session(session_id, {
-            'type': 'cursor_update',
-            'participant_id': participant_id,
-            'cursor': participant['cursor']
-        }, exclude=websocket)
+        await self.broadcast_to_session(
+            session_id,
+            {
+                "type": "cursor_update",
+                "participant_id": participant_id,
+                "cursor": participant["cursor"],
+            },
+            exclude=websocket,
+        )
 
-    async def handle_entity_select(self, session_id: str, participant_id: str,
-                                 data: Dict[str, Any], websocket: WebSocketConnection):
+    async def handle_entity_select(
+        self,
+        session_id: str,
+        participant_id: str,
+        data: Dict[str, Any],
+        websocket: WebSocketConnection,
+    ):
         """Handle entity selection"""
-        if session_id in self.session_participants and participant_id in self.session_participants[session_id]:
+        if (
+            session_id in self.session_participants
+            and participant_id in self.session_participants[session_id]
+        ):
             participant = self.session_participants[session_id][participant_id]
-            participant['selected_entity'] = data.get('entity_id')
-            participant['last_activity'] = datetime.now().isoformat()
+            participant["selected_entity"] = data.get("entity_id")
+            participant["last_activity"] = datetime.now().isoformat()
 
         # Broadcast entity selection to other participants
-        await self.broadcast_to_session(session_id, {
-            'type': 'entity_selected',
-            'participant_id': participant_id,
-            'entity_id': data.get('entity_id'),
-            'entity_name': data.get('entity_name')
-        }, exclude=websocket)
+        await self.broadcast_to_session(
+            session_id,
+            {
+                "type": "entity_selected",
+                "participant_id": participant_id,
+                "entity_id": data.get("entity_id"),
+                "entity_name": data.get("entity_name"),
+            },
+            exclude=websocket,
+        )
 
-    async def handle_entity_update(self, session_id: str, participant_id: str,
-                                 data: Dict[str, Any], websocket: WebSocketConnection):
+    async def handle_entity_update(
+        self,
+        session_id: str,
+        participant_id: str,
+        data: Dict[str, Any],
+        websocket: WebSocketConnection,
+    ):
         """Handle entity updates"""
         # Broadcast entity update to all participants
-        await self.broadcast_to_session(session_id, {
-            'type': 'entity_updated',
-            'participant_id': participant_id,
-            'entity_id': data.get('entity_id'),
-            'changes': data.get('changes', {}),
-            'timestamp': datetime.now().isoformat()
-        })
+        await self.broadcast_to_session(
+            session_id,
+            {
+                "type": "entity_updated",
+                "participant_id": participant_id,
+                "entity_id": data.get("entity_id"),
+                "changes": data.get("changes", {}),
+                "timestamp": datetime.now().isoformat(),
+            },
+        )
 
-    async def handle_chat_message(self, session_id: str, participant_id: str,
-                                data: Dict[str, Any], websocket: WebSocketConnection):
+    async def handle_chat_message(
+        self,
+        session_id: str,
+        participant_id: str,
+        data: Dict[str, Any],
+        websocket: WebSocketConnection,
+    ):
         """Handle chat messages"""
         message = {
-            'type': 'chat_message',
-            'participant_id': participant_id,
-            'message': data.get('message', ''),
-            'timestamp': datetime.now().isoformat()
+            "type": "chat_message",
+            "participant_id": participant_id,
+            "message": data.get("message", ""),
+            "timestamp": datetime.now().isoformat(),
         }
 
         # Add participant info
-        if session_id in self.session_participants and participant_id in self.session_participants[session_id]:
+        if (
+            session_id in self.session_participants
+            and participant_id in self.session_participants[session_id]
+        ):
             participant = self.session_participants[session_id][participant_id]
-            message['participant_name'] = participant.get('name', f'User {participant_id}')
-            message['participant_color'] = participant.get('color', '#3b82f6')
+            message["participant_name"] = participant.get(
+                "name", f"User {participant_id}"
+            )
+            message["participant_color"] = participant.get("color", "#3b82f6")
 
         # Broadcast to all participants in session
         await self.broadcast_to_session(session_id, message)
 
-    async def handle_ping(self, session_id: str, participant_id: str,
-                        data: Dict[str, Any], websocket: WebSocketConnection):
+    async def handle_ping(
+        self,
+        session_id: str,
+        participant_id: str,
+        data: Dict[str, Any],
+        websocket: WebSocketConnection,
+    ):
         """Handle ping messages"""
-        await websocket.send(json.dumps({
-            'type': 'pong',
-            'timestamp': datetime.now().isoformat()
-        }))
+        await websocket.send(
+            json.dumps({"type": "pong", "timestamp": datetime.now().isoformat()})
+        )
 
-    async def broadcast_to_session(self, session_id: str, message: Dict[str, Any],
-                                 exclude: WebSocketConnection = None):
+    async def broadcast_to_session(
+        self,
+        session_id: str,
+        message: Dict[str, Any],
+        exclude: WebSocketConnection = None,
+    ):
         """Broadcast message to all participants in a session"""
         if session_id not in self.active_connections:
             return
@@ -308,7 +412,9 @@ class CollaborationManager:
         if tasks:
             await asyncio.gather(*tasks, return_exceptions=True)
 
-    async def send_to_participant(self, session_id: str, participant_id: str, message: Dict[str, Any]):
+    async def send_to_participant(
+        self, session_id: str, participant_id: str, message: Dict[str, Any]
+    ):
         """Send message to specific participant"""
         if session_id not in self.active_connections:
             return
@@ -339,10 +445,12 @@ class CollaborationManager:
     def get_session_info(self, session_id: str) -> Dict[str, Any]:
         """Get information about a session"""
         return {
-            'session_id': session_id,
-            'active_connections': len(self.active_connections.get(session_id, set())),
-            'participants': list(self.session_participants.get(session_id, {}).values()),
-            'created_at': datetime.now().isoformat()
+            "session_id": session_id,
+            "active_connections": len(self.active_connections.get(session_id, set())),
+            "participants": list(
+                self.session_participants.get(session_id, {}).values()
+            ),
+            "created_at": datetime.now().isoformat(),
         }
 
     def get_all_sessions(self) -> List[Dict[str, Any]]:
@@ -354,24 +462,31 @@ class CollaborationManager:
 
     def get_system_stats(self) -> Dict[str, Any]:
         """Get system-wide collaboration statistics"""
-        total_connections = sum(len(connections) for connections in self.active_connections.values())
-        total_participants = sum(len(participants) for participants in self.session_participants.values())
+        total_connections = sum(
+            len(connections) for connections in self.active_connections.values()
+        )
+        total_participants = sum(
+            len(participants) for participants in self.session_participants.values()
+        )
 
         return {
-            'active_sessions': len(self.active_connections),
-            'total_connections': total_connections,
-            'total_participants': total_participants,
-            'server_running': self.running,
-            'host': self.host,
-            'port': self.port
+            "active_sessions": len(self.active_connections),
+            "total_connections": total_connections,
+            "total_participants": total_participants,
+            "server_running": self.running,
+            "host": self.host,
+            "port": self.port,
         }
+
 
 # Global collaboration manager instance
 collaboration_manager = CollaborationManager()
 
+
 async def get_collaboration_manager() -> CollaborationManager:
     """Get the global collaboration manager instance"""
     return collaboration_manager
+
 
 # WebSocket client for frontend use
 class CollaborationClient:
@@ -399,7 +514,7 @@ class CollaborationClient:
             self.websocket = await websockets.connect(
                 f"{self.server_url}/ws/session/{self.session_id}",
                 ping_interval=30,
-                ping_timeout=10
+                ping_timeout=10,
             )
 
             self.connected = True
@@ -407,10 +522,10 @@ class CollaborationClient:
 
             # Send join message
             join_message = {
-                'type': 'join_session',
-                'name': participant_info.get('name', 'Anonymous'),
-                'role': participant_info.get('role', 'investigator'),
-                'color': participant_info.get('color', '#3b82f6')
+                "type": "join_session",
+                "name": participant_info.get("name", "Anonymous"),
+                "role": participant_info.get("role", "investigator"),
+                "color": participant_info.get("color", "#3b82f6"),
             }
 
             await self.websocket.send(json.dumps(join_message))
@@ -438,10 +553,10 @@ class CollaborationClient:
             async for message in self.websocket:
                 try:
                     data = json.loads(message)
-                    message_type = data.get('type', '')
+                    message_type = data.get("type", "")
 
-                    if message_type == 'join_success':
-                        self.participant_id = data.get('participant_id')
+                    if message_type == "join_success":
+                        self.participant_id = data.get("participant_id")
 
                     # Call message handler if registered
                     if message_type in self.message_handlers:
@@ -468,9 +583,11 @@ class CollaborationClient:
             return
 
         self.reconnect_attempts += 1
-        wait_time = min(2 ** self.reconnect_attempts, 30)  # Exponential backoff, max 30s
+        wait_time = min(2**self.reconnect_attempts, 30)  # Exponential backoff, max 30s
 
-        logger.info(f"Attempting reconnection in {wait_time} seconds (attempt {self.reconnect_attempts})")
+        logger.info(
+            f"Attempting reconnection in {wait_time} seconds (attempt {self.reconnect_attempts})"
+        )
 
         await asyncio.sleep(wait_time)
         try:
@@ -491,34 +608,27 @@ class CollaborationClient:
 
     async def update_cursor(self, x: float, y: float):
         """Update cursor position"""
-        await self.send_message({
-            'type': 'cursor_update',
-            'x': x,
-            'y': y
-        })
+        await self.send_message({"type": "cursor_update", "x": x, "y": y})
 
     async def select_entity(self, entity_id: str, entity_name: str = ""):
         """Select an entity"""
-        await self.send_message({
-            'type': 'entity_select',
-            'entity_id': entity_id,
-            'entity_name': entity_name
-        })
+        await self.send_message(
+            {
+                "type": "entity_select",
+                "entity_id": entity_id,
+                "entity_name": entity_name,
+            }
+        )
 
     async def update_entity(self, entity_id: str, changes: Dict[str, Any]):
         """Update an entity"""
-        await self.send_message({
-            'type': 'entity_update',
-            'entity_id': entity_id,
-            'changes': changes
-        })
+        await self.send_message(
+            {"type": "entity_update", "entity_id": entity_id, "changes": changes}
+        )
 
     async def send_chat_message(self, message: str):
         """Send a chat message"""
-        await self.send_message({
-            'type': 'chat_message',
-            'message': message
-        })
+        await self.send_message({"type": "chat_message", "message": message})
 
     def is_connected(self) -> bool:
         """Check if connected to the server"""
