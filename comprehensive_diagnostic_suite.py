@@ -164,11 +164,14 @@ class ComprehensiveDiagnosticSuite:
         routes_path = backend_path / 'app' / 'routes'
         backend_metrics['api_endpoints'] = {'total_endpoints': 0, 'route_files': 0}
         if routes_path.exists():
-            endpoint_count = 0
             for route_file in routes_path.rglob('*.py'):
-                with open(route_file, 'r') as f:
-                    content = f.read()
-                    endpoint_count += len(re.findall(r'@router\\.(get|post|put|delete|patch)', content))
+                try:
+                    with open(route_file, 'r', encoding='utf-8', errors='ignore') as f:
+                        content = f.read()
+                    # Count route decorators
+                    endpoint_count += len(re.findall(r'@router\.(get|post|put|delete|patch)', content))
+                except (OSError, IOError):
+                    continue
             backend_metrics['api_endpoints']['total_endpoints'] = endpoint_count
             backend_metrics['api_endpoints']['route_files'] = len(list(routes_path.glob('*.py')))
 
