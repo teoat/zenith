@@ -432,21 +432,32 @@ class E2ETestFramework:
                         responses.append(status_code)
                         time.sleep(0.1)
 
-                    # Should have some 429 responses for rate limiting
+                    # Check rate limiting behavior
                     rate_limited_responses = sum(1 for r in responses if r == 429)
+                    successful_responses = sum(1 for r in responses if r == 200)
+
                     if rate_limited_responses > 0:
+                        # Rate limiting is working
                         results["passed"] += 1
                         results["details"].append({
                             "test": f"security_{test_name}",
                             "status": "passed",
                             "info": f"Rate limiting active ({rate_limited_responses}/10 requests blocked)"
                         })
-                    else:
-                        results["passed"] += 1  # Pass for now - rate limiting may be disabled in test mode
+                    elif successful_responses >= 8:
+                        # Rate limiting may be disabled for localhost/development
+                        results["passed"] += 1
                         results["details"].append({
                             "test": f"security_{test_name}",
                             "status": "passed",
-                            "info": "Rate limiting check (may be disabled in test environment)"
+                            "info": f"Rate limiting bypassed for localhost ({successful_responses}/10 requests allowed)"
+                        })
+                    else:
+                        results["failed"] += 1
+                        results["details"].append({
+                            "test": f"security_{test_name}",
+                            "status": "failed",
+                            "error": f"Unexpected response pattern: {responses}"
                         })
                 else:
                     # For security headers test - use HTTP request to check status
@@ -604,6 +615,54 @@ class E2ETestFramework:
 
         return results
 
+    async def run_ai_service_tests(self) -> Dict[str, Any]:
+        """Run AI service availability and response tests"""
+        results = {
+            "test_name": "ai_service_tests",
+            "passed": 0,
+            "failed": 0,
+            "total": 0,
+            "details": []
+        }
+
+        ai_tests = [
+            ("ai_analyze_endpoint", f"{self.base_url}/api/v1/ai/analyze", "POST",
+             {"type": "fraud_pattern", "data": {"text": "test fraud pattern"}}),
+            ("ai_health_endpoint", f"{self.base_url}/api/v1/ai/health", "GET", None),
+            ("performance_ai_metrics", f"{self.base_url}/performance/metrics", "GET", None),
+        ]
+
+        for test_name, url, method, data in ai_tests:
+            results["total"] += 1
+            try:
+                status_code, response_time = self.make_http_request(url, method, data)
+
+                if status_code in [200, 401]:  # 401 is expected for protected endpoints
+                    results["passed"] += 1
+                    results["details"].append({
+                        "test": f"ai_{test_name}",
+                        "status": "passed",
+                        "response_time": response_time,
+                        "status_code": status_code
+                    })
+                else:
+                    results["failed"] += 1
+                    results["details"].append({
+                        "test": f"ai_{test_name}",
+                        "status": "failed",
+                        "error": f"HTTP {status_code}",
+                        "response_time": response_time
+                    })
+            except Exception as e:
+                results["failed"] += 1
+                results["details"].append({
+                    "test": f"ai_{test_name}",
+                    "status": "failed",
+                    "error": str(e)
+                })
+
+        return results
+
     async def run_all_tests(self) -> Dict[str, Any]:
         """Run all E2E tests"""
         print("🚀 Starting E2E Test Suite...")
@@ -611,6 +670,7 @@ class E2ETestFramework:
         test_suites = [
             ("Backend API Tests", self.run_backend_tests()),
             ("WebSocket Tests", self.run_websocket_tests()),
+            ("AI Service Tests", self.run_ai_service_tests()),
             ("Frontend Tests", self.run_frontend_tests()),
             ("Security Tests", self.run_security_tests()),
             ("Performance Tests", self.run_performance_tests())
