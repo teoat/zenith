@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 DEPRECATED: This module is deprecated. The functionality has been consolidated into backend/app/routers/identity.py.
 Please use the onboarding endpoints provided in backend/app/routers/identity.py instead.
@@ -74,3 +75,43 @@ def submit_rookie_checklist(
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to store checklist: {e}")
+=======
+from fastapi import APIRouter, Request, HTTPException
+import re
+
+router = APIRouter()
+
+
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
+@router.get('/onboarding/roles')
+async def get_roles():
+    return {'roles': ['analyst', 'manager', 'investigator']}
+
+
+@router.post('/onboarding/rookie-checklist')
+async def submit_rookie_checklist(request: Request):
+    try:
+        payload = await request.json()
+    except Exception:
+        try:
+            payload = dict(await request.form())
+        except Exception:
+            payload = {}
+
+    email = payload.get('user_email') or payload.get('user')
+    items = payload.get('items')
+
+    if not items:
+        raise HTTPException(status_code=422, detail='items required')
+    if not email or not _EMAIL_RE.match(email):
+        raise HTTPException(status_code=422, detail='invalid email')
+
+    return {'status': 'accepted'}
+
+
+@router.get('/onboarding/status')
+async def onboarding_status():
+    return {'status': 'ok'}
+>>>>>>> 070c7cf08 (chore(batch): clean backend core files only)

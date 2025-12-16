@@ -37,7 +37,11 @@ async def temporal_burst(request: Request):
         except Exception:
             payload = {}
 
+<<<<<<< HEAD
     from app.services.fraud_detection import detect_burst
+=======
+    from services.temporal_detector import detect_burst
+>>>>>>> 070c7cf08 (chore(batch): clean backend core files only)
 
     ip = payload.get('entity_id') or payload.get('ip')
     # detect_burst gracefully handles missing session; tests call without app DB
