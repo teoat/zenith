@@ -12,28 +12,14 @@ sys.modules["networkx"] = MagicMock()
 
 # Set environment to development for tests to bypass production security middleware
 os.environ["ENVIRONMENT"] = "development"
-# Mock heavy/optional dependencies that might not be in the test environment
-# This prevents 500 errors in tests when these libs are missing
-# Create mock modules
-mock_pypdf2 = MagicMock()
-mock_cv2 = MagicMock()
-mock_params = MagicMock()
-mock_pil = MagicMock()
-mock_pil.Image = MagicMock()
-
-# Assign them to sys.modules
-sys.modules["PyPDF2"] = mock_pypdf2
-# sys.modules["cv2"] = mock_cv2 # opencv-python is in requirements
-# sys.modules["PIL"] = mock_pil # pillow is in requirements
-# sys.modules["numpy"] = MagicMock() # numpy is in requirements and critically needed by sklearn
-sys.modules["transformers"] = MagicMock() # Not in requirements, safe to mock
-
-# Mock heavy/optional dependencies critical for tests
-sys.modules["pytesseract"] = MagicMock()
-sys.modules["PIL"] = MagicMock()
-sys.modules["cv2"] = MagicMock()
-sys.modules["PyPDF2"] = MagicMock()
-sys.modules["python-docx"] = MagicMock()
+# Conditionally mock heavy/optional dependencies
+# Only mock them if they cannot be imported (e.g. absent in CI env)
+for lib in ["pytesseract", "PIL", "cv2", "PyPDF2", "docx", "transformers", "sentence_transformers"]:
+    try:
+        __import__(lib)
+    except ImportError:
+        sys.modules[lib] = MagicMock()
+# Note: 'python-docx' is imported as 'docx'
 
 from main import app
 from core.database import Base, get_db

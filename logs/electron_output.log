@@ -1,0 +1,14 @@
+
+> 378x492-fraud-detection@1.0.0 dev:electron
+> wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .
+
+01:16:12.552 › Auto-updater initialized
+Electron app ready, initializing...
+✅ Secure IPC initialized with HMAC signing
+Creating main window...
+Loading URL: http://localhost:5173
+Failed to initialize system tray: updateTrayMenu is not defined
+✅ Global shortcuts registered
+01:16:12.940 › Skipping update check in development mode
+Main window created successfully
+/Users/Arief/Desktop/378x492/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron exited with signal SIGTERM

@@ -21,9 +21,9 @@
 | **Phase 6A-G** | User Onboarding, Fraud Proof, AI, UI, Advanced Features | ✅ Complete |
 | **Phase 7** | Advanced Enhancements (Quick Wins) | ✅ Complete |
 | **Phase 8** | Core Enhancements (AI/ML, Architecture) | ✅ Complete |
-| **Phase 9** | Advanced Features (Multi-modal, AI Dev Tools) | ✅ Complete |
-| **Phase 10** | Enterprise Maturity (AI Dev Tools, Predictive Maintenance) | ✅ Complete |
-| **Phase 11** | Future Roadmap (Post-Production Enhancements) | 📋 Planned |
+| **Phase 9** | Advanced Features (Multi-modal, AI Dev Tools) | ⚠️ Heuristic/Prototype Complete |
+| **Phase 10** | Enterprise Maturity (AI Dev Tools, Predictive Maintenance) | ⚠️ Heuristic/Prototype Complete |
+| **Phase 11** | Future Roadmap (Real ML Integration & Optimizations) | 📋 Planned |
 
 ---
 
@@ -223,6 +223,29 @@
 - **Architecture:** Microservices with <20 services, event-driven design
 - **Monitoring:** End-to-end observability, predictive alerting
 - **Compliance:** 100% automated regulatory reporting
+
+---
+
+## 🏗️ Phase 12: Technical Debt & Integration (Transferred Tasks)
+
+### 🔴 Critical Technical Debt (Discovery: 2025-12-17)
+> **Source:** Architecture Diagnosis & Code Review
+
+#### **12.1 Evidence Processing Consolidation**
+- [ ] **Remove Split-Brain Architecture:** Consolidate `evidence_service.py` and `multimodal_analysis_service.py`.
+- [ ] **Delete Dead Code:** Remove `backend/app/services/evidence_processor.py`.
+- [ ] **Unify PDF Engines:** standardize on `fitz` (PyMuPDF) across all services.
+- [ ] **Refactor Router:** Update `routers/evidence.py` to use the unified service.
+
+#### **12.2 Real ML Model Integration (Currently Heuristic)**
+- [ ] **Train Fraud Models:** Replace heuristic logic in `multimodal_fraud_detector.py` with real trained models (Scikit-Learn/PyTorch).
+- [ ] **Implement AI Code Review:** Connect `ai_code_reviewer.py` to a real LLM or Static Analysis engine (currently Regex-based).
+- [ ] **Connect External Services:** Implement real API calls in `regulatory_reporter.py` (currently mocked).
+- [ ] **Vector Database:** Fully wire up `LocalRAGEngine.py` to persistent vector storage for `explainable_ai.py` similar case search.
+
+#### **12.3 Audio/Video Processing**
+- [ ] **Implement A/V Stubs:** dedicated implementation for `_process_audio` and `_process_video` in `evidence_service.py`.
+
 
 ---
 

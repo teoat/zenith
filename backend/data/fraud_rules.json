@@ -15,8 +15,8 @@
         "structuring",
         "smurfing"
       ],
-      "created_at": "2025-12-17 02:28:26.725269",
-      "updated_at": "2025-12-17 02:28:26.725274",
+      "created_at": "2025-12-17 02:46:11.537558",
+      "updated_at": "2025-12-17 02:46:11.537563",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -38,8 +38,8 @@
         "round_numbers",
         "suspicious"
       ],
-      "created_at": "2025-12-17 02:28:26.725283",
-      "updated_at": "2025-12-17 02:28:26.725284",
+      "created_at": "2025-12-17 02:46:11.537570",
+      "updated_at": "2025-12-17 02:46:11.537571",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -60,8 +60,8 @@
         "velocity",
         "frequency"
       ],
-      "created_at": "2025-12-17 02:28:26.725288",
-      "updated_at": "2025-12-17 02:28:26.725289",
+      "created_at": "2025-12-17 02:46:11.537580",
+      "updated_at": "2025-12-17 02:46:11.537580",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -83,8 +83,8 @@
         "geographic",
         "international"
       ],
-      "created_at": "2025-12-17 02:28:26.725441",
-      "updated_at": "2025-12-17 02:28:26.725442",
+      "created_at": "2025-12-17 02:46:11.537585",
+      "updated_at": "2025-12-17 02:46:11.537585",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
@@ -106,14 +106,14 @@
         "shell_company",
         "new_entity"
       ],
-      "created_at": "2025-12-17 02:28:26.725447",
-      "updated_at": "2025-12-17 02:28:26.725447",
+      "created_at": "2025-12-17 02:46:11.537591",
+      "updated_at": "2025-12-17 02:46:11.537591",
       "trigger_count": 0,
       "last_triggered": null,
       "confidence_threshold": 0.8,
       "action": "flag"
     }
   ],
-  "last_updated": "2025-12-17T02:28:26.725454",
+  "last_updated": "2025-12-17T02:46:11.537597",
   "version": "1.0"
 }

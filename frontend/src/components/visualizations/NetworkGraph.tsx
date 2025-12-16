@@ -48,107 +48,25 @@ export interface NetworkGraphData {
 }
 
 interface NetworkGraphProps {
-<<<<<<< Updated upstream
     data?: NetworkGraphData;
-    onNodeClick?: (node: NetworkNode) => void;
     height?: number;
+    width?: number;
+    mode?: '2d' | '3d';
+    focusNodeId?: string;
+    onNodeClick?: (node: NetworkGraphNode) => void;
+    onNodeHover?: (node: NetworkGraphNode | null) => void;
+    onLinkClick?: (link: NetworkGraphLink) => void;
+    showControls?: boolean;
+    enablePhysics?: boolean;
 }
 
-const NetworkGraph: React.FC<NetworkGraphProps> = ({ data, onNodeClick, height = 500 }) => {
-    const fgRef = useRef<ForceGraphMethods | undefined>(undefined);
 
-    // Auto-zoom when data changes
-    useEffect(() => {
-        if (data && data.nodes.length > 0) {
-            // Small delay to allow graph to layout
-            setTimeout(() => {
-                fgRef.current?.zoomToFit(400, 20);
-            }, 500);
-        }
-    }, [data]);
-
-    if (!data || !data.nodes || data.nodes.length === 0) {
-        return (
-            <div style={{ height: `${height}px` }} className="w-full border rounded-lg overflow-hidden bg-slate-900 border-slate-700 flex items-center justify-center">
-                <div className="text-center max-w-md px-6">
-                    <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                        </svg>
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-200 mb-2">No Network Data</h3>
-                    <p className="text-slate-400 mb-4">
-                        The relationship graph will appear here once you have cases with connected entities, transactions, or evidence.
-                    </p>
-                    <div className="text-sm text-slate-500 space-y-1">
-                        <p>🔗 <strong>How it works:</strong> Connect suspects, accounts, and evidence to reveal fraud patterns</p>
-                        <p>📊 <strong>Get started:</strong> Create cases and upload evidence with entity relationships</p>
-                        <p>🎯 <strong>Pro tip:</strong> The graph automatically detects and highlights suspicious connections</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div style={{ height: `${height}px` }} className="w-full border rounded-lg overflow-hidden bg-slate-900 border-slate-700 relative">
-            <ForceGraph2D
-                ref={fgRef}
-                graphData={data}
-                nodeLabel={(node: any) => node.name || node.label || node.id}
-                nodeColor={(node: any) => {
-                    const group = node.group || 0;
-                    // Hash string to number for consistent colors if group is string
-                    const groupNum = typeof group === 'string' 
-                        ? group.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) 
-                        : group;
-                        
-                    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
-                    return colors[groupNum % colors.length];
-                }}
-                nodeRelSize={4}
-                linkDirectionalArrowLength={3}
-                linkDirectionalArrowRelPos={1}
-                linkWidth={(link: any) => link.width || 1}
-                onNodeClick={(node) => {
-                    if (onNodeClick) {
-                        onNodeClick(node as NetworkNode);
-                    } else {
-                        console.log('Node clicked:', node);
-                    }
-                }}
-                backgroundColor="#0f172a" // slate-900
-            />
-            
-            {/* Legend Overlay */}
-            <div className="absolute bottom-4 left-4 bg-slate-900/80 backdrop-blur-sm p-3 rounded-lg border border-slate-700 text-xs">
-                <h4 className="font-bold text-slate-300 mb-2">Legend</h4>
-                <div className="space-y-1">
-                    <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-blue-500"></div><span className="text-slate-400">Person</span></div>
-                    <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-500"></div><span className="text-slate-400">Account</span></div>
-                    <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-amber-500"></div><span className="text-slate-400">Company</span></div>
-                    <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500"></div><span className="text-slate-400">Suspicious</span></div>
-                </div>
-            </div>
-        </div>
-=======
-  data?: NetworkGraphData;
-  height?: number;
-  width?: number;
-  mode?: '2d' | '3d';
-  focusNodeId?: string;
-  onNodeClick?: (node: NetworkGraphNode) => void;
-  onNodeHover?: (node: NetworkGraphNode | null) => void;
-  onLinkClick?: (link: NetworkGraphLink) => void;
-  showControls?: boolean;
-  enablePhysics?: boolean;
-}
 
 const NetworkGraph: React.FC<NetworkGraphProps> = ({
   data,
-  height = 600,
+  height = 500,
   width,
-  mode = '2d',
+  mode = '3d',
   focusNodeId,
   onNodeClick,
   onNodeHover,
@@ -182,7 +100,6 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
           node.group?.toLowerCase().includes(query)
         )
         .map(n => n.id)
->>>>>>> Stashed changes
     );
 
     // Include links between matching nodes

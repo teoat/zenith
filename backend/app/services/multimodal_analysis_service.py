@@ -104,14 +104,14 @@ class MultiModalAnalyzer:
             return False
     
     def _check_document_analysis_available(self) -> bool:
-        """Check if document analysis is available"""
+        """Check if document analysis is available (requires PyMuPDF)"""
         try:
-            import PyPDF2
+            import fitz  # PyMuPDF
             import docx
             import pandas as pd # Added for Excel/CSV analysis
             return True
         except ImportError:
-            logger.warning("Document analysis not available - install PyPDF2, python-docx, and pandas")
+            logger.warning("Document analysis not available - install pymupdf, python-docx, and pandas")
             return False
     
     def _check_forensic_availability(self) -> bool:
@@ -267,49 +267,50 @@ class MultiModalAnalyzer:
             analysis.errors.append(f"Image analysis failed: {str(e)}")
     
     def _analyze_pdf_file(self, file_path: str, analysis: MultiModalAnalysis, options: Dict[str, Any]):
-        """Analyze PDF file with text extraction and structure analysis"""
+        """Analyze PDF document using PyMuPDF (fitz)"""
         if not self.document_analysis_available:
             analysis.errors.append("Document analysis not available")
             return
         
         try:
-            import PyPDF2
+            import fitz  # PyMuPDF
             
-            with open(file_path, 'rb') as file:
-                pdf_reader = PyPDF2.PdfReader(file)
+            doc = fitz.open(file_path)
+            
+            # Extract text from all pages
+            text_content = ""
+            for page in doc:
+                text_content += page.get_text() + "\n"
                 
-                # Extract text from all pages
-                text_content = ""
-                for page_num, page in enumerate(pdf_reader.pages):
-                    try:
-                        page_text = page.extract_text()
-                        text_content += page_text + "\n"
-                    except Exception as e:
-                        logger.warning(f"Failed to extract text from page {page_num}: {e}")
-                
-                analysis.extracted_text = text_content.strip()
-                
-                if analysis.extracted_text:
-                    analysis.key_entities = self._extract_entities_from_text(analysis.extracted_text)
-                    analysis.sentiment_score = self._analyze_sentiment(analysis.extracted_text)
-                    analysis.language_detected = self._detect_language(analysis.extracted_text)
-                
-                # Document structure analysis
-                analysis.document_structure = {
-                    'page_count': len(pdf_reader.pages),
-                    'has_forms': any('/AcroForm' in page for page in pdf_reader.pages),
-                    'is_encrypted': pdf_reader.is_encrypted,
-                    'has_signatures': any('/V' in page.get('/Annots', {}) for page in pdf_reader.pages if hasattr(page, 'get'))
-                }
-                
-                # Extract metadata
-                if pdf_reader.metadata:
-                    analysis.document_structure['metadata'] = dict(pdf_reader.metadata)
+            analysis.extracted_text = text_content.strip()
+            
+            if analysis.extracted_text:
+                analysis.key_entities = self._extract_entities_from_text(analysis.extracted_text)
+                analysis.sentiment_score = self._analyze_sentiment(analysis.extracted_text)
+                analysis.language_detected = self._detect_language(analysis.extracted_text)
+            
+            # Document structure analysis
+            analysis.document_structure = {
+                'page_count': doc.page_count,
+                'is_encrypted': doc.is_encrypted,
+                'metadata': doc.metadata,
+                'toc': doc.get_toc() # Table of Contents
+            }
+
+            # Check for form fields (widgets)
+            has_forms = False
+            for page in doc:
+                if page.first_widget:
+                    has_forms = True
+                    break
+            analysis.document_structure['has_forms'] = has_forms
 
             # Basic attempt to extract tables from text content
             if analysis.extracted_text:
                 tables = self._extract_tables_from_text(analysis.extracted_text)
                 analysis.extracted_tables.extend(tables)
+                
+            doc.close()
             
         except Exception as e:
             analysis.errors.append(f"PDF analysis failed: {str(e)}")
@@ -549,35 +550,45 @@ class MultiModalAnalyzer:
             raise
     
     def _analyze_pdf_forensics(self, file_path: str, analysis: MultiModalAnalysis) -> ForensicResult:
-        """Perform forensic analysis on PDF"""
+        """Perform forensic analysis on PDF using PyMuPDF (fitz)"""
         try:
-            import PyPDF2
+            import fitz # PyMuPDF
             
             forensic_indicators = []
             manipulation_score = 0.0
             authenticity_score = 100.0
+            metadata = {}
             
-            with open(file_path, 'rb') as file:
-                pdf_reader = PyPDF2.PdfReader(file)
-                
-                # Check for modifications
-                if pdf_reader.is_encrypted:
-                    forensic_indicators.append("PDF is encrypted")
-                    manipulation_score += 10
-                
-                # Check for suspicious metadata
-                if pdf_reader.metadata:
-                    metadata = dict(pdf_reader.metadata)
-                    if self._has_suspicious_pdf_metadata(metadata):
-                        forensic_indicators.append("Suspicious PDF metadata detected")
-                        manipulation_score += 15
-                        authenticity_score -= 10
-                
-                # Check for form fields (potential for manipulation)
-                for page in pdf_reader.pages:
-                    if '/AcroForm' in page:
-                        forensic_indicators.append("PDF contains form fields")
-                        manipulation_score += 5
+            doc = fitz.open(file_path)
+            
+            # Check for modifications/Encryption
+            if doc.is_encrypted:
+                forensic_indicators.append("PDF is encrypted")
+                manipulation_score += 10
+            
+            # Check metadata
+            metadata = doc.metadata
+            if self._has_suspicious_pdf_metadata(metadata):
+                forensic_indicators.append("Suspicious PDF metadata detected")
+                manipulation_score += 15
+                authenticity_score -= 10
+            
+            # Check for annotations/widgets (form fields) which might indicate interactive manipulation
+            has_annots = False
+            for page in doc:
+                if page.first_annot or page.first_widget:
+                    has_annots = True
+                    break
+            
+            if has_annots:
+                forensic_indicators.append("PDF contains annotations/form fields")
+                manipulation_score += 5
+            
+            # Check for incremental updates (potential tampering)
+            # PyMuPDF doesn't directly expose simple incremental update count like PyPDF2 might check for trailing bytes
+            # But we can check garbage/broken cross-refs if we drilled down. For now, keep simple.
+
+            doc.close()
                 
             return ForensicResult(
                 evidence_id=analysis.evidence_id,
@@ -585,7 +596,7 @@ class MultiModalAnalyzer:
                 manipulation_score=manipulation_score,
                 authenticity_score=authenticity_score,
                 forensic_indicators=forensic_indicators,
-                metadata_analysis={'pdf_metadata': metadata if 'metadata' in locals() else {}},
+                metadata_analysis={'pdf_metadata': metadata},
                 confidence=0.7,
                 analysis_timestamp=datetime.now(timezone.utc)
             )

@@ -6,7 +6,7 @@ Combines auth.py, users.py, webauthn.py, and onboarding.py
 from fastapi import APIRouter, HTTPException, status, Depends, Request
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
-from app.services.core.auth_service import auth_service
+from app.services.auth_service import auth_service
 from core.logging import logger
 from core.database import User, UserDevice, RookieChecklist, utc_now
 from sqlalchemy.orm import Session

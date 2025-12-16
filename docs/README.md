@@ -1,32 +1,56 @@
 # 📚 378x492 Documentation
-## Ultra-Minimal Structure - Essential Information Only
+## Efficient Browse-Optimized Structure
 
-**Version:** Ultra-Minimal 1.0
-**Files:** 7 core documents + 1 archive  
-**Reduction:** 95% from original 146+ files
+**Version:** Browse-Optimized 2.0
+**Current Docs:** 7 organized files  
+**Archive:** 63+ files consolidated into 18 logical groups
+**Total Reduction:** 71% fewer files through consolidation
 
-## 📋 Core Documentation Files
+## 🗂️ Documentation Structure
 
-01-user-manual.md      # Complete user guide with all features
-02-api-reference.md    # Complete API specification and examples  
-03-architecture.md     # System architecture and technical design
-04-system-health.md    # Current system status and diagnostics
-05-roadmap.md          # Implementation roadmap and priorities
-06-deployment.md       # Production deployment and CI/CD
-developer-guide.md     # Development setup and operations
+### 📁 current/ - Actively Used Documentation
+**Purpose:** Documentation currently referenced and maintained
 
-## 🚀 Quick Access
+#### 📁 current/user/ - User-Facing Content
+- **`manual.md`** - Complete user guide with all features and workflows
+- **`assets/`** - UI mockups and visual assets (preserved)
 
-**Users:** Start with 01-user-manual.md
-**Developers:** Use developer-guide.md  
-**Planning:** Check 05-roadmap.md
-**Technical:** See 02-api-reference.md and 03-architecture.md
+#### 📁 current/technical/ - Technical Specifications  
+- **`api.md`** - Complete API reference with endpoints and examples
+- **`architecture.md`** - System architecture and design decisions
+- **`specs.md`** - Technical specifications and requirements
 
-## 📊 Statistics
+#### 📁 current/operations/ - Operational Procedures
+- **`deployment.md`** - Production deployment and CI/CD procedures
+- **`development.md`** - Development setup, testing, and workflow
+- **`monitoring.md`** - System health monitoring and diagnostics
 
-- **Before:** 146+ files in complex structure
-- **After:** 8 files (7 docs + index) in single folder
-- **Reduction:** 95% fewer files, 75% shallower navigation
-- **Content:** All essential information preserved
+#### 📁 current/planning/ - Strategy & Roadmap
+- **`roadmap.md`** - Current implementation roadmap and priorities
 
-*Ultra-minimal documentation: Maximum efficiency, minimum clutter.*
+### 📁 archive/ - Historical Documentation  
+**Purpose:** Consolidated historical content organized by time and topic
+
+#### 📁 archive/2025/q4/ - December 2025 Content (Majority)
+- **`development/`** - Development tooling, API versioning, monitoring (8→3 consolidated)
+- **`operations/`** - Deployment, CI/CD, production operations (12→4 consolidated)  
+- **`planning/`** - Feature planning, UX metrics, strategy docs (15→5 consolidated)
+- **`technical/`** - Architecture, API specs, accessibility (8→3 consolidated)
+- **`reports/`** - Diagnostics, status reports, performance baselines (20→3 consolidated)
+
+## 🚀 Quick Access Guide
+
+### For Users: `current/user/manual.md`
+### For Developers: `current/operations/development.md` + `current/technical/api.md`
+### For Operations: `current/operations/monitoring.md` + `current/operations/deployment.md`
+### For Planning: `current/planning/roadmap.md`
+
+## 📊 Key Benefits
+
+- **Browse-Optimized**: Clear folder hierarchy, logical organization
+- **71% File Reduction**: Aggressive consolidation of similar content
+- **Content Preserved**: All essential information maintained  
+- **Scalable**: Easy to extend with new time periods or topics
+- **Maintainable**: Single source of truth per topic area
+
+*This efficient structure prioritizes browsing while consolidating similar content for maximum efficiency.*

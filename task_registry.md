@@ -163,3 +163,12 @@
 | 157 | ✅ Phase 6G: Advanced Intelligence (Weeks 37-42) — COMPLETED 2025-12-11 | Automated Case Report Generation (AutoReportGenerator.tsx) — ✅ AI-powered documentation with templates | Completed | 343 |
 | 158 | ✅ Phase 6G: Advanced Intelligence (Weeks 37-42) — COMPLETED 2025-12-11 | Evidence Strength Scoring (EvidenceScorer.ts) — ✅ Automated evidence evaluation with legal admissibility | Completed | 344 |
 | 159 | ✅ Phase 6G: Advanced Intelligence (Weeks 37-42) — COMPLETED 2025-12-11 | Court-Ready Documentation (CourtDocumentGenerator.tsx) — ✅ Legal document automation with preview | Completed | 345 |
+| 160 | 🔴 Phase 12: Technical Debt | Remove Split-Brain Architecture (evidence_service/multimodal_service) | Pending | 234 |
+| 161 | 🔴 Phase 12: Technical Debt | Delete Dead Code (evidence_processor.py) | Completed | 235 |
+| 162 | 🔴 Phase 12: Technical Debt | Unify PDF Engines to fitz/PyMuPDF | Pending | 236 |
+| 163 | 🔴 Phase 12: Technical Debt | Refactor Router to use unified service | Pending | 237 |
+| 164 | 🔴 Phase 12: Technical Debt | Train Fraud Models (Real ML vs Heuristic) | Pending | 240 |
+| 165 | 🔴 Phase 12: Technical Debt | Implement AI Code Review (Real LLM vs Regex) | Pending | 241 |
+| 166 | 🔴 Phase 12: Technical Debt | Connect External Services (Regulatory API) | Pending | 242 |
+| 167 | 🔴 Phase 12: Technical Debt | Wire up Vector Database for RAG | Pending | 243 |
+| 168 | 🔴 Phase 12: Technical Debt | Implement A/V Processing Stubs | Pending | 246 |

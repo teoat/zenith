@@ -1,4 +1,4 @@
-export const API_BASE = 'http://localhost:8000/api/v1';
+export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
 // Check if running in Electron
 export const isElectron = (): boolean => {
@@ -10,6 +10,13 @@ export const isElectron = (): boolean => {
 export const getToken = (): string | null => {
   return localStorage.getItem('token');
 };
+
+// Add type definition for Electron global
+declare global {
+  interface Window {
+    electronAPI?: unknown;
+  }
+}
 
 // Core request method - works in both browser and Electron
 export const request = async <T>(
@@ -28,22 +35,14 @@ export const request = async <T>(
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // Dummy trusted hash for demonstration. In production, this would be securely fetched.
-  const trustedPublicKeyHashes = ["dummy_hash_for_development"]; 
+  // NOTE: Certificate pinning logic removed for web compatibility. 
+  // In production, rely on standard TLS/SSL CA trust or implement secure pinning in Electron/Native layer.
 
   try {
     const response = await fetch(url, {
       ...options,
       headers,
     });
-
-    // Server-assisted pinning for web browsers (conceptual)
-    if (!isElectron()) { // Only for web browser environment
-      const serverPublicKeyHash = response.headers.get('X-Public-Key-Hash');
-      if (serverPublicKeyHash && !trustedPublicKeyHashes.includes(serverPublicKeyHash)) {
-        throw new Error('Certificate pinning failed: Server public key hash mismatch!');
-      }
-    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ detail: response.statusText }));

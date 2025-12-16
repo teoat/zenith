@@ -1,14 +1,15 @@
-"""
-Frontend Intelligence Service Integration
-Phase 5 Extension: Connects frontend to intelligence APIs
-
-Provides service layer for:
-- Fraud detection analysis
-- Evidence processing
-- Risk scoring
-"""
+/**
+ * Frontend Intelligence Service Integration
+ * Phase 5 Extension: Connects frontend to intelligence APIs
+ * 
+ * Provides service layer for:
+ * - Fraud detection analysis
+ * - Evidence processing
+ * - Risk scoring
+ */
 
 import { api } from '../lib/api';
+import { useState } from 'react';
 
 // Types
 export interface TransactionInput {

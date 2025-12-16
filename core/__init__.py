@@ -3,6 +3,6 @@ These modules re-export the implementations under `backend.core` so tests and sc
 that import `core.*` continue to work.
 """
 
-from . import database, metrics, validation, logging  # re-export submodules
+from . import database, metrics, validation, logging, security  # re-export submodules
 
-__all__ = ["database", "metrics", "validation", "logging"]
+__all__ = ["database", "metrics", "validation", "logging", "security"]

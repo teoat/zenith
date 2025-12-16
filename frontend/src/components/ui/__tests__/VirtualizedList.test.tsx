@@ -12,6 +12,14 @@ describe('VirtualizedList', () => {
     { id: 3, name: 'Item 3' },
   ];
 
+  beforeAll(() => {
+    // Mock offsetHeight/Width for JSDOM
+    Object.defineProperties(HTMLElement.prototype, {
+      offsetHeight: { get: () => 600 },
+      offsetWidth: { get: () => 800 },
+    });
+  });
+
   const renderItem = (item: typeof mockItems[0]) => (
     <div data-testid={`item-${item.id}`}>{item.name}</div>
   );

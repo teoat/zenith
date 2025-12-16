@@ -1,0 +1,24 @@
+
+> frontend@0.0.0 dev
+> vite
+
+✘ [ERROR] Expected string in JSON but found "<<"
+
+    ../package.json:69:0:
+      69 │ <<<<<<< Updated upstream
+         ╵ ~~
+
+failed to load config from /Users/Arief/Desktop/378x492/frontend/vite.config.js
+error when starting dev server:
+Error: Build failed with 1 error:
+../package.json:69:0: ERROR: Expected string in JSON but found "<<"
+    at failureErrorWithLog (/Users/Arief/Desktop/378x492/frontend/node_modules/esbuild/lib/main.js:1472:15)
+    at /Users/Arief/Desktop/378x492/frontend/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/Users/Arief/Desktop/378x492/frontend/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/Users/Arief/Desktop/378x492/frontend/node_modules/esbuild/lib/main.js:943:7)
+    at /Users/Arief/Desktop/378x492/frontend/node_modules/esbuild/lib/main.js:970:16
+    at responseCallbacks.<computed> (/Users/Arief/Desktop/378x492/frontend/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/Users/Arief/Desktop/378x492/frontend/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/Users/Arief/Desktop/378x492/frontend/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
