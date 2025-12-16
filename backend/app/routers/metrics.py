@@ -14,50 +14,63 @@ from prometheus_client import (
     Gauge,
     Histogram,
     generate_latest,
+    REGISTRY,
 )
 
 router = APIRouter()
 
+def get_or_create_metric(metric_class, name, documentation, labelnames=(), **kwargs):
+    """Safely get or create a prometheus metric to handle reloads"""
+    try:
+        return metric_class(name, documentation, labelnames=labelnames, **kwargs)
+    except ValueError:
+        # If metric already exists (e.g. during reload), try to get it from registry
+        # accessing private attribute is not ideal but necessary for hot reloading support
+        if name in REGISTRY._names_to_collectors:
+            return REGISTRY._names_to_collectors[name]
+        raise
+
 # HTTP Metrics
-http_requests_total = Counter(
-    "http_requests_total", "Total HTTP requests", ["method", "endpoint", "status"]
+http_requests_total = get_or_create_metric(
+    Counter, "http_requests_total", "Total HTTP requests", ["method", "endpoint", "status"]
 )
 
-http_request_duration_seconds = Histogram(
+http_request_duration_seconds = get_or_create_metric(
+    Histogram,
     "http_request_duration_seconds",
     "HTTP request duration in seconds",
     ["method", "endpoint"],
 )
 
 # Business Metrics
-fraud_cases_detected_total = Counter(
-    "fraud_cases_detected_total", "Total fraud cases detected", ["severity"]
+fraud_cases_detected_total = get_or_create_metric(
+    Counter, "fraud_cases_detected_total", "Total fraud cases detected", ["severity"]
 )
 
-ai_prediction_confidence = Histogram(
-    "ai_prediction_confidence", "AI prediction confidence scores"
+ai_prediction_confidence = get_or_create_metric(
+    Histogram, "ai_prediction_confidence", "AI prediction confidence scores"
 )
 
-pending_cases_total = Gauge("pending_cases_total", "Number of pending cases")
+pending_cases_total = get_or_create_metric(Gauge, "pending_cases_total", "Number of pending cases")
 
-approval_queue_size = Gauge("approval_queue_size", "Number of items in approval queue")
+approval_queue_size = get_or_create_metric(Gauge, "approval_queue_size", "Number of items in approval queue")
 
 # System Metrics
-db_query_duration_seconds = Histogram(
-    "db_query_duration_seconds", "Database query duration in seconds", ["query_type"]
+db_query_duration_seconds = get_or_create_metric(
+    Histogram, "db_query_duration_seconds", "Database query duration in seconds", ["query_type"]
 )
 
-cache_requests_total = Counter(
-    "cache_requests_total", "Total cache requests", ["result"]  # hit or miss
+cache_requests_total = get_or_create_metric(
+    Counter, "cache_requests_total", "Total cache requests", ["result"]  # hit or miss
 )
 
-websocket_connections = Gauge(
-    "websocket_connections", "Number of active WebSocket connections"
+websocket_connections = get_or_create_metric(
+    Gauge, "websocket_connections", "Number of active WebSocket connections"
 )
 
 # Application startup time
-app_start_time = Gauge(
-    "app_start_time_seconds", "Application start time in seconds since epoch"
+app_start_time = get_or_create_metric(
+    Gauge, "app_start_time_seconds", "Application start time in seconds since epoch"
 )
 app_start_time.set(time.time())
 

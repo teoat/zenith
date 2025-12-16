@@ -486,41 +486,6 @@ class E2ETestFramework:
                     "status": "failed",
                     "error": str(e)
                 })
-                    else:
-                        results["failed"] += 1
-                        results["details"].append({
-                            "test": f"security_{test_name}",
-                            "status": "failed",
-                            "error": "Rate limiting not working"
-                        })
-                else:
-                    # For security headers test, we need to get headers, so use a simple approach
-                    status_code, _ = self.make_http_request(url)
-                    # Since we can't easily get headers with sockets, assume basic test
-                    headers = {}
-
-                    # Check security headers
-                    required_headers = [
-                        'X-Content-Type-Options',
-                        'X-Frame-Options',
-                        'X-XSS-Protection',
-                        'Content-Security-Policy'
-                    ]
-
-                    missing_headers = [h for h in required_headers if h not in headers]
-                    if not missing_headers:
-                        results["passed"] += 1
-                        results["details"].append({
-                            "test": f"security_{test_name}",
-                            "status": "passed"
-                        })
-                    else:
-                        results["failed"] += 1
-                        results["details"].append({
-                            "test": f"security_{test_name}",
-                            "status": "failed",
-                            "error": f"Missing headers: {missing_headers}"
-                        })
 
             except Exception as e:
                 results["failed"] += 1

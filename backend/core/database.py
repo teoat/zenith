@@ -285,8 +285,20 @@ def get_database_url():
 
 
 def create_engine_and_session():
-    """Create database engine and session"""
-    engine = create_engine(get_database_url(), echo=False)
+    """Create database engine and session with connection pooling"""
+    from sqlalchemy.pool import QueuePool
+
+    engine = create_engine(
+        get_database_url(),
+        echo=False,
+        poolclass=QueuePool,
+        pool_size=20,
+        max_overflow=30,
+        pool_timeout=60,
+        pool_recycle=1800,  # Recycle connections every 30 minutes
+        pool_pre_ping=True,  # Check connection health before use
+        connect_args={"check_same_thread": False},  # Needed for SQLite with pooling
+    )
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     return engine, SessionLocal
 
