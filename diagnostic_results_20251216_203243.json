@@ -319,7 +319,7 @@
         "incident_volume": 12
       },
       "vulnerability_management": {
-        "open_vulnerabilities": 3,
+        "open_vulnerabilities": 2,
         "critical_vulnerabilities": 0,
         "average_remediation_time": 72,
         "patch_compliance": 98
