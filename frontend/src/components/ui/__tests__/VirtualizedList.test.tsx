@@ -14,6 +14,7 @@ describe('VirtualizedList', () => {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   beforeAll(() => {
     // Mock offsetHeight/Width for JSDOM
     Object.defineProperties(HTMLElement.prototype, {
@@ -22,6 +23,8 @@ describe('VirtualizedList', () => {
     });
   });
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======

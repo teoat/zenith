@@ -49,6 +49,11 @@ const NotFound = React.lazy(() => import(/* webpackChunkName: "not-found" */ '@/
 // New compliance components
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+const ComplianceDashboard = React.lazy(() => import(/* webpackChunkName: "compliance-dashboard" */ '@/pages/ComplianceDashboard'));
+const ComplianceTraining = React.lazy(() => import(/* webpackChunkName: "compliance-training" */ '@/pages/ComplianceTraining'));
+>>>>>>> Stashed changes
 =======
 const ComplianceDashboard = React.lazy(() => import(/* webpackChunkName: "compliance-dashboard" */ '@/pages/ComplianceDashboard'));
 const ComplianceTraining = React.lazy(() => import(/* webpackChunkName: "compliance-training" */ '@/pages/ComplianceTraining'));
@@ -210,7 +215,10 @@ const AppContent: React.FC = () => {
       <EnhancedErrorBoundary>
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
           <WebSocketProvider>
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -259,6 +267,11 @@ const AppContent: React.FC = () => {
                          {/* Compliance Routes */}
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+                         <Route path="/compliance" element={<ComplianceDashboard />} />
+                         <Route path="/compliance/training" element={<ComplianceTraining />} />
+>>>>>>> Stashed changes
 =======
                          <Route path="/compliance" element={<ComplianceDashboard />} />
                          <Route path="/compliance/training" element={<ComplianceTraining />} />
@@ -280,7 +293,10 @@ const AppContent: React.FC = () => {
         </Suspense>
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       </WebSocketProvider>
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
