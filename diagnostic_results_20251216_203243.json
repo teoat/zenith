@@ -20,7 +20,10 @@
         "compliance_service": "file_exists",
         "case_service": "file_exists"
       },
-      "api_endpoints": {},
+      "api_endpoints": {
+        "total_endpoints": 0,
+        "route_files": []
+      },
       "error_rates": {},
       "response_times": {},
       "resource_usage": {
