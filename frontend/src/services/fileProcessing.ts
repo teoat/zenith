@@ -50,7 +50,7 @@ class FileProcessingService {
         if (fileResult.errors.length > 0) {
           result.errors.push(...fileResult.errors.map(err => `${file.name}: ${err}`));
         }
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = `Failed to process ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`;
         result.errors.push(errorMessage);
         result.success = false;
@@ -68,7 +68,7 @@ class FileProcessingService {
     if (result.processedCases.length > 0) {
       try {
         await this.createCasesInBackend(result.processedCases);
-      } catch (error) {
+      } catch (_error) {
         result.errors.push(`Failed to create cases in backend: ${error instanceof Error ? error.message : 'Unknown error'}`);
         result.success = false;
       }
@@ -156,11 +156,11 @@ class FileProcessingService {
 
             result.cases.push(caseData);
           }
-        } catch (error) {
+        } catch (_error) {
           result.errors.push(`Error processing row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       result.errors.push(`Failed to read CSV file: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 
@@ -188,11 +188,11 @@ class FileProcessingService {
           };
 
           result.cases.push(processedCase);
-        } catch (error) {
+        } catch (_error) {
           result.errors.push(`Error processing case: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       result.errors.push(`Failed to parse JSON file: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 
@@ -248,7 +248,7 @@ class FileProcessingService {
             type: caseData.type,
             tags: caseData.tags
           });
-        } catch (error) {
+        } catch (_error) {
           errorReporting.reportApiError(error, 'createCase', 'POST');
           throw new Error(`Failed to create case "${caseData.title}": ${error instanceof Error ? error.message : 'Unknown error'}`);
         }

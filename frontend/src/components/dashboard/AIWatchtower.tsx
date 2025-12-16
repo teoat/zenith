@@ -27,7 +27,7 @@ const AIWatchtower: React.FC = () => {
           confidence: Math.round(i.confidence * 100),
           type: (i.type as 'pattern' | 'anomaly' | 'suggestion') || 'anomaly'
         })));
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to load AI insights', error);
       }
     };

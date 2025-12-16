@@ -75,7 +75,7 @@ export function MonitoringDashboard() {
       const errorResponse = await api.getErrorSummary(timeRange);
       setErrorSummary(errorResponse);
 
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load monitoring data:', error);
     } finally {
       setLoading(false);

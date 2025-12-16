@@ -78,7 +78,7 @@ const ThreatMap: React.FC = () => {
             description: `Type: ${t.type}`
           })));
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to load threat data', error);
       }
     };

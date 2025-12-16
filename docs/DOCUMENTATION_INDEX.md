@@ -1,3 +1,23 @@
+# Project Documentation Index
+
+This index links to the consolidated topical indexes and important per-directory READMEs.
+
+- Project overview and roadmap: [01_Project.md](01_Project.md)
+- Developer guide and standards: [02_Developer_Guide.md](02_Developer_Guide.md)
+- Standards and policies: [03_Standards_and_Policies.md](03_Standards_and_Policies.md)
+- Operations and deployment: [04_Operations_and_Deployment.md](04_Operations_and_Deployment.md)
+- Architecture and design: [05_Architecture_and_Design.md](05_Architecture_and_Design.md)
+- User guides and how-tos: [06_User_Guides.md](06_User_Guides.md)
+- Reports and analyses: [07_Reports.md](07_Reports.md)
+
+Additional resources:
+
+- API documentation: [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
+- Internal archives (originals & restoration proposals): [internal/archives/](internal/archives/)
+
+If you are looking for a specific topic, try the topical indexes above or search the repository for keywords.
+
+-- Consolidation Bot
 # Documentation Index
 
 Overview

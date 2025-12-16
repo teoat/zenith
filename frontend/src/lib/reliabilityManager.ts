@@ -111,7 +111,7 @@ class ReliabilityManager {
           try {
             await fetch('/api/cache/invalidate', { method: 'POST' });
             console.log('Cache invalidation completed');
-          } catch (error) {
+          } catch (_error) {
             console.error('Cache invalidation failed:', error);
           }
         }
@@ -127,7 +127,7 @@ class ReliabilityManager {
           try {
             await fetch('/api/admin/restart-services', { method: 'POST' });
             console.log('Service restart completed');
-          } catch (error) {
+          } catch (_error) {
             console.error('Service restart failed:', error);
           }
         }
@@ -153,7 +153,7 @@ class ReliabilityManager {
         };
         results.set(id, updatedCheck);
         this.consistencyChecks.set(id, updatedCheck);
-      } catch (error) {
+      } catch (_error) {
         const updatedCheck: DataConsistencyCheck = {
           ...check,
           lastChecked: Date.now(),
@@ -194,7 +194,7 @@ class ReliabilityManager {
             console.log('✅ Failover successful, all checks now passing');
             break;
           }
-        } catch (error) {
+        } catch (_error) {
           console.error(`❌ Failover strategy ${strategy.name} failed:`, error);
         }
       }
@@ -210,7 +210,7 @@ class ReliabilityManager {
     this.checkInterval = setInterval(async () => {
       try {
         await this.executeFailoverIfNeeded();
-      } catch (error) {
+      } catch (_error) {
         console.error('Reliability monitoring error:', error);
       }
     }, intervalMs);

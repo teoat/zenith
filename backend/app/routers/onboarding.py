@@ -1,32 +1,13 @@
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-"""Onboarding API with Pydantic validation and DB persistence.
-
-This module replaces the earlier JSON-file stub with a DB-backed implementation
-using the project's SQLAlchemy session. It keeps a compatibility response for tests.
-"""
-from fastapi import APIRouter, Body, HTTPException, Depends
-from pydantic import BaseModel, EmailStr
-from typing import List, Optional, Dict, Any
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 """
 DEPRECATED: This module is deprecated. The functionality has been consolidated into backend/app/routers/identity.py.
 Please use the onboarding endpoints provided in backend/app/routers/identity.py instead.
 """
-from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi import APIRouter, Body, HTTPException, Depends
+from pydantic import BaseModel, EmailStr
+from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
-import re
-import json
+from datetime import datetime, timezone
 import uuid
->>>>>>> Stashed changes
 from datetime import datetime, timezone
 import uuid
 

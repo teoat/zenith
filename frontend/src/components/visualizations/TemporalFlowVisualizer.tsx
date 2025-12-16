@@ -119,7 +119,7 @@ export const TemporalFlowVisualizer: React.FC<TemporalFlowVisualizerProps> = ({
             timestamp: new Date(tx.timestamp)
           }));
           setTransactions(processedData);
-        } catch (error) {
+        } catch (_error) {
           console.error("Failed to fetch temporal flow data:", error);
         } finally {
           setIsLoading(false);

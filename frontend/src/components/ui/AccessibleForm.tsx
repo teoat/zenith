@@ -152,7 +152,7 @@ export function AccessibleForm({
     try {
       await onSubmit(values);
       accessibilityManager.announce('Form submitted successfully', 'polite');
-    } catch (error) {
+    } catch (_error) {
       accessibilityManager.announce('Form submission failed', 'assertive');
       console.error('Form submission error:', error);
     }

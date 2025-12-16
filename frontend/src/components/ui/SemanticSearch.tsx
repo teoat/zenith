@@ -127,6 +127,9 @@ export function SemanticSearch({
                 key={result.document_id}
                 className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                 onClick={() => handleResultClick(result)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleResultClick(result); } }}
+                tabIndex={0}
+                role="button"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">

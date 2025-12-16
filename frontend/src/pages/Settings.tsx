@@ -54,7 +54,7 @@ const Settings = () => {
       });
       addToast('Settings saved successfully', 'success');
       accessibilityManager.announce('Settings saved successfully', 'polite');
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to save settings:', error);
       accessibilityManager.announce('Failed to save settings', 'assertive');
     } finally {

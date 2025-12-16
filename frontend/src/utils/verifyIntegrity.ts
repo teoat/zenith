@@ -19,7 +19,7 @@ const verifyIntegrity = async (expectedHash: string) => {
       document.body.innerHTML = '<h1>Integrity check failed! The application may have been tampered with.</h1>';
       window.location.href = 'about:blank'; // Redirect to a blank page
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('Error during integrity verification:', error);
     // Potentially take action even on error if it suggests a blocked request or other issue
     document.body.innerHTML = '<h1>Application integrity check failed due to an error.</h1>';

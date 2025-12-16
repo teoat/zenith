@@ -99,7 +99,7 @@ class ErrorReportingService {
       if (!response.ok) {
         console.warn('Failed to send error report to remote service');
       }
-    } catch (error) {
+    } catch (_error) {
       console.warn('Error reporting service failed:', error);
     }
   }

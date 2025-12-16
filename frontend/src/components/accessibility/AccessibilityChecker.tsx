@@ -33,7 +33,7 @@ export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({
         } else {
           console.log('✅ No accessibility violations found');
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Accessibility check failed:', error);
       }
     };
@@ -57,7 +57,7 @@ export const runAccessibilityAudit = async (context?: Element) => {
       incomplete: results.incomplete,
       inapplicable: results.inapplicable
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('Accessibility audit failed:', error);
     return null;
   }

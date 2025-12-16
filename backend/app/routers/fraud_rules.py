@@ -1,8 +1,4 @@
 """
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 Fraud Rules Engine API Router
 Provides endpoints for managing and using fraud detection rules
 """
@@ -565,13 +561,9 @@ async def update_alert_status(alert_id: str, update: AlertUpdate, db: Session = 
         "id": alert.id,
         "status": alert.status,
         "updatedAt": alert.updated_at.isoformat() if alert.updated_at else datetime.now(timezone.utc).isoformat()
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+    }
+
+"""
 Fraud Detection API Router
 Endpoints for rule management and transaction evaluation
 """
@@ -761,11 +753,6 @@ async def get_engine_stats():
 
 @router.post('/batch-evaluate')
 async def batch_evaluate_transactions(transactions: List[EvaluationRequest]):
-    """
-    Evaluate multiple transactions in batch
-    
-    Useful for bulk processing or historical analysis
-    """
     results = []
     
     for request in transactions:
@@ -792,14 +779,4 @@ async def batch_evaluate_transactions(transactions: List[EvaluationRequest]):
         "successful": sum(1 for r in results if r["success"]),
         "failed": sum(1 for r in results if not r["success"]),
         "results": results
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     }

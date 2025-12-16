@@ -88,7 +88,7 @@ const CorrelationCell: React.FC<{
 
   if (!correlation || Math.abs(correlation.strength) < threshold) {
     return (
-      <div className="matrix-cell empty" onClick={onClick}>
+      <div className="matrix-cell empty" onClick={onClick} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }} tabIndex={0} role="button">
         <span className="cell-empty-indicator">—</span>
       </div>
     );
@@ -117,6 +117,9 @@ const CorrelationCell: React.FC<{
       className={`matrix-cell filled ${correlation.type}`}
       style={{ background: getColor(correlation.strength, correlation.type) }}
       onClick={onClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
+      tabIndex={0}
+      role="button"
     >
       {showLabels && (
         <span className="cell-value">

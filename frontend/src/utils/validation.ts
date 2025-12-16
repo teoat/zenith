@@ -127,7 +127,7 @@ export function sanitizeInput(input: string): string {
 export function validateSearchQuery(query: string): string {
   try {
     return searchQuerySchema.parse(query);
-  } catch (error) {
+  } catch (_error) {
     throw new Error('Invalid search query');
   }
 }
@@ -194,7 +194,7 @@ export function validateFormData<T>(
   try {
     const validated = schema.parse(data);
     return { success: true, data: validated };
-  } catch (error) {
+  } catch (_error) {
     if (error instanceof z.ZodError) {
       const errors: Record<string, string> = {};
       error.errors.forEach(err => {

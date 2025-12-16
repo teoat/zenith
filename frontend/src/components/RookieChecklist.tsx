@@ -24,7 +24,7 @@ const RookieChecklist: React.FC = () => {
     try {
       await submitRookieChecklist({ user_email: email || undefined, items: selected });
       setStatus('success');
-    } catch (err) {
+    } catch (_err) {
       setStatus('error');
     } finally {
       setLoading(false);

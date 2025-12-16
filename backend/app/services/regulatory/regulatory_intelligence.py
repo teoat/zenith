@@ -215,7 +215,7 @@ class RegulatoryIntelligenceHub:
             for rule in applicable_framework.requirements:
                 rule_result = await self._check_rule_compliance(rule, case_data)
                 
-                if rule_result["is_compliant":
+                if rule_result["is_compliant"]:
                     compliant_rules += 1
                 else:
                     violations.extend(rule_result.get("violations", []))

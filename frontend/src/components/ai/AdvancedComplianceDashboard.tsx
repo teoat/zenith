@@ -210,7 +210,7 @@ const AdvancedComplianceDashboard: React.FC = () => {
       setComplianceReports(mockReports);
       setMonitoringActive(true);
 
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load compliance data:', error);
     } finally {
       setLoading(false);
@@ -220,7 +220,7 @@ const AdvancedComplianceDashboard: React.FC = () => {
   const toggleMonitoring = async () => {
     try {
       setMonitoringActive(!monitoringActive);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to toggle monitoring:', error);
     }
   };
@@ -230,7 +230,7 @@ const AdvancedComplianceDashboard: React.FC = () => {
       console.log(`Running compliance check: ${ruleId} for ${entityId}`);
       await new Promise(resolve => setTimeout(resolve, 2000));
       await loadComplianceData();
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to run compliance check:', error);
     }
   };
@@ -239,7 +239,7 @@ const AdvancedComplianceDashboard: React.FC = () => {
     try {
       console.log(`Acknowledging alert: ${alertId}`);
       await loadComplianceData();
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to acknowledge alert:', error);
     }
   };

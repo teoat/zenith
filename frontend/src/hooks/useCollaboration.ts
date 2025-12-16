@@ -108,7 +108,7 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
                 }
               }
             }
-          } catch (error) {
+          } catch (_error) {
             console.error('Error parsing collaboration message:', error);
           }
         };
@@ -131,7 +131,7 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
           console.error('WebSocket error:', error);
         };
 
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to connect to collaboration server:', error);
       }
     };

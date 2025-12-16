@@ -94,7 +94,7 @@ export const OfflineQueueProvider: React.FC<{ children: React.ReactNode }> = ({ 
             removeFromQueue(req.id);
           }
 
-        } catch (error) {
+        } catch (_error) {
           console.error(`[OfflineQueue] Request ${req.id} failed`, error);
           // Stop syncing on error to preserve order
           break;

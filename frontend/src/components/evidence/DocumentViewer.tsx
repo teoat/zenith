@@ -41,7 +41,7 @@ export const DocumentViewer: React.FC = () => {
         const result = await response.json();
         setResults([result]);
         setSelectedResult(result);
-      } catch (error) {
+      } catch (_error) {
         console.error('Processing failed:', error);
       }
     } else {
@@ -59,7 +59,7 @@ export const DocumentViewer: React.FC = () => {
         if (data.results?.length > 0) {
           setSelectedResult(data.results[0]);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Batch processing failed:', error);
       }
     }
@@ -159,6 +159,9 @@ export const DocumentViewer: React.FC = () => {
                   <div
                     key={idx}
                     onClick={() => setSelectedResult(result)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedResult(result); } }}
+                    tabIndex={0}
+                    role="button"
                     className={`p-3 rounded-lg cursor-pointer transition-colors ${
                       selectedResult === result
                         ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500'

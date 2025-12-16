@@ -180,7 +180,7 @@ class QuickLoad(HttpUser):
 class StressLoad(HttpUser):
     """Stress test - high concurrent load"""
     wait_time = between(0.5, 1)
-    tasks = [CaseManagement Tasks, FraudAnalysisTasks]
+    tasks = [CaseManagementTasks, FraudAnalysisTasks]
 
 class SpikeLoad(HttpUser):
     """Spike test - sudden bursts of traffic"""

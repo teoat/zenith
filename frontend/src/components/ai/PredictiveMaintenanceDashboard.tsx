@@ -157,7 +157,7 @@ const PredictiveMaintenanceDashboard: React.FC = () => {
       setHealingActions(mockHealingActions);
       setSystemHealth(87.3);
 
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load predictive maintenance data:', error);
     } finally {
       setLoading(false);
@@ -173,7 +173,7 @@ const PredictiveMaintenanceDashboard: React.FC = () => {
         // Start monitoring
         setMonitoringActive(true);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to toggle monitoring:', error);
     }
   };
@@ -184,7 +184,7 @@ const PredictiveMaintenanceDashboard: React.FC = () => {
       console.log(`Running chaos experiment: ${experimentType}`);
       await new Promise(resolve => setTimeout(resolve, 2000));
       await loadDashboardData();
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to run chaos experiment:', error);
     }
   };

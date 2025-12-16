@@ -41,7 +41,7 @@ const RelationshipGraph: React.FC = () => {
   const [stats, setStats] = useState<GraphStats>({});
   const [loading, setLoading] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [_communities, setCommunities] = useState<any[]>([]);
+  const [, setCommunities] = useState<any[]>([]);
   const [centralEntities, setCentralEntities] = useState<CentralEntity[]>([]);
   const [suspiciousPatterns, setSuspiciousPatterns] = useState<SuspiciousPattern[]>([]);
   
@@ -94,7 +94,7 @@ const RelationshipGraph: React.FC = () => {
         });
         setStats((data as any).stats || {});
       }
-    } catch (error) {
+    } catch (_error) {
       addToast('Failed to load graph data', 'error');
     } finally {
       if (isMounted.current) setLoading(false);
@@ -122,7 +122,7 @@ const RelationshipGraph: React.FC = () => {
         setStats((data as any).stats || {});
         addToast(`Graph rebuilt successfully for past ${daysBack} days`, 'success');
       }
-    } catch (error) {
+    } catch (_error) {
       addToast('Failed to rebuild graph', 'error');
     } finally {
       if (isMounted.current) setLoading(false);
@@ -136,7 +136,7 @@ const RelationshipGraph: React.FC = () => {
           setCommunities((data as any).communities || []);
           addToast('Communities detected', 'success');
       }
-    } catch (error) {
+    } catch (_error) {
       addToast('Failed to fetch communities', 'error');
     }
   };
@@ -149,7 +149,7 @@ const RelationshipGraph: React.FC = () => {
           const entities = (data as any).central_entities || data;
           setCentralEntities(Array.isArray(entities) ? entities : []);
       }
-    } catch (error) {
+    } catch (_error) {
       addToast('Failed to fetch central entities', 'error');
     }
   };
@@ -158,7 +158,7 @@ const RelationshipGraph: React.FC = () => {
     try {
       const data = await api.getSuspiciousPatterns();
       if (isMounted.current) setSuspiciousPatterns((data as any).suspicious_patterns || data);
-    } catch (error) {
+    } catch (_error) {
       addToast('Failed to fetch suspicious patterns', 'error');
     }
   };
@@ -322,7 +322,7 @@ const RelationshipGraph: React.FC = () => {
       a.click();
       URL.revokeObjectURL(url);
       addToast('Graph exported successfully', 'success');
-    } catch (error) {
+    } catch (_error) {
       addToast('Export failed', 'error');
     }
   };

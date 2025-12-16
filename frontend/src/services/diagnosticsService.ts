@@ -55,7 +55,7 @@ class DiagnosticsService {
         system_health: Math.round(systemHealth),
         metrics: healthMetrics
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to fetch health status:', error);
       return {
         status: 'error',
@@ -73,7 +73,7 @@ class DiagnosticsService {
         components: status,
         timestamp: new Date().toISOString()
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to fetch detailed health:', error);
       return { status: 'error' };
     }
@@ -103,7 +103,7 @@ class DiagnosticsService {
         alerts: [],
         status: 'healthy'
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to fetch performance baselines:', error);
       return {
         baselines: {},
@@ -152,7 +152,7 @@ class DiagnosticsService {
         user_analytics: userAnalytics,
         recommendations: this.generateRecommendations(health, performance)
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to fetch diagnostics dashboard:', error);
       return {
         status: 'error',
@@ -202,7 +202,7 @@ class DiagnosticsService {
       // Log event locally - would send to analytics backend in production
       const userId = localStorage.getItem('userId') || 'anonymous';
       console.log(`[Analytics] Event: ${eventType}`, { userId, metadata, timestamp: new Date().toISOString() });
-    } catch (error) {
+    } catch (_error) {
       console.warn('Failed to track user event:', error);
       // Don't throw - tracking failures shouldn't break the app
     }
@@ -214,7 +214,7 @@ class DiagnosticsService {
       try {
         const data = await this.getDiagnosticsDashboard();
         callback(data);
-      } catch (error) {
+      } catch (_error) {
         console.error('Real-time monitoring error:', error);
       }
     }, 30000); // Update every 30 seconds

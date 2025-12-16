@@ -32,7 +32,7 @@ export function SyncStatus() {
       setLoading(true);
       const syncStatus = await api.getSyncStatus();
       setStatus(syncStatus);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load sync status:', error);
     } finally {
       setLoading(false);
@@ -44,7 +44,7 @@ export function SyncStatus() {
       setSyncing(true);
       await api.forceSync();
       await loadSyncStatus(); // Refresh status after sync
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to force sync:', error);
     } finally {
       setSyncing(false);
@@ -55,7 +55,7 @@ export function SyncStatus() {
     try {
       await api.resolveConflict(conflictId, resolution as any);
       await loadSyncStatus(); // Refresh status after resolution
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to resolve conflict:', error);
     }
   };

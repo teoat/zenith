@@ -1,0 +1,42 @@
+{
+  "overall_score": 86.62079207920792,
+  "overall_grade": "A-",
+  "critical_findings": [],
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "category": "innovation_readiness",
+      "title": "Address multiple innovation_readiness issues",
+      "description": "Found 3 issues in innovation_readiness requiring attention",
+      "impact": "High",
+      "effort": "Medium"
+    },
+    {
+      "priority": "HIGH",
+      "category": "risk_management",
+      "title": "Address multiple risk_management issues",
+      "description": "Found 4 issues in risk_management requiring attention",
+      "impact": "High",
+      "effort": "Medium"
+    }
+  ],
+  "scope_coverage": {
+    "core_systems": 95.11666666666667,
+    "architecture": 87.0,
+    "code_quality": 87.0,
+    "security": 91.0,
+    "performance": 90.16666666666667,
+    "business_alignment": 89.5,
+    "operational_excellence": 90.33333333333333,
+    "innovation_readiness": 79.83333333333333,
+    "cost_optimization": 83.05,
+    "sustainability": 82.45,
+    "competitive_positioning": 79.83333333333333,
+    "risk_management": 74.33333333333333,
+    "compliance": 92.33333333333333,
+    "scalability": 85.33333333333333,
+    "reliability": 91.5,
+    "monitoring": 86.83333333333333,
+    "automation": 87.0
+  }
+}

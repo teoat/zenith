@@ -355,6 +355,8 @@ export function AutoComplete<T>({
               id={`autocomplete-option-${index}`}
               className={`autocomplete-item ${index === highlightedIndex ? 'bg-blue-100 dark:bg-blue-900 cursor-pointer p-2' : 'cursor-pointer p-2'} ${index === highlightedIndex ? 'highlighted' : ''}`}
               onClick={() => handleSelect(item)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelect(item); } }}
+              tabIndex={0}
               role="option"
               aria-selected={index === highlightedIndex ? "true" : "false"}
             >

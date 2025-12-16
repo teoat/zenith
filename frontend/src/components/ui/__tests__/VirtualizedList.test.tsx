@@ -12,10 +12,6 @@ describe('VirtualizedList', () => {
     { id: 3, name: 'Item 3' },
   ];
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   beforeAll(() => {
     // Mock offsetHeight/Width for JSDOM
     Object.defineProperties(HTMLElement.prototype, {
@@ -23,15 +19,6 @@ describe('VirtualizedList', () => {
       offsetWidth: { get: () => 800 },
     });
   });
-
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   const renderItem = (item: typeof mockItems[0]) => (
     <div data-testid={`item-${item.id}`}>{item.name}</div>
   );

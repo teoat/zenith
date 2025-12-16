@@ -104,7 +104,7 @@ class ComplianceMonitoringService {
         compliance_score: 92,
         last_updated: new Date().toISOString()
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to get system health:', error);
       throw error;
     }
@@ -129,7 +129,7 @@ class ComplianceMonitoringService {
           error_rate: systemHealth.error_rate
         }
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to get monitoring dashboard:', error);
       throw error;
     }
@@ -183,7 +183,7 @@ class ComplianceMonitoringService {
       }
 
       return alerts;
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to get active alerts:', error);
       return [];
     }
@@ -240,7 +240,7 @@ class ComplianceMonitoringService {
           await this.createAlert(rule, currentValue);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to check thresholds:', error);
     }
   }
@@ -306,7 +306,7 @@ class ComplianceMonitoringService {
       try {
         await this.checkThresholds();
         await this.performHealthCheck();
-      } catch (error) {
+      } catch (_error) {
         console.error('Monitoring check failed:', error);
       }
     }, intervalMinutes * 60 * 1000);

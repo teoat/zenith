@@ -116,6 +116,9 @@ const GraphNode3D: React.FC<{
         zIndex: Math.round(1000 - position.z),
       }}
       onClick={onClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
+      tabIndex={0}
+      role="button"
       onMouseEnter={() => onHover(true)}
       onMouseLeave={() => onHover(false)}
     >

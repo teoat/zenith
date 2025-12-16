@@ -1,9 +1,8 @@
-# core/logging.py
 import logging
 import json
 import sys
 from datetime import datetime, timezone
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import os
 
 
@@ -71,7 +70,7 @@ def setup_logging(level: str = "INFO", format_type: str = "json", log_file: Opti
 logger = setup_logging(level=os.getenv("LOG_LEVEL", "INFO"), format_type=os.getenv("LOG_FORMAT", "json"), log_file=os.getenv("LOG_FILE"))
 
 
-def log_request(request_id: str, method: str, path: str, status_code: int, duration: float, user_id: str | None = None):
+def log_request(request_id: str, method: str, path: str, status_code: int, duration: float, user_id: Optional[str] = None):
     """Log HTTP request details (single call to module logger)."""
     extra_fields = {
         "request_id": request_id,
@@ -105,7 +104,7 @@ def log_request(request_id: str, method: str, path: str, status_code: int, durat
             pass
 
 
-def log_error(error_type: str, message: str, details: Dict[str, Any] | None = None, user_id: str | None = None):
+def log_error(error_type: str, message: str, details: Optional[Dict[str, Any]] = None, user_id: Optional[str] = None):
     """Log application errors."""
     extra_fields = {"error_type": error_type, "details": details or {}}
     if user_id:
@@ -131,7 +130,7 @@ def log_error(error_type: str, message: str, details: Dict[str, Any] | None = No
             pass
 
 
-def log_security_event(event_type: str, user_id: str | None = None, ip_address: str | None = None, details: Dict[str, Any] | None = None):
+def log_security_event(event_type: str, user_id: Optional[str] = None, ip_address: Optional[str] = None, details: Optional[Dict[str, Any]] = None):
     """Log security-related events."""
     extra_fields = {"event_type": event_type, "security_event": True, "details": details or {}}
     if user_id:
@@ -159,7 +158,7 @@ def log_security_event(event_type: str, user_id: str | None = None, ip_address: 
             pass
 
 
-def log_performance(metric_name: str, value: float, tags: Dict[str, Any] | None = None):
+def log_performance(metric_name: str, value: float, tags: Optional[Dict[str, Any]] = None):
     """Log performance metrics."""
     extra_fields = {"metric_name": metric_name, "metric_value": value, "performance_metric": True, "tags": tags or {}}
     try:

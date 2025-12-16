@@ -49,7 +49,7 @@ const ComplianceMonitoring: React.FC = () => {
       await complianceMonitoringService.acknowledgeAlert(alertId);
       // Refresh data
       await loadMonitoringData();
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to acknowledge alert:', error);
     }
   };

@@ -188,7 +188,7 @@ const CodeReviewDashboard: React.FC = () => {
 
       setReviewResult(mockResult);
       setTestSuggestions(mockTestSuggestions);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load code review data:', error);
     } finally {
       setLoading(false);
@@ -201,7 +201,7 @@ const CodeReviewDashboard: React.FC = () => {
       // Simulate analysis delay
       await new Promise(resolve => setTimeout(resolve, 3000));
       await loadCodeReviewData();
-    } catch (error) {
+    } catch (_error) {
       console.error('Analysis failed:', error);
     } finally {
       setAnalyzing(false);

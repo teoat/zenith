@@ -246,7 +246,7 @@ const Ingestion: React.FC = () => {
                 } : res
             ));
             savedCount++;
-        } catch (error) {
+        } catch (_error) {
             console.error(`Failed to save ${item.file.name}:`, error);
             addToast(`Failed to save ${item.file.name}. It may already exist or backend is unavailable.`, 'error');
         }

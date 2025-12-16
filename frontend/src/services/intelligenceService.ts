@@ -1,7 +1,3 @@
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 /**
  * Frontend Intelligence Service Integration
  * Phase 5 Extension: Connects frontend to intelligence APIs
@@ -14,34 +10,6 @@
 
 import { api } from '../lib/api';
 import { useState } from 'react';
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-"""
-Frontend Intelligence Service Integration
-Phase 5 Extension: Connects frontend to intelligence APIs
-
-Provides service layer for:
-- Fraud detection analysis
-- Evidence processing
-- Risk scoring
-"""
-
-import { api } from '../lib/api';
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
 // Types
 export interface TransactionInput {
@@ -114,7 +82,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (_error) {
       console.error('Fraud analysis error:', error);
       throw error;
     }
@@ -142,7 +110,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (_error) {
       console.error('Risk calculation error:', error);
       throw error;
     }
@@ -169,7 +137,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (_error) {
       console.error('Evidence processing error:', error);
       throw error;
     }
@@ -194,7 +162,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (_error) {
       console.error('Evidence search error:', error);
       throw error;
     }
@@ -222,7 +190,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (_error) {
       console.error('Statistics fetch error:', error);
       throw error;
     }
@@ -246,7 +214,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (_error) {
       console.error('Health check error:', error);
       throw error;
     }

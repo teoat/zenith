@@ -394,7 +394,6 @@ async def ai_health_check():
     try:
         ai_service = await get_ai_service()
 
-<<<<<<< Updated upstream
         health_status = {
             "service": "ai",
             "status": "healthy" if ai_service.initialized else "initializing",
@@ -408,36 +407,13 @@ async def ai_health_check():
                     "status": "healthy" if ai_service.tfidf_vectorizer else "building",
                     "features": ai_service.tfidf_vectorizer.n_features_ if ai_service.tfidf_vectorizer else 0
                 }
-=======
-        # Start training in background
-        background_tasks.add_task(
-            ai_service.train_model,
-            request.model_type,
-            request.training_data,
-            request.hyperparameters
-        )
-
-        # Log training initiation
-        await audit_service.log_access(
-            action="ai_model_training_initiated",
-            resource=f"model:{request.model_type}",
-            details={
-                "training_samples": len(request.training_data),
-                "hyperparameters": request.hyperparameters
             }
-        )
-
-        return {
-            "message": f"Training initiated for {request.model_type} model",
-            "status": "training",
-            "model_type": request.model_type,
-            "training_samples": len(request.training_data),
-            "started_at": datetime.now(timezone.utc).isoformat()
         }
 
+        return health_status
     except Exception as e:
-        logger.error(f"Model training failed for {request.model_type}: {e}")
-        raise HTTPException(status_code=500, detail="Model training failed")
+        logger.error(f"AI health check failed: {e}")
+        raise HTTPException(status_code=500, detail="AI service health check failed")
 
 @router.get("/models/status")
 async def get_model_status(db: Session = Depends(get_db)):
@@ -885,7 +861,6 @@ async def get_llm_status():
                 "multimodal_analysis": True,
                 "fraud_specific_finetuning": True,
                 "domain_expertise": True
->>>>>>> Stashed changes
             }
         }
 

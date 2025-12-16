@@ -56,7 +56,7 @@ const NetworkGraph3D: React.FC<NetworkGraph3DProps> = ({
       setLoading(true);
       const data = await api.getGraphData();
       setGraphData(processGraphData(data));
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load graph data:', error);
     } finally {
       setLoading(false);

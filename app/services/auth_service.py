@@ -72,7 +72,11 @@ try:
     auth_service = backend_auth_service
     db_service = backend_db_service
     backend_auth_available = True
-except Exception:
+    backend_auth_available = True
+except Exception as e:
+    print(f"DEBUG: Failed to import backend auth service: {e}")
+    import traceback
+    traceback.print_exc()
     AuthService = _AuthService
     auth_service = _AuthService()
     db_service = None

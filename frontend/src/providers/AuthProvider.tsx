@@ -167,7 +167,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: credentials.email.split('@')[0] // Derive name from email
       };
       setUser(loggedInUser); 
-    } catch (error) {
+    } catch (_error) {
       console.error('Login failed:', error);
       throw error;
     }

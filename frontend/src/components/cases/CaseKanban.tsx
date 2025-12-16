@@ -236,7 +236,7 @@ const CaseKanban = () => {
           break;
         
         case 'ArrowRight':
-        case 'Tab':
+        case 'Tab': {
           e.preventDefault();
           const nextColIndex = columns.indexOf(column) + 1;
           if (nextColIndex < columns.length) {
@@ -247,8 +247,9 @@ const CaseKanban = () => {
             }
           }
           break;
+        }
         
-        case 'ArrowLeft':
+        case 'ArrowLeft': {
           e.preventDefault();
           const prevColIndex = columns.indexOf(column) - 1;
           if (prevColIndex >= 0) {
@@ -259,8 +260,9 @@ const CaseKanban = () => {
             }
           }
           break;
+        }
         
-        case 'Enter':
+        case 'Enter': {
           // Open card details - could navigate to full case view
           const card = currentColumn[index];
           if (card) {
@@ -268,6 +270,7 @@ const CaseKanban = () => {
             // Navigate or open modal
           }
           break;
+        }
         
         case 'Escape':
           setFocusedCard(null);

@@ -47,26 +47,6 @@ const AgentDrafts = React.lazy(() => import(/* webpackChunkName: "drafts" */ '@/
 const NotFound = React.lazy(() => import(/* webpackChunkName: "not-found" */ '@/pages/NotFound'));
 
 // New compliance components
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-const ComplianceDashboard = React.lazy(() => import(/* webpackChunkName: "compliance-dashboard" */ '@/pages/ComplianceDashboard'));
-const ComplianceTraining = React.lazy(() => import(/* webpackChunkName: "compliance-training" */ '@/pages/ComplianceTraining'));
->>>>>>> Stashed changes
-=======
-const ComplianceDashboard = React.lazy(() => import(/* webpackChunkName: "compliance-dashboard" */ '@/pages/ComplianceDashboard'));
-const ComplianceTraining = React.lazy(() => import(/* webpackChunkName: "compliance-training" */ '@/pages/ComplianceTraining'));
->>>>>>> Stashed changes
-=======
-const ComplianceDashboard = React.lazy(() => import(/* webpackChunkName: "compliance-dashboard" */ '@/pages/ComplianceDashboard'));
-const ComplianceTraining = React.lazy(() => import(/* webpackChunkName: "compliance-training" */ '@/pages/ComplianceTraining'));
->>>>>>> Stashed changes
-=======
-const ComplianceDashboard = React.lazy(() => import(/* webpackChunkName: "compliance-dashboard" */ '@/pages/ComplianceDashboard'));
-const ComplianceTraining = React.lazy(() => import(/* webpackChunkName: "compliance-training" */ '@/pages/ComplianceTraining'));
->>>>>>> Stashed changes
 const ComplianceMonitoring = React.lazy(() => import(/* webpackChunkName: "compliance-monitoring" */ '@/pages/ComplianceMonitoring'));
 
 
@@ -218,19 +198,7 @@ const AppContent: React.FC = () => {
   return (
     <AccessibilityChecker>
       <EnhancedErrorBoundary>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           <WebSocketProvider>
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
           <WebSocketSync />
           <TourSpotlight />
           <Suspense fallback={<LoadingState />}>
@@ -273,26 +241,7 @@ const AppContent: React.FC = () => {
                          <Route path="/drafts" element={<AgentDrafts />} />
 
                          {/* Compliance Routes */}
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-                         <Route path="/compliance" element={<ComplianceDashboard />} />
-                         <Route path="/compliance/training" element={<ComplianceTraining />} />
->>>>>>> Stashed changes
-=======
-                         <Route path="/compliance" element={<ComplianceDashboard />} />
-                         <Route path="/compliance/training" element={<ComplianceTraining />} />
->>>>>>> Stashed changes
-=======
-                         <Route path="/compliance" element={<ComplianceDashboard />} />
-                         <Route path="/compliance/training" element={<ComplianceTraining />} />
->>>>>>> Stashed changes
-=======
-                         <Route path="/compliance" element={<ComplianceDashboard />} />
-                         <Route path="/compliance/training" element={<ComplianceTraining />} />
->>>>>>> Stashed changes
+
                          <Route path="/compliance/monitoring" element={<ComplianceMonitoring />} />
 
                          <Route path="*" element={<NotFound />} />
@@ -304,19 +253,7 @@ const AppContent: React.FC = () => {
             />
           </Routes>
         </Suspense>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
       </WebSocketProvider>
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
       </EnhancedErrorBoundary>
     </AccessibilityChecker>
   );

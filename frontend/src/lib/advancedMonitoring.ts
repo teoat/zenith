@@ -305,7 +305,7 @@ export const withTracing = <T extends any[], R>(
       const result = fn(...args);
       advancedMonitoring.endTrace(spanId);
       return result;
-    } catch (error) {
+    } catch (_error) {
       advancedMonitoring.endTrace(spanId);
       throw error;
     }

@@ -14,7 +14,6 @@ import {
 const CollaborativeEditor = ({ documentId, userId }) => {
   const [content, setContent] = useState('');
   const [connected, setConnected] = useState(false);
-  const [_connectedUsers, _setConnectedUsers] = useState([]);
   const [operations, setOperations] = useState([]);
   const [vectorClock, setVectorClock] = useState({});
   const [clientId, setClientId] = useState('');

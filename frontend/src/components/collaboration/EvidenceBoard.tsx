@@ -179,6 +179,9 @@ const EvidenceCardComponent: React.FC<{
       className={`evidence-card ${isSelected ? 'selected' : ''} ${isConnecting ? 'connecting' : ''}`}
       style={{ left: evidence.position.x, top: evidence.position.y }}
       onClick={onSelect}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(); } }}
+      tabIndex={0}
+      role="button"
     >
       <div className="card-priority-bar" style={{ background: getPriorityIndicator(evidence.priority) }} />
       

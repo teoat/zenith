@@ -41,7 +41,7 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
       const response = await fetch('/api/v1/fraud/rules');
       const data = await response.json();
       setRules(data.rules || []);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load rules:', error);
     } finally {
       setLoading(false);
@@ -52,7 +52,7 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
     try {
       await fetch(`/api/v1/fraud/rules/${ruleId}/toggle`, { method: 'PATCH' });
       await loadRules();
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to toggle rule:', error);
     }
   };
@@ -64,7 +64,7 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
       await fetch(`/api/v1/fraud/rules/${ruleId}`, { method: 'DELETE' });
       await loadRules();
       onRuleDeleted?.(ruleId);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to delete rule:', error);
     }
   };
@@ -90,7 +90,7 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
         });
         onRuleCreated?.(data.rule);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to create rule:', error);
     }
   };
@@ -208,10 +208,11 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
             <div className="space-y-4">
               {/* Rule Type */}
               <div>
-                <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                <label htmlFor="rule-type" className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
                   Rule Type
                 </label>
                 <select
+                  id="rule-type"
                   value={newRule.rule_type}
                   onChange={(e) => setNewRule({ ...newRule, rule_type: e.target.value as any })}
                   className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800"
@@ -224,10 +225,11 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
 
               {/* Risk Level */}
               <div>
-                <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                <label htmlFor="risk-level" className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
                   Risk Level
                 </label>
                 <select
+                  id="risk-level"
                   value={newRule.risk_level}
                   onChange={(e) => setNewRule({ ...newRule, risk_level: e.target.value as any })}
                   className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800"
@@ -243,10 +245,11 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
               {newRule.rule_type === 'velocity' && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                    <label htmlFor="max-transactions" className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
                       Max Transactions
                     </label>
                     <input
+                      id="max-transactions"
                       type="number"
                       value={newRule.parameters.max_transactions || 5}
                       onChange={(e) => setNewRule({
@@ -257,10 +260,11 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                    <label htmlFor="time-window" className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
                       Time Window (minutes)
                     </label>
                     <input
+                      id="time-window"
                       type="number"
                       value={newRule.parameters.time_window_minutes || 5}
                       onChange={(e) => setNewRule({
@@ -275,10 +279,11 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
 
               {newRule.rule_type === 'amount' && (
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                  <label htmlFor="threshold-amount" className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
                     Threshold Amount
                   </label>
                   <input
+                    id="threshold-amount"
                     type="number"
                     value={newRule.parameters.threshold_amount || 10000}
                     onChange={(e) => setNewRule({

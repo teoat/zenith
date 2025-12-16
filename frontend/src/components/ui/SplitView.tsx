@@ -128,20 +128,19 @@ export const SplitView: React.FC<SplitViewProps> = ({
 
       {/* Resize Handle */}
       {showHandle && (
-        <div
-          className={`
-            flex items-center justify-center flex-shrink-0 bg-slate-200 dark:bg-slate-800
-            hover:bg-blue-500 dark:hover:bg-blue-600 transition-colors
-            ${isHorizontal ? 'w-1 cursor-col-resize' : 'h-1 cursor-row-resize'}
-            ${isDragging ? 'bg-blue-500 dark:bg-blue-600' : ''}
-          `}
-          onMouseDown={handleMouseDown}
-          role="separator"
-          aria-orientation={orientation}
-          aria-valuenow={splitPosition}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          tabIndex={0}
+          <button
+            className={`
+              flex items-center justify-center flex-shrink-0 bg-slate-200 dark:bg-slate-800
+              hover:bg-blue-500 dark:hover:bg-blue-600 transition-colors
+              ${isHorizontal ? 'w-1 cursor-col-resize' : 'h-1 cursor-row-resize'}
+              ${isDragging ? 'bg-blue-500 dark:bg-blue-600' : ''}
+            `}
+            onMouseDown={handleMouseDown}
+            aria-orientation={orientation}
+            aria-valuenow={splitPosition}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Resize panel"
           onKeyDown={(e) => {
             const step = 5;
             if ((isHorizontal && e.key === 'ArrowLeft') || (!isHorizontal && e.key === 'ArrowUp')) {
@@ -160,7 +159,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
           {isHorizontal && (
             <GripVertical size={16} className="text-slate-400 pointer-events-none" />
           )}
-        </div>
+        </button>
       )}
 
       {/* Right/Bottom Panel */}

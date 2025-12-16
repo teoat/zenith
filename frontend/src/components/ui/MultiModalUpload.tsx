@@ -127,7 +127,7 @@ export function MultiModalUpload({
       ));
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       setUploadedFiles(prev => prev.map(f =>
         f.id === fileId ? {
           ...f,
@@ -180,7 +180,7 @@ export function MultiModalUpload({
       try {
         const result = await processFile(file as unknown as ElectronFile, file.id);
         results.push(result);
-      } catch (error) {
+      } catch (_error) {
         console.error(`Failed to process ${file.name}:`, error);
       }
     }

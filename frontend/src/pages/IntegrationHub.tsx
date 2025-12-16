@@ -46,7 +46,7 @@ const IntegrationHub: React.FC = () => {
 
       setIntegrations(integrationsData);
       setMetrics(metricsData);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load integration data:', error);
     } finally {
       setLoading(false);

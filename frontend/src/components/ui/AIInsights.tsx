@@ -193,7 +193,7 @@ export function AIModelPerformance() {
       setLoading(true);
       const perf = await aiFraudDetector.getModelPerformance();
       setPerformance(perf);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load AI performance:', error);
     } finally {
       setLoading(false);

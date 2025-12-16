@@ -172,7 +172,7 @@ export const performanceTests = {
             duration: end - start,
             status: response.status
           };
-        } catch (error) {
+        } catch (_error) {
           const end = Date.now();
           return {
             success: false,

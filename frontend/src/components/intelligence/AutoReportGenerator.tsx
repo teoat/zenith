@@ -298,6 +298,9 @@ export const AutoReportGenerator: React.FC<AutoReportGeneratorProps> = ({
                       key={tmpl.id}
                       className={`template-card ${selectedTemplate === tmpl.id ? 'selected' : ''}`}
                       onClick={() => setSelectedTemplate(tmpl.id)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedTemplate(tmpl.id); } }}
+                      tabIndex={0}
+                      role="button"
                     >
                       <div className="template-name">{tmpl.name}</div>
                       <div className="template-description">{tmpl.description}</div>

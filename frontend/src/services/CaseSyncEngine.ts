@@ -211,7 +211,7 @@ export class CaseSyncEngine {
       this.startPolling();
       
       console.log('[CaseSyncEngine] Connected to case:', this.options.caseId);
-    } catch (error) {
+    } catch (_error) {
       this.options.onError?.(error as Error);
       throw error;
     }

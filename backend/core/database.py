@@ -3,13 +3,13 @@ import uuid
 import json
 from datetime import datetime, date
 from typing import List, Optional, Dict, Any
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Text, JSON, Float, Date, ForeignKey, Enum
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Text, JSON, Float, Date, ForeignKey, Enum, Index
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 import os
 
 # Encrypted field types
-from core.security.encryption import EncryptedString
+from core.security import EncryptedString
 
 # Create base class
 Base = declarative_base()
@@ -63,10 +63,15 @@ class User(Base):
     username = Column(String, unique=True, nullable=False, index=True)
     email = Column(EncryptedString, unique=True, nullable=False)
     full_name = Column(EncryptedString, nullable=False)
+    password_hash = Column(String, nullable=False)
     role = Column(String, default=UserRole.INVESTIGATOR)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=utc_now)
     last_login = Column(DateTime)
+
+    # MFA fields
+    mfa_enabled = Column(Boolean, default=False)
+    mfa_secret = Column(EncryptedString, nullable=True)
 
     # Relationships
     cases = relationship("Case", back_populates="assignee")
@@ -108,6 +113,8 @@ class Case(Base):
     notes = relationship("CaseNote", back_populates="case", cascade="all, delete-orphan")
     activities = relationship("CaseActivity", back_populates="case", cascade="all, delete-orphan")
     alerts = relationship("FraudAlert", back_populates="case", cascade="all, delete-orphan")
+    trade_transactions = relationship("TradeTransaction", back_populates="case", cascade="all, delete-orphan")
+    crypto_transactions = relationship("CryptoTransaction", back_populates="case", cascade="all, delete-orphan")
 
 class Transaction(Base):
     __tablename__ = "transactions"
@@ -218,53 +225,7 @@ class FraudAlert(Base):
     # Relationships
     case = relationship("Case", back_populates="alerts")
 
-class Entity(Base):
-    __tablename__ = "entities"
 
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = Column(String, nullable=False, index=True)
-    entity_type = Column(String, nullable=False, index=True)  # person, company, account
-    entity_metadata = Column(JSON, default=dict)
-    created_at = Column(DateTime, default=utc_now)
-
-class Relationship(Base):
-    __tablename__ = "relationships"
-
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    from_entity_id = Column(String, ForeignKey('entities.id'), index=True)
-    to_entity_id = Column(String, ForeignKey('entities.id'), index=True)
-    relationship_type = Column(String, nullable=False, index=True)
-    strength = Column(Float, default=1.0)
-    relationship_metadata = Column(JSON, default=dict)
-    created_at = Column(DateTime, default=utc_now)
-
-class GraphSnapshot(Base):
-    __tablename__ = "graph_snapshots"
-
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = Column(String, nullable=False)
-    description = Column(Text)
-    data = Column(JSON, nullable=False)
-    created_at = Column(DateTime, default=utc_now)
-    created_by = Column(String, ForeignKey('users.id'))
-
-class UserDevice(Base):
-    __tablename__ = "user_devices"
-
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String, ForeignKey('users.id'), index=True)
-    device_id = Column(String, nullable=False, index=True)
-    device_name = Column(String)
-    last_seen = Column(DateTime, default=utc_now)
-
-class RookieChecklist(Base):
-    __tablename__ = "rookie_checklists"
-
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String, ForeignKey('users.id'), index=True)
-    checklist_data = Column(JSON, default=dict)
-    completed_at = Column(DateTime)
-    created_at = Column(DateTime, default=utc_now)
 
 # Database setup functions
 def get_database_url():
@@ -279,8 +240,7 @@ def create_engine_and_session():
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     return engine, SessionLocal
 
-<<<<<<< Updated upstream
-=======
+
 class Entity(Base):
     __tablename__ = 'entities'
 
@@ -332,6 +292,20 @@ class Relationship(Base):
         Index('idx_relationship_confidence_type', 'confidence', 'relationship_type'),
     )
 
+
+class UserDevice(Base):
+    __tablename__ = 'user_devices'
+
+    id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey('users.id'), index=True)
+    device_name = Column(String)
+    device_type = Column(String)
+    ip_address = Column(String)
+    last_login = Column(DateTime, default=utc_now)
+    is_trusted = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=utc_now)
+
+    user = relationship("User", backref="devices")
 
 class RookieChecklist(Base):
     __tablename__ = 'rookie_checklists'
@@ -906,16 +880,7 @@ def optimize_database_performance():
         ]
     }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
 def create_tables():
     """Create all database tables"""
     engine, _ = create_engine_and_session()
@@ -932,10 +897,20 @@ def get_db():
     finally:
         db.close()
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
+# Security hardening: Parameterized query enforcement
+from sqlalchemy import text
+
+def secure_query_execution(query_template: str, params: dict) -> str:
+    """Execute parameterized queries to prevent SQL injection"""
+    try:
+        # Use SQLAlchemy text() for safe parameter binding
+        safe_query = text(query_template)
+        # Implementation would use session.execute(safe_query, params)
+        return "Query executed safely"
+    except Exception as e:
+        logger.error(f"Secure query execution failed: {str(e)}")
+        raise
+
 # Export all models and utilities
 __all__ = [
     # Base class
@@ -970,36 +945,6 @@ __all__ = [
     'create_tables',
     'get_db',
     'SessionLocal',
-    'engine'
+    'engine',
+    'secure_query_execution'
 ]
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-# Security hardening: Parameterized query enforcement
-from sqlalchemy import text
-
-def secure_query_execution(query_template: str, params: dict) -> str:
-    """Execute parameterized queries to prevent SQL injection"""
-    try:
-        # Use SQLAlchemy text() for safe parameter binding
-        safe_query = text(query_template)
-        # Implementation would use session.execute(safe_query, params)
-        return "Query executed safely"
-    except Exception as e:
-        logger.error(f"Secure query execution failed: {str(e)}")
-        raise
-
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes

@@ -37,7 +37,7 @@ const InvestigationNotebook: React.FC<InvestigationNotebookProps> = ({
           timestamp: new Date(n.timestamp || Date.now())
         }));
         setNotes(loadedNotes);
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to load notes:', error);
       } finally {
         setIsLoading(false);
@@ -68,7 +68,7 @@ const InvestigationNotebook: React.FC<InvestigationNotebookProps> = ({
       setNotes([createdNote, ...notes]);
       setActiveNote(createdNote);
       setIsEditing(true);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to create note:', error);
     }
   };
@@ -88,7 +88,7 @@ const InvestigationNotebook: React.FC<InvestigationNotebookProps> = ({
       );
       setNotes(updatedNotes);
       setActiveNote(updatedNote);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to update note:', error);
     }
   };
@@ -105,7 +105,7 @@ const InvestigationNotebook: React.FC<InvestigationNotebookProps> = ({
         setActiveNote(null);
         setIsEditing(false);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to delete note:', error);
     }
   };

@@ -136,7 +136,7 @@ export const BehavioralHeatmap: React.FC<BehavioralHeatmapProps> = ({
           const result = await api.getBehavioralAnalytics();
           if (!propData) setTimeData(result.timeData);
           if (!propGeoData) setGeoData(result.geoData);
-        } catch (error) {
+        } catch (_error) {
           console.error("Failed to fetch behavioral analytics:", error);
         } finally {
           setIsLoading(false);

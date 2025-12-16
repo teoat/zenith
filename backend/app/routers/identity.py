@@ -10,7 +10,7 @@ from app.services.auth_service import auth_service
 from core.logging import logger
 from core.database import User, UserDevice, RookieChecklist, utc_now
 from sqlalchemy.orm import Session
-from app.services.core.database_service import db_service
+from app.services.database_service import db_service
 import pyotp
 import hashlib
 import uuid
@@ -52,70 +52,92 @@ class MFAVerifyRequest(BaseModel):
 async def login(login_data: LoginRequest, request: Request):
     """Authenticate user and return JWT tokens"""
     try:
+        logger.info(f"Login attempt for user: {login_data.username}")
+
         # Authenticate user against database (Password check)
         user = auth_service.authenticate_user(login_data.username, login_data.password)
         if not user:
+            logger.warning(f"Authentication failed for user: {login_data.username}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username or password",
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
+        logger.info(f"User authenticated successfully: {user.username}, role: {user.role}")
+
         # ------------------------------------------------------------------
         # MFA Optimization: Enforce TOTP if enabled
         # ------------------------------------------------------------------
         if user.mfa_enabled:
+            logger.info(f"MFA required for user: {user.username}")
             if not login_data.mfa_code:
-                # Client needs to know MFA is required. 
-                # Standard pattern: Return specific error structure or code?
-                # For this API, a readable error is fine.
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="MFA code required",
                     headers={"WWW-Authenticate": "Bearer"},
                 )
-            
+
             # Verify TOTP
             try:
-                # mfa_secret is EncryptedString, likely decrypted on access by SQLAlchemy type 
-                # or we just access it. Assuming access returns string.
                 if not user.mfa_secret:
                     logger.error(f"User {user.id} has MFA enabled but no secret")
-                    # Fallback allow? No, secure deny.
                     raise HTTPException(status_code=500, detail="MFA configuration error")
 
                 totp = pyotp.TOTP(user.mfa_secret)
                 if not totp.verify(login_data.mfa_code, valid_window=1):
+                    logger.warning(f"Invalid MFA code for user: {user.username}")
                     raise HTTPException(
                         status_code=status.HTTP_401_UNAUTHORIZED,
                         detail="Invalid MFA code"
                     )
+                logger.info(f"MFA verification successful for user: {user.username}")
             except Exception as e:
-                # If pyotp fails or other error
                 if isinstance(e, HTTPException): raise e
-                logger.error(f"MFA verify error: {e}")
+                logger.error(f"MFA verify error for user {user.username}: {e}")
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid MFA code")
 
         # Generate real JWT tokens
-        # Use constants from auth_service implicitly or explicitly if available, or defaults
-        access_token = auth_service.create_access_token(
-            data={"sub": user.id, "username": user.username, "role": user.role if user.role else None}
-        )
-        refresh_token = auth_service.create_refresh_token(user.id)
+        logger.info(f"Generating tokens for user: {user.username}")
+        # Role is already a string from database
+        token_data = {"sub": user.id, "username": user.username, "role": user.role}
+        logger.debug(f"Token data: {token_data}")
 
-        # Get permissions based on role
-        user_perms = ROLE_PERMISSIONS.get(user.role, []) if hasattr(user, 'role') else []
+        try:
+            access_token = auth_service.create_access_token(data=token_data)
+            refresh_token = auth_service.create_refresh_token(user.id)
+            logger.info(f"Tokens generated successfully for user: {user.username}")
+        except Exception as token_error:
+            logger.error(f"Token generation failed: {token_error}")
+            raise HTTPException(status_code=500, detail=f"Token generation failed: {str(token_error)}")
 
-        return TokenResponse(
-            access_token=access_token, 
-            refresh_token=refresh_token, 
+        logger.info(f"Tokens generated successfully for user: {user.username}")
+
+        # Get permissions based on role (case-insensitive)
+        user_role = user.role.lower() if hasattr(user, 'role') and user.role else None
+        user_perms = ROLE_PERMISSIONS.get(user_role, []) if user_role else []
+        logger.debug(f"User role: {user_role}, permissions type: {type(user_perms)}, permissions: {user_perms}")
+
+        response = TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
             permissions=user_perms,
             token_type="bearer"
         )
+
+        logger.info(f"Login successful for user: {user.username}")
+        logger.debug(f"Response data: access_token={bool(access_token)}, refresh_token={bool(refresh_token)}, permissions={user_perms}")
+        return response
+
+    except HTTPException as he:
+        # Re-raise HTTP exceptions as-is
+        raise he
     except Exception as e:
-        if isinstance(e, HTTPException): raise e
-        logger.error(f"Login error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal login error")
+        logger.error(f"Unexpected login error for user {login_data.username}: {str(e)}")
+        logger.error(f"Exception type: {type(e).__name__}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"Internal login error: {str(e)}")
 
 # ... register endpoint remains ...
 

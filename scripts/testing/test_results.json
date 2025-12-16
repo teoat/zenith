@@ -1,63 +1,58 @@
 {
-  "timestamp": "2025-12-17 02:46:24",
+  "timestamp": "2025-12-17 03:50:13",
   "tests": {
-    "frontend_build": {
-      "result": false
+    "backend_startup": false,
+    "frontend_build": false,
+    "api_endpoints": {
+      "error": "No module named 'main'"
     },
-    "api_health": {
-      "result": true
+    "database_operations": {
+      "error": "No module named 'main'"
     },
-    "authentication": {
-      "result": false
-    },
-    "components": {
-      "App": {
-        "status": "PASS",
-        "message": "Component exists"
-      },
+    "react_pages": {
       "Dashboard": {
-        "status": "PASS",
-        "message": "Component exists"
+        "status": "FAIL",
+        "message": "Page file missing"
       },
       "Cases": {
-        "status": "PASS",
-        "message": "Component exists"
+        "status": "FAIL",
+        "message": "Page file missing"
       },
       "Login": {
-        "status": "PASS",
-        "message": "Component exists"
+        "status": "FAIL",
+        "message": "Page file missing"
       },
       "Settings": {
-        "status": "PASS",
-        "message": "Component exists"
+        "status": "FAIL",
+        "message": "Page file missing"
       },
-      "DataGrid": {
-        "status": "PASS",
-        "message": "Component exists"
+      "Ingestion": {
+        "status": "FAIL",
+        "message": "Page file missing"
       },
-      "NetworkGraph": {
-        "status": "PASS",
-        "message": "Component exists"
+      "Forensics": {
+        "status": "FAIL",
+        "message": "Page file missing"
       },
-      "Button": {
-        "status": "PASS",
-        "message": "Component exists"
+      "AdjudicationQueue": {
+        "status": "FAIL",
+        "message": "Page file missing"
       },
-      "Input": {
-        "status": "PASS",
-        "message": "Component exists"
+      "Reconciliation": {
+        "status": "FAIL",
+        "message": "Page file missing"
       },
-      "Card": {
-        "status": "PASS",
-        "message": "Component exists"
+      "Setup": {
+        "status": "FAIL",
+        "message": "Page file missing"
       }
     }
   },
   "summary": {
-    "total_tests": 13,
-    "passed_tests": 11,
-    "failed_tests": 2,
-    "overall_score": 84.6,
-    "grade": "B (Satisfactory)"
+    "total_tests": 11,
+    "passed_tests": 0,
+    "failed_tests": 11,
+    "overall_score": 0.0,
+    "grade": "F (Critical Issues)"
   }
 }

@@ -18,7 +18,7 @@ export function usePersistedState<T>(key: string, initialValue: T): [T, (value: 
       const item = window.localStorage.getItem(key);
       // Parse stored json or if none return initialValue
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
+    } catch (_error) {
       // If error also return initialValue
       console.warn(`Error reading localStorage key "${key}":`, error);
       return initialValue;
@@ -42,7 +42,7 @@ export function usePersistedState<T>(key: string, initialValue: T): [T, (value: 
         // TODO: Integration with Electron Store for deeper persistence
         // if (window.electronAPI?.store) { ... }
       }
-    } catch (error) {
+    } catch (_error) {
       // A more advanced implementation would handle the error case
       console.warn(`Error setting localStorage key "${key}":`, error);
     }

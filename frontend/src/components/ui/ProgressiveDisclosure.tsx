@@ -167,6 +167,9 @@ export const MicroInteraction: React.FC<MicroInteractionProps> = ({
       onFocus={() => handleInteraction(true)}
       onBlur={() => handleInteraction(false)}
       onClick={handleClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }}
+      tabIndex={0}
+      role="button"
     >
       {children}
     </div>

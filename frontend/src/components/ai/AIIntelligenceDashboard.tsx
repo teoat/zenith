@@ -107,7 +107,7 @@ const AIIntelligenceDashboard: React.FC = () => {
       setMetrics(metricsData);
       setFederatedNodes(nodesData);
       setModelVersions(modelsData);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load AI dashboard data:', error);
     } finally {
       setLoading(false);

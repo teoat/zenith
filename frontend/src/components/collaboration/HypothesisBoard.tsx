@@ -177,7 +177,7 @@ const HypothesisCard: React.FC<{
   const opposingEvidence = hypothesis.evidence.filter(e => !e.supports).length;
 
   return (
-    <div className="hypothesis-card" onClick={onClick}>
+    <div className="hypothesis-card" onClick={onClick} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }} tabIndex={0} role="button">
       <div className="hypothesis-header">
         <Badge className={getStatusColor(hypothesis.status)}>
           {getStatusIcon(hypothesis.status)}
