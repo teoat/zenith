@@ -564,31 +564,28 @@ class EvidenceProcessor:
             # Check for identical blocks (very basic clone detection)
             clone_detected = False
             block_size = 32
+            block_hashes = set()
 
+            # Optimized O(n) approach using hash map instead of O(n^2) nested loops
             for y in range(0, height - block_size, block_size):
                 for x in range(0, width - block_size, block_size):
                     block = gray[y : y + block_size, x : x + block_size]
 
-                    # Look for identical blocks elsewhere
-                    for y2 in range(y + block_size, height - block_size, block_size):
-                        for x2 in range(0, width - block_size, block_size):
-                            if x == x2 and y == y2:
-                                continue
+                    # Use bytes as hashable key (tobytes is fast and sufficient for exact match)
+                    block_bytes = block.tobytes()
 
-                            block2 = gray[y2 : y2 + block_size, x2 : x2 + block_size]
-                            if np.array_equal(block, block2):
-                                clone_detected = True
-                                break
-                        if clone_detected:
-                            break
-                    if clone_detected:
+                    if block_bytes in block_hashes:
+                        clone_detected = True
                         break
+                    else:
+                        block_hashes.add(block_bytes)
+
                 if clone_detected:
                     break
 
             return {
                 "clone_regions_detected": clone_detected,
-                "clone_detection_method": "basic_block_comparison",
+                "clone_detection_method": "hash_map_lookup_optimized",
             }
 
         except Exception as e:
