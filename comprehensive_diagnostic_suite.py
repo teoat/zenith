@@ -165,18 +165,15 @@ class ComprehensiveDiagnosticSuite:
 
         # API endpoint testing (count from routes)
         routes_path = backend_path / 'app' / 'routes'
+        backend_metrics['api_endpoints'] = {'total_endpoints': 0, 'route_files': 0}
         if routes_path.exists():
             endpoint_count = 0
             for route_file in routes_path.rglob('*.py'):
                 with open(route_file, 'r') as f:
                     content = f.read()
-                    # Count route decorators
-                    endpoint_count += len(re.findall(r'@router\.(get|post|put|delete|patch)', content))
-            
-            backend_metrics['api_endpoints'] = {
-                'total_endpoints': endpoint_count,
-                'route_files': len(list(routes_path.glob('*.py')))
-            }
+                    endpoint_count += len(re.findall(r'@router\\.(get|post|put|delete|patch)', content))
+            backend_metrics['api_endpoints']['total_endpoints'] = endpoint_count
+            backend_metrics['api_endpoints']['route_files'] = len(list(routes_path.glob('*.py')))
 
         # Check dependencies
         requirements_file = self.repo_root / 'requirements.txt'
