@@ -37,5 +37,16 @@ module.exports = {
       lines: 5,
       statements: 5
     }
+  },
+  globals: {
+    'import.meta': {
+      env: {
+        VITE_API_URL: 'http://localhost:8000/api/v1',
+        MODE: 'test',
+        DEV: false,
+        PROD: false,
+        SSR: false
+      }
+    }
   }
 };

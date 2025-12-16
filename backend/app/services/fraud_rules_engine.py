@@ -289,31 +289,20 @@ class FraudRulesEngine:
         # synchronous callers see a populated `rules` collection.
         try:
             if not self.rules:
-                try:
-                    # create_default_rules is async; run it synchronously here
-                    asyncio.run(self.create_default_rules())
-                except RuntimeError:
-                    # In case an event loop is already running (test runners),
-                    # fall back to creating defaults synchronously.
-                    for template_id, template in self.rule_templates.items():
-                        rule_id = f"default_{template_id}"
-                        rule = FraudRule(
-                            id=rule_id,
-                            name=template["name"],
-                            description=template["description"],
-                            type=template["type"],
-                            conditions=[
-                                RuleCondition(**cond) for cond in template["conditions"]
-                            ],
-                            severity=template["severity"],
-                            tags=template["tags"],
-                        )
-                        self.rules[rule_id] = rule
-                    # best-effort save (async)
-                    try:
-                        asyncio.run(self.save_rules())
-                    except Exception:
-                        pass
+                # Create default rules synchronously
+                for template_id, template in self.rule_templates.items():
+                    rule_id = f"default_{template_id}"
+                    rule = FraudRule(
+                        id=rule_id,
+                        name=template['name'],
+                        description=template['description'],
+                        type=template['type'],
+                        conditions=[RuleCondition(**cond) for cond in template['conditions']],
+                        severity=template['severity'],
+                        tags=template['tags']
+                    )
+                    self.rules[rule_id] = rule
+                logger.info(f"Created {len(self.rules)} default rules synchronously")
         except Exception as e:
             logger.warning(f"Failed to ensure default rules at init: {e}")
 

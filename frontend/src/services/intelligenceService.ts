@@ -110,7 +110,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (_error) {
+    } catch (error) {
       console.error('Risk calculation error:', error);
       throw error;
     }
@@ -137,7 +137,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (_error) {
+    } catch (error) {
       console.error('Evidence processing error:', error);
       throw error;
     }
@@ -162,7 +162,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (_error) {
+    } catch (error) {
       console.error('Evidence search error:', error);
       throw error;
     }
@@ -190,7 +190,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (_error) {
+    } catch (error) {
       console.error('Statistics fetch error:', error);
       throw error;
     }
@@ -214,7 +214,7 @@ class IntelligenceService {
       }
 
       return await response.json();
-    } catch (_error) {
+    } catch (error) {
       console.error('Health check error:', error);
       throw error;
     }

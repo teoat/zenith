@@ -193,10 +193,18 @@ async def lifespan(app: FastAPI):
             extra={"event": "monitoring_start"},
         )
 
-        logger.info(
-            "Collaboration WebSocket server skipped for testing",
-            extra={"event": "collaboration_skipped"},
-        )
+        # Start collaboration WebSocket server if enabled
+        if os.getenv("ENABLE_COLLABORATION_WS", "false").lower() == "true":
+            await collaboration_manager.start_server()
+            logger.info(
+                "Collaboration WebSocket server started on ws://localhost:8080",
+                extra={"event": "collaboration_started"},
+            )
+        else:
+            logger.info(
+                "Collaboration WebSocket server disabled (set ENABLE_COLLABORATION_WS=true to enable)",
+                extra={"event": "collaboration_disabled"},
+            )
         logger.info(
             "378x492 API startup completed successfully",
             extra={"event": "startup_complete"},
