@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /**
  * Frontend Intelligence Service Integration
  * Phase 5 Extension: Connects frontend to intelligence APIs
@@ -12,6 +13,8 @@
 import { api } from '../lib/api';
 import { useState } from 'react';
 =======
+=======
+>>>>>>> Stashed changes
 """
 Frontend Intelligence Service Integration
 Phase 5 Extension: Connects frontend to intelligence APIs
@@ -23,6 +26,9 @@ Provides service layer for:
 """
 
 import { api } from '../lib/api';
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 // Types

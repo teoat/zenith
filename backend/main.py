@@ -270,7 +270,11 @@ async def request_logging_middleware(request: Request, call_next):
     Middleware for logging all requests with comprehensive audit trail.
     """
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     from app.services.audit_service import audit_service
+=======
+    from app.services.core.audit_service import audit_service
+>>>>>>> Stashed changes
 =======
     from app.services.core.audit_service import audit_service
 >>>>>>> Stashed changes
@@ -324,9 +328,12 @@ async def request_logging_middleware(request: Request, call_next):
         "query_params": query_params[:500] if query_params else None,  # Limit size
         "user_agent": user_agent[:200],
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "session_id": session_id,
         "request_id": request_id
 =======
+=======
+>>>>>>> Stashed changes
         "session_id": session_id
 >>>>>>> Stashed changes
     }
@@ -346,6 +353,7 @@ async def request_logging_middleware(request: Request, call_next):
         })
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         # Log successful requests to application log
         log_request(
             request_id=request_id,
@@ -357,6 +365,8 @@ async def request_logging_middleware(request: Request, call_next):
 
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         # Log audit event to persistent database
         audit_service.log_request(
             user_id=user_id,
@@ -365,7 +375,11 @@ async def request_logging_middleware(request: Request, call_next):
             endpoint=path,
             status_code=response.status_code,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             processing_time=duration,
+=======
+            processing_time=process_time,
+>>>>>>> Stashed changes
 =======
             processing_time=process_time,
 >>>>>>> Stashed changes
@@ -409,6 +423,7 @@ async def request_logging_middleware(request: Request, call_next):
             details={**details, 'action': f"failed_{action}", 'resource_type': resource_type, 'resource_id': resource_id},
             ip_address=client_ip,
             user_agent=user_agent
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
         )
 
@@ -417,6 +432,9 @@ async def request_logging_middleware(request: Request, call_next):
             "response_time": round(duration, 3),
             "success": False
         })
+=======
+        )
+>>>>>>> Stashed changes
 
         # Log failed request to audit log
         audit_service.log_request(

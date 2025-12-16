@@ -16,7 +16,10 @@ import WidgetErrorBoundary from '../components/WidgetErrorBoundary';
 import Skeleton from '../components/ui/Skeleton';
 import { VirtualizedList } from '../components/ui/VirtualizedList';
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 
 >>>>>>> Stashed changes
 const CaseKanban = React.lazy(() => import('../components/cases/CaseKanban'));
@@ -166,6 +169,7 @@ const Cases = () => {
                     <VirtualizedList
                       items={filteredCases}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                       estimateSize={120}
                       renderItem={(caseItem, index) => (
                         <div
@@ -214,6 +218,8 @@ const Cases = () => {
                                   caseItem.priority === 'MEDIUM' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300' :
                                   'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
 =======
+=======
+>>>>>>> Stashed changes
                       estimateSize={80}
                       getItemKey={(caseItem) => caseItem.id}
                       renderItem={(caseItem) => {
@@ -266,11 +272,15 @@ const Cases = () => {
                                 </span>
                                 <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-bold ${
                                   caseItem.priority === 'HIGH' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                                 }`}>
                                   {caseItem.priority}
                                 </span>
                               </div>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
                               <p className="text-sm text-slate-600 dark:text-slate-400 mb-2 line-clamp-2">
@@ -291,6 +301,10 @@ const Cases = () => {
 =======
                             </div>
                           </div>
+=======
+                            </div>
+                          </div>
+>>>>>>> Stashed changes
                         );
                       }}
                       emptyMessage="No cases found matching your search."

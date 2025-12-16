@@ -906,6 +906,9 @@ def optimize_database_performance():
         ]
     }
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 def create_tables():
     """Create all database tables"""
@@ -923,6 +926,7 @@ def get_db():
     finally:
         db.close()
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 # Export all models and utilities
 __all__ = [
@@ -961,6 +965,8 @@ __all__ = [
     'engine'
 ]
 =======
+=======
+>>>>>>> Stashed changes
 # Security hardening: Parameterized query enforcement
 from sqlalchemy import text
 
@@ -975,4 +981,7 @@ def secure_query_execution(query_template: str, params: dict) -> str:
         logger.error(f"Secure query execution failed: {str(e)}")
         raise
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes

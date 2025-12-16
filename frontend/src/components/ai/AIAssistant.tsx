@@ -13,6 +13,9 @@ import { AIPersona } from '../../context/AIContext';
 import { SanitizedHTML } from '../../hooks/useSanitizedHTML';
 import { approvalService } from '../../services/approvalService';
 import { AgentStatusStream } from '../ui/AgentStatusStream';
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 interface Message {

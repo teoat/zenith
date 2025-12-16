@@ -49,6 +49,7 @@ export interface NetworkGraphData {
 
 interface NetworkGraphProps {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     data?: NetworkGraphData;
     height?: number;
     width?: number;
@@ -87,6 +88,44 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
   useEffect(() => {
     if (!data) return;
 
+=======
+  data?: NetworkGraphData;
+  height?: number;
+  width?: number;
+  mode?: '2d' | '3d';
+  focusNodeId?: string;
+  onNodeClick?: (node: NetworkGraphNode) => void;
+  onNodeHover?: (node: NetworkGraphNode | null) => void;
+  onLinkClick?: (link: NetworkGraphLink) => void;
+  showControls?: boolean;
+  enablePhysics?: boolean;
+}
+
+const NetworkGraph: React.FC<NetworkGraphProps> = ({
+  data,
+  height = 600,
+  width,
+  mode = '2d',
+  focusNodeId,
+  onNodeClick,
+  onNodeHover,
+  onLinkClick,
+  showControls = true,
+  enablePhysics = true
+}) => {
+  const graphRef = useRef<any>();
+  const [highlightNodes, setHighlightNodes] = useState<Set<string>>(new Set());
+  const [highlightLinks, setHighlightLinks] = useState<Set<string>>(new Set());
+  const [hoverNode, setHoverNode] = useState<NetworkGraphNode | null>(null);
+  const [selectedNode, setSelectedNode] = useState<NetworkGraphNode | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState<NetworkGraphData>(data || { nodes: [], links: [] });
+
+  // Update filtered data when search changes
+  useEffect(() => {
+    if (!data) return;
+
+>>>>>>> Stashed changes
 =======
   data?: NetworkGraphData;
   height?: number;

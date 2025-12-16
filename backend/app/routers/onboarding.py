@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 """Onboarding API with Pydantic validation and DB persistence.
 
 This module replaces the earlier JSON-file stub with a DB-backed implementation
@@ -8,6 +9,8 @@ from fastapi import APIRouter, Body, HTTPException, Depends
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional, Dict, Any
 =======
+=======
+>>>>>>> Stashed changes
 """
 DEPRECATED: This module is deprecated. The functionality has been consolidated into backend/app/routers/identity.py.
 Please use the onboarding endpoints provided in backend/app/routers/identity.py instead.
