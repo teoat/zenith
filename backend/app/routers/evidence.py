@@ -203,7 +203,7 @@ async def upload_evidence(
     4. Indexes content for search
     """
     try:
-        from app.services.multimodal_analysis_service import multimodal_analyzer
+        from app.services.evidence_service import evidence_processor
 
         # Validate case exists
         case = db.query(Case).filter(Case.id == case_id).first()
@@ -218,7 +218,6 @@ async def upload_evidence(
             except json.JSONDecodeError:
                 evidence_tags = [tags]  # Treat as single tag
 
-        # Create temporary file for analysis
         # Create persistent file for storage and analysis
         UPLOAD_DIR = "uploads"
         if not os.path.exists(UPLOAD_DIR):
@@ -236,44 +235,63 @@ async def upload_evidence(
         temp_file_path = saved_file_path  # usage in rest of function
 
         try:
-            # Perform multi-modal analysis
+            # Perform multi-modal analysis using consolidated evidence_processor
             logger.info(f"Starting multi-modal analysis for file: {file.filename}")
-            analysis_result = multimodal_analyzer.analyze_evidence(
-                temp_file_path,
+
+            # Using process_files_batch but with single file for now as per refactor
+            results = await evidence_processor.process_files_batch(
+                [temp_file_path],
                 {
                     "filename": file.filename,
                     "enable_ocr": True,
                     "enable_forensics": True,
-                },
+                }
             )
+
+            if not results:
+                raise Exception("Analysis returned no results")
+
+            processing_result = results[0]
+
+            if processing_result.error:
+                 raise Exception(f"Processing error: {processing_result.error}")
 
             # Create evidence record
             evidence_id = str(uuid.uuid4())
+
+            # Extract forensic result if available from metadata
+            forensic_result = {
+                "manipulation_score": processing_result.metadata.get("manipulation_score"),
+                "authenticity_score": processing_result.metadata.get("authenticity_score"),
+                "forensic_indicators": processing_result.metadata.get("forensic_indicators", []),
+                # Include raw forensic data
+                "raw_analysis": {
+                     k: v for k, v in processing_result.metadata.items()
+                     if k not in ["manipulation_score", "authenticity_score", "forensic_indicators"]
+                }
+            }
+
             evidence_record = {
                 "id": evidence_id,
                 "case_id": case_id,
                 "filename": file.filename,
                 "original_filename": file.filename,
                 "file_path": temp_file_path,  # Will be moved to secure storage
-                "file_type": analysis_result.file_type,
+                "file_type": processing_result.file_type,
                 "file_category": _determine_file_category(
-                    file.filename, analysis_result.file_type
+                    file.filename, processing_result.file_type
                 ),
                 "size_bytes": len(content),
                 "uploaded_at": datetime.now(),
                 "uploaded_by": getattr(request.state, "user_id", None) or "system",
                 "processing_status": "completed",
-                "extracted_text": analysis_result.extracted_text or "",
-                "key_entities": analysis_result.key_entities or [],
-                "sentiment_score": analysis_result.sentiment_score,
-                "quality_score": analysis_result.quality_score,
+                "extracted_text": processing_result.extracted_text or "",
+                "key_entities": processing_result.key_entities or [],
+                "sentiment_score": processing_result.sentiment_score,
+                "quality_score": processing_result.quality_score,
                 "evidence_metadata": {
-                    "multimodal_analysis": {},  # analysis_result.metadata doesn't exist on dataclass?
-                    "forensic_result": (
-                        asdict(analysis_result.forensic_result)
-                        if analysis_result.forensic_result
-                        else None
-                    ),
+                    "multimodal_analysis": processing_result.metadata,
+                    "forensic_result": forensic_result,
                 },
                 "tags": evidence_tags,
             }
@@ -338,17 +356,17 @@ async def upload_evidence(
                 "id": evidence_id,
                 "caseId": case_id,
                 "fileName": file.filename,
-                "fileType": analysis_result.file_type,
+                "fileType": processing_result.file_type,
                 "sizeBytes": len(content),
                 "uploadedAt": evidence_record["uploaded_at"].isoformat(),
                 "filePath": temp_file_path,
-                "ocrText": analysis_result.extracted_text or "",
+                "ocrText": processing_result.extracted_text or "",
                 "analysis_result": {
-                    "extractedTextLength": len(analysis_result.extracted_text or ""),
-                    "keyEntitiesCount": len(analysis_result.key_entities or []),
-                    "sentimentScore": analysis_result.sentiment_score,
-                    "qualityScore": analysis_result.quality_score,
-                    "fileType": analysis_result.file_type,
+                    "extractedTextLength": len(processing_result.extracted_text or ""),
+                    "keyEntitiesCount": len(processing_result.key_entities or []),
+                    "sentimentScore": processing_result.sentiment_score,
+                    "qualityScore": processing_result.quality_score,
+                    "fileType": processing_result.file_type,
                 },
             }
 

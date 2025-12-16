@@ -355,8 +355,11 @@ class EvidenceProcessor:
     def _analyze_image_forensics(
         self, opencv_image: "np.ndarray", pil_image: "Image"
     ) -> Dict[str, Any]:
-        """Analyze image for forensic indicators"""
+        """Analyze image for forensic indicators with scoring"""
         forensics = {}
+        manipulation_score = 0.0
+        authenticity_score = 100.0
+        forensic_indicators = []
 
         try:
             import cv2
@@ -364,19 +367,59 @@ class EvidenceProcessor:
             from PIL import Image
 
             # Error Level Analysis (ELA) - detects image manipulation
-            forensics.update(self._error_level_analysis(pil_image))
+            ela_result = self._error_level_analysis(pil_image)
+            forensics.update(ela_result)
+            if ela_result.get("ela_score", 0) > 15:
+                forensic_indicators.append(
+                    "High error level analysis score - possible manipulation"
+                )
+                manipulation_score += 25
+                authenticity_score -= 20
 
             # Noise analysis
-            forensics.update(self._analyze_image_noise(opencv_image))
+            noise_result = self._analyze_image_noise(opencv_image)
+            forensics.update(noise_result)
+            if noise_result.get("noise_level", 0) > 0.8:  # Arbitrary threshold example
+                forensic_indicators.append("High noise level detected")
+                # Adjust scores as appropriate
 
             # Metadata analysis
-            forensics.update(self._analyze_image_metadata(pil_image))
+            metadata_result = self._analyze_image_metadata(pil_image)
+            forensics.update(metadata_result)
+            if metadata_result.get("suspicious_software"):
+                forensic_indicators.append(
+                    f"Suspicious software detected: {metadata_result['suspicious_software']}"
+                )
+                manipulation_score += 15
+                authenticity_score -= 10
+            if not metadata_result.get("date_consistency", True):
+                 forensic_indicators.append("Inconsistent dates in metadata")
+                 manipulation_score += 10
+                 authenticity_score -= 5
 
             # Compression artifacts
-            forensics.update(self._detect_compression_artifacts(opencv_image))
+            compression_result = self._detect_compression_artifacts(opencv_image)
+            forensics.update(compression_result)
+            if compression_result.get("likely_compressed"):
+                 forensic_indicators.append("Likely re-compressed")
 
             # Clone detection (basic)
-            forensics.update(self._detect_clone_regions(opencv_image))
+            clone_result = self._detect_clone_regions(opencv_image)
+            forensics.update(clone_result)
+            if clone_result.get("clone_regions_detected"):
+                forensic_indicators.append("Clone regions detected")
+                manipulation_score += 30
+                authenticity_score -= 25
+
+            # Cap scores
+            manipulation_score = min(manipulation_score, 100.0)
+            authenticity_score = max(authenticity_score, 0.0)
+
+            forensics.update({
+                "manipulation_score": manipulation_score,
+                "authenticity_score": authenticity_score,
+                "forensic_indicators": forensic_indicators
+            })
 
         except Exception as e:
             forensics["forensics_error"] = str(e)
