@@ -99,7 +99,7 @@ async def login(login_data: LoginRequest, request: Request):
         # Generate real JWT tokens
         # Use constants from auth_service implicitly or explicitly if available, or defaults
         access_token = auth_service.create_access_token(
-            data={"sub": user.id, "username": user.username, "role": user.role.value if user.role else None}
+            data={"sub": user.id, "username": user.username, "role": user.role if user.role else None}
         )
         refresh_token = auth_service.create_refresh_token(user.id)
 

@@ -140,40 +140,24 @@ const Cases = () => {
             {/* List View Left Pane */}
             <div className="w-1/3 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-y-auto shrink-0">
               <div className="case-list-content">
-                {filteredCases.map((caseItem) => (
-                  <div
-                    key={caseItem.id}
-                    className={`flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${previewCaseId === caseItem.id ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-l-blue-500' : 'hover:bg-slate-50 dark:hover:bg-slate-800 border-l-4 border-l-transparent'}`}
-                    onClick={() => handleOpenCase(caseItem.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleOpenCase(caseItem.id);
-                      }
-                    }}
-                    tabIndex={0}
-                    role="button"
-                    aria-current={previewCaseId === caseItem.id ? 'page' : undefined}
-                    aria-label={`Open case: ${caseItem.title}`}
+                <div className="px-4 py-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center">
+                  <button
+                    onClick={selectedCases.size === filteredCases.length && filteredCases.length > 0 ? clearSelection : selectAllCases}
+                    className="flex items-center gap-2 text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                   >
-                    <div>
-                      <p className="font-semibold text-slate-800 dark:text-white">{caseItem.title}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400`}>
-                          {caseItem.status}
-                        {selectedCases.size === filteredCases.length ? (
-                          <CheckSquare size={14} className="text-blue-500" />
-                        ) : (
-                          <Square size={14} />
-                        )}
-                        {selectedCases.size === filteredCases.length ? 'Deselect All' : 'Select All'}
-                      </button>
-                      {selectedCases.size > 0 && (
-                        <span className="text-xs text-slate-500 dark:text-slate-400 ml-4">
-                          {selectedCases.size} selected
-                        </span>
-                      )}
-                    </div>
+                    {selectedCases.size === filteredCases.length && filteredCases.length > 0 ? (
+                      <CheckSquare size={14} className="text-blue-500" />
+                    ) : (
+                      <Square size={14} />
+                    )}
+                    {selectedCases.size === filteredCases.length && filteredCases.length > 0 ? 'Deselect All' : 'Select All'}
+                  </button>
+                  {selectedCases.size > 0 && (
+                    <span className="text-xs text-slate-500 dark:text-slate-400 ml-4">
+                      {selectedCases.size} selected
+                    </span>
+                  )}
+                </div>
 
                     <VirtualizedList
                       items={filteredCases}

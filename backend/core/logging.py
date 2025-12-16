@@ -37,7 +37,7 @@ class JSONFormatter(logging.Formatter):
         return json.dumps(log_entry, default=str)
 
 
-def setup_logging(level: str = "INFO", format_type: str = "json", log_file: str | None = None) -> logging.Logger:
+def setup_logging(level: str = "INFO", format_type: str = "json", log_file: Optional[str] = None) -> logging.Logger:
     numeric_level = getattr(logging, level.upper(), logging.INFO)
     logger = logging.getLogger("378x492")
     logger.setLevel(numeric_level)
