@@ -19,7 +19,6 @@ import json
 import subprocess
 from pathlib import Path
 import re
-import hashlib
 
 # Add backend to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'backend'))
