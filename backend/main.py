@@ -272,7 +272,11 @@ async def request_logging_middleware(request: Request, call_next):
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     from app.services.audit_service import audit_service
+=======
+    from app.services.core.audit_service import audit_service
+>>>>>>> Stashed changes
 =======
     from app.services.core.audit_service import audit_service
 >>>>>>> Stashed changes
@@ -334,9 +338,12 @@ async def request_logging_middleware(request: Request, call_next):
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "session_id": session_id,
         "request_id": request_id
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -362,6 +369,7 @@ async def request_logging_middleware(request: Request, call_next):
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         # Log successful requests to application log
         log_request(
             request_id=request_id,
@@ -371,6 +379,8 @@ async def request_logging_middleware(request: Request, call_next):
             duration=duration
         )
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -387,7 +397,11 @@ async def request_logging_middleware(request: Request, call_next):
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             processing_time=duration,
+=======
+            processing_time=process_time,
+>>>>>>> Stashed changes
 =======
             processing_time=process_time,
 >>>>>>> Stashed changes
@@ -439,6 +453,7 @@ async def request_logging_middleware(request: Request, call_next):
             user_agent=user_agent
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
         )
 
@@ -448,6 +463,8 @@ async def request_logging_middleware(request: Request, call_next):
             "success": False
         })
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         )

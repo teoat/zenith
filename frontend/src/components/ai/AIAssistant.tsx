@@ -15,6 +15,9 @@ import { approvalService } from '../../services/approvalService';
 import { AgentStatusStream } from '../ui/AgentStatusStream';
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

@@ -18,7 +18,10 @@ import { VirtualizedList } from '../components/ui/VirtualizedList';
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -174,6 +177,7 @@ const Cases = () => {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                       estimateSize={120}
                       renderItem={(caseItem, index) => (
                         <div
@@ -222,6 +226,8 @@ const Cases = () => {
                                   caseItem.priority === 'MEDIUM' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300' :
                                   'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -280,6 +286,9 @@ const Cases = () => {
                                   caseItem.priority === 'HIGH' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -289,6 +298,7 @@ const Cases = () => {
                                   {caseItem.priority}
                                 </span>
                               </div>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -311,6 +321,10 @@ const Cases = () => {
 =======
                             </div>
                           </div>
+=======
+                            </div>
+                          </div>
+>>>>>>> Stashed changes
 =======
                             </div>
                           </div>

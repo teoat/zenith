@@ -2,6 +2,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 Fraud Rules Engine API Router
 Provides endpoints for managing and using fraud detection rules
 """
@@ -569,6 +570,8 @@ async def update_alert_status(alert_id: str, update: AlertUpdate, db: Session = 
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 Fraud Detection API Router
 Endpoints for rule management and transaction evaluation
 """
@@ -791,6 +794,9 @@ async def batch_evaluate_transactions(transactions: List[EvaluationRequest]):
         "results": results
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
