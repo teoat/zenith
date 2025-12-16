@@ -1,0 +1,89 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    # Run weekly on Mondays at 8 AM UTC
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    # Update Node.js dependencies
+    - name: Update npm dependencies
+      run: |
+        npm update
+        npm audit fix
+
+    # Update Python dependencies
+    - name: Update Python dependencies
+      run: |
+        cd backend
+        pip install --upgrade pip
+        pip install --upgrade -r requirements.txt
+        pip list --outdated
+
+    # Check for breaking changes
+    - name: Run tests after updates
+      run: |
+        npm run lint
+        npm run type-check
+        npm run test:ci
+        cd backend && python -m pytest tests/ -x --tb=short
+
+    # Create pull request if updates are available
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: |
+          🔄 Automated dependency updates
+
+          - Updated Node.js dependencies
+          - Updated Python dependencies
+          - Ran tests to ensure compatibility
+        title: '🔄 Automated Dependency Updates'
+        body: |
+          ## 🔄 Automated Dependency Updates
+
+          This PR contains automated updates for project dependencies:
+
+          ### 📦 Node.js Dependencies
+          - Updated all packages to latest compatible versions
+          - Ran `npm audit fix` for security patches
+
+          ### 🐍 Python Dependencies
+          - Updated packages in requirements.txt
+          - Checked for outdated packages
+
+          ### ✅ Testing
+          - All linting checks passed
+          - TypeScript compilation successful
+          - Unit tests passed
+          - No breaking changes detected
+
+          ### 🔍 Review Notes
+          - Review the dependency changes for any breaking changes
+          - Check if any new versions introduce security improvements
+          - Verify that all tests still pass in your local environment
+        branch: automated/dependency-updates
+        delete-branch: true
+        labels: |
+          dependencies
+          automated

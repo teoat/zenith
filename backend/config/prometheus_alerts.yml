@@ -1,0 +1,248 @@
+# Prometheus Alerting Rules for Simple378 Fraud Detection
+# Save this file as: backend/config/prometheus_alerts.yml
+#
+# To use with Prometheus, add to prometheus.yml:
+#   rule_files:
+#     - "alert_rules.yml"
+
+groups:
+  - name: 378x492_alerts
+    interval: 30s
+    rules:
+      
+      # High Error Rate Alert
+      - alert: HighErrorRate
+        expr: |
+          rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} over the last 5 minutes"
+          
+      # Critical Error Rate
+      - alert: CriticalErrorRate
+        expr: |
+          rate(http_requests_total{status=~"5.."}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+          component: backend
+        annotations:
+          summary: "Critical error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} - immediate action required"
+      
+      # Slow Query Alert
+      - alert: SlowDatabaseQueries
+        expr: |
+          rate(db_slow_queries_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "High number of slow database queries"
+          description: "{{ $value }} slow queries per second in the last 5 minutes"
+      
+      # Database Connection Issues
+      - alert: DatabaseConnectionErrors
+        expr: |
+          rate(db_query_errors_total[5m]) > 0.01
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "Database connection errors detected"
+          description: "{{ $value }} database errors per second"
+      
+      # High Memory Usage
+      - alert: HighMemoryUsage
+        expr: |
+          (process_resident_memory_bytes / 1024 / 1024) > 1024
+        for: 10m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "High memory usage detected"
+          description: "Process is using {{ $value }}MB of memory"
+      
+      # Critical Memory Usage
+      - alert: CriticalMemoryUsage
+        expr: |
+          (process_resident_memory_bytes / 1024 / 1024) > 2048
+        for: 5m
+        labels:
+          severity: critical
+          component: backend
+        annotations:
+          summary: "Critical memory usage - possible memory leak"
+          description: "Process is using {{ $value }}MB of memory - investigate immediately"
+      
+      # High CPU Usage
+      - alert: HighCPUUsage
+        expr: |
+          rate(process_cpu_seconds_total[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value | humanizePercentage }}"
+      
+      # Response Time Degradation
+      - alert: SlowResponseTime
+        expr: |
+          histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "API response time degradation"
+          description: "95th percentile response time is {{ $value }}s"
+      
+      # Critical Response Time
+      - alert: CriticalResponseTime
+        expr: |
+          histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 5
+        for: 2m
+        labels:
+          severity: critical
+          component: backend
+        annotations:
+          summary: "Critical API response time"
+          description: "95th percentile response time is {{ $value }}s - investigate immediately"
+      
+      # Cache Performance
+      - alert: LowCacheHitRate
+        expr: |
+          (rate(cache_hits_total[10m]) / (rate(cache_hits_total[10m]) + rate(cache_misses_total[10m]))) < 0.7
+        for: 15m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "Low cache hit rate"
+          description: "Cache hit rate is {{ $value | humanizePercentage }} - consider cache tuning"
+      
+      # Fraud Detection Performance
+      - alert: FraudDetectionFailures
+        expr: |
+          rate(fraud_detection_errors_total[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+          component: fraud_detection
+        annotations:
+          summary: "Fraud detection failures detected"
+          description: "{{ $value }} fraud detection errors per second"
+      
+      # File Processing Issues
+      - alert: FileProcessingFailures
+        expr: |
+          rate(file_processing_errors_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: evidence_processing
+        annotations:
+          summary: "High file processing failure rate"
+          description: "{{ $value }} file processing errors per second"
+      
+      # CSRF Protection Violations
+      - alert: CSRFViolations
+        expr: |
+          rate(http_requests_total{status="403",path=~".*"}[5m]) > 1
+        for: 5m
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "Potential CSRF attack detected"
+          description: "{{ $value }} CSRF violations per second - possible attack"
+      
+      # Rate Limit Exceeded
+      - alert: RateLimitExceeded
+        expr: |
+          rate(http_requests_total{status="429"}[5m]) > 10
+        for: 5m
+        labels:
+          severity: info
+          component: security
+        annotations:
+          summary: "High rate limit violations"
+          description: "{{ $value }} rate limit violations per second"
+      
+      # Disk Space Warning
+      - alert: LowDiskSpace
+        expr: |
+          (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.2
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Low disk space"
+          description: "Only {{ $value | humanizePercentage }} disk space remaining"
+      
+      # Critical Disk Space
+      - alert: CriticalDiskSpace
+        expr: |
+          (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Critical disk space - immediate action required"
+          description: "Only {{ $value | humanizePercentage }} disk space remaining"
+      
+      # Service Down
+      - alert: ServiceDown
+        expr: |
+          up{job="378x492-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: backend
+        annotations:
+          summary: "Simple378 backend service is down"
+          description: "The backend service has been down for more than 1 minute"
+
+
+# Alert Routing Configuration (for Alertmanager)
+# Save as: backend/config/alertmanager.yml
+#
+# route:
+#   receiver: 'team-notifications'
+#   group_by: ['alertname', 'severity']
+#   group_wait: 30s
+#   group_interval: 5m
+#   repeat_interval: 4h
+#   
+#   routes:
+#     - match:
+#         severity: critical
+#       receiver: 'critical-alerts'
+#       repeat_interval: 1h
+#     
+#     - match:
+#         severity: warning
+#       receiver: 'warning-alerts'
+#       repeat_interval: 4h
+#
+# receivers:
+#   - name: 'team-notifications'
+#     # Configure your notification channels here
+#     # Examples: email, Slack, PagerDuty, etc.
+#   
+#   - name: 'critical-alerts'
+#     # Critical alerts go here (SMS, PagerDuty, etc.)
+#   
+#   - name: 'warning-alerts'
+#     # Warning alerts (email, Slack, etc.)

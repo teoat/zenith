@@ -1,0 +1,251 @@
+/* EvidenceBoard Styles */
+
+.evidence-board-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+  border: 1px solid rgba(100, 116, 139, 0.2);
+  color: white;
+}
+
+.board-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.board-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  width: 200px;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Board Canvas */
+.board-canvas {
+  position: relative;
+  min-height: 500px;
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.03), transparent 70%),
+    linear-gradient(90deg, rgba(100, 116, 139, 0.05) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(rgba(100, 116, 139, 0.05) 1px, transparent 1px) 0 0 / 40px 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(100, 116, 139, 0.2);
+  overflow: hidden;
+}
+
+.connection-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.connection-line {
+  stroke: rgba(139, 92, 246, 0.5);
+  stroke-width: 2;
+  stroke-dasharray: 8, 4;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+/* Evidence Card */
+.evidence-card {
+  position: absolute;
+  width: 280px;
+  background: rgba(30, 41, 59, 0.95);
+  border-radius: 12px;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+
+.evidence-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  border-color: rgba(139, 92, 246, 0.5);
+}
+
+.evidence-card.selected {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.evidence-card.connecting {
+  border-color: #3b82f6;
+  animation: pulse-border 1s infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
+}
+
+.card-priority-bar {
+  height: 3px;
+  width: 100%;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px 8px;
+}
+
+.card-type-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(139, 92, 246, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a78bfa;
+}
+
+.card-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-menu {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.evidence-card:hover .card-menu {
+  opacity: 1;
+}
+
+.card-content {
+  padding: 0 12px;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-tags {
+  padding: 8px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tag-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  background: rgba(100, 116, 139, 0.2);
+  border-color: rgba(100, 116, 139, 0.3);
+  color: #94a3b8;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+.card-connections {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.connect-btn {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 4px 8px;
+  height: auto;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* Empty State */
+.empty-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* Add Dialog */
+.add-dialog {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98)) !important;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #94a3b8;
+}

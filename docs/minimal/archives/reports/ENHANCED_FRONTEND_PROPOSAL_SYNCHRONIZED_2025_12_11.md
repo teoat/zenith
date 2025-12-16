@@ -1,0 +1,1 @@
+../../../archives/reports/ENHANCED_FRONTEND_PROPOSAL_SYNCHRONIZED_2025_12_11.md

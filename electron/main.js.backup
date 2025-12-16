@@ -1,0 +1,839 @@
+const { app, BrowserWindow, ipcMain, Menu, Tray } = require('electron');
+const path = require('path');
+const { spawn } = require('child_process');
+const SecureIPC = require('./secure-ipc');
+const IPCOptimizer = require('./ipc-optimizer');
+const MemoryManager = require('./memory-manager');
+const DatabaseEncryption = require('./database-encryption');
+const SecureFileStorage = require('./secure-file-storage');
+const KeyManager = require('./key-management');
+const isDev = process.env.NODE_ENV === 'development';
+
+class App {
+  constructor() {
+    this.mainWindow = null;
+    this.backendProcess = null;
+    this.tray = null;
+    this.secureIPC = null;
+    this.ipcOptimizer = null;
+    this.memoryManager = null;
+    this.databaseEncryption = null;
+    this.secureFileStorage = null;
+    this.keyManager = null;
+
+    this.init();
+  }
+
+  init() {
+    // Initialize security components first
+    this.initializeSecurity();
+
+    app.whenReady().then(async () => {
+      // Initialize secure storage and keys
+      await this.initializeSecureStorage();
+
+      this.createTray();
+      this.startBackend();
+      this.createWindow();
+      this.setupIPC();
+    });
+
+    app.on('window-all-closed', () => {
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+    });
+
+    app.on('will-quit', () => {
+      // Cleanup security resources
+      if (this.backendProcess) {
+        this.backendProcess.kill();
+      }
+      this.cleanup();
+    });
+
+    app.on('activate', () => {
+      if (this.mainWindow === null) {
+        this.createWindow();
+      }
+    });
+  }
+
+  createTray() {
+    const iconPath = path.join(__dirname, 'assets', 'tray-icon.png');
+
+    // Only create tray if icon exists (for development)
+    if (require('fs').existsSync(iconPath)) {
+      this.tray = new Tray(iconPath);
+
+      const contextMenu = Menu.buildFromTemplate([
+        { label: 'Show App', click: () => this.showWindow() },
+        { label: 'New Case', click: () => this.createNewCase() },
+        { type: 'separator' },
+        { label: 'Quit', click: () => app.quit() }
+      ]);
+
+      this.tray.setContextMenu(contextMenu);
+      this.tray.setToolTip('Simple378 Fraud Detection');
+    } else {
+      console.log('Tray icon not found, skipping tray creation');
+    }
+  }
+
+  startBackend() {
+    const backendPath = isDev
+      ? path.join(__dirname, '..', 'backend', 'main.py')
+      : path.join(process.resourcesPath, 'backend', 'fraud-detection-backend');
+
+    // Security: Restrict environment variables
+    const secureEnv = {
+      PATH: process.env.PATH,
+      PYTHONPATH: path.join(__dirname, '..', 'backend'),
+      // Only pass essential environment variables
+      NODE_ENV: process.env.NODE_ENV,
+      // Add any application-specific secure env vars here
+    };
+
+    // Process isolation options
+    const spawnOptions = {
+      cwd: process.cwd(),
+      stdio: ['pipe', 'pipe', 'pipe'],
+      env: secureEnv,
+      // Security: Set UID/GID if running on Unix-like systems
+      uid: process.getuid ? process.getuid() : undefined,
+      gid: process.getgid ? process.getgid() : undefined,
+      // Resource limits
+      maxBuffer: 1024 * 1024, // 1MB buffer limit
+    };
+
+    this.backendProcess = spawn('python', [backendPath], spawnOptions);
+
+    this.setupProcessMonitoring();
+    this.setupCrashRecovery();
+    this.setupProcessSecurity();
+  }
+
+  createWindow() {
+    this.mainWindow = new BrowserWindow({
+      width: 1400,
+      height: 900,
+      minWidth: 1000,
+      minHeight: 700,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        preload: path.join(__dirname, 'preload.js')
+      },
+      icon: path.join(__dirname, 'assets', 'app-icon.png'),
+      titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
+      show: false
+    });
+
+    const startUrl = isDev
+      ? 'http://localhost:5173'
+      : `file://${path.join(__dirname, '../frontend/dist/index.html')}`;
+
+    this.mainWindow.loadURL(startUrl);
+
+    this.mainWindow.once('ready-to-show', () => {
+      this.mainWindow.show();
+    });
+
+    if (isDev) {
+      this.mainWindow.webContents.openDevTools();
+    }
+
+    // Handle window closed
+    this.mainWindow.on('closed', () => {
+      this.mainWindow = null;
+    });
+  }
+
+  setupIPC() {
+    // Batch IPC handler for performance optimization
+    ipcMain.handle('batch-ipc', async (event, batchData) => {
+      const { batchId, channel, requests } = batchData;
+      const results = [];
+
+      try {
+        // Process each request in the batch
+        for (const request of requests) {
+          try {
+            const result = await this.handleIndividualIPC(channel, request.data);
+            results.push({
+              success: true,
+              data: result
+            });
+          } catch (error) {
+            results.push({
+              success: false,
+              error: error.message
+            });
+          }
+        }
+
+        return {
+          batchId,
+          results,
+          processedAt: new Date().toISOString()
+        };
+      } catch (batchError) {
+        // If batch processing fails entirely
+        return {
+          batchId,
+          error: batchError.message,
+          results: requests.map(() => ({
+            success: false,
+            error: 'Batch processing failed'
+          }))
+        };
+      }
+    });
+
+    // Case management - Secure handlers
+    ipcMain.handle('secure-cases', async (event, data) => {
+      return this.handleSecureCases(event, data);
+    });
+          }
+        }
+
+        return {
+          batchId,
+          results,
+          processedAt: new Date().toISOString()
+        };
+      } catch (batchError) {
+        // If batch processing fails entirely
+        return {
+          batchId,
+          error: batchError.message,
+          results: requests.map(() => ({
+            success: false,
+            error: 'Batch processing failed'
+          }))
+        };
+      }
+    });
+
+    // Case management - Secure handlers
+    ipcMain.handle('secure-cases', async (event, data) => {
+      return this.handleSecureCases(event, data);
+    });
+
+    // Evidence management - Secure handlers
+    ipcMain.handle('secure-evidence', async (event, data) => {
+      return this.handleSecureEvidence(event, data);
+    });
+
+    // Reconciliation - Secure handlers
+    ipcMain.handle('secure-reconciliation', async (event, data) => {
+      return this.handleSecureReconciliation(event, data);
+    });
+
+        case 'process':
+          return await this.callBackendAPI('/api/v1/evidence/process', 'POST', payload);
+
+        case 'get':
+          return await this.callBackendAPI(`/api/v1/cases/${payload.caseId}/evidence`);
+
+        default:
+          throw new Error('Unknown evidence operation');
+      }
+    }, { cacheable: operation === 'get' }); // Only cache 'get' operations
+
+    // Reconciliation - Optimized secure handlers
+    this.ipcOptimizer.handle('secure-reconciliation', async (event, data) => {
+      const { operation, payload } = data;
+
+      switch (operation) {
+        case 'start':
+          return await this.callBackendAPI('/api/v1/reconciliation/start', 'POST', payload);
+        case 'status':
+          return await this.callBackendAPI(`/api/v1/reconciliation/status/${payload.jobId}`);
+        default:
+          throw new Error('Unknown reconciliation operation');
+      }
+    }, { cacheable: operation === 'status' }); // Cache status checks
+
+    // Settings - Optimized secure handlers
+    this.ipcOptimizer.handle('secure-settings', async (event, data) => {
+      const { operation, payload } = data;
+
+      switch (operation) {
+        case 'get':
+          const settingsPath = path.join(app.getPath('userData'), 'settings.json');
+          try {
+            const fs = require('fs').promises;
+            const settingsData = await fs.readFile(settingsPath, 'utf8');
+            return JSON.parse(settingsData);
+          } catch {
+            return this.getDefaultSettings();
+          }
+
+        case 'update':
+          const settingsPath = path.join(app.getPath('userData'), 'settings.json');
+          const fs = require('fs').promises;
+          await fs.writeFile(settingsPath, JSON.stringify(payload, null, 2));
+          return true;
+
+        default:
+          throw new Error('Unknown settings operation');
+      }
+    }, { cacheable: operation === 'get', cacheTimeout: 60000 }); // 1 minute cache for settings
+
+    // System - Optimized secure handlers (limited access)
+    this.ipcOptimizer.handle('secure-system', async (event, data) => {
+      const { operation } = data;
+
+      switch (operation) {
+        case 'info':
+          return {
+            platform: process.platform,
+            arch: process.arch,
+            version: app.getVersion(),
+            electron: process.versions.electron,
+            node: process.version,
+            memory: process.memoryUsage(),
+            uptime: process.uptime()
+          };
+
+        case 'updates':
+          // Placeholder for update checking logic
+          return { available: false, version: app.getVersion() };
+
+        default:
+          throw new Error('Unknown system operation');
+      }
+    }, { cacheable: operation === 'info', cacheTimeout: 30000 }); // 30 second cache for system info
+
+    // Security monitoring - Direct handler (not cached)
+    ipcMain.handle('security-stats', async () => {
+      return this.secureIPC.getSecurityStats();
+    });
+
+    // IPC performance monitoring
+    ipcMain.handle('ipc-performance-stats', async () => {
+      return this.ipcOptimizer.getMetrics();
+    });
+
+    // Memory management
+    ipcMain.handle('memory-stats', async () => {
+      return this.memoryManager.getStats();
+    });
+
+    ipcMain.handle('memory-cleanup', async () => {
+      this.memoryManager.cleanup();
+      return { cleaned: true };
+    });
+
+    ipcMain.handle('force-gc', async () => {
+      this.memoryManager.forceGC();
+      return { gc: true };
+    });
+
+    // Settings - Secure handlers
+    ipcMain.handle('secure-settings', async (event, data) => {
+      const { operation, payload } = data;
+
+      switch (operation) {
+        case 'get':
+          const settingsPathGet = path.join(app.getPath('userData'), 'settings.json');
+          try {
+            const fs = require('fs').promises;
+            const settingsData = await fs.readFile(settingsPathGet, 'utf8');
+            return JSON.parse(settingsData);
+          } catch {
+            return this.getDefaultSettings();
+          }
+
+        case 'update':
+          const settingsPathUpdate = path.join(app.getPath('userData'), 'settings.json');
+          const fs = require('fs').promises;
+          await fs.writeFile(settingsPathUpdate, JSON.stringify(payload, null, 2));
+          return true;
+
+        default:
+          throw new Error('Unknown settings operation');
+      }
+    });
+
+    // System - Secure handlers (limited access)
+    ipcMain.handle('secure-system', async (event, data) => {
+      const { operation } = data;
+
+      switch (operation) {
+        case 'info':
+          return {
+            platform: process.platform,
+            arch: process.arch,
+            version: app.getVersion(),
+            electron: process.versions.electron,
+            node: process.version,
+            memory: process.memoryUsage(),
+            uptime: process.uptime()
+          };
+
+        case 'updates':
+          // Placeholder for update checking logic
+          return { available: false, version: app.getVersion() };
+
+        default:
+          throw new Error('Unknown system operation');
+      }
+    });
+
+    // Security monitoring
+    ipcMain.handle('security-stats', async () => {
+      return this.secureIPC.getSecurityStats();
+    });
+
+    // Secure file operations
+    ipcMain.handle('secure-file-store', async (event, data) => {
+      const { operation, payload } = data;
+
+      switch (operation) {
+        case 'store':
+          const fileId = await this.secureFileStorage.storeFile(payload.filePath, payload.metadata);
+          return { fileId };
+
+        case 'retrieve':
+          const retrievedFile = await this.secureFileStorage.retrieveFile(payload.fileId, payload.outputPath);
+          return {
+            buffer: retrievedFile.buffer.toString('base64'), // Send as base64 for IPC
+            metadata: retrievedFile.metadata
+          };
+
+        case 'delete':
+          const deleteResult = await this.secureFileStorage.deleteFile(payload.fileId);
+          return deleteResult;
+
+        case 'list':
+          const files = await this.secureFileStorage.listFiles(payload.filters);
+          return files;
+
+        case 'stats':
+          const stats = await this.secureFileStorage.getStorageStats();
+          return stats;
+
+        default:
+          throw new Error('Unknown secure file operation');
+      }
+    });
+
+    // Key management operations
+    ipcMain.handle('key-management', async (event, data) => {
+      const { operation, payload } = data;
+
+      switch (operation) {
+        case 'rotate':
+          const rotationResult = await this.keyManager.rotateMasterKey(payload.currentPassword, payload.newPassword);
+          // Reinitialize secure storage with new key
+          await this.initializeSecureStorage();
+          return rotationResult;
+
+        case 'status':
+          const status = await this.keyManager.getRotationStatus();
+          return status;
+
+        case 'list':
+          const keys = await this.keyManager.listKeys();
+          return keys;
+
+        case 'stats':
+          const keyStats = await this.keyManager.getKeyStoreStats();
+          return keyStats;
+
+        default:
+          throw new Error('Unknown key management operation');
+      }
+    });
+
+    // Database security operations
+    ipcMain.handle('database-security', async (event, data) => {
+      const { operation, payload } = data;
+
+      switch (operation) {
+        case 'encrypt':
+          const db = await this.databaseEncryption.setupEncryptedDatabase(payload.dbPath);
+          return { encrypted: true, dbPath: payload.dbPath };
+
+        case 'verify':
+          const isValid = await this.databaseEncryption.verifyDatabaseAccess(payload.dbPath);
+          return { valid: !!isValid, testData: isValid };
+
+        case 'change-password':
+          await this.databaseEncryption.changePassword(payload.dbPath, payload.newPassword);
+          return { passwordChanged: true };
+
+        case 'info':
+          const info = this.databaseEncryption.getEncryptionInfo();
+          return info;
+
+        default:
+          throw new Error('Unknown database security operation');
+      }
+    });
+  }
+
+  // Handle individual IPC calls for batching
+  async handleIndividualIPC(channel, data) {
+    // Route to appropriate handler based on channel
+    switch (channel) {
+      case 'secure-cases':
+        return this.handleSecureCases(null, data);
+      case 'secure-evidence':
+        return this.handleSecureEvidence(null, data);
+      case 'secure-reconciliation':
+        return this.handleSecureReconciliation(null, data);
+      default:
+        throw new Error(`Unsupported channel for batching: ${channel}`);
+    }
+  }
+
+  // Extract handler logic into separate methods
+  async handleSecureCases(event, data) {
+    const { operation, payload } = data;
+
+    switch (operation) {
+      case 'get':
+        return await this.callBackendAPI('/api/v1/cases');
+      case 'create':
+        return await this.callBackendAPI('/api/v1/cases', 'POST', payload);
+      case 'update':
+        return await this.callBackendAPI(`/api/v1/cases/${payload.id}`, 'PUT', payload);
+      case 'delete':
+        return await this.callBackendAPI(`/api/v1/cases/${payload.id}`, 'DELETE');
+      default:
+        throw new Error('Unknown case operation');
+    }
+  }
+
+  async handleSecureEvidence(event, data) {
+    const { operation, payload } = data;
+
+    switch (operation) {
+      case 'select-file':
+        const { dialog } = require('electron');
+        const result = await dialog.showOpenDialog(this.mainWindow, {
+          properties: ['openFile', 'multiSelections'],
+          filters: [
+            { name: 'Documents', extensions: ['pdf', 'docx', 'xlsx', 'csv'] },
+            { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'tiff'] }
+          ]
+        });
+        return result.filePaths;
+
+      case 'process':
+        return await this.callBackendAPI('/api/v1/evidence/process', 'POST', payload);
+
+      case 'get':
+        return await this.callBackendAPI(`/api/v1/cases/${payload.caseId}/evidence`);
+
+      default:
+        throw new Error('Unknown evidence operation');
+    }
+  }
+
+  async handleSecureReconciliation(event, data) {
+    const { operation, payload } = data;
+
+    switch (operation) {
+      case 'start':
+        return await this.callBackendAPI('/api/v1/reconciliation/start', 'POST', payload);
+      case 'status':
+        return await this.callBackendAPI(`/api/v1/reconciliation/status/${payload.jobId}`);
+      default:
+        throw new Error('Unknown reconciliation operation');
+    }
+  }
+
+  async callBackendAPI(endpoint, method = 'GET', data = null) {
+    const http = require('http');
+    const url = `http://127.0.0.1:8000${endpoint}`;
+
+    return new Promise((resolve, reject) => {
+      const options = {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      };
+
+      const req = http.request(url, options, (res) => {
+        let body = '';
+        res.on('data', (chunk) => body += chunk);
+        res.on('end', () => {
+          try {
+            resolve(JSON.parse(body));
+          } catch {
+            resolve(body);
+          }
+        });
+      });
+
+      req.on('error', reject);
+
+      if (data) {
+        req.write(JSON.stringify(data));
+      }
+
+      req.end();
+    });
+  }
+
+  showWindow() {
+    if (this.mainWindow) {
+      this.mainWindow.show();
+      this.mainWindow.focus();
+    }
+  }
+
+  createNewCase() {
+    // IPC call to renderer to open new case modal
+    if (this.mainWindow) {
+      this.mainWindow.webContents.send('create-new-case');
+    }
+  }
+
+  async initializeSecurity() {
+    // Initialize secure IPC
+    this.secureIPC = new SecureIPC(process.env.IPC_SECRET || 'default-dev-secret-change-in-production');
+
+    // Initialize IPC optimizer
+    this.ipcOptimizer = new IPCOptimizer(ipcMain, {
+      batchTimeout: 50,      // 50ms batch window
+      cacheTimeout: 300000,  // 5 minutes cache
+      maxBatchSize: 10       // Max 10 requests per batch
+    });
+
+    // Set up performance monitoring
+    this.ipcOptimizer.on('cache-hit', (data) => {
+      console.log(`IPC Cache Hit: ${data.channel} (${data.duration}ms)`);
+    });
+
+    this.ipcOptimizer.on('batch-completed', (data) => {
+      console.log(`IPC Batch Completed: ${data.channel} (${data.requestCount} requests, ${data.duration}ms)`);
+    });
+
+    // Initialize memory manager
+    this.memoryManager = new MemoryManager({
+      gcThreshold: 100 * 1024 * 1024,      // 100MB GC threshold
+      warningThreshold: 80 * 1024 * 1024,  // 80MB warning threshold
+      criticalThreshold: 150 * 1024 * 1024, // 150MB critical threshold
+      monitoringInterval: 30000             // 30 second monitoring
+    });
+
+    // Initialize key manager
+    const keyStorePath = path.join(app.getPath('userData'), 'keys');
+    this.keyManager = new KeyManager(keyStorePath);
+
+    console.log('Security and performance components initialized');
+  }
+
+  async initializeSecureStorage() {
+    try {
+      // Get or create master key
+      const masterKeyData = await this.getOrCreateMasterKey();
+
+      // Initialize secure file storage
+      const storagePath = path.join(app.getPath('userData'), 'secure-storage');
+      this.secureFileStorage = new SecureFileStorage(masterKeyData.key, storagePath);
+
+      // Initialize database encryption
+      this.databaseEncryption = new DatabaseEncryption(masterKeyData.key.toString('hex'));
+
+      console.log('Secure storage initialized');
+
+    } catch (error) {
+      console.error('Failed to initialize secure storage:', error);
+      // In production, this should trigger a security alert
+      throw error;
+    }
+  }
+
+  async getOrCreateMasterKey() {
+    const masterPassword = process.env.MASTER_PASSWORD || 'default-dev-password-change-in-production';
+
+    try {
+      // Try to retrieve existing master key
+      return await this.keyManager.retrieveMasterKey(masterPassword);
+    } catch (error) {
+      // Key doesn't exist or password is wrong, create new key
+      console.log('Creating new master key');
+      const newMasterKey = this.keyManager.generateMasterKey();
+      const keyId = await this.keyManager.storeMasterKey(newMasterKey, masterPassword);
+
+      return {
+        key: newMasterKey,
+        keyId: keyId,
+        created: new Date().toISOString(),
+        version: '1.0'
+      };
+    }
+  }
+
+  getDefaultSettings() {
+    return {
+      theme: 'system',
+      autoStart: false,
+      notifications: true,
+      maxMemory: 512,
+      backupFrequency: 'daily'
+    };
+  }
+
+  setupProcessMonitoring() {
+    if (!this.backendProcess) return;
+
+    // Monitor process health
+    const healthCheck = setInterval(() => {
+      if (this.backendProcess && this.backendProcess.killed) {
+        console.error('Backend process died unexpectedly');
+        this.restartBackend();
+      }
+    }, 30000); // Check every 30 seconds
+
+    this.backendProcess.on('exit', (code, signal) => {
+      console.log(`Backend process exited with code ${code}, signal ${signal}`);
+      clearInterval(healthCheck);
+      this.handleProcessExit(code, signal);
+    });
+  }
+
+  setupCrashRecovery() {
+    // Implement exponential backoff for restarts
+    this.restartAttempts = 0;
+    this.maxRestartAttempts = 5;
+    this.restartDelay = 1000; // Start with 1 second
+  }
+
+  setupProcessSecurity() {
+    if (!this.backendProcess) return;
+
+    // Monitor process for suspicious activity
+    this.securityMonitor = {
+      lastActivity: Date.now(),
+      suspiciousPatterns: [],
+      resourceUsage: {},
+    };
+
+    // Set up process monitoring intervals
+    this.securityCheckInterval = setInterval(() => {
+      this.performSecurityCheck();
+    }, 30000); // Check every 30 seconds
+
+    // Monitor process output for security events
+    this.backendProcess.stdout.on('data', (data) => {
+      this.analyzeProcessOutput(data.toString(), 'stdout');
+    });
+
+    this.backendProcess.stderr.on('data', (data) => {
+      this.analyzeProcessOutput(data.toString(), 'stderr');
+    });
+
+    // Set process resource limits (if supported)
+    if (this.backendProcess.setMaxListeners) {
+      this.backendProcess.setMaxListeners(10);
+    }
+  }
+
+  performSecurityCheck() {
+    if (!this.backendProcess || this.backendProcess.killed) return;
+
+    try {
+      // Check for suspicious resource usage
+      const usage = this.backendProcess.memoryUsage ? this.backendProcess.memoryUsage() : {};
+
+      // Alert if memory usage is suspiciously high
+      if (usage.rss && usage.rss > 500 * 1024 * 1024) { // 500MB
+        console.warn('Backend process high memory usage detected:', usage);
+        this.securityMonitor.suspiciousPatterns.push({
+          type: 'high_memory',
+          timestamp: Date.now(),
+          usage: usage
+        });
+      }
+
+      // Check for unusual CPU usage patterns
+      // Additional security checks can be added here
+
+    } catch (error) {
+      console.error('Security check failed:', error);
+    }
+  }
+
+  analyzeProcessOutput(data, stream) {
+    // Analyze process output for security events
+    const suspiciousPatterns = [
+      /password/i,
+      /secret/i,
+      /key/i,
+      /token/i,
+      /eval\(/,
+      /exec\(/,
+      /spawn\(/,
+    ];
+
+    for (const pattern of suspiciousPatterns) {
+      if (pattern.test(data)) {
+        console.warn(`Suspicious pattern detected in ${stream}:`, pattern);
+        this.securityMonitor.suspiciousPatterns.push({
+          type: 'suspicious_output',
+          stream: stream,
+          pattern: pattern.toString(),
+          timestamp: Date.now(),
+          data: data.substring(0, 200) // First 200 chars
+        });
+      }
+    }
+  }
+
+  handleProcessExit(code, signal) {
+    if (code !== 0) {
+      // Unexpected exit
+      console.error(`Backend process crashed with code ${code}`);
+      this.restartBackend();
+    }
+  }
+
+  async restartBackend() {
+    if (this.restartAttempts >= this.maxRestartAttempts) {
+      console.error('Max restart attempts reached, not restarting backend');
+      app.quit();
+      return;
+    }
+
+    console.log(`Restarting backend (attempt ${this.restartAttempts + 1})`);
+
+    // Wait with exponential backoff
+    await new Promise(resolve => setTimeout(resolve, this.restartDelay));
+
+    this.restartAttempts++;
+    this.restartDelay *= 2; // Exponential backoff
+
+    await this.startBackend();
+  }
+
+  // Cleanup security and performance resources
+  cleanup() {
+    if (this.backendProcess && !this.backendProcess.killed) {
+      this.backendProcess.kill();
+    }
+
+    if (this.ipcOptimizer) {
+      this.ipcOptimizer.destroy();
+    }
+
+    if (this.memoryManager) {
+      this.memoryManager.destroy();
+    }
+  }
+
+    if (this.backendProcess && !this.backendProcess.killed) {
+      this.backendProcess.kill();
+    }
+  }
+}
+
+// Initialize app
+new App();

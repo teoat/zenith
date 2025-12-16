@@ -1,0 +1,1 @@
+../../../frontend/pages/10_FRENLY_AI_ASSISTANT.md

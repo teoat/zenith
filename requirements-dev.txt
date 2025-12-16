@@ -1,0 +1,15 @@
+# Development / test dependencies
+pytest>=7.0
+pytest-asyncio>=0.21
+pytest-cov>=4.0
+httpx>=0.24
+coverage>=7.0
+tox>=3.28
+black>=24.3
+isort>=5.12
+pre-commit>=3.4
+numpy>=1.26.0
+pandas>=2.2.0
+
+# Ensure backend runtime deps are available for tests
+-r backend/requirements.txt

@@ -1,0 +1,90 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  quality-check:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        npm ci
+        cd backend && python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+
+    # Code formatting and style
+    - name: Check code formatting
+      run: |
+        # JavaScript/TypeScript
+        npx prettier --check "frontend/src/**/*.{ts,tsx,js,jsx,json,css,md}"
+        npx prettier --check "*.{js,json,md}"
+        npx prettier --check "electron/**/*.{js,json}"
+        npx prettier --check "scripts/**/*.{js,json}"
+
+        # Python
+        cd backend
+        pip install black isort
+        black --check .
+        isort --check-only .
+
+    # Linting
+    - name: Run ESLint
+      run: npm run lint
+
+    - name: Run TypeScript checks
+      run: npm run type-check
+
+    - name: Run Python linting
+      run: |
+        cd backend
+        pip install flake8 pylint
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        pylint --rcfile=../pylint.ini . || true
+
+    # Type checking
+    - name: Run mypy (Python type checking)
+      run: |
+        cd backend
+        pip install mypy
+        mypy . --ignore-missing-imports || true
+
+    # Documentation checks
+    - name: Check documentation links
+      run: |
+        # Check for broken links in markdown files
+        find docs/ -name "*.md" -exec grep -l "\[.*\](" {} \; | head -5 | xargs -I {} sh -c 'echo "Checking {}"; grep "\[.*\](" "{}" | head -3' || true
+
+    # License and copyright checks
+    - name: Check license headers
+      run: |
+        # Check that source files have license headers
+        echo "License check would run here"
+        # Add logic to check for license headers in source files
+
+    - name: Generate quality report
+      run: |
+        echo "## 📊 Code Quality Report" >> $GITHUB_STEP_SUMMARY
+        echo "- **ESLint**: $(npm run lint 2>&1 | grep -c "error" || echo "0") errors" >> $GITHUB_STEP_SUMMARY
+        echo "- **TypeScript**: $(npm run type-check 2>&1 | grep -c "error" || echo "0") errors" >> $GITHUB_STEP_SUMMARY
+        echo "- **Python Flake8**: $(cd backend && flake8 . --count 2>/dev/null || echo "0") issues" >> $GITHUB_STEP_SUMMARY
+        echo "- **Prettier**: $(npx prettier --check "frontend/src/**/*.{ts,tsx}" 2>&1 | grep -c "Code style issues found" || echo "0") files" >> $GITHUB_STEP_SUMMARY

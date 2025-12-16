@@ -1,0 +1,157 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "reset": "Réinitialiser",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "import": "Importer",
+    "refresh": "Actualiser",
+    "view": "Voir",
+    "details": "Détails",
+    "actions": "Actions",
+    "status": "Statut",
+    "date": "Date",
+    "time": "Heure",
+    "name": "Nom",
+    "description": "Description",
+    "type": "Type",
+    "priority": "Priorité",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "cases": "Cas",
+    "investigation": "Enquête",
+    "reporting": "Rapports",
+    "settings": "Paramètres",
+    "alerts": "Alertes",
+    "analytics": "Analyses",
+    "network": "Analyse réseau",
+    "forensics": "Forensique",
+    "reconciliation": "Rapprochement",
+    "ingestion": "Ingestion des données",
+    "admin": "Administration",
+    "logout": "Déconnexion",
+    "profile": "Profil"
+  },
+  "ai": {
+    "assistant": "Assistant IA",
+    "thinking": "Réflexion...",
+    "askPersona": "Demander à {{persona}}...",
+    "freezeAccount": "Geler le compte",
+    "sendKycRequest": "Envoyer demande KYC",
+    "deepInvestigation": "Enquête approfondie",
+    "riskScore": "Score de risque",
+    "confidence": "Confiance",
+    "recommendation": "Recommandation",
+    "analysis": "Analyse IA",
+    "patterns": "Motifs détectés",
+    "anomalies": "Anomalies"
+  },
+  "cases": {
+    "title": "Gestion des cas",
+    "create": "Créer un cas",
+    "view": "Voir le cas",
+    "edit": "Modifier le cas",
+    "assign": "Assigner le cas",
+    "close": "Fermer le cas",
+    "reopen": "Rouvrir le cas",
+    "priority": {
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé",
+      "critical": "Critique"
+    },
+    "status": {
+      "open": "Ouvert",
+      "investigating": "En cours d'investigation",
+      "pending": "En attente de révision",
+      "closed": "Fermé",
+      "archived": "Archivé"
+    },
+    "fields": {
+      "caseId": "ID du cas",
+      "title": "Titre",
+      "description": "Description",
+      "assignee": "Assigné à",
+      "createdAt": "Créé le",
+      "updatedAt": "Mis à jour le",
+      "riskScore": "Score de risque",
+      "transactionCount": "Transactions"
+    }
+  },
+  "alerts": {
+    "title": "Alertes de fraude",
+    "new": "Nouvelle alerte",
+    "acknowledge": "Accuser réception",
+    "dismiss": "Ignorer",
+    "escalate": "Escalader",
+    "severity": {
+      "info": "Info",
+      "warning": "Avertissement",
+      "error": "Erreur",
+      "critical": "Critique"
+    }
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "S'inscrire",
+    "forgotPassword": "Mot de passe oublié",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "mfa": "Authentification multi-facteurs",
+    "setupMfa": "Configurer MFA",
+    "verifyCode": "Vérifier le code"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "general": "Général",
+    "security": "Sécurité",
+    "notifications": "Notifications",
+    "appearance": "Apparence",
+    "language": "Langue",
+    "timezone": "Fuseau horaire",
+    "dateFormat": "Format de date",
+    "localeChangesApply": "Les changements de langue s'appliquent immédiatement",
+    "theme": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    }
+  },
+  "errors": {
+    "generic": "Une erreur s'est produite. Veuillez réessayer.",
+    "network": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+    "notFound": "La ressource demandée n'a pas été trouvée.",
+    "validation": "Veuillez vérifier vos données et réessayer.",
+    "serverError": "Erreur serveur. Veuillez réessayer plus tard."
+  },
+  "time": {
+    "now": "À l'instant",
+    "minutesAgo": "{{count}} minute auparavant",
+    "minutesAgo_plural": "{{count}} minutes auparavant",
+    "hoursAgo": "{{count}} heure auparavant",
+    "hoursAgo_plural": "{{count}} heures auparavant",
+    "daysAgo": "{{count}} jour auparavant",
+    "daysAgo_plural": "{{count}} jours auparavant"
+  }
+}

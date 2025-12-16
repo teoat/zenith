@@ -1,0 +1,1215 @@
+openapi: 3.0.3
+info:
+  title: Simple378 Fraud Detection API
+  description: |
+    Enterprise-grade fraud detection and investigation platform API.
+
+    ## Authentication
+    All API endpoints require authentication via JWT tokens obtained from `/auth/login`.
+
+    ## Rate Limiting
+    - 100 requests per minute per IP
+    - 1000 requests per minute for authenticated users
+    - Progressive backoff on violations
+
+    ## Security
+    - All data encrypted at rest using SQLCipher
+    - HMAC-SHA256 signed IPC communication
+    - Comprehensive audit logging
+    - Zero-trust architecture
+
+    ## Versioning
+    API versioning follows semantic versioning with breaking changes in major versions.
+  version: 1.0.0
+  contact:
+    name: Simple378 Support
+    email: support@378x492.com
+  license:
+    name: Proprietary
+    url: https://378x492.com/license
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Development server
+  - url: https://api.378x492.com/v1
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+paths:
+  # Authentication
+  /auth/login:
+    post:
+      summary: User authentication
+      description: Authenticate user and return JWT token with session information
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  description: User login identifier
+                  example: investigator@example.com
+                password:
+                  type: string
+                  format: password
+                  description: User password
+                  example: SecurePass123!
+                biometricToken:
+                  type: string
+                  description: Optional biometric authentication token
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    description: JWT access token
+                  refreshToken:
+                    type: string
+                    description: JWT refresh token
+                  session:
+                    $ref: '#/components/schemas/Session'
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      description: Obtain new access token using refresh token
+      tags: [Authentication]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+                  description: JWT refresh token
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    description: New JWT access token
+                  expiresAt:
+                    type: string
+                    format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/logout:
+    post:
+      summary: User logout
+      description: Invalidate current session and revoke tokens
+      tags: [Authentication]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Session terminated successfully
+
+  # Cases Management
+  /cases:
+    get:
+      summary: List cases with filtering and pagination
+      description: Retrieve paginated list of fraud cases with advanced filtering
+      tags: [Cases]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Number of items per page
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, open, investigating, pending_review, escalated, closed_approved, closed_denied, closed_no_action]
+          description: Filter by case status
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [low, medium, high, critical]
+          description: Filter by case priority
+        - name: risk_score_min
+          in: query
+          schema:
+            type: number
+            minimum: 0
+            maximum: 100
+          description: Minimum risk score filter
+        - name: assigned_to
+          in: query
+          schema:
+            type: string
+          description: Filter by assigned investigator
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Full-text search across case data
+      responses:
+        '200':
+          description: Cases retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Case'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  filters:
+                    type: object
+                    description: Applied filters summary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Create new case
+      description: Create a new fraud investigation case
+      tags: [Cases]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - priority
+              properties:
+                title:
+                  type: string
+                  maxLength: 200
+                  description: Case title
+                  example: Suspicious wire transfer pattern
+                description:
+                  type: string
+                  description: Detailed case description
+                  example: Multiple wire transfers just below $10k threshold
+                priority:
+                  type: string
+                  enum: [low, medium, high, critical]
+                  default: medium
+                type:
+                  type: string
+                  enum: [fraud_suspected, identity_theft, account_takeover, money_laundering]
+                  default: fraud_suspected
+                assigned_to:
+                  type: string
+                  description: User ID to assign case to
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: Case tags for categorization
+      responses:
+        '201':
+          description: Case created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Case'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /cases/{caseId}:
+    get:
+      summary: Get case details
+      description: Retrieve detailed information about a specific case
+      tags: [Cases]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique case identifier
+      responses:
+        '200':
+          description: Case details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/CaseDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update case
+      description: Update case information and status
+      tags: [Cases]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  maxLength: 200
+                description:
+                  type: string
+                status:
+                  type: string
+                  enum: [draft, open, investigating, pending_review, escalated, closed_approved, closed_denied, closed_no_action]
+                priority:
+                  type: string
+                  enum: [low, medium, high, critical]
+                assigned_to:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Case updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Case'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Delete case
+      description: Soft delete a case (mark as archived)
+      tags: [Cases]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Case deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Case archived successfully
+
+  # Evidence Management
+  /evidence/upload:
+    post:
+      summary: Upload evidence files
+      description: Upload and process evidence files with automatic analysis
+      tags: [Evidence]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - files
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Evidence files to upload
+                caseId:
+                  type: string
+                  format: uuid
+                  description: Associated case ID
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: Evidence tags
+      responses:
+        '201':
+          description: Files uploaded and processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Evidence'
+                  processing:
+                    type: object
+                    properties:
+                      ocr:
+                        type: boolean
+                        description: OCR processing initiated
+                      metadata:
+                        type: boolean
+                        description: Metadata extraction initiated
+                      fraudAnalysis:
+                        type: boolean
+                        description: Fraud analysis initiated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /evidence/{evidenceId}/analyze:
+    post:
+      summary: Analyze evidence
+      description: Trigger advanced analysis on evidence file
+      tags: [Evidence]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: evidenceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                analysisTypes:
+                  type: array
+                  items:
+                    type: string
+                    enum: [ocr, metadata, forgery, signature, pattern]
+                  description: Types of analysis to perform
+      responses:
+        '200':
+          description: Analysis initiated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  jobId:
+                    type: string
+                    description: Analysis job identifier
+                  estimatedTime:
+                    type: number
+                    description: Estimated completion time in seconds
+
+  # AI and Intelligence
+  /ai/analyze:
+    post:
+      summary: AI-powered analysis
+      description: Perform AI analysis on case data or evidence
+      tags: [AI]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+                - data
+              properties:
+                type:
+                  type: string
+                  enum: [case_summary, fraud_pattern, entity_linkage, risk_assessment, evidence_analysis]
+                  description: Type of AI analysis
+                data:
+                  type: object
+                  description: Analysis input data
+                caseId:
+                  type: string
+                  format: uuid
+                  description: Associated case ID
+      responses:
+        '200':
+          description: AI analysis completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  analysis:
+                    type: object
+                    description: AI analysis results
+                  confidence:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                    description: Analysis confidence score
+        '202':
+          description: Analysis queued for processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  jobId:
+                    type: string
+                    description: Analysis job identifier
+
+  /ai/search:
+    post:
+      summary: Semantic search
+      description: Perform natural language search across case data and evidence
+      tags: [AI]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  description: Natural language search query
+                  example: "transactions involving shell companies in Cayman Islands"
+                filters:
+                  type: object
+                  properties:
+                    caseId:
+                      type: string
+                      format: uuid
+                    dateRange:
+                      type: object
+                      properties:
+                        start:
+                          type: string
+                          format: date
+                        end:
+                          type: string
+                          format: date
+                    riskScore:
+                      type: object
+                      properties:
+                        min:
+                          type: number
+                          minimum: 0
+                          maximum: 100
+                        max:
+                          type: number
+                          minimum: 0
+                          maximum: 100
+      responses:
+        '200':
+          description: Search completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum: [case, evidence, transaction, entity]
+                        id:
+                          type: string
+                        relevance:
+                          type: number
+                          minimum: 0
+                          maximum: 1
+                        snippet:
+                          type: string
+                          description: Relevant text snippet
+                        metadata:
+                          type: object
+                          description: Additional result metadata
+                  total:
+                    type: integer
+                    description: Total number of results found
+
+  # Dashboard and Analytics
+  /dashboard/metrics:
+    get:
+      summary: Get dashboard metrics
+      description: Retrieve key performance indicators and metrics for dashboard
+      tags: [Dashboard]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [hour, day, week, month]
+            default: day
+          description: Time period for metrics
+      responses:
+        '200':
+          description: Dashboard metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      totalCases:
+                        type: integer
+                        description: Total number of cases
+                      activeCases:
+                        type: integer
+                        description: Currently active cases
+                      highRiskCases:
+                        type: integer
+                        description: Cases with risk score > 80
+                      pendingReviews:
+                        type: integer
+                        description: Cases awaiting review
+                      resolvedToday:
+                        type: integer
+                        description: Cases resolved today
+                      averageResolutionTime:
+                        type: number
+                        description: Average case resolution time in hours
+                      fraudDetections:
+                        type: integer
+                        description: Total fraud detections
+                      falsePositives:
+                        type: integer
+                        description: False positive detections
+
+  /dashboard/alerts:
+    get:
+      summary: Get active alerts
+      description: Retrieve current security and system alerts
+      tags: [Dashboard]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Alerts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  alerts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Alert'
+
+  # System Health and Monitoring
+  /health:
+    get:
+      summary: System health check
+      description: Comprehensive system health assessment
+      tags: [System]
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, critical]
+                    example: healthy
+                  timestamp:
+                    type: string
+                    format: date-time
+                  services:
+                    type: object
+                    properties:
+                      database:
+                        type: string
+                        enum: [up, down, degraded]
+                      cache:
+                        type: string
+                        enum: [up, down, degraded]
+                      ai:
+                        type: string
+                        enum: [up, down, degraded]
+                      storage:
+                        type: string
+                        enum: [up, down, degraded]
+                  metrics:
+                    type: object
+                    properties:
+                      uptime:
+                        type: number
+                        description: System uptime in seconds
+                      memoryUsage:
+                        type: number
+                        description: Memory usage percentage
+                      cpuUsage:
+                        type: number
+                        description: CPU usage percentage
+                      activeConnections:
+                        type: integer
+                        description: Number of active connections
+
+  /health/metrics:
+    get:
+      summary: Detailed system metrics
+      description: Comprehensive system performance metrics
+      tags: [System]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  metrics:
+                    type: object
+                    properties:
+                      system:
+                        $ref: '#/components/schemas/SystemMetrics'
+                      application:
+                        $ref: '#/components/schemas/ApplicationMetrics'
+                      database:
+                        $ref: '#/components/schemas/DatabaseMetrics'
+                      security:
+                        $ref: '#/components/schemas/SecurityMetrics'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        fullName:
+          type: string
+        role:
+          type: string
+          enum: [admin, investigator, analyst, auditor]
+        permissions:
+          type: array
+          items:
+            type: string
+        lastLogin:
+          type: string
+          format: date-time
+        isActive:
+          type: boolean
+
+    Session:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        userId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        ipAddress:
+          type: string
+        userAgent:
+          type: string
+
+    Case:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        status:
+          type: string
+          enum: [draft, open, investigating, pending_review, escalated, closed_approved, closed_denied, closed_no_action]
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+        riskScore:
+          type: number
+          minimum: 0
+          maximum: 100
+        type:
+          type: string
+          enum: [fraud_suspected, identity_theft, account_takeover, money_laundering]
+        assignedTo:
+          $ref: '#/components/schemas/User'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
+
+    CaseDetail:
+      allOf:
+        - $ref: '#/components/schemas/Case'
+        - type: object
+          properties:
+            description:
+              type: string
+            evidence:
+              type: array
+              items:
+                $ref: '#/components/schemas/Evidence'
+            timeline:
+              type: array
+              items:
+                $ref: '#/components/schemas/TimelineEvent'
+            relatedCases:
+              type: array
+              items:
+                type: string
+                format: uuid
+            aiAnalysis:
+              type: object
+              description: AI-generated insights and recommendations
+
+    Evidence:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        fileType:
+          type: string
+        fileSize:
+          type: integer
+        hash:
+          type: string
+          description: SHA-256 file hash
+        uploadedAt:
+          type: string
+          format: date-time
+        uploadedBy:
+          $ref: '#/components/schemas/User'
+        caseId:
+          type: string
+          format: uuid
+        tags:
+          type: array
+          items:
+            type: string
+        analysis:
+          type: object
+          properties:
+            ocr:
+              type: object
+              description: OCR extraction results
+            metadata:
+              type: object
+              description: File metadata
+            fraudIndicators:
+              type: array
+              items:
+                type: string
+              description: Detected fraud indicators
+
+    TimelineEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        type:
+          type: string
+          enum: [case_created, evidence_uploaded, analysis_completed, status_changed, comment_added, alert_triggered]
+        description:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        metadata:
+          type: object
+          description: Event-specific data
+
+    Alert:
+      type: object
+      properties:
+        id:
+          type: string
+        severity:
+          type: string
+          enum: [critical, high, medium, low]
+        title:
+          type: string
+        message:
+          type: string
+        category:
+          type: string
+          enum: [security, performance, fraud, system]
+        timestamp:
+          type: string
+          format: date-time
+        acknowledged:
+          type: boolean
+        resolved:
+          type: boolean
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrev:
+          type: boolean
+
+    SystemMetrics:
+      type: object
+      properties:
+        cpuUsage:
+          type: number
+          description: CPU usage percentage
+        memoryUsage:
+          type: number
+          description: Memory usage percentage
+        diskUsage:
+          type: number
+          description: Disk usage percentage
+        uptime:
+          type: number
+          description: System uptime in seconds
+        loadAverage:
+          type: array
+          items:
+            type: number
+          description: System load averages (1, 5, 15 minutes)
+
+    ApplicationMetrics:
+      type: object
+      properties:
+        activeSessions:
+          type: integer
+        requestRate:
+          type: number
+          description: Requests per second
+        errorRate:
+          type: number
+          description: Error rate percentage
+        responseTime:
+          type: number
+          description: Average response time in milliseconds
+        throughput:
+          type: number
+          description: Requests processed per second
+        queueSize:
+          type: integer
+          description: Number of queued requests
+
+    DatabaseMetrics:
+      type: object
+      properties:
+        connections:
+          type: integer
+          description: Active database connections
+        queryTime:
+          type: number
+          description: Average query execution time
+        cacheHitRate:
+          type: number
+          description: Database cache hit rate
+        transactionRate:
+          type: number
+          description: Transactions per second
+        lockWaits:
+          type: integer
+          description: Number of lock waits
+        deadlocks:
+          type: integer
+          description: Number of deadlocks detected
+
+    SecurityMetrics:
+      type: object
+      properties:
+        failedLogins:
+          type: integer
+          description: Failed login attempts in last hour
+        blockedIPs:
+          type: integer
+          description: Currently blocked IP addresses
+        suspiciousActivities:
+          type: integer
+          description: Suspicious activities detected
+        securityEvents:
+          type: integer
+          description: Total security events
+        authenticationFailures:
+          type: integer
+          description: Authentication failures
+        authorizationFailures:
+          type: integer
+          description: Authorization failures
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid input parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: Invalid input parameters
+              details:
+                type: object
+                description: Validation error details
+
+    Unauthorized:
+      description: Authentication required or invalid credentials
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: Authentication required
+              code:
+                type: string
+                example: UNAUTHORIZED
+
+    Forbidden:
+      description: Insufficient permissions for this operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: Insufficient permissions
+              code:
+                type: string
+                example: FORBIDDEN
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: Resource not found
+              code:
+                type: string
+                example: NOT_FOUND
+
+    RateLimited:
+      description: Too many requests - rate limit exceeded
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: Rate limit exceeded
+              retryAfter:
+                type: integer
+                description: Seconds to wait before retrying
+              code:
+                type: string
+                example: RATE_LIMITED
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: Internal server error
+              code:
+                type: string
+                example: INTERNAL_ERROR

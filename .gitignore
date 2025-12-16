@@ -1,0 +1,37 @@
+# Node
+node_modules/
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+env/
+*.pyc
+
+# Databases and test artifacts
+*.db
+test_*.db
+test_output.txt
+test_server.log
+
+# Playwright / test recordings
+playwright-report/
+*.webm
+
+# Build / release artifacts
+release/
+dist/
+build/
+*.zip
+*.dmg
+*.app
+*.blockmap
+
+# Electron app bundles and helpers (do not push)
+electron/
+
+# Misc
+/.idea/
+.vscode/
+.DS_Store
