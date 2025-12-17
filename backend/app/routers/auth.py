@@ -173,7 +173,7 @@ async def login(login_data: LoginRequest, request: Request):
             {
                 "sub": user.id,
                 "username": user.username,
-                "role": user.role.value if user.role else None,
+                "role": user.role.value if hasattr(user.role, 'value') else user.role,
                 "mfa_verified": user.mfa_enabled,  # Add claim
             }
         )
