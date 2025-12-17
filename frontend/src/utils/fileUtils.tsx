@@ -1,4 +1,3 @@
-import React from 'react';
 import { FileText, Image, Video, AudioWaveform, Database } from 'lucide-react';
 
 /**
@@ -7,7 +6,7 @@ import { FileText, Image, Video, AudioWaveform, Database } from 'lucide-react';
  * @param className - Optional CSS classes for the icon
  * @returns React component for the file icon
  */
-export const getFileIcon = (fileType?: string, className = "h-4 w-4"): JSX.Element => {
+export const getFileIcon = (fileType?: string, className = "h-4 w-4"): React.ReactElement => {
   const iconProps = { className };
   const type = fileType?.toLowerCase() || '';
   

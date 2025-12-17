@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 # Node
 node_modules/
 
@@ -10,11 +9,18 @@ venv/
 env/
 *.pyc
 
+# Environment variables
+.env
+.env.*
+!.env.example
+
 # Databases and test artifacts
 *.db
 test_*.db
+backend/data/*.db
 test_output.txt
 test_server.log
+backend/data/audit.db
 
 # Playwright / test recordings
 playwright-report/
@@ -29,19 +35,14 @@ build/
 *.app
 *.blockmap
 
-# Electron app bundles and helpers (do not push)
+# Electron app bundles and helpers
 electron/
 
-# Diagnostic reports (timestamped ones - keep examples)
+# Diagnostic reports
 diagnostic_results_*.json
 COMPREHENSIVE_DIAGNOSTIC_REPORT_*.md
-!diagnostic_results_example.json
-!COMPREHENSIVE_DIAGNOSTIC_REPORT_EXAMPLE.md
 
 # Misc
-/.idea/
+.idea/
 .vscode/
 .DS_Store
-=======
-node_modules
->>>>>>> Stashed changes

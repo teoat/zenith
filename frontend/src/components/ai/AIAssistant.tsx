@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, MessageCircle, X, User, Send, ThumbsUp, ThumbsDown, Search, Eye, File } from 'lucide-react';
 import { useAIContext, AIPersona } from '@/context/AIContext';
@@ -38,6 +39,23 @@ export const AIAssistant: React.FC = () => {
     }
   ]);
   const [currentAgentStep, setCurrentAgentStep] = useState('');
+  const [aiStatus, setAiStatus] = useState<{ mode: string; llm_api_available: boolean } | null>(null);
+
+  // Fetch AI status on mount
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const response = await fetch('/api/v1/ai/status');
+        const data = await response.json();
+        if (data.success) {
+          setAiStatus(data.status);
+        }
+      } catch (error) {
+        console.error('Failed to fetch AI status:', error);
+      }
+    };
+    fetchStatus();
+  }, []);
 
   const handleActionClick = async (action: any) => {
     if (!action.endpoint) return;
@@ -245,6 +263,15 @@ export const AIAssistant: React.FC = () => {
                 <option value="forensic">Forensic</option>
                 <option value="redteam">Red Team 🔴</option>
               </select>
+              {aiStatus && (
+                <div className={`text-xs px-2 py-1 rounded-full ${
+                  aiStatus.llm_api_available
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                }`}>
+                  {aiStatus.mode === 'live' ? 'Live AI' : 'Simulation Mode'}
+                </div>
+              )}
             </div>
           </div>
 

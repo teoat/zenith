@@ -32,6 +32,10 @@ class AdvancedLLMService:
     def __init__(self):
         self.api_key = os.getenv("OPENAI_API_KEY")
         self.client = AsyncOpenAI(api_key=self.api_key) if HAS_OPENAI and self.api_key else None
+
+    def is_api_available(self) -> bool:
+        """Check if external LLM API is available and configured."""
+        return self.client is not None
         
     async def generate_response(self, prompt: str, context: Optional[Dict[str, Any]] = None, persona: str = "frenly") -> ACosmicLLMResponse:
         """

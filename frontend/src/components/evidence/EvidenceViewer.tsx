@@ -52,7 +52,7 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
         setShowOCR(true);
       }
     }
-  }, [initialRegionId, regions]);
+  }, [initialRegionId, regions, setShowOCR]);
   
   // Filter regions by type
   const filteredRegions = useMemo(() => {
@@ -76,8 +76,15 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
   const copyText = (region: OCRRegion) => {
     navigator.clipboard.writeText(region.text);
     setCopiedId(region.id);
-    setTimeout(() => setCopiedId(null), 2000);
   };
+
+  // Cleanup copied state timeout
+  React.useEffect(() => {
+    if (copiedId) {
+      const timer = setTimeout(() => setCopiedId(null), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [copiedId]);
 
   if (!fileUrl) {
     return (

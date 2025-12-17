@@ -99,9 +99,43 @@ class PluginRegistryService:
                         plugin_instance = plugin_class()
                         
                         # Initialize the plugin
+                        # Initialize the plugin
                         from core.plugin_system.interface import PluginContext
                         
-                        context = PluginContext(config={}, services={})
+                        # Inject Core Services (Local import to avoid circular dependencies)
+                        services = {}
+                        try:
+                            from app.services.ai.ai_service import AIService
+                            # Check if AIService is a class (needs instantiation) or instance
+                            # Based on file view, it's a class but might have a global instance or need one
+                            # However, 'ai_service' variable usually implies instance. 
+                            # Let's check app/services/ai/__init__.py or usage patterns.
+                            # Standard pattern in this project seems to be singletons.
+                            # Let's try to get the singleton if it exists, or instantiate.
+                            # Looking at main.py: from app.routers.ai import router as ai_router
+                            # Let's assume we can instantiate or get a global.
+                            # Re-checking ai_service.py view... it has `class AIService`.
+                            # It doesn't seem to export a global instance at the bottom like others.
+                            # Wait, generic `ai_service` usage in `typology_analysis` expects `semantic_search`.
+                            # Let's instantiate a shared one or look for an existing one.
+                            # To be safe and consistent with typical DI, we'll instantiate one if needed
+                            # OR better, use the one from `app.services.ai.ai_service`.
+                            
+                            # Let's use a lazy property or similar if possible.
+                            # For now, let's instantiate.
+                            services['ai_service'] = AIService() # This uses local ./data/vector_store.db
+                            await services['ai_service'].initialize()
+                            
+                            from app.services.infrastructure.storage.database_service import db_service
+                            services['db_service'] = db_service
+                            
+                            from app.services.infrastructure.monitoring_service import monitoring_service
+                            services['monitoring_service'] = monitoring_service
+                            
+                        except ImportError as e:
+                            logger.warning(f"Could not inject some services into plugin context: {e}")
+                            
+                        context = PluginContext(config={}, services=services)
                         
                         if asyncio.iscoroutinefunction(plugin_instance.initialize):
                             await plugin_instance.initialize(context)

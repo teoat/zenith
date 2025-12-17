@@ -65,14 +65,18 @@ const GraphCanvas: React.FC<GraphCanvasProps> = ({ width, height, data }) => {
 
   useEffect(() => {
     // Initial Zoom to Fit only on mount or data change
+    let timer: NodeJS.Timeout;
     if (fgRef.current) {
       // Small delay to allow layout to settle
-      setTimeout(() => {
+      timer = setTimeout(() => {
           fgRef.current?.d3Force('charge')?.strength(-400);
           fgRef.current?.zoomToFit(400); 
       }, 500);
     }
-  }, [data]);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [graphData]); // Use graphData to capture fallback case
 
   const handleNodeHover = (node: GraphNode | null) => {
     // setHoverNode(node || null); // Unused state

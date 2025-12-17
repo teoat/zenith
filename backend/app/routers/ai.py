@@ -453,9 +453,17 @@ async def get_ai_status():
     try:
         ai_service = await get_ai_service()
 
+        # Check LLM API availability
+        import os
+        from app.services.intelligence.advanced_llm_service import AdvancedLLMService
+        llm_service = AdvancedLLMService()
+        llm_available = llm_service.is_api_available()
+
         status = {
             "initialized": ai_service.initialized,
             "documents_indexed": len(ai_service.vector_store),
+            "llm_api_available": llm_available,
+            "mode": "live" if llm_available else "simulation",
             "capabilities": [
                 "semantic_search",
                 "fraud_pattern_analysis",

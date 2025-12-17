@@ -1,9 +1,11 @@
-const React = require('react');
+import React from 'react';
 
-module.exports = React.forwardRef((props, ref) => {
+const ForceGraphMock = React.forwardRef((props, ref) => {
   return React.createElement('div', {
     ref,
     'data-testid': 'force-graph',
     ...props
   }, 'Force Graph');
 });
+
+export default ForceGraphMock;

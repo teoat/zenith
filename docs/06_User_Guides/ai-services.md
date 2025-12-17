@@ -3,6 +3,8 @@
 ## Overview
 Comprehensive AI-powered fraud detection and analysis capabilities for the 378x492 Fraud Detection system, including automated analysis, intelligent insights, and contextual assistance.
 
+> **Important Note:** Frenly AI currently uses simulation mode with heuristic responses when external LLM APIs (OpenAI/Claude) are unavailable or misconfigured. Full AI capabilities require proper API key configuration. System status indicators show whether live AI or simulation mode is active.
+
 ## 🤖 Frenly AI Assistant
 
 ### Multi-Persona AI System

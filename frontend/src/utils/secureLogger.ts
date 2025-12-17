@@ -1,4 +1,4 @@
-
+import { v4 as uuidv4 } from 'uuid';
 
 export interface LogEntry {
   id: string;
@@ -122,26 +122,26 @@ export class SecureLogger {
     const sanitizedMessage = entry.sanitized ? entry.message : '[UNSANITIZED] ' + entry.message;
 
     switch (entry.level) {
-      case 'debug':
-         
+      case 'debug': {
         const logger = console;
         logger.debug(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
-      case 'info':
-         
+      }
+      case 'info': {
         const loggerInfo = console;
         loggerInfo.info(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
-      case 'warn':
-         
+      }
+      case 'warn': {
         const loggerWarn = console;
         loggerWarn.warn(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
-      case 'error':
-         
+      }
+      case 'error': {
         const loggerErr = console;
         loggerErr.error(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
+      }
     }
   }
 

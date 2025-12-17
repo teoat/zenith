@@ -1,5 +1,6 @@
 import { request, isElectron, API_BASE, getToken } from './client';
 import type { EvidenceItem, ProcessedEvidence, FileSelectResult } from '../types/api';
+import '../types/electron'; // Ensure electron types are available
 
 export const evidenceService = {
   getEvidence: async (caseId?: string, page: number = 1, pageSize: number = 20, query?: string): Promise<{ items: EvidenceItem[]; total: number }> => {
@@ -31,8 +32,8 @@ export const evidenceService = {
   },
 
   processEvidence: async (filePath: string): Promise<ProcessedEvidence> => {
-    if (isElectron() && (window as any).electronAPI?.processEvidence) {
-      return (window as any).electronAPI.processEvidence(filePath);
+    if (isElectron() && window.electronAPI?.processEvidence) {
+      return window.electronAPI.processEvidence(filePath);
     }
     // Browser fallback - mock response
     return { fileType: 'unknown', sizeBytes: 0 };
@@ -88,8 +89,8 @@ export const evidenceService = {
   },
 
   selectFile: async (): Promise<FileSelectResult> => {
-    if (isElectron() && (window as any).electronAPI?.selectFile) {
-      return (window as any).electronAPI.selectFile();
+    if (isElectron() && window.electronAPI?.selectFile) {
+      return window.electronAPI.selectFile() as Promise<FileSelectResult>;
     }
     // Browser fallback - use file input
     return new Promise((resolve) => {

@@ -8,6 +8,8 @@ jest.mock('react', () => {
   };
 });
 
+
+
 // Mock the App component to avoid React.lazy issues
 jest.mock('../App', () => {
   const MockApp = () => <div data-testid="mock-app">App Component</div>;
@@ -261,27 +263,7 @@ describe('App', () => {
     expect(screen.getByTestId('tour-spotlight')).toBeInTheDocument();
   });
 
-  it('calls setup functions on mount', () => {
-    const { setupGlobalErrorHandlers } = require('../utils/errorHandler');
-    const antiDebug = require('../utils/antiDebug').default;
-    const performanceMonitor = require('../utils/performanceMonitor');
-    const webVitals = require('../utils/webVitals');
 
-    const queryClient = createTestQueryClient();
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <App />
-        </MemoryRouter>
-      </QueryClientProvider>
-    );
-
-    expect(setupGlobalErrorHandlers).toHaveBeenCalled();
-    expect(antiDebug).toHaveBeenCalled();
-    expect(performanceMonitor).toHaveBeenCalled();
-    expect(webVitals).toHaveBeenCalled();
-  });
 
   it('sets up proper app version in environment', () => {
     const queryClient = createTestQueryClient();

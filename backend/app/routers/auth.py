@@ -106,7 +106,7 @@ async def register(user_data: RegisterRequest):
         logger.error(f"Registration error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Registration failed"
+            detail="An internal error occurred during registration."
         )
 
 

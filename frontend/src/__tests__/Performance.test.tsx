@@ -72,10 +72,8 @@ describe('Performance Optimization', () => {
 
   test('network requests are tracked', () => {
     const originalFetch = global.fetch;
-    let fetchCount = 0;
 
     global.fetch = jest.fn().mockImplementation(() => {
-      fetchCount++;
       return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
 

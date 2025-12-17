@@ -1,3 +1,5 @@
+import { secureLogger } from '../../utils/secureLogger';
+
 /**
  * Intelligent Edge Cache Manager
  * Handles region-aware caching and Service Worker coordination
@@ -28,9 +30,9 @@ class EdgeCacheManager {
           '/locales/en/translation.json',
           '/locales/ar/translation.json', // Prefetch RTL if relevant
         ]);
-        console.log(`[EdgeCache] Critical resources cached efficiently for region: ${this.region}`);
+        secureLogger.info('EdgeCache', `Critical resources cached efficiently for region: ${this.region}`);
       } catch (e) {
-        console.warn('Edge caching failed:', e);
+        secureLogger.warn('EdgeCache', 'Edge caching failed', { error: e });
       }
     }
   }
