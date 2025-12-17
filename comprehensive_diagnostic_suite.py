@@ -173,7 +173,7 @@ class ComprehensiveDiagnosticSuite:
                 except (OSError, IOError):
                     continue
             backend_metrics['api_endpoints']['total_endpoints'] = endpoint_count
-            backend_metrics['api_endpoints']['route_files'] = len(list(routes_path.glob('*.py')))
+            backend_metrics['api_endpoints']['route_files'] = len(list(routes_path.rglob('*.py')))
 
         # Check dependencies
         requirements_file = self.repo_root / 'requirements.txt'
