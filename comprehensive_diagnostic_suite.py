@@ -751,10 +751,14 @@ class ComprehensiveDiagnosticSuite:
                 }
         
         # Analyze Node dependencies
-        package_json = self.repo_root / 'package.json'
-        if package_json.exists():
-            import json
-            with open(package_json, 'r') as f:
+        candidate_package_jsons = [
+            self.repo_root / 'package.json',
+            self.repo_root / 'frontend' / 'package.json',
+        ]
+        package_json = next((p for p in candidate_package_jsons if p.exists()), None)
+
+        if package_json:
+            with open(package_json, 'r', encoding='utf-8', errors='ignore') as f:
                 pkg = json.load(f)
                     'dependencies': len(pkg.get('dependencies', {})),
                     'devDependencies': len(pkg.get('devDependencies', {})),
