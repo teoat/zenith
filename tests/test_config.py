@@ -4,6 +4,7 @@ Centralized location for test-specific settings to avoid hardcoded secrets.
 """
 import os
 from typing import Dict, Any
+from cryptography.fernet import Fernet
 
 # Test database encryption key - should be different from production
 TEST_SQLCIPHER_KEY = 'test_sqlcipher_key_for_development_only_123456789012345678901234567890'
@@ -11,10 +12,14 @@ TEST_SQLCIPHER_KEY = 'test_sqlcipher_key_for_development_only_123456789012345678
 # Test authentication encryption key
 TEST_AUTH_ENCRYPTION_KEY = 'test_auth_key_for_development_only_123456789012345678901234567890'
 
+# Test encryption key for EncryptedString - must be a valid Fernet key
+TEST_ENCRYPTION_KEY = Fernet.generate_key().decode()
+
 def setup_test_environment() -> None:
     """Set up test environment variables safely."""
     os.environ.setdefault('SQLCIPHER_KEY', TEST_SQLCIPHER_KEY)
     os.environ.setdefault('AUTH_ENCRYPTION_KEY', TEST_AUTH_ENCRYPTION_KEY)
+    os.environ.setdefault('ENCRYPTION_KEY', TEST_ENCRYPTION_KEY) # Add this line
     # Set test-specific environment
     os.environ.setdefault('ENV', 'test')
 

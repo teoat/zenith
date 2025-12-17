@@ -4,8 +4,13 @@
  */
 
 import React, { useState, useCallback, useRef, Suspense } from 'react';
-import { DndProvider, useDrag, DragSourceMonitor } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { 
+  DndContext, 
+  useDraggable, 
+  useDroppable, 
+  DragEndEvent,
+  DragOverlay
+} from '@dnd-kit/core';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/Input';
@@ -87,8 +92,7 @@ interface GraphNode extends Entity {
   fy?: number | null;
   vx?: number;
   vy?: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any; // Allow arbitrary properties used by d3/force-graph
+  [key: string]: unknown; // Allow arbitrary properties used by d3/force-graph
 }
 
 interface GraphLink {
@@ -98,8 +102,7 @@ interface GraphLink {
   strength: number;
   color: string;
   width: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface Evidence {
@@ -107,15 +110,8 @@ interface Evidence {
   type: 'document' | 'image' | 'video' | 'email' | 'phone';
   filename: string;
   url?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+  [key: string]: unknown;
 }
-
-// Drag and Drop Item Types
-const ItemTypes = {
-  ENTITY: 'entity',
-  EVIDENCE: 'evidence'
-};
 
 // Entity Node Component
 const EntityNode: React.FC<{
@@ -123,14 +119,12 @@ const EntityNode: React.FC<{
   isSelected: boolean;
   onSelect: (entity: Entity) => void;
   onConnect: (entity: Entity) => void;
-}> = ({ entity, isSelected, onSelect, onConnect }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: ItemTypes.ENTITY,
-    item: entity,
-    collect: (monitor: DragSourceMonitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }));
+  isOverlay?: boolean;
+}> = ({ entity, isSelected, onSelect, onConnect, isOverlay }) => {
+  const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
+    id: `entity-source-${entity.id}`,
+    data: { type: 'entity', entity }
+  });
 
   const getEntityIcon = (type: string) => {
     switch (type) {
@@ -152,14 +146,28 @@ const EntityNode: React.FC<{
     return 'bg-green-100 text-green-800';
   };
 
+  if (isOverlay) {
+    return (
+      <div className={`
+        flex items-center gap-2 p-2 rounded-lg border bg-white shadow-lg
+        border-blue-500
+      `}>
+        {getEntityIcon(entity.type)}
+        <div className="font-medium text-sm">{entity.name}</div>
+      </div>
+    );
+  }
+
   return (
     <div
-      ref={drag as unknown as React.RefObject<HTMLDivElement>}
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
       className={`
-        flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-all
+        flex items-center gap-2 p-2 rounded-lg border cursor-grab transition-all
         ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white'}
         ${isDragging ? 'opacity-50' : 'opacity-100'}
-        hover:shadow-md
+        hover:shadow-md touch-none
       `}
       role="button"
       tabIndex={0}
@@ -192,15 +200,12 @@ const EntityNode: React.FC<{
 // Evidence Item Component
 const EvidenceItem: React.FC<{
   evidence: Evidence;
-  onDrag: (evidence: Evidence) => void;
-}> = ({ evidence, onDrag }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: ItemTypes.EVIDENCE,
-    item: evidence,
-    collect: (monitor: DragSourceMonitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }));
+  isOverlay?: boolean;
+}> = ({ evidence, isOverlay }) => {
+  const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
+    id: `evidence-source-${evidence.id}`,
+    data: { type: 'evidence', evidence }
+  });
 
   const getEvidenceIcon = (type: string) => {
     switch (type) {
@@ -213,29 +218,40 @@ const EvidenceItem: React.FC<{
     }
   };
 
+  if (isOverlay) {
+    return (
+      <div className="flex items-center gap-2 p-2 rounded border bg-white shadow-lg border-blue-500">
+        {getEvidenceIcon(evidence.type)}
+        <div className="font-medium text-sm">{evidence.filename}</div>
+      </div>
+    );
+  }
+
   return (
     <div
-      ref={drag as unknown as React.RefObject<HTMLDivElement>}
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
       className={`
         flex items-center gap-2 p-2 rounded border cursor-grab transition-all
         ${isDragging ? 'opacity-50' : 'opacity-100'}
-        hover:bg-gray-50
+        hover:bg-gray-50 touch-none
       `}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          // Dragging via keyboard is complex, but at least we make it focusable
-          console.log('Use mouse to drag');
-        }
-      }}
-      onClick={() => onDrag(evidence)}
     >
       {getEvidenceIcon(evidence.type)}
       <div className="flex-1 min-w-0">
         <div className="font-medium text-sm truncate">{evidence.filename}</div>
         <div className="text-xs text-gray-500">{evidence.type}</div>
       </div>
+    </div>
+  );
+};
+
+// Droppable Canvas Area
+const CanvasArea = ({ children, setNodeRef }: { children: React.ReactNode, setNodeRef: (node: HTMLElement | null) => void }) => {
+  return (
+    <div ref={setNodeRef} className="flex-1 relative h-full w-full">
+      {children}
     </div>
   );
 };
@@ -256,23 +272,25 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [showEvidence, setShowEvidence] = useState(false);
+  const [activeDragItem, setActiveDragItem] = useState<{type: 'entity' | 'evidence', item: Entity | Evidence} | null>(null);
+
   const evidence: Evidence[] = [
     { id: 'ev1', type: 'document', filename: 'Report.pdf', url: '#' },
     { id: 'ev2', type: 'image', filename: 'Evidence.jpg', url: '#' }
   ];
-  // graphData moved to useMemo
+
   const [zoom, setZoom] = useState(1);
   const [showEntityDialog, setShowEntityDialog] = useState(false);
   const [showRelationshipDialog, setShowRelationshipDialog] = useState(false);
 
-  // ForceGraph methods type definition
-
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fgRef = useRef<any>(null);
+  
+  // Dnd Context Hook for Droppable Area
+  const { setNodeRef } = useDroppable({
+    id: 'investigation-canvas',
+  });
 
-  // Collaboration features
-  // Collaboration features - strict destructuring to avoid unused vars
   useCollaboration(caseId);
 
   const getNodeColor = useCallback((entity: Entity) => {
@@ -315,8 +333,6 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
 
     return { nodes, links };
   }, [entities, relationships, getNodeColor, getLinkColor]);
-
-
 
   const handleEntitySelect = useCallback((entity: Entity) => {
     setSelectedEntity(entity);
@@ -406,8 +422,28 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
     }
   }, [onExport]);
 
+  const handleDragStart = (event: any) => {
+    setActiveDragItem(event.active.data.current);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveDragItem(null);
+    const { over, active } = event;
+
+    // Drop on Canvas
+    if (over && over.id === 'investigation-canvas') {
+       const data = active.data.current;
+       if (data && data.type === 'entity') {
+         // Check if entity is already in list (it is, since we drag from list)
+         console.log('Dropped entity on canvas', data.entity.name);
+       } else if (data && data.type === 'evidence') {
+         console.log('Dropped evidence on canvas', data.evidence.filename);
+       }
+    }
+  };
+
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="flex h-full bg-gray-50">
         {/* Left Sidebar - Entities & Tools */}
         <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
@@ -494,10 +530,6 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
                     <EvidenceItem
                       key={item.id}
                       evidence={item}
-                      onDrag={(evidence) => {
-                        // Handle evidence drag to canvas
-                        console.log('Evidence dragged:', evidence);
-                      }}
                     />
                   ))}
                 </div>
@@ -543,7 +575,7 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
           </div>
 
           {/* Force Graph Canvas */}
-          <div className="flex-1 relative">
+          <CanvasArea setNodeRef={setNodeRef}>
             <Suspense fallback={<div className="flex items-center justify-center h-full">Loading Graph...</div>}>
               <ForceGraph2D
                 ref={fgRef}
@@ -573,7 +605,7 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
                 d3VelocityDecay={0.3}
               />
             </Suspense>
-          </div>
+          </CanvasArea>
         </div>
 
         {/* Right Sidebar - Entity Details */}
@@ -703,8 +735,27 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
             />
           </DialogContent>
         </Dialog>
+
+        {/* Drag Overlay */}
+        <DragOverlay>
+           {activeDragItem && activeDragItem.type === 'entity' && (
+             <EntityNode 
+               entity={activeDragItem.item as Entity} 
+               isSelected={false} 
+               onSelect={() => {}} 
+               onConnect={() => {}}
+               isOverlay 
+             />
+           )}
+           {activeDragItem && activeDragItem.type === 'evidence' && (
+             <EvidenceItem 
+               evidence={activeDragItem.item as Evidence}
+               isOverlay
+             />
+           )}
+        </DragOverlay>
       </div>
-    </DndProvider>
+    </DndContext>
   );
 };
 

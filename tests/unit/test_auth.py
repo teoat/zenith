@@ -1,7 +1,11 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
+
 # tests/unit/test_auth.py
 import pytest
 from unittest.mock import Mock, patch
-from services.auth import AuthService, auth_service
+from backend.app.services.auth_service import AuthService, auth_service
 from core.database import User, UserRole
 
 

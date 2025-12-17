@@ -13,9 +13,9 @@ from typing import Any, Dict, List, Literal, Optional
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from app.services.audit_service import audit_service
-from app.services.auth_service import auth_service
-from app.services.backup_service import get_backup_manager
+from app.services.infrastructure.security.audit_service import audit_service
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.storage.backup_service import get_backup_manager
 from core.database import User
 
 logger = logging.getLogger(__name__)

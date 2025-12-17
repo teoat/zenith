@@ -7,7 +7,7 @@ from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.services.collaboration_service import (
+from app.services.integration.collaboration.collaboration_service import (
     CollaborationManager,
     get_collaboration_manager,
 )

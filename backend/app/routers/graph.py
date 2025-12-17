@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.services.auth_service import auth_service
+from app.services.infrastructure.auth_service import auth_service
 from app.services.graph_service import relationship_graph
 from app.services.metadata_correlation_service import MetadataCorrelationEngine
 from core.database import GraphSnapshot, Relationship, User, get_db

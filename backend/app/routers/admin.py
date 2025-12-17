@@ -3,14 +3,14 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.services.audit_service import audit_service
-from app.services.auth_service import auth_service
-from app.services.cache_service import (
+from app.services.infrastructure.security.audit_service import audit_service
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.cache_service import (
     clear_all_cache,
     clear_cache_namespace,
     get_cache_stats,
 )
-from app.services.database_service import db_service
+from app.services.infrastructure.storage.database_service import db_service
 from core.database import User
 
 logger = logging.getLogger(__name__)

@@ -20,14 +20,14 @@ from fastapi.responses import FileResponse
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.services.auth_service import auth_service
-from app.services.evidence_service import evidence_processor
+from app.services.infrastructure.auth_service import auth_service
+from app.services.intelligence.evidence_service import evidence_processor
 from app.services.search_service import evidence_search_index
 from core.database import Case, User, get_db
 
 # Provide a module-level alias `evidence_service` so tests can patch it
 try:
-    from app.services.evidence_service import evidence_service
+    from app.services.intelligence.evidence_service import evidence_service
 except Exception:
     evidence_service = None
 
@@ -203,7 +203,7 @@ async def upload_evidence(
     4. Indexes content for search
     """
     try:
-        from app.services.evidence_service import evidence_processor
+        from app.services.intelligence.evidence_service import evidence_processor
 
         # Validate case exists
         case = db.query(Case).filter(Case.id == case_id).first()

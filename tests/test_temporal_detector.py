@@ -2,10 +2,11 @@ import os
 import sys
 from datetime import datetime, timedelta
 
+sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('backend'))
 
-from core.database import create_tables, Transaction
-from services.temporal_detector import detect_burst
+from backend.core.database import create_tables, Transaction
+from backend.app.services.fraud_detection import detect_burst
 from core.database import create_engine_and_session, utc_now
 from test_config import setup_test_environment
 

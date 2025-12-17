@@ -42,7 +42,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         localStorage.setItem('userId', userId);
     }
 
-    return `${protocol}//${host}/api/v1/communication/sync/ws/${userId}`;
+    return `${protocol}//${host}/api/v1/sync/ws/${userId}`;
   }, [url]);
 
   const [isConnected, setIsConnected] = useState(false);

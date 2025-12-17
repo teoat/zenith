@@ -12,7 +12,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app.services.ai_service import get_ai_service
+from app.services.ai.ai_service import get_ai_service
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ router = APIRouter(
 )
 
 # Authentication Dependency
-from app.services.auth_service import auth_service
+from app.services.infrastructure.auth_service import auth_service
 from core.database import User
 
 # Request/Response Models

@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 from sqlalchemy.orm import Session
 
-from app.services.evidence_service import EvidenceProcessor, ProcessingResult
+from app.services.intelligence.evidence_service import EvidenceProcessor, ProcessingResult
 from core.database import get_db
 
 logger = logging.getLogger(__name__)

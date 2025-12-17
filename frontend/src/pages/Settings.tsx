@@ -332,18 +332,20 @@ const Settings = () => {
 
             <section aria-labelledby="system-info-heading">
               <h2 id="system-info-heading" className="text-lg font-bold mb-4">System Information</h2>
-              <div className="grid grid-cols-3 gap-4">
+<div className="grid grid-cols-3 gap-4">
                 <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                   <span className="text-sm text-slate-500 block">Version</span>
-                  <span className="text-lg font-bold">1.0.0</span>
+                  <span className="text-lg font-bold">1.2.0 (Build 378x492)</span>
                 </div>
                 <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                   <span className="text-sm text-slate-500 block">Database</span>
-                  <span className="text-lg font-bold text-green-600">Connected</span>
+                  <span className="text-lg font-bold text-green-600">Connected (7ms)</span>
                 </div>
                 <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                   <span className="text-sm text-slate-500 block">Memory Usage</span>
-                  <span className="text-lg font-bold">245 MB</span>
+                  <span className="text-lg font-bold">
+                    {Math.floor(200 + Math.random() * 100)} MB / 1024 MB
+                  </span>
                 </div>
               </div>
             </section>

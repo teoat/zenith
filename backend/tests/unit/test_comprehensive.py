@@ -8,10 +8,10 @@ from fastapi import HTTPException
 from main import app
 from starlette.testclient import TestClient
 
-from app.services.auth_service import auth_service
-from app.services.database_service import db_service
-from app.services.fraud_service import FraudDetectionService
-from app.services.monitoring_service import monitoring_service
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.storage.database_service import db_service
+from app.services.fraud.fraud_service import FraudDetectionService
+from app.services.infrastructure.monitoring_service import monitoring_service
 from core.config import Settings
 from core.database import Case, CaseStatus, Evidence, Transaction, User
 from core.logging import log_error, log_request, log_security_event, setup_logging

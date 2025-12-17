@@ -382,7 +382,7 @@ async def get_available_backends():
         for backend_name, backend_info in backends.items():
             try:
                 if backend_name == "sqlite":
-                    from app.services.ai_service import AIService
+                    from app.services.ai.ai_service import AIService
 
                     VectorStore = AIService
                     availability[backend_name] = True

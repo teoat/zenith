@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 
 # Import from the new standard service locations
-from app.services.local_rag_engine import rag_engine
-from app.services.multimodal_analyzer import multimodal_analyzer
-from app.services.red_team_persona import red_team_service
+from app.services.ai.local_rag_engine import rag_engine
+from app.services.ai.multimodal.multimodal_analyzer import multimodal_analyzer
+from app.services.workflow.red_team_persona import red_team_service
 from core.database import get_db
 
 router = APIRouter()

@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 
-from app.services.auth_service import auth_service
+from app.services.infrastructure.auth_service import auth_service
 from app.services.notification_service import (
     NotificationChannel,
     NotificationPriority,

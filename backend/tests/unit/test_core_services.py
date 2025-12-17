@@ -14,7 +14,7 @@ class TestAuthService:
 
     def test_password_hashing(self):
         """Test password hashing functionality"""
-        from app.services.auth_service import AuthService
+        from app.services.infrastructure.auth_service import AuthService
 
         service = AuthService()
 
@@ -26,7 +26,7 @@ class TestAuthService:
 
     def test_password_verification_fails_for_wrong_password(self):
         """Test that wrong passwords don't verify"""
-        from app.services.auth_service import AuthService
+        from app.services.infrastructure.auth_service import AuthService
 
         service = AuthService()
 
@@ -37,7 +37,7 @@ class TestAuthService:
 
     def test_token_generation(self):
         """Test JWT token generation"""
-        from app.services.auth_service import AuthService
+        from app.services.infrastructure.auth_service import AuthService
 
         service = AuthService()
 
@@ -51,7 +51,7 @@ class TestAuthService:
 
     def test_token_decoding(self):
         """Test JWT token decoding"""
-        from app.services.auth_service import AuthService
+        from app.services.infrastructure.auth_service import AuthService
 
         service = AuthService()
 
@@ -65,7 +65,7 @@ class TestAuthService:
 
     def test_mock_token_handling(self):
         """Test that mock tokens are handled specially"""
-        from app.services.auth_service import AuthService
+        from app.services.infrastructure.auth_service import AuthService
 
         service = AuthService()
 
@@ -77,7 +77,7 @@ class TestAuthService:
 
     def test_refresh_token_creation(self):
         """Test refresh token creation"""
-        from app.services.auth_service import AuthService
+        from app.services.infrastructure.auth_service import AuthService
 
         service = AuthService()
 
@@ -273,13 +273,13 @@ class TestDatabaseService:
 
     def test_service_instantiation(self):
         """Test database service can be imported"""
-        from app.services.database_service import db_service
+        from app.services.infrastructure.storage.database_service import db_service
 
         assert db_service is not None
 
     def test_get_db_session(self):
         """Test getting database session"""
-        from app.services.database_service import db_service
+        from app.services.infrastructure.storage.database_service import db_service
 
         # Should have a method to get session
         assert hasattr(db_service, "get_cases") or hasattr(db_service, "create_case")
@@ -290,7 +290,7 @@ class TestMonitoringService:
 
     def test_service_initialization(self):
         """Test monitoring service initialization"""
-        from app.services.monitoring_service import MonitoringService
+        from app.services.infrastructure.monitoring_service import MonitoringService
 
         service = MonitoringService()
 
@@ -298,7 +298,7 @@ class TestMonitoringService:
 
     def test_record_error(self):
         """Test error recording"""
-        from app.services.monitoring_service import MonitoringService
+        from app.services.infrastructure.monitoring_service import MonitoringService
 
         service = MonitoringService()
 
@@ -309,7 +309,7 @@ class TestMonitoringService:
 
     def test_get_health_metrics(self):
         """Test getting health metrics"""
-        from app.services.monitoring_service import MonitoringService
+        from app.services.infrastructure.monitoring_service import MonitoringService
 
         service = MonitoringService()
 
@@ -377,7 +377,7 @@ class TestSyncService:
 
     def test_service_instantiation(self):
         """Test sync service initialization"""
-        from app.services.sync_service import SyncService
+        from app.services.integration.collaboration.sync_service import SyncService
 
         service = SyncService()
 
@@ -440,7 +440,7 @@ class TestAIFraudDetector:
 
     def test_service_instantiation(self):
         """Test AI fraud detector initialization"""
-        from app.services.ai_fraud_detector import AIFraudDetector
+        from app.services.ai.ai_fraud_detector import AIFraudDetector
 
         detector = AIFraudDetector()
 
@@ -448,7 +448,7 @@ class TestAIFraudDetector:
 
     def test_prediction_method_exists(self):
         """Test prediction method exists"""
-        from app.services.ai_fraud_detector import AIFraudDetector
+        from app.services.ai.ai_fraud_detector import AIFraudDetector
 
         detector = AIFraudDetector()
 
@@ -497,13 +497,13 @@ class TestServiceImports:
 
     def test_auth_service_import(self):
         """Test auth service import"""
-        from app.services.auth_service import AuthService
+        from app.services.infrastructure.auth_service import AuthService
 
         assert AuthService is not None
 
     def test_database_service_import(self):
         """Test database service import"""
-        from app.services.database_service import DatabaseService
+        from app.services.infrastructure.storage.database_service import DatabaseService
 
         assert DatabaseService is not None
 
@@ -515,13 +515,13 @@ class TestServiceImports:
 
     def test_monitoring_service_import(self):
         """Test monitoring service import"""
-        from app.services.monitoring_service import MonitoringService
+        from app.services.infrastructure.monitoring_service import MonitoringService
 
         assert MonitoringService is not None
 
     def test_sync_service_import(self):
         """Test sync service import"""
-        from app.services.sync_service import SyncService
+        from app.services.integration.collaboration.sync_service import SyncService
 
         assert SyncService is not None
 
@@ -551,6 +551,6 @@ class TestServiceImports:
 
     def test_ai_fraud_detector_import(self):
         """Test AI fraud detector import"""
-        from app.services.ai_fraud_detector import AIFraudDetector
+        from app.services.ai.ai_fraud_detector import AIFraudDetector
 
         assert AIFraudDetector is not None

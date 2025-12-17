@@ -3,18 +3,14 @@ import sys
 from dotenv import load_dotenv
 from test_config import setup_test_environment
 
-# Ensure backend package path is importable when running tests from project root
-sys.path.insert(0, os.path.abspath('backend'))
-
 load_dotenv()
 setup_test_environment()
 
 from fastapi.testclient import TestClient
 from fastapi import FastAPI
 
-# Import the onboarding router directly and mount it on a lightweight test app
-from app.routers.onboarding import router as onboarding_router
-from backend.core.database import create_tables
+from backend.app.routers.onboarding import router as onboarding_router
+from backend.core.database import create_tables, RookieChecklist
 
 # Create DB tables for tests
 create_tables()
@@ -38,3 +34,17 @@ def test_submit_rookie_checklist():
     assert r.status_code == 200
     body = r.json()
     assert body.get('status') == 'accepted'
+
+def test_submit_rookie_checklist_no_items():
+    payload = {'user': 'test@example.com', 'items': []}
+    r = client.post('/api/v1/onboarding/rookie-checklist', json=payload)
+    assert r.status_code == 422
+    body = r.json()
+    assert 'items required' in body['detail']
+
+def test_submit_rookie_checklist_invalid_email():
+    payload = {'user': 'not-an-email', 'items': ['verify_email']}
+    r = client.post('/api/v1/onboarding/rookie-checklist', json=payload)
+    assert r.status_code == 422
+    body = r.json()
+    assert 'invalid email' in body['detail']

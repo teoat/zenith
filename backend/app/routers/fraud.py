@@ -6,8 +6,8 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app.services.auth_service import auth_service
-from app.services.fraud_service import FraudDetectionService
+from app.services.infrastructure.auth_service import auth_service
+from app.services.fraud.fraud_service import FraudDetectionService
 from core.database import get_db
 
 logger = logging.getLogger(__name__)

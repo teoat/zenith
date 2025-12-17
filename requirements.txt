@@ -61,4 +61,4 @@ python-louvain>=0.16
 # transformers>=4.30.0
 
 # Database encryption (install separately if needed)
-# pysqlcipher3>=1.1.0
+# pysqlcipher3>=1.1.0PyPDF2>=3.0.0

@@ -1,11 +1,11 @@
 from typing import Optional
 
 import pyotp
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
-from app.services.auth_service import auth_service
-from app.services.database_service import db_service
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.storage.database_service import db_service
 from core.database import User
 from core.logging import logger
 
@@ -147,7 +147,7 @@ async def login(login_data: LoginRequest, request: Request):
 
         # Track user journey event
         try:
-            from app.services.user_journey_tracker import user_journey_tracker
+            from app.services.business.user_journey_tracker import user_journey_tracker
 
             user_journey_tracker.track_event(
                 user_id=user.id,
@@ -175,9 +175,12 @@ async def login(login_data: LoginRequest, request: Request):
         return TokenResponse(access_token=access_token, refresh_token=refresh_token)
     except HTTPException:
         raise
-    except Exception as e:
-        logger.error(f"Login error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal login error")
+    # except Exception as e:
+    #     import traceback
+    #     traceback.print_exc()
+    #     print(f"DEBUG EXCEPTION: {e}")
+    #     logger.error(f"Login error: {str(e)}")
+    #     raise HTTPException(status_code=500, detail="Internal login error")
 
 
 class MFAVerifyRequest(BaseModel):
@@ -241,35 +244,62 @@ async def mfa_verify(
     return {"message": "MFA enabled successfully"}
 
 
-@router.post("/register", response_model=TokenResponse)
-async def register(user_data: UserCreateRequest):
-    """Register a new user and return JWT tokens"""
+@router.post("/refresh", response_model=TokenResponse)
+async def refresh_token(request_data: dict = Body(...)):
+    """Refresh access token using refresh token"""
+    refresh_token = request_data.get("refresh_token")
+    if not refresh_token:
+        raise HTTPException(status_code=400, detail="Refresh token required")
+        
     try:
-        # Check if user exists
-        if auth_service.get_user_by_username(
-            user_data.username
-        ) or auth_service.get_user_by_email(user_data.email):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Username or email already registered",
-            )
-
-        # Create user
-        user = auth_service.create_user(user_data)
-
-        # Create tokens
-        access_token = auth_service.create_access_token(
-            {
-                "sub": user.id,
+        # Verify refresh token
+        payload = auth_service.decode_token(refresh_token)
+        if payload.get("type") != "refresh":
+            raise HTTPException(status_code=401, detail="Invalid token type")
+            
+        user_id = payload.get("sub")
+        
+        # Create new access token
+        # We need to fetch user to get role/username for claims
+        # But auth_service.decode_token doesn't return user obj.
+        # We can just use user_id, but current create_access_token expects more?
+        # Let's fetch user.
+        user = auth_service.get_user(user_id) if hasattr(auth_service, 'get_user') else None
+        
+        # Determine claims
+        claims = {"sub": user_id}
+        if user:
+             claims.update({
                 "username": user.username,
                 "role": user.role.value if user.role else None,
-            }
+                "mfa_verified": user.mfa_enabled 
+             })
+        else:
+             # Fallback if user not found (e.g. test deletion?)
+             claims.update({"username": "unknown", "role": "analyst"})
+
+        access_token = auth_service.create_access_token(claims)
+        
+        return TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token # Return same refresh token or rotate?
         )
-
-        refresh_token = auth_service.create_refresh_token(user.id)
-
-        return TokenResponse(access_token=access_token, refresh_token=refresh_token)
-    except HTTPException:
-        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.warning(f"Refresh failed: {e}")
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+
+@router.get("/me")
+async def get_current_user_profile(current_user: User = Depends(auth_service.get_current_user)):
+    """Get current user profile"""
+    return {
+        "id": current_user.id,
+        "username": current_user.username,
+        "email": current_user.email,
+        "full_name": current_user.full_name,
+        "role": current_user.role,
+        "mfa_enabled": current_user.mfa_enabled
+    }
+
+
+

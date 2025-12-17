@@ -1,0 +1,20 @@
+{
+  "name": "fraud_metrics_widget",
+  "version": "1.0.0",
+  "namespace": "378x492/ui/fraud_metrics_widget",
+  "description": "Dashboard widget configuration for displaying fraud trends",
+  "author": "378x492 Team",
+  "entry_point": "plugin.py:FraudMetricsWidgetPlugin",
+  "dependencies": {},
+  "capabilities": ["ui_widget", "dashboard"],
+  "config_schema": {
+    "refresh_interval": {
+      "type": "integer",
+      "default": 300
+    },
+    "chart_type": {
+        "type": "string",
+        "default": "line"
+    }
+  }
+}

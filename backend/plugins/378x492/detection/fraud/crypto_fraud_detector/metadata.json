@@ -1,0 +1,20 @@
+{
+  "name": "crypto_fraud_detector",
+  "version": "1.0.0",
+  "namespace": "378x492/detection/fraud/crypto_fraud_detector",
+  "description": "Detects fraud in cryptocurrency transactions",
+  "author": "378x492 Team",
+  "entry_point": "plugin.py:CryptoFraudDetectorPlugin",
+  "dependencies": {},
+  "capabilities": ["fraud_detection"],
+  "config_schema": {
+    "threshold": {
+      "type": "number",
+      "default": 0.75
+    },
+    "mixer_detection_enabled": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

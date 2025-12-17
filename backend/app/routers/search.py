@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.services.ai_service import ai_service
+from app.services.ai.ai_service import ai_service
 from app.services.search_service import evidence_search_index
 
 vector_store = ai_service.vector_store

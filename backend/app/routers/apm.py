@@ -6,14 +6,14 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app.services.apm_service import (
+from app.services.infrastructure.apm_service import (
     create_alert,
     finish_span,
     get_apm_summary,
     record_metric,
     start_span,
 )
-from app.services.auth_service import auth_service
+from app.services.infrastructure.auth_service import auth_service
 from core.database import User, get_db
 
 logger = logging.getLogger(__name__)
@@ -597,7 +597,7 @@ async def get_dashboard_data():
             record_metric,
             start_span,
         )
-        from app.services.auth_service import auth_service
+        from app.services.infrastructure.auth_service import auth_service
         from core.database import User, get_db
 
         logger = logging.getLogger(__name__)

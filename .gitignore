@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 # Node
 node_modules/
 
@@ -41,3 +42,6 @@ COMPREHENSIVE_DIAGNOSTIC_REPORT_*.md
 /.idea/
 .vscode/
 .DS_Store
+=======
+node_modules
+>>>>>>> Stashed changes

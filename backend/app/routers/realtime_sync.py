@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 
-from app.services.sync_service import CRDTDocument, sync_manager
+from app.services.integration.collaboration.sync_service import CRDTDocument, sync_manager
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/sync", tags=["realtime-sync"])

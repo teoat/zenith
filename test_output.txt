@@ -1,0 +1,34 @@
+python-dotenv could not parse statement starting at line 5
+python-dotenv could not parse statement starting at line 6
+python-dotenv could not parse statement starting at line 7
+python-dotenv could not parse statement starting at line 8
+python-dotenv could not parse statement starting at line 9
+python-dotenv could not parse statement starting at line 11
+python-dotenv could not parse statement starting at line 12
+python-dotenv could not parse statement starting at line 14
+python-dotenv could not parse statement starting at line 15
+python-dotenv could not parse statement starting at line 17
+python-dotenv could not parse statement starting at line 18
+python-dotenv could not parse statement starting at line 20
+python-dotenv could not parse statement starting at line 24
+python-dotenv could not parse statement starting at line 26
+python-dotenv could not parse statement starting at line 27
+python-dotenv could not parse statement starting at line 28
+python-dotenv could not parse statement starting at line 32
+python-dotenv could not parse statement starting at line 34
+python-dotenv could not parse statement starting at line 35
+python-dotenv could not parse statement starting at line 36
+python-dotenv could not parse statement starting at line 37
+python-dotenv could not parse statement starting at line 38
+python-dotenv could not parse statement starting at line 39
+python-dotenv could not parse statement starting at line 40
+ImportError while loading conftest '/Users/Arief/Desktop/378x492/backend/tests/conftest.py'.
+backend/tests/conftest.py:24: in <module>
+    from main import app
+backend/main.py:24: in <module>
+    from app.routers.auth import router as auth_router
+backend/app/routers/auth.py:4: in <module>
+    from app.services.auth_service import auth_service
+app/services/auth_service.py:8: in <module>
+    @dataclass
+E   NameError: name 'dataclass' is not defined

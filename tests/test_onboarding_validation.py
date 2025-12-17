@@ -1,18 +1,15 @@
 import os
 import sys
-
-# Ensure backend path
-sys.path.insert(0, os.path.abspath('backend'))
-
-from fastapi.testclient import TestClient
-from fastapi import FastAPI
-from app.routers.onboarding import router as onboarding_router
-from core.database import create_tables
 from dotenv import load_dotenv
 from test_config import setup_test_environment
 
 load_dotenv()  # load .env if present
 setup_test_environment()
+
+from fastapi.testclient import TestClient
+from fastapi import FastAPI
+from backend.app.routers.onboarding import router as onboarding_router
+from backend.core.database import create_tables, RookieChecklist
 create_tables()
 
 

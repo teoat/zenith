@@ -2,7 +2,7 @@ from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.services.database_service import db_service
+from app.services.infrastructure.storage.database_service import db_service
 
 router = APIRouter()
 

@@ -6,10 +6,10 @@ from pydantic import BaseModel
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.services.auth_service import auth_service
-from app.services.database_service import db_service
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.storage.database_service import db_service
 from app.services.geocoding_service import geocode_transaction_location
-from app.services.monitoring_service import monitoring_service
+from app.services.infrastructure.monitoring_service import monitoring_service
 from core.database import Case, Transaction, User, get_db
 
 router = APIRouter()

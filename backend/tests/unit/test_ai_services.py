@@ -131,7 +131,7 @@ class TestLocalRAG:
     def test_service_instantiation(self):
         """Test service instantiation"""
         try:
-            from app.services.local_rag_engine import LocalRAGEngine
+            from app.services.ai.local_rag_engine import LocalRAGEngine
 
             engine = LocalRAGEngine()
             assert engine is not None
@@ -141,7 +141,7 @@ class TestLocalRAG:
     def test_search_method_exists(self):
         """Test search method exists"""
         try:
-            from app.services.local_rag_engine import LocalRAGEngine
+            from app.services.ai.local_rag_engine import LocalRAGEngine
 
             engine = LocalRAGEngine()
 

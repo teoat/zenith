@@ -93,9 +93,20 @@ const Dashboard: React.FC = () => {
   // Use React Query hook
   const { data: metrics, isLoading, error } = useDashboardMetrics();
 
-  if (isLoading) return <div className="p-6"><LoadingState text="Loading Intelligence Dashboard..." /></div>;
-  if (error) return <div className="p-6"><ErrorMessage error={error.message} /></div>;
-
+  // Calculate volume data before conditional returns
+  const volumeData = React.useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((metrics as any)?.volumeTrend) return (metrics as any).volumeTrend;
+    return Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      return {
+        date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        // Deterministic pseudo-random volume
+        volume: 2000 + Math.floor(Math.abs(Math.sin(i + 1) * 1500))
+      };
+    });
+  }, [metrics]);
 
   const getSystemStatus = () => {
       const health = metrics?.systemHealth || 0;
@@ -105,6 +116,9 @@ const Dashboard: React.FC = () => {
   };
 
   const status = getSystemStatus();
+
+  if (isLoading) return <div className="p-6"><LoadingState text="Loading Intelligence Dashboard..." /></div>;
+  if (error) return <div className="p-6"><ErrorMessage error={error.message} /></div>;
 
   return (
     <div className="p-6 space-y-6 bg-slate-50 dark:bg-slate-950 min-h-screen">
@@ -188,15 +202,7 @@ const Dashboard: React.FC = () => {
         {/* Volume Trends Chart */}
         <div className="lg:col-span-1 h-full">
           <React.Suspense fallback={<div className="h-full w-full bg-slate-100 dark:bg-slate-800 animate-pulse rounded-xl" />}>
-             <VolumeChart data={[
-               { date: 'Jan 1', volume: 4000 },
-               { date: 'Jan 5', volume: 3000 },
-               { date: 'Jan 10', volume: 2000 },
-               { date: 'Jan 15', volume: 2780 },
-               { date: 'Jan 20', volume: 1890 },
-               { date: 'Jan 25', volume: 2390 },
-               { date: 'Jan 30', volume: 3490 },
-             ]} />
+<VolumeChart data={volumeData} />
           </React.Suspense>
         </div>
 

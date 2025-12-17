@@ -1,0 +1,20 @@
+{
+  "name": "typology_analysis",
+  "version": "1.0.0",
+  "namespace": "378x492/intelligence/typology_analysis",
+  "description": "Analyzes cases against known fraud typologies using semantic search",
+  "author": "378x492 Team",
+  "entry_point": "plugin.py:TypologyAnalysisPlugin",
+  "dependencies": {},
+  "capabilities": ["intelligence", "case_analysis"],
+  "config_schema": {
+    "similarity_threshold": {
+      "type": "number",
+      "default": 0.3
+    },
+    "limit": {
+        "type": "integer",
+        "default": 3
+    }
+  }
+}

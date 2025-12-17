@@ -1,12 +1,26 @@
 // Header component - React is auto-imported in JSX transform
-import { Bell, Search, User } from 'lucide-react';
+import { Bell, Search, User, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
 import OfflineIndicator from '@/components/OfflineIndicator';
+import { useSidebar } from '@/store/globalStore';
 
 export const Header = () => {
+  const { collapsed, setCollapsed } = useSidebar();
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="hidden md:flex" 
+        onClick={() => setCollapsed(!collapsed)}
+        aria-label={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+      >
+        <Menu className="h-5 w-5" />
+      </Button>
+
+
       <div className="w-full flex-1">
         <form>
           <div className="relative">

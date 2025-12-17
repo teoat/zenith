@@ -1,17 +1,17 @@
 # main.py
+import json
 import os
-import time
 from contextlib import asynccontextmanager
+import asyncio
 
 import uvicorn
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import FileResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
@@ -24,9 +24,7 @@ load_dotenv()
 
 import traceback
 
-from fastapi import Depends, HTTPException
-from sqlalchemy import text
-from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
 from app.routers import advanced_ai
 from app.routers.admin import router as admin_router
@@ -55,25 +53,26 @@ from app.routers.search import router as search_router
 from app.routers.semantic_search import router as semantic_search_router
 from app.routers.stats import router as stats_router
 from app.routers.users import router as users_router
-from app.services.ai_training_service import training_pipeline
-from app.services.apm_service import APMMiddleware, apm_service
-from app.services.audit_service import audit_service
-from app.services.collaboration_service import collaboration_manager
-from app.services.monitoring_service import (
+from app.services.infrastructure.apm_service import APMMiddleware
+from app.services.infrastructure.security.audit_service import audit_service
+from app.services.integration.collaboration.collaboration_service import collaboration_manager
+from app.services.infrastructure.monitoring_service import (
     create_monitoring_middleware,
     monitoring_service,
 )
-from app.services.performance_monitor import performance_monitor
-from app.services.sync_service import sync_manager
-from app.services.user_journey_tracker import user_journey_tracker
-from core.database import create_tables, get_db
+from app.services.infrastructure.performance_monitor import performance_monitor
+from core.database import create_tables
 from core.logging import log_error, log_request, logger
-from core.metrics import PrometheusMiddleware
 from core.performance import PerformanceMonitoringMiddleware
 from core.api_documentation import setup_api_documentation
 from core.sentry_config import init_sentry
 from core.validation import InputValidationMiddleware
 from middleware.request_id import RequestIDMiddleware
+
+# Import new models to ensure registration with Base.metadata
+from core.plugin_system import models as plugin_models
+from core.feature_flags import models as feature_flag_models
+from core.eav import models as eav_models
 
 
 # Utility function for safe service calls with graceful degradation
@@ -363,9 +362,7 @@ async def request_logging_middleware(request: Request, call_next):
     import time
     import uuid
 
-    from app.services.audit_service import audit_service
-
-    from app.services.audit_service import audit_service
+    from app.services.infrastructure.security.audit_service import audit_service
 
     # Use existing request ID from RequestIDMiddleware, or fallback
     request_id = getattr(request.state, "request_id", str(uuid.uuid4())[:8])

@@ -1,36 +1,47 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, Settings, ShieldAlert, BarChart3, Database, WifiOff } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, Settings, ShieldAlert, BarChart3, Database, WifiOff, Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useSidebar } from '@/store/globalStore';
 
-const NavItem = ({ to, icon: Icon, children }: { to: string; icon: React.ElementType; children: React.ReactNode }) => (
-  <NavLink
-    to={to}
-    className={({ isActive }) =>
-      cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:text-primary",
-        isActive
-          ? "bg-muted text-primary"
-          : "text-muted-foreground hover:bg-muted/50"
-      )
-    }
-  >
-    <Icon className="h-4 w-4" />
-    {children}
-  </NavLink>
-);
+const NavItem = ({ to, icon: Icon, children }: { to: string; icon: React.ElementType; children: React.ReactNode }) => {
+  const { collapsed } = useSidebar();
+  
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        cn(
+          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:text-primary",
+          collapsed ? "justify-center px-2" : "",
+          isActive
+            ? "bg-muted text-primary"
+            : "text-muted-foreground hover:bg-muted/50"
+        )
+      }
+      title={typeof children === 'string' ? children : undefined}
+    >
+      <Icon className="h-4 w-4" />
+      {!collapsed && children}
+    </NavLink>
+  );
+};
 
 export const Sidebar = () => {
     const { isOnline } = useNetworkStatus();
+    const { collapsed } = useSidebar();
 
   return (
-    <div className="hidden border-r bg-muted/40 md:block w-[280px] h-full overflow-y-auto">
+    <div className={cn(
+        "hidden border-r bg-muted/40 md:block h-full overflow-y-auto transition-all duration-300",
+        collapsed ? "w-[60px]" : "w-[280px]"
+    )}>
       <div className="flex h-full max-h-screen flex-col gap-2">
-        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+        <div className={cn("flex h-14 items-center border-b px-4 lg:h-[60px]", collapsed ? "justify-center px-0" : "px-6")}>
             <div className="flex items-center gap-2 font-semibold">
               <ShieldAlert className="h-6 w-6 text-primary" />
-              <span className="">378x492 Fraud Detection</span>
+              {!collapsed && <span className="">378x492 Fraud</span>}
             </div>
         </div>
         <div className="flex-1">

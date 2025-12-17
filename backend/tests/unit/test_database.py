@@ -6,8 +6,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from sqlalchemy.orm import Session
 
-from app.services.auth_service import AuthService
-from app.services.database_service import DatabaseService
+from app.services.infrastructure.auth_service import AuthService
+from app.services.infrastructure.storage.database_service import DatabaseService
 from core.database import (
     Case,
     CaseActivity,

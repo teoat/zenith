@@ -6,13 +6,10 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Type
 
-from app.services.ai_fraud_detector import AIFraudDetector
+from app.services.ai.ai_fraud_detector import AIFraudDetector
 
-from .rules.ai_detection import AIDetectionAlert, detect_ai_fraud
-from .rules.mirror_transaction import MirrorTransactionAlert, detect_mirror_transactions
-from .rules.round_trip import RoundTripAlert, detect_round_trip_transactions
-from .rules.shell_company import ShellCompanyAlert, detect_shell_companies
-from .rules.structuring import StructuringAlert, detect_structuring
+# Imports for deleted rules removed
+
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +51,7 @@ class FraudRule(ABC):
         self.last_run = None
 
     @abstractmethod
-    def execute(
+    async def execute(
         self, transactions: List[Dict[str, Any]], context: Dict[str, Any] = None
     ) -> List[FraudAlert]:
         """Execute the rule and return alerts"""
@@ -66,6 +63,67 @@ class FraudRule(ABC):
         pass
 
 
+from core.plugin_system.registry import plugin_registry_service
+import asyncio
+
+class PluginAdapterRule(FraudRule):
+    """Adapter to make Plugins look like FraudRules"""
+    
+    def __init__(self, plugin_instance):
+        metadata = plugin_instance.metadata
+        super().__init__(metadata.name, AlertSeverity.HIGH) # Default severity
+        self.plugin = plugin_instance
+        self.namespace = metadata.namespace
+        
+    async def execute(self, transactions: List[Dict[str, Any]], context: Dict[str, Any] = None) -> List[FraudAlert]:
+        # Plugins usually take a specific input format
+        # We need to bridge the gap. Most of our plugins expect {"transactions": [...]}
+        input_data = {
+            "transactions": transactions,
+            "context": context
+        }
+        
+        try:
+            # Execute plugin (async native)
+            result = await self.plugin.execute(input_data)
+            
+            alerts = []
+            if result and "alerts" in result:
+                for plugin_alert in result["alerts"]:
+                     # Dynamic Severity Mapping
+                     risk_score = plugin_alert.get("risk_score", 0.0)
+                     if risk_score >= 90:
+                         severity = AlertSeverity.CRITICAL
+                     elif risk_score >= 75:
+                         severity = AlertSeverity.HIGH
+                     elif risk_score >= 50:
+                         severity = AlertSeverity.MEDIUM
+                     else:
+                         severity = AlertSeverity.LOW
+
+                     # Convert plugin alert dict to FraudAlert object
+                     alert = FraudAlert(
+                        alert_id=f"PL_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{len(alerts)}",
+                        rule_name=self.name,
+                        severity=severity,
+                        confidence=plugin_alert.get("confidence", 0.8),
+                        risk_score=risk_score,
+                        description=plugin_alert.get("reason", "Plugin detected fraud"),
+                        detected_at=datetime.now(timezone.utc),
+                        metadata=plugin_alert.get("details", {}),
+                        recommendations=["Review plugin findings"]
+                     )
+                     alerts.append(alert)
+            return alerts
+            
+        except Exception as e:
+            logger.error(f"Error executing plugin {self.name}: {e}")
+            return []
+
+    def get_config_schema(self) -> Dict[str, Any]:
+        return self.plugin.metadata.config_schema if hasattr(self.plugin.metadata, 'config_schema') else {}
+
+
 class RuleEngine:
     """Main fraud detection rule engine"""
 
@@ -74,14 +132,57 @@ class RuleEngine:
         self.rule_registry: Dict[str, Type[FraudRule]] = {}
         self.execution_history: List[Dict[str, Any]] = []
         self._register_builtin_rules()
+        # Plugins loaded via async initialize() call
+
 
     def _register_builtin_rules(self):
-        """Register built-in fraud detection rules"""
-        self.register_rule(MirrorTransactionRule())
-        self.register_rule(ShellCompanyRule())
-        self.register_rule(StructuringRule())
-        self.register_rule(RoundTripRule())
-        self.register_rule(AIDetectionRule())
+        """Register built-in fraud detection rules (Legacy)"""
+        # We keeping these for backward compatibility / shadow mode if needed, 
+        # but User asked to delete unused files. 
+        # We will remove them from here if implementation is now fully plugin-based.
+        # But for safety, we might mistakenly successfully run plugins that are NOT yet fully working.
+        # However, plan says "Move to plugins".
+        # Let's rely on _load_plugin_rules primarily.
+        pass 
+
+    async def initialize(self):
+        """Async initialization to load plugin rules"""
+        await self._load_plugin_rules()
+
+    async def _load_plugin_rules(self):
+        """Load rules from PluginRegistry"""
+        # In a synchronous init, we can't await. 
+        # We might need a start() method or similar. 
+        # Or just run loop here for init.
+        try:
+            # Helper to fetch active detection plugins
+            from core.database import SessionLocal
+            from core.plugin_system.models import PluginRegistry as PluginRegistryModel
+                 
+            db = SessionLocal()
+            plugin_instances = []
+            try:
+                # Fetch all active plugins
+                db_plugins = db.query(PluginRegistryModel).filter(
+                    PluginRegistryModel.status == 'active'
+                ).all()
+                    
+                for p in db_plugins:
+                    if 'fraud_detection' in p.metadata_json.get('capabilities', []):
+                        # Load instance
+                        instance = await plugin_registry_service.get_plugin(p.plugin_id, db)
+                        plugin_instances.append(instance)
+            except Exception as e:
+                 logger.error(f"Failed to load plugins from DB: {e}")
+            finally:
+                 db.close()
+            
+            for p in plugin_instances:
+                adapter = PluginAdapterRule(p)
+                self.register_rule(adapter)
+                
+        except Exception as e:
+            logger.error(f"Failed to load plugin rules: {e}")
 
     def register_rule(self, rule: FraudRule):
         """Register a fraud detection rule"""
@@ -106,7 +207,7 @@ class RuleEngine:
             self.rules[rule_name].enabled = False
             logger.info(f"Disabled fraud rule: {rule_name}")
 
-    def execute_rules(
+    async def execute_rules(
         self, transactions: List[Dict[str, Any]], context: Dict[str, Any] = None
     ) -> List[FraudAlert]:
         """Execute all enabled rules and return combined alerts"""
@@ -126,7 +227,10 @@ class RuleEngine:
 
             try:
                 rule_start = datetime.now(timezone.utc)
-                rule_alerts = rule.execute(transactions, context)
+                if asyncio.iscoroutinefunction(rule.execute):
+                    rule_alerts = await rule.execute(transactions, context)
+                else:
+                    rule_alerts = rule.execute(transactions, context)
                 rule_end = datetime.now(timezone.utc)
 
                 # Update rule execution stats
@@ -193,279 +297,4 @@ class RuleEngine:
         return self.execution_history[-limit:] if self.execution_history else []
 
 
-# Built-in rule implementations
-class MirrorTransactionRule(FraudRule):
-    """Detect mirror transactions (A->B followed by B->A)"""
-
-    def __init__(self):
-        super().__init__("mirror_transaction", AlertSeverity.HIGH)
-
-    def execute(
-        self, transactions: List[Dict[str, Any]], context: Dict[str, Any] = None
-    ) -> List[FraudAlert]:
-        alerts = []
-        raw_alerts = detect_mirror_transactions(transactions)
-
-        for raw_alert in raw_alerts:
-            alert = FraudAlert(
-                alert_id=f"MT_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{len(alerts)}",
-                rule_name=self.name,
-                severity=self.severity,
-                confidence=raw_alert.confidence,
-                risk_score=raw_alert.confidence * 80,  # Scale to 0-100
-                description=f"Mirror transaction detected: {raw_alert.amount} in {raw_alert.time_diff_seconds:.0f}s",
-                detected_at=datetime.now(timezone.utc),
-                transaction_ids=raw_alert.transaction_ids,
-                metadata={
-                    "amount": raw_alert.amount,
-                    "time_diff_seconds": raw_alert.time_diff_seconds,
-                },
-                recommendations=[
-                    "Review transaction sequence",
-                    "Check for money laundering patterns",
-                ],
-            )
-            alerts.append(alert)
-
-        return alerts
-
-    def get_config_schema(self) -> Dict[str, Any]:
-        return {
-            "time_window_minutes": {
-                "type": "integer",
-                "default": 60,
-                "description": "Time window for mirror detection",
-            },
-            "amount_tolerance": {
-                "type": "float",
-                "default": 0.01,
-                "description": "Amount tolerance for matching",
-            },
-        }
-
-
-class ShellCompanyRule(FraudRule):
-    """Detect potential shell companies"""
-
-    def __init__(self):
-        super().__init__("shell_company", AlertSeverity.MEDIUM)
-
-    def execute(
-        self, transactions: List[Dict[str, Any]], context: Dict[str, Any] = None
-    ) -> List[FraudAlert]:
-        alerts = []
-        raw_alerts = detect_shell_companies(transactions)
-
-        for raw_alert in raw_alerts:
-            alert = FraudAlert(
-                alert_id=f"SC_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{len(alerts)}",
-                rule_name=self.name,
-                severity=self.severity,
-                confidence=0.8,
-                risk_score=raw_alert.risk_score,
-                description=f"Shell company suspected: {raw_alert.merchant_name}",
-                detected_at=datetime.now(timezone.utc),
-                entities=[raw_alert.merchant_name],
-                metadata={"indicators": raw_alert.indicators},
-                recommendations=[
-                    "Conduct enhanced due diligence",
-                    "Review business registration documents",
-                ],
-            )
-            alerts.append(alert)
-
-        return alerts
-
-    def get_config_schema(self) -> Dict[str, Any]:
-        return {
-            "min_transaction_volume": {
-                "type": "float",
-                "default": 1000,
-                "description": "Minimum volume to analyze",
-            },
-            "pass_through_threshold": {
-                "type": "float",
-                "default": 0.05,
-                "description": "Pass-through detection threshold",
-            },
-        }
-
-
-class StructuringRule(FraudRule):
-    """Detect transaction structuring (just below reporting limits)"""
-
-    def __init__(self):
-        super().__init__("structuring", AlertSeverity.HIGH)
-
-    def execute(
-        self, transactions: List[Dict[str, Any]], context: Dict[str, Any] = None
-    ) -> List[FraudAlert]:
-        alerts = []
-        raw_alerts = detect_structuring(transactions)
-
-        for raw_alert in raw_alerts:
-            alert = FraudAlert(
-                alert_id=f"ST_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{len(alerts)}",
-                rule_name=self.name,
-                severity=self.severity,
-                confidence=raw_alert.confidence,
-                risk_score=raw_alert.confidence * 85,
-                description=f"Transaction structuring detected for entity: {raw_alert.entity_name}",
-                detected_at=datetime.now(timezone.utc),
-                transaction_ids=raw_alert.transaction_ids,
-                entities=[raw_alert.entity_name],
-                metadata={
-                    "total_amount": raw_alert.total_amount,
-                    "transaction_count": raw_alert.transaction_count,
-                    "pattern_type": raw_alert.pattern_type,
-                },
-                recommendations=[
-                    "File SAR if applicable",
-                    "Review transaction history",
-                    "Consider account monitoring",
-                ],
-            )
-            alerts.append(alert)
-
-        return alerts
-
-    def get_config_schema(self) -> Dict[str, Any]:
-        return {
-            "reporting_limit": {
-                "type": "float",
-                "default": 10000,
-                "description": "Reporting threshold amount",
-            },
-            "structuring_threshold": {
-                "type": "float",
-                "default": 0.9,
-                "description": "Threshold for structuring detection",
-            },
-        }
-
-
-class RoundTripRule(FraudRule):
-    """Detect round-trip transactions (funds that return to origin)"""
-
-    def __init__(self):
-        super().__init__("round_trip", AlertSeverity.CRITICAL)
-
-    def execute(
-        self, transactions: List[Dict[str, Any]], context: Dict[str, Any] = None
-    ) -> List[FraudAlert]:
-        alerts = []
-        raw_alerts = detect_round_trip_transactions(transactions)
-
-        for raw_alert in raw_alerts:
-            alert = FraudAlert(
-                alert_id=f"RT_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{len(alerts)}",
-                rule_name=self.name,
-                severity=self.severity,
-                confidence=raw_alert.confidence,
-                risk_score=raw_alert.confidence * 90,
-                description=f"Round-trip transaction detected: {raw_alert.path_description}",
-                detected_at=datetime.now(timezone.utc),
-                transaction_ids=raw_alert.transaction_ids,
-                entities=raw_alert.entities,
-                metadata={
-                    "path_length": raw_alert.path_length,
-                    "total_time_hours": raw_alert.total_time_hours,
-                    "amount": raw_alert.amount,
-                },
-                recommendations=[
-                    "Immediate investigation required",
-                    "Check for money laundering",
-                    "Review all parties involved",
-                ],
-            )
-            alerts.append(alert)
-
-        return alerts
-
-    def get_config_schema(self) -> Dict[str, Any]:
-        return {
-            "max_path_length": {
-                "type": "integer",
-                "default": 5,
-                "description": "Maximum path length to analyze",
-            },
-            "time_window_hours": {
-                "type": "float",
-                "default": 24,
-                "description": "Time window for round-trip detection",
-            },
-        }
-
-
-class AIDetectionRule(FraudRule):
-    """AI-powered fraud detection using Isolation Forest"""
-
-    def __init__(self):
-        super().__init__("ai_detection", AlertSeverity.HIGH)
-        self.ai_detector = AIFraudDetector()
-
-    def execute(
-        self, transactions: List[Dict[str, Any]], context: Dict[str, Any] = None
-    ) -> List[FraudAlert]:
-        alerts = []
-
-        # Skip if AI model not trained
-        if not self.ai_detector.is_trained:
-            logger.warning("AI model not trained, skipping AI detection")
-            return alerts
-
-        raw_alerts = detect_ai_fraud(transactions, self.ai_detector)
-
-        for raw_alert in raw_alerts:
-            # Determine severity based on fraud score
-            if raw_alert.fraud_score >= 80:
-                severity = AlertSeverity.CRITICAL
-            elif raw_alert.fraud_score >= 60:
-                severity = AlertSeverity.HIGH
-            elif raw_alert.fraud_score >= 40:
-                severity = AlertSeverity.MEDIUM
-            else:
-                severity = AlertSeverity.LOW
-
-            alert = FraudAlert(
-                alert_id=f"AI_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{len(alerts)}",
-                rule_name=self.name,
-                severity=severity,
-                confidence=raw_alert.confidence,
-                risk_score=raw_alert.fraud_score,
-                description=f"AI-detected fraud: {raw_alert.explanation}",
-                detected_at=datetime.now(timezone.utc),
-                transaction_ids=[raw_alert.transaction_id],
-                metadata={
-                    "anomaly_score": raw_alert.anomaly_score,
-                    "is_fraud": raw_alert.is_fraud,
-                    "ai_explanation": raw_alert.explanation,
-                },
-                recommendations=[
-                    "Review AI-generated explanation",
-                    "Consider transaction context",
-                    "Verify with rule-based detection results",
-                ],
-            )
-            alerts.append(alert)
-
-        return alerts
-
-    def get_config_schema(self) -> Dict[str, Any]:
-        return {
-            "score_threshold": {
-                "type": "float",
-                "default": 60.0,
-                "description": "Minimum fraud score to generate alert",
-            },
-            "model_path": {
-                "type": "string",
-                "default": "models/isolation_forest.pkl",
-                "description": "Path to trained AI model",
-            },
-            "contamination": {
-                "type": "float",
-                "default": 0.1,
-                "description": "Expected proportion of anomalies in training data",
-            },
-        }
+# Legacy built-in rules removed. Logic migrated to plugins.

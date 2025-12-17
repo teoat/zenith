@@ -21,6 +21,7 @@ spec2 = importlib.util.spec_from_file_location('core_database', db_path)
 core_database = importlib.util.module_from_spec(spec2)
 spec2.loader.exec_module(core_database)
 create_tables = getattr(core_database, 'create_tables')
+RookieChecklist = getattr(core_database, 'RookieChecklist')
 
 
 # Ensure a SQLCIPHER_KEY is set for test DB usage (development/test only)

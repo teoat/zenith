@@ -7,9 +7,9 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app.services.ai_service import ai_service
-from app.services.auth_service import auth_service
-from app.services.case_service import case_service
+from app.services.ai.ai_service import ai_service
+from app.services.infrastructure.auth_service import auth_service
+from app.services.business.case_service import case_service
 from core.database import Case, Entity, Transaction, User, get_db
 
 logger = logging.getLogger(__name__)

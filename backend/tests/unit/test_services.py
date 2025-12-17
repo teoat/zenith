@@ -5,11 +5,11 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from app.services.ai_service import AIService
+from app.services.ai.ai_service import AIService
 from app.services.fraud import AlertSeverity, FraudAlert
 from app.services.fraud_rules_engine import FraudRulesEngine
-from app.services.fraud_service import FraudDetectionService
-from app.services.monitoring_service import MonitoringService
+from app.services.fraud.fraud_service import FraudDetectionService
+from app.services.infrastructure.monitoring_service import MonitoringService
 
 
 class TestFraudDetectionService:

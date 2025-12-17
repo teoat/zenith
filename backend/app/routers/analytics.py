@@ -7,8 +7,8 @@ from pydantic import BaseModel
 from sqlalchemy import and_, func, text
 from sqlalchemy.orm import Session
 
-from app.services.auth_service import auth_service
-from app.services.database_service import db_service
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.storage.database_service import db_service
 from core.database import Case, Transaction, User, get_db
 
 logger = logging.getLogger(__name__)

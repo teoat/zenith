@@ -9,9 +9,8 @@ from starlette.testclient import TestClient
 
 # Ensure backend directory is at the front of sys.path to avoid import conflicts
 # with the root 'app' directory shims
-_backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _backend_dir not in sys.path:
-    sys.path.insert(0, _backend_dir)
+if os.path.abspath("backend") not in sys.path:
+    sys.path.insert(0, os.path.abspath("backend"))
 
 # Mock networkx if not present with proper __spec__
 mock_networkx = MagicMock()
@@ -44,24 +43,46 @@ from core.database import Base, get_db
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
 
-@pytest.fixture(scope="session")
-def test_user():
-    """Standard test user entity"""
+@pytest.fixture
+def test_user(db_session):
+    """Standard test user entity persisted in DB"""
     from core.database import User, UserRole
-
-    return User(
+    # Check if exists
+    existing = db_session.query(User).filter(User.username == "testuser").first()
+    if existing:
+        return existing
+        
+    user = User(
         id="test_user_id",
         username="testuser",
         email="test@example.com",
+        full_name="Test User",
         role=UserRole.ANALYST,
         is_active=True,
+        # Hash for "password123" (pbkdf2_sha256)
+        password_hash="$pbkdf2-sha256$29000$N2YJ..$..." # Mock hash or use auth_service
     )
+    # Use auth_service to hash properly if reachable
+    from app.services.infrastructure.auth_service import auth_service
+    user.password_hash = auth_service.hash_password("password123")
+    
+    db_session.add(user)
+    db_session.commit()
+    return user
 
 
-@pytest.fixture(scope="session")
-def auth_headers():
-    """Standard authorized headers"""
-    return {"Authorization": "Bearer test_token"}
+@pytest.fixture
+def auth_headers(test_user):
+    """Standard authorized headers with REAL token for test_user"""
+    from app.services.infrastructure.auth_service import auth_service
+    
+    role_val = test_user.role.value if hasattr(test_user.role, 'value') else test_user.role
+    token = auth_service.create_access_token({
+        "sub": test_user.id,
+        "username": test_user.username,
+        "role": role_val
+    })
+    return {"Authorization": f"Bearer {token}"}
 
 
 from sqlalchemy.pool import StaticPool
@@ -133,3 +154,19 @@ def client(db_session):
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(autouse=True)
+def patch_db_service(db_session):
+    """Patch db_service to use the test session"""
+    from app.services.infrastructure.storage.database_service import db_service
+    from contextlib import contextmanager
+
+    @contextmanager
+    def mock_get_db():
+        yield db_session
+
+    original_get_db = db_service.get_db
+    db_service.get_db = mock_get_db
+    yield
+    db_service.get_db = original_get_db
