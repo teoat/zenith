@@ -9,24 +9,44 @@ interface DialogProps {
 }
 
 export function Dialog({ open, onOpenChange, children }: DialogProps) {
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) {
+        onOpenChange?.(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('keydown', handleKeyDown);
+      // Small timeout to ensure render
+      setTimeout(() => contentRef.current?.focus(), 10);
+    }
+
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, onOpenChange]);
+
   if (!open) return null;
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black/50" 
         onClick={() => onOpenChange?.(false)}
-        role="button"
-        tabIndex={-1}
-        aria-label="Close dialog"
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            onOpenChange?.(false);
-          }
-        }}
+        aria-hidden="true"
       />
-      <div className="relative z-50 w-full max-w-lg">{children}</div>
+      {/* Dialog Content Wrapper */}
+      <div
+        ref={contentRef}
+        className="relative z-50 w-full max-w-lg outline-none"
+        role="dialog"
+        aria-modal="true"
+        tabIndex={-1}
+      >
+        {children}
+      </div>
     </div>
   );
 }
