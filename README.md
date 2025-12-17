@@ -1,5 +1,12 @@
 # 378x492 Fraud Detection API — Canonical Reference (Merged)
 
+> 🔍 **NEW: Comprehensive Diagnostic System**  
+> For platform health diagnostics, system investigation, and detailed scoring:
+> - 📖 **Guide**: [DIAGNOSTIC_SYSTEM_GUIDE.md](./DIAGNOSTIC_SYSTEM_GUIDE.md)
+> - ⚡ **Quick Ref**: [DIAGNOSTIC_QUICK_REFERENCE.md](./DIAGNOSTIC_QUICK_REFERENCE.md)
+> - 📊 **Summary**: [DIAGNOSTIC_IMPLEMENTATION_SUMMARY.md](./DIAGNOSTIC_IMPLEMENTATION_SUMMARY.md)
+> - 🚀 **Run**: `python comprehensive_diagnostic_suite.py`
+
 **Change impact (keep in sync):**
 - If endpoints/auth change, update `docs/api/openapi.yaml`, `docs/deployment/README.md`, and client snippets in `docs/guides/GETTING_STARTED.md`.
 - When adding/renaming endpoints, refresh any examples in `docs/tests` or API client docs, then run the docs link check workflow.
