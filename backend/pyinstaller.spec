@@ -12,10 +12,9 @@ datas = [
     # Only essential model files
     ('models/models.py', 'models'),
     ('models/evidence.py', 'models'),
-    # Only essential service files (from app/ directory)
-    ('../app/services/fraud.py', 'services'),
-    ('../app/services/auth_service.py', 'services'),
-    ('../app/services/search_service.py', 'services'),
+    # Only essential service files
+    ('../services/fraud_detection.py', 'services'),
+    ('../services/auth.py', 'services'),
 ]
 
 # Selective hidden imports - only what's actually needed

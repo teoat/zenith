@@ -1,4 +1,23 @@
-export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+// Safe access to environment variables for both Vite and Jest
+let apiBase = 'http://localhost:8000/api/v1';
+
+try {
+  // Hide import.meta from CJS parsers (Jest)
+  // This fails gracefully if import.meta is not allowed
+  const getMeta = new Function('try { return import.meta; } catch { return undefined; }');
+  const meta = getMeta();
+  
+  if (meta && meta.env && meta.env.VITE_API_URL) {
+    apiBase = meta.env.VITE_API_URL;
+  }
+} catch (_e) {
+  // Fallback for environments where new Function is restricted or fails
+  if (typeof process !== 'undefined' && process.env && process.env.VITE_API_URL) {
+    apiBase = process.env.VITE_API_URL;
+  }
+}
+
+export const API_BASE = apiBase;
 
 // Check if running in Electron
 export const isElectron = (): boolean => {

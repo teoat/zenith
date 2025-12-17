@@ -18,6 +18,19 @@ Object.defineProperty(window, 'import', {
   }
 });
 
+// ResizeObserver mock
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
+// TextEncoder/Decoder polyfill
+import { TextEncoder, TextDecoder } from 'util';
+global.TextEncoder = TextEncoder;
+// @ts-expect-error - TextDecoder type mismatch
+global.TextDecoder = TextDecoder;
+
 // Clean up after each test
 afterEach(() => {
   cleanup();

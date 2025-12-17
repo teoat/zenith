@@ -9,6 +9,13 @@ import React from 'react';
 // Mock fetch
 global.fetch = jest.fn();
 
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
 describe('useAuth Hook', () => {
   beforeEach(() => {
     jest.clearAllMocks();

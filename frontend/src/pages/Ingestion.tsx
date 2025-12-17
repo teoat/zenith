@@ -6,40 +6,20 @@ import ProgressBar from '../components/ui/ProgressBar';
 import { AccessibleButton } from '../components/ui/AccessibleButton';
 import { accessibilityManager } from '../lib/accessibility';
 import { api } from '../lib/api';
-import { TableData } from '../types/api'; // Import TableData
-import FacetedFilter from '../components/cases/FacetedFilter'; // Import FacetedFilter
+import { TableData } from '../types/api';
+import FacetedFilter from '../components/cases/FacetedFilter';
 import { useToast } from '../providers/ToastProvider';
-
-interface ProcessedFileData {
-  fileType: string;
-  sizeBytes: number;
-  ocrText?: string;
-  extracted_tables?: TableData[];
-  document_type?: string;
-  bank_statement_data?: Record<string, any>;
-  expense_data?: Record<string, any>;
-}
-
-interface ProcessingResult {
-  file: File;
-  status: 'pending' | 'processing' | 'completed' | 'error' | 'paused' | 'cancelled';
-  progress: number;
-  result?: ProcessedFileData;
-  error?: string;
-  isPaused: boolean;
-  isCancellable: boolean;
-  isSaved?: boolean;      // New: Indicates if saved to backend
-  savedId?: string;       // New: ID of the saved evidence
-}
+import { useIngestionStore, ProcessingResult } from '../stores/useIngestionStore';
 
 interface FilterOption {
   id: string;
   label: string;
   type: 'checkbox' | 'slider' | 'select' | 'search';
-  options?: { value: string; label: string }[]; // For checkbox/select
-  min?: number; // For slider
-  max?: number; // For slider
-  defaultValue?: any; // For slider or select
+  options?: { value: string; label: string }[];
+  min?: number;
+  max?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  defaultValue?: any;
 }
 
 const renderTable = (table: TableData) => (
@@ -70,11 +50,18 @@ const renderTable = (table: TableData) => (
 );
 
 const Ingestion: React.FC = () => {
-  const [files, setFiles] = useState<File[]>([]);
-  const [processingResults, setProcessingResults] = useState<ProcessingResult[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const {
+    files,
+    processingResults,
+    isProcessing,
+    filters,
+    addFiles,
+    setProcessingResults,
+    setIsProcessing,
+    setFilters
+  } = useIngestionStore();
+
   const [isSaving, setIsSaving] = useState(false);
-  const [filters, setFilters] = useState<Record<string, any>>({});
   const { addToast } = useToast();
 
   const filterOptions: FilterOption[] = [
@@ -118,21 +105,22 @@ const Ingestion: React.FC = () => {
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFilterChange = (newFilters: Record<string, any>) => {
     setFilters(newFilters);
   };
 
   const handleFilesDropped = (droppedFiles: File[]) => {
-    setFiles(prevFiles => [...prevFiles, ...droppedFiles]);
-    const newResults = droppedFiles.map(file => ({
+    addFiles(droppedFiles);
+    const newResults: ProcessingResult[] = droppedFiles.map(file => ({
       file,
-      status: 'pending' as const,
+      status: 'pending',
       progress: 0,
       isPaused: false,
       isCancellable: true,
       isSaved: false
     }));
-    setProcessingResults(prevResults => [...prevResults, ...newResults]);
+    setProcessingResults(prev => [...prev, ...newResults]);
     accessibilityManager.announce(`${droppedFiles.length} files selected for processing`, 'polite');
   };
 
@@ -246,7 +234,7 @@ const Ingestion: React.FC = () => {
                 } : res
             ));
             savedCount++;
-        } catch (_error) {
+        } catch (error) {
             console.error(`Failed to save ${item.file.name}:`, error);
             addToast(`Failed to save ${item.file.name}. It may already exist or backend is unavailable.`, 'error');
         }

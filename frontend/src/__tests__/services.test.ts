@@ -9,6 +9,7 @@ import { caseService } from '../services/cases';
 import { graphService } from '../services/graph';
 import { evidenceService } from '../services/evidence';
 import { monitoringService } from '../services/monitoring';
+import api from '../services/api';
 
 // Mock localStorage
 const localStorageMock = {
