@@ -192,19 +192,28 @@ class TemporalBurstDetector:
 
         window = timedelta(hours=self.burst_window_hours)
 
+        # Pre-parse dates once
+        txn_dates = []
+        for txn in transactions:
+            txn_dates.append(self._parse_date(txn.get("date", "")))
+
         # Sliding window analysis
-        for i, start_txn in enumerate(transactions):
-            start_time = self._parse_date(start_txn.get("date", ""))
-            end_time = start_time + window
+        # Using O(N) approach with two pointers
+        start_idx = 0
 
-            # Find transactions within window
-            window_txns = [
-                txn
-                for txn in transactions[i:]
-                if start_time <= self._parse_date(txn.get("date", "")) <= end_time
-            ]
+        # Iterate through transactions as the end of the window
+        for end_idx in range(len(transactions)):
+            current_time = txn_dates[end_idx]
 
-            if len(window_txns) >= self.burst_threshold:
+            # Shrink window from the left if it exceeds duration
+            while start_idx < end_idx and (current_time - txn_dates[start_idx]) > window:
+                start_idx += 1
+
+            # Check if current window size meets threshold
+            current_window_size = end_idx - start_idx + 1
+            if current_window_size >= self.burst_threshold:
+                window_txns = transactions[start_idx : end_idx + 1]
+
                 total_amount = sum(float(txn.get("amount", 0)) for txn in window_txns)
                 entity_name = window_txns[0].get("customer_name", entity_id)
 
