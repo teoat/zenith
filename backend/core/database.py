@@ -228,6 +228,8 @@ class Evidence(Base):
     ocr_text = Column(EncryptedString)
     extracted_text = Column(EncryptedString)
     sentiment_score = Column(Float, index=True)
+    fraud_amount = Column(Float, default=0.0)
+    customer_name = Column(EncryptedString, default="Unknown")
 
     # Quality and admissibility
     quality_score = Column(Float, default=0.0, index=True)

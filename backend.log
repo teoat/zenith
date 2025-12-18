@@ -379,3 +379,1289 @@ INFO:     Waiting for application startup.
 2025-12-18 19:22:46 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
 2025-12-18 19:22:46 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
 INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:00:28 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:00:28 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [27554]
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+Process SpawnProcess-19:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 29, in <module>
+    from app.routers import advanced_ai
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/advanced_ai.py", line 10, in <module>
+    from core.database import get_db
+ImportError: cannot import name 'get_db' from 'core.database' (/Users/Arief/Desktop/378x492/backend/core/database.py)
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+2025-12-18 20:00:39 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [34952]
+INFO:     Waiting for application startup.
+2025-12-18 20:00:40 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:00:40 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:00:40 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:00:40 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:00:40 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:00:41 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:00:41 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [34952]
+2025-12-18 20:00:44 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [34960]
+INFO:     Waiting for application startup.
+2025-12-18 20:00:45 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:00:45 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:00:45 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:00:45 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:00:45 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:00:51 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:00:51 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [34960]
+2025-12-18 20:00:56 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [34971]
+INFO:     Waiting for application startup.
+2025-12-18 20:00:57 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:00:57 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:00:57 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:00:57 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:00:57 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:03:59 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:03:59 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [34971]
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+2025-12-18 20:04:05 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [35226]
+INFO:     Waiting for application startup.
+2025-12-18 20:04:06 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:04:06 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:04:06 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:04:06 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:04:06 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:04:07 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:04:07 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [35226]
+2025-12-18 20:04:11 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [35242]
+INFO:     Waiting for application startup.
+2025-12-18 20:04:11 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:04:11 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:04:11 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:04:11 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:04:11 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'core/database.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:04:17 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:04:17 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [35242]
+2025-12-18 20:04:21 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [35263]
+INFO:     Waiting for application startup.
+2025-12-18 20:04:22 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:04:22 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:04:22 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:04:22 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:04:22 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/intelligence/evidence_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:07:59 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:07:59 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [35263]
+2025-12-18 20:08:03 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [35566]
+INFO:     Waiting for application startup.
+2025-12-18 20:08:04 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:08:04 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:08:04 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:08:04 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:08:04 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/intelligence/evidence_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:08:33 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:08:33 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [35566]
+WARNING:  WatchFiles detected changes in 'app/services/intelligence/evidence_service.py'. Reloading...
+2025-12-18 20:08:39 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [35676]
+INFO:     Waiting for application startup.
+2025-12-18 20:08:39 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:08:39 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:08:39 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:08:39 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:08:39 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/intelligence/evidence_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:09:20 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:09:20 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [35676]
+2025-12-18 20:09:25 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [35793]
+INFO:     Waiting for application startup.
+2025-12-18 20:09:26 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:09:26 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:09:26 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:09:26 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:09:26 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:10:24 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:10:24 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [35793]
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+2025-12-18 20:10:30 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [35893]
+INFO:     Waiting for application startup.
+2025-12-18 20:10:31 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:10:31 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:10:31 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:10:31 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:10:31 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:11:18 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:11:18 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [35893]
+2025-12-18 20:11:23 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [35961]
+INFO:     Waiting for application startup.
+2025-12-18 20:11:25 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:11:25 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:11:25 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:11:25 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:11:25 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'venv/lib/python3.12/site-packages/pymupdf/table.py', 'venv/lib/python3.12/site-packages/pymupdf/utils.py', 'venv/lib/python3.12/site-packages/pymupdf/extra.py', 'venv/lib/python3.12/site-packages/pymupdf/_apply_pages.py', 'venv/lib/python3.12/site-packages/pymupdf/__init__.py', 'venv/lib/python3.12/site-packages/pymupdf/_build.py', 'venv/lib/python3.12/site-packages/pymupdf/mupdf.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 20:27:05 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 20:27:05 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [35961]
+WARNING:  WatchFiles detected changes in 'venv/lib/python3.12/site-packages/pymupdf/utils.py', 'venv/lib/python3.12/site-packages/pymupdf/pymupdf.py', 'venv/lib/python3.12/site-packages/pymupdf/table.py', 'venv/lib/python3.12/site-packages/pymupdf/_apply_pages.py', 'venv/lib/python3.12/site-packages/fitz/utils.py', 'venv/lib/python3.12/site-packages/pymupdf/mupdf.py', 'venv/lib/python3.12/site-packages/pymupdf/_build.py', 'venv/lib/python3.12/site-packages/fitz/table.py', 'venv/lib/python3.12/site-packages/pymupdf/__main__.py', 'venv/lib/python3.12/site-packages/fitz/__init__.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'venv/lib/python3.12/site-packages/~ymupdf/_wxcolors.py', 'venv/lib/python3.12/site-packages/~ymupdf/_build.py', 'venv/lib/python3.12/site-packages/~ymupdf/utils.py', 'venv/lib/python3.12/site-packages/~ymupdf/__init__.py', 'venv/lib/python3.12/site-packages/~ymupdf/extra.py', 'venv/lib/python3.12/site-packages/~ymupdf/mupdf.py', 'venv/lib/python3.12/site-packages/~itz/table.py', 'venv/lib/python3.12/site-packages/~itz/utils.py', 'venv/lib/python3.12/site-packages/~itz/__init__.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'venv/lib/python3.12/site-packages/~ymupdf/__main__.py', 'venv/lib/python3.12/site-packages/~ymupdf/_apply_pages.py', 'venv/lib/python3.12/site-packages/~ymupdf/pymupdf.py', 'venv/lib/python3.12/site-packages/~ymupdf/table.py'. Reloading...
+2025-12-18 20:27:15 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [40526]
+INFO:     Waiting for application startup.
+2025-12-18 20:27:16 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 20:27:16 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 20:27:16 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 20:27:16 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 20:27:16 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'core/csrf_protection 2.py', 'core/api_documentation 2.py', 'test_endpoints 2.py', 'app/services/fraud_service 2.py', 'core/exceptions 2.py', 'core/config_profile 2.py', 'core/query_monitoring 2.py', 'core/cache_monitoring 2.py', 'config/production 2.py', 'core/performance 2.py', 'core/metrics 2.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 21:31:35 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 21:31:35 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [40526]
+2025-12-18 21:31:46 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [86417]
+INFO:     Waiting for application startup.
+2025-12-18 21:31:50 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 21:31:50 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 21:31:50 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 21:31:50 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 21:31:50 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'alembic/versions 2/004_add_audit_logs.py', 'alembic/versions 2/003_add_rookie_checklists.py', 'alembic/versions 2/001_metadata_rename.py', 'alembic/versions 2/002_add_fraud_alerts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 21:33:03 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 21:33:03 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [86417]
+WARNING:  WatchFiles detected changes in 'app/routers/ai.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'app/routers/ai.py'. Reloading...
+2025-12-18 21:33:21 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [90430]
+INFO:     Waiting for application startup.
+2025-12-18 21:33:22 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 21:33:22 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 21:33:22 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 21:33:22 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 21:33:22 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/search_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 21:40:51 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 21:40:51 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [90430]
+WARNING:  WatchFiles detected changes in 'app/services/search_service.py'. Reloading...
+2025-12-18 21:40:59 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [96019]
+INFO:     Waiting for application startup.
+2025-12-18 21:41:00 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 21:41:00 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 21:41:00 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 21:41:00 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 21:41:00 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/infrastructure/predictive_maintenance.py', 'app/services/infrastructure/cost_optimization_service.py', 'app/services/infrastructure/technical_debt_reduction_service.py', 'app/services/infrastructure/scalability_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:02:34 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:02:34 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [96019]
+2025-12-18 22:02:45 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [22189]
+INFO:     Waiting for application startup.
+2025-12-18 22:02:48 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:02:48 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:02:48 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:02:48 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:02:48 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/perfection/perfect_competitive_positioning_system.py', 'app/services/perfection/perfect_risk_management_system.py', 'app/services/perfection/perfect_systems_suite.py', 'app/services/perfection/perfect_innovation_readiness_system.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:03:12 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:03:12 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [22189]
+2025-12-18 22:03:19 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [23715]
+INFO:     Waiting for application startup.
+2025-12-18 22:03:20 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:03:20 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:03:20 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:03:20 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:03:20 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/infrastructure/predictive_maintenance.py', 'app/services/infrastructure/cost_optimization_service.py', 'app/services/infrastructure/technical_debt_reduction_service.py', 'app/services/infrastructure/scalability_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:05:31 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:05:31 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [23715]
+WARNING:  WatchFiles detected changes in 'app/services/infrastructure/predictive_maintenance.py', 'app/services/infrastructure/cost_optimization_service.py', 'app/services/infrastructure/technical_debt_reduction_service.py', 'app/services/infrastructure/scalability_service.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'app/services/perfection/perfect_competitive_positioning_system.py', 'app/services/perfection/perfect_risk_management_system.py', 'app/services/perfection/perfect_systems_suite.py', 'app/services/perfection/perfect_innovation_readiness_system.py'. Reloading...
+2025-12-18 22:05:43 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [24987]
+INFO:     Waiting for application startup.
+2025-12-18 22:05:45 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:05:45 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:05:45 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:05:45 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:05:45 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/intelligence/reconciliation_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:08:27 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:08:27 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [24987]
+2025-12-18 22:08:33 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [29092]
+INFO:     Waiting for application startup.
+2025-12-18 22:08:35 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:08:35 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:08:35 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:08:35 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:08:35 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/intelligence/timeline_reconstruction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:09:35 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:09:35 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [29092]
+2025-12-18 22:09:41 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [30193]
+INFO:     Waiting for application startup.
+2025-12-18 22:09:42 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:09:42 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:09:42 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:09:42 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:09:42 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/intelligence/behavior_engine.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:10:51 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:10:51 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [30193]
+2025-12-18 22:10:56 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [30474]
+INFO:     Waiting for application startup.
+2025-12-18 22:10:58 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:10:58 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:10:58 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:10:58 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:10:58 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/intelligence/timeline_reconstruction.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:11:54 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:11:54 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [30474]
+2025-12-18 22:11:59 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [30565]
+INFO:     Waiting for application startup.
+2025-12-18 22:12:00 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:12:00 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:12:00 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:12:00 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:12:00 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/ai/ai_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:28:20 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:28:20 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [30565]
+2025-12-18 22:28:25 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [37644]
+INFO:     Waiting for application startup.
+2025-12-18 22:28:26 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:28:26 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:28:26 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:28:26 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:28:26 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/ai/ai_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:30:22 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:30:22 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [37644]
+2025-12-18 22:30:31 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [40301]
+INFO:     Waiting for application startup.
+2025-12-18 22:30:33 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:30:33 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:30:33 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:30:33 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:30:33 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/ai/ai_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:32:02 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:32:02 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [40301]
+Process SpawnProcess-57:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 31, in <module>
+    from app.routers.ai import router as ai_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/ai.py", line 15, in <module>
+    from app.services.ai.ai_service import get_ai_service
+  File "/Users/Arief/Desktop/378x492/backend/app/services/ai/ai_service.py", line 350
+    async def semantic_search(
+    ^
+SyntaxError: invalid syntax
+WARNING:  WatchFiles detected changes in 'app/services/ai/ai_service.py'. Reloading...
+2025-12-18 22:33:52 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [41128]
+INFO:     Waiting for application startup.
+2025-12-18 22:33:53 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:33:53 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:33:53 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:33:53 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:33:53 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/infrastructure/predictive_maintenance.py', 'app/services/infrastructure/technical_debt_reduction_service.py', 'app/services/infrastructure/scalability_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:42:40 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:42:40 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [41128]
+WARNING:  WatchFiles detected changes in 'app/services/perfection/perfect_architecture_service.py', 'app/services/perfection/perfect_competitive_positioning_system.py', 'app/services/perfection/perfect_risk_management_system.py', 'app/services/perfection/perfect_systems_suite.py', 'app/services/perfection/ultimate_platform_perfection_service.py', 'app/services/perfection/perfect_innovation_readiness_system.py', 'app/services/perfection/perfect_availability_service.py', 'app/services/perfection/perfect_code_quality_service.py', 'app/services/perfection/perfect_security_posture_service.py'. Reloading...
+2025-12-18 22:42:52 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [48117]
+INFO:     Waiting for application startup.
+2025-12-18 22:42:54 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:42:54 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:42:54 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:42:54 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:42:54 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/workflow/comprehensive_diagnostic_orchestrator.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:43:00 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:43:00 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [48117]
+WARNING:  WatchFiles detected changes in 'app/services/intelligence/graph_service.py'. Reloading...
+2025-12-18 22:43:12 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [49346]
+INFO:     Waiting for application startup.
+2025-12-18 22:43:13 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:43:13 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:43:13 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:43:13 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:43:13 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/cost_optimization.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:43:15 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:43:15 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49346]
+2025-12-18 22:43:22 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [49724]
+INFO:     Waiting for application startup.
+2025-12-18 22:43:23 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:43:23 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:43:23 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:43:23 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:43:23 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'plugins/378x492/infrastructure/cost_optimizer/plugin.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:48:10 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:48:10 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49724]
+WARNING:  WatchFiles detected changes in 'plugins/378x492/infrastructure/cost_optimizer/plugin.py'. Reloading...
+2025-12-18 22:48:20 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [58595]
+INFO:     Waiting for application startup.
+2025-12-18 22:48:23 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:48:23 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:48:23 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:48:23 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:48:23 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'plugins/378x492/development/architecture_analyzer/plugin.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:48:28 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:48:28 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [58595]
+WARNING:  WatchFiles detected changes in 'plugins/378x492/development/architecture_analyzer/plugin.py'. Reloading...
+2025-12-18 22:48:38 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [59174]
+INFO:     Waiting for application startup.
+2025-12-18 22:48:41 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 22:48:41 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 22:48:41 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 22:48:41 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 22:48:41 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 22:54:58 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 22:54:58 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [59174]
+Process SpawnProcess-68:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.evidence import router as evidence_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/evidence.py", line 571, in <module>
+    payload: Dict[str, Any] = Body(...),
+NameError: name 'Body' is not defined
+WARNING:  WatchFiles detected changes in 'app/routers/fraud.py'. Reloading...
+Process SpawnProcess-69:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.evidence import router as evidence_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/evidence.py", line 571, in <module>
+    payload: Dict[str, Any] = Body(...),
+NameError: name 'Body' is not defined
+WARNING:  WatchFiles detected changes in 'app/routers/compliance.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'app/routers/compliance.py'. Reloading...
+Process SpawnProcess-71:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.evidence import router as evidence_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/evidence.py", line 571, in <module>
+    payload: Dict[str, Any] = Body(...),
+NameError: name 'Body' is not defined
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+Process SpawnProcess-73:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.cost_optimization import router as cost_optimization_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cost_optimization.py", line 7, in <module>
+    from app.services.infrastructure.cost_optimization_service import CostOptimizationService
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 427, in <module>
+    class CostOptimizationService:
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 1279, in CostOptimizationService
+    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> Dict[str, Any]:
+NameError: name 'CostOptimizationOpportunity' is not defined
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+Process SpawnProcess-74:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.cost_optimization import router as cost_optimization_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cost_optimization.py", line 7, in <module>
+    from app.services.infrastructure.cost_optimization_service import CostOptimizationService
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 427, in <module>
+    class CostOptimizationService:
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 1279, in CostOptimizationService
+    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> Dict[str, Any]:
+NameError: name 'CostOptimizationOpportunity' is not defined
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+Process SpawnProcess-75:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.cost_optimization import router as cost_optimization_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cost_optimization.py", line 7, in <module>
+    from app.services.infrastructure.cost_optimization_service import CostOptimizationService
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 427, in <module>
+    class CostOptimizationService:
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 1279, in CostOptimizationService
+    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> Dict[str, Any]:
+NameError: name 'CostOptimizationOpportunity' is not defined
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+Process SpawnProcess-76:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.cost_optimization import router as cost_optimization_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cost_optimization.py", line 7, in <module>
+    from app.services.infrastructure.cost_optimization_service import CostOptimizationService
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 427, in <module>
+    class CostOptimizationService:
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 1279, in CostOptimizationService
+    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> Dict[str, Any]:
+NameError: name 'CostOptimizationOpportunity' is not defined
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+Process SpawnProcess-78:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.cost_optimization import router as cost_optimization_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cost_optimization.py", line 7, in <module>
+    from app.services.infrastructure.cost_optimization_service import CostOptimizationService
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 427, in <module>
+    class CostOptimizationService:
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 1279, in CostOptimizationService
+    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> Dict[str, Any]:
+NameError: name 'CostOptimizationOpportunity' is not defined
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+Process SpawnProcess-79:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.cost_optimization import router as cost_optimization_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cost_optimization.py", line 7, in <module>
+    from app.services.infrastructure.cost_optimization_service import CostOptimizationService
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 427, in <module>
+    class CostOptimizationService:
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 1279, in CostOptimizationService
+    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> Dict[str, Any]:
+NameError: name 'CostOptimizationOpportunity' is not defined
+WARNING:  WatchFiles detected changes in 'app/routers/cases.py'. Reloading...
+Process SpawnProcess-80:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.cost_optimization import router as cost_optimization_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cost_optimization.py", line 7, in <module>
+    from app.services.infrastructure.cost_optimization_service import CostOptimizationService
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 427, in <module>
+    class CostOptimizationService:
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 1279, in CostOptimizationService
+    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> Dict[str, Any]:
+NameError: name 'CostOptimizationOpportunity' is not defined
+WARNING:  WatchFiles detected changes in 'app/routers/ai.py'. Reloading...
+Process SpawnProcess-81:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 31, in <module>
+    from app.routers.ai import router as ai_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/ai.py", line 904, in <module>
+    payload: Dict[str, Any] = Body(...),
+NameError: name 'Body' is not defined
+WARNING:  WatchFiles detected changes in 'app/routers/ai.py'. Reloading...
+Process SpawnProcess-82:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.cost_optimization import router as cost_optimization_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cost_optimization.py", line 7, in <module>
+    from app.services.infrastructure.cost_optimization_service import CostOptimizationService
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 427, in <module>
+    class CostOptimizationService:
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 1279, in CostOptimizationService
+    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> Dict[str, Any]:
+NameError: name 'CostOptimizationOpportunity' is not defined
+WARNING:  WatchFiles detected changes in 'app/routers/advanced_ai.py'. Reloading...
+Process SpawnProcess-83:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.cost_optimization import router as cost_optimization_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cost_optimization.py", line 7, in <module>
+    from app.services.infrastructure.cost_optimization_service import CostOptimizationService
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 427, in <module>
+    class CostOptimizationService:
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/cost_optimization_service.py", line 1279, in CostOptimizationService
+    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> Dict[str, Any]:
+NameError: name 'CostOptimizationOpportunity' is not defined
+WARNING:  WatchFiles detected changes in 'app/services/infrastructure/cost_optimization_service.py'. Reloading...
+Process SpawnProcess-84:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 40, in <module>
+    from app.routers.evidence import router as evidence_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/evidence.py", line 571, in <module>
+    payload: Dict[str, Any] = Body(...),
+NameError: name 'Body' is not defined
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+Process SpawnProcess-85:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 40, in <module>
+    from app.routers.evidence import router as evidence_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/evidence.py", line 572, in <module>
+    payload: Dict[str, Any] = Body(...),
+NameError: name 'Any' is not defined
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+Process SpawnProcess-86:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 41, in <module>
+    from app.routers.fraud import router as fraud_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/fraud.py", line 197
+    @router.post("/accounts/freeze")
+IndentationError: unexpected unindent
+WARNING:  WatchFiles detected changes in 'app/routers/fraud.py'. Reloading...
+2025-12-19 00:49:34 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [29061]
+INFO:     Waiting for application startup.
+2025-12-19 00:49:35 - 378x492 - INFO - main:193 - Starting 378x492 Fraud Detection API
+2025-12-19 00:49:36 - 378x492 - INFO - main:199 - Database tables created successfully (Development Mode)
+2025-12-19 00:49:36 - 378x492 - INFO - main:216 - Monitoring services disabled for debugging
+2025-12-19 00:49:36 - 378x492 - INFO - main:225 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-19 00:49:36 - 378x492 - INFO - main:234 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'core/sentry_config.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-19 00:50:47 - 378x492 - INFO - main:248 - Shutting down 378x492 Fraud Detection API
+2025-12-19 00:50:47 - 378x492 - ERROR - main:267 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [29061]
+WARNING:  WatchFiles detected changes in 'core/sentry_config.py'. Reloading...
+2025-12-19 00:50:56 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [29545]
+INFO:     Waiting for application startup.
+2025-12-19 00:50:59 - 378x492 - INFO - main:193 - Starting 378x492 Fraud Detection API
+2025-12-19 00:50:59 - 378x492 - INFO - main:199 - Database tables created successfully (Development Mode)
+2025-12-19 00:50:59 - 378x492 - INFO - main:216 - Monitoring services disabled for debugging
+2025-12-19 00:50:59 - 378x492 - INFO - main:225 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-19 00:50:59 - 378x492 - INFO - main:234 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'core/sentry_config.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-19 00:51:29 - 378x492 - INFO - main:248 - Shutting down 378x492 Fraud Detection API
+2025-12-19 00:51:29 - 378x492 - ERROR - main:267 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [29545]
+2025-12-19 00:51:36 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [30629]
+INFO:     Waiting for application startup.
+2025-12-19 00:51:38 - 378x492 - INFO - main:193 - Starting 378x492 Fraud Detection API
+2025-12-19 00:51:38 - 378x492 - INFO - main:199 - Database tables created successfully (Development Mode)
+2025-12-19 00:51:38 - 378x492 - INFO - main:216 - Monitoring services disabled for debugging
+2025-12-19 00:51:38 - 378x492 - INFO - main:225 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-19 00:51:38 - 378x492 - INFO - main:234 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/workflow/compliance/compliance_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-19 00:51:45 - 378x492 - INFO - main:248 - Shutting down 378x492 Fraud Detection API
+2025-12-19 00:51:45 - 378x492 - ERROR - main:267 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [30629]
+WARNING:  WatchFiles detected changes in 'app/services/workflow/innovation_framework_service.py'. Reloading...
+2025-12-19 00:51:55 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [31431]
+INFO:     Waiting for application startup.
+2025-12-19 00:51:57 - 378x492 - INFO - main:193 - Starting 378x492 Fraud Detection API
+2025-12-19 00:51:57 - 378x492 - INFO - main:199 - Database tables created successfully (Development Mode)
+2025-12-19 00:51:57 - 378x492 - INFO - main:216 - Monitoring services disabled for debugging
+2025-12-19 00:51:57 - 378x492 - INFO - main:225 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-19 00:51:57 - 378x492 - INFO - main:234 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/workflow/automated_resolution_engine.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-19 00:51:58 - 378x492 - INFO - main:248 - Shutting down 378x492 Fraud Detection API
+2025-12-19 00:51:58 - 378x492 - ERROR - main:267 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [31431]
+2025-12-19 00:52:05 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [31503]
+INFO:     Waiting for application startup.
+2025-12-19 00:52:07 - 378x492 - INFO - main:193 - Starting 378x492 Fraud Detection API
+2025-12-19 00:52:07 - 378x492 - INFO - main:199 - Database tables created successfully (Development Mode)
+2025-12-19 00:52:07 - 378x492 - INFO - main:216 - Monitoring services disabled for debugging
+2025-12-19 00:52:07 - 378x492 - INFO - main:225 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-19 00:52:07 - 378x492 - INFO - main:234 - 378x492 API startup completed successfully
+INFO:     Application startup complete.

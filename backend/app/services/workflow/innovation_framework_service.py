@@ -161,8 +161,8 @@ class RapidPrototypingEngine:
         if len(customizations) > 5:
             feasibility_score -= 0.1
 
-        # Simulate technical validation
-        await asyncio.sleep(0.1)  # Simulate processing time
+        # TODO: Implement actual technical validation
+        # For now, perform basic validation - real implementation would validate technical feasibility
 
         return {
             "feasible": feasibility_score > 0.6,

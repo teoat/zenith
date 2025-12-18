@@ -49,6 +49,10 @@ const ProjectSelection = React.lazy(() => import(/* webpackChunkName: "projects"
 
 // New compliance components
 const ComplianceMonitoring = React.lazy(() => import(/* webpackChunkName: "compliance-monitoring" */ '@/pages/ComplianceMonitoring'));
+const SARCreation = React.lazy(() => import(/* webpackChunkName: "sar-creation" */ '@/pages/SARCreation'));
+const RegulatoryIntelligence = React.lazy(() => import(/* webpackChunkName: "regulatory-intelligence" */ '@/pages/RegulatoryIntelligence'));
+const SystemDiagnosticsCenter = React.lazy(() => import(/* webpackChunkName: "system-diagnostics" */ '@/pages/SystemDiagnosticsCenter'));
+const EnhancedEvidenceLocker = React.lazy(() => import(/* webpackChunkName: "enhanced-evidence-locker" */ '@/pages/EnhancedEvidenceLocker'));
 
 
 
@@ -264,9 +268,13 @@ const AppContent: React.FC = () => {
                            <Route path="/approvals" element={<AgentApprovals />} />
                            <Route path="/drafts" element={<AgentDrafts />} />
   
-                           {/* Compliance Routes */}
-  
-                           <Route path="/compliance/monitoring" element={<ComplianceMonitoring />} />
+                            {/* Compliance Routes */}
+
+                            <Route path="/compliance/monitoring" element={<ComplianceMonitoring />} />
+                            <Route path="/compliance/sar/create" element={<SARCreation />} />
+                            <Route path="/regulatory/intelligence" element={<RegulatoryIntelligence />} />
+                            <Route path="/diagnostics/system" element={<SystemDiagnosticsCenter />} />
+                            <Route path="/evidence/enhanced" element={<EnhancedEvidenceLocker />} />
   
                            <Route path="*" element={<NotFound />} />
                         </Routes>

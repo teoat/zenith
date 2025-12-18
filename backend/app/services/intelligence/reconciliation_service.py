@@ -171,3 +171,85 @@ class ReconciliationService:
             "expense_ids": [e.id for e in expenses],
             "status": "success",
         }
+
+    def detect_mirror_transfers(
+        self, case_id: str, window_hours: int = 48
+    ) -> List[Dict[str, Any]]:
+        """
+        Implementation of the Temporal Pair Matcher (Mirror Detection).
+        Scans for $X outflow from Account A -> $X inflow to Account B within 48 hours.
+        Identifies "Wash" transactions that should be collapsed in the UI.
+        """
+        logger.info(f"Scanning for mirror transfers in case {case_id}")
+        
+        # 1. Get all transactions for the case
+        transactions = (
+            self.db.query(Transaction)
+            .filter(Transaction.case_id == case_id)
+            .order_by(Transaction.date.asc())
+            .all()
+        )
+        
+        if not transactions:
+            return []
+            
+        mirror_pairs = []
+        visited_ids = set()
+        
+        # 2. Nested loop to find temporal pairs with matching amounts
+        for i, tx_out in enumerate(transactions):
+            if tx_out.id in visited_ids:
+                continue
+                
+            # Only consider outflows (DEBIT) for the source
+            if tx_out.transaction_type != "DEBIT":
+                continue
+                
+            for j in range(i + 1, len(transactions)):
+                tx_in = transactions[j]
+                
+                if tx_in.id in visited_ids:
+                    continue
+                    
+                # Only consider inflows (CREDIT) for the target
+                if tx_in.transaction_type != "CREDIT":
+                    continue
+                    
+                # Check if amounts match (within 0.01 tolerance)
+                if abs(abs(tx_out.amount) - abs(tx_in.amount)) > 0.01:
+                    continue
+                    
+                # Check time window
+                time_diff = (tx_in.date - tx_out.date).days * 24 # Simplified date diff
+                if time_diff > window_hours:
+                    break # Sorted by date, so no more matches possible
+                
+                # 3. Calculate "Wash Score"
+                # In a real system, we'd check if accounts share the same UBO from Entity/Relationship tables
+                # For now, we simulate this by checking metadata 'shared_owner_id' or checking descriptions
+                wash_score = 0.5 # Base score for amount + time match
+                
+                # Check for description similarities or metadata links
+                out_meta = tx_out.transaction_metadata or {}
+                in_meta = tx_in.transaction_metadata or {}
+                
+                if out_meta.get("owner_id") == in_meta.get("owner_id") and out_meta.get("owner_id"):
+                    wash_score = 1.0
+                elif tx_out.merchant_name == tx_in.merchant_name: # Simple string match fallback
+                    wash_score = 0.8
+                    
+                if wash_score >= 0.5:
+                    mirror_pairs.append({
+                        "pair_id": f"mirror_{tx_out.id}_{tx_in.id}",
+                        "source_tx": tx_out.id,
+                        "target_tx": tx_in.id,
+                        "amount": abs(tx_out.amount),
+                        "wash_score": wash_score,
+                        "suggested_action": "COLLAPSE",
+                        "reason": f"Symmetric transfer detected within {time_diff}h between related endpoints."
+                    })
+                    visited_ids.add(tx_out.id)
+                    visited_ids.add(tx_in.id)
+                    break
+                    
+        return mirror_pairs

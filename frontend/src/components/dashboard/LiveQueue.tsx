@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Activity, CheckCircle, Clock, AlertTriangle, ArrowRight, Wifi, WifiOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useWebSocketQueue, QueueItem } from '../../hooks/useWebSocketQueue';
 
-const LiveQueue: React.FC = () => {
+const LiveQueue: React.FC = memo(() => {
   const { queue, isConnected, reconnect } = useWebSocketQueue({
     maxItems: 15,
     fallbackToSimulation: false,
@@ -88,7 +88,9 @@ const LiveQueue: React.FC = () => {
       </div>
     </div>
   );
-};
+});
+
+LiveQueue.displayName = 'LiveQueue';
 
 export default LiveQueue;
 

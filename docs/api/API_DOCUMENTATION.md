@@ -2242,34 +2242,51 @@ ModuleNotFoundError: No module named 'app.services.core.auth_service'
 
 #### GET /evidence
 **Route Name:** get_evidence
-**Summary:** None
+**Summary:** Get list of evidence items with pagination and search
 
-Get list of evidence items
-
-Args:
-    case_id: Filter by case ID
-    file_type: Filter by file type
-    limit: Maximum number of results
-
-Get list of evidence items
-
-    Args:
-        case_id: Filter by case ID
-        file_type: Filter by file type
-        limit: Maximum number of results
+**Description:** Retrieves a paginated list of evidence items. Supports server-side search by filename or uploader.
 
 **Parameters:**
-- Path parameters as defined in route
-- Query parameters as applicable
-- Request body for POST/PUT requests
+- `case_id` (str, optional): Filter by case ID
+- `file_type` (str, optional): Filter by file type
+- `page` (int, default: 1): Page number
+- `page_size` (int, default: 20): Items per page
+- `q` (str, optional): Search query for filename/uploader
+
+**Responses:**
+- `200`: Success (Returns `{ "items": [], "total": 0, "page": 1, "page_size": 20 }`)
+- `401`: Unauthorized
+
+---
+
+#### GET /evidence/{evidence_id}/highlights
+**Route Name:** get_evidence_highlights
+**Summary:** Get forensic highlights for a document
+
+**Description:** Retrieves all saved highlights and forensic notes for a specific evidence item.
+
+**Parameters:**
+- `evidence_id` (str): Unique ID of the evidence
+
+**Responses:**
+- `200`: Success (Array of highlight objects)
+- `404`: Evidence not found
+
+---
+
+#### POST /evidence/{evidence_id}/highlights
+**Route Name:** save_evidence_highlight
+**Summary:** Add a forensic highlight to a document
+
+**Description:** Persists a new text or area highlight, including forensic notes and creator metadata.
+
+**Parameters:**
+- `evidence_id` (str): Unique ID of the evidence
+- `body` (JSON): Highlight object (position, content, comment)
 
 **Responses:**
 - `200`: Success
-- `400`: Bad Request
-- `401`: Unauthorized
-- `403`: Forbidden
-- `404`: Not Found
-- `500`: Internal Server Error
+- `404`: Evidence not found
 
 ---
 

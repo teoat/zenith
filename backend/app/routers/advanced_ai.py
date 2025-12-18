@@ -1,11 +1,11 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 
-# Import from the new standard service locations
-from app.services.ai.local_rag_engine import rag_engine
-# from app.services.ai.multimodal.multimodal_analyzer import multimodal_analyzer
+# Consolidated Service Layer Imports
+from app.services.ai.ai_service import ai_service
+from app.services.intelligence.evidence_service import evidence_processor
 from app.services.workflow.red_team_persona import red_team_service
 from core.database import get_db
 
@@ -15,6 +15,7 @@ router = APIRouter()
 class RAGQuery(BaseModel):
     query: str
     k: int = 3
+    filters: Optional[Dict[str, Any]] = None
 
 
 class RedTeamRequest(BaseModel):
@@ -23,30 +24,27 @@ class RedTeamRequest(BaseModel):
 
 
 @router.post("/advanced-ai/rag/query")
-def local_rag_query(req: RAGQuery):
-    """Retrieve documents using Local RAG (TF-IDF/Cosine Similarity)."""
-    results = rag_engine.retrieve(req.query, k=req.k)
+async def local_rag_query(req: RAGQuery):
+    """Retrieve documents using consolidated AI Service (FAISS/TF-IDF)."""
+    results = await ai_service.semantic_search(req.query, limit=req.k, filters=req.filters)
     return {"query": req.query, "results": results}
 
 
 @router.post("/advanced-ai/rag/add")
-def local_rag_add(doc_id: str = Form(...), text: str = Form(...)):
-    """Add a document to the local vector store."""
-    rag_engine.add_document(doc_id, text)
-    return {"success": True, "doc_id": doc_id, "stats": rag_engine.get_stats()}
+async def local_rag_add(doc_id: str = Form(...), text: str = Form(...)):
+    """Add a document to the shared vector store."""
+    success = await ai_service.add_document(doc_id, text, metadata={"source": "user_upload"})
+    return {"success": success, "doc_id": doc_id}
 
 
 @router.post("/advanced-ai/multimodal/image")
 async def analyze_image(file: UploadFile = File(...)):
-    """Analyze an image for metadata and text (OCR)."""
+    """Analyze an image for metadata and text (OCR) using the shared EvidenceProcessor."""
     import tempfile
     import os
-    from app.services.intelligence.evidence_service import EvidenceProcessor
-
-    processor = EvidenceProcessor()
 
     try:
-        # Save uploaded file temporarily (EvidenceProcessor expects file path)
+        # Save uploaded file temporarily
         suffix = os.path.splitext(file.filename)[1] if file.filename else ""
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
             content = await file.read()
@@ -54,7 +52,7 @@ async def analyze_image(file: UploadFile = File(...)):
             temp_file_path = temp_file.name
 
         try:
-             results = await processor.process_files_batch(
+             results = await evidence_processor.process_files_batch(
                  [temp_file_path], 
                  options={"enable_ocr": True, "enable_forensics": True}
              )
@@ -62,11 +60,11 @@ async def analyze_image(file: UploadFile = File(...)):
                  raise HTTPException(status_code=500, detail="Analysis failed")
              
              result = results[0]
-             # Map back to simple response format expected by this endpoint consumers
              return {
                  "metadata": result.metadata,
                  "text": result.extracted_text,
-                 "quality_score": result.quality_score
+                 "quality_score": result.quality_score,
+                 "key_entities": result.key_entities
              }
         finally:
             if os.path.exists(temp_file_path):
@@ -78,18 +76,9 @@ async def analyze_image(file: UploadFile = File(...)):
 
 @router.post("/advanced-ai/multimodal/text")
 async def analyze_text(text: str = Form(...)):
-    """Analyze text for fraud indicators."""
-    # Since EvidenceProcessor is file-based, we can use a simpler direct analysis here 
-    # or wrap text in a temp file. For now, let's use the sentiment analysis 
-    # part of the processor if exposed, or keep it simple.
-    # Actually, EvidenceProcessor has _analyze_sentiment but it's internal.
-    # Let's use a quick temp file approach to leverage the exact same pipeline.
-    
+    """Analyze text for fraud indicators using the shared EvidenceProcessor."""
     import tempfile
     import os
-    from app.services.intelligence.evidence_service import EvidenceProcessor
-
-    processor = EvidenceProcessor()
 
     try:
         with tempfile.NamedTemporaryFile(delete=False, mode="w", suffix=".txt") as temp_file:
@@ -97,7 +86,7 @@ async def analyze_text(text: str = Form(...)):
             temp_file_path = temp_file.name
         
         try:
-            results = await processor.process_files_batch([temp_file_path])
+            results = await evidence_processor.process_files_batch([temp_file_path])
             if not results:
                  raise HTTPException(status_code=500, detail="Analysis failed")
             
@@ -122,9 +111,10 @@ def generate_red_team_prompts(req: RedTeamRequest):
 
 
 @router.get("/advanced-ai/stats")
-def ai_stats():
+async def ai_stats():
     """Get statistics about the advanced AI services."""
     return {
-        "rag": rag_engine.get_stats(),
+        "vector_store_docs": len(ai_service.vector_store),
         "red_team_vectors": red_team_service.get_attack_types(),
+        "evidence_processed": evidence_processor.metrics["total_processed"]
     }

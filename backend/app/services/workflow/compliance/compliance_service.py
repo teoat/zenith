@@ -528,8 +528,8 @@ class ComplianceService:
         """Auto-submit regulatory report"""
         # Mock implementation - would integrate with regulatory APIs
         try:
-            # Simulate API call to regulatory body
-            await asyncio.sleep(0.1)  # Simulate network delay
+            # TODO: Implement actual regulatory API call
+            # For now, return success - real implementation would validate with regulatory body
             return True
         except Exception:
             return False

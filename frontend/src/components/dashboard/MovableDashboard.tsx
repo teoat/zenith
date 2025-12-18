@@ -11,6 +11,7 @@ import VolumeChart from './VolumeChart';
 import RiskDistributionChart from './RiskDistributionChart';
 import ProofVisualizationCard from './ProofVisualizationCard';
 import MetricSparkline from './MetricSparkline';
+import CostOptimizationWidget from './CostOptimizationWidget';
 import { useProjectStore } from '../../store/projectStore';
 
 
@@ -207,10 +208,14 @@ const MovableDashboard: React.FC = () => {
                             { name: 'Medium', value: metrics?.riskDistribution?.medium || 0, color: '#3b82f6' },   
                             { name: 'Low', value: metrics?.riskDistribution?.low || 0, color: '#10b981' }, 
                         ]} />
-                    </WidgetWrapper>
-                </div>
+                     </WidgetWrapper>
+                 </div>
 
-            </ResponsiveGridLayout>
+                 <div key="cost_optimization">
+                     <CostOptimizationWidget />
+                 </div>
+
+             </ResponsiveGridLayout>
         </div>
     );
 };

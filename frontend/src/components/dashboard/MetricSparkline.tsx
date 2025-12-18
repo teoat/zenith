@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface MetricSparklineProps {
@@ -8,7 +8,7 @@ interface MetricSparklineProps {
   showTooltip?: boolean;
 }
 
-const MetricSparkline: React.FC<MetricSparklineProps> = ({ 
+const MetricSparkline: React.FC<MetricSparklineProps> = memo(({ 
   data, 
   color = '#3b82f6', 
   height = 40,
@@ -56,6 +56,8 @@ const MetricSparkline: React.FC<MetricSparklineProps> = ({
       </ResponsiveContainer>
     </div>
   );
-};
+});
+
+MetricSparkline.displayName = 'MetricSparkline';
 
 export default MetricSparkline;

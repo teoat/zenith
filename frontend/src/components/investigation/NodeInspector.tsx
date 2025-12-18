@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { X, Edit3, Trash2, Link2, User, Building, CreditCard, Globe, Calendar, Tag, ExternalLink } from 'lucide-react';
 
 interface NodeInspectorProps {
@@ -14,7 +14,7 @@ interface NodeInspectorProps {
   onDelete?: () => void;
 }
 
-const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onEdit, onDelete }) => {
+const NodeInspector: React.FC<NodeInspectorProps> = memo(({ node, onClose, onEdit, onDelete }) => {
   if (!node) return null;
 
   const getTypeIcon = () => {
@@ -142,6 +142,8 @@ const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onClose, onEdit, on
       </div>
     </div>
   );
-};
+});
+
+NodeInspector.displayName = 'NodeInspector';
 
 export default NodeInspector;

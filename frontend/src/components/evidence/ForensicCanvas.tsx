@@ -98,7 +98,8 @@ export const ForensicCanvas: React.FC<ForensicCanvasProps> = ({ fileUrl, evidenc
                        {evidence?.fileType === 'pdf' || fileUrl?.endsWith('.pdf') ? (
                            <PdfViewer 
                                 url={fileUrl} 
-                                onHighlight={(highlight) => {
+                                evidenceId={evidence?.id}
+                                 onHighlight={(highlight) => {
                                     if (evidence?.id) {
                                         api.saveHighlight(evidence.id, highlight).catch(console.error);
                                     }

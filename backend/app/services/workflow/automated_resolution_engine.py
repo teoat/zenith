@@ -673,8 +673,8 @@ class AutomatedCaseResolutionEngine:
             # Set up monitoring
             logger.info(f"Setting up monitoring for case {resolution_attempt.case_id}")
 
-        # Simulate some processing time
-        await asyncio.sleep(0.1)
+        # TODO: Implement actual resolution processing
+        # For now, perform immediate resolution - real implementation would process the resolution
 
         return True
 

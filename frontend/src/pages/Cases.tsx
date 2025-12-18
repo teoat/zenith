@@ -1,16 +1,19 @@
 // pages/Cases.tsx
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Search, Plus, LayoutList, LayoutGrid, Gavel, CheckSquare, Square
-} from 'lucide-react';
+import { LayoutGrid, List, Plus, Search, CheckSquare, Square, Activity, Gavel, LayoutList } from 'lucide-react';
+import { useCases } from '../hooks/useCases';
+import { approvalService } from '../services/approvalService';
 import { AccessibleButton } from '../components/ui/AccessibleButton';
-import { useCases, useCreateCase } from '../hooks/useCases';
+import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { useTouchGestures } from '../hooks/useTouchGestures';
 import CasePreviewDrawer from '../components/cases/CasePreviewDrawer';
-import InvestigationWizard, { InvestigationData } from '../components/cases/InvestigationWizard';
 import { VirtualizedList } from '../components/ui/VirtualizedList';
 import { Skeleton } from '../components/ui/Skeleton';
+import { KeyboardShortcutsModal } from '../components/ui/KeyboardShortcutsModal';
+import { KEYBOARD_SHORTCUTS } from '../lib/keyboardShortcuts';
+import { ApprovalQueue } from '../components/ApprovalQueue';
+import { SplitView } from '../components/ui/SplitView';
 
 const CaseKanban = React.lazy(() => import('../components/cases/CaseKanban'));
 const AdjudicationQueue = React.lazy(() => import('../pages/AdjudicationQueue'));
@@ -18,21 +21,16 @@ const AdjudicationQueue = React.lazy(() => import('../pages/AdjudicationQueue'))
 const Cases = () => {
   const { data } = useCases();
   const cases = data?.cases || [];
-  const createCaseMutation = useCreateCase();
   const { caseId } = useParams<{ caseId: string }>();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
   const [selectedCases, setSelectedCases] = useState<Set<string>>(new Set());
   
   const [viewMode, setViewMode] = useState<'list' | 'kanban' | 'adjudication'>('list');
 
   // Sync URL param to state
   const previewCaseId = caseId || null;
-  const setPreviewCaseId = (id: string | null) => {
-    if (id) navigate(`/cases/${id}`);
-    else navigate('/cases');
-  }
 
   // Touch gestures for case navigation
   const touchRef = useTouchGestures({
@@ -52,25 +50,8 @@ const Cases = () => {
     }
   });
 
-  const handleNewCase = useCallback(() => setIsWizardOpen(true), [setIsWizardOpen]);
-  
-  const handleWizardComplete = async (data: InvestigationData) => {
-    // Priority is not in wizard data, default to MEDIUM
-    const caseData = {
-      title: data.title,
-      description: data.description, 
-      type: 'FRAUD' as const,
-      priority: 'MEDIUM' as const,
-      status: 'OPEN' as const
-    };
-
-    try {
-      await createCaseMutation.mutateAsync(caseData);
-      setIsWizardOpen(false);
-      // Query is automatically invalidated by the mutation hook
-    } catch (e) {
-      console.error('Failed to create case:', e);
-    }
+  const handleNewCase = () => {
+    navigate('/cases/new');
   };
   
   const handleOpenCase = useCallback((id: string) => {
@@ -88,6 +69,65 @@ const Cases = () => {
     setSelectedCases(newSelected);
   };
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '?') {
+        e.preventDefault();
+        setShowShortcuts(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleBulkDelete = async () => {
+    const selectedIds = Array.from(selectedCases);
+    const selectedCaseTitles = cases
+      .filter(c => selectedCases.has(c.id))
+      .map(c => c.title)
+      .join(', ');
+
+    try {
+      await approvalService.createFromAISuggestion({
+        type: 'delete',
+        title: `Bulk Delete ${selectedIds.length} Cases`,
+        description: `Delete the following cases: ${selectedCaseTitles}`,
+        details: {
+          caseIds: selectedIds,
+          operation: 'bulk_delete'
+        },
+        reasoning: 'Bulk delete operation initiated by user',
+        confidence: 1.0
+      });
+
+      setSelectedCases(new Set());
+    } catch (error) {
+      console.error('Failed to add bulk delete to approval queue:', error);
+    }
+  };
+
+  const handleBulkAIAnalyze = async () => {
+    const selectedIds = Array.from(selectedCases);
+    try {
+      await approvalService.createFromAISuggestion({
+        type: 'external_api',
+        title: `AI Deep Analysis: ${selectedIds.length} Cases`,
+        description: `Run comprehensive cross-case correlation and fraud pattern detection on ${selectedIds.length} investigations.`,
+        details: {
+          caseIds: selectedIds,
+          operation: 'bulk_ai_analyze'
+        },
+        reasoning: 'AI-driven batch triage requested for selected cases',
+        confidence: 0.95
+      });
+      setSelectedCases(new Set());
+    } catch (error) {
+      console.error('Failed to add bulk AI analysis to approval queue:', error);
+    }
+  };
+
   const selectAllCases = () => {
     const allIds = new Set(filteredCases.map(c => c.id));
     setSelectedCases(allIds);
@@ -101,51 +141,70 @@ const Cases = () => {
     caseItem.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Keyboard navigation for case list
+  const listRef = useKeyboardNavigation({
+    onArrowDown: () => {
+      const currentIndex = filteredCases.findIndex(c => c.id === previewCaseId);
+      if (currentIndex < filteredCases.length - 1) {
+        handleOpenCase(filteredCases[currentIndex + 1].id);
+      }
+    },
+    onArrowUp: () => {
+      const currentIndex = filteredCases.findIndex(c => c.id === previewCaseId);
+      if (currentIndex > 0) {
+        handleOpenCase(filteredCases[currentIndex - 1].id);
+      }
+    },
+    enabled: viewMode === 'list' && !!previewCaseId
+  });
+
   return (
-    <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-slate-50 dark:bg-slate-950 flex-col">
-      {/* Header Toolbar */}
-      <div className="h-16 px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex justify-between items-center shrink-0">
-        <h1 className="text-2xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-          Cases
-          <span className="bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs px-2 py-0.5 rounded-full">{cases.length}</span>
-        </h1>
-
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 overflow-hidden">
+      {/* Header section */}
+      <div className="flex-shrink-0 p-6 flex justify-between items-center bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <LayoutList size={24} className="text-blue-600" />
+            Cases
+            <span className="bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs px-2 py-0.5 rounded-full font-normal">{cases.length}</span>
+          </h1>
+          <p className="text-slate-500 text-sm mt-1">Manage and triage active fraud investigations</p>
+        </div>
+        
         <div className="flex items-center gap-4">
-           {/* View Toggle */}
-           <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
-              <button 
-                onClick={() => setViewMode('list')}
-                className={`p-1.5 rounded-md transition-colors ${viewMode === 'list' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
-                aria-label="List View"
-              >
-                <LayoutList size={18} />
-              </button>
-              <button 
-                onClick={() => setViewMode('kanban')}
-                className={`p-1.5 rounded-md transition-colors ${viewMode === 'kanban' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
-                aria-label="Kanban View"
-              >
-                <LayoutGrid size={18} />
-              </button>
-              <button 
-                onClick={() => setViewMode('adjudication')}
-                className={`p-1.5 rounded-md transition-colors ${viewMode === 'adjudication' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
-                aria-label="Adjudication View"
-              >
-                <Gavel size={18} />
-              </button>
-           </div>
-
-           <div className="relative">
+          <div className="relative">
             <Search className="absolute left-3 top-2.5 text-slate-400" size={16} />
             <input
               type="text"
-              name="search"
               placeholder="Search cases..."
               className="pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 w-64"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+          </div>
+
+          <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+            <button 
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+              aria-label="List View"
+            >
+              <List size={18} />
+            </button>
+            <button 
+              onClick={() => setViewMode('kanban')}
+              className={`p-1.5 rounded-md transition-all ${viewMode === 'kanban' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+              aria-label="Kanban View"
+            >
+              <LayoutGrid size={18} />
+            </button>
+            <button 
+               onClick={() => setViewMode('adjudication')}
+               className={`p-1.5 rounded-md transition-all ${viewMode === 'adjudication' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+               aria-label="Adjudication Mode"
+            >
+              <Gavel size={18} />
+            </button>
           </div>
 
           <AccessibleButton onClick={handleNewCase} className="bg-blue-600 hover:bg-blue-700 text-white border-0">
@@ -157,9 +216,18 @@ const Cases = () => {
       {/* Content Area */}
       <div ref={touchRef} className="flex-1 overflow-hidden relative">
         {viewMode === 'list' ? (
-          <div className="flex h-full">
-            {/* List View Left Pane */}
-            <div className="w-1/3 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-y-auto shrink-0">
+          <SplitView
+            initialSplit={33}
+            minLeftWidth={300}
+            minRightWidth={400}
+            left={(
+              <div 
+                ref={listRef}
+                className="h-full border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-y-auto focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                tabIndex={0}
+                role="listbox"
+                aria-label="Cases list"
+              >
               <div className="case-list-content">
                 <div className="px-4 py-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center">
                   <button
@@ -173,11 +241,32 @@ const Cases = () => {
                     )}
                     {selectedCases.size === filteredCases.length && filteredCases.length > 0 ? 'Deselect All' : 'Select All'}
                   </button>
-                  {selectedCases.size > 0 && (
-                    <span className="text-xs text-slate-500 dark:text-slate-400 ml-4">
-                      {selectedCases.size} selected
-                    </span>
-                  )}
+                    {selectedCases.size > 0 && (
+                      <>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 ml-4">
+                          {selectedCases.size} selected
+                        </span>
+                        <div className="ml-auto flex gap-2">
+                          <AccessibleButton
+                            onClick={handleBulkAIAnalyze}
+                            variant="secondary"
+                            size="sm"
+                            className="text-xs border-blue-500 text-blue-600 dark:border-blue-700 dark:text-blue-400"
+                          >
+                            AI Triage
+                          </AccessibleButton>
+                          <AccessibleButton
+                            onClick={handleBulkDelete}
+                            variant="danger"
+                            size="sm"
+                            className="text-xs"
+                            aria-label={`Delete ${selectedCases.size} selected cases`}
+                          >
+                            Delete Selected
+                          </AccessibleButton>
+                        </div>
+                      </>
+                    )}
                 </div>
 
                 <VirtualizedList
@@ -198,16 +287,16 @@ const Cases = () => {
                           }
                         }}
                         tabIndex={0}
-                        role="button"
-                        aria-current={previewCaseId === caseItem.id ? 'page' : undefined}
-                        aria-label={`Open case: ${caseItem.title}`}
+                        role="option"
+                        aria-selected={previewCaseId === caseItem.id ? "true" : "false"}
+                        aria-label={`Case: ${caseItem.title}`}
                       >
                         {/* Selection Checkbox */}
                         <div 
                           className="mr-3 shrink-0"
                           onClick={(e) => toggleCaseSelection(caseItem.id, e)}
                           role="checkbox"
-                          aria-checked={isSelected}
+                          aria-checked={isSelected ? "true" : "false"}
                           tabIndex={0}
                           aria-label={`Select case ${caseItem.title}`}
                           onKeyDown={(e) => {
@@ -256,47 +345,55 @@ const Cases = () => {
                 />
               </div>
             </div>
+            )}
+            right={(
+              <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-slate-950">
+                {previewCaseId ? (
+                  <CasePreviewDrawer 
+                    isOpen={true} 
+                    caseId={previewCaseId} 
+                    onClose={() => navigate('/cases')} 
+                    isEmbedded={true} 
+                  />
+                ) : (
+                  <div className="flex-1 p-8 space-y-8 overflow-y-auto">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-12 text-center shadow-sm">
+                      <Activity size={48} className="mx-auto text-blue-500 mb-6 opacity-80" />
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">Active Case Triage</h3>
+                      <p className="text-slate-500 text-sm mt-3 max-w-xs mx-auto">
+                        Select a case from the list to begin deep investigation, or use bulk actions to process multiple alerts at once.
+                      </p>
+                    </div>
 
-            {/* List View Right Pane (Preview) */}
-            <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-slate-950">
-              {previewCaseId ? (
-                <CasePreviewDrawer 
-                  isOpen={true} 
-                  caseId={previewCaseId} 
-                  onClose={() => navigate('/cases')} 
-                  isEmbedded={true} 
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-slate-400">
-                  <LayoutList size={48} className="mb-4 opacity-20" />
-                  <p>Select a case to view details</p>
-                </div>
-              )}
-            </div>
-          </div>
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active Approval Workflow</h4>
+                      <ApprovalQueue maxHeight="400px" showHeader={false} className="border-none shadow-none bg-transparent" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          />
         ) : viewMode === 'kanban' ? (
           <React.Suspense fallback={<Skeleton className="h-full w-full" />}>
-             <CaseKanban />
+            <CaseKanban 
+              cases={filteredCases} 
+              onCaseClick={(id) => navigate(`/cases/${id}`)} 
+            />
           </React.Suspense>
         ) : (
           <React.Suspense fallback={<Skeleton className="h-full w-full" />}>
-             <AdjudicationQueue />
+            <AdjudicationQueue />
           </React.Suspense>
         )}
       </div>
 
-       {/* Create Case Wizard */}
-      {isWizardOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
-              <InvestigationWizard 
-                isOpen={isWizardOpen}
-                onComplete={handleWizardComplete}
-                onClose={() => setIsWizardOpen(false)}
-              />
-           </div>
-        </div>
-      )}
+      {/* Keyboard Shortcuts Modal */}
+      <KeyboardShortcutsModal
+        shortcuts={KEYBOARD_SHORTCUTS}
+        isOpen={showShortcuts}
+        onClose={() => setShowShortcuts(false)}
+      />
     </div>
   );
 };

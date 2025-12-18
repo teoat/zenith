@@ -10,7 +10,7 @@ export const monitoringService = {
     try {
       const response = await request<{ success: boolean; system_metrics: SystemMetrics }>('/apm/system-metrics');
       return response.system_metrics;
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to get system status, returning fallback:', error);
        // Return fallback data ONLY if backend is truly unreachable, to prevent UI crash
       return {
@@ -35,7 +35,7 @@ export const monitoringService = {
   getPerformanceHistory: async (timeRangeHours: number = 24): Promise<PerformanceData[]> => {
     try {
       return await request<PerformanceData[]>(`/apm/performance-history?time_range_hours=${timeRangeHours}`);
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to get performance history:', error);
       return [];
     }
@@ -44,7 +44,7 @@ export const monitoringService = {
   getErrorSummary: async (timeRangeHours: number = 24): Promise<ErrorSummary> => {
     try {
       return await request<ErrorSummary>(`/apm/error-summary?time_range_hours=${timeRangeHours}`);
-    } catch (_error) {
+    } catch (error) {
        console.error('Failed to get error summary:', error);
        return {
          total_errors: 0,

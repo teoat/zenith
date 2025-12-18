@@ -123,6 +123,8 @@ export interface EvidenceItem {
   uploadedAt: string;
   filePath: string;
   ocrText?: string;
+  fraudAmount?: number;
+  customerName?: string;
 }
 
 export interface ReportGenerateRequest {

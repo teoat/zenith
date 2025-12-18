@@ -60,6 +60,7 @@ API references, service specifications, and technical interfaces.
 - `MODEL_DOCUMENTATION.md` - Data models and schemas
 - `CONFIG_DOCUMENTATION.md` - Configuration options
 - `LEGAL_REPORTING_STANDARDS.md` - **Forensic & Prosecution Standards**
+- `project/DEEP_FORENSICS.md` - **Deep Forensics & Server-Side Intelligence**
 - `COMPLIANCE_DASHBOARD.md` - Compliance documentation
 
 ### 📋 [project/](./project/) - Project Management & Planning

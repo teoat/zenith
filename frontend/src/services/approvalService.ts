@@ -4,7 +4,9 @@
  * Handles pending actions, approval/rejection, and integration with AI workflows.
  */
 
+import { request } from './client';
 import { api } from '../lib/api';
+import { secureLogger } from '../utils/secureLogger';
 
 export interface PendingAction {
   id: string;
@@ -45,7 +47,7 @@ class ApprovalService {
       // For now, return local state
       return Array.from(this.pendingActions.values());
     } catch (error) {
-      console.error('Failed to fetch pending actions:', error);
+      secureLogger.error('ApprovalService', 'Failed to fetch pending actions', { error: String(error) });
       return [];
     }
   }
@@ -85,6 +87,8 @@ class ApprovalService {
       userId,
     };
 
+    secureLogger.debug('ApprovalService', 'Decision made', { decision });
+
     // Execute the approved action
     await this.executeAction(action);
 
@@ -112,6 +116,8 @@ class ApprovalService {
       timestamp: new Date(),
       userId,
     };
+    
+    console.debug('[ApprovalService] Decision made:', decision);
 
     // Remove from pending
     this.pendingActions.delete(actionId);
@@ -129,21 +135,40 @@ class ApprovalService {
     
     try {
       switch (action.type) {
-        case 'create':
-          // Execute create action
-          break;
-        case 'update':
-          // Execute update action
-          break;
         case 'delete':
-          // Execute delete action
+          if (action.details?.ids || action.details?.caseIds) {
+            const ids = action.details.ids || action.details.caseIds;
+            const endpoint = action.details?.caseIds ? '/cases/bulk-delete' : '/evidence/bulk-delete';
+            await request(endpoint, { 
+              method: 'POST',
+              body: JSON.stringify({ ids }) 
+            });
+          }
           break;
         case 'external_api':
-          // Execute external API call
+          if (action.details?.endpoint === 'freeze_account') {
+            await request('/accounts/freeze', { 
+              method: 'POST',
+              body: JSON.stringify({ account_id: action.details.id }) 
+            });
+          } else if (action.details?.endpoint === 'create_sar') {
+             await request('/compliance/sar/create', { 
+              method: 'POST',
+              body: JSON.stringify({ case_id: action.details.caseId }) 
+            });
+          } else if (action.details?.operation === 'bulk_ai_analyze') {
+             await request('/ai/analyze/batch', {
+               method: 'POST',
+               body: JSON.stringify({ caseIds: action.details.caseIds })
+             });
+          }
           break;
         case 'financial':
-          // Execute financial transaction
+          // Mock financial execution
+          await new Promise(resolve => setTimeout(resolve, 1000));
           break;
+        default:
+          console.warn(`[ApprovalService] No execution logic for type: ${action.type}`);
       }
     } catch (error) {
       console.error(`[ApprovalService] Failed to execute action ${action.id}:`, error);

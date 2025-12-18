@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bot, MessageCircle, X, User, Send, StopCircle, ThumbsUp, ThumbsDown, Search, Eye, File } from 'lucide-react';
+import { Bot, MessageCircle, X, User, Send, ThumbsUp, ThumbsDown, Search, Eye, File } from 'lucide-react';
 import { useAIContext } from '../../context/AIContext';
 // import { useProject } from '../../context/ProjectContext'; // Context not available
 
@@ -8,7 +8,8 @@ import { aiService } from '../../services/ai';
 import { AIPersona } from '../../context/AIContext';
 import { SanitizedHTML } from '../../hooks/useSanitizedHTML';
 import { approvalService, PendingAction } from '../../services/approvalService';
-// import { AgentStatusStream } from '../ui/AgentStatusStream'; // Module not available
+import { ApprovalQueue } from '../ApprovalQueue';
+import { AgentStatusStream } from '../ui/AgentStatusStream';
 
 interface Message {
   id: string;
@@ -36,7 +37,6 @@ export const AIAssistant: React.FC = () => {
       timestamp: Date.now()
     }
   ]);
-  const [agentLogs, setAgentLogs] = useState<any[]>([]);
   const [currentAgentStep, setCurrentAgentStep] = useState('');
 
   const handleActionClick = async (action: any) => {
@@ -69,7 +69,7 @@ export const AIAssistant: React.FC = () => {
 
         setMessages(prev => [...prev, successMsg]);
 
-    } catch (_error) {
+    } catch (error) {
         console.error('Action failed:', error);
         // Add an error message to the chat
         const errorMsg: Message = {
@@ -84,11 +84,6 @@ export const AIAssistant: React.FC = () => {
     }
   };
 
-  const handleStopGeneration = () => {
-    setLoading(false);
-    setAgentLogs([]);
-    setCurrentAgentStep('');
-  };
 
   const handleSend = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -190,7 +185,7 @@ export const AIAssistant: React.FC = () => {
                             timestamp: Date.now(),
                             type: 'success'
                         }]);
-                    } catch (_error) {
+                    } catch (error) {
                         console.error('Failed to create approval action:', error);
                     }
                 }
@@ -315,18 +310,23 @@ export const AIAssistant: React.FC = () => {
                 ))}
 
                 {/* Chain of Thought Visualization */}
-                {loading && agentLogs.length > 0 && (
-                  <div className="px-2">
-                    {/* AgentStatusStream removed due to missing module */}
-                    <div className="text-xs text-slate-500 italic p-2 border border-slate-200 rounded">
-                        {currentAgentStep || 'Thinking...'}
+                {loading && (
+                  <div className="px-2 space-y-2">
+                    <AgentStatusStream />
+                    <div className="text-[10px] text-slate-400 italic px-2">
+                        Current focus: {currentAgentStep || 'Aggregating insights...'}
                     </div>
                   </div>
                 )}
-          </div>
+           </div>
 
-          {/* Input */}
-          <form onSubmit={handleSend} className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+           {/* Approval Queue */}
+           <div className="border-t border-slate-200 dark:border-slate-800">
+             <ApprovalQueue showHeader={false} maxHeight="150px" />
+           </div>
+
+           {/* Input */}
+           <form onSubmit={handleSend} className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
             <div className="relative">
               <input
                 type="text"

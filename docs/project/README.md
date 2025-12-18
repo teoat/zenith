@@ -5,6 +5,7 @@
 > - 📖 **Guide**: [DIAGNOSTIC_SYSTEM_GUIDE.md](./DIAGNOSTIC_SYSTEM_GUIDE.md)
 > - ⚡ **Quick Ref**: [DIAGNOSTIC_QUICK_REFERENCE.md](./DIAGNOSTIC_QUICK_REFERENCE.md)
 > - 📊 **Summary**: [DIAGNOSTIC_IMPLEMENTATION_SUMMARY.md](./DIAGNOSTIC_IMPLEMENTATION_SUMMARY.md)
+> - 🔍 **Deep Forensics**: [DEEP_FORENSICS.md](./DEEP_FORENSICS.md)
 > - 🚀 **Run**: `python comprehensive_diagnostic_suite.py`
 
 **Change impact (keep in sync):**

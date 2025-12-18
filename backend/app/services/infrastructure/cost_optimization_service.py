@@ -76,6 +76,44 @@ class CostAnalysis:
     roi_percentage: float
 
 
+
+class OptimizationCategory(Enum):
+    INFRASTRUCTURE = "infrastructure"
+    OPERATIONS = "operations"
+    LICENSING = "licensing"
+    DEVELOPMENT = "development"
+    PROCESSES = "processes"
+    SECURITY = "security"
+
+
+class OptimizationPriority(Enum):
+    CRITICAL = "critical"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
+@dataclass
+class CostOptimizationOpportunity:
+    opportunity_id: str
+    title: str
+    description: str
+    category: OptimizationCategory
+    priority: OptimizationPriority
+    current_cost: float
+    potential_savings: float
+    implementation_cost: float
+    payback_period_months: float
+    roi_percentage: float
+    complexity: str
+    timeline_months: int
+    owner: str
+    status: str
+    created_at: datetime
+    actual_savings: Optional[float] = None
+    implemented_at: Optional[datetime] = None
+
+
 class InfrastructureOptimizer:
     """Optimizes infrastructure costs"""
 

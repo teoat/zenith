@@ -54,6 +54,32 @@ class AIService {
     if (!response.ok) throw new Error('Failed to get proactive suggestions');
     return response.json();
   }
+
+  async search(query: string, limit: number = 10) {
+    const response = await fetch(`${API_BASE_URL}/ai/search`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ query, limit })
+    });
+    if (!response.ok) throw new Error('Failed to perform semantic search');
+    return response.json();
+  }
+
+  async indexEvidence(evidenceId: string) {
+    const response = await fetch(`${API_BASE_URL}/ai/index-evidence`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ evidence_id: evidenceId })
+    });
+    if (!response.ok) throw new Error('Failed to index evidence');
+    return response.json();
+  }
 }
 
 export const aiService = new AIService();

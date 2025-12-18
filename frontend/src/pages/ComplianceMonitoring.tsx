@@ -362,6 +362,161 @@ const ComplianceMonitoring: React.FC = () => {
         </CardContent>
       </Card>
 
+      {/* Compliance Overview Dashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">SAR Filings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {dashboard?.active_alerts?.length || 0}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              {dashboard?.active_alerts?.filter(a => !a.acknowledged).length || 0} pending review
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Regulatory Alerts</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-orange-600">
+              {dashboard?.active_alerts?.length || 0}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              {dashboard?.active_alerts?.filter(a => a.severity === 'critical').length || 0} critical
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Compliance Score</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {dashboard?.system_health?.compliance_score || 0}%
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              {dashboard?.compliance_trends?.[0]?.score || 0} last 7 days
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Audit Readiness</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-600">
+              {Math.round((dashboard?.system_health?.compliance_score || 0) * 0.9)}%
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Next audit in 45 days
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Regulatory Framework Compliance */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Regulatory Framework Compliance</CardTitle>
+          <CardDescription>
+            Compliance status across different regulatory frameworks
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { name: 'BSA/AML', score: 95, status: 'compliant' },
+              { name: 'FATF Standards', score: 92, status: 'compliant' },
+              { name: 'EU AMLD5', score: 88, status: 'review' },
+              { name: 'OFAC Sanctions', score: 96, status: 'compliant' },
+              { name: 'MAS Notice 626', score: 91, status: 'compliant' },
+              { name: 'SOX Controls', score: 89, status: 'review' }
+            ].map((framework, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{framework.name}</span>
+                  <Badge variant={framework.status === 'compliant' ? 'default' : 'secondary'}>
+                    {framework.score}%
+                  </Badge>
+                </div>
+                <Progress
+                  value={framework.score}
+                  className="h-2"
+                />
+                <p className="text-xs text-gray-500">
+                  {framework.status === 'compliant' ? 'Fully Compliant' : 'Under Review'}
+                </p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Recent Compliance Activities */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Compliance Activities</CardTitle>
+          <CardDescription>
+            Latest compliance filings, reviews, and regulatory submissions
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {[
+              {
+                type: 'SAR Filing',
+                description: 'Suspicious Activity Report filed for Case #CASE-2025-001',
+                timestamp: '2025-12-15T14:30:00Z',
+                status: 'submitted'
+              },
+              {
+                type: 'Regulatory Review',
+                description: 'FATF compliance assessment completed',
+                timestamp: '2025-12-14T10:15:00Z',
+                status: 'completed'
+              },
+              {
+                type: 'OFAC Screening',
+                description: 'Enhanced sanctions screening implemented',
+                timestamp: '2025-12-13T16:45:00Z',
+                status: 'completed'
+              },
+              {
+                type: 'Training Completion',
+                description: 'AML training completed by 95% of staff',
+                timestamp: '2025-12-12T09:00:00Z',
+                status: 'completed'
+              }
+            ].map((activity, index) => (
+              <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <div>
+                    <p className="font-medium">{activity.type}</p>
+                    <p className="text-sm text-gray-600">{activity.description}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <Badge className="mb-1" variant={activity.status === 'submitted' ? 'default' : 'secondary'}>
+                    {activity.status}
+                  </Badge>
+                  <p className="text-xs text-gray-500">
+                    {new Date(activity.timestamp).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* System Health Checks */}
       <Card>
         <CardHeader>

@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
-import { X, ChevronRight, ChevronLeft, Check, AlertTriangle, User, FileText } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Check, AlertTriangle, User, FileText, Sparkles } from 'lucide-react';
 import { CalendarFormat, CurrencyFormat, DecimalFormat } from '../../types/locale';
+import { ApprovalQueue } from '../ApprovalQueue';
+import { DraftPreview } from '../ui/DraftPreview';
+import { draftPreviewService, DraftState } from '../../services/draftPreviewService';
+import { useEffect } from 'react';
 
 interface InvestigationWizardProps {
   isOpen: boolean;
@@ -54,6 +58,9 @@ const STEPS = [
 
 const InvestigationWizard: React.FC<InvestigationWizardProps> = ({ isOpen, onClose, onComplete }) => {
   const [step, setStep] = useState(1);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [drafts, setDrafts] = useState<DraftState[]>([]);
+  
   const [data, setData] = useState<InvestigationData>({
     title: '',
     // priority: 'Medium', // Removed
@@ -106,6 +113,52 @@ const InvestigationWizard: React.FC<InvestigationWizardProps> = ({ isOpen, onClo
     }
   };
 
+  useEffect(() => {
+    const unsub = draftPreviewService.addListener((id, newDrafts) => {
+      if (id === 'new-investigation') {
+        setDrafts(newDrafts);
+      }
+    });
+    return unsub;
+  }, []);
+
+  const handleAiAutofill = async () => {
+    if (!data.title) return;
+    setIsAiLoading(true);
+    
+    // Simulate AI thinking and proposing changes
+    setTimeout(() => {
+      draftPreviewService.proposeAIChange(
+        'new-investigation',
+        'description',
+        `Comprehensive investigation into ${data.title}. Focus on identifying nexus of actors and transaction velocity patterns indicative of money laundering.`,
+        data.description,
+        'AI generated description based on your title.'
+      );
+      
+      draftPreviewService.proposeAIChange(
+        'new-investigation',
+        'tags',
+        ['High Risk', 'Internal Audit', 'Priority'],
+        data.tags,
+        'Recommended tags for this type of investigation.'
+      );
+      
+      setIsAiLoading(false);
+    }, 1500);
+  };
+
+  const acceptDraft = (field: string) => {
+    const draft = draftPreviewService.acceptDraft('new-investigation', field);
+    if (draft) {
+      updateField(field as keyof InvestigationData, draft.value);
+    }
+  };
+
+  const rejectDraft = (field: string) => {
+    draftPreviewService.rejectDraft('new-investigation', field);
+  };
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
@@ -147,27 +200,51 @@ const InvestigationWizard: React.FC<InvestigationWizardProps> = ({ isOpen, onClo
           <div className="p-6 min-h-[300px]">
             {step === 1 && (
               <div className="space-y-4 animate-in fade-in">
-                <div>
-                  <label htmlFor="investigation-title" className="block text-sm font-medium mb-2">Investigation Title *</label>
-                  <input 
-                    id="investigation-title"
-                    type="text"
-                    value={data.title}
-                    onChange={(e) => updateField('title', e.target.value)}
-                    placeholder="e.g., Suspicious Wire Transfer Pattern"
-                    className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                <div className="flex justify-between items-end">
+                  <div className="flex-1">
+                    <label htmlFor="investigation-title" className="block text-sm font-medium mb-2">Investigation Title *</label>
+                    <input 
+                      id="investigation-title"
+                      type="text"
+                      value={data.title}
+                      onChange={(e) => updateField('title', e.target.value)}
+                      placeholder="e.g., Suspicious Wire Transfer Pattern"
+                      className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <button
+                    onClick={handleAiAutofill}
+                    disabled={!data.title || isAiLoading}
+                    className="ml-3 h-[46px] px-4 bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/30 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800 rounded-lg transition-all flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {isAiLoading ? (
+                      <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Sparkles size={16} />
+                    )}
+                    <span className="font-medium text-sm">Auto-fill</span>
+                  </button>
                 </div>
-                <div>
+
+                <div className="space-y-3">
                   <label htmlFor="investigation-description" className="block text-sm font-medium mb-2">Description</label>
-                  <textarea 
-                    id="investigation-description"
-                    value={data.description}
-                    onChange={(e) => updateField('description', e.target.value)}
-                    placeholder="Describe the suspicious activity..."
-                    rows={4}
-                    className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  />
+                  
+                  {drafts.find(d => d.field === 'description') ? (
+                    <DraftPreview 
+                      draft={drafts.find(d => d.field === 'description')!}
+                      onAccept={() => acceptDraft('description')}
+                      onReject={() => rejectDraft('description')}
+                    />
+                  ) : (
+                    <textarea 
+                      id="investigation-description"
+                      value={data.description}
+                      onChange={(e) => updateField('description', e.target.value)}
+                      placeholder="Describe the suspicious activity..."
+                      rows={4}
+                      className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all"
+                    />
+                  )}
                 </div>
               </div>
             )}
@@ -349,8 +426,19 @@ const InvestigationWizard: React.FC<InvestigationWizardProps> = ({ isOpen, onClo
                     <option value="M. Lee">M. Lee (Manager)</option>
                   </select>
                 </div>
-                <fieldset>
-                  <legend className="block text-sm font-medium mb-3">Tags</legend>
+                
+                <div className="space-y-3">
+                  <span className="block text-sm font-medium mb-3">Tags</span>
+                  
+                  {drafts.find(d => d.field === 'tags') && (
+                    <DraftPreview 
+                      draft={drafts.find(d => d.field === 'tags')!}
+                      onAccept={() => acceptDraft('tags')}
+                      onReject={() => rejectDraft('tags')}
+                      className="mb-4"
+                    />
+                  )}
+
                   <div className="flex flex-wrap gap-2">
                     {['Urgent', 'VIP Client', 'Cross-border', 'Crypto', 'Structuring', 'KYC Fail'].map(tag => (
                       <button
@@ -371,7 +459,7 @@ const InvestigationWizard: React.FC<InvestigationWizardProps> = ({ isOpen, onClo
                       </button>
                     ))}
                   </div>
-                </fieldset>
+                </div>
               </div>
             )}
 
@@ -448,13 +536,18 @@ const InvestigationWizard: React.FC<InvestigationWizardProps> = ({ isOpen, onClo
                         </div>
                       </div>
                     )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+                   </div>
+                 </div>
+               </div>
+             )}
+           </div>
 
-          {/* Footer */}
+           {/* Approval Queue */}
+           <div className="mt-6">
+             <ApprovalQueue showHeader={false} maxHeight="200px" />
+           </div>
+
+           {/* Footer */}
           <div className="p-6 border-t border-slate-200 dark:border-slate-800 flex justify-between">
             <button
               onClick={() => step > 1 && setStep(step - 1)}

@@ -449,23 +449,13 @@ class DiagnosticOrchestrator:
         """Load available diagnostic service modules"""
         # Try to import diagnostic services that might exist
         potential_modules = [
-            "perfect_availability_service",
-            "perfect_architecture_service",
-            "perfect_code_quality_service",
-            "perfect_security_posture_service",
             "privacy_preserving_ml_service",
             "advanced_threat_detection_service",
-            "scalability_service",
             "advanced_ai_service",
             "innovation_framework_service",
             "cost_optimization_service",
-            "technical_debt_reduction_service",
-            "ultimate_platform_perfection_service",
-            # Add our new perfect systems
-            "perfect_risk_management_system",
-            "perfect_innovation_readiness_system",
-            "perfect_competitive_positioning_system",
-            "perfect_systems_suite",
+            # Infrastructure services (kept for business value)
+            # Note: Removed all "perfect_*" services as they provided no real business value
         ]
 
         for module_name in potential_modules:

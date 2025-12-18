@@ -26,8 +26,14 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+try:
+    from sentence_transformers import SentenceTransformer
+    import faiss
+    HAS_SEMANTIC = True
+except ImportError:
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.metrics.pairwise import cosine_similarity
+    HAS_SEMANTIC = False
 
 logger = logging.getLogger(__name__)
 
@@ -88,27 +94,30 @@ class AIService:
     def __init__(self, db_path: str = "./data/vector_store.db"):
         self.db_path = db_path
         self.vector_store = {}
-        self.tfidf_vectorizer = None
-        self.tfidf_matrix = None
         self.document_index = {}
         self.initialized = False
+        self.model = None
+        self.faiss_index = None
+        self.doc_ids = []
 
         # Create data directory if it doesn't exist
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
 
-        # Initialize the service synchronously
-        # Note: Full async initialization will happen on first use
-
     async def initialize(self):
         """Initialize the AI service and load existing data"""
         try:
+            if HAS_SEMANTIC:
+                logger.info("Initializing Semantic AI with SentenceTransformers...")
+                self.model = SentenceTransformer('all-MiniLM-L6-v2')
+            else:
+                logger.warning("Semantic AI dependencies missing, falling back to TF-IDF")
+            
             await self._load_vector_store()
             await self._rebuild_index()
             self.initialized = True
             logger.info("AI Service initialized successfully")
         except Exception as e:
             logger.error(f"Failed to initialize AI service: {e}")
-            # Continue with empty state
             self.initialized = True
 
     # Backwards-compatible no-op hooks used by tests / patches
@@ -199,39 +208,59 @@ class AIService:
             logger.error(f"Failed to load vector store: {e}")
 
     async def _rebuild_index(self):
-        """Rebuild TF-IDF index for semantic search"""
+        """Rebuild semantic index (FAISS or TF-IDF)"""
         if not self.vector_store:
             return
 
         try:
             documents = []
             doc_ids = []
+            vectors = []
 
             for doc_id, doc_data in self.vector_store.items():
                 documents.append(doc_data["content"])
                 doc_ids.append(doc_id)
+                if doc_data.get("vector") is not None:
+                    vectors.append(doc_data["vector"])
 
-            if documents:
+            if HAS_SEMANTIC and self.model:
+                # Use FAISS
+                if not vectors:
+                    logger.info("Generating vectors for existing documents...")
+                    vectors = self.model.encode(documents)
+                    # Update vector store with newly generated vectors
+                    for i, doc_id in enumerate(doc_ids):
+                        self.vector_store[doc_id]["vector"] = vectors[i]
+
+                vectors_np = np.array(vectors).astype('float32')
+                dim = vectors_np.shape[1]
+                self.faiss_index = faiss.IndexFlatL2(dim)
+                self.faiss_index.add(vectors_np)
+                self.doc_ids = doc_ids
+                logger.info(f"Rebuilt FAISS index with {len(documents)} documents (dim={dim})")
+            else:
+                # Fallback to TF-IDF
                 self.tfidf_vectorizer = TfidfVectorizer(
                     max_features=5000, stop_words="english", ngram_range=(1, 2)
                 )
                 self.tfidf_matrix = self.tfidf_vectorizer.fit_transform(documents)
                 self.document_index = dict(zip(doc_ids, range(len(documents))))
-
+                self.doc_ids = doc_ids
                 logger.info(f"Rebuilt TF-IDF index with {len(documents)} documents")
+
         except Exception as e:
             logger.error(f"Failed to rebuild index: {e}")
 
     def embed_text(self, text: str) -> List[float]:
-        """Generate embedding for text using TF-IDF or fallback"""
+        """Generate embedding for text using SentenceTransformer or TF-IDF"""
         try:
-            if self.tfidf_vectorizer:
+            if HAS_SEMANTIC and self.model:
+                return self.model.encode([text])[0].tolist()
+            elif self.tfidf_vectorizer:
                 return self.tfidf_vectorizer.transform([text]).toarray()[0].tolist()
             else:
-                # Fallback hash-based vector (deterministically random)
-                # Using 384 dimensions to match MiniLM default
+                # Fallback hash-based vector
                 import random
-
                 random.seed(hash(text))
                 return [random.random() for _ in range(384)]
         except Exception as e:
@@ -319,46 +348,69 @@ class AIService:
     async def semantic_search(
         self, query: str, limit: int = 10, filters: Dict[str, Any] = None
     ) -> List[Dict[str, Any]]:
-        """Perform semantic search across documents"""
+        """Perform semantic search across documents using FAISS or TF-IDF"""
         try:
             if not self.initialized or not self.vector_store:
                 return []
 
-            # Transform query to vector
-            if self.tfidf_vectorizer:
-                query_vector = self.tfidf_vectorizer.transform([query]).toarray()[0]
-            else:
-                # Fallback: simple keyword matching
-                return await self._keyword_search(query, limit, filters)
-
-            # Calculate similarities
-            results = []
-            for doc_id, doc_data in self.vector_store.items():
-                if doc_data["vector"] is not None:
-                    # Cosine similarity
-                    similarity = cosine_similarity(
-                        [query_vector], [doc_data["vector"]]
-                    )[0][0]
-
+            if HAS_SEMANTIC and self.faiss_index and self.model:
+                # 1. Semantic Search with FAISS
+                query_vector = self.model.encode([query]).astype('float32')
+                
+                # Search FAISS index (return more than limit to allow for filtering)
+                search_limit = limit * 2 if filters else limit
+                distances, indices = self.faiss_index.search(query_vector, min(search_limit, len(self.doc_ids)))
+                
+                results = []
+                for i, idx in enumerate(indices[0]):
+                    if idx == -1: continue # No more results
+                    
+                    doc_id = self.doc_ids[idx]
+                    doc_data = self.vector_store[doc_id]
+                    
                     # Apply filters
-                    if filters and not self._matches_filters(
-                        doc_data["metadata"], filters
-                    ):
+                    if filters and not self._matches_filters(doc_data["metadata"], filters):
                         continue
+                        
+                    # L2 distance to similarity (approximate)
+                    # For IndexFlatL2, lower distance is better.
+                    similarity = 1.0 / (1.0 + float(distances[0][i]))
+                    
+                    results.append({
+                        "id": doc_id,
+                        "similarity": similarity,
+                        "content": doc_data["content"][:800],
+                        "metadata": doc_data["metadata"],
+                        "created_at": doc_data["created_at"],
+                    })
+                return results[:limit]
+            
+            else:
+                # 2. Fallback to TF-IDF
+                if self.tfidf_vectorizer:
+                    query_vector = self.tfidf_vectorizer.transform([query]).toarray()[0]
+                    
+                    results = []
+                    for doc_id, doc_data in self.vector_store.items():
+                        if doc_data["vector"] is not None:
+                            similarity = cosine_similarity(
+                                [query_vector], [doc_data["vector"]]
+                            )[0][0]
 
-                    results.append(
-                        {
-                            "id": doc_id,
-                            "similarity": float(similarity),
-                            "content": doc_data["content"][:500],  # Snippet
-                            "metadata": doc_data["metadata"],
-                            "created_at": doc_data["created_at"],
-                        }
-                    )
+                            if filters and not self._matches_filters(doc_data["metadata"], filters):
+                                continue
 
-            # Sort by similarity and limit results
-            results.sort(key=lambda x: x["similarity"], reverse=True)
-            return results[:limit]
+                            results.append({
+                                "id": doc_id,
+                                "similarity": float(similarity),
+                                "content": doc_data["content"][:800],
+                                "metadata": doc_data["metadata"],
+                                "created_at": doc_data["created_at"],
+                            })
+                    results.sort(key=lambda x: x["similarity"], reverse=True)
+                    return results[:limit]
+                else:
+                    return await self._keyword_search(query, limit, filters)
 
         except Exception as e:
             logger.error(f"Semantic search failed: {e}")

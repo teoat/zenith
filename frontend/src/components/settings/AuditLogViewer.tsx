@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Search, Shield, AlertTriangle, FileText, Loader } from 'lucide-react';
 import { useFormatters } from '../../providers/LocaleProvider';
 import { api, AuditLogEntry as ApiAuditLogEntry } from '../../lib/api';
@@ -12,13 +12,11 @@ interface UIAuditLogEntry extends ApiAuditLogEntry {
 }
 
 const ROW_HEIGHT = 56;
-const VISIBLE_ROWS = 10;
 
 const AuditLogViewer: React.FC = () => {
   const [logs, setLogs] = useState<UIAuditLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [scrollTop, setScrollTop] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [levelFilter, setLevelFilter] = useState<string>('all');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -59,11 +57,7 @@ const AuditLogViewer: React.FC = () => {
       return 'info';
   };
 
-  // Infinite scroll - load more on scroll to bottom (Mock implementation for now as API handles pagination differently)
-  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop } = e.currentTarget;
-    setScrollTop(scrollTop);
-  }, []);
+
 
   // Filter logs
   const filteredLogs = logs.filter(log => {
@@ -75,12 +69,7 @@ const AuditLogViewer: React.FC = () => {
     return matchesSearch && matchesLevel;
   });
 
-  // Virtual scrolling calculations
-  const startIndex = Math.floor(scrollTop / ROW_HEIGHT);
-  const endIndex = Math.min(startIndex + VISIBLE_ROWS + 2, filteredLogs.length);
-  const visibleLogs = filteredLogs.slice(startIndex, endIndex);
-  const totalHeight = filteredLogs.length * ROW_HEIGHT;
-  const offsetY = startIndex * ROW_HEIGHT;
+
 
   const getLevelIcon = (level: string) => {
     switch (level) {
@@ -146,54 +135,51 @@ const AuditLogViewer: React.FC = () => {
       </div>
 
       {/* Logs Table */}
-      <div 
-        ref={containerRef}
-        className="flex-1 overflow-auto bg-slate-50 dark:bg-slate-950"
-        onScroll={handleScroll}
-      >
-        <div style={{ height: totalHeight, position: 'relative' }}>
-          <div style={{ transform: `translateY(${offsetY}px)` }}>
-            {visibleLogs.map(log => (
-              <div 
-                key={log.id} 
-                className={`flex items-center gap-4 px-4 py-3 border-b border-slate-100 dark:border-slate-800 transition-colors hover:bg-slate-100 dark:hover:bg-slate-900`}
-                style={{ height: ROW_HEIGHT }}
-              >
-                {/* Status Indicator */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${getLevelBg(log.level)}`}>
-                  {getLevelIcon(log.level)}
+      <div className="flex-1 overflow-hidden bg-slate-50 dark:bg-slate-950">
+        <VirtualizedList
+          items={filteredLogs}
+          estimateSize={ROW_HEIGHT}
+          getItemKey={(log) => log.id}
+          className="h-full"
+          renderItem={(log: UIAuditLogEntry) => (
+            <div 
+              className={`flex items-center gap-4 px-4 py-3 border-b border-slate-100 dark:border-slate-800 transition-colors hover:bg-slate-100 dark:hover:bg-slate-900`}
+              style={{ height: ROW_HEIGHT }}
+            >
+              {/* Status Indicator */}
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${getLevelBg(log.level)}`}>
+                {getLevelIcon(log.level)}
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0 grid grid-cols-12 gap-4 items-center">
+                <div className="col-span-3">
+                  <p className="font-medium text-sm text-slate-900 dark:text-slate-200 truncate">{log.action}</p>
+                  <p className="text-xs text-slate-500 truncate">{formatTime(new Date(log.timestamp))}</p>
+                </div>
+                
+                <div className="col-span-3">
+                  <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
+                    <Shield size={12} />
+                    <span className="text-sm truncate">{log.user}</span>
+                  </div>
                 </div>
 
-                {/* Content */}
-                <div className="flex-1 min-w-0 grid grid-cols-12 gap-4 items-center">
-                  <div className="col-span-3">
-                    <p className="font-medium text-sm text-slate-900 dark:text-slate-200 truncate">{log.action}</p>
-                    <p className="text-xs text-slate-500 truncate">{formatTime(new Date(log.timestamp))}</p>
-                  </div>
-                  
-                  <div className="col-span-3">
-                    <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-                      <Shield size={12} />
-                      <span className="text-sm truncate">{log.user}</span>
-                    </div>
-                  </div>
+                <div className="col-span-3">
+                  <span className="text-sm text-slate-500 truncate block bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded w-fit max-w-full">
+                    {log.resource}
+                  </span>
+                </div>
 
-                  <div className="col-span-3">
-                    <span className="text-sm text-slate-500 truncate block bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded w-fit max-w-full">
-                      {log.resource}
-                    </span>
-                  </div>
-
-                  <div className="col-span-3">
-                    <p className="text-sm text-slate-500 truncate" title={log.details ? JSON.stringify(log.details) : ''}>
-                      {log.details ? JSON.stringify(log.details) : '-'}
-                    </p>
-                  </div>
+                <div className="col-span-3">
+                  <p className="text-sm text-slate-500 truncate" title={log.details ? JSON.stringify(log.details) : ''}>
+                    {log.details ? JSON.stringify(log.details) : '-'}
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          )}
+        />
       </div>
 
       {/* Footer */}

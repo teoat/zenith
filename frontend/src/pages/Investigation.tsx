@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import React, { Suspense } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { DndContext, useDroppable, DragEndEvent } from '@dnd-kit/core';
 import { useToast } from '../providers/ToastProvider';
 import EntityRegistry from '../components/investigation/EntityRegistry';
-import { Share2, Save, RotateCcw } from 'lucide-react';
+import { Share2, Save, RotateCcw, Network, Map, Activity, BarChart3 } from 'lucide-react';
 import { api, GraphData as ApiGraphData } from '../lib/api';
 import InvestigationSkeleton from '../components/investigation/InvestigationSkeleton';
 import { AccessibleButton } from '../components/ui/AccessibleButton';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
 // Removed GraphData import from ../lib/api to avoid conflict
 import { GraphData, GraphNode } from '../components/investigation/GraphCanvas';
 
@@ -30,9 +30,12 @@ const Investigation = () => {
   const [graphData, setGraphData] = useState<GraphData | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Force remount on reset
   const [graphVersion, setGraphVersion] = useState(0);
+
+  // Advanced visualization mode
+  const [visualizationMode, setVisualizationMode] = useState<'2d-graph' | '3d-graph' | 'behavioral-heatmap' | 'temporal-flow'>('2d-graph');
 
   const fetchGraphData = useCallback(async () => {
     setLoading(true);
@@ -86,6 +89,30 @@ const Investigation = () => {
     }
   };
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in input
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
+
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case 'r':
+            e.preventDefault();
+            handleReset();
+            break;
+          case 's':
+            e.preventDefault();
+            handleSaveSnapshot();
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -136,37 +163,97 @@ const Investigation = () => {
         <div className="flex-1 flex flex-col min-w-0 bg-slate-950 relative">
           
           {/* Toolbar */}
-          <div className="h-14 border-b border-slate-800 flex justify-between items-center px-6 bg-slate-900 shadow-sm z-20">
-            <h1 className="font-bold text-slate-100 flex items-center gap-2">
-               <Share2 size={20} className="text-blue-500" />
-               Investigation #{caseId || '492'}: Shell Corp Network
-            </h1>
-            <div className="flex gap-3">
-               <AccessibleButton 
-                variant="secondary"
-                onClick={handleReset}
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reset
-              </AccessibleButton>
-              
-              <AccessibleButton
-                variant="primary"
-                onClick={handleSaveSnapshot}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                Save Snapshot
-              </AccessibleButton>
+          <div className="h-14 border-b border-slate-800 bg-slate-900 shadow-sm z-20">
+            <div className="flex justify-between items-center px-6 h-full">
+              <h1 className="font-bold text-slate-100 flex items-center gap-2">
+                 <Share2 size={20} className="text-blue-500" />
+                 Investigation #{caseId || '492'}: Shell Corp Network
+              </h1>
+              <div className="flex gap-3">
+                 <AccessibleButton
+                  variant="secondary"
+                  onClick={handleReset}
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Reset
+                </AccessibleButton>
+
+                <AccessibleButton
+                  variant="primary"
+                  onClick={handleSaveSnapshot}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Snapshot
+                </AccessibleButton>
+              </div>
+            </div>
+
+            {/* Visualization Mode Tabs */}
+            <div className="px-6 pb-2">
+              <Tabs value={visualizationMode} onValueChange={(value: any) => setVisualizationMode(value)}>
+                <TabsList className="bg-slate-800 border-slate-700">
+                  <TabsTrigger value="2d-graph" className="flex items-center gap-2">
+                    <Network className="w-4 h-4" />
+                    2D Graph
+                  </TabsTrigger>
+                  <TabsTrigger value="3d-graph" className="flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4" />
+                    3D Graph
+                  </TabsTrigger>
+                  <TabsTrigger value="behavioral-heatmap" className="flex items-center gap-2">
+                    <Map className="w-4 h-4" />
+                    Behavioral Map
+                  </TabsTrigger>
+                  <TabsTrigger value="temporal-flow" className="flex items-center gap-2">
+                    <Activity className="w-4 h-4" />
+                    Temporal Flow
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
           </div>
 
-          {/* Graph Canvas */}
+          {/* Visualization Canvas */}
           <div className="flex-1 relative overflow-hidden">
-            <DroppableCanvas>
-              <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>}>
-                <GraphCanvas key={graphVersion} data={graphData} />
-              </Suspense>
-            </DroppableCanvas>
+            <Tabs value={visualizationMode} onValueChange={() => {}}>
+              <TabsContent value="2d-graph" className="h-full m-0">
+                <DroppableCanvas>
+                  <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>}>
+                    <GraphCanvas key={graphVersion} data={graphData} />
+                  </Suspense>
+                </DroppableCanvas>
+              </TabsContent>
+
+              <TabsContent value="3d-graph" className="h-full m-0">
+                <div className="h-full w-full flex items-center justify-center bg-slate-900 text-slate-400">
+                  <div className="text-center">
+                    <BarChart3 className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                    <h3 className="text-lg font-medium mb-2">3D Graph Visualization</h3>
+                    <p className="text-sm">Interactive 3D network analysis coming soon</p>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="behavioral-heatmap" className="h-full m-0">
+                <div className="h-full w-full flex items-center justify-center bg-slate-900 text-slate-400">
+                  <div className="text-center">
+                    <Map className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                    <h3 className="text-lg font-medium mb-2">Behavioral Heatmap</h3>
+                    <p className="text-sm">Geographic risk pattern analysis coming soon</p>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="temporal-flow" className="h-full m-0">
+                <div className="h-full w-full flex items-center justify-center bg-slate-900 text-slate-400">
+                  <div className="text-center">
+                    <Activity className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                    <h3 className="text-lg font-medium mb-2">Temporal Flow Analysis</h3>
+                    <p className="text-sm">Transaction timeline visualization coming soon</p>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
 
         </div>

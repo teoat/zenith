@@ -15,6 +15,7 @@ from typing import Any, Callable, Dict, List, Optional
 try:
     from app.services.ai.ai_service import ai_service
     from app.services.search_service import evidence_search_index
+    from app.services.business.standardization_service import standardization_service
 
     vector_store = ai_service.vector_store
 except ImportError:
@@ -37,6 +38,8 @@ class ProcessingResult:
     key_entities: List[Dict[str, Any]] = None
     sentiment_score: float = 0.0
     quality_score: float = 0.0
+    fraud_amount: float = 0.0
+    customer_name: str = "Unknown"
     error: str = None
     metadata: Dict[str, Any] = None
 
@@ -269,6 +272,26 @@ class EvidenceProcessor:
                 self._process_archive(file_path, result, options)
             else:
                 result.error = f"Unsupported file type: {mime_type}"
+
+            # Standardize extracted data if text exists
+            if result.extracted_text and not result.error:
+                standard_entities = standardization_service.extract_entities_from_text(result.extracted_text)
+                result.fraud_amount = standard_entities.get("fraud_amount", 0.0)
+                result.customer_name = standard_entities.get("customer_name", "Unknown")
+                
+                # Merge into key_entities if not already present
+                if result.fraud_amount > 0:
+                    result.key_entities.append({
+                        "type": "standardized_amount",
+                        "value": result.fraud_amount,
+                        "confidence": 0.95
+                    })
+                if result.customer_name != "Unknown":
+                    result.key_entities.append({
+                        "type": "standardized_customer",
+                        "value": result.customer_name,
+                        "confidence": 0.90
+                    })
 
             result.processing_time = time.time() - start_time
             return result

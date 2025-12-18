@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X, ShieldAlert, User, DollarSign, Calendar } from 'lucide-react';
+import { SanitizedHTML } from '../../hooks/useSanitizedHTML';
 
 interface CasePreviewDrawerProps {
   caseId: string | null;
@@ -76,9 +77,10 @@ const CasePreviewDrawer: React.FC<CasePreviewDrawerProps> = ({ caseId, isOpen, o
                     {/* Main Info */}
                     <div>
                       <h3 className="font-semibold text-lg mb-2">{caseData.title}</h3>
-                      <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                        {caseData.description}
-                      </p>
+                      <SanitizedHTML 
+                        html={caseData.description} 
+                        className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed"
+                      />
                     </div>
 
                     {/* Details Grid */}
@@ -166,9 +168,10 @@ const CasePreviewDrawer: React.FC<CasePreviewDrawerProps> = ({ caseId, isOpen, o
                 {/* Main Info */}
                 <div>
                   <h3 className="font-semibold text-lg mb-2">{caseData.title}</h3>
-                  <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                    {caseData.description}
-                  </p>
+                  <SanitizedHTML 
+                    html={caseData.description} 
+                    className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed"
+                  />
                 </div>
 
                 {/* Details Grid */}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import MetricSparkline from './MetricSparkline';
 
@@ -12,7 +12,7 @@ interface MetricCardProps {
   isCritical?: boolean;
 }
 
-const MetricCard: React.FC<MetricCardProps> = ({
+const MetricCard: React.FC<MetricCardProps> = memo(({
   title,
   value,
   change,
@@ -67,6 +67,6 @@ const MetricCard: React.FC<MetricCardProps> = ({
       )}
     </div>
   );
-};
+});
 
 export default React.memo(MetricCard);

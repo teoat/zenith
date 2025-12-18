@@ -4,7 +4,7 @@ import os
 import uuid
 from dataclasses import asdict
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 from fastapi import (
     APIRouter,
@@ -15,6 +15,7 @@ from fastapi import (
     Query,
     Request,
     UploadFile,
+    Body,
 )
 from fastapi.responses import FileResponse
 from sqlalchemy import text
@@ -114,8 +115,8 @@ async def get_evidence(
             SELECT e.id, e.case_id, e.filename, e.file_path,
                    e.file_type, e.file_category, e.size_bytes, e.uploaded_at, e.uploaded_by,
                    e.processed_at, e.processing_status, e.hash, e.ocr_text, e.extracted_text,
-                   e.sentiment_score, e.is_admissible,
-                   e.quality_score, e.relevance_score, e.evidence_metadata, e.evidence_tags
+                    e.sentiment_score, e.is_admissible, e.fraud_amount, e.customer_name,
+                    e.quality_score, e.relevance_score, e.evidence_metadata, e.evidence_tags
             FROM evidence e
             WHERE {where_clause}
             ORDER BY e.uploaded_at DESC
@@ -141,7 +142,8 @@ async def get_evidence(
                     ),
                     "filePath": row.file_path,
                     "ocrText": row.extracted_text,
-                    # Add extra fields that might be useful
+                    "fraudAmount": row.fraud_amount,
+                    "customerName": row.customer_name,
                     "processingStatus": row.processing_status
                 }
             )
@@ -326,6 +328,8 @@ async def upload_evidence(
                 "key_entities": processing_result.key_entities or [],
                 "sentiment_score": processing_result.sentiment_score,
                 "quality_score": processing_result.quality_score,
+                "fraud_amount": processing_result.fraud_amount,
+                "customer_name": processing_result.customer_name,
                 "evidence_metadata": {
                     "multimodal_analysis": processing_result.metadata,
                     "forensic_result": forensic_result,
@@ -340,12 +344,12 @@ async def upload_evidence(
                     INSERT INTO evidence (
                         id, case_id, filename, file_path, file_type,
                         file_category, size_bytes, uploaded_at, uploaded_by, processing_status,
-                        extracted_text, sentiment_score, quality_score,
+                        extracted_text, sentiment_score, quality_score, fraud_amount, customer_name,
                         evidence_metadata, evidence_tags
                     ) VALUES (
                         :id, :case_id, :filename, :file_path, :file_type,
                         :file_category, :size_bytes, :uploaded_at, :uploaded_by, :processing_status,
-                        :extracted_text, :sentiment_score, :quality_score,
+                        :extracted_text, :sentiment_score, :quality_score, :fraud_amount, :customer_name,
                         :evidence_metadata, :evidence_tags
                     )
                 """
@@ -364,6 +368,8 @@ async def upload_evidence(
                     "extracted_text": evidence_record["extracted_text"],
                     "sentiment_score": evidence_record["sentiment_score"],
                     "quality_score": evidence_record["quality_score"],
+                    "fraud_amount": evidence_record["fraud_amount"],
+                    "customer_name": evidence_record["customer_name"],
                     "evidence_metadata": json.dumps(
                         evidence_record["evidence_metadata"], default=str
                     ),
@@ -405,11 +411,15 @@ async def upload_evidence(
                 "uploadedAt": evidence_record["uploaded_at"].isoformat(),
                 "filePath": temp_file_path,
                 "ocrText": processing_result.extracted_text or "",
+                "fraudAmount": processing_result.fraud_amount,
+                "customerName": processing_result.customer_name,
                 "analysis_result": {
                     "extractedTextLength": len(processing_result.extracted_text or ""),
                     "keyEntitiesCount": len(processing_result.key_entities or []),
                     "sentimentScore": processing_result.sentiment_score,
                     "qualityScore": processing_result.quality_score,
+                    "fraudAmount": processing_result.fraud_amount,
+                    "customerName": processing_result.customer_name,
                     "fileType": processing_result.file_type,
                 },
             }
@@ -553,6 +563,39 @@ async def save_evidence_highlight(
         raise
     except Exception as e:
         logger.error(f"Failed to save highlight: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+@router.post("/bulk-delete")
+async def bulk_delete_evidence(
+    payload: Dict[str, Any] = Body(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """Bulk delete evidence records and their associated files"""
+    try:
+        evidence_ids = payload.get("ids", [])
+        if not evidence_ids:
+            return {"deleted_count": 0, "status": "success"}
+
+        # We use raw SQL for performance and to match the pattern in this file
+        from sqlalchemy import text
+        
+        # Count records first
+        check_query = text("SELECT COUNT(*) FROM evidence WHERE id IN :ids")
+        count = db.execute(check_query, {"ids": tuple(evidence_ids)}).scalar()
+        
+        # Delete
+        delete_query = text("DELETE FROM evidence WHERE id IN :ids")
+        db.execute(delete_query, {"ids": tuple(evidence_ids)})
+        
+        db.commit()
+        logger.info(f"Bulk deleted {count} evidence items")
+        return {"deleted_count": count, "status": "success"}
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Bulk delete failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

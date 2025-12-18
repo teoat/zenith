@@ -36,6 +36,7 @@ from app.routers.auth import router as auth_router
 from app.routers.backup import router as backup_router
 from app.routers.cases import router as cases_router
 from app.routers.collaboration import router as collaboration_router
+from app.routers.cost_optimization import router as cost_optimization_router
 from app.routers.evidence import router as evidence_router
 from app.routers.fraud import router as fraud_router
 from app.routers.fraud_rules import router as fraud_rules_router
@@ -548,6 +549,9 @@ app.include_router(
 app.include_router(cases_router, prefix=f"/api/{API_VERSION}/cases", tags=["Cases"])
 app.include_router(audit_router, prefix=f"/api/{API_VERSION}/audit", tags=["Audit"])
 app.include_router(
+    cost_optimization_router, prefix=f"/api/{API_VERSION}/cost-optimization", tags=["Cost Optimization"]
+)
+app.include_router(
     evidence_router, prefix=f"/api/{API_VERSION}/evidence", tags=["Evidence"]
 )
 app.include_router(fraud_router, prefix=f"/api/{API_VERSION}/fraud", tags=["Fraud"])
@@ -613,6 +617,13 @@ app.include_router(
     prefix=f"/api/{API_VERSION}/entities",
     tags=["Entities"]
 )
+from app.routers.compliance import router as compliance_router
+app.include_router(
+    compliance_router,
+    prefix=f"/api/{API_VERSION}",
+    tags=["Compliance"]
+)
+
 app.include_router(
     relationships_router_from_entities,
     prefix=f"/api/{API_VERSION}/relationships",

@@ -197,3 +197,28 @@ async def get_fraud_stats(
     except Exception as e:
         logger.error(f"Error getting fraud stats: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/accounts/freeze")
+async def freeze_account(
+    payload: Dict[str, Any] = Body(...),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(auth_service.get_current_user),
+):
+    """Freeze a bank account due to suspicious activity"""
+    try:
+        account_id = payload.get("account_id")
+        if not account_id:
+            raise HTTPException(status_code=400, detail="account_id is required")
+
+        # Mock freeze logic
+        logger.info(f"FREEZING ACCOUNT: {account_id} by user {current_user.get('id')}")
+        
+        return {
+            "status": "success",
+            "account_id": account_id,
+            "action": "frozen",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Failed to freeze account {payload.get('account_id')}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

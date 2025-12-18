@@ -1,16 +1,73 @@
 
 import logging
+import asyncio
+from typing import Dict, Any, Optional
+from app.services.ai.ai_service import get_ai_service
 
 logger = logging.getLogger(__name__)
 
 class EvidenceSearchIndex:
     """
-    Mock Evidence Search Index service to allow backend startup.
-    Required by evidence_service.py
+    Evidence Search Index service that bridges evidence processing and semantic search.
     """
-    def index_evidence(self, file_id, file_path, processing_dict):
-        logger.info(f"Indexing evidence {file_id} from {file_path}")
-        return True
+    async def index_evidence(self, file_id: str, file_path: str, processing_dict: Dict[str, Any]):
+        """
+        Indices evidence content for semantic search.
+        """
+        try:
+            ai_service = await get_ai_service()
+            
+            # Extract content to index
+            content = processing_dict.get("extracted_text") or ""
+            if not content and processing_dict.get("metadata"):
+                 content = str(processing_dict.get("metadata"))
+            
+            if not content:
+                 logger.warning(f"No content found to index for evidence {file_id}")
+                 return False
+
+            # Prepare metadata for indexing
+            metadata = {
+                "source": "evidence",
+                "file_id": file_id,
+                "file_path": file_path,
+                "file_type": processing_dict.get("file_type"),
+                "quality_score": processing_dict.get("quality_score"),
+                "sentiment_score": processing_dict.get("sentiment_score"),
+                "indexed_at": "auto"
+            }
+            
+            # Add to AI vector store/index
+            success = await ai_service.add_document(
+                doc_id=file_id,
+                content=content,
+                metadata=metadata
+            )
+            
+            if success:
+                logger.info(f"Successfully indexed evidence {file_id} for semantic search")
+            else:
+                logger.error(f"Failed to index evidence {file_id} in AI service")
+                
+            return success
+            
+        except Exception as e:
+            logger.error(f"Error indexing evidence {file_id}: {str(e)}")
+            return False
+
+    def index_evidence_sync(self, file_id: str, file_path: str, processing_dict: Dict[str, Any]):
+        """Synchronous version for calls from sync contexts"""
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # If loop is already running, we should use a background task
+                asyncio.create_task(self.index_evidence(file_id, file_path, processing_dict))
+                return True
+            else:
+                return loop.run_until_complete(self.index_evidence(file_id, file_path, processing_dict))
+        except Exception as e:
+            logger.error(f"Sync indexing failed for {file_id}: {e}")
+            return False
 
 evidence_search_index = EvidenceSearchIndex()
-search_service = evidence_search_index # Alias if needed
+search_service = evidence_search_index # Alias for broad usage

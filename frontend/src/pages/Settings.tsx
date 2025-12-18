@@ -14,10 +14,13 @@ import { LOCALE_DISPLAY_NAMES, SupportedLocale } from '../types/locale';
 import { getCommonTimezones, getBrowserTimezone } from '../lib/formatters';
 import { AccessibilitySettings } from '../components/accessibility/AccessibilitySettings';
 
+import { useAuth } from '../hooks/useAuth';
+
 type Tab = 'general' | 'notifications' | 'security' | 'detection' | 'system' | 'accessibility';
 
 
 const Settings = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('general');
   const { settings: localeSettings, setLocale, setTimezone } = useLocale();
   const { addToast } = useToast();
@@ -31,6 +34,9 @@ const Settings = () => {
 
   const [isSaving, setIsSaving] = useState(false);
   
+  const isAdmin = user?.role === 'ADMIN';
+  const isManager = user?.role === 'MANAGER' || isAdmin;
+
   // Get timezone options
   const timezoneOptions = useMemo(() => {
     const timezones = getCommonTimezones();
@@ -54,7 +60,7 @@ const Settings = () => {
       });
       addToast('Settings saved successfully', 'success');
       accessibilityManager.announce('Settings saved successfully', 'polite');
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to save settings:', error);
       accessibilityManager.announce('Failed to save settings', 'assertive');
     } finally {
@@ -74,14 +80,14 @@ const Settings = () => {
     accessibilityManager.announce('Settings reset to defaults', 'polite');
   };
 
-  const tabs = [
-    { id: 'general' as Tab, label: 'General', icon: SettingsIcon },
-    { id: 'notifications' as Tab, label: 'Notifications', icon: Bell },
-    { id: 'security' as Tab, label: 'Security', icon: Shield },
-    { id: 'detection' as Tab, label: 'Detection Logic', icon: Layers },
-    { id: 'accessibility' as Tab, label: 'Accessibility', icon: Eye },
-    { id: 'system' as Tab, label: 'System', icon: Activity },
-  ];
+  const availableTabs = [
+    { id: 'general' as Tab, label: 'General', icon: SettingsIcon, allowed: true },
+    { id: 'notifications' as Tab, label: 'Notifications', icon: Bell, allowed: true },
+    { id: 'security' as Tab, label: 'Security', icon: Shield, allowed: isAdmin },
+    { id: 'detection' as Tab, label: 'Detection Logic', icon: Layers, allowed: isManager },
+    { id: 'accessibility' as Tab, label: 'Accessibility', icon: Eye, allowed: true },
+    { id: 'system' as Tab, label: 'System', icon: Activity, allowed: isAdmin },
+  ].filter(tab => tab.allowed);
 
   const themeOptions = [
     { value: 'dark', label: 'Dark Theme' },
@@ -129,11 +135,11 @@ const Settings = () => {
 
       {/* Tabbed Navigation */}
       <div className="flex gap-1 border-b border-slate-200 dark:border-slate-700 mb-6" role="tablist">
-        {tabs.map(tab => (
+        {availableTabs.map(tab => (
           <button
             key={tab.id}
             role="tab"
-            aria-selected={activeTab === tab.id}
+            aria-selected={activeTab === tab.id ? "true" : "false"}
             aria-controls={`panel-${tab.id}`}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${

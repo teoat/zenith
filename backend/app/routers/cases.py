@@ -441,3 +441,25 @@ async def delete_case(case_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/bulk-delete")
+async def bulk_delete_cases(
+    payload: Dict[str, Any] = Body(...),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(auth_service.get_current_user),
+):
+    """Bulk delete cases"""
+    try:
+        case_ids = payload.get("ids", [])
+        if not case_ids:
+            return {"deleted_count": 0, "status": "success"}
+
+        count = 0
+        for cid in case_ids:
+            if db_service.delete_case(cid):
+                count += 1
+        
+        return {"deleted_count": count, "status": "success"}
+    except Exception as e:
+        logger.error(f"Bulk delete cases failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

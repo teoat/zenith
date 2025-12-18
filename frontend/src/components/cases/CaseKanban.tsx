@@ -21,6 +21,14 @@ interface ColumnProps {
   items: Case[];
   title: string;
   icon: ReactNode;
+  focusedIndex: number | null;
+  isFocusedColumn: boolean;
+  onCaseClick?: (caseId: string) => void;
+}
+
+interface CaseKanbanProps {
+  cases?: ApiCase[];
+  onCaseClick?: (caseId: string) => void;
 }
 
 interface KanbanState {
@@ -49,7 +57,7 @@ const getRiskBarColor = (score: number) => {
   return 'bg-green-500';
 };
 
-const SortableItem = memo(({ id, data }: { id: string, data: Case }) => {
+const SortableItem = memo(({ id, data, isFocused, onClick }: { id: string, data: Case, isFocused?: boolean, onClick?: () => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const { formatDate } = useFormatters();
 
@@ -67,7 +75,8 @@ const SortableItem = memo(({ id, data }: { id: string, data: Case }) => {
       style={style} 
       {...attributes} 
       {...listeners}
-      className={`bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm mb-3 cursor-grab active:cursor-grabbing hover:border-blue-500/50 transition-colors ${data.priority === 'High' ? 'border-l-4 border-l-red-500' : ''}`}
+      onClick={onClick}
+      className={`bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm mb-3 cursor-grab active:cursor-grabbing hover:border-blue-500/50 transition-all ${isFocused ? 'ring-2 ring-blue-500 shadow-md ring-offset-2 z-10 scale-[1.02]' : ''} ${data.priority === 'High' ? 'border-l-4 border-l-red-500' : ''}`}
     >
       {/* Header */}
       <div className="flex justify-between items-start mb-2">
@@ -129,7 +138,7 @@ const SortableItem = memo(({ id, data }: { id: string, data: Case }) => {
   );
 });
 
-const Column = memo(({ id, items, title, icon }: ColumnProps) => {
+const Column = memo(({ id, items, title, icon, focusedIndex, isFocusedColumn, onCaseClick }: ColumnProps) => {
   return (
     <div className="flex-1 min-w-[300px] bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 border border-slate-200 dark:border-slate-800 flex flex-col h-full">
       <div className="flex items-center gap-2 mb-4">
@@ -141,8 +150,14 @@ const Column = memo(({ id, items, title, icon }: ColumnProps) => {
       </div>
       <SortableContext id={id} items={items} strategy={verticalListSortingStrategy}>
         <div className="flex-1 overflow-y-auto min-h-[100px]">
-          {items.map((item: Case) => (
-            <SortableItem key={item.id} id={item.id} data={item} />
+          {items.map((item: Case, index: number) => (
+            <SortableItem 
+              key={item.id} 
+              id={item.id} 
+              data={item} 
+              isFocused={isFocusedColumn && focusedIndex === index}
+              onClick={() => onCaseClick?.(item.id)}
+            />
           ))}
         </div>
       </SortableContext>
@@ -150,14 +165,52 @@ const Column = memo(({ id, items, title, icon }: ColumnProps) => {
   );
 });
 
-const CaseKanban = () => {
+const CaseKanban: React.FC<CaseKanbanProps> = ({ cases: externalCases, onCaseClick }) => {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [focusedCard, setFocusedCard] = useState<{ column: keyof KanbanState; index: number } | null>(null);
+  const [items, setItems] = useState<KanbanState>({
+    incoming: [],
+    review: [],
+    closed: []
+  });
 
-  // Load cases from API
+  const transformCase = useCallback((c: ApiCase): Case => ({
+    id: c.id,
+    title: c.title,
+    priority: (c.priority?.toLowerCase() === 'critical' || c.priority?.toLowerCase() === 'high') ? 'High' : 
+             c.priority?.toLowerCase() === 'medium' ? 'Medium' : 'Low',
+    riskScore: c.riskScore || 50,
+    assignee: c.assigneeId ? { name: c.assigneeId.substring(0, 8), avatar: 'U' } : undefined,
+    dueDate: c.dueDate,
+    tags: c.tags || [],
+  }), []);
+
+  // Update items when external cases change
   useEffect(() => {
+    if (externalCases) {
+      const incoming = externalCases.filter((c: ApiCase) => 
+        c.status === 'open' || c.status === 'OPEN'
+      ).map(transformCase);
+      
+      const review = externalCases.filter((c: ApiCase) => 
+        c.status === 'investigating' || c.status === 'pending_review' || c.status === 'escalated'
+      ).map(transformCase);
+      
+      const closed = externalCases.filter((c: ApiCase) => 
+        c.status?.startsWith('closed') || c.status === 'resolved'
+      ).map(transformCase);
+
+      setItems({ incoming, review, closed });
+      setLoading(false);
+    }
+  }, [externalCases, transformCase]);
+
+  // Load cases from API if not provided
+  useEffect(() => {
+    if (externalCases) return;
+    
     const loadCases = async () => {
       try {
         setError(null);
@@ -166,17 +219,6 @@ const CaseKanban = () => {
         const cases: ApiCase[] = result?.cases || [];
         
         // Transform API cases to kanban format and categorize by status
-        const transformCase = (c: ApiCase): Case => ({
-          id: c.id,
-          title: c.title,
-          priority: c.priority === 'critical' || c.priority === 'high' ? 'High' : 
-                   c.priority === 'medium' ? 'Medium' : 'Low',
-          riskScore: c.riskScore || 50,
-          assignee: c.assigneeId ? { name: c.assigneeId.substring(0, 8), avatar: 'U' } : undefined,
-          dueDate: c.dueDate,
-          tags: c.tags || [],
-        });
-
         const incoming = cases.filter((c: ApiCase) => 
           c.status === 'open' || c.status === 'OPEN'
         ).map(transformCase);
@@ -263,11 +305,9 @@ const CaseKanban = () => {
         }
         
         case 'Enter': {
-          // Open card details - could navigate to full case view
           const card = currentColumn[index];
           if (card) {
-            console.log('Opening card:', card.id);
-            // Navigate or open modal
+            onCaseClick?.(card.id);
           }
           break;
         }
@@ -431,9 +471,33 @@ const CaseKanban = () => {
       onDragEnd={handleDragEnd}
     >
       <div className="flex gap-4 h-full overflow-x-auto pb-4">
-        <Column id="incoming" title="Incoming Triage" items={items.incoming} icon={<AlertCircle size={18} className="text-blue-500" />} />
-        <Column id="review" title="In Review" items={items.review} icon={<Clock size={18} className="text-amber-500" />} />
-        <Column id="closed" title="Closed / Resolved" items={items.closed} icon={<CheckCircle2 size={18} className="text-green-500" />} />
+        <Column 
+          id="incoming" 
+          title="Incoming Triage" 
+          items={items.incoming} 
+          icon={<AlertCircle size={18} className="text-blue-500" />} 
+          focusedIndex={focusedCard?.column === 'incoming' ? focusedCard.index : null}
+          isFocusedColumn={focusedCard?.column === 'incoming'}
+          onCaseClick={onCaseClick}
+        />
+        <Column 
+          id="review" 
+          title="In Review" 
+          items={items.review} 
+          icon={<Clock size={18} className="text-amber-500" />} 
+          focusedIndex={focusedCard?.column === 'review' ? focusedCard.index : null}
+          isFocusedColumn={focusedCard?.column === 'review'}
+          onCaseClick={onCaseClick}
+        />
+        <Column 
+          id="closed" 
+          title="Closed / Resolved" 
+          items={items.closed} 
+          icon={<CheckCircle2 size={18} className="text-green-500" />} 
+          focusedIndex={focusedCard?.column === 'closed' ? focusedCard.index : null}
+          isFocusedColumn={focusedCard?.column === 'closed'}
+          onCaseClick={onCaseClick}
+        />
       </div>
       <DragOverlay>
           {activeId ? <div className="p-4 bg-white shadow-xl rounded border border-blue-500">Dragging {activeId}</div> : null}

@@ -6,11 +6,40 @@ Provides error tracking, performance monitoring, and alerting
 import logging
 import os
 
-import sentry_sdk
-from sentry_sdk.integrations.fastapi import FastApiIntegration
-from sentry_sdk.integrations.logging import LoggingIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
-from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+try:
+    import sentry_sdk
+    from sentry_sdk.integrations.fastapi import FastApiIntegration
+    from sentry_sdk.integrations.logging import LoggingIntegration
+    from sentry_sdk.integrations.redis import RedisIntegration
+    from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+except ImportError:
+    # Dummy mock for environments where sentry-sdk cannot be installed
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.warning("sentry-sdk not installed. Using dummy mocks.")
+
+    class DummySentry:
+        def init(self, *args, **kwargs): pass
+        def capture_exception(self, *args, **kwargs): pass
+        def capture_message(self, *args, **kwargs): pass
+        def set_user(self, *args, **kwargs): pass
+        def start_transaction(self, *args, **kwargs): 
+            class CM:
+                def __enter__(self): return self
+                def __exit__(self, *args): pass
+            return CM()
+        def push_scope(self):
+            class Scope:
+                def __enter__(self): return self
+                def __exit__(self, *args): pass
+                def set_extra(self, *args, **kwargs): pass
+            return Scope()
+
+    sentry_sdk = DummySentry()
+    FastApiIntegration = lambda *args, **kwargs: None
+    LoggingIntegration = lambda *args, **kwargs: None
+    RedisIntegration = lambda *args, **kwargs: None
+    SqlalchemyIntegration = lambda *args, **kwargs: None
 
 logger = logging.getLogger(__name__)
 
