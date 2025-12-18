@@ -79,6 +79,7 @@ const WelcomeMessage: React.FC<WelcomeMessageProps> = ({ onDismiss }) => {
           <button
             onClick={handleDismiss}
             className="text-gray-400 hover:text-gray-600"
+            aria-label="Dismiss welcome message"
           >
             <X size={16} />
           </button>

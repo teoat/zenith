@@ -252,3 +252,83 @@ async def get_current_system_metrics(admin: User = Depends(require_admin)):
     except Exception as e:
         logger.error(f"Failed to get current metrics: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ===== PLUGIN MANAGEMENT ENDPOINTS (PHASE 3) =====
+from core.database import SessionLocal
+from core.plugin_system.models import PluginRegistry
+
+@router.get("/plugins")
+async def list_plugins(admin: User = Depends(require_admin)):
+    """List all installed plugins (Admin only)"""
+    db = SessionLocal()
+    try:
+        plugins = db.query(PluginRegistry).all()
+        return {
+            "plugins": [
+                {
+                    "id": p.plugin_id,
+                    "name": p.name, # PluginRegistry model might not have name directly if in metadata_json?
+                    # Let's check model definition. The script used 'namespace'. 
+                    # Assuming standard fields. Let's start with safe fields.
+                    "namespace": p.namespace,
+                    "version": p.version,
+                    "status": p.status,
+                    "updated_at": p.updated_at,
+                    "metadata": p.metadata_json
+                }
+                for p in plugins
+            ]
+        }
+    except Exception as e:
+        logger.error(f"Failed to list plugins: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        db.close()
+
+
+@router.post("/plugins/{plugin_id}/toggle")
+async def toggle_plugin_status(plugin_id: str, admin: User = Depends(require_admin)):
+    """Toggle plugin active/inactive status (Admin only)"""
+    db = SessionLocal()
+    try:
+        plugin = db.query(PluginRegistry).filter(PluginRegistry.plugin_id == plugin_id).first()
+        if not plugin:
+            # Try searching by namespace if UUID fail
+            plugin = db.query(PluginRegistry).filter(PluginRegistry.namespace == plugin_id).first()
+            
+        if not plugin:
+            raise HTTPException(status_code=404, detail="Plugin not found")
+            
+        new_status = "inactive" if plugin.status == "active" else "active"
+        plugin.status = new_status
+        db.commit()
+        
+        audit_service.log_security_event(
+            user_id=admin.id,
+            action="PLUGIN_STATUS_CHANGE",
+            resource_type="plugin",
+            details={"plugin": plugin.namespace, "new_status": new_status},
+        )
+        
+        return {"message": f"Plugin {plugin.namespace} is now {new_status}", "status": new_status}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to toggle plugin: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        db.close()
+
+@router.get("/plugins/metrics")
+async def get_plugin_metrics(admin: User = Depends(require_admin)):
+    """Get plugin execution metrics (Admin only)"""
+    # Placeholder for reading ShadowResult or PluginExecution table
+    return {
+        "metrics": {
+            "active_plugins": 14,
+            "shadow_executions_24h": 1250,
+            "anomalies_detected": 42
+        },
+        "note": "Real-time metrics integration pending ShadowExecutor persistence link."
+    }

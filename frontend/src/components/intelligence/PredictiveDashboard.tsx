@@ -331,7 +331,7 @@ export const PredictiveDashboard: React.FC<PredictiveDashboardProps> = ({
                 <SelectItem value="30d">30 Days</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="icon" onClick={handleRefresh} disabled={isRefreshing}>
+            <Button variant="outline" size="icon" onClick={handleRefresh} disabled={isRefreshing} aria-label="Refresh predictions">
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             </Button>
           </div>
