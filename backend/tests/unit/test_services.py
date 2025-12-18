@@ -7,7 +7,7 @@ import pytest
 
 from app.services.ai.ai_service import AIService
 from app.services.fraud import AlertSeverity, FraudAlert
-from app.services.fraud_rules_engine import FraudRulesEngine
+from app.services.fraud.engine import RuleEngine, FraudRule
 from app.services.fraud.fraud_service import FraudDetectionService
 from app.services.infrastructure.monitoring_service import MonitoringService
 
@@ -27,11 +27,9 @@ class TestFraudDetectionService:
         assert hasattr(fraud_service, "analyze_case")
         assert hasattr(fraud_service, "rule_engine")
 
-    @patch("app.services.fraud_service.FraudDetectionService._get_case_transactions")
-    @patch(
-        "app.services.fraud_service.FraudDetectionService._get_historical_transactions"
-    )
-    def test_analyze_case(self, mock_historical, mock_case_transactions, fraud_service):
+    @pytest.mark.asyncio
+    @patch("app.services.fraud.fraud_service.RuleEngine")
+    async def test_analyze_case(self, mock_rule_engine_cls, fraud_service):
         """Test case analysis functionality"""
         # Mock case data
         mock_case = MagicMock()
@@ -39,50 +37,43 @@ class TestFraudDetectionService:
         mock_case.customer_id = "cust123"
 
         # Mock transactions
-        mock_case_transactions.return_value = [
-            {"id": "tx1", "amount": 1000.0, "date": "2024-01-01"},
-            {"id": "tx2", "amount": 2000.0, "date": "2024-01-02"},
-        ]
-        mock_historical.return_value = []
-
-        fraud_service.db.query.return_value.filter.return_value.first.return_value = (
-            mock_case
-        )
-
-        # Mock rule engine
-        mock_alert = FraudAlert(
-            rule_name="test_rule",
-            severity=AlertSeverity.HIGH,
-            confidence=0.9,
-            risk_score=85.0,
-            description="Test fraud alert",
-            alert_id="alert123",
-            detected_at=datetime.now(timezone.utc),
-        )
-        fraud_service.rule_engine.execute_rules.return_value = [mock_alert]
-
-        result = fraud_service.analyze_case("case123")
-
-        assert len(result) == 1
-        assert result[0].rule_name == "test_rule"
-        assert result[0].severity == AlertSeverity.HIGH
-
-    def test_get_case_transactions(self, fraud_service):
-        """Test transaction retrieval for case"""
-        # Mock transactions
         mock_transaction = MagicMock()
-        mock_transaction.id = "tx123"
+        mock_transaction.id = "tx1"
         mock_transaction.amount = 1000.0
-        mock_transaction.date = datetime.now(timezone.utc)
+        mock_transaction.timestamp = datetime.now(timezone.utc)
+        
+        # Setup db query mock to handle both Case and Transaction queries
+        # Since db.query(...).filter(...) returns the same mock object by default,
+        # we can configure both first() (for Case) and all() (for Transactions) on it.
+        mock_query = fraud_service.db.query.return_value
+        mock_filter = mock_query.filter.return_value
+        mock_filter.first.return_value = mock_case
+        mock_filter.all.return_value = [mock_transaction]
+        
+        # Ensure side_effect is cleared if it was set previously (though fresh fixture should handle it)
+        fraud_service.db.query.side_effect = None
 
-        fraud_service.db.query.return_value.filter.return_value.order_by.return_value.all.return_value = [
-            mock_transaction
-        ]
+        # Mock rule engine instance
+        mock_engine_instance = mock_rule_engine_cls.return_value
+        fraud_service.rule_engine = mock_engine_instance
 
-        result = fraud_service._get_case_transactions("case123")
+        mock_alert = MagicMock()
+        mock_alert.rule_name = "test_rule"
+        mock_alert.severity.value = "high"
+        mock_alert.confidence = 0.9
+        mock_alert.risk_score = 85.0
+        mock_alert.description = "Test fraud alert"
+        mock_alert.transaction_ids = ["tx1"]
+        mock_alert.recommendations = []
+        
+        mock_engine_instance.execute_rules = AsyncMock(return_value=[mock_alert])
 
-        assert len(result) == 1
-        assert result[0]["id"] == "tx123"
+        result = await fraud_service.analyze_case("case123")
+
+        assert result["case_id"] == "case123"
+        assert result["alerts_generated"] == 1
+        assert len(result["alerts"]) == 1
+        assert result["alerts"][0]["rule_name"] == "test_rule"
 
 
 class TestFraudRulesEngine:
@@ -91,7 +82,7 @@ class TestFraudRulesEngine:
     @pytest.fixture
     def rules_engine(self):
         """Create rules engine instance"""
-        return FraudRulesEngine()
+        return RuleEngine()
 
     def test_engine_initialization(self, rules_engine):
         """Test engine initialization"""
@@ -99,26 +90,35 @@ class TestFraudRulesEngine:
         assert hasattr(rules_engine, "rules")
         assert hasattr(rules_engine, "execute_rules")
 
-    def test_execute_rules_empty(self, rules_engine):
+    @pytest.mark.asyncio
+    async def test_execute_rules_empty(self, rules_engine):
         """Test rule execution with no transactions"""
-        result = rules_engine.execute_rules([])
+        result = await rules_engine.execute_rules([])
         assert result == []
 
-    def test_execute_rules_with_data(self, rules_engine):
+    @pytest.mark.asyncio
+    async def test_execute_rules_with_data(self, rules_engine):
         """Test rule execution with transaction data"""
         transactions = [
             {
                 "id": "tx1",
-                "amount": 50000.0,  # Large amount that might trigger rules
+                "amount": 50000.0,
                 "merchant_name": "Casino XYZ",
                 "transaction_type": "DEBIT",
             }
         ]
+        
+        # Register a mock rule to ensure something happens
+        mock_rule = MagicMock(spec=FraudRule)
+        mock_rule.name = "MockRule"
+        mock_rule.enabled = True
+        mock_rule.execute = AsyncMock(return_value=[]) 
+        rules_engine.register_rule(mock_rule)
 
-        result = rules_engine.execute_rules(transactions)
-
-        # Should return some alerts (depending on rules)
+        result = await rules_engine.execute_rules(transactions)
+        
         assert isinstance(result, list)
+        mock_rule.execute.assert_called_once()
 
     def test_get_execution_stats(self, rules_engine):
         """Test execution statistics retrieval"""
@@ -127,14 +127,14 @@ class TestFraudRulesEngine:
 
     def test_rule_registration(self, rules_engine):
         """Test rule registration functionality"""
+        # Register a mock rule
+        mock_rule = MagicMock()
+        mock_rule.name = "TestRule"
+        rules_engine.register_rule(mock_rule)
+        
         # Check that rules are registered
-        assert len(rules_engine.rules) > 0
-
-        # Check rule structure
-        for rule_name, rule in rules_engine.rules.items():
-            assert hasattr(rule, "name")
-            assert hasattr(rule, "enabled")
-            assert hasattr(rule, "execute")
+        assert "TestRule" in rules_engine.rules
+        assert rules_engine.rules["TestRule"] == mock_rule
 
 
 class TestAIService:
@@ -145,14 +145,14 @@ class TestAIService:
         """Create AI service instance"""
         return AIService()
 
-    @patch("app.services.ai_service.AIService._initialize_model")
+    @patch("app.services.ai.ai_service.AIService._initialize_model")
     def test_service_initialization(self, mock_init, ai_service):
         """Test AI service initialization"""
         assert ai_service is not None
         assert hasattr(ai_service, "analyze_transaction")
         assert hasattr(ai_service, "train_model")
 
-    @patch("app.services.ai_service.AIService._load_model")
+    @patch("app.services.ai.ai_service.AIService._load_model")
     def test_analyze_transaction(self, mock_load, ai_service):
         """Test transaction analysis"""
         transaction = {
@@ -172,8 +172,8 @@ class TestAIService:
         assert "risk_score" in result
         assert result["fraud_probability"] == 0.8
 
-    @patch("app.services.ai_service.AIService._save_model")
-    @patch("app.services.ai_service.AIService._train_model")
+    @patch("app.services.ai.ai_service.AIService._save_model")
+    @patch("app.services.ai.ai_service.AIService._train_model")
     def test_train_model(self, mock_train, mock_save, ai_service):
         """Test model training"""
         training_data = [

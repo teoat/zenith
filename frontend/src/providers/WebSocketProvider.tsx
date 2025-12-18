@@ -28,6 +28,11 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 }) => {
   // Determine correct WS URL dynamically
   const getWsUrl = useCallback(() => {
+    // Check for authentication token - required for WS connection
+    const token = localStorage.getItem('token');
+    if (!token) return ''; // Do not connect without token
+
+    // Determine correct WS URL dynamically
     if (url) return url;
 
     // Auto-detect host/port for dev vs prod
@@ -35,14 +40,15 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     // Use 8000 for local dev matching backend default
     const host = window.location.hostname === 'localhost' ? 'localhost:8000' : window.location.host;
 
-    // Get or generate ephemeral user ID
+    // Get or generate ephemeral user ID - but prefer authenticated user info if available
+    // For now, we rely on the token for auth, but the URL param might still be used for routing
     let userId = localStorage.getItem('userId');
     if (!userId) {
         userId = 'anon_' + Math.random().toString(36).substr(2, 9);
         localStorage.setItem('userId', userId);
     }
 
-    return `${protocol}//${host}/api/v1/sync/ws/${userId}`;
+    return `${protocol}//${host}/api/v1/sync/ws/${userId}?token=${token}`;
   }, [url]);
 
   const [isConnected, setIsConnected] = useState(false);
@@ -61,6 +67,10 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
       try {
         const targetUrl = getWsUrl();
+        if (!targetUrl) {
+           console.log('[WebSocketProvider] No URL (waiting for auth), skipping connection');
+           return;
+        }
         console.log('[WebSocketProvider] Connecting to', targetUrl);
         const ws = new WebSocket(targetUrl);
         wsRef.current = ws;

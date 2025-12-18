@@ -20,7 +20,7 @@ class FraudDetectionService:
         self.db = db
         self.rule_engine = RuleEngine()  # Real engine, no mocks
 
-    def analyze_case(
+    async def analyze_case(
         self, case_id: str, transaction_ids: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """Analyze a case for fraud patterns"""
@@ -52,21 +52,29 @@ class FraudDetectionService:
 
             # Execute fraud rules
             logger.info(f"Running fraud rules on {len(transactions)} transactions for case {case_id}")
-            rule_alerts = self.rule_engine.execute_rules(transaction_dicts)
+            rule_alerts = await self.rule_engine.execute_rules(transaction_dicts)
             
             saved_alerts = []
 
             for result in rule_alerts:
                 # Convert Engine Alert to Database Model
+                # Prepare metadata
+                alert_metadata = {
+                    "transaction_ids": result.transaction_ids,
+                    "confidence": result.confidence,
+                    "risk_score": result.risk_score,
+                    "recommendations": result.recommendations,
+                    "rule_name": result.rule_name,
+                    "status": "open"
+                }
+
                 alert = FraudAlertModel(
                     case_id=case_id,
-                    transaction_id=result.transaction_ids[0] if result.transaction_ids else None,
-                    rule_name=result.rule_name,
+                    alert_type="fraud_rule",
+                    title=f"Fraud Alert: {result.rule_name}",
                     severity=result.severity.value,
-                    confidence=result.confidence,
-                    risk_score=result.risk_score,
-                    details={"description": result.description, "recommendations": result.recommendations},
-                    status="open",
+                    description=result.description,
+                    alert_metadata=alert_metadata,
                     created_at=datetime.now(timezone.utc)
                 )
                 self.db.add(alert)
@@ -85,9 +93,10 @@ class FraudDetectionService:
                 "alerts": [
                     {
                         "id": a.id,
-                        "rule_name": a.rule_name,
+                        # Fallback to metadata if column doesn't exist
+                        "rule_name": a.alert_metadata.get("rule_name") if hasattr(a, "alert_metadata") and a.alert_metadata else None,
                         "severity": a.severity,
-                        "risk_score": a.risk_score
+                        "risk_score": a.alert_metadata.get("risk_score") if hasattr(a, "alert_metadata") and a.alert_metadata else 0.0
                     } for a in saved_alerts
                 ],
             }

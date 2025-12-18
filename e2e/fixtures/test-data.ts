@@ -5,9 +5,9 @@
 
 export const TEST_USERS = {
   analyst: {
-    username: 'test_analyst',
-    email: 'analyst@test.com',
-    password: 'TestPass123!',
+    username: 'analyst@378x492.com',
+    email: 'analyst@378x492.com',
+    password: 'Test123!',
     fullName: 'Test Analyst',
     role: 'analyst'
   },

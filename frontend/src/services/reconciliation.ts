@@ -63,5 +63,12 @@ export const reconciliationService = {
           method: 'POST',
           body: JSON.stringify({ transaction_ids: transactionIds, funding_source_id: fundingSourceId })
       });
+  },
+
+  ingestMappedData: async (evidenceId: string, mapping: Record<string, string>): Promise<{ success: boolean; transactions_created: number }> => {
+    return request('/reconciliation/ingest-mapped', {
+      method: 'POST',
+      body: JSON.stringify({ evidence_id: evidenceId, mapping })
+    });
   }
 };

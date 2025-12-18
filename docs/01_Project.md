@@ -9,6 +9,8 @@ TOC
 - Master Plan & Strategy — [docs/project/master_plan.md](project/master_plan.md)
 - Master TODO (summary) — [docs/project/master_todo.md](project/master_todo.md)
 - Product Roadmap & Vision — [docs/project/roadmap.md](project/roadmap.md)
+- 10/10 Vision (Converged Intel) — [docs/architecture/VISION_10_10.md](../architecture/VISION_10_10.md)
+- Zenith Horizon (2027+) — [docs/architecture/ZENITH_VISION.md](../architecture/ZENITH_VISION.md)
 - Perfection Roadmap (full) — [docs/project/PERFECTION_ROADMAP.md](project/PERFECTION_ROADMAP.md)
 - Implementation Record — [docs/project/IMPLEMENTATION_RECORD.md](project/IMPLEMENTATION_RECORD.md)
 - Phases index — [docs/project/phases/](project/phases/)

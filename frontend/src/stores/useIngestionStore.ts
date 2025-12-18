@@ -23,6 +23,10 @@ export interface ProcessingResult {
   isCancellable: boolean;
   isSaved?: boolean;
   savedId?: string;
+  mappingConfig?: Record<string, string>;
+  detectedHeaders?: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  rawPreviewData?: any[];
 }
 
 interface IngestionState {

@@ -1,0 +1,85 @@
+
+> frontend@0.0.0 dev
+> vite --port 5174
+
+
+  VITE v5.4.21  ready in 299 ms
+
+  ➜  Local:   http://localhost:5174/
+  ➜  Network: use --host to expose
+2:59:11 AM [vite] hmr update /src/index.css, /src/providers/OfflineQueueContext.tsx, /src/providers/AuthProvider.tsx, /src/App.tsx, /src/pages/Dashboard.tsx, /src/components/dashboard/AIWatchtower.tsx
+2:59:18 AM [vite] hmr update /src/providers/OfflineQueueContext.tsx, /src/index.css, /src/providers/AuthProvider.tsx, /src/App.tsx, /src/pages/Dashboard.tsx, /src/components/dashboard/AIWatchtower.tsx
+2:59:27 AM [vite] hmr update /src/providers/AuthProvider.tsx, /src/index.css
+3:00:07 AM [vite] Internal server error: /Users/Arief/Desktop/378x492/frontend/src/pages/Investigation.tsx: Identifier 'React' has already been declared. (2:7)
+
+  1 | import React, { useState, useEffect, useCallback } from 'react';
+> 2 | import React, { Suspense } from 'react';
+    |        ^
+  3 | import { useParams } from 'react-router-dom';
+  4 | import { DndContext, useDroppable, DragEndEvent } from '@dnd-kit/core';
+  5 | import { useToast } from '../providers/ToastProvider';
+  Plugin: vite:react-babel
+  File: /Users/Arief/Desktop/378x492/frontend/src/pages/Investigation.tsx:2:7
+  1  |  import React, { useState, useEffect, useCallback } from 'react';
+  2  |  import React, { Suspense } from 'react';
+     |         ^
+  3  |  import { useParams } from 'react-router-dom';
+  4  |  import { DndContext, useDroppable, DragEndEvent } from '@dnd-kit/core';
+      at constructor (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:367:19)
+      at TypeScriptParserMixin.raise (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:6624:19)
+      at TypeScriptScopeHandler.checkRedeclarationInScope (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:1646:19)
+      at TypeScriptScopeHandler.declareName (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:1612:12)
+      at TypeScriptScopeHandler.declareName (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:4909:11)
+      at TypeScriptParserMixin.declareNameFromIdentifier (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:7594:16)
+      at TypeScriptParserMixin.checkIdentifier (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:7590:12)
+      at TypeScriptParserMixin.checkLVal (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:7527:12)
+      at TypeScriptParserMixin.finishImportSpecifier (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:14342:10)
+      at TypeScriptParserMixin.parseImportSpecifierLocal (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:14339:31)
+      at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:14446:12)
+      at TypeScriptParserMixin.parseImportSpecifiersAndAfter (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:14315:29)
+      at TypeScriptParserMixin.parseImport (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:14311:17)
+      at TypeScriptParserMixin.parseImport (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:9412:26)
+      at TypeScriptParserMixin.parseStatementContent (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:12952:27)
+      at TypeScriptParserMixin.parseStatementContent (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:9569:18)
+      at TypeScriptParserMixin.parseStatementLike (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:12843:17)
+      at TypeScriptParserMixin.parseModuleItem (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:12820:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:13392:36)
+      at TypeScriptParserMixin.parseBlockBody (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:13385:10)
+      at TypeScriptParserMixin.parseProgram (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:12698:10)
+      at TypeScriptParserMixin.parseTopLevel (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:12688:25)
+      at TypeScriptParserMixin.parse (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:14568:25)
+      at TypeScriptParserMixin.parse (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:10183:18)
+      at parse (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/parser/lib/index.js:14602:38)
+      at parser (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/core/lib/parser/index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/core/lib/transformation/normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/core/lib/transformation/index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (/Users/Arief/Desktop/378x492/frontend/node_modules/@babel/core/lib/transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (/Users/Arief/Desktop/378x492/frontend/node_modules/gensync/index.js:261:32)
+      at /Users/Arief/Desktop/378x492/frontend/node_modules/gensync/index.js:273:13
+      at async.call.result.err.err (/Users/Arief/Desktop/378x492/frontend/node_modules/gensync/index.js:223:11)
+      at /Users/Arief/Desktop/378x492/frontend/node_modules/gensync/index.js:189:28
+      at /Users/Arief/Desktop/378x492/frontend/node_modules/@babel/core/lib/gensync-utils/async.js:67:7
+      at /Users/Arief/Desktop/378x492/frontend/node_modules/gensync/index.js:113:33
+      at step (/Users/Arief/Desktop/378x492/frontend/node_modules/gensync/index.js:287:14)
+      at /Users/Arief/Desktop/378x492/frontend/node_modules/gensync/index.js:273:13
+      at async.call.result.err.err (/Users/Arief/Desktop/378x492/frontend/node_modules/gensync/index.js:223:11)
+3:02:38 AM [vite] hmr update /src/providers/AuthProvider.tsx, /src/index.css
+3:05:29 AM [vite] hmr update /src/providers/WebSocketProvider.tsx, /src/index.css
+3:05:30 AM [vite] hmr update /src/providers/WebSocketProvider.tsx, /src/index.css
+3:05:30 AM [vite] hmr invalidate /src/providers/WebSocketProvider.tsx Could not Fast Refresh ("useWebSocket" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+3:05:30 AM [vite] hmr update /src/App.tsx, /src/index.css, /src/components/WebSocketSync.tsx, /src/components/dashboard/LiveQueue.tsx, /src/pages/PerformanceDashboard.tsx
+3:05:31 AM [vite] hmr update /src/providers/WebSocketProvider.tsx, /src/index.css
+3:05:31 AM [vite] hmr invalidate /src/providers/WebSocketProvider.tsx Could not Fast Refresh ("useWebSocket" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+3:05:31 AM [vite] hmr update /src/App.tsx, /src/index.css, /src/components/WebSocketSync.tsx, /src/components/dashboard/LiveQueue.tsx, /src/pages/PerformanceDashboard.tsx
+3:06:08 AM [vite] hmr update /src/App.tsx, /src/index.css
+3:06:33 AM [vite] hmr update /src/App.tsx, /src/index.css
+3:52:52 AM [vite] hmr update /src/index.css, /src/pages/Ingestion.tsx
+3:54:05 AM [vite] hmr update /src/pages/Ingestion.tsx, /src/index.css
+3:54:34 AM [vite] page reload README.md
+3:56:51 AM [vite] hmr update /src/pages/Ingestion.tsx, /src/index.css
+3:57:00 AM [vite] hmr update /src/pages/Ingestion.tsx, /src/index.css
+3:57:00 AM [vite] hmr update /src/pages/Ingestion.tsx, /src/index.css

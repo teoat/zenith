@@ -205,10 +205,21 @@ async def upload_evidence(
     try:
         from app.services.intelligence.evidence_service import evidence_processor
 
-        # Validate case exists
+        # Validate or create case
         case = db.query(Case).filter(Case.id == case_id).first()
         if not case:
-            raise HTTPException(status_code=404, detail="Case not found")
+            # Auto-create case if it doesn't exist (Handling frontend hardcoded IDs like CASE-001)
+            logger.info(f"Case {case_id} not found, auto-creating...")
+            case = Case(
+                id=case_id,
+                title=f"Case {case_id}",
+                description="Auto-generated case for evidence upload",
+                status="OPEN",
+                priority="MEDIUM"
+            )
+            db.add(case)
+            db.commit()
+            db.refresh(case)
 
         # Parse tags if provided
         evidence_tags = []

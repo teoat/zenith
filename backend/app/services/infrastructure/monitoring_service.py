@@ -122,9 +122,17 @@ class MonitoringService:
             with open(temp_file, 'w') as f:
                 json.dump(data, f, default=str)
             os.replace(temp_file, self.state_file)
-            logger.info("Saved monitoring state to disk")
+            # Only log if logging system is still alive
+            if logging.getLogger().handlers:
+                logger.info("Saved monitoring state to disk")
+        except ReferenceError:
+             pass # Logging system likely shut down
+        except ValueError:
+             pass # I/O operation on closed file
         except Exception as e:
-            logger.error(f"Failed to save monitoring state: {e}")
+            # Try to log but fail silently if logger is dead
+            try: logger.error(f"Failed to save monitoring state: {e}")
+            except: pass
 
     def _load_state(self):
         """Load monitoring state from disk"""

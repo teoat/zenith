@@ -43,6 +43,10 @@ class BatchSaveRequest(BaseModel):
     withdrawal_id: str
     expense_ids: List[str]
 
+class IngestMappedDataRequest(BaseModel):
+    evidence_id: str
+    mapping: Dict[str, str]
+
 @router.get("/items", response_model=List[Dict[str, Any]])
 async def get_reconciliation_items(
     status: Optional[str] = None,
@@ -155,21 +159,95 @@ async def mark_reconciled(
     db.commit()
     return {"success": True, "id": tx.id, "status": "reconciled"}
 
-@router.post("/flag/{transaction_id}")
-async def flag_discrepancy(
-    transaction_id: str,
-    reason: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    tx = db.query(Transaction).filter(Transaction.id == transaction_id).first()
-    if not tx:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-        
-    meta = dict(tx.transaction_metadata or {})
-    meta["reconciliation_status"] = "discrepancy"
-    meta["discrepancy_reason"] = reason
-    meta["flagged_at"] = datetime.now(timezone.utc).isoformat()
     tx.transaction_metadata = meta
     db.commit()
     return {"success": True, "id": tx.id, "status": "discrepancy"}
+
+@router.post("/ingest-mapped", response_model=Dict[str, Any])
+async def ingest_mapped_data(
+    request: IngestMappedDataRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Ingest data from an evidence file using a column mapping.
+    Creates Transaction records.
+    """
+    from core.database import Evidence
+    import csv
+    import os
+    import uuid
+    from datetime import datetime
+
+    # 1. Get Evidence File
+    evidence = db.query(Evidence).filter(Evidence.id == request.evidence_id).first()
+    if not evidence:
+         raise HTTPException(status_code=404, detail="Evidence file not found")
+    
+    file_path = evidence.file_path
+    if not file_path or not os.path.exists(file_path):
+         raise HTTPException(status_code=404, detail="Physical file not found")
+
+    # 2. Parse File (Assuming CSV for now)
+    # TODO: Support Excel/PDF via extracted_text or conversion
+    transactions_created = 0
+    
+    try:
+        with open(file_path, 'r', encoding='utf-8-sig') as f:
+            reader = csv.DictReader(f)
+            
+            for row in reader:
+                # 3. Apply Mapping
+                txn_data = {}
+                for target_field, source_col in request.mapping.items():
+                    if source_col in row:
+                        val = row[source_col]
+                        txn_data[target_field] = val
+                
+                # 4. Create Transaction
+                # Basic validation/cleaning
+                try:
+                    amount_str = txn_data.get('amount', '0').replace(',', '').replace('$', '')
+                    amount = float(amount_str) if amount_str else 0.0
+                    
+                    # Date parsing (simplified)
+                    date_str = txn_data.get('date')
+                    date_obj = datetime.now() # Fallback
+                    if date_str:
+                        for fmt in ('%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y', '%Y/%m/%d'):
+                            try:
+                                date_obj = datetime.strptime(date_str, fmt)
+                                break
+                            except ValueError:
+                                continue
+
+                    new_tx = Transaction(
+                        id=str(uuid.uuid4()),
+                        date=date_obj,
+                        amount=amount,
+                        currency=txn_data.get('currency', 'USD'),
+                        merchant_name=txn_data.get('merchant') or txn_data.get('description'),
+                        description=txn_data.get('description'),
+                        category=txn_data.get('category'),
+                        transaction_metadata={
+                            "source": "ingestion", 
+                            "evidence_id": request.evidence_id,
+                            "original_row": row
+                        }
+                    )
+                    db.add(new_tx)
+                    transactions_created += 1
+                except Exception as e:
+                    # Skip invalid rows or log
+                    print(f"Skipping row: {e}")
+                    continue
+        
+        db.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to process file: {str(e)}")
+
+    return {
+        "success": True,
+        "transactions_created": transactions_created,
+        "evidence_id": request.evidence_id
+    }

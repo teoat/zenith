@@ -103,9 +103,11 @@ class DualModeAPIFacade {
   reconcileTransaction = reconciliationService.reconcileTransaction;
   flagTransaction = reconciliationService.flagTransaction;
   getReconciliationItems = reconciliationService.getReconciliationItems;
+  ingestMappedData = reconciliationService.ingestMappedData;
 
   // User (from userService)
   saveUserPreferences = userService.saveUserPreferences;
+  getMe = userService.getMe;
 
   // AI Assistant
   chat = aiService.chat;

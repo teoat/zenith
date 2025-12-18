@@ -58,7 +58,7 @@ async def require_admin(
     Raises:
         HTTPException: 403 if user is not an admin
     """
-    if current_user.role not in ["admin", "super_admin"]:
+    if str(current_user.role).upper() not in ["ADMIN", "SUPER_ADMIN", "admin", "super_admin"]:
         logger.warning(
             f"User {current_user.id} attempted admin operation without permission",
             extra={"user_id": current_user.id, "role": current_user.role},

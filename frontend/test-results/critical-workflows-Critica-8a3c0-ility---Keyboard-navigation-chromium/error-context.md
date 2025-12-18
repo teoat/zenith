@@ -1,0 +1,72 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - link [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+    - text: Skip to main content
+  - link [ref=e3] [cursor=pointer]:
+    - /url: "#navigation"
+    - text: Skip to navigation
+  - link [ref=e4] [cursor=pointer]:
+    - /url: "#search"
+    - text: Skip to search
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - link "Skip to main content" [ref=e7] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e9]:
+        - generic [ref=e11]:
+          - img [ref=e12]
+          - generic [ref=e14]: 378x492 Fraud
+        - navigation [ref=e16]:
+          - link "Dashboard" [active] [ref=e17] [cursor=pointer]:
+            - /url: /
+            - img [ref=e18]
+            - text: Dashboard
+          - link "Case Management" [ref=e23] [cursor=pointer]:
+            - /url: /cases
+            - img [ref=e24]
+            - text: Case Management
+          - link "Data Ingestion" [ref=e27] [cursor=pointer]:
+            - /url: /ingestion
+            - img [ref=e28]
+            - text: Data Ingestion
+          - link "Forensics" [ref=e32] [cursor=pointer]:
+            - /url: /forensics
+            - img [ref=e33]
+            - text: Forensics
+          - link "Visualization" [ref=e36] [cursor=pointer]:
+            - /url: /network
+            - img [ref=e37]
+            - text: Visualization
+          - link "Reconciliation" [ref=e39] [cursor=pointer]:
+            - /url: /reconciliation
+            - img [ref=e40]
+            - text: Reconciliation
+        - navigation [ref=e44]:
+          - link "Settings" [ref=e45] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e46]
+            - text: Settings
+      - generic [ref=e49]:
+        - banner [ref=e50]:
+          - button "Collapse Sidebar" [ref=e51]:
+            - img [ref=e52]
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - searchbox "Search cases, entities, or transactions" [ref=e59]
+          - button "Notifications" [ref=e60]:
+            - img [ref=e61]
+            - generic [ref=e64]: Notifications
+          - button "Toggle user menu" [ref=e65]:
+            - img [ref=e66]
+            - generic [ref=e69]: Toggle user menu
+        - main [ref=e70]:
+          - alert [ref=e72]:
+            - generic [ref=e73]:
+              - img [ref=e75]
+              - generic [ref=e78]: "Failed to fetch metrics: type object 'Transaction' has no attribute 'is_flagged'"
+    - button "Open AI Assistant" [ref=e79]:
+      - img [ref=e80]
+```

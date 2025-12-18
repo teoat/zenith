@@ -194,66 +194,75 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <>{children}</>;
 };
 
+const AuthWebSocketWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { token } = useAuth();
+  return (
+    <WebSocketProvider key={token || 'anonymous'}>
+      {children}
+    </WebSocketProvider>
+  );
+};
+
 const AppContent: React.FC = () => {
   return (
     <AccessibilityChecker>
       <EnhancedErrorBoundary>
-          <WebSocketProvider>
-          <WebSocketSync />
-          <TourSpotlight />
-          <Suspense fallback={<LoadingState />}>
-            <Routes>
-            <Route path="/setup" element={<Setup />} />
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Suspense fallback={<LoadingState />}>
-                      <Routes>
-                        <Route path="/" element={<Dashboard />} />
-                        <Route path="/cases" element={<Cases />} />
-                        <Route path="/cases/:caseId" element={<Cases />} />
-                        <Route path="/ingestion" element={<Ingestion />} />
-                        <Route path="/forensics" element={<Forensics />} />
-                        <Route path="/adjudication" element={<AdjudicationQueue />} />
-                        <Route path="/reconciliation" element={<Reconciliation />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/design" element={<DesignSystemShowcase />} />
-                        <Route path="/onboarding" element={<OnboardingWizard />} />
-                        <Route path="/proof/:caseId" element={<ProofVisualizationRoute />} />
-                        <Route path="/playback" element={<TemporalPlayback />} />
-                        <Route path="/case/progress" element={<CaseProgressBar />} />
-                        <Route path="/notebook" element={<InvestigationNotebook />} />
-                        <Route path="/dossier/:caseId" element={<DigitalDossierGenerator />} />
-                        <Route path="/performance" element={<PerformanceDashboard />} />
-                        <Route path="/network" element={<NetworkAnalysis />} />
-                        <Route path="/graph" element={<RelationshipGraph />} />
-                        <Route path="/investigation" element={<Investigation />} />
-                        <Route path="/investigation/:caseId" element={<Investigation />} />
-                        <Route path="/reporting" element={<Reporting />} />
-                        <Route path="/code-review" element={<CodeReviewDashboard />} />
-                        <Route path="/predictive-maintenance" element={<PredictiveMaintenanceDashboard />} />
-                        <Route path="/advanced-compliance" element={<AdvancedComplianceDashboard />} />
-                         <Route path="/orchestration" element={<SystemOrchestrationDashboard />} />
-                         <Route path="/approvals" element={<AgentApprovals />} />
-                         <Route path="/drafts" element={<AgentDrafts />} />
-
-                         {/* Compliance Routes */}
-
-                         <Route path="/compliance/monitoring" element={<ComplianceMonitoring />} />
-
-                         <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </Suspense>
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </Suspense>
-      </WebSocketProvider>
+          <AuthWebSocketWrapper>
+            <WebSocketSync />
+            <TourSpotlight />
+            <Suspense fallback={<LoadingState />}>
+              <Routes>
+              <Route path="/setup" element={<Setup />} />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/*"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout>
+                      <Suspense fallback={<LoadingState />}>
+                        <Routes>
+                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/cases" element={<Cases />} />
+                          <Route path="/cases/:caseId" element={<Cases />} />
+                          <Route path="/ingestion" element={<Ingestion />} />
+                          <Route path="/forensics" element={<Forensics />} />
+                          <Route path="/adjudication" element={<AdjudicationQueue />} />
+                          <Route path="/reconciliation" element={<Reconciliation />} />
+                          <Route path="/settings" element={<Settings />} />
+                          <Route path="/design" element={<DesignSystemShowcase />} />
+                          <Route path="/onboarding" element={<OnboardingWizard />} />
+                          <Route path="/proof/:caseId" element={<ProofVisualizationRoute />} />
+                          <Route path="/playback" element={<TemporalPlayback />} />
+                          <Route path="/case/progress" element={<CaseProgressBar />} />
+                          <Route path="/notebook" element={<InvestigationNotebook />} />
+                          <Route path="/dossier/:caseId" element={<DigitalDossierGenerator />} />
+                          <Route path="/performance" element={<PerformanceDashboard />} />
+                          <Route path="/network" element={<NetworkAnalysis />} />
+                          <Route path="/graph" element={<RelationshipGraph />} />
+                          <Route path="/investigation" element={<Investigation />} />
+                          <Route path="/investigation/:caseId" element={<Investigation />} />
+                          <Route path="/reporting" element={<Reporting />} />
+                          <Route path="/code-review" element={<CodeReviewDashboard />} />
+                          <Route path="/predictive-maintenance" element={<PredictiveMaintenanceDashboard />} />
+                          <Route path="/advanced-compliance" element={<AdvancedComplianceDashboard />} />
+                           <Route path="/orchestration" element={<SystemOrchestrationDashboard />} />
+                           <Route path="/approvals" element={<AgentApprovals />} />
+                           <Route path="/drafts" element={<AgentDrafts />} />
+  
+                           {/* Compliance Routes */}
+  
+                           <Route path="/compliance/monitoring" element={<ComplianceMonitoring />} />
+  
+                           <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </Suspense>
+                    </AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </Suspense>
+          </AuthWebSocketWrapper>
       </EnhancedErrorBoundary>
     </AccessibilityChecker>
   );

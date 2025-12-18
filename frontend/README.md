@@ -1,16 +1,24 @@
-# React + Vite
+# 378x492 Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend application for the 378x492 Fraud Detection Platform.
 
-Currently, two official plugins are available:
+## Data Ingestion Wizard
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The Ingestion page (`/ingestion`) features a 3-step wizard for uploading and normalizing financial data:
 
-## React Compiler
+1.  **Upload Files**: Drag and drop CSV, Excel, PDF, or Image files.
+2.  **Map Columns**: For structured files (CSV/Excel), map the columns from your file to the system's standard fields (Date, Amount, Description, etc.) using a simple drag-and-drop interface.
+3.  **Review & Submit**: Verify the mapping results and submit the data for reconciliation.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Supported System Fields
+*   **Transaction Date** (Required)
+*   **Amount** (Required)
+*   **Description** (Required)
+*   Merchant / Payee
+*   Category
+*   Currency
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1.  Install dependencies: `npm install`
+2.  Run development server: `npm run dev`

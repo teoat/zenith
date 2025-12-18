@@ -96,5 +96,45 @@ class CaseService:
         }
 
 
+    def get_cases_paginated(
+        self, page: int, per_page: int, filters: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Get cases with pagination and filtering"""
+        from core.database import SessionLocal
+        import math
+
+        db = SessionLocal()
+        try:
+            query = db.query(Case)
+
+            if filters.get("status"):
+                query = query.filter(Case.status == filters["status"])
+            if filters.get("priority"):
+                query = query.filter(Case.priority == filters["priority"])
+            if filters.get("search"):
+                search = f"%{filters['search']}%"
+                query = query.filter(Case.title.ilike(search))
+
+            total = query.count()
+            total_pages = math.ceil(total / per_page)
+            
+            # Ensure page is valid
+            if page < 1:
+                page = 1
+            if page > total_pages and total_pages > 0:
+                page = total_pages
+
+            offset = (page - 1) * per_page
+            cases = query.order_by(Case.created_at.desc()).offset(offset).limit(per_page).all()
+
+            return {
+                "cases": cases,
+                "total": total,
+                "total_pages": total_pages,
+                "current_page": page
+            }
+        finally:
+            db.close()
+
 # Singleton instance
 case_service = CaseService()

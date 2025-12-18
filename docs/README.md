@@ -13,6 +13,10 @@ This directory contains all project documentation, organized by category for eas
 Core architecture documentation and design specifications.
 - `ARCHITECTURE_REPORT.md` - Current system architecture (10/10 scoring)
 - `ARCHITECTURE_10_10_REPORT.md` - Architecture optimization details
+- `VISION_10_10.md` - **Converged Fraud & AML 10/10 Vision**
+- `ZENITH_VISION.md` - **Beyond 10/10: Federated & Autonomous Horizon**
+- `MESSY_DATA_SOLUTIONS.md` - **Handling Redaction, Mirroring, and Co-mingling**
+- `FEATURE_INTERCONNECTIVITY.md` - Coordination Logic & Data Handoffs
 - `FULL_DESIGN_SPEC.md` - Complete design specifications and decisions
 
 ### 🚀 [development/](./development/) - Development Guides & Setup
@@ -55,6 +59,7 @@ API references, service specifications, and technical interfaces.
 - `SERVICE_DOCUMENTATION.md` - Service architecture
 - `MODEL_DOCUMENTATION.md` - Data models and schemas
 - `CONFIG_DOCUMENTATION.md` - Configuration options
+- `LEGAL_REPORTING_STANDARDS.md` - **Forensic & Prosecution Standards**
 - `COMPLIANCE_DASHBOARD.md` - Compliance documentation
 
 ### 📋 [project/](./project/) - Project Management & Planning

@@ -7,4 +7,10 @@ export const userService = {
       body: JSON.stringify(preferences),
     });
   },
+  
+  getMe: async (): Promise<any> => {
+    return request('/users/me', {
+       method: 'GET'
+    });
+  }
 };

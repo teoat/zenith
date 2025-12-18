@@ -47,6 +47,7 @@ test.describe('UI/UX Enhancements Verification', () => {
     // For this test, we might need to simulate login if protected
     // reusing login logic from critical-workflows usually
     await page.goto('/login');
+    await page.waitForSelector('[name="email"]');
     await page.fill('[name="email"]', 'analyst@378x492.com');
     await page.fill('[name="password"]', 'Test123!');
     await page.click('button[type="submit"]');
@@ -62,7 +63,7 @@ test.describe('UI/UX Enhancements Verification', () => {
     await page.goto('/investigation');
     
     // Set a window property to check for persistence
-    await page.evaluate(() => window.foo = 'bar');
+    await page.evaluate(() => (window as any).foo = 'bar');
     
     // Wait for graph to load
     await expect(page.locator('text=Shell Corp')).toBeVisible();
@@ -71,7 +72,7 @@ test.describe('UI/UX Enhancements Verification', () => {
     await page.click('button[title="Reset Layout"]'); // Assuming generic title or aria-label, might need adjustment
     
     // Check if property still exists
-    const preserved = await page.evaluate(() => window.foo);
+    const preserved = await page.evaluate(() => (window as any).foo);
     expect(preserved).toBe('bar'); // If page reloaded, this would be undefined
   });
 

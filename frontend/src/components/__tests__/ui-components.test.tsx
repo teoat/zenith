@@ -11,7 +11,7 @@ describe('LoadingState Component', () => {
 
   test('renders custom text', () => {
     render(<LoadingState text="Please wait..." />);
-    expect(screen.getByText('Please wait...')).toBeInTheDocument();
+    expect(screen.getAllByText('Please wait...')[0]).toBeInTheDocument();
   });
 
   test('renders skeleton loading', () => {

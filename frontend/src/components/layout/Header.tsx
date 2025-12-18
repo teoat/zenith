@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/Input';
 import OfflineIndicator from '@/components/OfflineIndicator';
 import { useSidebar } from '@/store/globalStore';
 
+import { ProjectSwitcher } from '@/components/common/ProjectSwitcher';
+
 export const Header = () => {
   const { collapsed, setCollapsed } = useSidebar();
 
@@ -20,6 +22,7 @@ export const Header = () => {
         <Menu className="h-5 w-5" />
       </Button>
 
+      <ProjectSwitcher />
 
       <div className="w-full flex-1">
         <form>

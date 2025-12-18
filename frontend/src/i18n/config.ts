@@ -4,43 +4,20 @@ import HttpBackend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 // Import translation files
+// Import translation files
 import en from './locales/en.json';
-import ar from './locales/ar.json';
-import es from './locales/es.json';
 import fr from './locales/fr-FR.json';
 import de from './locales/de-DE.json';
-import he from './locales/he.json';
-import id from './locales/id.json';
-import ja from './locales/ja.json';
-import zh from './locales/zh.json';
 
 const resources = {
   'en-US': {
     translation: en
-  },
-  'ar-SA': {
-    translation: ar
-  },
-  'es-ES': {
-    translation: es
   },
   'fr-FR': {
     translation: fr
   },
   'de-DE': {
     translation: de
-  },
-  'he-IL': {
-    translation: he
-  },
-  'id-ID': {
-    translation: id
-  },
-  'ja-JP': {
-    translation: ja
-  },
-  'zh-CN': {
-    translation: zh
   }
 };
 

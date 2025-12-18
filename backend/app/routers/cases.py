@@ -82,7 +82,10 @@ for _svc in ("case_service", "ai_service"):
 # Provide a safe default `db_service` to avoid NoneType errors in tests that
 # hit the router without patching the module-level `db_service`.
 if "db_service" not in globals() or globals().get("db_service") is None:
-    db_service = _NullCaseService()
+    if case_service:
+        db_service = case_service
+    else:
+        db_service = _NullCaseService()
 
 # ===== REQUEST/RESPONSE MODELS =====
 
@@ -203,13 +206,13 @@ async def get_cases(
                     "type": row.case_type,
                     "assigneeId": row.assignee_id,
                     "riskScore": row.risk_score or 0,
-                    "riskLevel": row.risk_level,
-                    "fraudAmount": row.fraud_amount,
-                    "customerName": row.customer_name,
+                    "riskLevel": getattr(row, "risk_level", "low"),
+                    "fraudAmount": getattr(row, "fraud_amount", 0.0),
+                    "customerName": getattr(row, "customer_name", "Unknown"),
                     "createdAt": row.created_at.isoformat() if row.created_at else None,
                     "updatedAt": row.updated_at.isoformat() if row.updated_at else None,
-                    "dueDate": row.due_date.isoformat() if row.due_date else None,
-                    "tags": [],  # Default tags as they are not in the localized query
+                    "dueDate": getattr(row, "due_date", None).isoformat() if getattr(row, "due_date", None) else None,
+                    "tags": row.tags if hasattr(row, "tags") else [],
                 }
             )
 

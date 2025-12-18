@@ -109,15 +109,7 @@ async def login(login_data: LoginRequest, request: Request):
     Supports MFA: If user has MFA enabled, mfa_code is required.
     """
     try:
-        import sys
-        print(f"DEBUG: Attempting login for {login_data.username}", file=sys.stderr)
-        if hasattr(auth_service, 'authenticate_user'):
-             print(f"DEBUG: Calling authenticate_user", file=sys.stderr)
-             user = auth_service.authenticate_user(login_data.username, login_data.password)
-             print(f"DEBUG: authenticate_user returned {user}", file=sys.stderr)
-        else:
-             print(f"DEBUG: auth_service missing authenticate_user", file=sys.stderr)
-             user = None
+        user = auth_service.authenticate_user(login_data.username, login_data.password)
         if not user:
             # Log authentication failure
             logger.warning(
@@ -183,12 +175,9 @@ async def login(login_data: LoginRequest, request: Request):
         return TokenResponse(access_token=access_token, refresh_token=refresh_token)
     except HTTPException:
         raise
-    # except Exception as e:
-    #     import traceback
-    #     traceback.print_exc()
-    #     print(f"DEBUG EXCEPTION: {e}")
-    #     logger.error(f"Login error: {str(e)}")
-    #     raise HTTPException(status_code=500, detail="Internal login error")
+    except Exception as e:
+        logger.error(f"Login error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal login error")
 
 
 class MFAVerifyRequest(BaseModel):

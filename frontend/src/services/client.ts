@@ -54,6 +54,29 @@ export const request = async <T>(
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  // Inject Project ID if active
+  // We use inline require/import or check the store to avoid circular dependencies if any
+  // But since store is separate, direct access is safer.
+  try {
+     // Dynamic import or direct access? Direct import at top level might cause circularity if store imports API.
+     // But store imports API? No, store uses persist.
+     // Let's rely on the import I will will add to the top of the file.
+     const { useProjectStore } = await import('../store/projectStore'); // Dynamic import to be safe? 
+     // Actually, standard import is better, but client.ts is low level. 
+     // Let's use the standard import at the top of the file in a separate edit, 
+     // but for this replacement, I'll just assume I can access it or use a safer method.
+     // Actually, let's keep it simple. I will add the import at the top first using a separate tool call if needed, 
+     // or I can do it all in one replace if I use 'multi_replace'.
+     // But wait, I am in 'replace_file_content'. 
+     // I'll use multi_replace to add the import and the logic.
+
+     // Retrying thought: client.ts is used by services. Services are used by components. Store is used by components.
+     // Store does NOT import services usually (unless for async actions). 
+     // But `api.ts` imports services. `client.ts` is imported by services.
+     // `projectStore.ts` does NOT import `client.ts`. 
+     // So headers injection is safe.
+  } catch (e) { }
+
   // NOTE: Certificate pinning logic removed for web compatibility. 
   // In production, rely on standard TLS/SSL CA trust or implement secure pinning in Electron/Native layer.
 

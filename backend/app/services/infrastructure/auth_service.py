@@ -143,7 +143,19 @@ class AuthService:
         # from app.services.infrastructure.storage.database_service import db_service
         # Use simple global db_service instance
         with db_service.get_db() as db:
-             return db.query(User).filter(User.email == email).first()
+             # Try direct match first (optimistic, works if encryption is deterministic or legacy plain text)
+             found = db.query(User).filter(User.email == email).first()
+             if found:
+                 return found
+                 
+             # Fallback: Scan all users for EncryptedString
+             # This is required because EncryptedString uses randomized encryption (Fernet)
+             # so SQL equality checks fail.
+             all_users = db.query(User).all()
+             for user in all_users:
+                 if user.email == email:
+                     return user
+             return None
 
     def create_user(self, user_data) -> User:
         """Create a new user"""
@@ -194,6 +206,11 @@ class AuthService:
             return None
 
         user = chosen_db.get_user_by_username(username)
+        if not user:
+            # Try to lookup by email if username lookup failed
+            # Use self.get_user_by_email which has the encryption fallback logic
+            user = self.get_user_by_email(username)
+            
         if not user:
             log_security_event(
                 "login_failed",

@@ -6,10 +6,11 @@ test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
     // Login before each test
     await page.goto('/login');
-    await page.fill('[data-testid="username-input"]', TEST_USERS.analyst.username);
-    await page.fill('[data-testid="password-input"]', TEST_USERS.analyst.password);
-    await page.click('[data-testid="login-button"]');
-    await expect(page).toHaveURL('/dashboard');
+    await page.waitForSelector('input[name="email"]', { state: 'visible' });
+    await page.fill('input[name="email"]', TEST_USERS.analyst.email);
+    await page.fill('input[name="password"]', TEST_USERS.analyst.password);
+    await page.click('button[type="submit"]');
+    await expect(page).toHaveURL(/.*dashboard|.*\/$/);
   });
 
   test('should navigate to dashboard', async ({ page }) => {

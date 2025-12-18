@@ -26,17 +26,24 @@ describe('useAuth Hook', () => {
     const { useAuth } = await import('../hooks/useAuth');
     
     // Need to wrap in provider context
+    const { AuthContext } = await import('../context/AuthContext');
+    
     const wrapper = ({ children }: { children: React.ReactNode }) => {
-      // Mock provider or use actual
-      return <>{children}</>;
+      return (
+        <AuthContext.Provider value={{
+          user: null,
+          token: null,
+          login: jest.fn(),
+          logout: jest.fn(),
+          isLoading: false,
+          isSetupRequired: false
+        }}>
+          {children}
+        </AuthContext.Provider>
+      );
     };
     
-    try {
-      const { result } = renderHook(() => useAuth(), { wrapper });
-      expect(result.current).toBeDefined();
-    } catch {
-      // Hook requires context, which is expected
-      expect(true).toBe(true);
-    }
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    expect(result.current).toBeDefined();
   });
 });
