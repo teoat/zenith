@@ -9,7 +9,8 @@ from sqlalchemy.orm import Session
 from app.services.infrastructure.auth_service import auth_service
 from app.services.reconciliation_service import ReconciliationService
 from app.services.temporal_burst_detector import temporal_burst_detector
-from core.database import Transaction, User, UserRole, get_db
+from core.database import Transaction, User, UserRole, Case, get_db
+from app.dependencies import get_current_project_id
 
 router = APIRouter(
     tags=["reconciliation"],
@@ -53,8 +54,12 @@ async def get_reconciliation_items(
     limit: int = 100,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    project_id: str = Depends(get_current_project_id),
 ):
-    query = db.query(Transaction)
+    query = db.query(Transaction).join(Case)
+    if project_id:
+        query = query.filter(Case.project_id == project_id)
+        
     transactions = query.order_by(Transaction.date.desc()).limit(limit).all()
     items = []
     for t in transactions:
@@ -70,6 +75,8 @@ async def get_reconciliation_items(
             "currency": t.currency,
             "date": t.date.isoformat() if t.date else None,
             "status": recon_status,
+            "evidenceId": meta.get("evidence_id"),
+            "evidenceRegionId": meta.get("region_id"),
         })
     return items
 

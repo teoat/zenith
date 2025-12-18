@@ -12,11 +12,14 @@ from fastapi.testclient import TestClient
 if os.path.abspath("backend") not in sys.path:
     sys.path.insert(0, os.path.abspath("backend"))
 
-# Mock networkx if not present with proper __spec__
-mock_networkx = MagicMock()
-mock_networkx.__spec__ = MagicMock()
-mock_networkx.__spec__.name = "networkx"
-sys.modules["networkx"] = mock_networkx
+# Mock networkx only if not present
+try:
+    import networkx
+except ImportError:
+    mock_networkx = MagicMock()
+    mock_networkx.__spec__ = MagicMock()
+    mock_networkx.__spec__.name = "networkx"
+    sys.modules["networkx"] = mock_networkx
 
 # Set environment to development for tests to bypass production security middleware
 os.environ["ENVIRONMENT"] = "development"

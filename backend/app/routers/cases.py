@@ -11,6 +11,7 @@ from app.services.ai.ai_service import ai_service
 from app.services.infrastructure.auth_service import auth_service
 from app.services.business.case_service import case_service
 from core.database import Case, Entity, Transaction, User, get_db
+from app.dependencies import get_current_project_id
 
 logger = logging.getLogger(__name__)
 
@@ -120,6 +121,7 @@ async def create_case(
     case: CaseCreate,
     db: Session = Depends(get_db),
     current_user: dict = Depends(auth_service.get_current_user),
+    project_id: str = Depends(get_current_project_id),
 ):
     """Create a new case"""
     try:
@@ -144,9 +146,9 @@ async def create_case(
             priority=case.priority.lower(),
             status=case.status.lower(),
             fraud_amount=case.fraudAmount,
-            customer_name=case.customerName,
             tags=case.tags,
-            case_metadata=case_metadata
+            case_metadata=case_metadata,
+            project_id=project_id
             # created_by=current_user.get("id") # If Case model has this
         )
 
@@ -190,6 +192,7 @@ async def get_cases(
     search: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: dict = Depends(auth_service.get_current_user),
+    project_id: str = Depends(get_current_project_id),
 ):
     """
     Get a paginated list of cases with optional filtering.
@@ -201,7 +204,7 @@ async def get_cases(
         if priority:
             priority = priority.lower()
             
-        filters = {"status": status, "priority": priority, "search": search}
+        filters = {"status": status, "priority": priority, "search": search, "project_id": project_id}
         result = db_service.get_cases_paginated(db, page, per_page, filters)
         
         # Convert rows to dicts with camelCase keys for frontend compatibility
@@ -328,9 +331,19 @@ async def search_cases(
     priority: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: dict = Depends(auth_service.get_current_user),
+    project_id: str = Depends(get_current_project_id),
 ):
     """Specific search endpoint for cases"""
-    return await get_cases(search=q, status=status, priority=priority, db=db, current_user=current_user, page=1, per_page=20)
+    return await get_cases(
+        search=q, 
+        status=status, 
+        priority=priority, 
+        db=db, 
+        current_user=current_user, 
+        project_id=project_id,
+        page=1, 
+        per_page=20
+    )
 
 
 @router.get("/{case_id}")

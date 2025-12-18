@@ -619,6 +619,26 @@ app.include_router(
     tags=["Relationships"]
 )
 
+try:
+    from app.routers.projects import router as projects_router
+    app.include_router(
+        projects_router,
+        prefix=f"/api/{API_VERSION}/projects",
+        tags=["Projects"]
+    )
+except ImportError as e:
+    logger.warning(f"Failed to import projects router: {e}")
+
+try:
+    from app.routers.alerts import router as alerts_router
+    app.include_router(
+        alerts_router,
+        prefix=f"/api/{API_VERSION}/alerts",
+        tags=["Alerts"]
+    )
+except ImportError as e:
+    logger.warning(f"Failed to import alerts router: {e}")
+
 
 # Optional Routers (Check for ImportError above/try-except)
 try:

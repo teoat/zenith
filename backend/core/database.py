@@ -112,10 +112,24 @@ class Team(Base):
     # Relationships - members relationship removed due to missing association table
 
 
+class Project(Base):
+    __tablename__ = "projects"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String, nullable=False, index=True)
+    description = Column(Text)
+    created_at = Column(DateTime, default=utc_now)
+    created_by = Column(String, ForeignKey("users.id"))
+
+    # Relationships
+    cases = relationship("Case", back_populates="project")
+
+
 class Case(Base):
     __tablename__ = "cases"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    project_id = Column(String, ForeignKey("projects.id"), index=True, default="default")
     title = Column(String, nullable=False, index=True)
     description = Column(EncryptedString)
     status = Column(String, default=CaseStatus.OPEN, index=True)
@@ -137,6 +151,7 @@ class Case(Base):
     created_by = Column(String, ForeignKey("users.id"))
 
     # Relationships
+    project = relationship("Project", back_populates="cases")
     assignee = relationship("User", back_populates="cases", foreign_keys=[assignee_id])
     creator = relationship("User", foreign_keys=[created_by])
     transactions = relationship(

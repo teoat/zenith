@@ -26,8 +26,8 @@ const Forensics = () => {
     const fetchEvidence = async () => {
         try {
             setLoading(true);
-            // Fetching evidence for a default demo case
-            const data = await api.getEvidence('CASE-2024-001');
+            // Fetching evidence for current project
+            const data = await api.getEvidence();
             setEvidence(data);
             setError(null);
             

@@ -1,0 +1,187 @@
+INFO:     Will watch for changes in these directories: ['/Users/Arief/Desktop/378x492/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [13281] using WatchFiles
+2025-12-18 18:09:51 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [13283]
+INFO:     Waiting for application startup.
+2025-12-18 18:09:53 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 18:09:53 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 18:09:53 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 18:09:53 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 18:09:53 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 18:10:41 - 378x492 - ERROR - logging:167 - HTTP 401: Not authenticated
+2025-12-18 18:10:41 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63585 - "GET /api/v1/alerts HTTP/1.1" 401 Unauthorized
+Failed to get evidence: 'str' object has no attribute 'isoformat'
+2025-12-18 18:10:41 - 378x492 - ERROR - logging:167 - HTTP 500: Failed to get evidence: 'str' object has no attribute 'isoformat'
+2025-12-18 18:10:41 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63587 - "GET /api/v1/evidence HTTP/1.1" 500 Internal Server Error
+2025-12-18 18:10:41 - 378x492 - ERROR - logging:167 - HTTP 401: Not authenticated
+2025-12-18 18:10:41 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63589 - "GET /api/v1/projects HTTP/1.1" 401 Unauthorized
+WARNING:  WatchFiles detected changes in 'tests/test_projects.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 18:11:14 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 18:11:14 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13283]
+WARNING:  WatchFiles detected changes in 'tests/test_projects.py'. Reloading...
+2025-12-18 18:11:19 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [13440]
+INFO:     Waiting for application startup.
+2025-12-18 18:11:20 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 18:11:20 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 18:11:20 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 18:11:20 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 18:11:20 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'tests/test_projects.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 18:11:37 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 18:11:37 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13440]
+2025-12-18 18:11:42 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [13479]
+INFO:     Waiting for application startup.
+2025-12-18 18:11:43 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 18:11:43 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 18:11:43 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 18:11:43 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 18:11:43 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 18:11:48 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 18:11:48 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13479]
+Process SpawnProcess-5:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 76, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 61, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 68, in serve
+    config.load()
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 467, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/Arief/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 21, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 39, in <module>
+    from app.routers.evidence import router as evidence_router
+ImportError: cannot import name 'router' from 'app.routers.evidence' (/Users/Arief/Desktop/378x492/backend/app/routers/evidence.py)
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+2025-12-18 18:12:01 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [13520]
+INFO:     Waiting for application startup.
+2025-12-18 18:12:02 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 18:12:02 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 18:12:02 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 18:12:02 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 18:12:02 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 18:12:34 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:12:34 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:12:34 - 378x492 - ERROR - logging:167 - HTTP 401: Invalid authentication token
+2025-12-18 18:12:34 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63680 - "GET /api/v1/alerts HTTP/1.1" 401 Unauthorized
+2025-12-18 18:12:34 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:12:34 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63682 - "GET /api/v1/evidence HTTP/1.1" 200 OK
+2025-12-18 18:12:34 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:12:34 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:12:34 - 378x492 - ERROR - logging:167 - HTTP 401: Invalid authentication token
+2025-12-18 18:12:34 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63684 - "GET /api/v1/projects HTTP/1.1" 401 Unauthorized
+2025-12-18 18:13:32 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:13:32 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:13:32 - 378x492 - ERROR - encryption:58 - Decryption failed: 
+2025-12-18 18:13:32 - 378x492 - ERROR - encryption:58 - Decryption failed: 
+2025-12-18 18:13:32 - 378x492 - ERROR - encryption:58 - Decryption failed: 
+2025-12-18 18:13:32 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63699 - "GET /api/v1/alerts HTTP/1.1" 200 OK
+2025-12-18 18:13:32 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:13:32 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63701 - "GET /api/v1/evidence HTTP/1.1" 200 OK
+2025-12-18 18:13:32 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:13:32 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:13:32 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63703 - "GET /api/v1/projects HTTP/1.1" 200 OK
+2025-12-18 18:13:57 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:13:57 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:13:57 - 378x492 - ERROR - encryption:58 - Decryption failed: 
+2025-12-18 18:13:57 - 378x492 - ERROR - encryption:58 - Decryption failed: 
+2025-12-18 18:13:57 - 378x492 - ERROR - encryption:58 - Decryption failed: 
+2025-12-18 18:13:57 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63711 - "GET /api/v1/alerts HTTP/1.1" 200 OK
+2025-12-18 18:14:21 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:14:21 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63726 - "GET /api/v1/evidence HTTP/1.1" 200 OK
+2025-12-18 18:14:44 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+2025-12-18 18:14:44 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63746 - "GET /api/v1/evidence HTTP/1.1" 200 OK
+2025-12-18 18:16:22 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 18:16:22 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63851 - "OPTIONS /api/v1/dashboard/metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63855 - "OPTIONS /api/v1/activity/recent HTTP/1.1" 200 OK
+2025-12-18 18:16:22 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:16:22 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:16:22 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:16:22 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:16:22 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 18:16:22 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63857 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63859 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-18 18:16:25 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:16:25 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:16:25 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63872 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+2025-12-18 18:16:25 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:16:25 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:16:25 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63872 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-18 18:16:27 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:16:27 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:16:27 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:16:27 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:16:27 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63888 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+2025-12-18 18:16:27 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:63890 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found

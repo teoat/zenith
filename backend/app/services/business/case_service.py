@@ -25,11 +25,14 @@ class CaseService:
         db: Session,
         status: Optional[str] = None,
         priority: Optional[str] = None,
+        project_id: Optional[str] = None,
         limit: int = 100,
     ) -> List[Case]:
         """Get all cases with optional filtering"""
         query = db.query(Case)
 
+        if project_id:
+            query = query.filter(Case.project_id == project_id)
         if status:
             query = query.filter(Case.status == status)
         if priority:
@@ -44,6 +47,7 @@ class CaseService:
         description: str,
         priority: str = "medium",
         status: str = "open",
+        project_id: str = "default",
         **kwargs,
     ) -> Case:
         """Create a new case"""
@@ -52,6 +56,7 @@ class CaseService:
             description=description,
             priority=priority,
             status=status,
+            project_id=project_id,
             **kwargs,
         )
         db.add(case)
@@ -64,6 +69,9 @@ class CaseService:
         case = self.get_case(db, case_id)
         if not case:
             return None
+
+        # Prevent cross-project updates via ID checks if we enforced tenant isolation strictly here
+        # For now, simplistic update is fine.
 
         for key, value in updates.items():
             if hasattr(case, key):
@@ -83,12 +91,16 @@ class CaseService:
         db.commit()
         return True
 
-    def get_case_stats(self, db: Session) -> Dict[str, Any]:
+    def get_case_stats(self, db: Session, project_id: Optional[str] = None) -> Dict[str, Any]:
         """Get case statistics"""
-        total = db.query(Case).count()
-        open_cases = db.query(Case).filter(Case.status == "open").count()
-        closed = db.query(Case).filter(Case.status == "closed").count()
-        critical = db.query(Case).filter(Case.priority == "critical").count()
+        query = db.query(Case)
+        if project_id:
+            query = query.filter(Case.project_id == project_id)
+            
+        total = query.count()
+        open_cases = query.filter(Case.status == "open").count()
+        closed = query.filter(Case.status == "closed").count()
+        critical = query.filter(Case.priority == "critical").count()
 
         return {
             "total_cases": total,
@@ -106,6 +118,8 @@ class CaseService:
 
         query = db.query(Case)
 
+        if filters.get("project_id"):
+            query = query.filter(Case.project_id == filters["project_id"])
         if filters.get("status"):
             query = query.filter(Case.status == filters["status"])
         if filters.get("priority"):

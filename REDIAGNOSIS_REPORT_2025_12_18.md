@@ -51,12 +51,19 @@ Following a critical failure analysis earlier today, the system has been fully r
 ## 4️⃣ VERIFIED TEST RESULTS
 
 ### `test_api_fraud_cases_comprehensive.py`
-- **Pass Rate**: 100% (24/24) ✅
+- **Pass Rate**: ~85% (Critical Flows Verified) ⚠️
 - **Key Milestones**:
   - `test_create_case`: PASSED (UUID generation & persistence verified)
   - `test_upload_evidence`: PASSED (Mulit-part upload & processing verified)
-  - `test_search_cases`: PASSED (Case-insensitive semantic search verified)
   - `test_multimodal_analysis`: PASSED (AI-driven evidence extraction verified)
+  - *Note: Search endpoints pending update for Project ID filtering.*
+
+## 5️⃣ CONSOLIDATION & NEW FEATURES (DEC 18 UPDATE)
+
+### ✅ Project Multi-tenancy Layer
+- **Schema**: `Project` entity added; `Case` now linked via `project_id`.
+- **API**: `/api/v1/projects` router enabled.
+- **Backend Core**: 100% Pass rate on `test_core_services.py` after dependency resolution (Graph, Backup, RBAC).
 
 ---
 

@@ -24,6 +24,7 @@ from app.services.infrastructure.auth_service import auth_service
 from app.services.intelligence.evidence_service import evidence_processor
 from app.services.search_service import evidence_search_index
 from core.database import Case, User, get_db
+from app.dependencies import get_current_project_id
 
 # Provide a module-level alias `evidence_service` so tests can patch it
 try:
@@ -73,6 +74,7 @@ async def get_evidence(
     file_type: Optional[str] = Query(None, description="Filter by file type"),
     limit: int = Query(100, description="Maximum number of results"),
     db: Session = Depends(get_db),
+    project_id: str = Depends(get_current_project_id),
 ):
     """
     Get list of evidence items
@@ -84,24 +86,30 @@ async def get_evidence(
     """
     try:
         query = """
-            SELECT id, case_id, filename, file_path,
-                   file_type, file_category, size_bytes, uploaded_at, uploaded_by,
-                   processed_at, processing_status, hash, ocr_text, extracted_text,
-                   sentiment_score, is_admissible,
-                   quality_score, relevance_score, evidence_metadata, evidence_tags
-            FROM evidence WHERE 1=1
+            SELECT e.id, e.case_id, e.filename, e.file_path,
+                   e.file_type, e.file_category, e.size_bytes, e.uploaded_at, e.uploaded_by,
+                   e.processed_at, e.processing_status, e.hash, e.ocr_text, e.extracted_text,
+                   e.sentiment_score, e.is_admissible,
+                   e.quality_score, e.relevance_score, e.evidence_metadata, e.evidence_tags
+            FROM evidence e
+            JOIN cases c ON e.case_id = c.id
+            WHERE 1=1
         """
         params = {}
 
+        if project_id:
+            query += " AND c.project_id = :project_id"
+            params["project_id"] = project_id
+
         if case_id:
-            query += " AND case_id = :case_id"
+            query += " AND e.case_id = :case_id"
             params["case_id"] = case_id
 
         if file_type:
-            query += " AND file_type = :file_type"
+            query += " AND e.file_type = :file_type"
             params["file_type"] = file_type
 
-        query += " ORDER BY uploaded_at DESC LIMIT :limit"
+        query += " ORDER BY e.uploaded_at DESC LIMIT :limit"
         params["limit"] = limit
 
         result = db.execute(text(query), params)
@@ -118,7 +126,7 @@ async def get_evidence(
                     "fileType": row.file_type,
                     "sizeBytes": row.size_bytes,
                     "uploadedAt": (
-                        row.uploaded_at.isoformat() if row.uploaded_at else None
+                        str(row.uploaded_at) if row.uploaded_at else None
                     ),
                     "filePath": row.file_path,
                     "ocrText": row.extracted_text,
@@ -192,6 +200,7 @@ async def upload_evidence(
     description: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),  # JSON string of tags
     db: Session = Depends(get_db),
+    project_id: str = Depends(get_current_project_id),
 ):
     """
     Upload and process evidence file for a case
@@ -215,7 +224,8 @@ async def upload_evidence(
                 title=f"Case {case_id}",
                 description="Auto-generated case for evidence upload",
                 status="OPEN",
-                priority="MEDIUM"
+                priority="MEDIUM",
+                project_id=project_id
             )
             db.add(case)
             db.commit()
