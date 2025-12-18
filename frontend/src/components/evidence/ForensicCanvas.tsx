@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import React from 'react';
-import { EvidenceItem } from '../../lib/api';
-import { Eye, Binary, FileJson } from 'lucide-react';
+import { api, EvidenceItem } from '../../lib/api';
+import { Eye, Binary, FileJson, FileText } from 'lucide-react';
+import PdfViewer from '../forensics/PdfViewer';
 
 const EvidenceViewer = React.lazy(() => import('./EvidenceViewer'));
 
@@ -95,7 +95,18 @@ export const ForensicCanvas: React.FC<ForensicCanvasProps> = ({ fileUrl, evidenc
                            </div>
                        </div>
                    }>
-                       <EvidenceViewer fileUrl={fileUrl} />
+                       {evidence?.fileType === 'pdf' || fileUrl?.endsWith('.pdf') ? (
+                           <PdfViewer 
+                                url={fileUrl} 
+                                onHighlight={(highlight) => {
+                                    if (evidence?.id) {
+                                        api.saveHighlight(evidence.id, highlight).catch(console.error);
+                                    }
+                                }}
+                            />
+                       ) : (
+                           <EvidenceViewer fileUrl={fileUrl} />
+                       )}
                    </React.Suspense>
                )
            )}

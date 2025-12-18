@@ -36,6 +36,12 @@ const AlertDetail: React.FC<AlertDetailProps> = ({
                     {alert.status.toUpperCase()}
                 </span>
             </div>
+            <button 
+                onClick={() => window.location.href = `/evidence?caseId=${alert.caseId || ''}`}
+                className="ml-auto text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
+            >
+                View Proof →
+            </button>
         </header>
 
         {/* Scrollable Content */}

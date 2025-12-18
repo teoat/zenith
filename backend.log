@@ -185,3 +185,197 @@ Failed to decode JWT token: 401: Invalid authentication token
 INFO:     127.0.0.1:63888 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
 2025-12-18 18:16:27 - 378x492 - INFO - logging:136 - HTTP request
 INFO:     127.0.0.1:63890 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-18 18:29:51 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:29:51 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:29:51 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:29:51 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:29:51 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:64513 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+2025-12-18 18:29:51 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:64517 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-18 18:29:52 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:29:52 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:29:52 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:29:52 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:29:52 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 18:29:52 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:64517 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64513 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-18 18:29:54 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:29:54 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:29:54 - 378x492 - WARNING - auth_service:127 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-18 18:29:54 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 18:29:54 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 18:29:54 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:64513 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64517 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+WARNING:  WatchFiles detected changes in 'venv/lib/python3.12/site-packages/charset_normalizer/utils.py', 'venv/lib/python3.12/site-packages/requests/adapters.py', 'venv/lib/python3.12/site-packages/charset_normalizer/cli/__init__.py', 'venv/lib/python3.12/site-packages/requests/models.py', 'venv/lib/python3.12/site-packages/requests/status_codes.py', 'venv/lib/python3.12/site-packages/requests/__init__.py', 'venv/lib/python3.12/site-packages/requests/packages.py', 'venv/lib/python3.12/site-packages/charset_normalizer/version.py', 'venv/lib/python3.12/site-packages/charset_normalizer/constant.py', 'venv/lib/python3.12/site-packages/requests/__version__.py', 'venv/lib/python3.12/site-packages/charset_normalizer/__init__.py', 'venv/lib/python3.12/site-packages/requests/structures.py', 'venv/lib/python3.12/site-packages/charset_normalizer/cli/__main__.py', 'venv/lib/python3.12/site-packages/requests/auth.py', 'venv/lib/python3.12/site-packages/requests/api.py', 'venv/lib/python3.12/site-packages/requests/_internal_utils.py', 'venv/lib/python3.12/site-packages/requests/compat.py', 'venv/lib/python3.12/site-packages/requests/cookies.py', 'venv/lib/python3.12/site-packages/charset_normalizer/cd.py', 'venv/lib/python3.12/site-packages/requests/hooks.py', 'venv/lib/python3.12/site-packages/charset_normalizer/legacy.py', 'venv/lib/python3.12/site-packages/charset_normalizer/models.py', 'venv/lib/python3.12/site-packages/charset_normalizer/__main__.py', 'venv/lib/python3.12/site-packages/requests/utils.py', 'venv/lib/python3.12/site-packages/requests/certs.py', 'venv/lib/python3.12/site-packages/requests/sessions.py', 'venv/lib/python3.12/site-packages/charset_normalizer/api.py', 'venv/lib/python3.12/site-packages/charset_normalizer/md.py', 'venv/lib/python3.12/site-packages/requests/exceptions.py', 'venv/lib/python3.12/site-packages/requests/help.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 18:40:54 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 18:40:54 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13520]
+WARNING:  WatchFiles detected changes in 'venv/lib/python3.12/site-packages/charset_normalizer/utils.py', 'venv/lib/python3.12/site-packages/requests/adapters.py', 'venv/lib/python3.12/site-packages/charset_normalizer/cli/__init__.py', 'venv/lib/python3.12/site-packages/requests/models.py', 'venv/lib/python3.12/site-packages/requests/status_codes.py', 'venv/lib/python3.12/site-packages/requests/packages.py', 'venv/lib/python3.12/site-packages/requests/__init__.py', 'venv/lib/python3.12/site-packages/charset_normalizer/version.py', 'venv/lib/python3.12/site-packages/charset_normalizer/constant.py', 'venv/lib/python3.12/site-packages/requests/__version__.py', 'venv/lib/python3.12/site-packages/charset_normalizer/__init__.py', 'venv/lib/python3.12/site-packages/requests/structures.py', 'venv/lib/python3.12/site-packages/charset_normalizer/cli/__main__.py', 'venv/lib/python3.12/site-packages/requests/auth.py', 'venv/lib/python3.12/site-packages/requests/api.py', 'venv/lib/python3.12/site-packages/requests/_internal_utils.py', 'venv/lib/python3.12/site-packages/requests/compat.py', 'venv/lib/python3.12/site-packages/requests/cookies.py', 'venv/lib/python3.12/site-packages/charset_normalizer/cd.py', 'venv/lib/python3.12/site-packages/requests/hooks.py', 'venv/lib/python3.12/site-packages/charset_normalizer/legacy.py', 'venv/lib/python3.12/site-packages/charset_normalizer/models.py', 'venv/lib/python3.12/site-packages/charset_normalizer/__main__.py', 'venv/lib/python3.12/site-packages/requests/utils.py', 'venv/lib/python3.12/site-packages/requests/certs.py', 'venv/lib/python3.12/site-packages/requests/sessions.py', 'venv/lib/python3.12/site-packages/charset_normalizer/api.py', 'venv/lib/python3.12/site-packages/charset_normalizer/md.py', 'venv/lib/python3.12/site-packages/requests/exceptions.py', 'venv/lib/python3.12/site-packages/requests/help.py'. Reloading...
+2025-12-18 18:41:03 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [19058]
+INFO:     Waiting for application startup.
+2025-12-18 18:41:06 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 18:41:06 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 18:41:06 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 18:41:06 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 18:41:06 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/websocket.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 19:03:18 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 19:03:18 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [19058]
+2025-12-18 19:03:25 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [23966]
+INFO:     Waiting for application startup.
+2025-12-18 19:03:26 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 19:03:26 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 19:03:26 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 19:03:26 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 19:03:26 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/websocket.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 19:04:53 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 19:04:53 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [23966]
+2025-12-18 19:04:58 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [24112]
+INFO:     Waiting for application startup.
+2025-12-18 19:05:00 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 19:05:00 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 19:05:00 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 19:05:00 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 19:05:00 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/ai/multimodal/multimodal_analyzer.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 19:07:08 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 19:07:08 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [24112]
+2025-12-18 19:07:13 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [24572]
+INFO:     Waiting for application startup.
+2025-12-18 19:07:14 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 19:07:14 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 19:07:14 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 19:07:14 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 19:07:14 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/services/intelligence/evidence_processor.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 19:07:29 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 19:07:29 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [24572]
+2025-12-18 19:07:34 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [24619]
+INFO:     Waiting for application startup.
+2025-12-18 19:07:36 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 19:07:36 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 19:07:36 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 19:07:36 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 19:07:36 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 19:11:39 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 19:11:39 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [24619]
+2025-12-18 19:11:46 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [25212]
+INFO:     Waiting for application startup.
+2025-12-18 19:11:47 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 19:11:47 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 19:11:47 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 19:11:47 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 19:11:47 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/advanced_ai.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 19:19:42 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 19:19:42 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25212]
+WARNING:  WatchFiles detected changes in 'app/routers/advanced_ai.py'. Reloading...
+2025-12-18 19:19:49 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [27288]
+INFO:     Waiting for application startup.
+2025-12-18 19:19:50 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 19:19:50 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 19:19:50 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 19:19:50 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 19:19:50 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 19:20:26 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 19:20:26 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [27288]
+2025-12-18 19:20:31 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [27369]
+INFO:     Waiting for application startup.
+2025-12-18 19:20:32 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 19:20:32 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 19:20:32 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 19:20:32 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 19:20:32 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/evidence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 19:22:39 - 378x492 - INFO - main:247 - Shutting down 378x492 Fraud Detection API
+2025-12-18 19:22:39 - 378x492 - ERROR - main:266 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [27369]
+2025-12-18 19:22:44 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+INFO:     Started server process [27554]
+INFO:     Waiting for application startup.
+2025-12-18 19:22:46 - 378x492 - INFO - main:192 - Starting 378x492 Fraud Detection API
+2025-12-18 19:22:46 - 378x492 - INFO - main:198 - Database tables created successfully (Development Mode)
+2025-12-18 19:22:46 - 378x492 - INFO - main:215 - Monitoring services disabled for debugging
+2025-12-18 19:22:46 - 378x492 - INFO - main:224 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 19:22:46 - 378x492 - INFO - main:233 - 378x492 API startup completed successfully
+INFO:     Application startup complete.

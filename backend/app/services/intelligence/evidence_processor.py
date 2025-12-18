@@ -1,5 +1,6 @@
 """
 Multi-Modal Evidence Processing System
+DEPRECATED: Use app.services.intelligence.evidence_service instead. This file contains legacy implementations.
 Task 4.5 from Orchestration Plan
 
 Handles extraction and analysis of evidence from multiple formats:

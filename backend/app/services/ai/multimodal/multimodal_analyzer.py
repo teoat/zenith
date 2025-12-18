@@ -1,5 +1,6 @@
 """
 Multimodal Analyzer Service
+DEPRECATED: Use app.services.intelligence.evidence_service instead.
 
 Provides image analysis using Pytesseract (OCR) and Pillow.
 Extracts text, metadata, and basic image statistics.

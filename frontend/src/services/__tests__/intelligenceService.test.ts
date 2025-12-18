@@ -52,7 +52,7 @@ describe('IntelligenceService', () => {
 
       expect(result).toEqual(mockAlerts);
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/intelligence/fraud/analyze',
+        expect.stringContaining('/api/v1/intelligence/fraud/analyze'),
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
@@ -65,7 +65,8 @@ describe('IntelligenceService', () => {
     it('handles API errors', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
-        statusText: 'Bad Request'
+        statusText: 'Bad Request',
+        json: async () => ({ detail: 'Bad Request' })
       });
 
       await expect(
@@ -123,7 +124,7 @@ describe('IntelligenceService', () => {
 
       expect(results).toEqual(mockResults);
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/intelligence/evidence/search?query='),
+        expect.stringContaining('/api/v1/intelligence/evidence/search?query='),
         expect.any(Object)
       );
     });

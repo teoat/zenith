@@ -4,6 +4,8 @@ import { api, AlertItem } from '../lib/api';
 import AdjudicationLayout from '../components/adjudication/AdjudicationLayout';
 import AlertList from '../components/adjudication/AlertList';
 import AlertDetail from '../components/adjudication/AlertDetail';
+import EmptyState from '../components/common/EmptyState';
+import { socketService } from '../services/socket';
 
 const AdjudicationQueue = () => {
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
@@ -28,7 +30,21 @@ const AdjudicationQueue = () => {
 
   useEffect(() => {
     fetchAlerts();
-  }, [fetchAlerts]);
+    
+    // Connect WS
+    socketService.connect('/ws/alerts');
+    const unsubscribe = socketService.subscribe((msg: any) => {
+        if (msg.type === 'new_alert' && msg.data) {
+            setAlerts(prev => [msg.data, ...prev]);
+            addToast('New Alert Received', 'info');
+        }
+    });
+
+    return () => {
+        unsubscribe();
+        socketService.disconnect();
+    };
+  }, [fetchAlerts, addToast]);
 
   const handleSelect = (alert: AlertItem) => {
     setSelectedId(alert.id);
@@ -89,6 +105,16 @@ const AdjudicationQueue = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
+
+  if (!loading && alerts.length === 0) {
+      return (
+          <AdjudicationLayout 
+            isDetailOpen={false}
+            list={<EmptyState title="Zero Inbox!" description="All alerts have been processed. Great work!" />}
+            detail={null}
+          />
+      );
+  }
 
   return (
     <AdjudicationLayout

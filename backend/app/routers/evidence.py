@@ -72,52 +72,63 @@ router = APIRouter()
 async def get_evidence(
     case_id: Optional[str] = Query(None, description="Filter by case ID"),
     file_type: Optional[str] = Query(None, description="Filter by file type"),
-    limit: int = Query(100, description="Maximum number of results"),
+    q: Optional[str] = Query(None, description="Search term for filename or uploader"),
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db),
     project_id: str = Depends(get_current_project_id),
 ):
     """
-    Get list of evidence items
-
-    Args:
-        case_id: Filter by case ID
-        file_type: Filter by file type
-        limit: Maximum number of results
+    Get list of evidence items with pagination and search
     """
     try:
-        query = """
+        # Base filters
+        filters = ["1=1"]
+        params = {}
+
+        if project_id:
+            filters.append("e.case_id IN (SELECT id FROM cases WHERE project_id = :project_id)")
+            params["project_id"] = project_id
+
+        if case_id:
+            filters.append("e.case_id = :case_id")
+            params["case_id"] = case_id
+
+        if file_type:
+            filters.append("e.file_type = :file_type")
+            params["file_type"] = file_type
+
+        if q:
+            filters.append("(e.filename ILIKE :q OR e.uploaded_by ILIKE :q)")
+            params["q"] = f"%{q}%"
+
+        where_clause = " AND ".join(filters)
+
+        # Count total
+        count_query = f"SELECT count(*) FROM evidence e WHERE {where_clause}"
+        total = db.execute(text(count_query), params).scalar()
+
+        # Get Page
+        offset = (page - 1) * page_size
+        data_query = f"""
             SELECT e.id, e.case_id, e.filename, e.file_path,
                    e.file_type, e.file_category, e.size_bytes, e.uploaded_at, e.uploaded_by,
                    e.processed_at, e.processing_status, e.hash, e.ocr_text, e.extracted_text,
                    e.sentiment_score, e.is_admissible,
                    e.quality_score, e.relevance_score, e.evidence_metadata, e.evidence_tags
             FROM evidence e
-            JOIN cases c ON e.case_id = c.id
-            WHERE 1=1
+            WHERE {where_clause}
+            ORDER BY e.uploaded_at DESC
+            LIMIT :limit OFFSET :offset
         """
-        params = {}
+        params["limit"] = page_size
+        params["offset"] = offset
 
-        if project_id:
-            query += " AND c.project_id = :project_id"
-            params["project_id"] = project_id
-
-        if case_id:
-            query += " AND e.case_id = :case_id"
-            params["case_id"] = case_id
-
-        if file_type:
-            query += " AND e.file_type = :file_type"
-            params["file_type"] = file_type
-
-        query += " ORDER BY e.uploaded_at DESC LIMIT :limit"
-        params["limit"] = limit
-
-        result = db.execute(text(query), params)
+        result = db.execute(text(data_query), params)
         rows = result.fetchall()
 
         evidence_list = []
         for row in rows:
-            # Map row to dictionary - adapt based on actual columns in DB
             evidence_list.append(
                 {
                     "id": row.id,
@@ -130,10 +141,18 @@ async def get_evidence(
                     ),
                     "filePath": row.file_path,
                     "ocrText": row.extracted_text,
+                    # Add extra fields that might be useful
+                    "processingStatus": row.processing_status
                 }
             )
 
-        return evidence_list
+        return {
+            "items": evidence_list,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": (total + page_size - 1) // page_size
+        }
 
     except Exception as e:
         logger.error(f"Failed to get evidence: {str(e)}")
@@ -442,6 +461,99 @@ async def upload_evidence(
     except Exception as e:
         logger.error(f"Evidence upload failed: {e}")
         raise HTTPException(status_code=500, detail=f"Evidence upload failed: {str(e)}")
+
+
+@router.get("/{evidence_id}/highlights")
+async def get_evidence_highlights(
+    evidence_id: str,
+    db: Session = Depends(get_db),
+    project_id: str = Depends(get_current_project_id)
+):
+    """Get saved highlights for an evidence file"""
+    try:
+        query = "SELECT evidence_metadata FROM evidence WHERE id = :id"
+        result = db.execute(text(query), {"id": evidence_id}).fetchone()
+
+        if not result:
+            raise HTTPException(status_code=404, detail="Evidence not found")
+
+        metadata = result.evidence_metadata
+        if isinstance(metadata, str):
+            metadata = json.loads(metadata)
+        
+        return metadata.get("user_highlights", [])
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get highlights: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/{evidence_id}/highlights")
+async def save_evidence_highlight(
+    evidence_id: str,
+    highlight:  Dict = None, # JSON body
+    request: Request = None, # Alternative way to get body
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """Save a new highlight to evidence metadata"""
+    try:
+        # Get body if not bound (FastAPI sometimes tricky with generic Dict)
+        if hasattr(request, "json"):
+             body = await request.json()
+             if body:
+                  highlight = body
+
+        if not highlight:
+             raise HTTPException(status_code=400, detail="Highlight data required")
+
+        # Get existing metadata
+        query = "SELECT evidence_metadata FROM evidence WHERE id = :id"
+        result = db.execute(text(query), {"id": evidence_id}).fetchone()
+
+        if not result:
+            raise HTTPException(status_code=404, detail="Evidence not found")
+
+        metadata = result.evidence_metadata
+        if isinstance(metadata, str):
+            metadata = json.loads(metadata)
+        
+        if metadata is None:
+            metadata = {}
+
+        # Append highlight
+        if "user_highlights" not in metadata:
+            metadata["user_highlights"] = []
+        
+        # Add metadata to highlight
+        highlight["created_at"] = datetime.now().isoformat()
+        highlight["created_by"] = current_user.id if current_user else "unknown"
+        
+        metadata["user_highlights"].append(highlight)
+
+        # Update DB
+        update_query = """
+            UPDATE evidence 
+            SET evidence_metadata = :metadata 
+            WHERE id = :id
+        """
+        db.execute(
+            text(update_query), 
+            {
+                "metadata": json.dumps(metadata, default=str),
+                "id": evidence_id
+            }
+        )
+        db.commit()
+
+        return {"status": "success", "count": len(metadata["user_highlights"])}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to save highlight: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 def _determine_file_category(filename: str, mime_type: str) -> str:

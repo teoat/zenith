@@ -18,22 +18,39 @@ const Forensics = () => {
   const [selectedEvidence, setSelectedEvidence] = useState<EvidenceItem | null>(null);
   const [rightPanelWidth, setRightPanelWidth] = useState(320);
   const [evidence, setEvidence] = useState<EvidenceItem[]>([]);
+  const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isUploadWizardOpen, setIsUploadWizardOpen] = useState(false);
+  const [filterText, setFilterText] = useState('');
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 20;
 
+  // Debounced fetch for search
   useEffect(() => {
-    const fetchEvidence = async () => {
+    const timer = setTimeout(() => {
+        setPage(1); // Reset to page 1 on search change
+        fetchEvidence(1, filterText);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filterText]);
+
+  // Fetch on page change (skip if search filter caused it, handled above)
+  useEffect(() => {
+      fetchEvidence(page, filterText);
+  }, [page]);
+
+  const fetchEvidence = async (p: number, q: string) => {
         try {
             setLoading(true);
-            // Fetching evidence for current project
-            const data = await api.getEvidence();
-            setEvidence(data);
+            const data = await api.getEvidence(undefined, p, itemsPerPage, q);
+            setEvidence(data.items);
+            setTotalItems(data.total);
             setError(null);
             
-            // Auto-select first item
-            if (data.length > 0) {
-                handleFileSelect(data[0]);
+            // Auto-select first item if list changed and nothing selected
+            if (data.items.length > 0 && !selectedEvidence) {
+                handleFileSelect(data.items[0]);
             }
         } catch (err) {
             console.error('Failed to fetch evidence:', err);
@@ -43,8 +60,9 @@ const Forensics = () => {
         }
     };
 
-    fetchEvidence();
-  }, []);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  // No client-side slicing needed
+  const paginatedEvidence = evidence;
 
   const [activeTab, setActiveTab] = useState<'EVIDENCE' | 'MENS_REA' | 'HYPOTHESIS'>('EVIDENCE');
   
@@ -150,11 +168,12 @@ const Forensics = () => {
             </div>
             
             <div className="p-2 flex-1 overflow-y-auto">
-            <div className="relative mb-4 px-2">
                 <Search className="absolute left-4 top-2 text-slate-500" size={14} />
                 <input 
                 type="text" 
-                placeholder="Filter chain of custody..." 
+                placeholder="Filter evidence..." 
+                value={filterText}
+                onChange={(e) => setFilterText(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded pl-8 pr-2 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
                 />
             </div>
@@ -173,7 +192,7 @@ const Forensics = () => {
                 <div className="flex items-center gap-1 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-2 mt-4">
                 Case #2024-001 Box
                 </div>
-                {evidence.map(file => (
+                {paginatedEvidence.map(file => (
                 <button
                     key={file.id}
                     onClick={() => handleFileSelect(file)}
@@ -192,20 +211,39 @@ const Forensics = () => {
                     </div>
                 </button>
                 ))}
-                {evidence.length === 0 && (
+                
+                {paginatedEvidence.length === 0 && (
                     <div className="text-center p-8 text-slate-500 border border-dashed border-slate-800 rounded m-2">
-                         {/* Empty state content */}
                         <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
+                            <Search className="w-6 h-6 text-slate-400" />
                         </div>
-                        <h4 className="font-semibold text-slate-400 mb-2">No Evidence Yet</h4>
+                        <h4 className="font-semibold text-slate-400 mb-2">No Matches</h4>
+                        <p className="text-xs">Try adjusting your filter</p>
+                    </div>
+                )}
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="flex justify-between items-center px-2 py-2 mt-4 border-t border-slate-800">
+                        <button 
+                            disabled={page === 1}
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            className="text-xs px-2 py-1 rounded hover:bg-slate-800 disabled:opacity-50"
+                        >
+                            Prev
+                        </button>
+                        <span className="text-xs text-slate-500">Page {page} of {totalPages}</span>
+                        <button 
+                            disabled={page === totalPages}
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            className="text-xs px-2 py-1 rounded hover:bg-slate-800 disabled:opacity-50"
+                        >
+                            Next
+                        </button>
                     </div>
                 )}
             </div>
             </div>
-        </div>
 
         {/* 2. Main Area: Controlled by Active Tab */}
         <div className="flex-1 bg-slate-950 relative flex flex-col min-w-0 overflow-hidden">

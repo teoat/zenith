@@ -2,9 +2,14 @@ import { request, isElectron, API_BASE, getToken } from './client';
 import { EvidenceItem, ProcessedEvidence, FileSelectResult } from '../types/api';
 
 export const evidenceService = {
-  getEvidence: async (caseId?: string): Promise<EvidenceItem[]> => {
-    const query = caseId ? `?case_id=${caseId}` : '';
-    return request(`/evidence${query}`);
+  getEvidence: async (caseId?: string, page: number = 1, pageSize: number = 20, query?: string): Promise<{ items: EvidenceItem[]; total: number }> => {
+    const params = new URLSearchParams();
+    if (caseId) params.append('case_id', caseId);
+    if (query) params.append('q', query);
+    params.append('page', page.toString());
+    params.append('page_size', pageSize.toString());
+    
+    return request(`/evidence?${params.toString()}`);
   },
 
   uploadEvidence: async (caseId: string, file: File): Promise<EvidenceItem> => {
@@ -68,5 +73,26 @@ export const evidenceService = {
       input.onchange = () => resolve({ filePaths: input.files ? [input.files[0].name] : [] });
       input.click();
     });
+  },
+
+  getHighlights: async (evidenceId: string): Promise<any[]> => {
+    return request(`/evidence/${evidenceId}/highlights`);
+  },
+
+  saveHighlight: async (evidenceId: string, highlight: any): Promise<any> => {
+    const token = getToken();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    };
+
+    const response = await fetch(`${API_BASE}/evidence/${evidenceId}/highlights`, {
+      method: 'POST',
+      body: JSON.stringify(highlight),
+      headers
+    });
+    
+    if (!response.ok) throw new Error('Failed to save highlight');
+    return response.json();
   }
 };

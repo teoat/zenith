@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Responsive, WidthProvider } from 'react-grid-layout';
+import { ResponsiveGridLayout } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useDashboardMetrics } from '../../hooks/useDashboardMetrics';
@@ -13,7 +13,7 @@ import ProofVisualizationCard from './ProofVisualizationCard';
 import MetricSparkline from './MetricSparkline';
 import { useProjectStore } from '../../store/projectStore';
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
+
 
 interface KPICardProps {
     title: string;

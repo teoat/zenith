@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 # Import from the new standard service locations
 from app.services.ai.local_rag_engine import rag_engine
-from app.services.ai.multimodal.multimodal_analyzer import multimodal_analyzer
+# from app.services.ai.multimodal.multimodal_analyzer import multimodal_analyzer
 from app.services.workflow.red_team_persona import red_team_service
 from core.database import get_db
 
@@ -37,20 +37,81 @@ def local_rag_add(doc_id: str = Form(...), text: str = Form(...)):
 
 
 @router.post("/advanced-ai/multimodal/image")
-def analyze_image(file: UploadFile = File(...)):
+async def analyze_image(file: UploadFile = File(...)):
     """Analyze an image for metadata and text (OCR)."""
+    import tempfile
+    import os
+    from app.services.intelligence.evidence_service import EvidenceProcessor
+
+    processor = EvidenceProcessor()
+
     try:
-        data = file.file.read()
-        res = multimodal_analyzer.analyze_image(data)
-        return res
+        # Save uploaded file temporarily (EvidenceProcessor expects file path)
+        suffix = os.path.splitext(file.filename)[1] if file.filename else ""
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+            content = await file.read()
+            temp_file.write(content)
+            temp_file_path = temp_file.name
+
+        try:
+             results = await processor.process_files_batch(
+                 [temp_file_path], 
+                 options={"enable_ocr": True, "enable_forensics": True}
+             )
+             if not results:
+                 raise HTTPException(status_code=500, detail="Analysis failed")
+             
+             result = results[0]
+             # Map back to simple response format expected by this endpoint consumers
+             return {
+                 "metadata": result.metadata,
+                 "text": result.extracted_text,
+                 "quality_score": result.quality_score
+             }
+        finally:
+            if os.path.exists(temp_file_path):
+                os.unlink(temp_file_path)
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/advanced-ai/multimodal/text")
-def analyze_text(text: str = Form(...)):
+async def analyze_text(text: str = Form(...)):
     """Analyze text for fraud indicators."""
-    return multimodal_analyzer.analyze_text(text)
+    # Since EvidenceProcessor is file-based, we can use a simpler direct analysis here 
+    # or wrap text in a temp file. For now, let's use the sentiment analysis 
+    # part of the processor if exposed, or keep it simple.
+    # Actually, EvidenceProcessor has _analyze_sentiment but it's internal.
+    # Let's use a quick temp file approach to leverage the exact same pipeline.
+    
+    import tempfile
+    import os
+    from app.services.intelligence.evidence_service import EvidenceProcessor
+
+    processor = EvidenceProcessor()
+
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, mode="w", suffix=".txt") as temp_file:
+            temp_file.write(text)
+            temp_file_path = temp_file.name
+        
+        try:
+            results = await processor.process_files_batch([temp_file_path])
+            if not results:
+                 raise HTTPException(status_code=500, detail="Analysis failed")
+            
+            result = results[0]
+            return {
+                "sentiment_score": result.sentiment_score,
+                "entities": result.key_entities,
+                "meta": result.metadata
+            }
+        finally:
+            if os.path.exists(temp_file_path):
+                os.unlink(temp_file_path)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/advanced-ai/red-team/generate")

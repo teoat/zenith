@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, Settings, ShieldAlert, BarChart3, Database, WifiOff, Menu, Gavel } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, Settings, ShieldAlert, BarChart3, Database, WifiOff, Gavel } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { useSidebar } from '@/store/globalStore';
@@ -41,7 +41,7 @@ export const Sidebar = () => {
         <div className={cn("flex h-14 items-center border-b px-4 lg:h-[60px]", collapsed ? "justify-center px-0" : "px-6")}>
             <div className="flex items-center gap-2 font-semibold">
               <ShieldAlert className="h-6 w-6 text-primary" />
-              {!collapsed && <span className="">378x492 Fraud</span>}
+              {!collapsed && <span className="">Zenith Platform</span>}
             </div>
         </div>
         <div className="flex-1">

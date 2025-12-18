@@ -72,6 +72,8 @@ class DualModeAPIFacade {
   processEvidence = evidenceService.processEvidence;
   selectFile = evidenceService.selectFile;
   analyzeFile = evidenceService.analyzeFile;
+  getHighlights = evidenceService.getHighlights;
+  saveHighlight = evidenceService.saveHighlight;
 
   // Settings / Audit
   getAuditLogs = settingsService.getAuditLogs;
