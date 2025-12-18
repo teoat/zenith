@@ -12,7 +12,7 @@ router = APIRouter()
 # ===== EVIDENCE SEARCH ENDPOINTS =====
 
 
-@router.post("/evidence/search")
+@router.post("")
 async def search_evidence(
     query: str, limit: int = 20, filters: Optional[Dict[str, Any]] = None
 ):
@@ -24,7 +24,7 @@ async def search_evidence(
         raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
 
 
-@router.get("/evidence/search/stats")
+@router.get("/stats")
 async def get_evidence_search_stats():
     """Get statistics about indexed evidence"""
     try:
@@ -34,17 +34,24 @@ async def get_evidence_search_stats():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/evidence/search/semantic")
-async def semantic_search_evidence(query: str, limit: int = 10, threshold: float = 0.0):
+from pydantic import BaseModel
+
+class SemanticSearchRequest(BaseModel):
+    query: str
+    limit: int = 10
+    threshold: float = 0.0
+
+@router.post("/semantic")
+async def semantic_search_evidence(request: SemanticSearchRequest):
     """Perform semantic search on evidence content"""
     try:
-        results = vector_store.search_similar_documents(query, limit, threshold)
-        return {"query": query, "total_results": len(results), "results": results}
+        results = vector_store.search_similar_documents(request.query, request.limit, request.threshold)
+        return {"query": request.query, "total_results": len(results), "results": results}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Semantic search failed: {str(e)}")
 
 
-@router.get("/evidence/search/semantic/stats")
+@router.get("/semantic/stats")
 async def get_semantic_search_stats():
     """Get statistics about the semantic search vector store"""
     try:

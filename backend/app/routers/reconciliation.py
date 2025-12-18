@@ -223,6 +223,7 @@ async def ingest_mapped_data(
 
                     new_tx = Transaction(
                         id=str(uuid.uuid4()),
+                        case_id=evidence.case_id,
                         date=date_obj,
                         amount=amount,
                         currency=txn_data.get('currency', 'USD'),

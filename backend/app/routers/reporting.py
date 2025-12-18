@@ -130,56 +130,15 @@ class ReportTemplateInfo(BaseModel):
 # --- Endpoints ---
 
 
-@router.get("/analytics/cases", response_model=CaseAnalytics, tags=["analytics"])
-async def get_case_analytics():
-    """
-    Get aggregated analytics for all cases.
-    """
-    return {
-        "totalCases": 150,
-        "activeCases": 45,
-        "resolvedCases": 105,
-        "casesByStatus": {"new": 10, "investigation": 30, "review": 5, "closed": 105},
-        "avgResolutionTimeDays": 12.5,
-        "urgentCases": 3,
-    }
+# Removed duplicated analytics routes as they are in analytics.py
 
 
-@router.get(
-    "/analytics/transactions", response_model=TransactionAnalytics, tags=["analytics"]
-)
-async def get_transaction_analytics():
-    """
-    Get aggregated analytics for transactions.
-    """
-    return {
-        "totalVolume": 5000000.0,
-        "flaggedVolume": 450000.0,
-        "transactionCount": 12500,
-        "flaggedCount": 150,
-        "riskDistribution": {
-            "low": 10000,
-            "medium": 2000,
-            "high": 350,
-            "critical": 150,
-        },
-    }
 
 
-@router.get("/analytics/overview", response_model=SystemOverview, tags=["analytics"])
-async def get_system_overview():
-    """
-    Get high-level system overview statistics.
-    """
-    return {
-        "ingestionRate": 99.9,
-        "activeUsers": 5,
-        "systemHealth": 100.0,
-        "lastSyncTime": datetime.datetime.now(datetime.timezone.utc),
-    }
 
 
-@router.post("/reporting/export", response_model=ReportResponse, tags=["reporting"])
+@router.post("/generate", response_model=ReportResponse, tags=["reporting"])
+@router.post("/export", response_model=ReportResponse, tags=["reporting"])
 async def generate_report(request: ReportRequest):
     """
     Generate a report based on provided criteria.
@@ -201,7 +160,7 @@ async def generate_report(request: ReportRequest):
 
 
 @router.get(
-    "/reporting/summary/{case_id}",
+    "/summary/{case_id}",
     response_model=CaseSummaryResponse,
     tags=["reporting"],
 )
@@ -262,7 +221,7 @@ async def get_case_summary(case_id: str):
 
 
 @router.get(
-    "/reporting/templates", response_model=List[ReportTemplateInfo], tags=["reporting"]
+    "/templates", response_model=List[ReportTemplateInfo], tags=["reporting"]
 )
 async def get_report_templates():
     """
@@ -334,7 +293,7 @@ async def get_report_templates():
 
 
 @router.get(
-    "/reporting/scheduled", response_model=List[ScheduledReport], tags=["reporting"]
+    "/scheduled", response_model=List[ScheduledReport], tags=["reporting"]
 )
 async def get_scheduled_reports():
     """
@@ -367,7 +326,7 @@ async def get_scheduled_reports():
     ]
 
 
-@router.post("/reporting/scheduled", response_model=ScheduledReport, tags=["reporting"])
+@router.post("/scheduled", response_model=ScheduledReport, tags=["reporting"])
 async def create_scheduled_report(request: ScheduledReportRequest):
     """
     Create a new scheduled report configuration.
@@ -399,7 +358,7 @@ async def create_scheduled_report(request: ScheduledReportRequest):
     }
 
 
-@router.delete("/reporting/scheduled/{schedule_id}", tags=["reporting"])
+@router.delete("/scheduled/{schedule_id}", tags=["reporting"])
 async def delete_scheduled_report(schedule_id: str):
     """
     Delete a scheduled report configuration.
@@ -407,7 +366,7 @@ async def delete_scheduled_report(schedule_id: str):
     return {"message": f"Scheduled report {schedule_id} deleted successfully"}
 
 
-@router.get("/reporting/financial-health/{case_id}", tags=["reporting"])
+@router.get("/financial-health/{case_id}", tags=["reporting"])
 async def get_financial_health(case_id: str):
     """
     Get financial health data for the FinancialHealth component.
@@ -431,7 +390,7 @@ async def get_financial_health(case_id: str):
     }
 
 
-@router.get("/reporting/project-tracker/{case_id}", tags=["reporting"])
+@router.get("/project-tracker/{case_id}", tags=["reporting"])
 async def get_project_tracker(case_id: str):
     """
     Get project milestone and benchmark data for the ProjectTracker component.

@@ -67,7 +67,7 @@ router = APIRouter()
 # ===== EVIDENCE ENDPOINTS =====
 
 
-@router.get("/evidence")
+@router.get("")
 async def get_evidence(
     case_id: Optional[str] = Query(None, description="Filter by case ID"),
     file_type: Optional[str] = Query(None, description="Filter by file type"),
@@ -132,7 +132,7 @@ async def get_evidence(
         raise HTTPException(status_code=500, detail=f"Failed to get evidence: {str(e)}")
 
 
-@router.get("/evidence/{evidence_id}/download")
+@router.get("/{evidence_id}/download")
 async def download_evidence(evidence_id: str, db: Session = Depends(get_db)):
     """Download evidence file"""
     try:
@@ -160,7 +160,7 @@ async def download_evidence(evidence_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Download failed: {str(e)}")
 
 
-@router.get("/evidence/processing/metrics")
+@router.get("/processing/metrics")
 async def get_evidence_processing_metrics(
     current_user: User = Depends(auth_service.get_current_user),
 ):
@@ -172,7 +172,7 @@ async def get_evidence_processing_metrics(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/evidence/processing/cleanup")
+@router.post("/processing/cleanup")
 async def cleanup_evidence_processor(
     current_user: User = Depends(auth_service.get_current_user),
 ):
@@ -184,7 +184,7 @@ async def cleanup_evidence_processor(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/evidence/upload")
+@router.post("/upload")
 async def upload_evidence(
     request: Request,
     case_id: str = Form(...),

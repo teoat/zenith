@@ -130,6 +130,8 @@ class Case(Base):
     tags = Column(JSON, default=list)
     case_metadata = Column(JSON, default=dict)
     is_synced = Column(Boolean, default=False)
+    fraud_amount = Column(Float, default=0.0)
+    customer_name = Column(EncryptedString, default="Unknown")
 
     # Relationships
     assignee = relationship("User", back_populates="cases")

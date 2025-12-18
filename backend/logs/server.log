@@ -46376,3 +46376,1677 @@ INFO:     Waiting for application startup.
 2025-12-18 12:08:45 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
 2025-12-18 12:08:45 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
 INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/core/database.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:13:04 - 378x492 - INFO - main:245 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:13:04 - 378x492 - ERROR - main:264 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92380]
+WARNING:  WatchFiles detected changes in 'backend/core/database.py'. Reloading...
+Redis initialization failed: Error 61 connecting to localhost:6379. Connection refused.. Continuing with memory-only cache.
+2025-12-18 12:13:10 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [92799]
+INFO:     Waiting for application startup.
+2025-12-18 12:13:11 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:13:11 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:13:11 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:13:11 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:13:11 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/core/database.py'. Reloading...
+Redis initialization failed: Error 61 connecting to localhost:6379. Connection refused.. Continuing with memory-only cache.
+2025-12-18 12:13:15 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [92807]
+INFO:     Waiting for application startup.
+2025-12-18 12:13:16 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:13:16 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:13:16 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:13:16 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:13:16 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+Redis initialization failed: Error 61 connecting to localhost:6379. Connection refused.. Continuing with memory-only cache.
+2025-12-18 12:13:20 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+WARNING:  WatchFiles detected changes in 'backend/core/database.py'. Reloading...
+INFO:     Started server process [92838]
+INFO:     Waiting for application startup.
+2025-12-18 12:13:21 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:13:21 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:13:21 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:13:21 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:13:21 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+Redis initialization failed: Error 61 connecting to localhost:6379. Connection refused.. Continuing with memory-only cache.
+2025-12-18 12:13:25 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [92848]
+INFO:     Waiting for application startup.
+2025-12-18 12:13:26 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:13:26 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:13:26 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:13:26 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:13:26 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/cases.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:13:56 - 378x492 - INFO - main:245 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:13:56 - 378x492 - ERROR - main:264 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92848]
+Redis initialization failed: Error 61 connecting to localhost:6379. Connection refused.. Continuing with memory-only cache.
+2025-12-18 12:14:00 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [92901]
+INFO:     Waiting for application startup.
+2025-12-18 12:14:01 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:14:01 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:14:01 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:14:01 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:14:01 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/test_client_debug.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:14:29 - 378x492 - INFO - main:245 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:14:29 - 378x492 - ERROR - main:264 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92901]
+Redis initialization failed: Error 61 connecting to localhost:6379. Connection refused.. Continuing with memory-only cache.
+2025-12-18 12:14:33 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [92938]
+INFO:     Waiting for application startup.
+2025-12-18 12:14:34 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:14:34 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:14:34 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:14:34 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:14:34 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/test_client_debug.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:14:36 - 378x492 - INFO - main:245 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:14:36 - 378x492 - ERROR - main:264 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92938]
+WARNING:  WatchFiles detected changes in 'backend/test_client_debug.py'. Reloading...
+Redis initialization failed: Error 61 connecting to localhost:6379. Connection refused.. Continuing with memory-only cache.
+2025-12-18 12:14:40 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [92946]
+INFO:     Waiting for application startup.
+2025-12-18 12:14:41 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:14:41 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:14:41 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:14:41 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:14:41 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/test_client_debug.py'. Reloading...
+Redis initialization failed: Error 61 connecting to localhost:6379. Connection refused.. Continuing with memory-only cache.
+2025-12-18 12:14:45 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [92953]
+INFO:     Waiting for application startup.
+2025-12-18 12:14:46 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:14:46 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:14:46 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:14:46 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:14:46 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/test_client_debug.py'. Reloading...
+Redis initialization failed: Error 61 connecting to localhost:6379. Connection refused.. Continuing with memory-only cache.
+2025-12-18 12:14:51 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [92958]
+INFO:     Waiting for application startup.
+2025-12-18 12:14:51 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:14:51 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:14:51 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:14:51 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:14:51 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+Redis initialization failed: Error 61 connecting to localhost:6379. Connection refused.. Continuing with memory-only cache.
+2025-12-18 12:14:55 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [92965]
+INFO:     Waiting for application startup.
+2025-12-18 12:14:56 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:14:56 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:14:56 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:14:56 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:14:56 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/tests/conftest.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:17:30 - 378x492 - INFO - main:245 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:17:30 - 378x492 - ERROR - main:264 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92965]
+2025-12-18 12:17:34 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [93130]
+INFO:     Waiting for application startup.
+2025-12-18 12:17:35 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:17:35 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:17:35 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:17:35 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:17:35 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/forensic_intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:19:56 - 378x492 - INFO - main:245 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:19:56 - 378x492 - ERROR - main:264 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93130]
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/forensic_intelligence.py'. Reloading...
+2025-12-18 12:19:59 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [93241]
+INFO:     Waiting for application startup.
+2025-12-18 12:20:00 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:20:00 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:20:00 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:20:00 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:20:00 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 12:20:03 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [93249]
+INFO:     Waiting for application startup.
+2025-12-18 12:20:04 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:20:04 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:20:04 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:20:04 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:20:04 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:20:11 - 378x492 - INFO - main:245 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:20:11 - 378x492 - ERROR - main:264 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93249]
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+2025-12-18 12:20:15 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [93254]
+INFO:     Waiting for application startup.
+2025-12-18 12:20:16 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:20:16 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:20:16 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:20:16 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:20:16 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 12:20:20 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [93264]
+INFO:     Waiting for application startup.
+2025-12-18 12:20:21 - 378x492 - INFO - main:190 - Starting 378x492 Fraud Detection API
+2025-12-18 12:20:21 - 378x492 - INFO - main:196 - Database tables created successfully (Development Mode)
+2025-12-18 12:20:21 - 378x492 - INFO - main:213 - Monitoring services disabled for debugging
+2025-12-18 12:20:21 - 378x492 - INFO - main:222 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:20:21 - 378x492 - INFO - main:231 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:21:03 - 378x492 - INFO - main:245 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:21:03 - 378x492 - ERROR - main:264 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93264]
+WARNING:  WatchFiles detected changes in 'backend/main.py'. Reloading...
+2025-12-18 12:21:08 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [93408]
+INFO:     Waiting for application startup.
+2025-12-18 12:21:09 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:21:09 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:21:09 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:21:09 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:21:09 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/main.py'. Reloading...
+2025-12-18 12:21:13 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [93421]
+INFO:     Waiting for application startup.
+2025-12-18 12:21:14 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:21:14 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:21:14 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:21:14 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:21:14 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 12:21:19 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [93461]
+INFO:     Waiting for application startup.
+2025-12-18 12:21:20 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:21:20 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:21:20 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:21:20 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:21:20 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:21:23 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:21:23 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93461]
+2025-12-18 12:21:28 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [93494]
+INFO:     Waiting for application startup.
+2025-12-18 12:21:29 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:21:29 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:21:29 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:21:29 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:21:29 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/forensic_intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:23:30 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:23:30 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93494]
+2025-12-18 12:23:35 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [94621]
+INFO:     Waiting for application startup.
+2025-12-18 12:23:35 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:23:35 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:23:35 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:23:35 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:23:35 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:23:51 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:23:51 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [94621]
+2025-12-18 12:23:56 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95024]
+INFO:     Waiting for application startup.
+2025-12-18 12:23:57 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:23:57 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:23:57 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:23:57 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:23:57 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/tests/test_api_fraud_cases_comprehensive.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:24:18 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:24:18 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95024]
+2025-12-18 12:24:22 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95080]
+INFO:     Waiting for application startup.
+2025-12-18 12:24:23 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:24:23 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:24:23 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:24:23 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:24:23 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/zenith_scoring.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:24:39 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:24:39 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95080]
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/zenith_scoring.py'. Reloading...
+2025-12-18 12:24:43 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95164]
+INFO:     Waiting for application startup.
+2025-12-18 12:24:44 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:24:44 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:24:44 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:24:44 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:24:44 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/zenith_scoring.py'. Reloading...
+2025-12-18 12:24:49 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95169]
+INFO:     Waiting for application startup.
+2025-12-18 12:24:50 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:24:50 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:24:50 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:24:50 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:24:50 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 12:24:54 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95179]
+INFO:     Waiting for application startup.
+2025-12-18 12:24:55 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:24:55 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:24:55 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:24:55 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:24:55 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+Failed to start WebSocket server: [Errno 48] error while attempting to bind on address ('::1', 8080, 0, 0): address already in use
+Task exception was never retrieved
+future: <Task finished name='Task-3' coro=<CollaborationManager.start_server() done, defined at /Users/Arief/Desktop/378x492/backend/app/services/integration/collaboration/collaboration_service.py:53> exception=OSError(48, "error while attempting to bind on address ('::1', 8080, 0, 0): address already in use")>
+Traceback (most recent call last):
+  File "/Users/Arief/Desktop/378x492/backend/app/services/integration/collaboration/collaboration_service.py", line 57, in start_server
+    self.server = await websockets.serve(
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/websockets/asyncio/server.py", line 831, in __await_impl__
+    server = await self.create_server
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1794, in create_server
+OSError: [Errno 48] error while attempting to bind on address ('::1', 8080, 0, 0): address already in use
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:25:03 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:25:03 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95179]
+2025-12-18 12:25:08 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95196]
+INFO:     Waiting for application startup.
+2025-12-18 12:25:09 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:25:09 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:25:09 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:25:09 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:25:09 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/cases.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:25:37 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:25:37 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95196]
+2025-12-18 12:25:41 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95307]
+INFO:     Waiting for application startup.
+2025-12-18 12:25:42 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:25:42 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:25:42 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:25:42 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:25:42 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/aml_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:27:01 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:27:01 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95307]
+2025-12-18 12:27:06 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95446]
+INFO:     Waiting for application startup.
+2025-12-18 12:27:07 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:27:07 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:27:07 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:27:07 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:27:07 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/aml_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:27:11 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:27:11 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95446]
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/aml_service.py'. Reloading...
+2025-12-18 12:27:16 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95455]
+INFO:     Waiting for application startup.
+2025-12-18 12:27:16 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:27:16 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:27:16 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:27:16 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:27:16 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 12:27:21 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95464]
+INFO:     Waiting for application startup.
+2025-12-18 12:27:22 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:27:22 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:27:22 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:27:22 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:27:22 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py', 'backend/tests/test_api_fraud_cases_comprehensive.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:27:35 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:27:35 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95464]
+2025-12-18 12:27:40 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95476]
+INFO:     Waiting for application startup.
+2025-12-18 12:27:41 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:27:41 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:27:41 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:27:41 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:27:41 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/juridical_anchor.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:28:42 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:28:42 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95476]
+2025-12-18 12:28:46 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95592]
+INFO:     Waiting for application startup.
+2025-12-18 12:28:47 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:28:47 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:28:47 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:28:47 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:28:47 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/tests/test_api_fraud_cases_comprehensive.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:28:49 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:28:49 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95592]
+2025-12-18 12:28:54 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95601]
+INFO:     Waiting for application startup.
+2025-12-18 12:28:55 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:28:55 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:28:55 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:28:55 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:28:55 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/juridical_anchor.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:28:56 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:28:56 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95601]
+2025-12-18 12:29:01 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95608]
+INFO:     Waiting for application startup.
+2025-12-18 12:29:02 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:29:02 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:29:02 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:29:02 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:29:02 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:29:14 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:29:14 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95608]
+2025-12-18 12:29:20 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95636]
+INFO:     Waiting for application startup.
+2025-12-18 12:29:20 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:29:20 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:29:20 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:29:20 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:29:20 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/zenith_horizon.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:30:43 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:30:43 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95636]
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/zenith_horizon.py'. Reloading...
+2025-12-18 12:30:47 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95713]
+INFO:     Waiting for application startup.
+2025-12-18 12:30:48 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:30:48 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:30:48 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:30:48 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:30:48 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/zenith_horizon.py'. Reloading...
+2025-12-18 12:30:52 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95723]
+INFO:     Waiting for application startup.
+2025-12-18 12:30:52 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:30:52 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:30:52 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:30:52 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:30:52 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 12:30:55 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95729]
+INFO:     Waiting for application startup.
+2025-12-18 12:30:56 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:30:56 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:30:56 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:30:56 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:30:56 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:31:00 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:31:00 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95729]
+2025-12-18 12:31:04 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95734]
+INFO:     Waiting for application startup.
+2025-12-18 12:31:05 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:31:05 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:31:05 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:31:05 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:31:05 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/coc_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:35:17 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:35:17 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95734]
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/coc_service.py'. Reloading...
+2025-12-18 12:35:21 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95969]
+INFO:     Waiting for application startup.
+2025-12-18 12:35:22 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:35:22 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:35:22 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:35:22 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:35:22 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/coc_service.py'. Reloading...
+2025-12-18 12:35:26 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95977]
+INFO:     Waiting for application startup.
+2025-12-18 12:35:27 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:35:27 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:35:27 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:35:27 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:35:27 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 12:35:31 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [95987]
+INFO:     Waiting for application startup.
+2025-12-18 12:35:31 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:35:31 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:35:31 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:35:31 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:35:31 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:35:41 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:35:41 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95987]
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+2025-12-18 12:35:44 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-48:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 175, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+2025-12-18 12:35:49 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-49:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 175, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/forensic_intelligence.py'. Reloading...
+2025-12-18 12:36:29 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-50:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 175, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/behavior_engine.py'. Reloading...
+2025-12-18 12:36:43 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-51:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 175, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/services/intelligence/behavior_engine.py'. Reloading...
+2025-12-18 12:36:51 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-52:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 175, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+2025-12-18 12:37:10 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-53:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 176, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+2025-12-18 12:37:16 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-54:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 176, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/routers/analytics.py'. Reloading...
+2025-12-18 12:39:47 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-55:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 176, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/routers/reporting.py'. Reloading...
+2025-12-18 12:41:20 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-56:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 176, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/routers/analytics.py'. Reloading...
+2025-12-18 12:42:00 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-57:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 176, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/routers/cases.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'backend/app/routers/cases.py'. Reloading...
+2025-12-18 12:42:28 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-58:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 176, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+2025-12-18 12:42:34 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-59:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 176, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/routers/search.py'. Reloading...
+2025-12-18 12:44:28 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-60:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 176, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/routers/cases.py'. Reloading...
+2025-12-18 12:45:12 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+Process SpawnProcess-61:
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/venv/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 56, in <module>
+    from app.routers.forensic_intelligence import router as forensic_intel_router
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/forensic_intelligence.py", line 176, in <module>
+    notes: Optional[str] = None,
+           ^^^^^^^^
+NameError: name 'Optional' is not defined
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+2025-12-18 12:46:42 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [96619]
+INFO:     Waiting for application startup.
+2025-12-18 12:46:43 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:46:43 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:46:43 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:46:43 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:46:43 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/forensic_intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:46:51 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:46:51 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [96619]
+2025-12-18 12:46:55 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [96646]
+INFO:     Waiting for application startup.
+2025-12-18 12:46:56 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:46:56 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:46:56 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:46:56 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:46:56 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/reconciliation.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:48:03 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:48:03 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [96646]
+2025-12-18 12:48:08 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [96743]
+INFO:     Waiting for application startup.
+2025-12-18 12:48:09 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:48:09 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:48:09 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:48:09 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:48:09 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/tests/conftest.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:51:09 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:51:09 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [96743]
+WARNING:  WatchFiles detected changes in 'backend/tests/conftest.py'. Reloading...
+2025-12-18 12:51:14 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [96909]
+INFO:     Waiting for application startup.
+2025-12-18 12:51:15 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:51:15 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:51:15 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:51:15 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:51:15 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 12:51:19 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [96918]
+INFO:     Waiting for application startup.
+2025-12-18 12:51:20 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:51:20 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:51:20 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:51:20 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:51:20 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/tests/conftest.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:54:57 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:54:57 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [96918]
+2025-12-18 12:55:02 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [97110]
+INFO:     Waiting for application startup.
+2025-12-18 12:55:03 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:55:03 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:55:03 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:55:03 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:55:03 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/backend/main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 12:57:06 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 12:57:06 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [97110]
+2025-12-18 12:57:11 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [97237]
+INFO:     Waiting for application startup.
+2025-12-18 12:57:11 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 12:57:11 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 12:57:11 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 12:57:11 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 12:57:11 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/fraud.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:01:16 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:01:16 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [97237]
+2025-12-18 13:01:21 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [97454]
+INFO:     Waiting for application startup.
+2025-12-18 13:01:22 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:01:22 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:01:22 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:01:22 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:01:22 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/fraud.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:01:34 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:01:34 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [97454]
+2025-12-18 13:01:38 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [97472]
+INFO:     Waiting for application startup.
+2025-12-18 13:01:39 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:01:39 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:01:39 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:01:39 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:01:39 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/tests/conftest.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:04:52 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:04:52 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [97472]
+2025-12-18 13:04:56 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [97649]
+INFO:     Waiting for application startup.
+2025-12-18 13:04:57 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:04:57 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:04:57 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:04:57 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:04:57 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/fraud.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:06:39 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:06:39 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [97649]
+2025-12-18 13:06:43 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [97737]
+INFO:     Waiting for application startup.
+2025-12-18 13:06:44 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:06:44 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:06:44 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:06:44 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:06:44 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/cases.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:06:54 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:06:54 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [97737]
+2025-12-18 13:06:59 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [97755]
+INFO:     Waiting for application startup.
+2025-12-18 13:07:00 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:07:00 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:07:00 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:07:00 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:07:00 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/evidence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:10:02 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:10:02 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [97755]
+2025-12-18 13:10:06 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [97914]
+INFO:     Waiting for application startup.
+2025-12-18 13:10:07 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:10:07 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:10:07 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:10:07 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:10:07 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/reporting.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:10:32 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:10:32 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [97914]
+2025-12-18 13:10:36 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [97941]
+INFO:     Waiting for application startup.
+2025-12-18 13:10:37 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:10:37 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:10:37 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:10:37 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:10:37 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/analytics.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:11:00 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:11:00 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [97941]
+2025-12-18 13:11:04 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [97991]
+INFO:     Waiting for application startup.
+2025-12-18 13:11:05 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:11:05 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:11:05 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:11:05 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:11:05 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/analytics.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:11:26 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:11:26 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [97991]
+WARNING:  WatchFiles detected changes in 'backend/app/routers/analytics.py'. Reloading...
+2025-12-18 13:11:31 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [98012]
+INFO:     Waiting for application startup.
+2025-12-18 13:11:32 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:11:32 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:11:32 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:11:32 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:11:32 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 13:11:36 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [98020]
+INFO:     Waiting for application startup.
+2025-12-18 13:11:37 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:11:37 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:11:37 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:11:37 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:11:37 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/cases.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:11:57 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:11:57 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [98020]
+2025-12-18 13:12:01 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [98040]
+INFO:     Waiting for application startup.
+2025-12-18 13:12:02 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:12:02 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:12:02 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:12:02 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:12:02 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/entities.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-18 13:53:55 - 378x492 - INFO - main:246 - Shutting down 378x492 Fraud Detection API
+2025-12-18 13:53:55 - 378x492 - ERROR - main:265 - Error during shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [98040]
+WARNING:  WatchFiles detected changes in 'backend/app/routers/entities.py'. Reloading...
+2025-12-18 13:53:59 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [99771]
+INFO:     Waiting for application startup.
+2025-12-18 13:54:00 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:54:00 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:54:00 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:54:00 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:54:00 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'backend/app/routers/entities.py'. Reloading...
+2025-12-18 13:54:04 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [99778]
+INFO:     Waiting for application startup.
+2025-12-18 13:54:05 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:54:05 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:54:05 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:54:05 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:54:05 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 13:54:09 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+INFO:     Started server process [99786]
+INFO:     Waiting for application startup.
+2025-12-18 13:54:10 - 378x492 - INFO - main:191 - Starting 378x492 Fraud Detection API
+2025-12-18 13:54:10 - 378x492 - INFO - main:197 - Database tables created successfully (Development Mode)
+2025-12-18 13:54:10 - 378x492 - INFO - main:214 - Monitoring services disabled for debugging
+2025-12-18 13:54:10 - 378x492 - INFO - main:223 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-18 13:54:10 - 378x492 - INFO - main:232 - 378x492 API startup completed successfully
+INFO:     Application startup complete.
+2025-12-18 14:58:30 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58220 - "OPTIONS /api/v1/apm/errors HTTP/1.1" 200 OK
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58222 - "OPTIONS /api/v1/apm/errors HTTP/1.1" 200 OK
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58224 - "OPTIONS /api/v1/apm/errors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58226 - "OPTIONS /api/v1/apm/errors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58228 - "OPTIONS /api/v1/apm/errors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58230 - "OPTIONS /api/v1/apm/errors HTTP/1.1" 200 OK
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+INFO:     127.0.0.1:58232 - "OPTIONS /api/v1/apm/errors HTTP/1.1" 200 OK
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58234 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58236 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58238 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58240 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58242 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58244 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58234 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58244 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58242 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58240 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58238 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58236 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58234 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58244 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58244 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58234 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58238 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58236 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58240 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58242 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:31 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58244 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:38 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:38 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:38 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:38 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58273 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58274 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:38 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:38 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:38 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:38 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:38 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:38 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58277 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58278 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:38 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:38 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:38 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+INFO:     127.0.0.1:58281 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58282 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:38 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58273 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:39 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:39 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:39 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:39 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58273 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58282 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:39 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:39 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:39 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:39 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:39 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:39 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:39 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 14:58:39 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58281 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58278 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58277 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58274 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 14:58:39 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 14:58:39 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58273 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 15:05:06 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 15:05:06 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 15:05:06 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 15:05:06 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58455 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58456 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 15:05:06 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 15:05:06 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 15:05:06 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 15:05:06 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 15:05:06 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 15:05:06 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-18 15:05:06 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58459 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 15:05:06 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58460 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58463 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58464 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found
+2025-12-18 15:05:06 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-18 15:05:06 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:58455 - "POST /api/v1/apm/errors HTTP/1.1" 404 Not Found

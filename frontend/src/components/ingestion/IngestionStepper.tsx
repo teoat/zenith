@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useIngestionStore } from '../../stores/useIngestionStore';
+import { useProjectStore } from '../../store/projectStore';
 import FileDropZone from '../ui/FileDropZone';
 import { DataMapping } from './DataMapping';
 import { CheckCircle, AlertCircle, FileText, ArrowRight, ChevronRight, Upload } from 'lucide-react';
@@ -23,6 +24,7 @@ export const IngestionStepper: React.FC = () => {
         updateProcessingResult,
         reset 
     } = useIngestionStore();
+    const { activeProjectId } = useProjectStore();
     
     const [currentStep, setCurrentStep] = useState(0);
     const [activeFileIndex, setActiveFileIndex] = useState(0);
@@ -57,25 +59,23 @@ export const IngestionStepper: React.FC = () => {
     const analyzeFiles = async (filesToAnalyze: File[], startIndex: number) => {
         setIsAnalyzing(true);
         try {
-             // Simulate analysis or call real API
-             // For now we simulate extracting headers for the demo
-             // In real app, api.analyzeFile would return this
-             
-             // Mock detected headers for demo purposes if API doesn't return them yet
-             const mockHeaders = ['Date', 'Post Date', 'Description', 'Amount', 'Debit', 'Credit', 'Merchant Name', 'Category', 'Reference'];
-             
-             // Update results with detected headers
-             // We'd loop through and update each one
-             // Here simply assuming all get headers
-             
+             // Upload files to get Evidence IDs and initial analysis
              for (let i = 0; i < filesToAnalyze.length; i++) {
-                 // Simulate API call delay
-                 await new Promise(r => setTimeout(r, 500));
+                 const file = filesToAnalyze[i];
+                 const formData = new FormData();
+                 formData.append('file', file);
+                 formData.append('case_id', activeProjectId || 'CASE-INGESTION'); // Default bucket for ingestion
                  
-                 // Update with headers
-                 updateProcessingResult(startIndex + i, {
-                     detectedHeaders: mockHeaders,
-                     rawPreviewData: Array(12).fill(0).map((_, idx) => ({
+                 try {
+                     // Upload to Evidence Service
+                     const response = await api.uploadEvidence(formData);
+                     
+                     // Mock detection of headers (since backend doesn't return them yet from analysis)
+                     // In a real scenario, response.analysis_result would contain 'detected_headers'
+                     const mockHeaders = ['Date', 'Post Date', 'Description', 'Amount', 'Debit', 'Credit', 'Merchant Name', 'Category', 'Reference'];
+                     
+                     // Generate preview data (mocked for now, implies backend could return this)
+                     const rawPreviewData = Array(12).fill(0).map((_, idx) => ({
                          'Date': `2023-11-${10 + idx}`,
                          'Post Date': `2023-11-${12 + idx}`,
                          'Description': `Transaction ${idx + 1}`,
@@ -85,8 +85,19 @@ export const IngestionStepper: React.FC = () => {
                          'Merchant Name': `Vendor ${String.fromCharCode(65 + idx)}`,
                          'Category': 'General',
                          'Reference': `REF-${1000 + idx}`
-                     }))
-                 });
+                     }));
+
+                     updateProcessingResult(startIndex + i, {
+                         status: 'processing',
+                         savedId: response.id, // Evidence ID from backend
+                         detectedHeaders: mockHeaders,
+                         rawPreviewData: rawPreviewData
+                     });
+
+                 } catch (err) {
+                     console.error(`Failed to upload ${file.name}`, err);
+                     updateProcessingResult(startIndex + i, { status: 'error', error: 'Upload failed' });
+                 }
              }
              
              setCurrentStep(1); // Move to Mapping
@@ -242,14 +253,34 @@ export const IngestionStepper: React.FC = () => {
                                 Back
                             </button>
                             <AccessibleButton
-                                onClick={() => {
-                                    addToast('Ingestion started successfully', 'success');
-                                    // Navigate to reconciliation or show success
+                                onClick={async () => {
+                                    setIsAnalyzing(true);
+                                    let successCount = 0;
+                                    try {
+                                        for (const res of processingResults) {
+                                            if (res.savedId && res.mappingConfig) {
+                                                await api.ingestMappedData(res.savedId, res.mappingConfig);
+                                                updateProcessingResult(processingResults.indexOf(res), { status: 'completed' });
+                                                successCount++;
+                                            }
+                                        }
+                                        addToast(`Successfully ingested ${successCount} files`, 'success');
+                                        // Redirect to Reconciliation page to see results
+                                        setTimeout(() => {
+                                            window.location.href = '/reconciliation';
+                                        }, 1500);
+                                    } catch (err) {
+                                        console.error(err);
+                                        addToast('Failed to ingest some files', 'error');
+                                    } finally {
+                                        setIsAnalyzing(false);
+                                    }
                                 }}
+                                disabled={isAnalyzing}
                                 className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-sm shadow-blue-500/20 flex items-center gap-2"
                             >
                                 <Upload size={18} />
-                                Ingest & Reconcile
+                                {isAnalyzing ? 'Ingesting...' : 'Ingest & Reconcile'}
                             </AccessibleButton>
                         </div>
                     </div>

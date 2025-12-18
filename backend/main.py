@@ -53,6 +53,8 @@ from app.routers.search import router as search_router
 from app.routers.semantic_search import router as semantic_search_router
 from app.routers.stats import router as stats_router
 from app.routers.users import router as users_router
+from app.routers.forensic_intelligence import router as forensic_intel_router
+from app.routers.entities import router as entities_router, relationships_router as relationships_router_from_entities
 from app.services.infrastructure.apm_service import APMMiddleware
 from app.services.infrastructure.security.audit_service import audit_service
 from app.services.integration.collaboration.collaboration_service import collaboration_manager
@@ -519,6 +521,9 @@ app.include_router(
     analytics_router, prefix=f"/api/{API_VERSION}/analytics", tags=["Analytics"]
 )
 app.include_router(
+    reporting_router, prefix=f"/api/{API_VERSION}/reports", tags=["Reporting"]
+)
+app.include_router(
     reporting_router, prefix=f"/api/{API_VERSION}/reporting", tags=["Reporting"]
 )
 app.include_router(cases_router, prefix=f"/api/{API_VERSION}/cases", tags=["Cases"])
@@ -579,6 +584,21 @@ app.include_router(
 )
 
 app.include_router(proof_router, prefix=f"/api/{API_VERSION}/proof", tags=["Proof"])
+app.include_router(
+    forensic_intel_router, 
+    prefix=f"/api/{API_VERSION}/forensic-intel", 
+    tags=["Forensic Intelligence"]
+)
+app.include_router(
+    entities_router,
+    prefix=f"/api/{API_VERSION}/entities",
+    tags=["Entities"]
+)
+app.include_router(
+    relationships_router_from_entities,
+    prefix=f"/api/{API_VERSION}/relationships",
+    tags=["Relationships"]
+)
 
 
 # Optional Routers (Check for ImportError above/try-except)

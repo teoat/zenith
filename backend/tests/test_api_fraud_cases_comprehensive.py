@@ -22,7 +22,7 @@ class TestFraudDetection:
             "timestamp": datetime.now().isoformat()
         }
         
-        response = client.post("/api/fraud/analyze",
+        response = client.post("/api/v1/fraud/analyze",
                               headers=auth_headers,
                               json=transaction)
         
@@ -44,7 +44,7 @@ class TestFraudDetection:
             "timestamp": datetime.now().isoformat()
         }
         
-        response = client.post("/api/fraud/analyze",
+        response = client.post("/api/v1/fraud/analyze",
                               headers=auth_headers,
                               json=transaction)
         
@@ -61,7 +61,7 @@ class TestFraudDetection:
             for i in range(1, 11)
         ]
         
-        response = client.post("/api/fraud/analyze/batch",
+        response = client.post("/api/v1/fraud/analyze/batch",
                               headers=auth_headers,
                               json={"transactions": transactions})
         
@@ -72,7 +72,7 @@ class TestFraudDetection:
     
     def test_fraud_rules_evaluation(self, client, auth_headers):
         """Test fraud rules engine"""
-        response = client.get("/api/fraud/rules", headers=auth_headers)
+        response = client.get("/api/v1/fraud/rules", headers=auth_headers)
         
         assert response.status_code == 200
         data = response.json()
@@ -98,7 +98,7 @@ class TestFraudDetection:
             }
         }
         
-        response = client.post("/api/fraud/alerts",
+        response = client.post("/api/v1/fraud/alerts",
                               headers=auth_headers,
                               json=alert)
         
@@ -120,19 +120,19 @@ class TestCaseManagement:
             "assigned_to": "investigator@example.com"
         }
         
-        response = client.post("/api/cases",
+        response = client.post("/api/v1/cases",
                               headers=auth_headers,
                               json=case_data)
         
         assert response.status_code == 201
         data = response.json()
-        assert data["title"] == case_data["title"]
-        assert data["status"] == "OPEN"
-        assert "case_id" in data
+        assert data["case"]["title"] == case_data["title"]
+        assert data["case"]["status"] == "open"
+        assert "id" in data
     
     def test_list_cases(self, client, auth_headers):
         """Test listing all cases"""
-        response = client.get("/api/cases", headers=auth_headers)
+        response = client.get("/api/v1/cases", headers=auth_headers)
         
         assert response.status_code == 200
         data = response.json()
@@ -141,13 +141,13 @@ class TestCaseManagement:
     def test_get_case_by_id(self, client, auth_headers):
         """Test retrieving specific case"""
         # First create a case
-        create_response = client.post("/api/cases",
+        create_response = client.post("/api/v1/cases",
                                      headers=auth_headers,
                                      json={"title": "Test Case", "priority": "MEDIUM"})
         case_id = create_response.json()["case_id"]
         
         # Then retrieve it
-        response = client.get(f"/api/cases/{case_id}", headers=auth_headers)
+        response = client.get(f"/api/v1/cases/{case_id}", headers=auth_headers)
         
         assert response.status_code == 200
         data = response.json()
@@ -156,13 +156,13 @@ class TestCaseManagement:
     def test_update_case_status(self, client, auth_headers):
         """Test updating case status"""
         # Create case
-        create_response = client.post("/api/cases",
+        create_response = client.post("/api/v1/cases",
                                      headers=auth_headers,
                                      json={"title": "Test Case", "priority": "LOW"})
         case_id = create_response.json()["case_id"]
         
         # Update status
-        response = client.patch(f"/api/cases/{case_id}",
+        response = client.patch(f"/api/v1/cases/{case_id}",
                                headers=auth_headers,
                                json={"status": "INVESTIGATING"})
         
@@ -173,7 +173,7 @@ class TestCaseManagement:
     def test_add_case_note(self, client, auth_headers):
         """Test adding note to case"""
         # Create case
-        create_response = client.post("/api/cases",
+        create_response = client.post("/api/v1/cases",
                                      headers=auth_headers,
                                      json={"title": "Test Case", "priority": "MEDIUM"})
         case_id = create_response.json()["case_id"]
@@ -183,7 +183,7 @@ class TestCaseManagement:
             "content": "Investigation started. Reviewing transaction history.",
             "note_type": "INVESTIGATION"
         }
-        response = client.post(f"/api/cases/{case_id}/notes",
+        response = client.post(f"/api/v1/cases/{case_id}/notes",
                               headers=auth_headers,
                               json=note)
         
@@ -194,12 +194,12 @@ class TestCaseManagement:
     def test_close_case(self, client, auth_headers):
         """Test closing a case"""
         # Create and close case
-        create_response = client.post("/api/cases",
+        create_response = client.post("/api/v1/cases",
                                      headers=auth_headers,
                                      json={"title": "Test Case", "priority": "LOW"})
         case_id = create_response.json()["case_id"]
         
-        response = client.post(f"/api/cases/{case_id}/close",
+        response = client.post(f"/api/v1/cases/{case_id}/close",
                               headers=auth_headers,
                               json={"resolution": "False positive - no fraud detected"})
         
@@ -219,7 +219,7 @@ class TestEvidenceManagement:
         file_content = b"Evidence document content"
         file = io.BytesIO(file_content)
         
-        response = client.post("/api/evidence/upload",
+        response = client.post("/api/v1/evidence/upload",
                               headers=auth_headers,
                               files={"file": ("evidence.txt", file, "text/plain")},
                               data={"case_id": "CASE123", "description": "Transaction receipt"})
@@ -238,7 +238,7 @@ class TestEvidenceManagement:
         file_content = b"PNG_IMAGE_DATA"
         file = io.BytesIO(file_content)
         
-        response = client.post("/api/multimodal/analyze",
+        response = client.post("/api/v1/multimodal/analyze",
                               headers=auth_headers,
                               files={"file": ("screenshot.png", file, "image/png")})
         
@@ -259,7 +259,7 @@ class TestEntityRelationships:
             }
         }
         
-        response = client.post("/api/entities",
+        response = client.post("/api/v1/entities",
                               headers=auth_headers,
                               json=entity)
         
@@ -271,10 +271,10 @@ class TestEntityRelationships:
     def test_create_relationship(self, client, auth_headers):
         """Test creating relationship between entities"""
         # Create two entities first
-        entity1 = client.post("/api/entities",
+        entity1 = client.post("/api/v1/entities",
                              headers=auth_headers,
                              json={"entity_type": "PERSON", "name": "Alice"}).json()
-        entity2 = client.post("/api/entities",
+        entity2 = client.post("/api/v1/entities",
                              headers=auth_headers,
                              json={"entity_type": "COMPANY", "name": "Acme Corp"}).json()
         
@@ -286,7 +286,7 @@ class TestEntityRelationships:
             "confidence": 0.95
         }
         
-        response = client.post("/api/relationships",
+        response = client.post("/api/v1/relationships",
                               headers=auth_headers,
                               json=relationship)
         
@@ -294,7 +294,7 @@ class TestEntityRelationships:
     
     def test_graph_analysis(self, client, auth_headers):
         """Test graph analysis endpoint"""
-        response = client.get("/api/graph/analyze/ENTITY123",
+        response = client.get("/api/v1/graph/analyze/ENTITY123",
                             headers=auth_headers)
         
         assert response.status_code in [200, 404]  # 200 if entity exists, 404 if not
@@ -305,7 +305,7 @@ class TestReporting:
     
     def test_fraud_statistics(self, client, auth_headers):
         """Test fraud statistics endpoint"""
-        response = client.get("/api/analytics/fraud-stats",
+        response = client.get("/api/v1/analytics/fraud-stats",
                             headers=auth_headers,
                             params={"period": "7d"})
         
@@ -315,7 +315,7 @@ class TestReporting:
     
     def test_case_metrics(self, client, auth_headers):
         """Test case metrics endpoint"""
-        response = client.get("/api/analytics/case-metrics",
+        response = client.get("/api/v1/analytics/case-metrics",
                             headers=auth_headers)
         
         assert response.status_code == 200
@@ -325,13 +325,15 @@ class TestReporting:
     def test_generate_report(self, client, auth_headers):
         """Test report generation"""
         report_config = {
-            "report_type": "FRAUD_SUMMARY",
-            "start_date": (datetime.now() - timedelta(days=30)).isoformat(),
-            "end_date": datetime.now().isoformat(),
-            "format": "PDF"
+            "template": "standard",
+            "dateRange": {
+                "start": (datetime.now() - timedelta(days=30)).isoformat(),
+                "end": datetime.now().isoformat()
+            },
+            "format": "pdf"
         }
         
-        response = client.post("/api/reports/generate",
+        response = client.post("/api/v1/reports/generate",
                               headers=auth_headers,
                               json=report_config)
         
@@ -343,7 +345,7 @@ class TestSearchAndFilter:
     
     def test_search_cases(self, client, auth_headers):
         """Test case search"""
-        response = client.get("/api/cases/search",
+        response = client.get("/api/v1/cases/search",
                             headers=auth_headers,
                             params={"q": "fraud", "status": "OPEN"})
         
@@ -353,7 +355,7 @@ class TestSearchAndFilter:
     
     def test_filter_by_priority(self, client, auth_headers):
         """Test filtering cases by priority"""
-        response = client.get("/api/cases",
+        response = client.get("/api/v1/cases",
                             headers=auth_headers,
                             params={"priority": "HIGH"})
         
@@ -361,7 +363,7 @@ class TestSearchAndFilter:
     
     def test_semantic_search(self, client, auth_headers):
         """Test semantic search if implemented"""
-        response = client.post("/api/search/semantic",
+        response = client.post("/api/v1/search/semantic",
                               headers=auth_headers,
                               json={"query": "suspicious transactions from foreign accounts"})
         
@@ -381,7 +383,7 @@ class TestPerformance:
         cases_created = 0
         
         for i in range(50):
-            response = client.post("/api/cases",
+            response = client.post("/api/v1/cases",
                                   headers=auth_headers,
                                   json={"title": f"Bulk Case {i}", "priority": "LOW"})
             if response.status_code == 201:
@@ -403,7 +405,7 @@ class TestPerformance:
                 "amount": 100.00,
                 "user_id": "USER123"
             }
-            return client.post("/api/fraud/analyze",
+            return client.post("/api/v1/fraud/analyze",
                              headers=auth_headers,
                              json=transaction)
         

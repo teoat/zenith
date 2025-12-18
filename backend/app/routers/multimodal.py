@@ -23,6 +23,7 @@ router = APIRouter(tags=["multi-modal-analysis"])
 processor = EvidenceProcessor()
 
 
+@router.post("/analyze")
 @router.post("/analyze/upload")
 async def analyze_uploaded_file(
     file: UploadFile = File(...),

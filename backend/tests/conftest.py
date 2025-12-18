@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
-from starlette.testclient import TestClient
+from fastapi.testclient import TestClient
 
 # Ensure backend directory is at the front of sys.path to avoid import conflicts
 # with the root 'app' directory shims
@@ -20,6 +20,7 @@ sys.modules["networkx"] = mock_networkx
 
 # Set environment to development for tests to bypass production security middleware
 os.environ["ENVIRONMENT"] = "development"
+os.environ["ENABLE_COLLABORATION_WS"] = "false"
 
 # Mock heavy ML dependencies before they can import
 # This prevents transformers/torch from trying to use networkx
