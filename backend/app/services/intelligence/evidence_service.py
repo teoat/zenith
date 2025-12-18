@@ -173,9 +173,45 @@ class EvidenceProcessor:
         Process a single file asynchronously
         """
         loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(
+        result = await loop.run_in_executor(
             self.executor, self._process_single_file_sync, file_path, options
         )
+
+        # Index the processed evidence for search
+        if not result.error:
+            try:
+                processing_dict = {
+                    "extracted_text": result.extracted_text,
+                    "key_entities": result.key_entities,
+                    "metadata": result.metadata,
+                    "file_type": result.file_type,
+                    "quality_score": result.quality_score,
+                    "sentiment_score": result.sentiment_score,
+                }
+                evidence_search_index.index_evidence(
+                    result.file_id, result.file_path, processing_dict
+                )
+
+                # Add to vector store for semantic search
+                content_to_embed = result.extracted_text or result.file_path
+                if content_to_embed.strip():
+                    await ai_service.add_document(
+                        doc_id=result.file_id,
+                        content=content_to_embed,
+                        metadata={
+                            "file_path": result.file_path,
+                            "file_type": result.file_type,
+                            "quality_score": result.quality_score,
+                            "sentiment_score": result.sentiment_score,
+                        },
+                    )
+
+            except Exception as index_error:
+                logger.warning(
+                    f"Failed to index evidence {result.file_id}: {index_error}"
+                )
+
+        return result
 
     def _process_single_file_sync(
         self, file_path: str, options: Dict[str, Any]
@@ -235,41 +271,6 @@ class EvidenceProcessor:
                 result.error = f"Unsupported file type: {mime_type}"
 
             result.processing_time = time.time() - start_time
-
-            # Index the processed evidence for search
-            if not result.error:
-                try:
-                    processing_dict = {
-                        "extracted_text": result.extracted_text,
-                        "key_entities": result.key_entities,
-                        "metadata": result.metadata,
-                        "file_type": result.file_type,
-                        "quality_score": result.quality_score,
-                        "sentiment_score": result.sentiment_score,
-                    }
-                    evidence_search_index.index_evidence(
-                        result.file_id, result.file_path, processing_dict
-                    )
-
-                    # Add to vector store for semantic search
-                    content_to_embed = result.extracted_text or result.file_path
-                    if content_to_embed.strip():
-                        vector_store.add_document(
-                            document_id=result.file_id,
-                            content=content_to_embed,
-                            metadata={
-                                "file_path": result.file_path,
-                                "file_type": result.file_type,
-                                "quality_score": result.quality_score,
-                                "sentiment_score": result.sentiment_score,
-                            },
-                        )
-
-                except Exception as index_error:
-                    logger.warning(
-                        f"Failed to index evidence {result.file_id}: {index_error}"
-                    )
-
             return result
 
         except Exception as e:

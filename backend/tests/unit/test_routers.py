@@ -82,31 +82,45 @@ class TestEvidenceRouter:
     """Test evidence router endpoints"""
 
     @pytest.fixture
-    def mock_evidence_service(self):
-        """Mock evidence service"""
-        with patch("app.routers.evidence.evidence_service") as mock:
+    def mock_evidence_processor(self):
+        """Mock evidence processor"""
+        with patch("app.services.intelligence.evidence_service.evidence_processor") as mock:
             yield mock
 
     @patch("app.routers.evidence.get_current_user")
-    def test_get_evidence(self, mock_get_user, client, mock_evidence_service):
+    def test_get_evidence(self, mock_get_user, client, mock_evidence_processor):
         """Test evidence retrieval"""
         mock_user = MagicMock()
         mock_get_user.return_value = mock_user
 
-        mock_evidence_service.get_evidence.return_value = []
+        mock_evidence_processor.get_evidence.return_value = []
 
-        response = client.get("/api/v1/evidence/evidence?case_id=case123")
+        response = client.get("/api/v1/evidence?case_id=case123")
 
         assert response.status_code in [200, 401, 403]
 
     @patch("app.routers.evidence.get_current_user")
     def test_upload_evidence(
-        self, mock_get_user, client, mock_evidence_service, db_session
+        self, mock_get_user, client, mock_evidence_processor, db_session
     ):
         """Test evidence upload"""
         mock_user = MagicMock()
         mock_get_user.return_value = mock_user
-        mock_evidence_service.upload_evidence.return_value = {"id": "evidence123"}
+        
+        # Mock the result of process_files_batch
+        from app.services.intelligence.evidence_service import ProcessingResult
+        mock_result = MagicMock(spec=ProcessingResult)
+        mock_result.file_id = "evidence123"
+        mock_result.file_type = "application/pdf"
+        mock_result.extracted_text = "test content"
+        mock_result.error = None
+        mock_result.success = True
+        mock_result.metadata = {}
+        mock_result.key_entities = []
+        mock_result.sentiment_score = 0.0
+        mock_result.quality_score = 0.0
+        
+        mock_evidence_processor.process_files_batch = AsyncMock(return_value=[mock_result])
 
         # Create test case in DB
         from core.database import Case
@@ -120,7 +134,7 @@ class TestEvidenceRouter:
         data = {"case_id": "case123"}
 
         response = client.post(
-            "/api/v1/evidence/evidence/upload", files=files, data=data
+            "/api/v1/evidence/upload", files=files, data=data
         )
 
         # 404/500 might happen if dependencies (multimodal) fail despite mocks,
@@ -134,30 +148,33 @@ class TestFraudRouter:
     """Test fraud router endpoints"""
 
     @pytest.fixture
-    def mock_fraud_service(self):
-        """Mock fraud service"""
-        with patch("app.routers.fraud.fraud_service") as mock:
+    def mock_fraud_service_class(self):
+        """Mock FraudDetectionService class"""
+        with patch("app.routers.fraud.FraudDetectionService") as mock:
             yield mock
 
-    @patch("app.routers.fraud.get_current_user")
-    def test_analyze_case(self, mock_get_user, client, mock_fraud_service):
+    @patch("app.routers.fraud.auth_service.get_current_user")
+    def test_analyze_case(self, mock_get_user, client, mock_fraud_service_class):
         """Test case fraud analysis"""
         mock_user = MagicMock()
         mock_get_user.return_value = mock_user
 
-        mock_fraud_service.analyze_case.return_value = []
+        # mock_fraud_service_class is the class, so mock_fraud_service_class() is the instance
+        mock_instance = mock_fraud_service_class.return_value
+        mock_instance.analyze_case.return_value = []
 
         response = client.post("/api/v1/fraud/analyze/case123")
 
         assert response.status_code in [200, 401, 403]
 
-    @patch("app.routers.fraud.get_current_user")
-    def test_get_fraud_alerts(self, mock_get_user, client, mock_fraud_service):
+    @patch("app.routers.fraud.auth_service.get_current_user")
+    def test_get_fraud_alerts(self, mock_get_user, client, mock_fraud_service_class):
         """Test fraud alerts retrieval"""
         mock_user = MagicMock()
         mock_get_user.return_value = mock_user
 
-        mock_fraud_service.get_case_alerts.return_value = []
+        mock_instance = mock_fraud_service_class.return_value
+        mock_instance.get_case_alerts.return_value = []
 
         response = client.get("/api/v1/fraud/alerts/case123")
 

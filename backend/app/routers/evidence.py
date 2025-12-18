@@ -84,11 +84,11 @@ async def get_evidence(
     """
     try:
         query = """
-            SELECT id, case_id, transaction_id, filename, original_filename, file_path,
+            SELECT id, case_id, filename, file_path,
                    file_type, file_category, size_bytes, uploaded_at, uploaded_by,
                    processed_at, processing_status, hash, ocr_text, extracted_text,
-                   key_entities, sentiment_score, is_admissible, admissibility_reason,
-                   quality_score, relevance_score, evidence_metadata, tags
+                   sentiment_score, is_admissible,
+                   quality_score, relevance_score, evidence_metadata, evidence_tags
             FROM evidence WHERE 1=1
         """
         params = {}
@@ -136,14 +136,14 @@ async def get_evidence(
 async def download_evidence(evidence_id: str, db: Session = Depends(get_db)):
     """Download evidence file"""
     try:
-        query = "SELECT file_path, original_filename, file_type FROM evidence WHERE id = :id"
+        query = "SELECT file_path, filename, file_type FROM evidence WHERE id = :id"
         result = db.execute(text(query), {"id": evidence_id}).fetchone()
 
         if not result:
             raise HTTPException(status_code=404, detail="Evidence not found")
 
         file_path = result.file_path
-        filename = result.original_filename
+        filename = result.filename
 
         # Security check: Ensure path is within allowed directory?
         # For now, simplistic check
@@ -246,9 +246,6 @@ async def upload_evidence(
         temp_file_path = saved_file_path  # usage in rest of function
 
         try:
-            # Perform multi-modal analysis using consolidated evidence_processor
-            logger.info(f"Starting multi-modal analysis for file: {file.filename}")
-
             # Using process_files_batch but with single file for now as per refactor
             results = await evidence_processor.process_files_batch(
                 [temp_file_path],
@@ -312,15 +309,15 @@ async def upload_evidence(
                 text(
                     """
                     INSERT INTO evidence (
-                        id, case_id, filename, original_filename, file_path, file_type,
+                        id, case_id, filename, file_path, file_type,
                         file_category, size_bytes, uploaded_at, uploaded_by, processing_status,
-                        extracted_text, key_entities, sentiment_score, quality_score,
-                        evidence_metadata, tags
+                        extracted_text, sentiment_score, quality_score,
+                        evidence_metadata, evidence_tags
                     ) VALUES (
-                        :id, :case_id, :filename, :original_filename, :file_path, :file_type,
+                        :id, :case_id, :filename, :file_path, :file_type,
                         :file_category, :size_bytes, :uploaded_at, :uploaded_by, :processing_status,
-                        :extracted_text, :key_entities, :sentiment_score, :quality_score,
-                        :evidence_metadata, :tags
+                        :extracted_text, :sentiment_score, :quality_score,
+                        :evidence_metadata, :evidence_tags
                     )
                 """
                 ),
@@ -328,7 +325,6 @@ async def upload_evidence(
                     "id": evidence_record["id"],
                     "case_id": evidence_record["case_id"],
                     "filename": evidence_record["filename"],
-                    "original_filename": evidence_record["original_filename"],
                     "file_path": evidence_record["file_path"],
                     "file_type": evidence_record["file_type"],
                     "file_category": evidence_record["file_category"],
@@ -337,22 +333,28 @@ async def upload_evidence(
                     "uploaded_by": evidence_record["uploaded_by"],
                     "processing_status": evidence_record["processing_status"],
                     "extracted_text": evidence_record["extracted_text"],
-                    "key_entities": json.dumps(
-                        evidence_record["key_entities"], default=str
-                    ),
                     "sentiment_score": evidence_record["sentiment_score"],
                     "quality_score": evidence_record["quality_score"],
                     "evidence_metadata": json.dumps(
                         evidence_record["evidence_metadata"], default=str
                     ),
-                    "tags": json.dumps(evidence_record["tags"], default=str),
+                    "evidence_tags": json.dumps(evidence_record["tags"], default=str),
                 },
             )
             db.commit()
 
             # Index for search
             try:
-                evidence_search_index.index_evidence(evidence_record)
+                # evidence_search_index.index_evidence expects (file_id, file_path, processing_dict)
+                processing_dict = {
+                    "extracted_text": processing_result.extracted_text,
+                    "key_entities": processing_result.key_entities,
+                    "metadata": processing_result.metadata,
+                    "file_type": processing_result.file_type,
+                    "quality_score": processing_result.quality_score,
+                    "sentiment_score": processing_result.sentiment_score,
+                }
+                evidence_search_index.index_evidence(evidence_id, temp_file_path, processing_dict)
                 logger.info(f"Evidence indexed for search: {evidence_id}")
             except Exception as e:
                 logger.warning(f"Failed to index evidence for search: {e}")
@@ -365,8 +367,10 @@ async def upload_evidence(
                 "evidence_id": evidence_id,
                 # Return standard EvidenceItem fields
                 "id": evidence_id,
+                "evidence_id": evidence_id,
                 "caseId": case_id,
                 "fileName": file.filename,
+                "filename": file.filename,
                 "fileType": processing_result.file_type,
                 "sizeBytes": len(content),
                 "uploadedAt": evidence_record["uploaded_at"].isoformat(),
@@ -389,24 +393,26 @@ async def upload_evidence(
                 text(
                     """
                     INSERT INTO evidence (
-                        id, case_id, filename, original_filename, file_path, file_type,
+                        id, case_id, filename, file_path, file_type,
                         size_bytes, uploaded_at, uploaded_by, processing_status, evidence_metadata
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (
+                        :id, :case_id, :filename, :file_path, :file_type,
+                        :size_bytes, :uploaded_at, :uploaded_by, :processing_status, :evidence_metadata
+                    )
                 """
                 ),
-                (
-                    evidence_id,
-                    case_id,
-                    file.filename,
-                    file.filename,
-                    temp_file_path,
-                    file.content_type or "unknown",
-                    len(content),
-                    datetime.now(),
-                    "system",
-                    "failed",
-                    json.dumps({"error": str(analysis_error)}),
-                ),
+                {
+                    "id": evidence_id,
+                    "case_id": case_id,
+                    "filename": file.filename,
+                    "file_path": temp_file_path,
+                    "file_type": file.content_type or "unknown",
+                    "size_bytes": len(content),
+                    "uploaded_at": datetime.now(),
+                    "uploaded_by": "system",
+                    "processing_status": "failed",
+                    "evidence_metadata": json.dumps({"error": str(analysis_error)}),
+                },
             )
             db.commit()
 

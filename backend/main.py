@@ -250,7 +250,7 @@ async def lifespan(app: FastAPI):
     try:
         monitoring_service.stop_monitoring()
         performance_monitor.stop_monitoring()
-        apm_service.stop_monitoring()
+        # apm_service.stop_monitoring() # apm_service is not defined in this scope
         logger.info("Monitoring services stopped", extra={"event": "monitoring_stop"})
 
         await collaboration_manager.stop_server()
@@ -268,12 +268,31 @@ async def lifespan(app: FastAPI):
         )
 
 
+PROJECT_NAME = "378x492 Fraud Detection API"
+DESCRIPTION = "Backend API for desktop fraud detection application"
+VERSION = "1.0.0"
+
 app = FastAPI(
-    title="378x492 Fraud Detection API",
-    version="1.0.0",
-    description="Backend API for desktop fraud detection application",
+    title=PROJECT_NAME,
+    description=DESCRIPTION,
+    version=VERSION,
+    docs_url="/docs",
+    redoc_url="/redoc",
     lifespan=lifespan,
 )
+
+# Health Check Endpoints
+@app.get("/health", tags=["Health"])
+async def health_check():
+    return {"status": "healthy", "version": VERSION}
+
+@app.get("/health/ready", tags=["Health"])
+async def readiness_check():
+    return {"status": "ready"}
+
+@app.get("/health/live", tags=["Health"])
+async def liveness_check():
+    return {"status": "alive"}
 
 # Setup comprehensive API documentation with custom OpenAPI schema
 app = setup_api_documentation(app)

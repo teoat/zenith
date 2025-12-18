@@ -2,8 +2,10 @@ import { useState } from 'react';
 import ConclusionWizard from './ConclusionWizard';
 import DossierExport from './DossierExport';
 import { FileText, Download, CheckCircle } from 'lucide-react';
+import { useProjectStore } from '@/store/projectStore';
 
 const ReportBuilder = () => {
+  const { activeProjectId } = useProjectStore();
   const [activeView, setActiveView] = useState<'wizard' | 'export'>('wizard');
   const [isConcluded, setIsConcluded] = useState(false);
 
@@ -74,7 +76,7 @@ const ReportBuilder = () => {
               <p className="text-slate-500 mb-8">
                 Generate a court-admissible dossier package including all evidence and chain of custody logs.
               </p>
-              <DossierExport caseId="CASE-001" />
+              <DossierExport caseId={activeProjectId || 'CASE-001'} />
             </div>
           </div>
         )}

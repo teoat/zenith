@@ -11,6 +11,7 @@ import VolumeChart from './VolumeChart';
 import RiskDistributionChart from './RiskDistributionChart';
 import ProofVisualizationCard from './ProofVisualizationCard';
 import MetricSparkline from './MetricSparkline';
+import { useProjectStore } from '../../store/projectStore';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -60,6 +61,7 @@ const WidgetWrapper = ({ children, className = "", title }: { children: React.Re
 );
 
 const MovableDashboard: React.FC = () => {
+    const { activeProjectId } = useProjectStore();
     const { data: metrics } = useDashboardMetrics();
     const [isDraggable, setIsDraggable] = useState(false);
     
@@ -182,7 +184,7 @@ const MovableDashboard: React.FC = () => {
                 </div>
 
                 <div key="proof_card">
-                    <ProofVisualizationCard caseId="492" />
+                    <ProofVisualizationCard caseId={activeProjectId || '492'} />
                 </div>
                 
                 <div key="live_queue">

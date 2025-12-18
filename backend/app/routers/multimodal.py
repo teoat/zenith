@@ -67,7 +67,11 @@ async def analyze_uploaded_file(
             analysis = results[0]
 
             if analysis.error:
-                raise Exception(analysis.error)
+                # If it's a processing error (like invalid image), return 400 instead of 500
+                # to match API expectations for invalid input
+                error_lower = analysis.error.lower()
+                status_code = 400 if any(kw in error_lower for kw in ["unsupported", "cannot identify", "invalid", "failed to process"]) else 500
+                raise HTTPException(status_code=status_code, detail=f"Analysis failed: {analysis.error}")
 
             # Convert ProcessingResult to the Response format frontend expects
             result = _map_processing_result(analysis, file.filename, options)
@@ -121,7 +125,9 @@ async def analyze_file_path(
         analysis = results[0]
 
         if analysis.error:
-             raise Exception(analysis.error)
+            error_lower = analysis.error.lower()
+            status_code = 400 if any(kw in error_lower for kw in ["unsupported", "cannot identify", "invalid", "failed to process"]) else 500
+            raise HTTPException(status_code=status_code, detail=f"Analysis failed: {analysis.error}")
 
         # Convert to dict for JSON response
         result = _map_processing_result(analysis, os.path.basename(file_path), options)

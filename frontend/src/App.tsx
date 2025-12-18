@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { NetworkStatusProvider } from '@/providers/NetworkStatusProvider';
 import { OfflineQueueProvider } from '@/providers/OfflineQueueContext';
 import { AuthProvider } from '@/providers/AuthProvider';
@@ -45,6 +45,7 @@ const SystemOrchestrationDashboard = React.lazy(() => import(/* webpackChunkName
 const AgentApprovals = React.lazy(() => import(/* webpackChunkName: "approvals" */ '@/pages/AgentApprovals'));
 const AgentDrafts = React.lazy(() => import(/* webpackChunkName: "drafts" */ '@/pages/AgentDrafts'));
 const NotFound = React.lazy(() => import(/* webpackChunkName: "not-found" */ '@/pages/NotFound'));
+const ProjectSelection = React.lazy(() => import(/* webpackChunkName: "projects" */ '@/pages/ProjectSelection'));
 
 // New compliance components
 const ComplianceMonitoring = React.lazy(() => import(/* webpackChunkName: "compliance-monitoring" */ '@/pages/ComplianceMonitoring'));
@@ -178,7 +179,18 @@ const DefaultErrorFallback: React.FC<{ error: Error }> = ({ error }) => (
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 
-// ... existing imports ...
+import { useProjectStore } from '@/store/projectStore';
+
+const ProjectInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { activeProjectId } = useProjectStore();
+  const location = useLocation();
+
+  if (!activeProjectId && location.pathname !== '/projects') {
+    return <Navigate to="/projects" replace />;
+  }
+
+  return <>{children}</>;
+};
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isLoading } = useAuth();
@@ -214,14 +226,16 @@ const AppContent: React.FC = () => {
               <Routes>
               <Route path="/setup" element={<Setup />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/projects" element={<ProtectedRoute><ProjectSelection /></ProtectedRoute>} />
               <Route
                 path="/*"
                 element={
                   <ProtectedRoute>
-                    <AppLayout>
-                      <Suspense fallback={<LoadingState />}>
-                        <Routes>
-                          <Route path="/" element={<Dashboard />} />
+                    <ProjectInitializer>
+                      <AppLayout>
+                        <Suspense fallback={<LoadingState />}>
+                          <Routes>
+                            <Route path="/" element={<Dashboard />} />
                           <Route path="/cases" element={<Cases />} />
                           <Route path="/cases/:caseId" element={<Cases />} />
                           <Route path="/ingestion" element={<Ingestion />} />
@@ -257,6 +271,7 @@ const AppContent: React.FC = () => {
                         </Routes>
                       </Suspense>
                     </AppLayout>
+                    </ProjectInitializer>
                   </ProtectedRoute>
                 }
               />

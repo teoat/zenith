@@ -113,7 +113,7 @@ class TestDatabaseService:
         assert db_service is not None
         assert hasattr(db_service, "get_db")
 
-    @patch("app.services.database_service.DatabaseService.get_db")
+    @patch("app.services.infrastructure.storage.database_service.DatabaseService.get_db")
     def test_get_cases_paginated(self, mock_get_db, db_service, mock_session):
         """Test paginated case retrieval"""
         mock_get_db.return_value.__enter__.return_value = mock_session
@@ -134,7 +134,7 @@ class TestDatabaseService:
         assert "page" in result
         assert "per_page" in result
 
-    @patch("app.services.database_service.DatabaseService.get_db")
+    @patch("app.services.infrastructure.storage.database_service.DatabaseService.get_db")
     def test_create_case(self, mock_get_db, db_service, mock_session):
         """Test case creation"""
         mock_get_db.return_value.__enter__.return_value = mock_session
@@ -151,7 +151,7 @@ class TestDatabaseService:
         mock_session.add.assert_called_once()
         mock_session.commit.assert_called_once()
 
-    @patch("app.services.database_service.DatabaseService.get_db")
+    @patch("app.services.infrastructure.storage.database_service.DatabaseService.get_db")
     def test_get_user_by_username(self, mock_get_db, db_service, mock_session):
         """Test user retrieval by username"""
         mock_get_db.return_value.__enter__.return_value = mock_session
@@ -219,7 +219,7 @@ class TestAuthService:
         assert decoded["sub"] == "user123"
         assert decoded["username"] == "testuser"
 
-    @patch("app.services.auth_service.db_service")
+    @patch("app.services.infrastructure.auth_service.db_service")
     def test_authenticate_user_success(self, mock_db_service, auth_service):
         """Test successful user authentication"""
         # Mock user
@@ -229,12 +229,13 @@ class TestAuthService:
         mock_user.is_active = True
 
         mock_db_service.get_user_by_username.return_value = mock_user
+        mock_db_service.get_user_by_email.return_value = None
 
         result = auth_service.authenticate_user("testuser", "testpass")
 
         assert result == mock_user
 
-    @patch("app.services.auth_service.db_service")
+    @patch("app.services.infrastructure.auth_service.db_service")
     def test_authenticate_user_invalid_password(self, mock_db_service, auth_service):
         """Test authentication with invalid password"""
         # Mock user
@@ -244,15 +245,21 @@ class TestAuthService:
         mock_user.is_active = True
 
         mock_db_service.get_user_by_username.return_value = mock_user
+        mock_db_service.get_user_by_email.return_value = None
 
         result = auth_service.authenticate_user("testuser", "wrongpass")
 
         assert result is None
 
-    @patch("app.services.auth_service.db_service")
+    @patch("app.services.infrastructure.auth_service.db_service")
     def test_authenticate_user_not_found(self, mock_db_service, auth_service):
         """Test authentication with non-existent user"""
         mock_db_service.get_user_by_username.return_value = None
+        mock_db_service.get_user_by_email.return_value = None
+        
+        # Also mock get_db to return a mock that doesn't return data for Scans
+        mock_db_service.get_db.return_value.__enter__.return_value.query.return_value.first.return_value = None
+        mock_db_service.get_db.return_value.__enter__.return_value.query.return_value.all.return_value = []
 
         result = auth_service.authenticate_user("nonexistent", "testpass")
 

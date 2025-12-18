@@ -373,6 +373,8 @@ export interface ReconciliationItem {
     status: string;
     discrepancyAmount?: number;
     notes?: string;
+    evidenceId?: string;
+    evidenceRegionId?: string;
 }
 
 export interface CashFloatAnalysisResult {

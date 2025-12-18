@@ -45,7 +45,7 @@ class SemanticSearchRequest(BaseModel):
 async def semantic_search_evidence(request: SemanticSearchRequest):
     """Perform semantic search on evidence content"""
     try:
-        results = vector_store.search_similar_documents(request.query, request.limit, request.threshold)
+        results = await ai_service.semantic_search(request.query, request.limit)
         return {"query": request.query, "total_results": len(results), "results": results}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Semantic search failed: {str(e)}")
@@ -55,7 +55,11 @@ async def semantic_search_evidence(request: SemanticSearchRequest):
 async def get_semantic_search_stats():
     """Get statistics about the semantic search vector store"""
     try:
-        stats = vector_store.get_stats()
+        # ai_service.vector_store is a dict
+        stats = {
+            "total_documents": len(ai_service.vector_store),
+            "initialized": ai_service.initialized
+        }
         return {"semantic_search_stats": stats}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

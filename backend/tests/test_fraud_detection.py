@@ -19,8 +19,8 @@ class TestFraudDetectionEngine:
     """Test suite for FraudDetectionEngine"""
 
     @pytest.fixture
-    def engine(self):
-        """Create a fresh engine instance for each test"""
+    def detection_engine(self):
+        """Create a fresh detection_engine.instance for each test"""
         return FraudDetectionEngine()
 
     @pytest.fixture
@@ -39,36 +39,36 @@ class TestFraudDetectionEngine:
 
     # Input Validation Tests
 
-    def test_analyze_transactions_with_none(self, engine):
+    def test_analyze_transactions_with_none(self, detection_engine):
         """Test that None input raises ValueError"""
         with pytest.raises(ValueError, match="cannot be None"):
-            engine.analyze_transactions(None)
+            detection_engine.analyze_transactions(None)
 
-    def test_analyze_transactions_with_empty_list(self, engine):
+    def test_analyze_transactions_with_empty_list(self, detection_engine):
         """Test that empty list raises ValueError"""
         with pytest.raises(ValueError, match="cannot be empty"):
-            engine.analyze_transactions([])
+            detection_engine.analyze_transactions([])
 
-    def test_analyze_transactions_with_invalid_type(self, engine):
+    def test_analyze_transactions_with_invalid_type(self, detection_engine):
         """Test that non-list input raises TypeError"""
         with pytest.raises(TypeError, match="must be a list"):
-            engine.analyze_transactions("not a list")
+            detection_engine.analyze_transactions("not a list")
 
-    def test_analyze_transactions_with_invalid_items(self, engine):
+    def test_analyze_transactions_with_invalid_items(self, detection_engine):
         """Test that invalid transaction items raise TypeError"""
         with pytest.raises(TypeError, match="must be a Transaction instance"):
-            engine.analyze_transactions([{"not": "a transaction"}])
+            detection_engine.analyze_transactions([{"not": "a transaction"}])
 
-    def test_analyze_transactions_with_valid_input(self, engine, valid_transactions):
+    def test_analyze_transactions_with_valid_input(self, detection_engine, valid_transactions):
         """Test that valid input doesn't raise errors"""
-        alerts = engine.analyze_transactions(valid_transactions)
+        alerts = detection_engine.analyze_transactions(valid_transactions)
         assert isinstance(alerts, list)
         # Single small transaction shouldn't trigger alerts
         assert len(alerts) == 0
 
     # Structuring Detection Tests
 
-    def test_structuring_detection_positive(self, engine):
+    def test_structuring_detection_positive(self, detection_engine):
         """Test that structuring pattern is detected"""
         # Create 3 transactions just below $10k threshold
         now = datetime.now()
@@ -82,7 +82,7 @@ class TestFraudDetectionEngine:
             Transaction("tx3", 9700, now, "ACC001", "ACC002", "Payment 3"),
         ]
 
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
 
         # Should detect structuring
         assert len(alerts) >= 1
@@ -97,7 +97,7 @@ class TestFraudDetectionEngine:
         assert len(alert.transactions) == 3
         assert "structuring" in alert.description.lower()
 
-    def test_structuring_detection_negative(self, engine):
+    def test_structuring_detection_negative(self, detection_engine):
         """Test that normal transactions don't trigger structuring"""
         now = datetime.now()
         transactions = [
@@ -110,7 +110,7 @@ class TestFraudDetectionEngine:
             Transaction("tx3", 2000, now, "ACC001", "ACC002", "Payment 3"),
         ]
 
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
         structuring_alerts = [
             a for a in alerts if a.fraud_type == FraudType.STRUCTURING
         ]
@@ -118,7 +118,7 @@ class TestFraudDetectionEngine:
         # Should not detect structuring (amounts too low, spread over time)
         assert len(structuring_alerts) == 0
 
-    def test_structuring_threshold_boundary(self, engine):
+    def test_structuring_threshold_boundary(self, detection_engine):
         """Test structuring detection at threshold boundaries"""
         now = datetime.now()
 
@@ -129,7 +129,7 @@ class TestFraudDetectionEngine:
             Transaction("tx3", 8000, now, "ACC001", "ACC002", "Payment 3"),
         ]
 
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
         structuring_alerts = [
             a for a in alerts if a.fraud_type == FraudType.STRUCTURING
         ]
@@ -139,7 +139,7 @@ class TestFraudDetectionEngine:
 
     # Velocity Detection Tests
 
-    def test_velocity_detection_positive(self, engine):
+    def test_velocity_detection_positive(self, detection_engine):
         """Test that velocity attack is detected"""
         now = datetime.now()
 
@@ -156,7 +156,7 @@ class TestFraudDetectionEngine:
             for i in range(12)
         ]
 
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
         velocity_alerts = [a for a in alerts if a.fraud_type == FraudType.VELOCITY]
 
         # Should detect velocity
@@ -168,7 +168,7 @@ class TestFraudDetectionEngine:
         assert len(alert.transactions) >= 10
         assert "velocity" in alert.description.lower()
 
-    def test_velocity_detection_negative(self, engine):
+    def test_velocity_detection_negative(self, detection_engine):
         """Test that normal transaction rate doesn't trigger velocity"""
         now = datetime.now()
 
@@ -185,7 +185,7 @@ class TestFraudDetectionEngine:
             for i in range(5)
         ]
 
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
         velocity_alerts = [a for a in alerts if a.fraud_type == FraudType.VELOCITY]
 
         # Should not detect velocity
@@ -193,7 +193,7 @@ class TestFraudDetectionEngine:
 
     # Round-Trip Detection Tests
 
-    def test_round_trip_detection_positive(self, engine):
+    def test_round_trip_detection_positive(self, detection_engine):
         """Test that round-trip money flow is detected"""
         now = datetime.now()
 
@@ -208,7 +208,7 @@ class TestFraudDetectionEngine:
             Transaction("rtx3", 4600, now, "ACC006", "ACC004", "Return"),
         ]
 
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
         round_trip_alerts = [a for a in alerts if a.fraud_type == FraudType.ROUND_TRIP]
 
         # Should detect round trip
@@ -221,7 +221,7 @@ class TestFraudDetectionEngine:
         assert "round" in alert.description.lower()
         assert "→" in alert.description  # Path visualization
 
-    def test_round_trip_detection_negative(self, engine):
+    def test_round_trip_detection_negative(self, detection_engine):
         """Test that linear flow doesn't trigger round-trip"""
         now = datetime.now()
 
@@ -236,7 +236,7 @@ class TestFraudDetectionEngine:
             Transaction("tx3", 4600, now, "ACC006", "ACC007", "Forward"),
         ]
 
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
         round_trip_alerts = [a for a in alerts if a.fraud_type == FraudType.ROUND_TRIP]
 
         # Should not detect round trip
@@ -244,18 +244,18 @@ class TestFraudDetectionEngine:
 
     # Risk Scoring Tests
 
-    def test_calculate_overall_risk_no_alerts(self, engine):
+    def test_calculate_overall_risk_no_alerts(self, detection_engine):
         """Test risk calculation for clean account"""
         transactions = [
             Transaction("tx1", 100, datetime.now(), "ACC001", "ACC002", "Test")
         ]
 
-        risk_score = engine.calculate_overall_risk("ACC001", transactions)
+        risk_score = detection_engine.calculate_overall_risk("ACC001", transactions)
 
         # Clean account should have minimal risk
         assert risk_score == 10
 
-    def test_calculate_overall_risk_with_alerts(self, engine):
+    def test_calculate_overall_risk_with_alerts(self, detection_engine):
         """Test risk calculation for suspicious account"""
         now = datetime.now()
 
@@ -272,21 +272,21 @@ class TestFraudDetectionEngine:
             ],
         ]
 
-        risk_score = engine.calculate_overall_risk("ACC001", transactions)
+        risk_score = detection_engine.calculate_overall_risk("ACC001", transactions)
 
         # Account with multiple fraud patterns should have high risk
         assert risk_score > 50
 
-    def test_calculate_overall_risk_empty_account(self, engine):
+    def test_calculate_overall_risk_empty_account(self, detection_engine):
         """Test risk calculation for account with no transactions"""
-        risk_score = engine.calculate_overall_risk("ACC999", [])
+        risk_score = detection_engine.calculate_overall_risk("ACC999", [])
 
         # Account with no activity should have zero risk
         assert risk_score == 0
 
     # Edge Cases
 
-    def test_mixed_fraud_types(self, engine):
+    def test_mixed_fraud_types(self, detection_engine):
         """Test detection of multiple fraud types in single batch"""
         now = datetime.now()
 
@@ -310,7 +310,7 @@ class TestFraudDetectionEngine:
             Transaction("r3", 4600, now, "ACC006", "ACC004", "Return"),
         ]
 
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
 
         # Should detect all three types
         fraud_types = {alert.fraud_type for alert in alerts}
@@ -318,7 +318,7 @@ class TestFraudDetectionEngine:
         assert FraudType.VELOCITY in fraud_types
         assert FraudType.ROUND_TRIP in fraud_types
 
-    def test_large_transaction_batch(self, engine):
+    def test_large_transaction_batch(self, detection_engine):
         """Test performance with large batch of transactions"""
         now = datetime.now()
 
@@ -336,10 +336,10 @@ class TestFraudDetectionEngine:
         ]
 
         # Should complete without errors
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
         assert isinstance(alerts, list)
 
-    def test_alert_id_uniqueness(self, engine):
+    def test_alert_id_uniqueness(self, detection_engine):
         """Test that alert IDs are unique"""
         now = datetime.now()
 
@@ -349,13 +349,13 @@ class TestFraudDetectionEngine:
             Transaction("tx3", 9700, now, "ACC001", "ACC002", "Payment 3"),
         ]
 
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
         alert_ids = [alert.alert_id for alert in alerts]
 
         # All IDs should be unique
         assert len(alert_ids) == len(set(alert_ids))
 
-    def test_alert_details_completeness(self, engine):
+    def test_alert_details_completeness(self, detection_engine):
         """Test that alerts contain all required details"""
         now = datetime.now()
 
@@ -365,7 +365,7 @@ class TestFraudDetectionEngine:
             Transaction("tx3", 9700, now, "ACC001", "ACC002", "Payment 3"),
         ]
 
-        alerts = engine.analyze_transactions(transactions)
+        alerts = detection_engine.analyze_transactions(transactions)
 
         for alert in alerts:
             # Check all required fields

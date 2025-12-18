@@ -97,7 +97,7 @@ class User(Base):
     mfa_secret = Column(EncryptedString, nullable=True)
 
     # Relationships
-    cases = relationship("Case", back_populates="assignee")
+    cases = relationship("Case", back_populates="assignee", foreign_keys="Case.assignee_id")
     activities = relationship("CaseActivity", back_populates="user")
 
 
@@ -132,9 +132,13 @@ class Case(Base):
     is_synced = Column(Boolean, default=False)
     fraud_amount = Column(Float, default=0.0)
     customer_name = Column(EncryptedString, default="Unknown")
+    risk_level = Column(String, default="low", index=True)
+    due_date = Column(DateTime)
+    created_by = Column(String, ForeignKey("users.id"))
 
     # Relationships
-    assignee = relationship("User", back_populates="cases")
+    assignee = relationship("User", back_populates="cases", foreign_keys=[assignee_id])
+    creator = relationship("User", foreign_keys=[created_by])
     transactions = relationship(
         "Transaction", back_populates="case", cascade="all, delete-orphan"
     )
@@ -170,7 +174,7 @@ class Transaction(Base):
     description = Column(EncryptedString)
     merchant_name = Column(EncryptedString, index=True)
     category = Column(String, index=True)
-    type = Column(String, index=True)  # DEBIT, CREDIT
+    transaction_type = Column(String, index=True)  # DEBIT, CREDIT
     transaction_metadata = Column(JSON, default=dict)
     confidence_score = Column(Float, default=1.0)
     is_reconciled = Column(Boolean, default=False, index=True)

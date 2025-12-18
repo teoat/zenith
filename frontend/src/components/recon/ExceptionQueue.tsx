@@ -6,12 +6,14 @@ import { useFormatters } from '../../providers/LocaleProvider';
 interface ExceptionQueueProps {
   items: ReconciliationItem[];
   onFlag: (id: string) => void;
+  onShowEvidence: (evidenceId: string, regionId?: string) => void;
   className?: string;
 }
 
 export const ExceptionQueue: React.FC<ExceptionQueueProps> = ({
   items,
   onFlag,
+  onShowEvidence,
   className = '',
 }) => {
   const { formatCurrency, formatDate } = useFormatters();
@@ -29,15 +31,23 @@ export const ExceptionQueue: React.FC<ExceptionQueueProps> = ({
         )}
         {items.map(item => (
           <div key={item.id} className="p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg flex justify-between items-center group">
-             <div>
+             <div className="flex-1">
                 <div className="font-medium text-slate-800 dark:text-slate-200">
                     {formatCurrency(item.amount, item.currency)}
                 </div>
                 <div className="text-xs text-slate-500">
                     {item.source} • {formatDate(item.date)}
                 </div>
-                <div className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                <div className="text-xs text-orange-600 dark:text-orange-400 mt-1 flex items-center gap-2">
                     {item.notes || 'Discrepancy detected'}
+                    {item.evidenceId && (
+                      <button 
+                        onClick={() => onShowEvidence(item.evidenceId!, item.evidenceRegionId)}
+                        className="text-[10px] bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded hover:bg-blue-200 transition-colors border border-blue-200 dark:border-blue-800"
+                      >
+                        VIEW PROOF
+                      </button>
+                    )}
                 </div>
              </div>
              <button

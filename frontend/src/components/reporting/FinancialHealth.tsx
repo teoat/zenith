@@ -3,9 +3,11 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { DollarSign, TrendingDown, AlertCircle, Activity, Wallet, CreditCard } from 'lucide-react';
 import { reportingService } from '../../services/reporting';
 import { FinancialHealthData } from '../../types/api';
+import { useProjectStore } from '../../store/projectStore';
 
 
 const FinancialHealth = () => {
+  const { activeProjectId } = useProjectStore();
   const [data, setData] = useState<FinancialHealthData | null>(null);
   const [loading, setLoading] = useState(true);
   
@@ -16,8 +18,8 @@ const FinancialHealth = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Using strict 'CASE-001' as per context
-        const health = await reportingService.getFinancialHealth('CASE-001');
+        // Using dynamic activeProjectId
+        const health = await reportingService.getFinancialHealth(activeProjectId || 'CASE-001');
         setData(health);
         setSimulatedBurnRate(health.burnRate || 15);
       } catch (err) {

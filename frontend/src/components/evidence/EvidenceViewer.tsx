@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, FileText, Search, Type, Ale
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 // OCR bounding box type
-interface OCRRegion {
+export interface OCRRegion {
   id: string;
   text: string;
   confidence: number;
@@ -28,19 +28,31 @@ const MOCK_OCR_REGIONS: OCRRegion[] = [
 interface EvidenceViewerProps {
   fileUrl: string | null;
   ocrData?: OCRRegion[];
+  initialRegionId?: string;
 }
 
-const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData }) => {
+const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initialRegionId }) => {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState(1); // Page number usually resets per document
   const [scale, setScale] = usePersistedState<number>('evidence_viewer_scale', 1.0);
-  const [showOCR, setShowOCR] = usePersistedState<boolean>('evidence_viewer_show_ocr', false);
+  const [showOCR, setShowOCR] = usePersistedState<boolean>('evidence_viewer_show_ocr', !!initialRegionId);
   const [selectedRegion, setSelectedRegion] = useState<OCRRegion | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [filterType, setFilterType] = usePersistedState<string>('evidence_viewer_ocr_filter', 'all');
 
   // Use provided OCR data or fall back to mock
   const regions = ocrData || MOCK_OCR_REGIONS;
+
+  // Set initial region if provided
+  React.useEffect(() => {
+    if (initialRegionId) {
+      const region = regions.find(r => r.id === initialRegionId);
+      if (region) {
+        setSelectedRegion(region);
+        setShowOCR(true);
+      }
+    }
+  }, [initialRegionId, regions]);
   
   // Filter regions by type
   const filteredRegions = useMemo(() => {

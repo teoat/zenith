@@ -3,6 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Check, Building, Briefcase, Search } from 'lucide-react';
 import { reportingService } from '../../services/reporting';
 import { ProjectTrackerData } from '../../types/api';
+import { useProjectStore } from '../../store/projectStore';
 
 interface VendorOutlier {
     x: number;
@@ -24,13 +25,14 @@ const VENDOR_OUTLIERS: VendorOutlier[] = [
 ];
 
 const ProjectTracker = () => {
+  const { activeProjectId } = useProjectStore();
   const [data, setData] = useState<ProjectTrackerData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTracker = async () => {
       try {
-        const trackerData = await reportingService.getProjectTracker('CASE-001');
+        const trackerData = await reportingService.getProjectTracker(activeProjectId || 'CASE-001');
         setData(trackerData);
       } catch (err) {
         console.error("Failed to load tracker", err);

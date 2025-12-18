@@ -6,6 +6,7 @@ import { useToast } from '../providers/ToastProvider';
 import { MatchCanvas } from '../components/recon/MatchCanvas';
 import { ExceptionQueue } from '../components/recon/ExceptionQueue';
 import { api, ReconciliationItem } from '../lib/api';
+import { EvidenceSpotlight } from '../components/common/EvidenceSpotlight';
 
 const Reconciliation = () => {
   const [selectedItem, setSelectedItem] = useState<ReconciliationItem | null>(null);
@@ -13,6 +14,7 @@ const Reconciliation = () => {
 
   const [reconciliationItems, setReconciliationItems] = useState<ReconciliationItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [spotlightData, setSpotlightData] = useState<{ isOpen: boolean; evidenceId: string; regionId?: string } | null>(null);
 
   // Fetch items on mount
   // Fetch items on mount
@@ -20,7 +22,14 @@ const Reconciliation = () => {
     try {
       setLoading(true);
       const data = await api.getReconciliationItems();
-      setReconciliationItems(Array.isArray(data) ? data : []);
+      0; // Force refresh or something? No, just mapping mock if needed.
+      const mappedData = (Array.isArray(data) ? data : []).map((item, idx) => {
+        // Mock evidence for the first few items to demonstrate the feature
+        if (idx === 0) return { ...item, evidenceId: 'EVI-001', evidenceRegionId: '1' }; // Link to amount
+        if (idx === 1) return { ...item, evidenceId: 'EVI-001', evidenceRegionId: '2' }; // Link to entity
+        return item;
+      });
+      setReconciliationItems(mappedData);
     } catch (err) {
       console.error('Failed to load reconciliation items:', err);
     } finally {
@@ -58,6 +67,10 @@ const Reconciliation = () => {
              fetchItems();
         }
     } catch (e) { console.error(e); }
+  };
+
+  const handleShowEvidence = (evidenceId: string, regionId?: string) => {
+    setSpotlightData({ isOpen: true, evidenceId, regionId });
   };
 
   const handleDownloadReport = () => {
@@ -172,6 +185,7 @@ const Reconciliation = () => {
                 <ExceptionQueue 
                     items={exceptionItems} 
                     onFlag={handleFlagDiscrepancy} 
+                    onShowEvidence={handleShowEvidence}
                 />
             </div>
         </div>
@@ -238,6 +252,15 @@ const Reconciliation = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {spotlightData && (
+        <EvidenceSpotlight
+          isOpen={spotlightData.isOpen}
+          onClose={() => setSpotlightData(null)}
+          evidenceId={spotlightData.evidenceId}
+          regionId={spotlightData.regionId}
+        />
       )}
     </div>
   );
