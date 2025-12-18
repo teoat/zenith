@@ -92,7 +92,7 @@ class TestRelationshipGraph:
 
     def test_graph_initialization(self):
         """Test graph initialization"""
-        from app.services.graph_service import RelationshipGraph
+        from app.services.graph_service import GraphService as RelationshipGraph
 
         graph = RelationshipGraph()
 
@@ -101,7 +101,7 @@ class TestRelationshipGraph:
 
     def test_build_graph_from_transactions(self):
         """Test building graph from transactions"""
-        from app.services.graph_service import RelationshipGraph
+        from app.services.graph_service import GraphService as RelationshipGraph
 
         graph = RelationshipGraph()
 
@@ -133,7 +133,7 @@ class TestRelationshipGraph:
 
     def test_detect_communities(self):
         """Test community detection"""
-        from app.services.graph_service import RelationshipGraph
+        from app.services.graph_service import GraphService as RelationshipGraph
 
         graph = RelationshipGraph()
 
@@ -145,7 +145,7 @@ class TestRelationshipGraph:
 
     def test_find_central_entities(self):
         """Test finding central entities"""
-        from app.services.graph_service import RelationshipGraph
+        from app.services.graph_service import GraphService as RelationshipGraph
 
         graph = RelationshipGraph()
 
@@ -177,7 +177,7 @@ class TestRelationshipGraph:
 
     def test_find_suspicious_patterns(self):
         """Test suspicious pattern detection"""
-        from app.services.graph_service import RelationshipGraph
+        from app.services.graph_service import GraphService as RelationshipGraph
 
         graph = RelationshipGraph()
 
@@ -223,7 +223,7 @@ class TestRelationshipGraph:
 
     def test_export_graph_data(self):
         """Test graph export"""
-        from app.services.graph_service import RelationshipGraph
+        from app.services.graph_service import GraphService as RelationshipGraph
 
         graph = RelationshipGraph()
 
@@ -243,7 +243,7 @@ class TestRelationshipGraph:
 
     def test_get_graph_stats(self):
         """Test graph statistics"""
-        from app.services.graph_service import RelationshipGraph
+        from app.services.graph_service import GraphService as RelationshipGraph
 
         graph = RelationshipGraph()
 
@@ -323,7 +323,7 @@ class TestSemanticSearchService:
 
     def test_service_instantiation(self):
         """Test semantic search service initialization"""
-        from app.services.semantic_search_service import SemanticSearchEngine
+        from app.services.intelligence.semantic_search_service import SemanticSearchEngine
 
         service = SemanticSearchEngine()
 
@@ -331,7 +331,7 @@ class TestSemanticSearchService:
 
     def test_search_method_exists(self):
         """Test that search method exists"""
-        from app.services.semantic_search_service import SemanticSearchEngine
+        from app.services.intelligence.semantic_search_service import SemanticSearchEngine
 
         service = SemanticSearchEngine()
 
@@ -348,7 +348,7 @@ class TestMultimodalAnalysisService:
     def test_service_instantiation(self):
         """Test multimodal service initialization"""
         try:
-            from app.services.multimodal_analysis_service import MultiModalAnalysis
+            from app.services.ai.multimodal.multimodal_analyzer import MultimodalAnalyzer as MultiModalAnalysis
 
             # Check class exists
             assert MultiModalAnalysis is not None
@@ -358,7 +358,7 @@ class TestMultimodalAnalysisService:
     def test_analysis_methods_exist(self):
         """Test that analysis methods exist"""
         try:
-            from app.services.multimodal_analysis_service import MultiModalAnalysis
+            from app.services.ai.multimodal.multimodal_analyzer import MultimodalAnalyzer as MultiModalAnalysis
 
             # Check for common analysis methods on the class
             has_analysis = (
@@ -390,7 +390,7 @@ class TestBackupService:
     def test_service_instantiation(self):
         """Test backup service initialization"""
         try:
-            from app.services.backup_service import BackupManager
+            from app.services.infrastructure.storage.backup_service import BackupManager
 
             # BackupManager requires config - test that class exists
             assert BackupManager is not None
@@ -400,7 +400,7 @@ class TestBackupService:
     def test_backup_methods_exist(self):
         """Test backup methods exist"""
         try:
-            from app.services.backup_service import BackupManager
+            from app.services.infrastructure.storage.backup_service import BackupManager
 
             # Check that the class has expected methods
             assert hasattr(BackupManager, "create_full_backup") or hasattr(
@@ -415,7 +415,7 @@ class TestRBACService:
 
     def test_service_instantiation(self):
         """Test RBAC service can be imported"""
-        from app.services.rbac_service import RBACService
+        from app.services.infrastructure.rbac_service import RBACService
 
         service = RBACService()
 
@@ -423,7 +423,7 @@ class TestRBACService:
 
     def test_check_permission_method(self):
         """Test permission checking method exists"""
-        from app.services.rbac_service import RBACService
+        from app.services.infrastructure.rbac_service import RBACService
 
         service = RBACService()
 
@@ -509,7 +509,7 @@ class TestServiceImports:
 
     def test_graph_service_import(self):
         """Test graph service import"""
-        from app.services.graph_service import RelationshipGraph
+        from app.services.graph_service import GraphService as RelationshipGraph
 
         assert RelationshipGraph is not None
 
@@ -533,7 +533,7 @@ class TestServiceImports:
 
     def test_semantic_search_import(self):
         """Test semantic search import"""
-        from app.services.semantic_search_service import SemanticSearchEngine
+        from app.services.intelligence.semantic_search_service import SemanticSearchEngine
 
         assert SemanticSearchEngine is not None
 
@@ -545,7 +545,7 @@ class TestServiceImports:
 
     def test_rbac_service_import(self):
         """Test RBAC service import"""
-        from app.services.rbac_service import RBACService
+        from app.services.infrastructure.rbac_service import RBACService
 
         assert RBACService is not None
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, Settings, ShieldAlert, BarChart3, Database, WifiOff, Menu } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, Settings, ShieldAlert, BarChart3, Database, WifiOff, Menu, Gavel } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { useSidebar } from '@/store/globalStore';
@@ -46,7 +46,8 @@ export const Sidebar = () => {
         </div>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4 gap-1 mt-4">
-            <NavItem to="/" icon={LayoutDashboard}>Dashboard</NavItem>
+            <NavItem to="/" icon={Gavel}>Adjudication Hub</NavItem>
+            <NavItem to="/dashboard" icon={LayoutDashboard}>Intelligence Center</NavItem>
             <NavItem to="/cases" icon={Briefcase}>Case Management</NavItem>
             {/* <NavItem to="/evidence" icon={FileText}>Evidence Locker</NavItem> */}
             <NavItem to="/ingestion" icon={Database}>Data Ingestion</NavItem>

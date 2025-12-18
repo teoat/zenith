@@ -258,8 +258,9 @@ class TestAuthService:
         mock_db_service.get_user_by_email.return_value = None
         
         # Also mock get_db to return a mock that doesn't return data for Scans
-        mock_db_service.get_db.return_value.__enter__.return_value.query.return_value.first.return_value = None
-        mock_db_service.get_db.return_value.__enter__.return_value.query.return_value.all.return_value = []
+        mock_db = mock_db_service.get_db.return_value.__enter__.return_value
+        mock_db.query.return_value.filter.return_value.first.return_value = None
+        mock_db.query.return_value.all.return_value = []
 
         result = auth_service.authenticate_user("nonexistent", "testpass")
 

@@ -7,67 +7,25 @@ import { MatchCanvas } from '../components/recon/MatchCanvas';
 import { ExceptionQueue } from '../components/recon/ExceptionQueue';
 import { api, ReconciliationItem } from '../lib/api';
 import { EvidenceSpotlight } from '../components/common/EvidenceSpotlight';
+import { useReconciliationStore } from '../store/reconciliationStore';
 
 const Reconciliation = () => {
   const [selectedItem, setSelectedItem] = useState<ReconciliationItem | null>(null);
   const { formatCurrency, formatDate } = useFormatters();
 
-  const [reconciliationItems, setReconciliationItems] = useState<ReconciliationItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [spotlightData, setSpotlightData] = useState<{ isOpen: boolean; evidenceId: string; regionId?: string } | null>(null);
+  const { 
+    items: reconciliationItems, 
+    loading, 
+    fetchItems, 
+    reconcileItem, 
+    flagItem 
+  } = useReconciliationStore();
 
-  // Fetch items on mount
-  // Fetch items on mount
-  const fetchItems = async () => {
-    try {
-      setLoading(true);
-      const data = await api.getReconciliationItems();
-      0; // Force refresh or something? No, just mapping mock if needed.
-      const mappedData = (Array.isArray(data) ? data : []).map((item, idx) => {
-        // Mock evidence for the first few items to demonstrate the feature
-        if (idx === 0) return { ...item, evidenceId: 'EVI-001', evidenceRegionId: '1' }; // Link to amount
-        if (idx === 1) return { ...item, evidenceId: 'EVI-001', evidenceRegionId: '2' }; // Link to entity
-        return item;
-      });
-      setReconciliationItems(mappedData);
-    } catch (err) {
-      console.error('Failed to load reconciliation items:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [spotlightData, setSpotlightData] = useState<{ isOpen: boolean; evidenceId: string; regionId?: string } | null>(null);
 
   useEffect(() => {
     fetchItems();
-  }, []);
-
-  const handleReconcileItem = async (itemId: string) => {
-    try {
-        const item = reconciliationItems.find(i => i.id === itemId);
-        if (item) {
-             await api.reconcileTransaction(item.transactionId);
-             // Optimistic update
-             setReconciliationItems(prev => prev.map(i => 
-                i.id === itemId ? { ...i, status: 'matched' } : i
-             ));
-             fetchItems();
-        }
-    } catch (e) { console.error(e); }
-  };
-
-  const handleFlagDiscrepancy = async (itemId: string) => {
-      try {
-        const item = reconciliationItems.find(i => i.id === itemId);
-        if (item) {
-             await api.flagTransaction(item.transactionId, "User flagged from UI");
-              // Optimistic update
-             setReconciliationItems(prev => prev.map(i => 
-                i.id === itemId ? { ...i, status: 'discrepancy' } : i
-             ));
-             fetchItems();
-        }
-    } catch (e) { console.error(e); }
-  };
+  }, [fetchItems]);
 
   const handleShowEvidence = (evidenceId: string, regionId?: string) => {
     setSpotlightData({ isOpen: true, evidenceId, regionId });
@@ -115,7 +73,7 @@ const Reconciliation = () => {
                  <MatchCanvas 
                     bankItems={bankItems}
                     ledgerItems={ledgerItems}
-                    onMatch={(sourceId, _targetId) => handleReconcileItem(sourceId)} 
+                    onMatch={(sourceId, _targetId) => reconcileItem(sourceId)} 
                     className="flex-1 min-h-0"
                  />
             </div>
@@ -182,9 +140,9 @@ const Reconciliation = () => {
                     </div>
                 </div>
 
-                <ExceptionQueue 
+                 <ExceptionQueue 
                     items={exceptionItems} 
-                    onFlag={handleFlagDiscrepancy} 
+                    onFlag={(id) => flagItem(id)} 
                     onShowEvidence={handleShowEvidence}
                 />
             </div>
@@ -223,7 +181,7 @@ const Reconciliation = () => {
             <div className="flex justify-end gap-2">
                  {selectedItem.status !== 'matched' && (
                   <button
-                    onClick={() => { handleReconcileItem(selectedItem.id); setSelectedItem(null); }}
+                    onClick={() => { reconcileItem(selectedItem.id); setSelectedItem(null); }}
                     className="btn btn-primary"
                   >
                         <div className="flex items-center gap-2">
@@ -234,7 +192,7 @@ const Reconciliation = () => {
                  )}
                 {selectedItem.status === 'discrepancy' && (
                   <button
-                     onClick={() => { handleFlagDiscrepancy(selectedItem.id); setSelectedItem(null); }}
+                     onClick={() => { flagItem(selectedItem.id); setSelectedItem(null); }}
                      className="btn btn-danger"
                   >
                         <div className="flex items-center gap-2">

@@ -235,8 +235,9 @@ const AppContent: React.FC = () => {
                       <AppLayout>
                         <Suspense fallback={<LoadingState />}>
                           <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                          <Route path="/cases" element={<Cases />} />
+                            <Route path="/" element={<AdjudicationQueue />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/cases" element={<Cases />} />
                           <Route path="/cases/:caseId" element={<Cases />} />
                           <Route path="/ingestion" element={<Ingestion />} />
                           <Route path="/forensics" element={<Forensics />} />
