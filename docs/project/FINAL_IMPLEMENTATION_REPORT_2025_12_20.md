@@ -20,11 +20,6 @@ The system has transitioned from a prototype with mock services to a robust, pro
 
 ### 1. Backend Core (The "Brain")
 
-* **Real Forensic Logic**: Replaced all mock services.
-  * `TemporalBurstDetector`: Sliding window velocity & structuring analysis.
-  * `ImmutableAuditChain`: Merkle Tree cryptography with HMAC pointers.
-  * `AMLVelocityService`: UBO tracing and smurfing detection.
-  * `ForensicIntelligence`: Triangulation and Wash Trade detection.
   * `ReconciliationService`: Float tracking and batch matching.
 * **Security & Logging**:
   * Implemented `StructuredLogger` with automated PII scrubbing (SSN, CC, Phone).

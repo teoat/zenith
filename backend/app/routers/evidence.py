@@ -77,6 +77,7 @@ async def get_evidence(
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db),
     project_id: str = Depends(get_current_project_id),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     Get list of evidence items with pagination and search
@@ -149,11 +150,9 @@ async def download_evidence_stream(
         raise HTTPException(status_code=500, detail="Download failed")
 
 
-@router.get("/{evidence_id}/download")
-async def download_evidence(
-    evidence_id: str,
+@router.get("/processing/metrics")
+async def get_processing_metrics(
     current_user: User = Depends(auth_service.get_current_user),
-    db: Session = Depends(get_db),
 ):
     """Get evidence processing performance metrics"""
     try:
@@ -346,6 +345,7 @@ async def upload_evidence(
     tags: Optional[str] = Form(None),  # JSON string of tags
     db: Session = Depends(get_db),
     project_id: str = Depends(get_current_project_id),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     Upload and process evidence file for a case
@@ -605,7 +605,8 @@ async def upload_evidence(
 async def get_evidence_highlights(
     evidence_id: str,
     db: Session = Depends(get_db),
-    project_id: str = Depends(get_current_project_id)
+    project_id: str = Depends(get_current_project_id),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """Get saved highlights for an evidence file"""
     try:

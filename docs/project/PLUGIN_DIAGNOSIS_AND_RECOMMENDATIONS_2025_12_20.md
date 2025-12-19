@@ -2,9 +2,11 @@
 # Generated: 2025-12-20
 
 ## 1. Executive Summary
+
 The `378x492` project boasts a sophisticated "Shadow Mode" plugin architecture designed for high-availability fraud detection. The core system (`shadow_executor`, `registry`, `interface`) is technically sound and production-grade on paper. However, **critical integration gaps** render the advanced intelligence plugins (like `typology_analysis`) widely non-functional in their current state. The dependency injection system is effectively a "stub," passing empty contexts to plugins that require heavy services like AI.
 
 **Overall System Score: 68/100**
+
 - **Core Architecture:** 90/100 (Strong design pattern, safe execution)
 - **Plugin Implementations:** 75/100 (Good variety, but some rely on mocks)
 - **Integration & Wiring:** 40/100 (Critical failure in dependency injection)
@@ -12,11 +14,13 @@ The `378x492` project boasts a sophisticated "Shadow Mode" plugin architecture d
 ## 2. Detailed Technical Diagnosis
 
 ### 2.1 Core System Analysis (`backend/core/plugin_system/`)
-*   **Shadow Executor (`shadow_executor.py`):** **Excellent.** This is a standout feature. It allows running new plugins in "shadow mode" (fire-and-forget) alongside production logic to verify behavior without risking user impact. The comparison logic is sound.
-*   **Registry (`registry.py`):** **Good but Flawed Integration.** It handles dynamic loading, caching (TTL), and concurrency (async locks) very well. However, the `PluginContext` initialization is hardcoded to be empty (`services={}`), which is the root cause of the broken intelligence layer.
-*   **Models (`models.py`):** **Solid.** The schema supports metadata, dependencies, permissions, and execution logging.
+
+- **Shadow Executor (`shadow_executor.py`):** **Excellent.** This is a standout feature. It allows running new plugins in "shadow mode" (fire-and-forget) alongside production logic to verify behavior without risking user impact. The comparison logic is sound.
+- **Registry (`registry.py`):** **Good but Flawed Integration.** It handles dynamic loading, caching (TTL), and concurrency (async locks) very well. However, the `PluginContext` initialization is hardcoded to be empty (`services={}`), which is the root cause of the broken intelligence layer.
+- **Models (`models.py`):** **Solid.** The schema supports metadata, dependencies, permissions, and execution logging.
 
 ### 2.2 Plugin Review
+
 | Plugin Name | Category | Status | Quality Score | Issues / Notes |
 | :--- | :--- | :--- | :--- | :--- |
 | `crypto_fraud_detector` | Fraud | ⚠️ Partial | 70/100 | Contains mock logic (`_analyze_bitcoin`). Needs real blockchain adapter. |
@@ -31,12 +35,16 @@ The `378x492` project boasts a sophisticated "Shadow Mode" plugin architecture d
 | `fraud_metrics_widget` | UI | ✅ Good | 90/100 | Simple config provider. Works as expected. |
 
 ### 2.3 The "Missing Link": Services Injection
+
 The most critical finding is in `backend/core/plugin_system/registry.py`:
+
 ```python
 # registry.py line 104
 context = PluginContext(config={}, services={}) 
 ```
+
 This single line breaks the entire "Advanced Intelligence" promise. Plugins like `typology_analysis` do this:
+
 ```python
 self.ai_service = context.get_service('ai_service') # Returns None
 # ... later ...
@@ -44,32 +52,32 @@ await self.ai_service.semantic_search(...) # AttributeError: 'NoneType' object h
 ```
 
 ### 2.4 Registration Mechanism
+
 The project includes a registration utility at `backend/scripts/register_all_plugins.py`. This script correctly scans the `backend/plugins/` directory and populates the `PluginRegistry` table. This component is **Functional**, but it must be integrated into the deployment pipeline or startup sequence to ensure new plugins are automatically registered.
 
-### 2.5 The "Missing Link": Services Injection (CRITICAL)
-The most critical finding is in `backend/core/plugin_system/registry.py`:
-```python
-# registry.py line 104
-context = PluginContext(config={}, services={}) 
-```
-This single line breaks the entire "Advanced Intelligence" promise. Plugins like `typology_analysis` do this:
-```python
-self.ai_service = context.get_service('ai_service') # Returns None
-# ... later ...
-await self.ai_service.semantic_search(...) # AttributeError: 'NoneType' object has no attribute 'semantic_search'
-```
+## 3. Strategic Recommendations
+
+### Phase 1: Critical Repairs (Immediate)
+
+1.  **Fix Dependency Injection in Registry:** Modify `PluginRegistryService` to accept a `service_registry` or global service accessor.
+    - *Action:* Update `registry.py` to import `ai_service`, `db_service`, etc., and pass them into `PluginContext`.
+2.  **Plugin Seeding Script:** Create a utility `backend/scripts/seed_plugins.py` that scans the `backend/plugins/` directory, reads `metadata.json`, and inserts/updates records in the `plugin_registry` table. This is essential for deployment.
 
 ### Phase 2: Intelligence Realization
+
 1.  **Activate Typology Analysis:** Once DI is fixed, the `typology_analysis` plugin needs a real vector store backing. Ensure `ai_service` is actually initialized with a vector DB (currently looks like it has a local SQLite/FAISS fallback).
 2.  **Optimize Graph Plugins:** `round_trip` and `entity_linkage` do in-memory graph traversals (DFS). For production with >10k transactions, this will hang.
-    *   *Recommendation:* Offload graph queries to a dedicated GraphDB service or optimize the Python DFS with strictly enforced depth/timeout limits (currently has depth limit but no timeout).
+    - *Recommendation:* Offload graph queries to a dedicated GraphDB service or optimize the Python DFS with strictly enforced depth/timeout limits (currently has depth limit but no timeout).
 
 ### Phase 3: "Production Perfect" Polish
+
 1.  **Admin UI for Plugins:** The backend supports it, but we need API endpoints in `admin.py` to:
-    *   List all plugins (active/inactive).
-    *   Toggle plugin status (enable/disable).
-    *   View execution metrics (via `shadow_executor` stats).
+    - List all plugins (active/inactive).
+    - Toggle plugin status (enable/disable).
+    - View execution metrics (via `shadow_executor` stats).
 2.  **Remove Mocks:** Replace `crypto_fraud_detector` mock logic with a call to a real crypto API (even a free one like Blockchain.info or similar) or clearly mark it as "Simulation Mode".
 
 ## 4. Conclusion
+
 The system is 90% "Architecture" and 40% "Wired Up". The code is high quality, but the wires are cut. Connecting the `services` to the `PluginContext` is the single highest-value action to take.
+
