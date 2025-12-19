@@ -376,3 +376,16 @@ INFO:     Application startup complete.
 2025-12-19 12:56:10 - 378x492 - ERROR - performance_monitor:74 - Performance monitoring error: unsupported operand type(s) for /: 'tuple' and 'int'
 2025-12-19 12:56:14 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
 2025-12-19 12:56:46 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79434)
+2025-12-19 12:57:11 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:57:11 - 378x492 - ERROR - performance_monitor:74 - Performance monitoring error: unsupported operand type(s) for /: 'tuple' and 'int'
+2025-12-19 12:57:18 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:57:19 - 378x492 - ERROR - proactive_monitoring:115 - Error performing health checks: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:57:19 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [ERROR]: Health monitoring failed: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:57:50 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:57:51 - 378x492 - ERROR - proactive_monitoring:115 - Error performing health checks: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:58:12 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=80211)
+2025-12-19 12:58:12 - 378x492 - WARNING - performance_monitor:161 - Performance monitoring circuit breaker opened after 3 failures
+2025-12-19 12:58:12 - 378x492 - ERROR - performance_monitor:74 - Performance monitoring error: unsupported operand type(s) for /: 'tuple' and 'int'
+2025-12-19 12:58:22 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=80211)
+2025-12-19 12:58:23 - 378x492 - ERROR - proactive_monitoring:115 - Error performing health checks: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:58:54 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=80211)
