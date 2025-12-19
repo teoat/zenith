@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Shield, AlertTriangle, FileText, Loader } from 'lucide-react';
 import { useFormatters } from '../../providers/LocaleProvider';
-import { api, AuditLogEntry as ApiAuditLogEntry } from '../../lib/api';
+import { api, type AuditLogEntry as ApiAuditLogEntry } from '../../lib/api';
+import { VirtualList } from '../ui/VirtualList';
+import { secureLogger } from '../../utils/secureLogger';
 
 // UI Interface extending API interface or mapping to it
 interface UIAuditLogEntry extends ApiAuditLogEntry {
@@ -19,7 +21,7 @@ const AuditLogViewer: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [levelFilter, setLevelFilter] = useState<string>('all');
-  const containerRef = useRef<HTMLDivElement>(null);
+  // const containerRef = useRef<HTMLDivElement>(null);
   const { formatTime } = useFormatters();
 
   useEffect(() => {
@@ -40,7 +42,7 @@ const AuditLogViewer: React.FC = () => {
             setLogs(transformedLogs);
             setError(null);
         } catch (err) {
-            console.error('Failed to fetch logs:', err);
+            secureLogger.error('Failed to fetch logs:', err);
             setError('Failed to load audit trail.');
         } finally {
             setLoading(false);
@@ -136,15 +138,17 @@ const AuditLogViewer: React.FC = () => {
 
       {/* Logs Table */}
       <div className="flex-1 overflow-hidden bg-slate-50 dark:bg-slate-950">
-        <VirtualizedList
+        <VirtualList<UIAuditLogEntry>
           items={filteredLogs}
-          estimateSize={ROW_HEIGHT}
-          getItemKey={(log) => log.id}
+          itemHeight={ROW_HEIGHT}
+          containerHeight={400} // Estimate
+          getItemKey={(log: UIAuditLogEntry) => log.id}
           className="h-full"
           renderItem={(log: UIAuditLogEntry) => (
             <div 
-              className={`flex items-center gap-4 px-4 py-3 border-b border-slate-100 dark:border-slate-800 transition-colors hover:bg-slate-100 dark:hover:bg-slate-900`}
-              style={{ height: ROW_HEIGHT }}
+              className="flex items-center gap-4 px-4 py-3 border-b border-slate-100 dark:border-slate-800 transition-colors hover:bg-slate-100 dark:hover:bg-slate-900 fill-height"
+              /* eslint-disable-next-line react/forbid-dom-props */
+              style={{ '--height': `${ROW_HEIGHT}px` } as React.CSSProperties}
             >
               {/* Status Indicator */}
               <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${getLevelBg(log.level)}`}>

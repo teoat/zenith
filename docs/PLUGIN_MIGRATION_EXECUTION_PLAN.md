@@ -1161,17 +1161,17 @@ python setup.py sdist bdist_wheel
 gpg --detach-sign --armor dist/crypto_fraud_detector-1.0.0.tar.gz
 
 # Step 3: Upload to plugin registry
-curl -X POST https://api.378x492.com/admin/plugins/upload \
+curl -X POST https://api.fraud-detection-378x492.com/admin/plugins/upload \
   -H "Authorization: Bearer ${ADMIN_TOKEN}" \
   -F "plugin=@dist/crypto_fraud_detector-1.0.0.tar.gz" \
   -F "signature=@dist/crypto_fraud_detector-1.0.0.tar.gz.asc" \
   -F "metadata=@metadata.json"
 
 # Step 4: Verify upload
-curl https://api.378x492.com/admin/plugins/378x492/detection/fraud/crypto_fraud_detector
+curl https://api.fraud-detection-378x492.com/admin/plugins/378x492/detection/fraud/crypto_fraud_detector
 
 # Step 5: Enable in registry (NOT activated yet)
-curl -X POST https://api.378x492.com/admin/plugins/378x492/detection/fraud/crypto_fraud_detector/enable
+curl -X POST https://api.fraud-detection-378x492.com/admin/plugins/378x492/detection/fraud/crypto_fraud_detector/enable
 ```
 
 **Configuration**:

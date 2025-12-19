@@ -10,13 +10,12 @@ jest.mock('../../lib/api', () => ({
 
 describe('Global Error Handlers', () => {
   let addEventListenerSpy: jest.SpyInstance;
-  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     addEventListenerSpy = jest.spyOn(window, 'addEventListener');
     // Don't mock implementation of console.error fully, just spy, 
     // but the utility replaces it, so we need to be careful
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     jest.clearAllMocks();
   });
 
@@ -32,10 +31,10 @@ describe('Global Error Handlers', () => {
 
   it('intercepts critical console errors', () => {
     setupGlobalErrorHandlers();
-    
-    // Trigger the wrapped console.error
+
+    // Trigger the wrapped console.error directly (secureLogger output is ignored)
     console.error('Critical: Something went wrong');
-    
+
     expect(api.reportError).toHaveBeenCalledWith(expect.objectContaining({
       type: 'console_error',
       message: 'Critical: Something went wrong',
@@ -44,9 +43,9 @@ describe('Global Error Handlers', () => {
 
   it('ignores React deprecation warnings', () => {
     setupGlobalErrorHandlers();
-    
+
     console.error('Warning: ReactDOM.render is no longer supported');
-    
+
     // Should NOT report to API
     expect(api.reportError).not.toHaveBeenCalled();
   });

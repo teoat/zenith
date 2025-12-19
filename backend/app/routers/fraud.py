@@ -183,17 +183,10 @@ async def get_fraud_stats(
     db: Session = Depends(get_db),
     current_user: dict = Depends(auth_service.get_current_user),
 ):
-    """Get fraud detection statistics"""
+    """Get real-time fraud detection statistics"""
     try:
-        # This would typically aggregate data from the database
-        # For now, return basic placeholder stats
-        return {
-            "total_cases_analyzed": 0,
-            "total_alerts_generated": 0,
-            "high_risk_alerts": 0,
-            "resolved_alerts": 0,
-            "average_response_time": "0s",
-        }
+        service = FraudDetectionService(db)
+        return service.get_fraud_stats()
     except Exception as e:
         logger.error(f"Error getting fraud stats: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -206,12 +199,33 @@ async def freeze_account(
 ):
     """Freeze a bank account due to suspicious activity"""
     try:
+        from core.database import FrozenEntity
         account_id = payload.get("account_id")
         if not account_id:
             raise HTTPException(status_code=400, detail="account_id is required")
 
-        # Mock freeze logic
-        logger.info(f"FREEZING ACCOUNT: {account_id} by user {current_user.get('id')}")
+        # Check if already frozen
+        existing = db.query(FrozenEntity).filter(FrozenEntity.entity_id == account_id).first()
+        if existing and existing.status == "frozen":
+            return {
+                "status": "already_frozen",
+                "account_id": account_id,
+                "timestamp": existing.frozen_at.isoformat()
+            }
+
+        # Create new freeze record
+        freeze_record = FrozenEntity(
+            entity_id=account_id,
+            entity_type="account",
+            frozen_by=current_user.get("id"),
+            reason=payload.get("reason", "Suspicious activity detected"),
+            metadata_json=payload.get("metadata", {})
+        )
+        
+        db.add(freeze_record)
+        db.commit()
+        
+        logger.info(f"ACCOUNT FROZEN PERMANENTLY: {account_id} by user {current_user.get('id')}")
         
         return {
             "status": "success",
@@ -221,4 +235,5 @@ async def freeze_account(
         }
     except Exception as e:
         logger.error(f"Failed to freeze account {payload.get('account_id')}: {e}")
+        db.rollback()
         raise HTTPException(status_code=500, detail=str(e))

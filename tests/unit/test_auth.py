@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # tests/unit/test_auth.py
 import pytest
 from unittest.mock import Mock, patch
-from backend.app.services.auth_service import AuthService, auth_service
+from backend.app.services.infrastructure.auth_service import AuthService, auth_service
 from core.database import User, UserRole
 
 
@@ -70,7 +70,7 @@ class TestAuthService:
         with pytest.raises(Exception):
             auth_svc.decode_token("")
 
-    @patch('app.services.auth_service.db_service')
+    @patch('backend.app.services.infrastructure.auth_service.db_service')
     def test_authenticate_user_success(self, mock_db, auth_svc):
         """Test successful user authentication"""
         # Mock user
@@ -83,24 +83,23 @@ class TestAuthService:
         assert result == mock_user
         mock_db.get_user_by_username.assert_called_once_with("testuser")
 
-    @patch('services.auth.db_service')
+    @patch('backend.app.services.infrastructure.auth_service.db_service')
     def test_authenticate_user_failure(self, mock_db, auth_svc):
         """Test failed user authentication"""
         # Mock user
         mock_user = Mock()
         mock_user.password_hash = auth_svc.hash_password("correct_password")
-        mock_db.get_user_by_username.return_value = mock_user
+        mock_db.get_user_by_username.side_effect = lambda username: mock_user if username == "testuser" else None
 
         # Wrong password
         result = auth_svc.authenticate_user("testuser", "wrong_password")
         assert result is None
 
         # Non-existent user
-        mock_db.get_user_by_username.return_value = None
         result = auth_svc.authenticate_user("nonexistent", "password")
         assert result is None
 
-    @patch('app.services.database_service.db_service')
+    @patch('app.services.infrastructure.storage.database_service.db_service')
     def test_get_current_user_success(self, mock_db, auth_svc):
         """Test getting current authenticated user"""
         # Mock user
@@ -121,7 +120,7 @@ class TestAuthService:
         assert result == mock_user
         mock_db.get_user.assert_called_once_with("user123")
 
-    @patch('services.auth.db_service')
+    @patch('backend.app.services.infrastructure.auth_service.db_service')
     def test_get_current_user_inactive(self, mock_db, auth_svc):
         """Test getting inactive user fails"""
         # Mock inactive user

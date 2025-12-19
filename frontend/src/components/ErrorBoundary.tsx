@@ -1,4 +1,6 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import { Component } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 
 interface Props {
   children: ReactNode;
@@ -23,7 +25,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
+    secureLogger.error('Uncaught error:', error, errorInfo);
 
     // Categorize error type
     const errorCategory = this.categorizeError(error);
@@ -76,8 +78,13 @@ class ErrorBoundary extends Component<Props, State> {
       });
     }
 
-    // In a real app, you would send this to your error reporting service
-    console.log('Error report:', errorReport);
+    // Send error report to secure logging service
+    secureLogger.error('ERROR_BOUNDARY', 'Error boundary caught an error', {
+      error: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+      retryCount: this.state.retryCount
+    });
   }
 
   private getSeverityLevel(category: string): string {

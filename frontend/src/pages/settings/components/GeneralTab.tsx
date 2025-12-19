@@ -2,9 +2,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../../../providers/LocaleProvider';
-import { LOCALE_DISPLAY_NAMES, SupportedLocale } from '../../../types/locale';
+import type { SupportedLocale } from '../../../types/locale';
+import { LOCALE_DISPLAY_NAMES } from '../../../types/locale';
 import { Moon, Sun, Monitor } from 'lucide-react';
-import { Button } from '../../../components/ui/button';
+import { Button } from '../../../components/ui/Button';
 import { usePersistedState } from '../../../hooks/usePersistedState';
 
 const GeneralTab: React.FC = () => {

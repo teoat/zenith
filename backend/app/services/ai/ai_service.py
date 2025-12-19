@@ -35,6 +35,8 @@ except ImportError:
     from sklearn.metrics.pairwise import cosine_similarity
     HAS_SEMANTIC = False
 
+from app.services.infrastructure.error_handler import error_handler, ErrorCategory, ServiceError
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,10 +49,8 @@ def safe_serialize_vector(vector) -> str:
         # For numpy arrays, convert to list for JSON serialization
         if hasattr(vector, "tolist"):  # numpy array
             return json.dumps(vector.tolist())
-        # For other objects, use base64-encoded pickle with signature
-        pickled = pickle.dumps(vector, protocol=pickle.HIGHEST_PROTOCOL)
-        signature = hashlib.sha256(pickled).hexdigest()[:16]
-        return f"pickle:{signature}:{base64.b64encode(pickled).decode()}"
+        # For other objects, raise error - pickle not allowed for security
+        raise ValueError("Unsupported vector type for serialization")
     except Exception as e:
         logger.error(f"Failed to serialize vector: {e}")
         return None
@@ -62,25 +62,8 @@ def safe_deserialize_vector(vector_str: str):
         return None
 
     try:
-        if vector_str.startswith("pickle:"):
-            # Handle legacy pickled data with signature validation
-            parts = vector_str.split(":", 2)
-            if len(parts) != 3:
-                logger.error("Invalid pickle format")
-                return None
-
-            _, signature, encoded = parts
-            pickled = base64.b64decode(encoded)
-            actual_signature = hashlib.sha256(pickled).hexdigest()[:16]
-
-            if signature != actual_signature:
-                logger.error("Vector data integrity check failed")
-                return None
-
-            return pickle.loads(pickled)
-        else:
-            # Handle JSON-serialized data (numpy arrays as lists)
-            return np.array(json.loads(vector_str))
+        # Handle JSON-serialized data (numpy arrays as lists)
+        return np.array(json.loads(vector_str))
     except Exception as e:
         logger.error(f"Failed to deserialize vector: {e}")
         return None
@@ -272,8 +255,19 @@ class AIService:
     ):
         """Add a document to the vector store"""
         try:
+            # Initialize TF-IDF vectorizer if not exists
+            if not hasattr(self, 'tfidf_vectorizer') or self.tfidf_vectorizer is None:
+                if not HAS_SEMANTIC:
+                    self.tfidf_vectorizer = TfidfVectorizer(
+                        max_features=5000, stop_words="english", ngram_range=(1, 2)
+                    )
+                    # Fit on existing documents if any
+                    if self.vector_store:
+                        docs = [data["content"] for data in self.vector_store.values()]
+                        self.tfidf_vectorizer.fit(docs)
+
             # Create TF-IDF vector
-            if self.tfidf_vectorizer:
+            if hasattr(self, 'tfidf_vectorizer') and self.tfidf_vectorizer:
                 vector = self.tfidf_vectorizer.transform([content]).toarray()[0]
             else:
                 # Fallback: simple hash-based vector
@@ -413,7 +407,17 @@ class AIService:
                     return await self._keyword_search(query, limit, filters)
 
         except Exception as e:
-            logger.error(f"Semantic search failed: {e}")
+            service_error = error_handler.create_error(
+                message="Semantic search operation failed",
+                category=ErrorCategory.BUSINESS_LOGIC,
+                severity=ErrorSeverity.MEDIUM,
+                error_code="AI_SEARCH_FAILED",
+                original_error=e,
+                retryable=True,
+                user_friendly_message="Search temporarily unavailable. Please try again."
+            )
+            logger.error("AI Service error", extra=service_error.to_dict())
+            # Return empty results instead of raising - let router decide how to handle
             return []
 
     async def _keyword_search(

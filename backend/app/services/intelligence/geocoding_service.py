@@ -16,6 +16,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+from app.services.infrastructure.circuit_breaker import circuit_breaker, CircuitBreakerConfig
+
 logger = logging.getLogger(__name__)
 
 
@@ -209,8 +211,14 @@ class GeocodingService:
         except Exception as e:
             logger.error(f"Error caching location: {e}")
 
+    @circuit_breaker("external_api_geocoding", CircuitBreakerConfig(
+        failure_threshold=5, 
+        recovery_timeout=120.0, 
+        expected_exception=(aiohttp.ClientError if aiohttp else Exception, Exception)
+    ))
+
     async def _geocode_online(self, city: str, country: str) -> Optional[Location]:
-        """Attempt online geocoding using free APIs."""
+        """Attempt online geocoding using free APIs with circuit breaker protection."""
         query = f"{city}, {country}"
 
         # Try OpenStreetMap Nominatim (no API key required)

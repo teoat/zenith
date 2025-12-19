@@ -1,20 +1,9 @@
-import React, { Suspense } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { NetworkStatusProvider } from '@/providers/NetworkStatusProvider';
-import { OfflineQueueProvider } from '@/providers/OfflineQueueContext';
-import { AuthProvider } from '@/providers/AuthProvider';
-import { LocaleProvider } from '@/providers/LocaleProvider';
-import { ToastProvider } from '@/providers/ToastProvider';
-import { TourProvider } from '@/context/TourContext';
+import React, { Suspense, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { AppProviders } from '@/providers/AppProviders';
 import { WebSocketProvider } from '@/providers/WebSocketProvider';
-import { WebSocketSync } from '@/components/WebSocketSync';
-import { AIProvider } from '@/context/AIContext';
-import { AIAssistant } from '@/components/ai/AIAssistant';
-import { AccessibilityChecker } from '@/components/accessibility/AccessibilityChecker';
 import { AccessibilityProvider } from '@/context/AccessibilityContext';
-
-const queryClient = new QueryClient();
+import { secureLogger } from '@/utils/secureLogger';
 
 // Lazy load components for better performance with preload hints
 const Dashboard = React.lazy(() => import(/* webpackChunkName: "dashboard" */ '@/pages/Dashboard'));
@@ -58,7 +47,7 @@ const EnhancedEvidenceLocker = React.lazy(() => import(/* webpackChunkName: "enh
 
 import { AppLayout } from '@/components/layout/AppLayout';
 import LoadingState from '@/components/LoadingState';
-import TourSpotlight from '@/components/common/TourSpotlight';
+
 import { setupGlobalErrorHandlers } from '@/utils/errorHandler';
 import antiDebug from '@/utils/antiDebug'; // Import anti-debugging utility
 import '@/utils/performanceMonitor'; // Initialize performance monitoring
@@ -73,18 +62,8 @@ if (process.env.NODE_ENV === 'production') {
   antiDebug();
 }
 
-// Register service worker for caching and offline support
-if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js')
-      .then(function(registration) {
-        console.log('Service Worker registered successfully:', registration.scope);
-      })
-      .catch(function(error) {
-        console.error('Service Worker registration failed:', error);
-      });
-  });
-}
+// Service worker registration moved to useEffect within App component
+
 
 // Enhanced error boundary component
 class EnhancedErrorBoundary extends React.Component<
@@ -104,8 +83,10 @@ class EnhancedErrorBoundary extends React.Component<
     this.setState({ errorInfo });
 
     // Enhanced error reporting
-    console.error('Application Error:', error);
-    console.error('Error Info:', errorInfo);
+    secureLogger.error('APP_ERROR', 'Application Error', {
+      error: error.message,
+      errorInfo
+    });
 
     // Send to error tracking service
     if (window.gtag) {
@@ -181,8 +162,6 @@ const DefaultErrorFallback: React.FC<{ error: Error }> = ({ error }) => (
 );
 
 import { useAuth } from '@/hooks/useAuth';
-import { Navigate } from 'react-router-dom';
-
 import { useProjectStore } from '@/store/projectStore';
 
 const ProjectInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -219,102 +198,93 @@ const AuthWebSocketWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 };
 
-const AppContent: React.FC = () => {
-  return (
-    <AccessibilityChecker>
-      <EnhancedErrorBoundary>
-          <AuthWebSocketWrapper>
-            <WebSocketSync />
-            <TourSpotlight />
-            <Suspense fallback={<LoadingState />}>
-              <Routes>
-              <Route path="/setup" element={<Setup />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/projects" element={<ProtectedRoute><ProjectSelection /></ProtectedRoute>} />
-              <Route
-                path="/*"
-                element={
-                  <ProtectedRoute>
-                    <ProjectInitializer>
-                      <AppLayout>
-                        <Suspense fallback={<LoadingState />}>
-                          <Routes>
-                            <Route path="/" element={<AdjudicationQueue />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/cases" element={<Cases />} />
-                          <Route path="/cases/:caseId" element={<Cases />} />
-                          <Route path="/ingestion" element={<Ingestion />} />
-                          <Route path="/forensics" element={<Forensics />} />
-                          <Route path="/adjudication" element={<AdjudicationQueue />} />
-                          <Route path="/reconciliation" element={<Reconciliation />} />
-                          <Route path="/settings" element={<Settings />} />
-                          <Route path="/design" element={<DesignSystemShowcase />} />
-                          <Route path="/onboarding" element={<OnboardingWizard />} />
-                          <Route path="/proof/:caseId" element={<ProofVisualizationRoute />} />
-                          <Route path="/playback" element={<TemporalPlayback />} />
-                          <Route path="/case/progress" element={<CaseProgressBar />} />
-                          <Route path="/notebook" element={<InvestigationNotebook />} />
-                          <Route path="/dossier/:caseId" element={<DigitalDossierGenerator />} />
-                          <Route path="/performance" element={<PerformanceDashboard />} />
-                          <Route path="/network" element={<NetworkAnalysis />} />
-                          <Route path="/graph" element={<RelationshipGraph />} />
-                          <Route path="/investigation" element={<Investigation />} />
-                          <Route path="/investigation/:caseId" element={<Investigation />} />
-                          <Route path="/reporting" element={<Reporting />} />
-                          <Route path="/code-review" element={<CodeReviewDashboard />} />
-                          <Route path="/predictive-maintenance" element={<PredictiveMaintenanceDashboard />} />
-                          <Route path="/advanced-compliance" element={<AdvancedComplianceDashboard />} />
-                           <Route path="/orchestration" element={<SystemOrchestrationDashboard />} />
-                           <Route path="/approvals" element={<AgentApprovals />} />
-                           <Route path="/drafts" element={<AgentDrafts />} />
-  
-                            {/* Compliance Routes */}
 
-                            <Route path="/compliance/monitoring" element={<ComplianceMonitoring />} />
-                            <Route path="/compliance/sar/create" element={<SARCreation />} />
-                            <Route path="/regulatory/intelligence" element={<RegulatoryIntelligence />} />
-                            <Route path="/diagnostics/system" element={<SystemDiagnosticsCenter />} />
-                            <Route path="/evidence/enhanced" element={<EnhancedEvidenceLocker />} />
-  
-                           <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </Suspense>
-                    </AppLayout>
-                    </ProjectInitializer>
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </Suspense>
-          </AuthWebSocketWrapper>
-      </EnhancedErrorBoundary>
-    </AccessibilityChecker>
-  );
-};
 
 const App: React.FC = () => {
+  // Register service worker for caching and offline support only in production
+  useEffect(() => {
+    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+      const handleLoad = () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(() => {
+            secureLogger.info('SYSTEM', 'Service Worker registered');
+          })
+          .catch((error) => {
+             secureLogger.error('SYSTEM', 'Service Worker registration failed', { error });
+          });
+      };
+
+      window.addEventListener('load', handleLoad);
+      return () => window.removeEventListener('load', handleLoad);
+    }
+  }, []);
+
   return (
     <AccessibilityProvider>
-      <QueryClientProvider client={queryClient}>
-        <NetworkStatusProvider>
-          <LocaleProvider>
-            <ToastProvider>
-              <OfflineQueueProvider>
-                <AuthProvider>
-                  <TourProvider>
-                    <AIProvider>
-                      <Router>
-                        <AppContent />
-                        <AIAssistant />
-                      </Router>
-                    </AIProvider>
-                  </TourProvider>
-                </AuthProvider>
-              </OfflineQueueProvider>
-            </ToastProvider>
-          </LocaleProvider>
-        </NetworkStatusProvider>
-      </QueryClientProvider>
+      <AppProviders>
+        <Router>
+          <AuthWebSocketWrapper>
+            <EnhancedErrorBoundary fallback={DefaultErrorFallback}>
+              <Suspense fallback={<LoadingState />}>
+                <Routes>
+                  <Route path="/setup" element={<Setup />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/projects" element={<ProtectedRoute><ProjectSelection /></ProtectedRoute>} />
+                  <Route
+                    path="/*"
+                    element={
+                      <ProtectedRoute>
+                        <ProjectInitializer>
+                          <AppLayout>
+                            <Suspense fallback={<LoadingState context="page" />}>
+                              <Routes>
+                                <Route path="/" element={<AdjudicationQueue />} />
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/cases" element={<Cases />} />
+                                <Route path="/cases/:caseId" element={<Cases />} />
+                                <Route path="/ingestion" element={<Ingestion />} />
+                                <Route path="/forensics" element={<Forensics />} />
+                                <Route path="/adjudication" element={<AdjudicationQueue />} />
+                                <Route path="/reconciliation" element={<Reconciliation />} />
+                                <Route path="/settings" element={<Settings />} />
+                                <Route path="/design" element={<DesignSystemShowcase />} />
+                                <Route path="/onboarding" element={<OnboardingWizard />} />
+                                <Route path="/proof/:caseId" element={<ProofVisualizationRoute />} />
+                                <Route path="/playback" element={<TemporalPlayback />} />
+                                <Route path="/case/progress" element={<CaseProgressBar />} />
+                                <Route path="/notebook" element={<InvestigationNotebook />} />
+                                <Route path="/dossier/:caseId" element={<DigitalDossierGenerator />} />
+                                <Route path="/performance" element={<PerformanceDashboard />} />
+                                <Route path="/network" element={<NetworkAnalysis />} />
+                                <Route path="/graph" element={<RelationshipGraph />} />
+                                <Route path="/investigation" element={<Investigation />} />
+                                <Route path="/investigation/:caseId" element={<Investigation />} />
+                                <Route path="/reporting" element={<Reporting />} />
+                                <Route path="/code-review" element={<CodeReviewDashboard />} />
+                                <Route path="/predictive-maintenance" element={<PredictiveMaintenanceDashboard />} />
+                                <Route path="/advanced-compliance" element={<AdvancedComplianceDashboard />} />
+                                <Route path="/orchestration" element={<SystemOrchestrationDashboard />} />
+                                <Route path="/approvals" element={<AgentApprovals />} />
+                                <Route path="/drafts" element={<AgentDrafts />} />
+                                <Route path="/compliance/monitoring" element={<ComplianceMonitoring />} />
+                                <Route path="/compliance/sar/create" element={<SARCreation />} />
+                                <Route path="/regulatory/intelligence" element={<RegulatoryIntelligence />} />
+                                <Route path="/diagnostics/system" element={<SystemDiagnosticsCenter />} />
+                                <Route path="/evidence/enhanced" element={<EnhancedEvidenceLocker />} />
+                                <Route path="*" element={<NotFound />} />
+                              </Routes>
+                            </Suspense>
+                          </AppLayout>
+                        </ProjectInitializer>
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </Suspense>
+            </EnhancedErrorBoundary>
+          </AuthWebSocketWrapper>
+        </Router>
+      </AppProviders>
     </AccessibilityProvider>
   );
 };

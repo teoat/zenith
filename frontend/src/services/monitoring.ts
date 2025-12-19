@@ -1,5 +1,6 @@
 import { request } from './client';
-import { HealthMetrics, SystemMetrics, PerformanceData, ErrorSummary } from '../types/api';
+import { secureLogger } from '../utils/secureLogger';
+import type { HealthMetrics, SystemMetrics, PerformanceData, ErrorSummary } from '../types/api';
 
 export const monitoringService = {
   getHealthMetrics: async (): Promise<HealthMetrics> => {
@@ -11,7 +12,9 @@ export const monitoringService = {
       const response = await request<{ success: boolean; system_metrics: SystemMetrics }>('/apm/system-metrics');
       return response.system_metrics;
     } catch (error) {
-      console.error('Failed to get system status, returning fallback:', error);
+      secureLogger.error('API', 'Failed to get system status, returning fallback', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
        // Return fallback data ONLY if backend is truly unreachable, to prevent UI crash
       return {
         status: 'warning',
@@ -36,7 +39,9 @@ export const monitoringService = {
     try {
       return await request<PerformanceData[]>(`/apm/performance-history?time_range_hours=${timeRangeHours}`);
     } catch (error) {
-      console.error('Failed to get performance history:', error);
+      secureLogger.error('API', 'Failed to get performance history', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       return [];
     }
   },
@@ -45,7 +50,9 @@ export const monitoringService = {
     try {
       return await request<ErrorSummary>(`/apm/error-summary?time_range_hours=${timeRangeHours}`);
     } catch (error) {
-       console.error('Failed to get error summary:', error);
+       secureLogger.error('API', 'Failed to get error summary', { 
+         error: error instanceof Error ? error.message : String(error) 
+       });
        return {
          total_errors: 0,
          error_types: {},
@@ -60,8 +67,22 @@ export const monitoringService = {
         method: 'POST',
         body: JSON.stringify(errorData),
       });
-    } catch (e) {
-      console.error('Failed to send error report', e);
+    } catch (error) {
+      secureLogger.error('API', 'Failed to send error report', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  },
+
+  getSystemDiagnostics: async (): Promise<any> => {
+    try {
+      return await request('/admin/system/diagnostics');
+    } catch (error) {
+      secureLogger.error('API', 'Failed to get system diagnostics', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+      throw error;
     }
   }
 };
+

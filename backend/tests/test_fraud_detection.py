@@ -59,7 +59,9 @@ class TestFraudDetectionEngine:
         with pytest.raises(TypeError, match="must be a Transaction instance"):
             detection_engine.analyze_transactions([{"not": "a transaction"}])
 
-    def test_analyze_transactions_with_valid_input(self, detection_engine, valid_transactions):
+    def test_analyze_transactions_with_valid_input(
+        self, detection_engine, valid_transactions
+    ):
         """Test that valid input doesn't raise errors"""
         alerts = detection_engine.analyze_transactions(valid_transactions)
         assert isinstance(alerts, list)

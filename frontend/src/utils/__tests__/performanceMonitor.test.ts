@@ -1,14 +1,10 @@
 import PerformanceMonitor, { performanceMonitor } from '../performanceMonitor';
 
 describe('PerformanceMonitor', () => {
-  let mockConsoleGroup: jest.SpyInstance;
-  let mockConsoleLog: jest.SpyInstance;
-  let mockConsoleWarn: jest.SpyInstance;
-
   beforeEach(() => {
-    mockConsoleGroup = jest.spyOn(console, 'group').mockImplementation(() => {});
-    mockConsoleLog = jest.spyOn(console, 'log').mockImplementation(() => {});
-    mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    // mockConsoleGroup = jest.spyOn(console, 'group').mockImplementation(() => {});
+    // mockConsoleLog = jest.spyOn(console, 'log').mockImplementation(() => {});
+    // mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     
     // Mock window.performance
     Object.defineProperty(window, 'performance', {
@@ -23,7 +19,7 @@ describe('PerformanceMonitor', () => {
     });
 
     // Mock PerformanceObserver
-    global.PerformanceObserver = jest.fn().mockImplementation((callback) => ({
+    global.PerformanceObserver = jest.fn().mockImplementation((_callback) => ({
       observe: jest.fn(),
       disconnect: jest.fn(),
       takeRecords: jest.fn(),
@@ -45,10 +41,13 @@ describe('PerformanceMonitor', () => {
   });
 
   it('logs metrics', () => {
+    const mockConsoleInfo = jest.spyOn(console, 'info').mockImplementation(() => {});
     const monitor = new PerformanceMonitor();
     monitor.logMetrics();
-    expect(mockConsoleGroup).toHaveBeenCalledWith('🚀 Performance Metrics');
-    expect(mockConsoleLog).toHaveBeenCalled();
+    expect(mockConsoleInfo).toHaveBeenCalledWith(
+      expect.stringContaining('[PERFORMANCE]'),
+      expect.any(Object)
+    );
   });
 
   it('reports to analytics if gtag exists', () => {
@@ -65,9 +64,8 @@ describe('PerformanceMonitor', () => {
 
   it('cleans up observers on destroy', () => {
     const monitor = new PerformanceMonitor();
-    // @ts-ignore - accessing private property for test
     const disconnectSpy = jest.fn();
-    // @ts-ignore
+    // @ts-expect-error - accessing private property for test
     monitor.observers = [{ disconnect: disconnectSpy }];
     
     monitor.destroy();

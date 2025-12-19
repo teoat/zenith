@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, FileText, Image, File, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import { secureLogger } from '../../utils/secureLogger';
 
 interface ProcessedDocument {
   success: boolean;
@@ -41,8 +42,8 @@ export const DocumentViewer: React.FC = () => {
         const result = await response.json();
         setResults([result]);
         setSelectedResult(result);
-      } catch (_error) {
-        console.error('Processing failed:', error);
+       } catch (error) { 
+        secureLogger.error('Processing failed:', error);
       }
     } else {
       // Batch processing
@@ -59,8 +60,8 @@ export const DocumentViewer: React.FC = () => {
         if (data.results?.length > 0) {
           setSelectedResult(data.results[0]);
         }
-      } catch (_error) {
-        console.error('Batch processing failed:', error);
+       } catch (error) { 
+        secureLogger.error('Batch processing failed:', error);
       }
     }
     

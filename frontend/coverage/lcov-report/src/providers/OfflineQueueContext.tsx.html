@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/59</span>
+                <span class='fraction'>0/60</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/53</span>
+                <span class='fraction'>0/54</span>
             </div>
         
             
@@ -180,7 +180,11 @@
 <a name='L115'></a><a href='#L115'>115</a>
 <a name='L116'></a><a href='#L116'>116</a>
 <a name='L117'></a><a href='#L117'>117</a>
-<a name='L118'></a><a href='#L118'>118</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -298,9 +302,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import React, { useEffect, useState } from 'react';</span>
+&nbsp;
 <span class="cstat-no" title="statement not covered" >import { useNetworkStatus } from '../hooks/useNetworkStatus';</span>
 <span class="cstat-no" title="statement not covered" >import { api } from '../lib/api';</span>
-<span class="cstat-no" title="statement not covered" >import { QueuedRequest, OfflineQueueContext } from '../context/OfflineQueueContext';</span>
+<span class="cstat-no" title="statement not covered" >import { OfflineQueueContext, type QueuedRequest } from '../context/OfflineQueueContext';</span>
+<span class="cstat-no" title="statement not covered" >import { secureLogger } from '../utils/secureLogger'; </span>// Import secureLogger
 &nbsp;
 const QUEUE_STORAGE_KEY = <span class="cstat-no" title="statement not covered" >'offline_mutation_queue';</span>
 &nbsp;
@@ -310,7 +316,7 @@ export const <span class="cstat-no" title="statement not covered" >OfflineQueueP
 <span class="cstat-no" title="statement not covered" >    try {</span>
       const stored = <span class="cstat-no" title="statement not covered" >localStorage.getItem(QUEUE_STORAGE_KEY);</span>
 <span class="cstat-no" title="statement not covered" >      return stored ? JSON.parse(stored) : [];</span>
-    } catch { // Ignore parse errors
+    } catch {
 <span class="cstat-no" title="statement not covered" >      return [];</span>
     }
   });
@@ -330,7 +336,7 @@ export const <span class="cstat-no" title="statement not covered" >OfflineQueueP
                 // We should only update if it's different to prevent loops, 
                 // but for now simple setQueue is fine as Re-render is cheap
 <span class="cstat-no" title="statement not covered" >                setQueue(JSON.parse(storedQueue));</span>
-            } catch(_e) { // Renamed to _e
+            } catch {
                 // Ignore storage parse errors
             }
         }
@@ -344,7 +350,7 @@ export const <span class="cstat-no" title="statement not covered" >OfflineQueueP
   const addToQueue = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(r</span>equest: Omit&lt;QueuedRequest, 'id' | 'timestamp'&gt;) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    setQueue(<span class="fstat-no" title="function not covered" >(p</span>rev) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (prev.length &gt;= 50) {</span>
-<span class="cstat-no" title="statement not covered" >        console.warn('[OfflineQueue] Queue limit reached (50 items). Dropping oldest request.');</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.warn('OFFLINE', 'Queue limit reached (50 items). Dropping oldest request.');</span>
         const [, ...rest] = <span class="cstat-no" title="statement not covered" >prev;</span>
 <span class="cstat-no" title="statement not covered" >        return [...rest, {</span>
           ...request,
@@ -378,23 +384,23 @@ export const <span class="cstat-no" title="statement not covered" >OfflineQueueP
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      for (const req of currentQueue) {</span>
 <span class="cstat-no" title="statement not covered" >        try {</span>
-<span class="cstat-no" title="statement not covered" >          console.log(`[OfflineQueue] Replaying request: ${req.method} (ID: ${req.id})`);</span>
+<span class="cstat-no" title="statement not covered" >          secureLogger.info('OFFLINE', `Replaying request: ${req.method} (ID: ${req.id})`);</span>
 &nbsp;
           // Dynamically invoke API method
           // @ts-expect-error - Dynamic method invocation
 <span class="cstat-no" title="statement not covered" >          if (typeof api[req.method] === 'function') {</span>
             // @ts-expect-error - spread args safely
 <span class="cstat-no" title="statement not covered" >            await api[req.method](...req.body); </span>// body is assumed to be args array
-<span class="cstat-no" title="statement not covered" >            console.log(`[OfflineQueue] Request ${req.id} succeeded`);</span>
+<span class="cstat-no" title="statement not covered" >            secureLogger.info('OFFLINE', `Request ${req.id} succeeded`);</span>
 <span class="cstat-no" title="statement not covered" >            removeFromQueue(req.id);</span>
           } else {
-<span class="cstat-no" title="statement not covered" >            console.error(`[OfflineQueue] Unknown API method: ${req.method}`);</span>
+<span class="cstat-no" title="statement not covered" >            secureLogger.error('OFFLINE', `Unknown API method: ${req.method}`);</span>
             // Drop invalid requests to prevent blocking
 <span class="cstat-no" title="statement not covered" >            removeFromQueue(req.id);</span>
           }
 &nbsp;
-        } catch (error) {
-<span class="cstat-no" title="statement not covered" >          console.error(`[OfflineQueue] Request ${req.id} failed`, error);</span>
+         } catch (error) { 
+<span class="cstat-no" title="statement not covered" >          secureLogger.error('OFFLINE', `Request ${req.id} failed`, { error: String(error) });</span>
           // Stop syncing on error to preserve order
 <span class="cstat-no" title="statement not covered" >          break;</span>
         }
@@ -421,7 +427,7 @@ export const <span class="cstat-no" title="statement not covered" >OfflineQueueP
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:26.724Z
+                at 2025-12-19T02:07:52.612Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

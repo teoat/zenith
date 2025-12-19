@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, Plus, Trash2, Edit3, FileText, Loader } from 'lucide-react';
 import { AccessibleButton } from './ui/AccessibleButton';
 import { caseService } from '../services/cases';
+import { secureLogger } from '../utils/secureLogger';
 
 interface Note {
   id: string;
@@ -37,8 +38,8 @@ const InvestigationNotebook: React.FC<InvestigationNotebookProps> = ({
           timestamp: new Date(n.timestamp || Date.now())
         }));
         setNotes(loadedNotes);
-      } catch (_error) {
-        console.error('Failed to load notes:', error);
+       } catch (error) { 
+        secureLogger.error('Failed to load notes:', error);
       } finally {
         setIsLoading(false);
       }
@@ -68,8 +69,8 @@ const InvestigationNotebook: React.FC<InvestigationNotebookProps> = ({
       setNotes([createdNote, ...notes]);
       setActiveNote(createdNote);
       setIsEditing(true);
-    } catch (_error) {
-      console.error('Failed to create note:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to create note:', error);
     }
   };
 
@@ -88,8 +89,8 @@ const InvestigationNotebook: React.FC<InvestigationNotebookProps> = ({
       );
       setNotes(updatedNotes);
       setActiveNote(updatedNote);
-    } catch (_error) {
-      console.error('Failed to update note:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to update note:', error);
     }
   };
 
@@ -105,8 +106,8 @@ const InvestigationNotebook: React.FC<InvestigationNotebookProps> = ({
         setActiveNote(null);
         setIsEditing(false);
       }
-    } catch (_error) {
-      console.error('Failed to delete note:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to delete note:', error);
     }
   };
 

@@ -1,9 +1,10 @@
 // frontend/src/components/collaboration/CollaborativeEditor.tsx
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Button } from '../ui/button';
+import { Button } from '../ui/Button';
 // Input import removed as unused
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { Users, User, Edit3, Save, X } from 'lucide-react';
+import { secureLogger } from '../../utils/secureLogger';
 
 interface UserPresence {
   user_id: string;
@@ -42,7 +43,7 @@ export function CollaborativeEditor({
       const ws = new WebSocket(`ws://localhost:8000/ws/${documentId}`);
 
       ws.onopen = () => {
-        console.log('Connected to collaborative editing');
+        secureLogger.info('Connected to collaborative editing');
         setIsConnected(true);
         wsRef.current = ws;
 
@@ -58,7 +59,7 @@ export function CollaborativeEditor({
 
         switch (message.type) {
           case 'welcome':
-            console.log('Joined collaborative session');
+            secureLogger.info('Joined collaborative session');
             break;
 
           case 'user_joined':
@@ -85,13 +86,13 @@ export function CollaborativeEditor({
             break;
 
           case 'error':
-            console.error('WebSocket error:', message.message);
+            secureLogger.error('WebSocket error:', message.message);
             break;
         }
       };
 
       ws.onclose = () => {
-        console.log('Disconnected from collaborative editing');
+        secureLogger.info('Disconnected from collaborative editing');
         setIsConnected(false);
         setUsers([]);
         wsRef.current = null;
@@ -101,7 +102,7 @@ export function CollaborativeEditor({
       };
 
       ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        secureLogger.error('WebSocket error:', error);
       };
     };
 

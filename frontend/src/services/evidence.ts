@@ -1,5 +1,5 @@
 import { request, isElectron, API_BASE, getToken } from './client';
-import { EvidenceItem, ProcessedEvidence, FileSelectResult } from '../types/api';
+import type { EvidenceItem, ProcessedEvidence, FileSelectResult } from '../types/api';
 
 export const evidenceService = {
   getEvidence: async (caseId?: string, page: number = 1, pageSize: number = 20, query?: string): Promise<{ items: EvidenceItem[]; total: number }> => {

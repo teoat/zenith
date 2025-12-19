@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Brain, AlertTriangle, CheckCircle, TrendingUp, Activity } from 'lucide-react';
 import { aiFraudDetector } from '../../lib/AIFraudDetection';
+import { secureLogger } from '../../utils/secureLogger';
 // api import removed as unused
 
 interface TransactionData {
@@ -193,8 +194,8 @@ export function AIModelPerformance() {
       setLoading(true);
       const perf = await aiFraudDetector.getModelPerformance();
       setPerformance(perf);
-    } catch (_error) {
-      console.error('Failed to load AI performance:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to load AI performance:', error);
     } finally {
       setLoading(false);
     }

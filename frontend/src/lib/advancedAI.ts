@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 
 // Advanced AI Features - Quantum-Resistant Cryptography & More
 // Note: This file contains placeholder implementations for advanced features
@@ -91,7 +92,7 @@ export class VoiceController {
       };
 
       this.recognition.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
+        secureLogger.error('Speech recognition error:', event.error);
       };
     }
   }

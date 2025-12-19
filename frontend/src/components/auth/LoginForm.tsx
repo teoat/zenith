@@ -52,7 +52,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+    <form className="space-y-6" onSubmit={handleSubmit} data-testid="login-form">
       <ErrorMessage error={error || undefined} onDismiss={clearError} />
 
       {!mfaRequired ? (
@@ -66,11 +66,18 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
+                autoComplete="username"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                aria-label="Email address"
+                aria-required="true"
+                placeholder="your@email.com"
+                data-testid="username-input"
+                className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-slate-800 dark:text-white"
               />
             </div>
           </div>
@@ -88,7 +95,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                aria-label="Password"
+                aria-required="true"
+                placeholder="Enter your password"
+                data-testid="password-input"
+                className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-slate-800 dark:text-white"
               />
             </div>
           </div>
@@ -111,12 +122,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
               name="mfaCode"
               type="text"
               autoComplete="one-time-code"
+              inputMode="numeric"
+              pattern="[0-9]*"
               required
               maxLength={6}
               placeholder="123456"
               value={mfaCode}
               onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ''))} // Only numbers
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm tracking-widest text-center text-lg"
+              aria-label="Six-digit authentication code"
+              aria-required="true"
+              aria-describedby="mfa-help"
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm tracking-widest text-center text-lg dark:bg-slate-800 dark:text-white"
             />
           </div>
           
@@ -136,6 +152,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         <AccessibleButton
           type="submit"
           loading={loading}
+          data-testid="login-button"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           {mfaRequired ? 'Verify & Sign in' : 'Sign in'}

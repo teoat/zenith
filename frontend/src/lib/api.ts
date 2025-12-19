@@ -15,7 +15,7 @@ import { reconciliationService } from '../services/reconciliation';
 import { userService } from '../services/user';
 import { aiService } from '../services/ai';
 import { integrationService } from '../services/integrations';
-import { costOptimizationService } from '../services/costOptimization';
+// import { costOptimizationService } from '../services/costOptimization';
 // diagnosticsService is standalone (uses internal logic, not the API facade)
 
 // Export types

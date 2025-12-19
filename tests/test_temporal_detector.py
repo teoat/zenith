@@ -5,12 +5,18 @@ from datetime import datetime, timedelta
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('backend'))
 
-from backend.core.database import create_tables, Transaction
-from backend.app.services.fraud_detection import detect_burst
+from backend.core.database import create_tables, Transaction, Base
+from backend.app.services.fraud.fraud_detection import detect_burst
 from core.database import create_engine_and_session, utc_now
 from test_config import setup_test_environment
+from sqlalchemy import create_engine
 
 setup_test_environment()
+
+# Recreate tables to include new schema changes
+engine, SessionLocal = create_engine_and_session()
+Base.metadata.drop_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 create_tables()
 
 def insert_tx(session, tx_id, date, ip=None, device=None, ext=None, amount=1.0):
@@ -19,7 +25,7 @@ def insert_tx(session, tx_id, date, ip=None, device=None, ext=None, amount=1.0):
 
 
 def test_detect_burst_simple():
-    engine, SessionLocal = create_engine_and_session()
+    # Use the same engine and session maker
     s = SessionLocal()
     try:
         # Clear any existing test transactions (best-effort)

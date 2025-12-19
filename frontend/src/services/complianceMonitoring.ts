@@ -1,3 +1,5 @@
+import { secureLogger } from '../utils/secureLogger';
+
 // Compliance Monitoring Service - Real-time monitoring and alerting for compliance systems
 // Tracks system health, compliance metrics, and provides alerting capabilities
 
@@ -104,8 +106,10 @@ class ComplianceMonitoringService {
         compliance_score: 92,
         last_updated: new Date().toISOString()
       };
-    } catch (_error) {
-      console.error('Failed to get system health:', error);
+    } catch (error) {
+      secureLogger.error('COMPLIANCE', 'Failed to get system health', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       throw error;
     }
   }
@@ -129,8 +133,10 @@ class ComplianceMonitoringService {
           error_rate: systemHealth.error_rate
         }
       };
-    } catch (_error) {
-      console.error('Failed to get monitoring dashboard:', error);
+    } catch (error) {
+      secureLogger.error('COMPLIANCE', 'Failed to get monitoring dashboard', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       throw error;
     }
   }
@@ -183,20 +189,22 @@ class ComplianceMonitoringService {
       }
 
       return alerts;
-    } catch (_error) {
-      console.error('Failed to get active alerts:', error);
+    } catch (error) {
+      secureLogger.error('COMPLIANCE', 'Failed to get active alerts', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       return [];
     }
   }
 
   async acknowledgeAlert(alertId: string): Promise<void> {
     // In production, call backend API
-    console.log(`Alert ${alertId} acknowledged`);
+    secureLogger.info('COMPLIANCE', `Alert acknowledged: ${alertId}`);
   }
 
   async resolveAlert(alertId: string): Promise<void> {
     // In production, call backend API
-    console.log(`Alert ${alertId} resolved`);
+    secureLogger.info('COMPLIANCE', `Alert resolved: ${alertId}`);
   }
 
   // Compliance Trends
@@ -240,8 +248,10 @@ class ComplianceMonitoringService {
           await this.createAlert(rule, currentValue);
         }
       }
-    } catch (_error) {
-      console.error('Failed to check thresholds:', error);
+    } catch (error) {
+      secureLogger.error('COMPLIANCE', 'Threshold check failed', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
     }
   }
 
@@ -263,7 +273,7 @@ class ComplianceMonitoringService {
     };
 
     // In production, send to backend and notification system
-    console.warn('Alert triggered:', alert);
+    secureLogger.warn('COMPLIANCE', `Alert triggered: ${rule.name}`, { alert });
   }
 
   // Performance Monitoring
@@ -306,8 +316,10 @@ class ComplianceMonitoringService {
       try {
         await this.checkThresholds();
         await this.performHealthCheck();
-      } catch (_error) {
-        console.error('Monitoring check failed:', error);
+      } catch (error) {
+        secureLogger.error('COMPLIANCE', 'Monitoring check failed', { 
+          error: error instanceof Error ? error.message : String(error) 
+        });
       }
     }, intervalMinutes * 60 * 1000);
 

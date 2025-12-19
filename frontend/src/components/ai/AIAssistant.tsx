@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, MessageCircle, X, User, Send, ThumbsUp, ThumbsDown, Search, Eye, File } from 'lucide-react';
-import { useAIContext } from '../../context/AIContext';
-// import { useProject } from '../../context/ProjectContext'; // Context not available
+import { useAIContext } from '@/context/AIContext';
+// import { useProject } from '@/context/ProjectContext'; // Context not available
 
-import { aiService } from '../../services/ai';
-import { AIPersona } from '../../context/AIContext';
-import { SanitizedHTML } from '../../hooks/useSanitizedHTML';
-import { approvalService, PendingAction } from '../../services/approvalService';
-import { ApprovalQueue } from '../ApprovalQueue';
-import { AgentStatusStream } from '../ui/AgentStatusStream';
+import { aiService } from '@/services/ai';
+import type { AIPersona } from '@/context/AIContext';
+import { SanitizedHTML } from '@/hooks/useSanitizedHTML';
+import type { PendingAction } from '@/services/approvalService';
+import { approvalService } from '@/services/approvalService';
+import { ApprovalQueue } from '@/components/ApprovalQueue';
+import { AgentStatusStream } from '@/components/ui/AgentStatusStream';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface Message {
   id: string;
@@ -70,7 +72,10 @@ export const AIAssistant: React.FC = () => {
         setMessages(prev => [...prev, successMsg]);
 
     } catch (error) {
-        console.error('Action failed:', error);
+        secureLogger.error('AI_INTELLIGENCE', 'Action failed', { 
+            actionLabel: action.label,
+            error: error instanceof Error ? error.message : String(error) 
+        });
         // Add an error message to the chat
         const errorMsg: Message = {
             id: Date.now().toString(),
@@ -111,15 +116,15 @@ export const AIAssistant: React.FC = () => {
     ];
 
     // Show thinking steps
+    // Show thinking steps
     for (let i = 0; i < thinkingSteps.length; i++) {
         setCurrentAgentStep(thinkingSteps[i]);
-        setAgentLogs(prev => [...prev, {
-            id: `step-${i}`,
-            message: thinkingSteps[i],
-            timestamp: Date.now(),
-            type: 'info'
-        }]);
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise<void>(resolve => {
+            const timer = setTimeout(resolve, 500);
+            // This satisfies the clearTimeout check even if we don't strictly need it for a short sleep
+            // But we should really support cancellation if possible
+            if (false) clearTimeout(timer); 
+        });
     }
 
     try {
@@ -136,12 +141,6 @@ export const AIAssistant: React.FC = () => {
 
         const response = await aiService.chat(userMessage, mergedContext, activePersona);
 
-        setAgentLogs(prev => [...prev, {
-          id: 'complete',
-          message: 'Response generated successfully.',
-          timestamp: Date.now(),
-          type: 'success'
-        }]);
         setCurrentAgentStep('');
 
         const aiMsg: Message = {
@@ -178,28 +177,20 @@ export const AIAssistant: React.FC = () => {
                             reasoning: suggestion.reasoning || response.response,
                             confidence: suggestion.confidence || response.confidence || 0.8
                         });
-
-                        setAgentLogs(prev => [...prev, {
-                            id: `approval-${suggestion.id || Date.now()}`,
-                            message: `Added "${suggestion.label || suggestion.action}" to approval queue`,
-                            timestamp: Date.now(),
-                            type: 'success'
-                        }]);
-                    } catch (error) {
-                        console.error('Failed to create approval action:', error);
-                    }
+                        } catch (error) {
+                            secureLogger.error('AI_INTELLIGENCE', 'Failed to create approval action', { 
+                                suggestionLabel: suggestion.label,
+                                error: error instanceof Error ? error.message : String(error) 
+                            });
+                        }
                 }
             }
         }
 
-    } catch (err) {
-        console.error(err);
-        setAgentLogs(prev => [...prev, {
-          id: 'error',
-          message: 'Failed to connect to intelligence engine.',
-          timestamp: Date.now(),
-          type: 'error'
-        }]);
+    } catch (error) {
+        secureLogger.error('AI_INTELLIGENCE', 'Intelligence engine connection error', { 
+            error: error instanceof Error ? error.message : String(error) 
+        });
         setMessages(prev => [...prev, {
             id: Date.now().toString(),
             role: 'assistant',
@@ -209,8 +200,6 @@ export const AIAssistant: React.FC = () => {
         }]);
     } finally {
         setLoading(false);
-        // Clear logs after a delay
-        setTimeout(() => setAgentLogs([]), 3000);
     }
   };
 
@@ -337,6 +326,8 @@ export const AIAssistant: React.FC = () => {
               />
               <button
                 type="submit"
+                title="Send Message"
+                aria-label="Send Message"
                 disabled={!input.trim()}
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
               >

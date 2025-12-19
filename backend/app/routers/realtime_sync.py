@@ -15,8 +15,97 @@ router = APIRouter(prefix="/sync", tags=["realtime-sync"])
 
 @router.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: str):
-    """WebSocket endpoint for real-time collaboration"""
+    """WebSocket endpoint for real-time collaboration with authentication"""
     try:
+        # Accept connection first to allow sending error messages
+        await websocket.accept()
+
+        # Extract token from query parameters
+        query_params = websocket.query_params
+        token = query_params.get("token")
+
+        if not token:
+            await websocket.send_json({
+                "type": "error",
+                "message": "Authentication token required"
+            })
+            await websocket.close(code=1008, reason="Authentication required")
+            return
+
+        # Validate JWT token
+        try:
+            from app.services.infrastructure.auth_service import auth_service
+            payload = auth_service.decode_token(token)
+            token_user_id = payload.get("sub")
+
+            # Verify token belongs to requested user
+            if token_user_id != user_id:
+                await websocket.send_json({
+                    "type": "error",
+                    "message": "Token does not match user ID"
+                })
+                await websocket.close(code=1008, reason="Authentication failed")
+                return
+
+            # Check MFA if required
+            mfa_verified = payload.get("mfa_verified", False)
+            if not mfa_verified:
+                await websocket.send_json({
+                    "type": "error",
+                    "message": "MFA verification required"
+                })
+                await websocket.close(code=1008, reason="MFA required")
+                return
+
+        except Exception as e:
+            logger.error(f"WebSocket authentication failed: {e}")
+            await websocket.send_json({
+                "type": "error",
+                "message": "Invalid authentication token"
+            })
+            await websocket.close(code=1008, reason="Authentication failed")
+            return
+            try:
+                from app.services.infrastructure.auth_service import auth_service
+                payload = auth_service.decode_token(token)
+                token_user_id = payload.get("sub")
+
+                # Verify token belongs to requested user
+                if token_user_id != user_id:
+                    await websocket.send_json({
+                        "type": "error",
+                        "message": "Token does not match user ID"
+                    })
+                    await websocket.close(code=1008, reason="Authentication failed")
+                    return
+
+                # Check MFA if required
+                mfa_verified = payload.get("mfa_verified", False)
+                if not mfa_verified:
+                    await websocket.send_json({
+                        "type": "error",
+                        "message": "MFA verification required"
+                    })
+                    await websocket.close(code=1008, reason="MFA required")
+                    return
+
+            except Exception as e:
+                logger.error(f"WebSocket authentication failed: {e}")
+                await websocket.send_json({
+                    "type": "error",
+                    "message": "Invalid authentication token"
+                })
+                await websocket.close(code=1008, reason="Authentication failed")
+                return
+        else:
+            # No token provided - require authentication
+            await websocket.send_json({
+                "type": "error",
+                "message": "Authentication token required"
+            })
+            await websocket.close(code=1008, reason="Authentication required")
+            return
+
         # Generate client ID
         client_id = f"{user_id}_{datetime.now().timestamp()}"
 

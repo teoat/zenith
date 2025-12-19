@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter, ZAxis, Cell } from 'recharts';
 import { Check, Building, Briefcase, Search } from 'lucide-react';
 import { reportingService } from '../../services/reporting';
-import { ProjectTrackerData } from '../../types/api';
+import type { ProjectTrackerData } from '../../types/api';
 import { useProjectStore } from '../../store/projectStore';
+import { secureLogger } from '../../utils/secureLogger';
 
 interface VendorOutlier {
     x: number;
@@ -35,7 +36,7 @@ const ProjectTracker = () => {
         const trackerData = await reportingService.getProjectTracker(activeProjectId || 'CASE-001');
         setData(trackerData);
       } catch (err) {
-        console.error("Failed to load tracker", err);
+        secureLogger.error("Failed to load tracker", err);
         // Fallback mock
         setData({
             caseId: 'CASE-001',

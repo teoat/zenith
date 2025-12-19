@@ -1,8 +1,9 @@
 // pages/Ingestion.tsx
 import React from 'react';
 import FacetedFilter from '../components/cases/FacetedFilter';
-import { useIngestionStore } from '../stores/useIngestionStore';
+import { useIngestionStore } from '../store/useIngestionStore';
 import { IngestionStepper } from '../components/ingestion/IngestionStepper';
+import PageErrorBoundary from '../components/PageErrorBoundary';
 
 interface FilterOption {
   id: string;
@@ -93,4 +94,10 @@ const Ingestion: React.FC = () => {
   );
 };
 
-export default Ingestion;
+const IngestionWithErrorBoundary = () => (
+  <PageErrorBoundary>
+    <Ingestion />
+  </PageErrorBoundary>
+);
+
+export default IngestionWithErrorBoundary;

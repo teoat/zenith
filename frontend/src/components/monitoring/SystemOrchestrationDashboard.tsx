@@ -1,5 +1,6 @@
 // frontend/src/components/monitoring/SystemOrchestrationDashboard.tsx
 import React, { useState, useEffect, useCallback } from 'react';
+import { secureLogger } from '../../utils/secureLogger';
 import {
   Activity,
   AlertTriangle,
@@ -139,7 +140,7 @@ const SystemOrchestrationDashboard: React.FC = () => {
 
       setMetrics(orchestrationMetrics);
     } catch (err) {
-      console.error('Failed to load orchestration metrics:', err);
+      secureLogger.error('Failed to load orchestration metrics:', err);
       setError('Failed to load system orchestration metrics');
     } finally {
       setLoading(false);

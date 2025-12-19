@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>0/16</span>
             </div>
         
             
@@ -39,7 +39,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>0/9</span>
             </div>
         
             
@@ -122,31 +122,18 @@
 <a name='L57'></a><a href='#L57'>57</a>
 <a name='L58'></a><a href='#L58'>58</a>
 <a name='L59'></a><a href='#L59'>59</a>
-<a name='L60'></a><a href='#L60'>60</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -156,6 +143,25 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -181,12 +187,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { useState } from 'react';</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import React, { useState, Suspense } from 'react';</span>
 <span class="cstat-no" title="statement not covered" >import { LayoutDashboard, TrendingUp, Presentation, FileText } from 'lucide-react';</span>
-<span class="cstat-no" title="statement not covered" >import SummaryPreview from '../components/reporting/SummaryPreview';</span>
-<span class="cstat-no" title="statement not covered" >import FinancialHealth from '../components/reporting/FinancialHealth';</span>
-<span class="cstat-no" title="statement not covered" >import ProjectTracker from '../components/reporting/ProjectTracker';</span>
 <span class="cstat-no" title="statement not covered" >import ReportBuilder from '../components/reporting/ReportBuilder';</span>
+&nbsp;
+const SummaryPreview = <span class="cstat-no" title="statement not covered" >React.lazy(<span class="fstat-no" title="function not covered" >() =</span>&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > import('</span>../components/reporting/SummaryPreview'))</span>;</span>
+const FinancialHealth = <span class="cstat-no" title="statement not covered" >React.lazy(<span class="fstat-no" title="function not covered" >() =</span>&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > import('</span>../components/reporting/FinancialHealth'))</span>;</span>
+const ProjectTracker = <span class="cstat-no" title="statement not covered" >React.lazy(<span class="fstat-no" title="function not covered" >() =</span>&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > import('</span>../components/reporting/ProjectTracker'))</span>;</span>
 &nbsp;
 const Reporting = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
   const [activeTab, setActiveTab] = <span class="cstat-no" title="statement not covered" >useState&lt;'summary' | 'financial' | 'project' | 'builder'&gt;('summary');</span>
@@ -225,14 +232,16 @@ const Reporting = <span class="cstat-no" title="statement not covered" ><span cl
       {/* Content */}
       &lt;div className="flex-1 overflow-y-auto"&gt;
         &lt;div className="max-w-7xl mx-auto w-full"&gt;
-          {activeTab === 'summary' &amp;&amp; &lt;SummaryPreview /&gt;}
-          {activeTab === 'financial' &amp;&amp; &lt;FinancialHealth /&gt;}
-          {activeTab === 'project' &amp;&amp; &lt;ProjectTracker /&gt;}
-          {activeTab === 'builder' &amp;&amp; (
-            &lt;div className="p-6"&gt;
-              &lt;ReportBuilder /&gt;
-            &lt;/div&gt;
-          )}
+          &lt;Suspense fallback={&lt;div className="flex items-center justify-center h-64"&gt;&lt;div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"&gt;&lt;/div&gt;&lt;/div&gt;}&gt;
+            {activeTab === 'summary' &amp;&amp; &lt;SummaryPreview /&gt;}
+            {activeTab === 'financial' &amp;&amp; &lt;FinancialHealth /&gt;}
+            {activeTab === 'project' &amp;&amp; &lt;ProjectTracker /&gt;}
+            {activeTab === 'builder' &amp;&amp; (
+              &lt;div className="p-6"&gt;
+                &lt;ReportBuilder /&gt;
+              &lt;/div&gt;
+            )}
+          &lt;/Suspense&gt;
         &lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
@@ -247,7 +256,7 @@ const Reporting = <span class="cstat-no" title="statement not covered" ><span cl
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:26.724Z
+                at 2025-12-19T02:07:52.612Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

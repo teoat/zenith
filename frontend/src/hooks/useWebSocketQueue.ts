@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useWebSocket } from '../providers/WebSocketProvider';
+import { secureLogger } from '../utils/secureLogger';
+import { secureRandom } from '../utils/secureRandom';
 
 export interface QueueItem {
   id: string;
@@ -83,7 +85,7 @@ export function useWebSocketQueue(options: UseWebSocketQueueOptions = {}) {
   useEffect(() => {
     if (!fallbackToSimulation || isConnected) return;
     
-    console.log('[LiveQueue] Simulation mode active (No WebSocket)');
+    secureLogger.info('WEBSOCKET', 'LiveQueue simulation mode active (No WebSocket)');
     
     // Only set initial mock data if queue is empty
     // Wrapped in timeout to avoid synchronous state update in effect warning
@@ -106,9 +108,9 @@ export function useWebSocketQueue(options: UseWebSocketQueueOptions = {}) {
           { id: Date.now().toString() + 'c', type: 'system', msg: 'Compliance report generated', time: 'just now', priority: 'low' },
         ];
         
-        const randomMsg = newActivities[Math.floor(Math.random() * newActivities.length)];
+        const randomMsg = newActivities[Math.floor(secureRandom.random() * newActivities.length)];
         
-        if (Math.random() > 0.7) {
+        if (secureRandom.random() > 0.7) {
           addItem(randomMsg);
         }
       }, 4000);

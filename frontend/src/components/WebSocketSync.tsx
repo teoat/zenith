@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+import type React from 'react';
+import { useEffect } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 import { useQueryClient } from '@tanstack/react-query';
 import { useWebSocket } from '@/providers/WebSocketProvider';
 
@@ -12,7 +14,7 @@ export const WebSocketSync: React.FC = () => {
       if (data.type === 'refresh_data') {
         const { target } = data; // e.g., 'cases', 'alerts'
         if (target && typeof target === 'string') {
-            console.log(`[WebSocketSync] Invalidating queries for: ${target}`);
+            secureLogger.info(`[WebSocketSync] Invalidating queries for: ${target}`);
             queryClient.invalidateQueries({ queryKey: [target] });
         }
       }
@@ -24,7 +26,7 @@ export const WebSocketSync: React.FC = () => {
               // Convert singular to plural roughly or use exact mapping
               // For now, naive mapping:
               const key = entity.endsWith('s') ? entity : `${entity}s`;
-              console.log(`[WebSocketSync] Entity update: ${entity}, invalidating ${key}`);
+              secureLogger.info(`[WebSocketSync] Entity update: ${entity}, invalidating ${key}`);
               queryClient.invalidateQueries({ queryKey: [key] });
           }
       }

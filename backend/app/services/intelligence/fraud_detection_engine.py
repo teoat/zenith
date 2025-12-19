@@ -64,19 +64,58 @@ class FraudDetectionEngine:
     - Velocity: Too many transactions in short time period
     """
 
-    # Detection thresholds
-    STRUCTURING_THRESHOLD = 10000  # $10,000 reporting threshold
-    STRUCTURING_WINDOW_HOURS = 24
-    STRUCTURING_MIN_TRANSACTIONS = 3
+    # Default thresholds (fallback if DB fails or empty)
+    DEFAULT_CONFIG = {
+        "STRUCTURING_THRESHOLD": 10000,
+        "STRUCTURING_WINDOW_HOURS": 24,
+        "STRUCTURING_MIN_TRANSACTIONS": 3,
+        "VELOCITY_MAX_TRANSACTIONS": 10,
+        "VELOCITY_WINDOW_MINUTES": 60,
+        "ROUND_TRIP_MAX_HOPS": 5,
+        "ROUND_TRIP_TIME_WINDOW_HOURS": 72
+    }
 
-    VELOCITY_MAX_TRANSACTIONS = 10
-    VELOCITY_WINDOW_MINUTES = 60
-
-    ROUND_TRIP_MAX_HOPS = 5
-    ROUND_TRIP_TIME_WINDOW_HOURS = 72
-
-    def __init__(self):
+    def __init__(self, db_session=None):
         self.alerts: List[FraudAlert] = []
+        self.db = db_session
+        self._load_config()
+
+    def _load_config(self):
+        """Load configuration from DB or use defaults"""
+        self.config = dict(self.DEFAULT_CONFIG)
+        
+        if self.db:
+            try:
+                from core.database import FraudRule
+                rules = self.db.query(FraudRule).filter(FraudRule.is_active == True).all()
+                for rule in rules:
+                    if rule.rule_id in self.config:
+                        # Simple casting based on value_type
+                        if rule.value_type == "int":
+                            self.config[rule.rule_id] = int(rule.value)
+                        elif rule.value_type == "float":
+                            self.config[rule.rule_id] = float(rule.value)
+                        elif rule.value_type == "json":
+                            import json
+                            self.config[rule.rule_id] = json.loads(rule.value)
+            except Exception as e:
+                # Fallback to defaults if DB fails
+                pass
+
+    @property
+    def STRUCTURING_THRESHOLD(self): return self.config["STRUCTURING_THRESHOLD"]
+    @property
+    def STRUCTURING_WINDOW_HOURS(self): return self.config["STRUCTURING_WINDOW_HOURS"]
+    @property
+    def STRUCTURING_MIN_TRANSACTIONS(self): return self.config["STRUCTURING_MIN_TRANSACTIONS"]
+    @property
+    def VELOCITY_MAX_TRANSACTIONS(self): return self.config["VELOCITY_MAX_TRANSACTIONS"]
+    @property
+    def VELOCITY_WINDOW_MINUTES(self): return self.config["VELOCITY_WINDOW_MINUTES"]
+    @property
+    def ROUND_TRIP_MAX_HOPS(self): return self.config["ROUND_TRIP_MAX_HOPS"]
+    @property
+    def ROUND_TRIP_TIME_WINDOW_HOURS(self): return self.config["ROUND_TRIP_TIME_WINDOW_HOURS"]
 
     def analyze_transactions(self, transactions: List[Transaction]) -> List[FraudAlert]:
         """
@@ -123,54 +162,159 @@ class FraudDetectionEngine:
     def _detect_structuring(self, transactions: List[Transaction]) -> List[FraudAlert]:
         """
         Detect structuring: Multiple transactions just below reporting threshold
-
-        Pattern: Criminal splits large amount into smaller transactions to avoid
-        triggering $10,000 reporting requirement (CTR - Currency Transaction Report)
-
-        Example:
-        - $9,900 + $9,800 + $9,700 = $29,400 (would be one $29,400 transaction)
-        - All within 24 hours
-        - Same account pairs or related accounts
         """
-        alerts = []
+        account_groups = self._group_transactions_by_account_pairs(transactions)
+        return self._analyze_account_groups_for_structuring(account_groups)
 
-        # Group transactions by account pairs within time window
+    def _group_transactions_by_account_pairs(self, transactions: List[Transaction]) -> Dict[Tuple[str, str], List[Transaction]]:
+        """Group transactions by account pairs for structuring analysis"""
         account_groups: Dict[Tuple[str, str], List[Transaction]] = {}
 
         for tx in transactions:
-            # Create sorted account pair key (order doesn't matter)
             account_pair = tuple(sorted([tx.source_account, tx.destination_account]))
 
             if account_pair not in account_groups:
                 account_groups[account_pair] = []
             account_groups[account_pair].append(tx)
 
-        # Analyze each account pair for structuring
+        return account_groups
+
+    def _analyze_account_groups_for_structuring(self, account_groups: Dict[Tuple[str, str], List[Transaction]]) -> List[FraudAlert]:
+        """Analyze grouped transactions for structuring patterns"""
+        alerts = []
+
         for account_pair, txs in account_groups.items():
-            # Sort by timestamp
             txs.sort(key=lambda x: x.timestamp)
 
-            # Look for clusters of transactions just below threshold
-            for i in range(len(txs)):
-                window_txs = []
-                window_start = txs[i].timestamp
-                total_amount = 0
+            structuring_windows = self._find_structuring_windows(txs)
 
-                # Collect transactions within time window
-                for tx in txs[i:]:
-                    if (
-                        tx.timestamp - window_start
-                    ).total_seconds() / 3600 <= self.STRUCTURING_WINDOW_HOURS:
-                        # Check if amount is suspiciously close to threshold
-                        if (
-                            0.8 * self.STRUCTURING_THRESHOLD
-                            <= tx.amount
-                            < self.STRUCTURING_THRESHOLD
-                        ):
-                            window_txs.append(tx)
-                            total_amount += tx.amount
-                    else:
-                        break
+            for window_data in structuring_windows:
+                if self._is_significant_structuring(window_data):
+                    alert = self._create_structuring_alert(account_pair, window_data)
+                    alerts.append(alert)
+
+        return alerts
+
+    def _find_structuring_windows(self, transactions: List[Transaction]) -> List[Dict[str, Any]]:
+        """Find windows of transactions that may indicate structuring"""
+        windows = []
+
+        for i in range(len(transactions)):
+            window_txs = []
+            window_start = transactions[i].timestamp
+            total_amount = 0
+
+            # Collect transactions within time window
+            for tx in transactions[i:]:
+                if self._is_within_structuring_window(tx, window_start):
+                    if self._is_suspicious_amount(tx.amount):
+                        window_txs.append(tx)
+                        total_amount += tx.amount
+                else:
+                    break
+
+            if window_txs:
+                windows.append({
+                    'transactions': window_txs,
+                    'total_amount': total_amount,
+                    'start_time': window_start,
+                    'end_time': window_txs[-1].timestamp
+                })
+
+        return windows
+
+    def _is_within_structuring_window(self, transaction: Transaction, window_start) -> bool:
+        """Check if transaction is within structuring time window"""
+        return (
+            transaction.timestamp - window_start
+        ).total_seconds() / 3600 <= self.STRUCTURING_WINDOW_HOURS
+
+    def _is_suspicious_amount(self, amount: float) -> bool:
+        """Check if transaction amount is suspiciously close to threshold"""
+        return (
+            0.8 * self.STRUCTURING_THRESHOLD <= amount < self.STRUCTURING_THRESHOLD
+        )
+
+    def _is_significant_structuring(self, window_data: Dict[str, Any]) -> bool:
+        """Determine if a transaction window represents significant structuring"""
+        txs = window_data['transactions']
+        total_amount = window_data['total_amount']
+
+        return (
+            len(txs) >= self.STRUCTURING_MIN_TRANSACTIONS and
+            total_amount >= self.STRUCTURING_THRESHOLD
+        )
+
+    def _create_structuring_alert(self, account_pair: Tuple[str, str], window_data: Dict[str, Any]) -> FraudAlert:
+        """Create a structuring fraud alert"""
+        txs = window_data['transactions']
+        total_amount = window_data['total_amount']
+
+        # Calculate risk score based on various factors
+        base_score = 70  # Structuring is inherently suspicious
+        proximity_bonus = self._calculate_proximity_bonus(txs)
+        count_bonus = min(len(txs) * 5, 30)  # Up to 30 points for many transactions
+
+        risk_score = min(base_score + proximity_bonus + count_bonus, 100)
+
+        return FraudAlert(
+            alert_id=f"STRUCTURING_{account_pair[0]}_{account_pair[1]}_{int(window_data['start_time'].timestamp())}",
+            case_id=None,  # Will be assigned by caller
+            title="Potential Structuring Detected",
+            description=self._generate_structuring_description(txs, total_amount),
+            severity=self._calculate_severity(risk_score),
+            risk_score=risk_score,
+            alert_type="structuring",
+            entities=[
+                {"type": "account", "value": account_pair[0], "confidence": 0.9},
+                {"type": "account", "value": account_pair[1], "confidence": 0.9}
+            ],
+            metadata={
+                "transaction_count": len(txs),
+                "total_amount": total_amount,
+                "time_window_hours": self.STRUCTURING_WINDOW_HOURS,
+                "threshold": self.STRUCTURING_THRESHOLD
+            },
+            confidence=0.85,
+            detection_method="transaction_pattern_analysis"
+        )
+
+    def _calculate_proximity_bonus(self, transactions: List[Transaction]) -> int:
+        """Calculate bonus based on how close amounts are to threshold"""
+        if not transactions:
+            return 0
+
+        # Average proximity to threshold (0-40 points)
+        proximities = []
+        for tx in transactions:
+            if tx.amount < self.STRUCTURING_THRESHOLD:
+                proximity = (self.STRUCTURING_THRESHOLD - tx.amount) / self.STRUCTURING_THRESHOLD
+                proximities.append(proximity)
+
+        avg_proximity = sum(proximities) / len(proximities) if proximities else 0
+        return int(avg_proximity * 40)
+
+    def _generate_structuring_description(self, transactions: List[Transaction], total_amount: float) -> str:
+        """Generate human-readable description of structuring pattern"""
+        count = len(transactions)
+        avg_amount = total_amount / count
+
+        return (
+            f"Detected {count} transactions totaling ${total_amount:,.2f} "
+            f"(avg: ${avg_amount:,.2f}) within {self.STRUCTURING_WINDOW_HOURS} hours. "
+            f"All amounts suspiciously close to ${self.STRUCTURING_THRESHOLD:,.0f} CTR threshold."
+        )
+
+    def _calculate_severity(self, risk_score: int) -> str:
+        """Convert risk score to severity level"""
+        if risk_score >= 90:
+            return "critical"
+        elif risk_score >= 75:
+            return "high"
+        elif risk_score >= 60:
+            return "medium"
+        else:
+            return "low"
 
                 # Alert if multiple transactions just below threshold
                 if len(window_txs) >= self.STRUCTURING_MIN_TRANSACTIONS:

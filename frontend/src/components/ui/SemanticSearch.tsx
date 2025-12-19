@@ -1,9 +1,9 @@
 // frontend/src/components/ui/SemanticSearch.tsx
 import React, { useState, useCallback } from 'react';
 import { Search, Loader2, FileText, MessageSquare } from 'lucide-react';
-import { Button } from './button';
+import { Button } from './Button';
 import { Input } from './Input';
-import { Card, CardContent, CardHeader, CardTitle } from './card';
+import { Card, CardContent, CardHeader, CardTitle } from './Card';
 
 interface SearchResult {
   document_id: string;

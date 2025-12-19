@@ -1,27 +1,23 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
-import jsxA11y from 'eslint-plugin-jsx-a11y'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
 
-export default defineConfig([
-  globalIgnores(['dist', 'scripts']),
-  {
-    extends: [
-      js.configs.recommended,
-      ...tseslint.configs.recommended,
-      jsxA11y.flatConfigs.recommended,
-    ],
-    files: ['**/*.{ts,tsx,js,jsx}'],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+// Define the configuration
+export default [
+  { ignores: ['dist', 'scripts', 'coverage', 'node_modules', 'e2e', '*.config.*', 'jest.config.*', 'playwright.config.*', 'postcss.config.*', 'public'] },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+   {
+     files: ['src/**/*.{ts,tsx,js,jsx}'],
+     languageOptions: {
+       ecmaVersion: 2020,
+       globals: globals.browser,
       parserOptions: {
         ecmaFeatures: { jsx: true },
       },
-    },
+     },
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
@@ -32,13 +28,34 @@ export default defineConfig([
         'warn',
         { allowConstantExport: true },
       ],
+
+      // Error Prevention Rules
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-debugger': 'error',
       'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true
+      }],
       '@typescript-eslint/no-explicit-any': 'warn',
-      'jsx-a11y/alt-text': 'error',
-      'jsx-a11y/role-supports-aria-props': 'error',
-      'jsx-a11y/click-events-have-key-events': 'warn',
-      'jsx-a11y/no-static-element-interactions': 'warn',
+      'prefer-const': 'error',
+      'no-var': 'error',
+
+      // Import Rules
+      'no-duplicate-imports': 'error',
+
+      // Error Handling Rules
+      'no-throw-literal': 'error',
+
+      // Code Quality Rules
+      'eqeqeq': ['error', 'always'],
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-script-url': 'error',
+      'no-alert': 'warn',
     },
   },
-])
+];
+

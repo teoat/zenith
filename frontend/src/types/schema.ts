@@ -4,7 +4,7 @@ export type CaseType = 'FRAUD' | 'AML' | 'COMPLIANCE' | 'OTHER';
 export type TransactionType = 'DEBIT' | 'CREDIT';
 export type AlertSeverity = 'LOW' | 'MEDIUM' | 'HIGH';
 export type AlertStatus = 'NEW' | 'INVESTIGATING' | 'CONFIRMED_FRAUD' | 'FALSE_POSITIVE';
-export type UserRole = 'ANALYST' | 'SENIOR_INVESTIGATOR' | 'ADMIN';
+export type UserRole = 'ANALYST' | 'SENIOR_INVESTIGATOR' | 'ADMIN' | 'MANAGER';
 
 export interface Case {
   id: string;

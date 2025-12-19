@@ -3,17 +3,18 @@
  * Legal document automation for court-ready documentation
  */
 
-import React, { useState, useCallback, useMemo, ChangeEvent } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import type { ChangeEvent } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/Textarea';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Label } from '@/components/ui/Label';
+import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Separator } from '@/components/ui/Separator';
+import { Progress } from '@/components/ui/Progress';
 import {
   Scale,
   FileText,

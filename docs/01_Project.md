@@ -6,15 +6,11 @@ High-level project charter, master plan, roadmaps and phase summaries. This inde
 
 TOC
 ----
-- Master Plan & Strategy — [docs/project/master_plan.md](project/master_plan.md)
-- Master TODO (summary) — [docs/project/master_todo.md](project/master_todo.md)
-- Product Roadmap & Vision — [docs/project/roadmap.md](project/roadmap.md)
-- 10/10 Vision (Converged Intel) — [docs/architecture/VISION_10_10.md](../architecture/VISION_10_10.md)
-- Zenith Horizon (2027+) — [docs/architecture/ZENITH_VISION.md](../architecture/ZENITH_VISION.md)
-- Perfection Roadmap (full) — [docs/project/PERFECTION_ROADMAP.md](project/PERFECTION_ROADMAP.md)
-- Implementation Record — [docs/project/IMPLEMENTATION_RECORD.md](project/IMPLEMENTATION_RECORD.md)
-- Phases index — [docs/project/phases/](project/phases/)
-- System Orchestration Framework — [docs/SYSTEM_ORCHESTRATION_FRAMEWORK.md](SYSTEM_ORCHESTRATION_FRAMEWORK.md)
+- Strategic Roadmap — [01_Project/02_Strategic_Roadmap.md](01_Project/02_Strategic_Roadmap.md)
+- Project Overview — [01_Project/01_Project_Overview.md](01_Project/01_Project_Overview.md)
+- Architecture Overview — [05_Architecture_and_Design/01_Architecture_Overview.md](../05_Architecture_and_Design/01_Architecture_Overview.md)
+- Security Implementation — [03_Standards_and_Policies/01_Security_Policies.md](../03_Standards_and_Policies/01_Security_Policies.md)
+- Performance Architecture — [05_Architecture_and_Design/02_Performance_Architecture.md](../05_Architecture_and_Design/02_Performance_Architecture.md)
 
 Visualization — Roadmap (simplified)
 -----------------------------------

@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 
 import { motion } from 'framer-motion';
 import { useWebSocket } from '../providers/WebSocketProvider';
+import { secureLogger } from '../utils/secureLogger';
 
+import type {
+  LucideIcon
+} from 'lucide-react';
 import {
   Activity,
   Cpu,
@@ -13,11 +17,10 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  BarChart3,
-  LucideIcon
+  BarChart3
 } from 'lucide-react';
 
-import memoryManager from '../utils/memoryManager';
+
 
 // MetricCard Component - Moved outside
 interface MetricCardProps {
@@ -85,7 +88,7 @@ const PerformanceDashboard: React.FC = () => {
     // Initialize metrics collection
     const updateLocalMetrics = async () => {
       // IPC Metrics (Local/Mock)
-      const ipcStats: Record<string, { pendingRequests: number }> = memoryManager.getBatchStats?.() || {};
+      const ipcStats: Record<string, { pendingRequests: number }> = {}; // Memory manager removed
       const ipcMetrics = {
         calls: Object.values(ipcStats).reduce((sum: number, stat) => sum + (stat.pendingRequests || 0), 0),
         avgResponseTime: 45, 
@@ -93,16 +96,17 @@ const PerformanceDashboard: React.FC = () => {
       };
 
       // Memory Metrics (Local Browser Memory)
-      const memoryStats = memoryManager.getMemoryStats?.() || {};
-      const memoryMetrics = memoryStats.current ? {
-        used: memoryStats.current.usedJSHeapSize || 0,
-        limit: memoryStats.current.jsHeapSizeLimit || 1,
-        percentage: ((memoryStats.current.usedJSHeapSize || 0) / (memoryStats.current.jsHeapSizeLimit || 1)) * 100
-      } : { used: 0, limit: 1, percentage: 0 };
+      const perfMemory = (performance as any).memory;
+      const memoryMetrics = {
+        used: perfMemory ? perfMemory.usedJSHeapSize : 0,
+        limit: perfMemory ? perfMemory.jsHeapSizeLimit : 1,
+        percentage: perfMemory ?
+          ((perfMemory.usedJSHeapSize || 0) / (perfMemory.jsHeapSizeLimit || 1)) * 100 : 0
+      };
 
       // Component Metrics (Local)
       const componentMetrics = {
-        renderCount: memoryStats.registeredComponents || 0,
+        renderCount: 0, // Memory manager removed
         avgRenderTime: 16
       };
       
@@ -193,7 +197,7 @@ interface SystemMetricsPayload {
             <option value="1h">Last Hour</option>
           </select>
           <button
-            onClick={() => memoryManager.takeMemorySnapshot?.('manual-dashboard')}
+            onClick={() => secureLogger.info('Memory snapshot functionality removed')}
             className="btn btn-secondary"
           >
             📸 Snapshot

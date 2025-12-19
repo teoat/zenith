@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import {
   Bell,
   TrendingUp,
@@ -16,6 +15,7 @@ import {
   BookmarkCheck
 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
+import { secureLogger } from '../utils/secureLogger';
 
 interface RegulatoryAlert {
   id: string;
@@ -162,7 +162,7 @@ const RegulatoryIntelligence: React.FC = () => {
       setUpdates(mockUpdates);
       setFeeds(mockFeeds);
     } catch (error) {
-      console.error('Failed to load regulatory data:', error);
+      secureLogger.error('Failed to load regulatory data:', error);
     } finally {
       setLoading(false);
     }
@@ -245,6 +245,7 @@ const RegulatoryIntelligence: React.FC = () => {
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                title="Filter by category"
               >
                 {categories.map(category => (
                   <option key={category} value={category}>
@@ -304,7 +305,7 @@ const RegulatoryIntelligence: React.FC = () => {
                     </Button>
                     {alert.url && (
                       <Button variant="ghost" size="sm" asChild>
-                        <a href={alert.url} target="_blank" rel="noopener noreferrer">
+                        <a href={alert.url} target="_blank" rel="noopener noreferrer" title="View source">
                           <ExternalLink className="h-4 w-4" />
                         </a>
                       </Button>

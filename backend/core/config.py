@@ -16,12 +16,13 @@ class Settings(BaseSettings):
 
     # Security
     # Provide safe defaults for development/test environments. Override in production via env.
-    SECRET_KEY: str = os.environ.get("SECRET_KEY", "dev-secret-key")
-    JWT_SECRET_KEY: str = os.environ.get("JWT_SECRET_KEY", "dev-jwt-secret")
+    SECRET_KEY: str = os.environ.get("SECRET_KEY", "CHANGE_THIS_SECRET_KEY_IN_DEVELOPMENT")
+    JWT_SECRET_KEY: str = os.environ.get("JWT_SECRET_KEY", "CHANGE_THIS_JWT_SECRET_IN_DEVELOPMENT")
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     FIELD_ENCRYPTION_KEY: str = os.environ.get(
-        "FIELD_ENCRYPTION_KEY", "dev-field-encryption-key"
+        "FIELD_ENCRYPTION_KEY", 
+        os.environ.get("ENCRYPTION_KEY", "cw_0x689RpI-jtRR7oFt8p98l8UIghx0spL_SXQky-0=")
     )
 
     # Optional external service configurations
@@ -42,7 +43,16 @@ class Settings(BaseSettings):
 
     # File Upload Configuration
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10MB
-    ALLOWED_FILE_TYPES: str = "pdf,doc,docx,txt,jpg,jpeg,png,tiff"
+    DEFAULT_MAX_PROCESS_SIZE: int = 50 * 1024 * 1024  # 50MB
+    ALLOWED_FILE_TYPES: str = "pdf,doc,docx,txt,jpg,jpeg,png,tiff,mp3,wav,mp4,mov"
+
+    # Fraud Score Thresholds
+    FRAUD_SCORE_CRITICAL: float = 90.0
+    FRAUD_SCORE_HIGH: float = 75.0
+    FRAUD_SCORE_MEDIUM: float = 50.0
+
+    # Plugin System
+    PLUGIN_CACHE_TTL: int = 3600
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"

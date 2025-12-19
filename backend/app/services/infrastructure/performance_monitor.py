@@ -3,7 +3,7 @@ import threading
 import time
 from collections import deque
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import psutil
 
@@ -11,13 +11,20 @@ from core.logging import logger
 
 
 class PerformanceMonitor:
-    """Enhanced performance monitoring with real-time alerts and API tracking"""
+    """Enhanced performance monitoring with circuit breaker resilience"""
 
     def __init__(self):
         self.metrics_history = deque(maxlen=1000)  # Keep last 1000 measurements
         self.baselines = {}
         self._stop_event = threading.Event()
         self._thread = None
+
+        # Circuit breaker for metric collection
+        self._circuit_breaker_failures = 0
+        self._circuit_breaker_last_failure = None
+        self._circuit_breaker_open = False
+        self._circuit_breaker_timeout = 300  # 5 minutes
+        self._max_consecutive_failures = 3
 
         # Enhanced monitoring features
         self.api_calls = deque(maxlen=5000)  # Track API performance
@@ -39,16 +46,28 @@ class PerformanceMonitor:
             self._thread.join(timeout=2.0)
 
     def _monitor_loop(self):
-        """Background monitoring loop"""
+        """Background monitoring loop with circuit breaker"""
         while not self._stop_event.is_set():
             try:
-                metrics = self._collect_metrics()
-                self.metrics_history.append(metrics)
-                self._update_baselines(metrics)
+                # Check circuit breaker state
+                if self._is_circuit_breaker_open():
+                    # Circuit is open, skip collection but still sleep
+                    if self._stop_event.wait(60):
+                        break
+                    continue
+
+                metrics = self._collect_metrics_safe()
+                if metrics:  # Only add if collection succeeded
+                    self.metrics_history.append(metrics)
+                    self._update_baselines(metrics)
+                    self._reset_circuit_breaker()
+
                 # Sleep for 60 seconds, but wake up immediately if stopped
                 if self._stop_event.wait(60):
                     break
             except Exception as e:
+                # Circuit breaker: record failure
+                self._record_circuit_breaker_failure()
                 # Avoid logging if we are shutting down (interpreter cleanup)
                 if not self._stop_event.is_set():
                     try:
@@ -58,17 +77,43 @@ class PerformanceMonitor:
                 if self._stop_event.wait(60):
                     break
 
+    def _collect_metrics_safe(self) -> Optional[Dict[str, Any]]:
+        """Safely collect metrics with individual error handling"""
+        metrics = {"timestamp": datetime.now(timezone.utc).isoformat()}
+
+        # Collect each metric individually with error handling
+        metric_collectors = {
+            "cpu_percent": lambda: psutil.cpu_percent(interval=1),
+            "memory_percent": lambda: psutil.virtual_memory().percent,
+            "disk_usage": lambda: psutil.disk_usage("/").percent,
+            "network_connections": lambda: len(psutil.net_connections()),
+            "load_average": lambda: psutil.getloadavg() if hasattr(psutil, "getloadavg") else None,
+        }
+
+        success_count = 0
+        for metric_name, collector in metric_collectors.items():
+            try:
+                value = collector()
+                if value is not None:
+                    metrics[metric_name] = value
+                    success_count += 1
+            except Exception as e:
+                logger.warning(f"Failed to collect {metric_name}: {e}")
+                # Set default value or skip
+                metrics[metric_name] = None
+
+        # Return metrics only if we got at least some data
+        return metrics if success_count > 0 else None
+
     def _collect_metrics(self) -> Dict[str, Any]:
-        """Collect current system metrics"""
-        return {
+        """Legacy method for backward compatibility"""
+        return self._collect_metrics_safe() or {
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "cpu_percent": psutil.cpu_percent(interval=1),
-            "memory_percent": psutil.virtual_memory().percent,
-            "disk_usage": psutil.disk_usage("/").percent,
-            "network_connections": len(psutil.net_connections()),
-            "load_average": (
-                psutil.getloadavg() if hasattr(psutil, "getloadavg") else None
-            ),
+            "cpu_percent": 0,
+            "memory_percent": 0,
+            "disk_usage": 0,
+            "network_connections": 0,
+            "load_average": None,
         }
 
     def _update_baselines(self, metrics: Dict[str, Any]):
@@ -91,12 +136,44 @@ class PerformanceMonitor:
                         baseline["avg"] * (baseline["count"] - 1) + value
                     ) / baseline["count"]
 
+    def _is_circuit_breaker_open(self) -> bool:
+        """Check if circuit breaker is open"""
+        if not self._circuit_breaker_open:
+            return False
+
+        # Check if timeout has elapsed
+        if self._circuit_breaker_last_failure:
+            elapsed = (datetime.now(timezone.utc) - self._circuit_breaker_last_failure).total_seconds()
+            if elapsed > self._circuit_breaker_timeout:
+                self._circuit_breaker_open = False
+                self._circuit_breaker_failures = 0
+                logger.info("Performance monitoring circuit breaker reset")
+
+        return self._circuit_breaker_open
+
+    def _record_circuit_breaker_failure(self):
+        """Record a circuit breaker failure"""
+        self._circuit_breaker_failures += 1
+        self._circuit_breaker_last_failure = datetime.now(timezone.utc)
+
+        if self._circuit_breaker_failures >= self._max_consecutive_failures:
+            self._circuit_breaker_open = True
+            logger.warning(f"Performance monitoring circuit breaker opened after {self._circuit_breaker_failures} failures")
+
+    def _reset_circuit_breaker(self):
+        """Reset circuit breaker on successful collection"""
+        if self._circuit_breaker_failures > 0:
+            self._circuit_breaker_failures = 0
+            logger.info("Performance monitoring circuit breaker reset on success")
+
     def get_baselines(self) -> Dict[str, Any]:
         """Get current performance baselines"""
         return {
             "baselines": self.baselines,
             "monitoring_active": self._thread is not None and self._thread.is_alive(),
             "metrics_collected": len(self.metrics_history),
+            "circuit_breaker_status": "open" if self._circuit_breaker_open else "closed",
+            "circuit_breaker_failures": self._circuit_breaker_failures,
             "last_updated": (
                 self.metrics_history[-1]["timestamp"] if self.metrics_history else None
             ),

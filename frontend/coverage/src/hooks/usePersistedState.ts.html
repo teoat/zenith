@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/25</span>
+                <span class='fraction'>0/29</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>0/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>0/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/24</span>
+                <span class='fraction'>0/28</span>
             </div>
         
             
@@ -128,6 +128,8 @@
 <a name='L63'></a><a href='#L63'>63</a>
 <a name='L64'></a><a href='#L64'>64</a>
 <a name='L65'></a><a href='#L65'>65</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -137,21 +139,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -167,10 +167,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -182,6 +178,10 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -192,6 +192,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { useState, useEffect } from 'react';</span>
+<span class="cstat-no" title="statement not covered" >import { electronStore } from '../utils/electronStore';</span>
+<span class="cstat-no" title="statement not covered" >import { secureLogger } from '../utils/secureLogger';</span>
 &nbsp;
 /**
  * A custom hook to persist state to localStorage (and Electron store if available).
@@ -201,25 +203,23 @@
  */
 <span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >u</span>sePersistedState&lt;</span>T&gt;(key: string, initialValue: T): [T, (value: T | ((val: T) =&gt; T)) =&gt; void] {
   // State to store our value
-  // Pass initial state function to useState so logic is only executed once
-  const [storedValue, setStoredValue] = <span class="cstat-no" title="statement not covered" >useState&lt;T&gt;(<span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof window === 'undefined') {</span>
-<span class="cstat-no" title="statement not covered" >      return initialValue;</span>
-    }
-<span class="cstat-no" title="statement not covered" >    try {</span>
-      // Get from local storage by key
-      const item = <span class="cstat-no" title="statement not covered" >window.localStorage.getItem(key);</span>
-      // Parse stored json or if none return initialValue
-<span class="cstat-no" title="statement not covered" >      return item ? JSON.parse(item) : initialValue;</span>
-    } catch (error) {
-      // If error also return initialValue
-<span class="cstat-no" title="statement not covered" >      console.warn(`Error reading localStorage key "${key}":`, error);</span>
-<span class="cstat-no" title="statement not covered" >      return initialValue;</span>
-    }
-  });
+  const [storedValue, setStoredValue] = <span class="cstat-no" title="statement not covered" >useState&lt;T&gt;(initialValue);</span>
+&nbsp;
+  // Load initial value from store
+<span class="cstat-no" title="statement not covered" >  useEffect(<span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
+    const loadPersistedState = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async </span>() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      try {</span>
+        const item = <span class="cstat-no" title="statement not covered" >await electronStore.get&lt;T&gt;(key, initialValue);</span>
+<span class="cstat-no" title="statement not covered" >        setStoredValue(item);</span>
+      } catch (error) {
+<span class="cstat-no" title="statement not covered" >        secureLogger.warn(`Error reading persisted key "${key}":`, error);</span>
+      }
+    };
+<span class="cstat-no" title="statement not covered" >    loadPersistedState();</span>
+  }, [key, initialValue]);
 &nbsp;
   // Return a wrapped version of useState's setter function that ...
-  // ... persists the new value to localStorage.
+  // ... persists the new value to the store.
   const setValue = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(v</span>alue: T | ((val: T) =&gt; T)) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
       // Allow value to be a function so we have same API as useState
@@ -228,16 +228,12 @@
       // Save state
 <span class="cstat-no" title="statement not covered" >      setStoredValue(valueToStore);</span>
       
-      // Save to local storage
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof window !== 'undefined') {</span>
-<span class="cstat-no" title="statement not covered" >        window.localStorage.setItem(key, JSON.stringify(valueToStore));</span>
-        
-        // TODO: Integration with Electron Store for deeper persistence
-        // if (window.electronAPI?.store) { ... }
-      }
+      // Save to store (handles both localStorage and Electron)
+<span class="cstat-no" title="statement not covered" >      electronStore.set(key, valueToStore).catch(<span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.warn(`Error persisting key "${key}":`, error);</span>
+      });
     } catch (error) {
-      // A more advanced implementation would handle the error case
-<span class="cstat-no" title="statement not covered" >      console.warn(`Error setting localStorage key "${key}":`, error);</span>
+<span class="cstat-no" title="statement not covered" >      secureLogger.warn(`Error setting persisted value for key "${key}":`, error);</span>
     }
   };
 &nbsp;
@@ -245,7 +241,11 @@
     // Sync with other tabs/windows
     const handleStorageChange = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(e</span>: StorageEvent) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (e.key === key &amp;&amp; e.newValue) {</span>
-<span class="cstat-no" title="statement not covered" >        setStoredValue(JSON.parse(e.newValue));</span>
+<span class="cstat-no" title="statement not covered" >        try {</span>
+<span class="cstat-no" title="statement not covered" >          setStoredValue(JSON.parse(e.newValue));</span>
+        } catch (error) {
+<span class="cstat-no" title="statement not covered" >          secureLogger.error(`Error parsing storage change for key "${key}":`, error);</span>
+        }
       }
     };
     
@@ -262,7 +262,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:27.522Z
+                at 2025-12-19T02:07:53.644Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

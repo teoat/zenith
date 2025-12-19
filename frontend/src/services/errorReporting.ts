@@ -3,6 +3,8 @@
  * Provides centralized error logging, user feedback, and optional remote reporting.
  */
 
+import { secureLogger } from '../utils/secureLogger';
+
 interface ErrorReport {
   message: string;
   stack?: string;
@@ -78,7 +80,7 @@ class ErrorReportingService {
     }
 
     if (process.env.NODE_ENV === 'development') {
-      console.error('Error reported:', errorReport);
+      secureLogger.debug('ERROR_REPORTING', 'Error reported', errorReport);
     }
 
     if (this.isReportingEnabled) {
@@ -97,10 +99,12 @@ class ErrorReportingService {
       });
 
       if (!response.ok) {
-        console.warn('Failed to send error report to remote service');
+        secureLogger.warn('ERROR_REPORTING', 'Failed to send error report to remote service');
       }
-    } catch (_error) {
-      console.warn('Error reporting service failed:', error);
+    } catch (error) {
+      secureLogger.warn('ERROR_REPORTING', 'Error reporting service failed', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
     }
   }
 

@@ -5,6 +5,7 @@
 
 import { api } from '../lib/api';
 import { errorReporting } from './errorReporting';
+import { secureLogger } from '../utils/secureLogger';
 
 export interface ProcessedCase {
   title: string;
@@ -50,7 +51,7 @@ class FileProcessingService {
         if (fileResult.errors.length > 0) {
           result.errors.push(...fileResult.errors.map(err => `${file.name}: ${err}`));
         }
-      } catch (_error) {
+      } catch (error: unknown) {
         const errorMessage = `Failed to process ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`;
         result.errors.push(errorMessage);
         result.success = false;
@@ -68,7 +69,7 @@ class FileProcessingService {
     if (result.processedCases.length > 0) {
       try {
         await this.createCasesInBackend(result.processedCases);
-      } catch (_error) {
+      } catch (error: unknown) {
         result.errors.push(`Failed to create cases in backend: ${error instanceof Error ? error.message : 'Unknown error'}`);
         result.success = false;
       }
@@ -140,7 +141,7 @@ class FileProcessingService {
             const caseData: ProcessedCase = {
               title: values[headers.indexOf('title')] || `Case ${i}`,
               description: values[headers.indexOf('description')] || '',
-              priority: (values[headers.indexOf('priority')] as any) || 'medium',
+              priority: (values[headers.indexOf('priority')] as unknown as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL') || 'MEDIUM',
             };
 
             // Add optional fields
@@ -156,11 +157,11 @@ class FileProcessingService {
 
             result.cases.push(caseData);
           }
-        } catch (_error) {
+        } catch (error: unknown) {
           result.errors.push(`Error processing row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       }
-    } catch (_error) {
+    } catch (error: unknown) {
       result.errors.push(`Failed to read CSV file: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 
@@ -188,11 +189,19 @@ class FileProcessingService {
           };
 
           result.cases.push(processedCase);
-        } catch (_error) {
+        } catch (error: unknown) { // Changed _error to error
+          secureLogger.error('FILE_PROCESSING', 'Error processing case', {
+            error: error instanceof Error ? error.message : String(error)
+          }); // Added console.error
+          // The original line was: result.errors.push(`Error processing case: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          // The instruction `throw error; ? error.message : 'Unknown error'}`);` is syntactically incorrect.
+          // Assuming the intent was to add `throw error;` and keep the error reporting.
+          // Re-throwing here would stop the loop, so we'll add it after reporting.
           result.errors.push(`Error processing case: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          throw error; // Added throw error as per instruction, this will exit the loop and the function.
         }
       }
-    } catch (_error) {
+    } catch (error: unknown) { // Changed _error to error
       result.errors.push(`Failed to parse JSON file: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 
@@ -248,7 +257,7 @@ class FileProcessingService {
             type: caseData.type,
             tags: caseData.tags
           });
-        } catch (_error) {
+        } catch (error: unknown) {
           errorReporting.reportApiError(error, 'createCase', 'POST');
           throw new Error(`Failed to create case "${caseData.title}": ${error instanceof Error ? error.message : 'Unknown error'}`);
         }

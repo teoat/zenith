@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReconciliationItem } from '../../lib/api';
+import type { ReconciliationItem } from '../../lib/api';
 import { AlertTriangle } from 'lucide-react';
 import { useFormatters } from '../../providers/LocaleProvider';
 import { VirtualizedList } from '../ui/VirtualizedList';

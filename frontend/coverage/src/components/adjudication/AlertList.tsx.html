@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>0/9</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>0/9</span>
             </div>
         
             
@@ -119,7 +119,25 @@
 <a name='L54'></a><a href='#L54'>54</a>
 <a name='L55'></a><a href='#L55'>55</a>
 <a name='L56'></a><a href='#L56'>56</a>
-<a name='L57'></a><a href='#L57'>57</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -131,14 +149,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -162,6 +172,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -176,9 +190,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import React from 'react';</span>
-import { AlertItem } from '../../lib/api';
+import type { AlertItem } from '../../lib/api';
 <span class="cstat-no" title="statement not covered" >import AlertListItem from './AlertListItem';</span>
 <span class="cstat-no" title="statement not covered" >import { Search } from 'lucide-react';</span>
+<span class="cstat-no" title="statement not covered" >import { VirtualizedList } from '../ui/VirtualizedList';</span>
 &nbsp;
 interface AlertListProps {
   alerts: AlertItem[];
@@ -206,8 +221,8 @@ const AlertList: React.FC&lt;AlertListProps&gt; = <span class="cstat-no" title="
         &lt;/div&gt;
       &lt;/div&gt;
 &nbsp;
-      {/* List */}
-      &lt;div className="flex-1 overflow-y-auto" role="listbox" aria-label="Alert Queue"&gt;
+      {/* List - Now Virtualized for Performance */}
+      &lt;div className="flex-1 overflow-hidden" role="listbox" aria-label="Alert Queue"&gt;
         {loading ? (
              &lt;div className="p-4 text-center text-slate-500"&gt;Loading alerts...&lt;/div&gt;
         ) : alerts.length === 0 ? (
@@ -216,14 +231,20 @@ const AlertList: React.FC&lt;AlertListProps&gt; = <span class="cstat-no" title="
                 &lt;p className="text-xs mt-1"&gt;Great job clearing the queue!&lt;/p&gt;
             &lt;/div&gt;
         ) : (
-            alerts.map(<span class="fstat-no" title="function not covered" >alert </span>=&gt; (
-<span class="cstat-no" title="statement not covered" >            &lt;AlertListItem</span>
-                key={alert.id}
-                alert={alert}
-                isSelected={selectedId === alert.id}
-                onSelect={onSelect}
+            &lt;VirtualizedList
+              items={alerts}
+              estimateSize={120}
+              getItemKey={<span class="fstat-no" title="function not covered" >(a</span>lert) =&gt; <span class="cstat-no" title="statement not covered" >alert.id}</span>
+              renderItem={<span class="fstat-no" title="function not covered" >(a</span>lert) =&gt; (
+<span class="cstat-no" title="statement not covered" >                &lt;AlertListItem</span>
+                  key={alert.id}
+                  alert={alert}
+                  isSelected={selectedId === alert.id}
+                  onSelect={onSelect}
+                /&gt;
+              )}
+              className="h-full"
             /&gt;
-            ))
         )}
       &lt;/div&gt;
     &lt;/div&gt;
@@ -238,7 +259,7 @@ const AlertList: React.FC&lt;AlertListProps&gt; = <span class="cstat-no" title="
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:27.522Z
+                at 2025-12-19T02:07:53.644Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

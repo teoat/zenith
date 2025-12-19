@@ -123,3 +123,19 @@ body {
 .skip-link:focus {
   @apply static w-auto h-auto overflow-visible outline-2 outline-white outline-offset-2;
 }
+
+/* ===== DYNAMIC STYLE UTILITIES ===== */
+.fill-width {
+  width: var(--width, auto);
+}
+
+.fill-height {
+  height: var(--height, auto);
+}
+
+.bar-fill {
+  width: var(--width, 0%);
+  height: var(--height, 100%);
+}
+
+

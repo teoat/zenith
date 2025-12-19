@@ -14,6 +14,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { api } from '../../lib/api';
+import { secureLogger } from '../../utils/secureLogger';
 
 interface SystemMetrics {
   status: 'healthy' | 'warning' | 'critical';
@@ -75,8 +76,8 @@ export function MonitoringDashboard() {
       const errorResponse = await api.getErrorSummary(timeRange);
       setErrorSummary(errorResponse);
 
-    } catch (_error) {
-      console.error('Failed to load monitoring data:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to load monitoring data:', error);
     } finally {
       setLoading(false);
     }

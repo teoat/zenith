@@ -1,23 +1,40 @@
-// Safe access to environment variables for both Vite and Jest
-let apiBase = 'http://localhost:8000/api/v1';
+export { API_BASE } from '../config';
+import { secureLogger } from '../utils/secureLogger';
+import { createCircuitBreaker, DEFAULT_CIRCUIT_CONFIGS } from '../lib/circuitBreaker';
+import { addCsrfHeader } from '../utils/csrfProtection';
+import { API_BASE } from '../config';
 
-try {
-  // Hide import.meta from CJS parsers (Jest)
-  // This fails gracefully if import.meta is not allowed
-  const getMeta = new Function('try { return import.meta; } catch { return undefined; }');
-  const meta = getMeta();
-  
-  if (meta && meta.env && meta.env.VITE_API_URL) {
-    apiBase = meta.env.VITE_API_URL;
-  }
-} catch (_e) {
-  // Fallback for environments where new Function is restricted or fails
-  if (typeof process !== 'undefined' && process.env && process.env.VITE_API_URL) {
-    apiBase = process.env.VITE_API_URL;
+// Create circuit breaker for API calls
+const apiCircuitBreaker = createCircuitBreaker('api-service', DEFAULT_CIRCUIT_CONFIGS.api);
+
+/**
+ * Convert HTTP status codes and error messages to user-friendly messages
+ */
+function getUserFriendlyErrorMessage(statusCode: number, originalMessage?: string): string {
+  switch (statusCode) {
+    case 400:
+      return 'Invalid request. Please check your input and try again.';
+    case 401:
+      return 'Authentication required. Please log in again.';
+    case 403:
+      return 'Access denied. You don\'t have permission to perform this action.';
+    case 404:
+      return 'The requested resource was not found.';
+    case 408:
+      return 'Request timed out. Please try again.';
+    case 429:
+      return 'Too many requests. Please wait a moment and try again.';
+    case 500:
+      return 'Server error occurred. Our team has been notified.';
+    case 502:
+    case 503:
+    case 504:
+      return 'Service temporarily unavailable. Please try again later.';
+    default:
+      return originalMessage || `An error occurred (${statusCode}). Please try again.`;
   }
 }
 
-export const API_BASE = apiBase;
 
 // Check if running in Electron
 export const isElectron = (): boolean => {
@@ -29,13 +46,6 @@ export const isElectron = (): boolean => {
 export const getToken = (): string | null => {
   return localStorage.getItem('token');
 };
-
-// Add type definition for Electron global
-declare global {
-  interface Window {
-    electronAPI?: unknown;
-  }
-}
 
 // Core request method - works in both browser and Electron
 export const request = async <T>(
@@ -61,28 +71,72 @@ export const request = async <T>(
     if (activeProjectId) {
       headers['X-Project-ID'] = activeProjectId;
     }
-  } catch (e) {
-    console.debug('[API] Failed to inject Project ID:', e);
-  }
-
-  // NOTE: Certificate pinning logic removed for web compatibility. 
-  // In production, rely on standard TLS/SSL CA trust or implement secure pinning in Electron/Native layer.
-
-  try {
-    const response = await fetch(url, {
-      ...options,
-      headers,
+  } catch (error) {
+    secureLogger.debug('API', 'Failed to inject Project ID', { 
+      error: error instanceof Error ? error.message : String(error) 
     });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ detail: response.statusText }));
-      throw new Error(errorData.detail || `HTTP ${response.status}`);
-    }
-
-    return response.json();
-  } catch (err) {
-    const error = err instanceof Error ? err : new Error('Unknown error');
-    console.error(`[API] ${options.method || 'GET'} ${endpoint} failed:`, error.message);
-    throw error;
   }
+
+   // NOTE: Certificate pinning logic removed for web compatibility.
+   // In production, rely on standard TLS/SSL CA trust or implement secure pinning in Electron/Native layer.
+
+   // Add CSRF protection for state-changing requests
+   const method = options.method || 'GET';
+   const finalHeaders = await addCsrfHeader(headers, method);
+
+    try {
+      // Wrap the API call with circuit breaker protection and retry logic
+      return await apiCircuitBreaker.execute(async () => {
+        let lastError: Error | null = null;
+        const maxRetries = 2;
+        const retryDelay = 1000; // 1 second
+
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+          try {
+            const response = await fetch(url, {
+              ...options,
+              headers: finalHeaders,
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+
+              // Create more user-friendly error messages
+              const userFriendlyMessage = getUserFriendlyErrorMessage(response.status, errorData.detail);
+              const error = new Error(userFriendlyMessage);
+              (error as any).statusCode = response.status;
+              (error as any).originalMessage = errorData.detail;
+
+              throw error;
+            }
+
+            return response.json();
+          } catch (error) {
+            lastError = error as Error;
+
+            // Don't retry on client errors (4xx) except 408, 429
+            const shouldRetry = attempt < maxRetries &&
+              (!(error as any).statusCode ||
+               [408, 429, 500, 502, 503, 504].includes((error as any).statusCode));
+
+            if (!shouldRetry) {
+              break;
+            }
+
+            // Wait before retrying
+            await new Promise(resolve => setTimeout(resolve, retryDelay * (attempt + 1)));
+            secureLogger.warn('API', `Retrying ${options.method || 'GET'} ${endpoint} (attempt ${attempt + 1}/${maxRetries + 1})`);
+          }
+        }
+
+        throw lastError;
+      });
+    } catch (error) {
+      secureLogger.error('API', `${options.method || 'GET'} ${endpoint} failed`, {
+          error: error instanceof Error ? error.message : String(error),
+          statusCode: (error as any).statusCode,
+          originalMessage: (error as any).originalMessage
+      });
+      throw error;
+    }
 };

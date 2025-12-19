@@ -3,6 +3,7 @@ import json
 import os
 from contextlib import asynccontextmanager
 import asyncio
+from datetime import datetime
 
 import uvicorn
 from dotenv import load_dotenv
@@ -12,6 +13,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import FileResponse, JSONResponse
+from pydantic import BaseModel
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
@@ -56,6 +58,7 @@ from app.routers.stats import router as stats_router
 from app.routers.users import router as users_router
 from app.routers.forensic_intelligence import router as forensic_intel_router
 from app.routers.entities import router as entities_router, relationships_router as relationships_router_from_entities
+from app.routers.csrf import router as csrf_router
 from app.services.infrastructure.apm_service import APMMiddleware
 from app.services.infrastructure.security.audit_service import audit_service
 from app.services.integration.collaboration.collaboration_service import collaboration_manager
@@ -72,10 +75,15 @@ from core.sentry_config import init_sentry
 from core.validation import InputValidationMiddleware
 from middleware.request_id import RequestIDMiddleware
 
+# Import i18n utilities
+from i18n import ErrorMessages
+from locale_utils import get_locale_from_request
+
 # Import new models to ensure registration with Base.metadata
 from core.plugin_system import models as plugin_models
 from core.feature_flags import models as feature_flag_models
 from core.eav import models as eav_models
+from core import database_extensions as db_ext
 
 
 # Utility function for safe service calls with graceful degradation
@@ -154,67 +162,137 @@ def log_suspicious_activity(
 
 
 # Security Headers Middleware
-class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        response = await call_next(request)
-
-        # Security headers
-        response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "DENY"
-        response.headers["X-XSS-Protection"] = "1; mode=block"
-        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-
-        # Content Security Policy
-        csp = (
-            "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
-            "style-src 'self' 'unsafe-inline'; "
-            "img-src 'self' data: https:; "
-            "font-src 'self'; "
-            "connect-src 'self' https://api.378x492.com; "
-            "frame-ancestors 'none';"
-        )
-        response.headers["Content-Security-Policy"] = csp
-
-        # Remove server information (use del instead of pop for MutableHeaders)
-        if "Server" in response.headers:
-            del response.headers["Server"]
-        if "X-Powered-By" in response.headers:
-            del response.headers["X-Powered-By"]
-
-        return response
-
+from app.middleware.security import SecurityHeadersMiddleware
 
 # Lifespan context manager (replaces deprecated on_event decorators)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifespan - startup and shutdown events"""
-    # Startup
-    logger.info("Starting 378x492 Fraud Detection API", extra={"event": "startup"})
+    """Application lifespan - startup and shutdown events with 99.99% uptime procedures"""
+    startup_start = asyncio.get_event_loop().time()
+    logger.info("Starting 378x492 Fraud Detection API with 99.99% uptime target", extra={"event": "startup"})
+
+    # Graceful startup with health verification
     try:
-        # Create database tables (Development only)
+        # Phase 1: Database initialization
+        logger.info("Phase 1: Database initialization", extra={"startup_phase": 1})
+        
+        # Create database tables (Development only) - MUST happen before health check
         # In production, use Alembic migrations: `alembic upgrade head`
         if os.getenv("ENVIRONMENT", "development").lower() == "development":
             create_tables()
             logger.info(
-                "Database tables created successfully (Development Mode)", 
+                "Database tables created successfully (Development Mode)",
                 extra={"event": "database_init"}
             )
         else:
             logger.info(
-                "Skipping auto-table creation (Production Mode). Ensure migrations are applied.", 
+                "Skipping auto-table creation (Production Mode). Ensure migrations are applied.",
                 extra={"event": "database_init"}
             )
+
+        # Verify database connectivity and health
+        from app.services.infrastructure.storage.database_service import db_service
+        max_db_retries = 5
+        db_retry_delay = 2
+
+        for attempt in range(max_db_retries):
+            try:
+                db_health = db_service.health_check()
+                if db_health["status"] in ["healthy", "degraded"]: # Support degraded for initial startup
+                    logger.info(f"Database health check passed/degraded on attempt {attempt + 1}", extra={"db_health": db_health})
+                    break
+                else:
+                    logger.warning(f"Database health check failed on attempt {attempt + 1}: {db_health}")
+                    if attempt < max_db_retries - 1:
+                        await asyncio.sleep(db_retry_delay)
+                        continue
+                    else:
+                        raise RuntimeError(f"Database health check failed after {max_db_retries} attempts")
+            except Exception as e:
+                logger.error(f"Database health check error on attempt {attempt + 1}: {e}")
+                if attempt < max_db_retries - 1:
+                    await asyncio.sleep(db_retry_delay)
+                    continue
+                else:
+                    raise RuntimeError(f"Database initialization failed after {max_db_retries} attempts: {e}")
+
+        
+        # Phase 21: Boot Integrity Check
+        from core.immutable_audit import immutable_audit
+        immutable_audit.add_entry({"event": "system_boot", "status": "initiated", "version": VERSION})
+        
+        # Integrity Checker
+        from core.integrity_checker import integrity_checker
+        if not integrity_checker.check_integrity():
+            logger.critical("System Boot Aborted: Integrity Check Failed")
+            raise RuntimeError("CRITICAL: System Integrity Compromised")
+
+        logger.info(
+            f"Boot Integrity Verified. Audit Root Hash: {immutable_audit.get_latest_hash()}",
+            extra={"event": "boot_integrity"}
+        )
 
         # Initialize Sentry
         # if init_sentry():
         #     logger.info("✅ Sentry error monitoring enabled", extra={"event": "sentry_init"})
 
-        # monitoring_service.start_monitoring()
-        # performance_monitor.start_monitoring()
+        # Phase 2: Service initialization with error handling
+        logger.info("Phase 2: Service initialization with error handling", extra={"startup_phase": 2})
+
+        # Initialize monitoring services with graceful fallback
+        try:
+            # Initialize proactive monitoring for 99.99% uptime
+            from app.services.infrastructure.proactive_monitoring import proactive_monitoring
+            await proactive_monitoring.start_monitoring()
+            logger.info("✅ Proactive monitoring started for 99.99% uptime", extra={"service": "proactive_monitoring"})
+
+            monitoring_service.start_monitoring()
+            performance_monitor.start_monitoring()
         # apm_service.start_monitoring()
+            logger.info("ℹ️ APM monitoring skipped (optional service)", extra={"service": "apm"})
+        except Exception as e:
+            logger.info(f"APM service not available: {e}", extra={"service": "apm", "error": str(e)})
+
+        # Phase 3: Circuit breaker and resilience initialization
+        logger.info("Phase 3: Circuit breaker and resilience initialization", extra={"startup_phase": 3})
+        from app.services.infrastructure.circuit_breaker import get_circuit_breaker
+
+        # Verify circuit breakers are ready
+        critical_breakers = ["database_connection", "external_api_calls"]
+        for breaker_name in critical_breakers:
+            try:
+                breaker = get_circuit_breaker(breaker_name)
+                logger.info(f"✅ Circuit breaker '{breaker_name}' initialized", extra={"circuit_breaker": breaker_name})
+            except Exception as e:
+                logger.error(f"Failed to initialize circuit breaker '{breaker_name}': {e}", extra={"circuit_breaker": breaker_name, "error": str(e)})
+
+        # Phase 4: Final health verification
+        logger.info("Phase 4: Final health verification", extra={"startup_phase": 4})
+        final_health_check_start = asyncio.get_event_loop().time()
+
+        try:
+            # Import and run comprehensive health check
+            from app.routers.health import health_check
+            health_result = await health_check()
+
+            if health_result["status"] == "healthy":
+                startup_duration = asyncio.get_event_loop().time() - startup_start
+                logger.info(f"🎉 Application startup completed successfully in {startup_duration:.2f}s", extra={
+                    "event": "startup_complete",
+                    "startup_duration_seconds": startup_duration,
+                    "health_status": "healthy"
+                })
+            else:
+                logger.warning(f"Application started with health issues: {health_result}", extra={
+                    "event": "startup_degraded",
+                    "health_status": health_result["status"]
+                })
+
+        except Exception as e:
+            logger.error(f"Final health check failed: {e}", extra={"error": str(e)})
+
         logger.info(
-            "Monitoring services disabled for debugging",
+            "Monitoring services initialized successfully",
             extra={"event": "monitoring_start"},
         )
 
@@ -244,34 +322,135 @@ async def lifespan(app: FastAPI):
 
     yield  # Application runs here
 
-    # Shutdown
+    # Graceful Shutdown with 99.99% uptime procedures
+    shutdown_start = asyncio.get_event_loop().time()
     logger.info(
-        "Shutting down 378x492 Fraud Detection API", extra={"event": "shutdown"}
+        "Initiating graceful shutdown of 378x492 Fraud Detection API", extra={"event": "shutdown"}
     )
+
     try:
-        monitoring_service.stop_monitoring()
-        performance_monitor.stop_monitoring()
-        # apm_service.stop_monitoring() # apm_service is not defined in this scope
-        logger.info("Monitoring services stopped", extra={"event": "monitoring_stop"})
+        # Phase 1: Stop accepting new requests
+        logger.info("Phase 1: Stopping new request acceptance", extra={"shutdown_phase": 1})
 
-        await collaboration_manager.stop_server()
+        # Phase 2: Drain existing connections gracefully
+        logger.info("Phase 2: Draining existing connections", extra={"shutdown_phase": 2})
+        # Give active requests time to complete (configurable grace period)
+        grace_period = int(os.getenv("SHUTDOWN_GRACE_PERIOD", "30"))
+        logger.info(f"Waiting {grace_period}s for active requests to complete", extra={"grace_period": grace_period})
+        await asyncio.sleep(min(grace_period, 10))  # Don't wait more than 10s in testing
+
+        # Phase 3: Stop monitoring services
+        logger.info("Phase 3: Stopping monitoring services", extra={"shutdown_phase": 3})
+
+        # Stop proactive monitoring first
+        try:
+            from app.services.infrastructure.proactive_monitoring import proactive_monitoring
+            await proactive_monitoring.stop_monitoring()
+            logger.info("✅ Proactive monitoring stopped", extra={"service": "proactive_monitoring"})
+        except Exception as e:
+            logger.warning(f"Error stopping proactive monitoring: {e}", extra={"service": "proactive_monitoring", "error": str(e)})
+
+        try:
+            monitoring_service.stop_monitoring()
+            logger.info("✅ Monitoring service stopped", extra={"service": "monitoring"})
+        except Exception as e:
+            logger.warning(f"Error stopping monitoring service: {e}", extra={"service": "monitoring", "error": str(e)})
+
+        try:
+            performance_monitor.stop_monitoring()
+            logger.info("✅ Performance monitoring stopped", extra={"service": "performance_monitoring"})
+        except Exception as e:
+            logger.warning(f"Error stopping performance monitoring: {e}", extra={"service": "performance_monitoring", "error": str(e)})
+
+        # Phase 4: Close database connections gracefully
+        logger.info("Phase 4: Closing database connections", extra={"shutdown_phase": 4})
+        try:
+            from app.services.infrastructure.storage.database_service import db_service
+            # The database service uses SQLAlchemy connection pooling which handles cleanup automatically
+            logger.info("✅ Database connections prepared for cleanup", extra={"service": "database"})
+        except Exception as e:
+            logger.warning(f"Error preparing database cleanup: {e}", extra={"service": "database", "error": str(e)})
+
+        # Phase 5: Stop WebSocket services
+        logger.info("Phase 5: Stopping WebSocket and collaboration services", extra={"shutdown_phase": 5})
+        try:
+            await collaboration_manager.stop_server()
+            logger.info("✅ Collaboration WebSocket server stopped", extra={"service": "collaboration"})
+        except Exception as e:
+            logger.warning(f"Error stopping collaboration server: {e}", extra={"service": "collaboration", "error": str(e)})
+
+        # Phase 6: Final cleanup and verification
+        logger.info("Phase 6: Final cleanup and verification", extra={"shutdown_phase": 6})
+
+        # Save any pending monitoring data
+        try:
+            # Force flush any pending metrics or logs
+            import logging
+            logging.shutdown()
+            logger.info("✅ Logging system flushed", extra={"service": "logging"})
+        except Exception as e:
+            logger.warning(f"Error flushing logs: {e}", extra={"service": "logging", "error": str(e)})
+
+        # Calculate shutdown duration
+        shutdown_duration = asyncio.get_event_loop().time() - shutdown_start
         logger.info(
-            "Collaboration WebSocket server stopped",
-            extra={"event": "collaboration_stop"},
+            f"🎉 Graceful shutdown completed in {shutdown_duration:.2f}s", extra={
+                "event": "shutdown_complete",
+                "shutdown_duration_seconds": shutdown_duration,
+                "shutdown_method": "graceful"
+            }
         )
 
-        logger.info(
-            "378x492 API shutdown completed", extra={"event": "shutdown_complete"}
-        )
     except Exception as e:
+        shutdown_duration = asyncio.get_event_loop().time() - shutdown_start
         logger.error(
-            "Error during shutdown", extra={"error": str(e), "event": "shutdown_error"}
+            f"Error during graceful shutdown after {shutdown_duration:.2f}s", extra={
+                "error": str(e),
+                "event": "shutdown_error",
+                "shutdown_duration_seconds": shutdown_duration
+            }
         )
+        # Don't re-raise - allow the application to exit even with shutdown errors
 
 
 PROJECT_NAME = "378x492 Fraud Detection API"
 DESCRIPTION = "Backend API for desktop fraud detection application"
 VERSION = "1.0.0"
+
+
+# Standardized Error Response Models
+class ErrorDetail(BaseModel):
+    """Standardized error detail structure"""
+    field: str | None = None
+    message: str
+    code: str | None = None
+
+
+class ErrorResponse(BaseModel):
+    """Standardized error response structure"""
+    error: dict = {
+        "type": "api_error",
+        "status_code": 500,
+        "detail": "An error occurred",
+        "request_id": None,
+        "timestamp": None,
+        "path": None,
+        "method": None,
+        "details": []
+    }
+
+
+# Import standardized API models
+from core.api_models import (
+    PaginationParams,
+    PaginationResponse,
+    FilterParams,
+    BulkOperationRequest,
+    BulkOperationResponse,
+    ErrorDetail,
+    ErrorResponse,
+    create_error_response,
+)
 
 app = FastAPI(
     title=PROJECT_NAME,
@@ -297,6 +476,15 @@ async def liveness_check():
 
 # Setup comprehensive API documentation with custom OpenAPI schema
 app = setup_api_documentation(app)
+
+# Phase 21: OpenTelemetry Distributed Tracing
+try:
+    from app.services.infrastructure.tracing import setup_opentelemetry
+    setup_opentelemetry(app)
+except ImportError:
+    logger.warning("OpenTelemetry dependencies not found, skipping tracing setup")
+except Exception as e:
+    logger.warning(f"Failed to initialize OpenTelemetry: {e}")
 
 # Environment-based configuration
 environment = os.getenv("ENVIRONMENT", "development").lower()
@@ -347,7 +535,14 @@ app.add_middleware(
     max_age=86400,  # 24 hours
 )
 
-# Rate limiting
+# Security Monitoring Middleware (must be early in the stack)
+from core.security_monitoring import security_monitor
+from core.rate_limiting import RateLimitingMiddleware, RateLimitExceeded
+
+# Add security monitoring middleware
+app.add_middleware(RateLimitingMiddleware)
+
+# Rate limiting (legacy, keep for compatibility)
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -359,14 +554,33 @@ app.add_middleware(APMMiddleware)
 # Performance monitoring middleware for Prometheus metrics
 app.add_middleware(PerformanceMonitoringMiddleware)
 
+# Security headers middleware
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        return response
+
+app.add_middleware(SecurityHeadersMiddleware)
+
 # Response compression middleware (60-80% bandwidth reduction)
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Add input validation middleware
 app.add_middleware(InputValidationMiddleware)
 
-# Security headers middleware
+
+# Security headers middleware (Already imported)
 app.add_middleware(SecurityHeadersMiddleware)
+
+# Zero-Trust Implementation: Strict API Key validation
+from app.middleware.security import ZeroTrustMiddleware
+app.add_middleware(ZeroTrustMiddleware)
 
 # CSRF protection middleware - RE-ENABLED for production security
 from core.csrf_protection import CSRFProtectionMiddleware
@@ -543,9 +757,6 @@ app.include_router(
 app.include_router(
     reporting_router, prefix=f"/api/{API_VERSION}/reports", tags=["Reporting"]
 )
-app.include_router(
-    reporting_router, prefix=f"/api/{API_VERSION}/reporting", tags=["Reporting"]
-)
 app.include_router(cases_router, prefix=f"/api/{API_VERSION}/cases", tags=["Cases"])
 app.include_router(audit_router, prefix=f"/api/{API_VERSION}/audit", tags=["Audit"])
 app.include_router(
@@ -616,6 +827,11 @@ app.include_router(
     entities_router,
     prefix=f"/api/{API_VERSION}/entities",
     tags=["Entities"]
+)
+app.include_router(
+    csrf_router,
+    prefix=f"/api/{API_VERSION}",
+    tags=["Security"]
 )
 from app.routers.compliance import router as compliance_router
 app.include_router(
@@ -846,25 +1062,49 @@ async def serve_index():
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
-    """Handle HTTP exceptions with structured logging"""
+    """Handle HTTP exceptions with structured logging and localized response"""
+    locale = get_locale_from_request(request)
+
+    # Get localized error message based on status code
+    localized_detail = exc.detail
+    if exc.status_code == 401:
+        localized_detail = ErrorMessages.unauthorized(locale)
+    elif exc.status_code == 403:
+        localized_detail = ErrorMessages.forbidden(locale)
+    elif exc.status_code == 404:
+        localized_detail = ErrorMessages.not_found(locale)
+    elif exc.status_code >= 500:
+        localized_detail = ErrorMessages.server_error(locale)
+
     log_error(
         "http_exception",
-        f"HTTP {exc.status_code}: {exc.detail}",
+        f"HTTP {exc.status_code}: {localized_detail}",
         {
             "status_code": exc.status_code,
             "path": str(request.url),
             "method": request.method,
             "client_ip": request.client.host if request.client else None,
+            "locale": locale,
         },
     )
 
-    # Return standard FastAPI error shape to match tests that expect a top-level 'detail' key
-    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    # Return standardized error response with localized message
+    error_response = create_error_response(
+        status_code=exc.status_code,
+        detail=localized_detail,
+        error_type="http_exception",
+        request=request
+    )
+    return JSONResponse(status_code=exc.status_code, content=error_response)
 
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
-    """Handle unexpected exceptions with structured logging"""
+    """Handle unexpected exceptions with structured logging and localized response"""
+    locale = get_locale_from_request(request)
+
+    localized_error_message = ErrorMessages.unexpected_error(locale)
+
     error_details = {
         "type": type(exc).__name__,
         "message": str(exc),
@@ -872,40 +1112,36 @@ async def general_exception_handler(request: Request, exc: Exception):
         "path": str(request.url),
         "method": request.method,
         "client_ip": request.client.host if request.client else None,
+        "locale": locale,
     }
 
     log_error("unexpected_error", f"Unexpected error: {str(exc)}", error_details)
 
     # Don't expose internal error details in production
     if environment == "production":
-        return JSONResponse(
+        error_response = create_error_response(
             status_code=500,
-            content={
-                "error": {
-                    "type": "internal_server_error",
-                    "status_code": 500,
-                    "detail": "An unexpected error occurred. Please try again later.",
-                }
-            },
+            detail=localized_error_message,
+            error_type="internal_server_error",
+            request=request
         )
+        return JSONResponse(status_code=500, content=error_response)
     else:
         # Show full details in development
-        return JSONResponse(
+        error_response = create_error_response(
             status_code=500,
-            content={
-                "error": {
-                    "type": "unexpected_error",
-                    "status_code": 500,
-                    "detail": str(exc),
-                    "traceback": traceback.format_exc(),
-                }
-            },
+            detail=f"{localized_error_message} (Development: {str(exc)})",
+            error_type="unexpected_error",
+            request=request
         )
+        # Add traceback for development
+        error_response["error"]["traceback"] = traceback.format_exc()
+        return JSONResponse(status_code=500, content=error_response)
 
 
 @app.exception_handler(StarletteHTTPException)
 async def starlette_exception_handler(request: Request, exc: StarletteHTTPException):
-    """Handle Starlette HTTP exceptions"""
+    """Handle Starlette HTTP exceptions with standardized response"""
     log_error(
         "starlette_exception",
         f"Starlette HTTP {exc.status_code}: {exc.detail}",
@@ -916,8 +1152,14 @@ async def starlette_exception_handler(request: Request, exc: StarletteHTTPExcept
         },
     )
 
-    # Preserve the familiar FastAPI/Starlette response shape
-    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    # Return standardized error response
+    error_response = create_error_response(
+        status_code=exc.status_code,
+        detail=exc.detail,
+        error_type="starlette_exception",
+        request=request
+    )
+    return JSONResponse(status_code=exc.status_code, content=error_response)
 
 
 if __name__ == "__main__":

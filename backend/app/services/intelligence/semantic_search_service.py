@@ -99,13 +99,11 @@ class SemanticSearchEngine:
     def _init_faiss_backend(self):
         """Initialize FAISS backend"""
         try:
-            import pickle
-
             import faiss
 
             self.faiss_index_path = self.config.get("index_path", "./data/faiss_index")
             self.faiss_metadata_path = self.config.get(
-                "metadata_path", "./data/faiss_metadata.pkl"
+                "metadata_path", "./data/faiss_metadata.json"
             )
 
             os.makedirs(os.path.dirname(self.faiss_index_path), exist_ok=True)
@@ -113,8 +111,8 @@ class SemanticSearchEngine:
             # Load or create FAISS index
             if os.path.exists(self.faiss_index_path):
                 self.faiss_index = faiss.read_index(self.faiss_index_path)
-                with open(self.faiss_metadata_path, "rb") as f:
-                    self.faiss_metadata = pickle.load(f)
+                with open(self.faiss_metadata_path, "r") as f:
+                    self.faiss_metadata = json.load(f)
             else:
                 # Initialize with dimension 384 (for MiniLM model)
                 self.faiss_index = faiss.IndexFlatIP(
@@ -251,10 +249,8 @@ class SemanticSearchEngine:
 
             # Save index and metadata
             faiss.write_index(self.faiss_index, self.faiss_index_path)
-            with open(self.faiss_metadata_path, "wb") as f:
-                import pickle
-
-                pickle.dump(self.faiss_metadata, f)
+            with open(self.faiss_metadata_path, "w") as f:
+                json.dump(self.faiss_metadata, f)
 
             return IndexingResult(
                 document_id=document_id,

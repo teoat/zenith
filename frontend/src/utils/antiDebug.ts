@@ -1,3 +1,5 @@
+import { secureLogger } from './secureLogger';
+
 const antiDebug = () => {
   const check = () => {
     // This will pause execution if dev tools are open
@@ -10,11 +12,14 @@ const antiDebug = () => {
       const after = new Date().getTime();
       if (after - before > 100) { // If time difference is significant, debugger was likely hit
         // You can add more aggressive actions here, e.g., redirect or clear local storage
-        document.body.innerHTML = '<h1>Debugger detected!</h1>';
+        // Use safer text content instead of innerHTML
+        document.body.textContent = 'Debugger detected!';
         window.location.href = 'about:blank'; // Redirect to a blank page
       }
-    } catch (err) {
-      // console.error("Anti-debug check error:", err);
+    } catch (error) {
+       secureLogger.error('SECURITY', 'Anti-debug check error', { 
+         error: error instanceof Error ? error.message : String(error) 
+       });
     }
 
     // Schedule the next check

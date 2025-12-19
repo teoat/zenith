@@ -1,49 +1,59 @@
-
-from enum import Enum
 from typing import Dict, Any, List
+import logging
+from core.messaging import mq_service, MessageQueueInterface
+from datetime import datetime
 
-class NotificationChannel(Enum):
-    EMAIL = "email"
-    SMS = "sms"
-    IN_APP = "in_app"
-    SLACK = "slack"
-    WEBHOOK = "webhook"
+logger = logging.getLogger(__name__)
 
-class NotificationPriority(Enum):
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
-
-class NotificationType(Enum):
-    SYSTEM_ALERT = "system_alert"
-    FRAUD_DETECTED = "fraud_detected"
-    CASE_UPDATED = "case_updated"
-    DOCUMENT_ANALYZED = "document_analyzed"
-    PERFORMANCE_METRIC = "performance_metric"
-    SECURITY_EVENT = "security_event"
-    COLLABORATION_EVENT = "collaboration_event"
-    DEADLINE_APPROACHING = "deadline_approaching"
-    TASK_ASSIGNED = "task_assigned"
-    REPORT_GENERATED = "report_generated"
-
-class NotificationSystem:
-    """Mock Notification System"""
-    
-    def get_user_notifications(self, user_id, unread_only=False):
-        return []
-
-    def mark_notification_read(self, user_id, notification_id):
-        return True
-
-    def process_event(self, event_type, data, recipient):
-        pass
-
-    def get_system_stats(self):
-        return {
-            "sent_last_hour": 0,
-            "failed_last_hour": 0,
-            "active_channels": 4
+class NotificationService:
+    """
+    Decoupled Notification Service using Message Queue.
+    Handles email, SMS, and push notifications via async messaging.
+    """
+    def __init__(self, mq: MessageQueueInterface = mq_service):
+        self.mq = mq
+        self._templates: Dict[str, str] = {
+            "welcome": "Welcome {name} to 378x492 Platform!",
+            "alert": "SECURITY ALERT: {details}",
+            "case_update": "Case {case_id} has been updated."
         }
+    
+    async def initialize(self):
+        """Subscribe to notification topics"""
+        await self.mq.connect()
+        await self.mq.subscribe("notifications.email", self._handle_email)
+        await self.mq.subscribe("notifications.sms", self._handle_sms)
+        logger.info("[NotificationService] Initialized and subscribed to topics")
 
-notification_system = NotificationSystem()
+    async def send_notification(self, type: str, recipient: str, template: str, context: Dict[str, Any]):
+        """Publish notification request to MQ"""
+        payload = {
+            "type": type,
+            "recipient": recipient,
+            "template": template,
+            "context": context,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        await self.mq.publish(f"notifications.{type}", payload)
+
+    async def _handle_email(self, data: Dict[str, Any]):
+        """Process email notification from MQ"""
+        recipient = data.get("recipient")
+        template_key = data.get("template")
+        context = data.get("context", {})
+        
+        template = self._templates.get(template_key, "Notification: {details}")
+        message = template.format(**context)
+        
+        logger.info(f"[EMAIL] Sending to {recipient}: {message}")
+        # Integration with SendGrid/SES would go here
+
+    async def _handle_sms(self, data: Dict[str, Any]):
+        """Process SMS notification from MQ"""
+        recipient = data.get("recipient")
+        context = data.get("context", {})
+        logger.info(f"[SMS] Sending to {recipient}: {context}")
+        # Integration with Twilio/SNS would go here
+
+# Singleton
+notification_service = NotificationService()

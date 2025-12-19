@@ -5,7 +5,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getBrowserTimezone } from '../lib/formatters';
-import {
+import type {
   SupportedLocale,
   LocaleSettings
 } from '../types/locale';

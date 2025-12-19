@@ -22,24 +22,10 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-# Singleton Engine Instance
-_engine_instance = None
+from app.services.fraud.engine import rule_engine, AlertSeverity
 
 def get_fraud_engine() -> RuleEngine:
-    global _engine_instance
-    if not _engine_instance:
-        # Warning: Initializing this inside a request might cause asyncio loop issues 
-        # if the engine init tries to run async code synchronously.
-        # Ideally this should be initialized at app startup.
-        try:
-             _engine_instance = RuleEngine()
-        except RuntimeError:
-             # Fallback if loop is running (e.g. during tests or lazy load)
-             # The engine init tries to create a new loop.
-             logger.warning("Re-using existing engine instance logic or handling loop conflict")
-             # Modifying engine to support async init would be better, but for now:
-             _engine_instance = RuleEngine() 
-    return _engine_instance
+    return rule_engine
 
 # Request/Response Models
 class RuleResponse(BaseModel):

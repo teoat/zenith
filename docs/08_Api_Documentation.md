@@ -1,7 +1,7 @@
 # Fraud Detection Platform API Documentation
 
 **Version:** 1.0.0
-**Base URL:** `https://api.378x492.com/v1`
+**Base URL:** `https://api.fraud-detection-378x492.com/v1`
 **Authentication:** JWT Bearer Token
 **Generated:** 2025-12-17
 **Total Endpoints:** 85+

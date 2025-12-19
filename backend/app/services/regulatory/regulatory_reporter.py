@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
+from .fincen_builder import FinCENXMLBuilder
+from .schema_validator import SchemaValidator
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +61,7 @@ class AutomatedRegulatoryReporter:
         self.report_templates = self._load_report_templates()
         self.regulatory_requirements = self._load_regulatory_requirements()
         self.submission_gateways = self._initialize_submission_gateways()
+        self.schema_validator = SchemaValidator()
 
     def _load_report_templates(self) -> Dict[ReportType, Dict[str, Any]]:
         """Load regulatory report templates"""
@@ -188,49 +191,54 @@ class AutomatedRegulatoryReporter:
 
     async def _fetch_case_data(self, case_id: str) -> Dict[str, Any]:
         """Fetch case data from case management system"""
-        # This would integrate with the actual case service
-        # For now, return mock data structure
-        return {
-            "case_id": case_id,
-            "title": f"Case {case_id}",
-            "status": "under_review",
-            "priority": "high",
-            "transactions": [
-                {
-                    "id": "tx_001",
-                    "amount": 25000.00,
-                    "currency": "USD",
-                    "date": "2024-01-15",
-                    "description": "Wire transfer to offshore account",
-                    "from_account": "ACC_001",
-                    "to_account": "OFFSHORE_001",
-                    "suspicious_indicators": ["unusual_amount", "offshore_destination"],
-                }
-            ],
-            "entities": [
-                {
-                    "id": "ent_001",
-                    "name": "John Doe",
-                    "type": "individual",
-                    "identifiers": {"ssn": "123-45-6789", "passport": "P123456"},
-                    "address": "123 Main St, Anytown, USA",
-                    "occupation": "Business Owner",
-                }
-            ],
-            "evidence": [
-                {
-                    "id": "ev_001",
-                    "type": "document",
-                    "filename": "wire_transfer_receipt.pdf",
-                    "description": "Bank wire transfer receipt",
-                }
-            ],
-            "analysis": {
-                "risk_score": 0.85,
-                "suspicious_patterns": ["structuring", "offshore_accounts"],
-                "amount_involved": 25000.00,
-            },
-        }
+        from app.services.business.case_service import case_service
+        from app.services.infrastructure.storage.database_service import database_service
+
+        with database_service.get_db() as db:
+            case = case_service.get_case(db, case_id)
+            if not case:
+                raise ValueError(f"Case with ID {case_id} not found")
+
+            # Transform Case SQL Alchemy model to dictionary required by the report
+            # Mappping Case -> Dict structure
+            
+            # Entities (Subject Info)
+            # Assuming 'case.customer_id' or 'case.metadata' holds entity info, 
+            # if unavailable, we extract from available metadata or return a placeholder aware of missing data.
+            entities = []
+            if getattr(case, "customer_name", None):
+                 entities.append({
+                     "name": case.customer_name,
+                     "type": "individual",  # Defaulting as we might not have this column
+                     "identifiers": {},     # Placeholder as we don't store SSN in raw case
+                     "address": "Unknown Address", 
+                     "occupation": "Unknown"
+                 })
+            
+            # Transactions
+            # Assuming 'case.transactions' or similar relation exists, otherwise we look at metadata
+            transactions = []
+            # Note: The current Case model might not have direct relation loaded. 
+            # We map from what appears to be available in standard Case model.
+            
+            # Analysis
+            # Use risk_score if available
+            risk_score = getattr(case, "risk_score", 0.0)
+            
+            return {
+                "case_id": case.id,
+                "title": case.title,
+                "status": case.status.value if hasattr(case.status, 'value') else str(case.status),
+                "priority": case.priority.value if hasattr(case.priority, 'value') else str(case.priority),
+                "transactions": transactions, # Empty if no direct relation (better than fake data)
+                "entities": entities,
+                "evidence": [], # Would need evidence service to fetch this
+                "analysis": {
+                    "risk_score": risk_score,
+                    "suspicious_patterns": [], # Would need analysis service
+                    "amount_involved": getattr(case, "amount", 0.0),
+                },
+            }
 
     def _validate_report_requirements(
         self, case_data: Dict[str, Any], report_type: ReportType, jurisdiction: str
@@ -458,27 +466,21 @@ class AutomatedRegulatoryReporter:
             raise ValueError(f"Unsupported format: {gateway['format']}")
 
     def _format_as_xml(self, report: RegulatoryReport) -> str:
-        """Format report as XML for regulatory submission"""
-        root = ET.Element("RegulatoryReport")
-        ET.SubElement(root, "ReportId").text = report.report_id
-        ET.SubElement(root, "ReportType").text = report.report_type.value
-        ET.SubElement(root, "InstitutionId").text = report.institution_id
-        ET.SubElement(root, "ReportingDate").text = report.reporting_date.isoformat()
-
-        # Add subject info
-        subject = ET.SubElement(root, "SubjectInfo")
-        for key, value in report.subject_info.items():
-            ET.SubElement(subject, key.replace("_", "")).text = str(value)
-
-        # Add activity details
-        activity = ET.SubElement(root, "ActivityDetails")
-        for key, value in report.activity_details.items():
-            ET.SubElement(activity, key.replace("_", "")).text = str(value)
-
-        # Add narrative
-        ET.SubElement(root, "Narrative").text = report.narrative
-
-        return ET.tostring(root, encoding="unicode")
+        """Format report as XML for regulatory submission using FinCENXMLBuilder"""
+        builder = FinCENXMLBuilder()
+        builder.build_header(submission_type=report.report_type.value)
+        
+        # Prepare activity data from report
+        activity_data = {
+            "type": "Suspicious",
+            "amount": report.activity_details.get("amount", 0.0),
+            "currency": report.activity_details.get("currency", "USD"),
+            "subject": report.subject_info,
+            "narrative": report.narrative
+        }
+        builder.add_activity(activity_data)
+        
+        return builder.to_xml_string()
 
     def _report_to_dict(self, report: RegulatoryReport) -> Dict[str, Any]:
         """Convert report to dictionary"""
@@ -500,19 +502,22 @@ class AutomatedRegulatoryReporter:
         self, formatted_report: str, gateway: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Submit formatted report to regulatory gateway"""
-        # This would implement actual API calls to regulatory authorities
-        # For now, simulate successful submission
+        # SAFE SIMULATION MODE
+        # In a real production environment, this would use mTLS/HTTPS to submit to FinCEN/FCA.
+        # For this deployment, we simulate the submission to avoid actual regulatory filings.
 
-        logger.info(f"Submitting {gateway['format']} report to {gateway['endpoint']}")
+        logger.info(f"SIMULATION: Submitting {gateway['format']} report to {gateway['endpoint']}")
 
         # Simulate API call delay
         await asyncio.sleep(1)
 
         return {
             "success": True,
-            "reference_number": f"REF_{int(datetime.now().timestamp())}",
+            "reference_number": f"SIM-REF_{int(datetime.now().timestamp())}",
             "submission_timestamp": datetime.now().isoformat(),
             "status": "accepted",
+            "is_simulation": True,
+            "note": "This was a simulated submission. No data was sent to external authorities."
         }
 
     def get_report_status(self, report_id: str) -> Optional[RegulatoryReport]:
@@ -557,6 +562,10 @@ class AutomatedRegulatoryReporter:
             "requirements_met": len(required_fields) - len(issues),
             "total_requirements": len(required_fields),
         }
+    
+    def validate_xml_schema(self, xml_content: str) -> Tuple[bool, str]:
+        """Validate generated XML against schema"""
+        return self.schema_validator.validate_structure(xml_content)
 
 
 # Global instance

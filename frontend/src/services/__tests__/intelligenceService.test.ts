@@ -3,14 +3,17 @@
  */
 
 import { intelligenceService } from '../intelligenceService';
+import { request } from '../client';
 
-// Mock fetch
-global.fetch = jest.fn();
+// Mock the request function
+jest.mock('../client', () => ({
+  request: jest.fn(),
+}));
 
 describe('IntelligenceService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    localStorage.setItem('auth_token', 'test-token');
+    localStorage.setItem('token', 'test-token');
   });
 
   afterEach(() => {
@@ -32,10 +35,7 @@ describe('IntelligenceService', () => {
         }
       ];
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockAlerts
-      });
+      (request as jest.Mock).mockResolvedValueOnce(mockAlerts);
 
       const transactions = [
         {
@@ -51,27 +51,21 @@ describe('IntelligenceService', () => {
       const result = await intelligenceService.analyzeFraud(transactions);
 
       expect(result).toEqual(mockAlerts);
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/intelligence/fraud/analyze'),
+      expect(request).toHaveBeenCalledWith(
+        '/intelligence/fraud/analyze',
         expect.objectContaining({
           method: 'POST',
-          headers: expect.objectContaining({
-            'Authorization': 'Bearer test-token'
-          })
+          body: JSON.stringify({ transactions })
         })
       );
     });
 
     it('handles API errors', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: false,
-        statusText: 'Bad Request',
-        json: async () => ({ detail: 'Bad Request' })
-      });
+      (request as jest.Mock).mockRejectedValueOnce(new Error('Bad Request'));
 
       await expect(
         intelligenceService.analyzeFraud([])
-      ).rejects.toThrow('Fraud analysis failed');
+      ).rejects.toThrow('Bad Request');
     });
   });
 
@@ -89,16 +83,13 @@ describe('IntelligenceService', () => {
         has_suspicious_indicators: false
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResult
-      });
+      (request as jest.Mock).mockResolvedValueOnce(mockResult);
 
       const file = new File(['content'], 'test.pdf', { type: 'application/pdf' });
       const result = await intelligenceService.processEvidence(file);
 
       expect(result).toEqual(mockResult);
-      expect(global.fetch).toHaveBeenCalled();
+      expect(request).toHaveBeenCalledWith('/intelligence/evidence/process', expect.any(Object));
     });
   });
 
@@ -115,18 +106,12 @@ describe('IntelligenceService', () => {
         }
       ];
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResults
-      });
+      (request as jest.Mock).mockResolvedValueOnce(mockResults);
 
       const results = await intelligenceService.searchEvidence('test query');
 
       expect(results).toEqual(mockResults);
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/intelligence/evidence/search?query='),
-        expect.any(Object)
-      );
+      expect(request).toHaveBeenCalledWith('/intelligence/evidence/search?query=test%20query');
     });
   });
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Check, X, Info } from 'lucide-react';
 import { AccessibleButton } from './AccessibleButton';
-import { DraftState } from '../../services/draftPreviewService';
+import type { DraftState } from '../../services/draftPreviewService';
 
 interface DraftPreviewProps {
   draft: DraftState;

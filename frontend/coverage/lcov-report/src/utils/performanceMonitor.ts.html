@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.56% </span>
+                <span class="strong">67.18% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>48/69</span>
+                <span class='fraction'>43/64</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.56% </span>
+                <span class="strong">67.18% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>48/69</span>
+                <span class='fraction'>43/64</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -239,9 +239,7 @@
 <a name='L174'></a><a href='#L174'>174</a>
 <a name='L175'></a><a href='#L175'>175</a>
 <a name='L176'></a><a href='#L176'>176</a>
-<a name='L177'></a><a href='#L177'>177</a>
-<a name='L178'></a><a href='#L178'>178</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L177'></a><a href='#L177'>177</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -350,12 +348,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -417,8 +415,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">// src/utils/performanceMonitor.ts
-// Performance monitoring utilities
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import { secureLogger } from './secureLogger';
 &nbsp;
 declare global {
   interface Window {
@@ -457,12 +454,12 @@ class PerformanceMonitor {
         const entries = <span class="cstat-no" title="statement not covered" >list.getEntries();</span>
         const lastEntry = <span class="cstat-no" title="statement not covered" >entries[entries.length - 1];</span>
 <span class="cstat-no" title="statement not covered" >        this.metrics.fcp = lastEntry.startTime;</span>
-<span class="cstat-no" title="statement not covered" >        console.log('FCP:', this.metrics.fcp);</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.info('PERFORMANCE', `FCP Measured: ${this.metrics.fcp}ms`);</span>
       });
       fcpObserver.observe({ entryTypes: ['paint'] });
       this.observers.push(fcpObserver);
     } catch {
-      console.warn('FCP observer not supported');
+      secureLogger.warn('PERFORMANCE', 'FCP observer not supported');
     }
 &nbsp;
     // Largest Contentful Paint
@@ -475,7 +472,7 @@ class PerformanceMonitor {
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.push(lcpObserver);
     } catch {
-      console.warn('LCP observer not supported');
+      secureLogger.warn('PERFORMANCE', 'LCP observer not supported');
     }
 &nbsp;
     // First Input Delay
@@ -491,7 +488,7 @@ class PerformanceMonitor {
       fidObserver.observe({ entryTypes: ['first-input'] });
       this.observers.push(fidObserver);
     } catch {
-      console.warn('FID observer not supported');
+      secureLogger.warn('PERFORMANCE', 'FID observer not supported');
     }
 &nbsp;
     // Cumulative Layout Shift
@@ -509,7 +506,7 @@ class PerformanceMonitor {
       clsObserver.observe({ entryTypes: ['layout-shift'] });
       this.observers.push(clsObserver);
     } catch {
-      console.warn('CLS observer not supported');
+      secureLogger.warn('PERFORMANCE', 'CLS observer not supported');
     }
   }
 &nbsp;
@@ -526,13 +523,13 @@ class PerformanceMonitor {
   }
 &nbsp;
   public logMetrics() {
-    console.group('🚀 Performance Metrics');
-    console.log('FCP (First Contentful Paint):', this.metrics.fcp ? <span class="branch-0 cbranch-no" title="branch not covered" >`${this.metrics.fcp.toFixed(2)}ms` </span>: 'Not measured');
-    console.log('LCP (Largest Contentful Paint):', this.metrics.lcp ? <span class="branch-0 cbranch-no" title="branch not covered" >`${this.metrics.lcp.toFixed(2)}ms` </span>: 'Not measured');
-    console.log('FID (First Input Delay):', this.metrics.fid ? <span class="branch-0 cbranch-no" title="branch not covered" >`${this.metrics.fid.toFixed(2)}ms` </span>: 'Not measured');
-    console.log('CLS (Cumulative Layout Shift):', this.metrics.cls ? <span class="branch-0 cbranch-no" title="branch not covered" >this.metrics.cls.toFixed(4) </span>: 'Not measured');
-    console.log('TTFB (Time to First Byte):', this.metrics.ttfb ? `${this.metrics.ttfb}ms` : <span class="branch-1 cbranch-no" title="branch not covered" >'Not measured')</span>;
-    console.groupEnd();
+    secureLogger.info('PERFORMANCE', 'Summary of Web Vitals', {
+      fcp: this.metrics.fcp ? <span class="branch-0 cbranch-no" title="branch not covered" >`${this.metrics.fcp.toFixed(2)}ms` </span>: 'Not measured',
+      lcp: this.metrics.lcp ? <span class="branch-0 cbranch-no" title="branch not covered" >`${this.metrics.lcp.toFixed(2)}ms` </span>: 'Not measured',
+      fid: this.metrics.fid ? <span class="branch-0 cbranch-no" title="branch not covered" >`${this.metrics.fid.toFixed(2)}ms` </span>: 'Not measured',
+      cls: this.metrics.cls ? <span class="branch-0 cbranch-no" title="branch not covered" >this.metrics.cls.toFixed(4) </span>: 'Not measured',
+      ttfb: this.metrics.ttfb ? `${this.metrics.ttfb}ms` : <span class="branch-1 cbranch-no" title="branch not covered" >'Not measured'</span>
+    });
   }
 &nbsp;
   public reportToAnalytics() {
@@ -601,7 +598,7 @@ export default PerformanceMonitor;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:26.724Z
+                at 2025-12-19T02:07:52.612Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

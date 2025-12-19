@@ -9,7 +9,7 @@ The Simple378 Fraud Detection API provides comprehensive endpoints for fraud det
 
 ### Production
 ```
-https://api.378x492.com/api/v1
+https://api.fraud-detection-378x492.com/api/v1
 ```
 
 ### Development

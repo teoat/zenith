@@ -2,6 +2,8 @@ import json
 import logging
 import os
 import uuid
+import hashlib
+import aiofiles
 from dataclasses import asdict
 from datetime import datetime
 from typing import Dict, List, Optional, Any
@@ -16,51 +18,48 @@ from fastapi import (
     Request,
     UploadFile,
     Body,
+    BackgroundTasks,
 )
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.services.infrastructure.auth_service import auth_service
 from app.services.intelligence.evidence_service import evidence_processor
-from app.services.search_service import evidence_search_index
+from app.services.business.evidence_service import evidence_service
 from core.database import Case, User, get_db
 from app.dependencies import get_current_project_id
+from pydantic import BaseModel, Field
 
-# Provide a module-level alias `evidence_service` so tests can patch it
-try:
-    from app.services.intelligence.evidence_service import evidence_service
-except Exception:
-    evidence_service = None
+# Streaming upload models
+class UploadChunkRequest(BaseModel):
+    file_id: str = Field(..., description="Unique file identifier")
+    chunk_index: int = Field(..., ge=0, description="Chunk index (0-based)")
+    total_chunks: int = Field(..., gt=0, description="Total number of chunks")
+    chunk_data: str = Field(..., description="Base64 encoded chunk data")
+    file_name: str = Field(..., description="Original file name")
+    file_size: int = Field(..., gt=0, description="Total file size in bytes")
+    mime_type: str = Field(..., description="File MIME type")
 
-# ---- Test placeholders (allow tests to patch module-level dependencies) ----
-if "get_current_user" not in globals():
-    try:
-        get_current_user = auth_service.get_current_user
-    except Exception:
+class UploadChunkResponse(BaseModel):
+    file_id: str
+    chunk_index: int
+    uploaded: bool
+    message: str
 
-        def get_current_user(*args, **kwargs):
-            return None
+class UploadCompleteRequest(BaseModel):
+    file_id: str
+    case_id: str
+    description: Optional[str] = None
+    tags: Optional[List[str]] = Field(default_factory=list)
 
-
-if "require_permission" not in globals():
-
-    def require_permission(*args, **kwargs):
-        def _dep(*a, **k):
-            return None
-
-        return _dep
-
-
-# Ensure common service aliases exist for tests that patch them
-for _svc in (
-    "evidence_service",
-    "fraud_service",
-    "notification_system",
-    "case_service",
-):
-    if _svc not in globals():
-        globals()[_svc] = None
+class UploadCompleteResponse(BaseModel):
+    evidence_id: str
+    file_name: str
+    file_size: int
+    uploaded_at: datetime
+    processing_status: str
+    message: str
 
 logger = logging.getLogger(__name__)
 
@@ -83,115 +82,78 @@ async def get_evidence(
     Get list of evidence items with pagination and search
     """
     try:
-        # Base filters
-        filters = ["1=1"]
-        params = {}
-
-        if project_id:
-            filters.append("e.case_id IN (SELECT id FROM cases WHERE project_id = :project_id)")
-            params["project_id"] = project_id
-
-        if case_id:
-            filters.append("e.case_id = :case_id")
-            params["case_id"] = case_id
-
-        if file_type:
-            filters.append("e.file_type = :file_type")
-            params["file_type"] = file_type
-
-        if q:
-            filters.append("(e.filename ILIKE :q OR e.uploaded_by ILIKE :q)")
-            params["q"] = f"%{q}%"
-
-        where_clause = " AND ".join(filters)
-
-        # Count total
-        count_query = f"SELECT count(*) FROM evidence e WHERE {where_clause}"
-        total = db.execute(text(count_query), params).scalar()
-
-        # Get Page
-        offset = (page - 1) * page_size
-        data_query = f"""
-            SELECT e.id, e.case_id, e.filename, e.file_path,
-                   e.file_type, e.file_category, e.size_bytes, e.uploaded_at, e.uploaded_by,
-                   e.processed_at, e.processing_status, e.hash, e.ocr_text, e.extracted_text,
-                    e.sentiment_score, e.is_admissible, e.fraud_amount, e.customer_name,
-                    e.quality_score, e.relevance_score, e.evidence_metadata, e.evidence_tags
-            FROM evidence e
-            WHERE {where_clause}
-            ORDER BY e.uploaded_at DESC
-            LIMIT :limit OFFSET :offset
-        """
-        params["limit"] = page_size
-        params["offset"] = offset
-
-        result = db.execute(text(data_query), params)
-        rows = result.fetchall()
-
-        evidence_list = []
-        for row in rows:
-            evidence_list.append(
-                {
-                    "id": row.id,
-                    "caseId": row.case_id,
-                    "fileName": row.filename,
-                    "fileType": row.file_type,
-                    "sizeBytes": row.size_bytes,
-                    "uploadedAt": (
-                        str(row.uploaded_at) if row.uploaded_at else None
-                    ),
-                    "filePath": row.file_path,
-                    "ocrText": row.extracted_text,
-                    "fraudAmount": row.fraud_amount,
-                    "customerName": row.customer_name,
-                    "processingStatus": row.processing_status
-                }
-            )
-
-        return {
-            "items": evidence_list,
-            "total": total,
-            "page": page,
-            "page_size": page_size,
-            "total_pages": (total + page_size - 1) // page_size
-        }
-
+        return evidence_service.get_evidence_paginated(
+            db=db,
+            page=page,
+            page_size=page_size,
+            project_id=project_id,
+            case_id=case_id,
+            file_type=file_type,
+            search_query=q
+        )
     except Exception as e:
         logger.error(f"Failed to get evidence: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to get evidence: {str(e)}")
 
 
-@router.get("/{evidence_id}/download")
-async def download_evidence(evidence_id: str, db: Session = Depends(get_db)):
-    """Download evidence file"""
+@router.get("/{evidence_id}/download/stream")
+async def download_evidence_stream(
+    evidence_id: str,
+    current_user: User = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Stream download evidence file for large files.
+    Provides better memory efficiency for large downloads.
+    """
     try:
-        query = "SELECT file_path, filename, file_type FROM evidence WHERE id = :id"
-        result = db.execute(text(query), {"id": evidence_id}).fetchone()
-
-        if not result:
+        # Get evidence record
+        evidence = db.query(Evidence).filter(Evidence.id == evidence_id).first()
+        if not evidence:
             raise HTTPException(status_code=404, detail="Evidence not found")
 
-        file_path = result.file_path
-        filename = result.filename
+        # Check permissions (simplified)
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Authentication required")
 
-        # Security check: Ensure path is within allowed directory?
-        # For now, simplistic check
-        if not file_path or not os.path.exists(file_path):
-            raise HTTPException(status_code=404, detail="File not found on server")
+        file_path = evidence.file_path
+        if not os.path.exists(file_path):
+            raise HTTPException(status_code=404, detail="File not found on disk")
 
-        return FileResponse(
-            path=file_path, filename=filename, media_type="application/octet-stream"
+        # Get file size for streaming
+        file_size = os.path.getsize(file_path)
+
+        # Stream the file
+        async def file_generator():
+            async with aiofiles.open(file_path, 'rb') as f:
+                chunk_size = 8192  # 8KB chunks
+                while True:
+                    chunk = await f.read(chunk_size)
+                    if not chunk:
+                        break
+                    yield chunk
+
+        return StreamingResponse(
+            file_generator(),
+            media_type='application/octet-stream',
+            headers={
+                'Content-Disposition': f'attachment; filename="{evidence.filename}"',
+                'Content-Length': str(file_size),
+            }
         )
+
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Download failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Download failed: {str(e)}")
+        logger.error(f"Failed to stream download evidence {evidence_id}: {e}")
+        raise HTTPException(status_code=500, detail="Download failed")
 
 
-@router.get("/processing/metrics")
-async def get_evidence_processing_metrics(
+@router.get("/{evidence_id}/download")
+async def download_evidence(
+    evidence_id: str,
     current_user: User = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
 ):
     """Get evidence processing performance metrics"""
     try:
@@ -213,6 +175,168 @@ async def cleanup_evidence_processor(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ===== STREAMING UPLOAD ENDPOINTS =====
+
+@router.post("/upload/chunk", response_model=UploadChunkResponse)
+async def upload_file_chunk(
+    request: UploadChunkRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Upload a file chunk for resumable file uploads.
+    Supports large file uploads by splitting them into chunks.
+    """
+    try:
+        # Create upload directory if it doesn't exist
+        upload_dir = "uploads/chunks"
+        os.makedirs(upload_dir, exist_ok=True)
+
+        # Create file-specific directory
+        file_dir = os.path.join(upload_dir, request.file_id)
+        os.makedirs(file_dir, exist_ok=True)
+
+        # Decode chunk data
+        import base64
+        chunk_data = base64.b64decode(request.chunk_data)
+
+        # Save chunk
+        chunk_path = os.path.join(file_dir, f"chunk_{request.chunk_index:06d}")
+        async with aiofiles.open(chunk_path, 'wb') as f:
+            await f.write(chunk_data)
+
+        # Store chunk metadata in database for resumability
+        chunk_record = {
+            "file_id": request.file_id,
+            "chunk_index": request.chunk_index,
+            "total_chunks": request.total_chunks,
+            "file_name": request.file_name,
+            "file_size": request.file_size,
+            "mime_type": request.mime_type,
+            "uploaded_at": datetime.now(),
+            "user_id": current_user.id if current_user else None,
+        }
+
+        # Store in a simple JSON file for now (could be database table)
+        metadata_file = os.path.join(file_dir, "metadata.json")
+        async with aiofiles.open(metadata_file, 'w') as f:
+            await f.write(json.dumps(chunk_record, default=str))
+
+        return UploadChunkResponse(
+            file_id=request.file_id,
+            chunk_index=request.chunk_index,
+            uploaded=True,
+            message=f"Chunk {request.chunk_index + 1}/{request.total_chunks} uploaded successfully"
+        )
+
+    except Exception as e:
+        logger.error(f"Failed to upload chunk {request.chunk_index} for file {request.file_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Chunk upload failed: {str(e)}")
+
+
+@router.post("/upload/complete", response_model=UploadCompleteResponse)
+async def complete_file_upload(
+    request: UploadCompleteRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
+    project_id: str = Depends(get_current_project_id),
+):
+    """
+    Complete a resumable file upload by assembling chunks and processing the file.
+    """
+    try:
+        upload_dir = "uploads/chunks"
+        file_dir = os.path.join(upload_dir, request.file_id)
+
+        if not os.path.exists(file_dir):
+            raise HTTPException(status_code=404, detail="Upload session not found")
+
+        # Load metadata
+        metadata_file = os.path.join(file_dir, "metadata.json")
+        async with aiofiles.open(metadata_file, 'r') as f:
+            metadata = json.loads(await f.read())
+
+        # Assemble file from chunks
+        final_file_path = os.path.join("uploads", f"{request.file_id}_{metadata['file_name']}")
+
+        async with aiofiles.open(final_file_path, 'wb') as final_file:
+            for i in range(metadata['total_chunks']):
+                chunk_path = os.path.join(file_dir, f"chunk_{i:06d}")
+                if not os.path.exists(chunk_path):
+                    raise HTTPException(status_code=400, detail=f"Missing chunk {i}")
+
+                async with aiofiles.open(chunk_path, 'rb') as chunk_file:
+                    await final_file.write(await chunk_file.read())
+
+        # Clean up chunk directory
+        import shutil
+        shutil.rmtree(file_dir)
+
+        # Process file in background
+        background_tasks.add_task(
+            process_evidence_file_background,
+            final_file_path,
+            request.case_id,
+            metadata['file_name'],
+            request.description,
+            request.tags,
+            metadata['mime_type'],
+            current_user.id if current_user else None,
+            project_id,
+        )
+
+        return UploadCompleteResponse(
+            evidence_id=request.file_id,
+            file_name=metadata['file_name'],
+            file_size=metadata['file_size'],
+            uploaded_at=datetime.now(),
+            processing_status="processing",
+            message="File uploaded successfully, processing in background"
+        )
+
+    except Exception as e:
+        logger.error(f"Failed to complete upload for file {request.file_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Upload completion failed: {str(e)}")
+
+
+async def process_evidence_file_background(
+    file_path: str,
+    case_id: str,
+    file_name: str,
+    description: Optional[str],
+    tags: List[str],
+    mime_type: str,
+    user_id: Optional[str],
+    project_id: str,
+):
+    """Background task to process uploaded evidence file"""
+    try:
+        logger.info(f"Starting background processing for file: {file_name}")
+
+        # Import here to avoid circular imports
+        from app.services.business.evidence_service import evidence_service
+
+        # Process the file
+        result = await evidence_service.process_file(
+            file_path=file_path,
+            case_id=case_id,
+            file_name=file_name,
+            description=description,
+            tags=tags,
+            mime_type=mime_type,
+            uploaded_by=user_id,
+            project_id=project_id,
+        )
+
+        logger.info(f"Successfully processed evidence file: {file_name}, evidence_id: {result.get('evidence_id')}")
+
+    except Exception as e:
+        logger.error(f"Background processing failed for file {file_name}: {e}")
+
+
+# ===== LEGACY ENDPOINTS =====
+
 @router.post("/upload")
 async def upload_evidence(
     request: Request,
@@ -230,11 +354,9 @@ async def upload_evidence(
     1. Saves the uploaded file
     2. Performs multi-modal analysis (OCR, forensics, etc.)
     3. Creates evidence record in database
-    4. Indexes content for search
+    4. Indexes content for search (via processor)
     """
     try:
-        from app.services.intelligence.evidence_service import evidence_processor
-
         # Validate or create case
         case = db.query(Case).filter(Case.id == case_id).first()
         if not case:
@@ -277,7 +399,8 @@ async def upload_evidence(
         temp_file_path = saved_file_path  # usage in rest of function
 
         try:
-            # Using process_files_batch but with single file for now as per refactor
+            # Using process_files_batch but with single file.
+            # NOTE: process_files_batch handles indexing to search and vector store
             results = await evidence_processor.process_files_batch(
                 [temp_file_path],
                 {
@@ -378,25 +501,6 @@ async def upload_evidence(
             )
             db.commit()
 
-            # Index for search
-            try:
-                # evidence_search_index.index_evidence expects (file_id, file_path, processing_dict)
-                processing_dict = {
-                    "extracted_text": processing_result.extracted_text,
-                    "key_entities": processing_result.key_entities,
-                    "metadata": processing_result.metadata,
-                    "file_type": processing_result.file_type,
-                    "quality_score": processing_result.quality_score,
-                    "sentiment_score": processing_result.sentiment_score,
-                }
-                evidence_search_index.index_evidence(evidence_id, temp_file_path, processing_dict)
-                logger.info(f"Evidence indexed for search: {evidence_id}")
-            except Exception as e:
-                logger.warning(f"Failed to index evidence for search: {e}")
-
-            # clean up temp file logic removed - we keep the file now
-            pass
-
             return {
                 "message": "Evidence uploaded and processed successfully",
                 "evidence_id": evidence_id,
@@ -481,16 +585,15 @@ async def get_evidence_highlights(
 ):
     """Get saved highlights for an evidence file"""
     try:
-        query = "SELECT evidence_metadata FROM evidence WHERE id = :id"
-        result = db.execute(text(query), {"id": evidence_id}).fetchone()
-
-        if not result:
+        metadata = evidence_service.get_evidence_metadata(db, evidence_id)
+        
+        if metadata and isinstance(metadata, str):
+            metadata = json.loads(metadata)
+        elif not metadata:
+             # If None, maybe evidence not found or no metadata
+             # To be strict we should check if evidence exists
             raise HTTPException(status_code=404, detail="Evidence not found")
 
-        metadata = result.evidence_metadata
-        if isinstance(metadata, str):
-            metadata = json.loads(metadata)
-        
         return metadata.get("user_highlights", [])
     except HTTPException:
         raise
@@ -519,18 +622,15 @@ async def save_evidence_highlight(
              raise HTTPException(status_code=400, detail="Highlight data required")
 
         # Get existing metadata
-        query = "SELECT evidence_metadata FROM evidence WHERE id = :id"
-        result = db.execute(text(query), {"id": evidence_id}).fetchone()
-
-        if not result:
-            raise HTTPException(status_code=404, detail="Evidence not found")
-
-        metadata = result.evidence_metadata
-        if isinstance(metadata, str):
-            metadata = json.loads(metadata)
+        metadata = evidence_service.get_evidence_metadata(db, evidence_id)
         
         if metadata is None:
-            metadata = {}
+             raise HTTPException(status_code=404, detail="Evidence not found")
+
+        if isinstance(metadata, str):
+            metadata = json.loads(metadata)
+        if metadata is None: 
+             metadata = {}
 
         # Append highlight
         if "user_highlights" not in metadata:
@@ -541,8 +641,7 @@ async def save_evidence_highlight(
         highlight["created_by"] = current_user.id if current_user else "unknown"
         
         metadata["user_highlights"].append(highlight)
-
-        # Update DB
+        
         update_query = """
             UPDATE evidence 
             SET evidence_metadata = :metadata 
@@ -567,34 +666,55 @@ async def save_evidence_highlight(
 
 
 
-@router.post("/bulk-delete")
+@router.post("/bulk-delete", responses={
+    200: {
+        "description": "Bulk delete operation completed successfully",
+        "content": {
+            "application/json": {
+                "example": {
+                    "deleted_count": 3,
+                    "status": "success"
+                }
+            }
+        }
+    },
+    400: {
+        "description": "Invalid request data",
+        "content": {
+            "application/json": {
+                "example": {
+                    "error": {
+                        "type": "validation_error",
+                        "status_code": 400,
+                        "detail": "Invalid evidence IDs provided",
+                        "request_id": "req_12345",
+                        "timestamp": "2024-12-19T06:20:00Z",
+                        "path": "/api/v1/evidence/bulk-delete",
+                        "method": "POST",
+                        "details": []
+                    }
+                }
+            }
+        }
+    }
+})
 async def bulk_delete_evidence(
-    payload: Dict[str, Any] = Body(...),
+    payload: Dict[str, Any] = Body(
+        ...,
+        example={
+            "ids": ["ev_123456", "ev_789012", "ev_345678"]
+        }
+    ),
     db: Session = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """Bulk delete evidence records and their associated files"""
     try:
         evidence_ids = payload.get("ids", [])
-        if not evidence_ids:
-            return {"deleted_count": 0, "status": "success"}
-
-        # We use raw SQL for performance and to match the pattern in this file
-        from sqlalchemy import text
-        
-        # Count records first
-        check_query = text("SELECT COUNT(*) FROM evidence WHERE id IN :ids")
-        count = db.execute(check_query, {"ids": tuple(evidence_ids)}).scalar()
-        
-        # Delete
-        delete_query = text("DELETE FROM evidence WHERE id IN :ids")
-        db.execute(delete_query, {"ids": tuple(evidence_ids)})
-        
-        db.commit()
+        count = evidence_service.delete_evidence(db, evidence_ids)
         logger.info(f"Bulk deleted {count} evidence items")
         return {"deleted_count": count, "status": "success"}
     except Exception as e:
-        db.rollback()
         logger.error(f"Bulk delete failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 

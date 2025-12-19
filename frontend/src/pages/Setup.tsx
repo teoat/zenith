@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { AccessibleButton } from '@/components/ui/AccessibleButton';
 import ErrorMessage from '@/components/ErrorMessage';
 import { useApiError } from '@/hooks/useApiError';
-import { UserRole } from '@/types/schema';
+import type { UserRole } from '@/types/schema';
 import FileDropZone from '@/components/ui/FileDropZone';
 import { fileProcessingService } from '@/services/fileProcessing';
+import { secureLogger } from '../utils/secureLogger';
 
 const Setup: React.FC = () => {
   const [step, setStep] = useState<'password' | 'role' | 'import'>('password');
@@ -72,8 +74,7 @@ const Setup: React.FC = () => {
         }
 
         if (result.casesCreated > 0) {
-          // Show success message for created cases
-          console.log(`Successfully created ${result.casesCreated} cases from uploaded files`);
+          secureLogger.info(`Successfully created ${result.casesCreated} cases from uploaded files`);
         }
       }
 
@@ -131,7 +132,7 @@ const Setup: React.FC = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {step === 'password' && (
-            <form className="space-y-6" onSubmit={handlePasswordSubmit}>
+            <form className="space-y-6" onSubmit={(e) => { void handlePasswordSubmit(e); }}>
               <ErrorMessage error={error || undefined} onDismiss={clearError} />
 
               <div>
@@ -230,7 +231,7 @@ const Setup: React.FC = () => {
           )}
 
           {step === 'import' && (
-            <form className="space-y-6" onSubmit={handleImportSubmit}>
+            <form className="space-y-6" onSubmit={(e) => { void handleImportSubmit(e); }}>
               <ErrorMessage error={error || undefined} onDismiss={clearError} />
 
               <div>

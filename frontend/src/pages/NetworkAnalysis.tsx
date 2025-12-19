@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import NetworkGraph, { NetworkGraphData } from '../components/visualizations/NetworkGraph';
+import type { NetworkGraphData } from '../components/visualizations/NetworkGraph';
+import NetworkGraph from '../components/visualizations/NetworkGraph';
 import { api } from '../lib/api';
 import { Loader2, RefreshCw, Box, Layers } from 'lucide-react';
 import { AccessibleButton } from '../components/ui/AccessibleButton';
+import { secureLogger } from '../utils/secureLogger';
 
 const NetworkAnalysis: React.FC = () => {
     const [graphData, setGraphData] = useState<NetworkGraphData | undefined>(undefined);
@@ -34,7 +36,7 @@ const NetworkAnalysis: React.FC = () => {
 
             setGraphData(mappedData);
         } catch (err) {
-            console.error("Failed to fetch network data:", err);
+            secureLogger.error("Failed to fetch network data:", err);
             setError("Failed to load network visualization. Please try again.");
         } finally {
             setLoading(false);

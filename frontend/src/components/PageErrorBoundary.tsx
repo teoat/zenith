@@ -1,7 +1,9 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
+import { Component } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { AccessibleButton } from './ui/AccessibleButton';
 import { errorReporting } from '../services/errorReporting';
+import { secureLogger } from '../utils/secureLogger';
 
 interface Props {
   children: ReactNode;
@@ -30,7 +32,7 @@ class PageLevelErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Page error caught:', error, errorInfo);
+    secureLogger.error('Page error caught:', error, errorInfo);
     
     // Log to our centralized error reporting service
     errorReporting.reportReactError(error, { componentStack: errorInfo.componentStack || '' }, 'PageLevelErrorBoundary');

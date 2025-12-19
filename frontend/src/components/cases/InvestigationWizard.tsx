@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X, ChevronRight, ChevronLeft, Check, AlertTriangle, User, FileText, Sparkles } from 'lucide-react';
-import { CalendarFormat, CurrencyFormat, DecimalFormat } from '../../types/locale';
+import type { CalendarFormat, CurrencyFormat, DecimalFormat } from '../../types/locale';
 import { ApprovalQueue } from '../ApprovalQueue';
 import { DraftPreview } from '../ui/DraftPreview';
-import { draftPreviewService, DraftState } from '../../services/draftPreviewService';
+import type { DraftState } from '../../services/draftPreviewService';
+import { draftPreviewService } from '../../services/draftPreviewService';
 import { useEffect } from 'react';
 
 interface InvestigationWizardProps {

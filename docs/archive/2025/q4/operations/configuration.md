@@ -233,7 +233,7 @@ CREATE INDEX idx_evidence_case_id ON evidence(case_id);
 ```json
 {
   "api": {
-    "baseUrl": "https://api.378x492.com",
+    "baseUrl": "https://api.fraud-detection-378x492.com",
     "timeout": 30,
     "retryAttempts": 3,
     "rateLimit": 1000

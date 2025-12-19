@@ -2,11 +2,11 @@
 import React, { useState, useMemo } from 'react';
 import { CheckCircle, XCircle, Clock, AlertTriangle, Filter, Search } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { useToast } from '@/hooks/use-toast';
 import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
@@ -185,7 +185,7 @@ const AgentApprovals: React.FC = () => {
                 <Input
                   placeholder="Search agent actions..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                   className="pl-9"
                 />
               </div>
@@ -244,8 +244,9 @@ const AgentApprovals: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <div className="w-12 bg-secondary rounded-full h-2">
                         <div
-                          className="bg-primary h-2 rounded-full"
-                          style={{ width: `${approval.confidence * 100}%` }}
+                          className="bg-primary h-2 rounded-full bar-fill"
+                          // eslint-disable-next-line
+                          style={{ '--width': `${approval.confidence * 100}%` } as React.CSSProperties}
                         />
                       </div>
                       <span className="text-sm">{Math.round(approval.confidence * 100)}%</span>
@@ -270,8 +271,8 @@ const AgentApprovals: React.FC = () => {
                         </AccessibleButton>
                         <AccessibleButton
                           onClick={() => handleApproval(approval.id, 'reject')}
-                          variant="outline"
-                          className="border-red-300 text-red-600 hover:bg-red-50 px-3 py-1 rounded text-sm"
+                          variant="secondary"
+                          className="border border-red-300 text-red-600 hover:bg-red-50 px-3 py-1 rounded text-sm"
                           aria-label={`Reject action ${approval.action}`}
                         >
                           Reject

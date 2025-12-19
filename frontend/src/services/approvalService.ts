@@ -5,8 +5,9 @@
  */
 
 import { request } from './client';
-import { api } from '../lib/api';
+
 import { secureLogger } from '../utils/secureLogger';
+import { secureRandom } from '../utils/secureRandom';
 
 export interface PendingAction {
   id: string;
@@ -58,7 +59,7 @@ class ApprovalService {
   async addPendingAction(action: Omit<PendingAction, 'id' | 'timestamp'>): Promise<PendingAction> {
     const newAction: PendingAction = {
       ...action,
-      id: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `action_${Date.now()}_${secureRandom.random().toString(36).substr(2, 9)}`,
       timestamp: new Date(),
     };
 
@@ -117,7 +118,7 @@ class ApprovalService {
       userId,
     };
     
-    console.debug('[ApprovalService] Decision made:', decision);
+    secureLogger.debug('HITL', 'Decision made (rejected)', { decision });
 
     // Remove from pending
     this.pendingActions.delete(actionId);
@@ -131,7 +132,7 @@ class ApprovalService {
    * Execute an approved action
    */
   private async executeAction(action: PendingAction): Promise<void> {
-    console.log(`[ApprovalService] Executing action: ${action.type} - ${action.title}`);
+    secureLogger.info('HITL', `Executing action: ${action.type} - ${action.title}`);
     
     try {
       switch (action.type) {
@@ -168,10 +169,12 @@ class ApprovalService {
           await new Promise(resolve => setTimeout(resolve, 1000));
           break;
         default:
-          console.warn(`[ApprovalService] No execution logic for type: ${action.type}`);
+          secureLogger.warn('HITL', `No execution logic for type: ${action.type}`);
       }
     } catch (error) {
-      console.error(`[ApprovalService] Failed to execute action ${action.id}:`, error);
+      secureLogger.error('HITL', `Failed to execute action ${action.id}`, { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       throw error;
     }
   }

@@ -231,3 +231,24 @@ async def clear_entire_cache(admin: User = Depends(require_admin)):
     except Exception as e:
         logger.error(f"Cache clearing failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+@router.get("/system/diagnostics")
+async def get_system_diagnostics(admin: User = Depends(require_admin)):
+    """Get comprehensive system diagnostics and performance history (Admin only)"""
+    try:
+        from app.services.infrastructure.monitoring_service import monitoring_service
+        data = monitoring_service.get_dashboard_data()
+        return data
+    except Exception as e:
+        logger.error(f"Failed to get system diagnostics: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/system/metrics/current")
+async def get_current_system_metrics(admin: User = Depends(require_admin)):
+    """Get real-time system metrics (Admin only)"""
+    try:
+        from app.services.infrastructure.performance_monitor import performance_monitor
+        return performance_monitor.get_current_metrics()
+    except Exception as e:
+        logger.error(f"Failed to get current metrics: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

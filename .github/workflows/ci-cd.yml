@@ -38,11 +38,17 @@ jobs:
           npm ci
           cd backend && pip install -r requirements.txt
 
-      - name: Run linting
-        run: npm run lint
+       - name: Run automated error prevention
+         run: npm run error-prevention
 
-      - name: Run type checking
-        run: npm run type-check
+       - name: Run link checking
+         run: npm run link-check
+
+       - name: Run linting
+         run: npm run lint
+
+       - name: Run type checking
+         run: npm run type-check
 
       - name: Run backend tests
         run: |

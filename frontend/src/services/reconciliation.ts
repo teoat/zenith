@@ -1,5 +1,5 @@
 import { request } from './client';
-import { 
+import type { 
   ReconciliationItem, 
   CashFloatAnalysisResult, 
   BatchMatchResult, 

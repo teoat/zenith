@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, Suspense } from 'react';
 import { ResponsiveGridLayout } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useDashboardMetrics } from '../../hooks/useDashboardMetrics';
 import { Activity, AlertTriangle, FolderOpen, Users, Lock, Unlock } from 'lucide-react';
-import ThreatMap from './ThreatMap';
-import AIWatchtower from './AIWatchtower';
-import LiveQueue from './LiveQueue';
-import VolumeChart from './VolumeChart';
-import RiskDistributionChart from './RiskDistributionChart';
-import ProofVisualizationCard from './ProofVisualizationCard';
 import MetricSparkline from './MetricSparkline';
-import CostOptimizationWidget from './CostOptimizationWidget';
 import { useProjectStore } from '../../store/projectStore';
+
+// Lazy load heavy components to reduce initial bundle size
+const ThreatMap = React.lazy(() => import(/* webpackChunkName: "threat-map" */ './ThreatMap'));
+const AIWatchtower = React.lazy(() => import(/* webpackChunkName: "ai-watchtower" */ './AIWatchtower'));
+const LiveQueue = React.lazy(() => import(/* webpackChunkName: "live-queue" */ './LiveQueue'));
+const VolumeChart = React.lazy(() => import(/* webpackChunkName: "volume-chart" */ './VolumeChart'));
+const RiskDistributionChart = React.lazy(() => import(/* webpackChunkName: "risk-chart" */ './RiskDistributionChart'));
+const ProofVisualizationCard = React.lazy(() => import(/* webpackChunkName: "proof-viz" */ './ProofVisualizationCard'));
+const CostOptimizationWidget = React.lazy(() => import(/* webpackChunkName: "cost-widget" */ './CostOptimizationWidget'));
 
 
 
@@ -87,7 +89,7 @@ const MovableDashboard: React.FC = () => {
         return saved ? JSON.parse(saved) : defaultLayouts;
     });
 
-    const onLayoutChange = (layout: any, allLayouts: any) => {
+    const onLayoutChange = (_layout: any, allLayouts: any) => {
         setLayouts(allLayouts);
         localStorage.setItem('dashboard_layout', JSON.stringify(allLayouts));
     };
@@ -127,6 +129,7 @@ const MovableDashboard: React.FC = () => {
                 breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                 cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                 rowHeight={30}
+                // @ts-ignore
                 isDraggable={isDraggable}
                 isResizable={isDraggable}
                 onLayoutChange={onLayoutChange}
@@ -174,46 +177,60 @@ const MovableDashboard: React.FC = () => {
                     />
                 </div>
 
-                <div key="threat_map">
-                    <WidgetWrapper className="bg-slate-900 border-none" title="Global Threat Map">
-                         <ThreatMap />
-                    </WidgetWrapper>
-                </div>
-
-                <div key="ai_watchtower">
-                    <AIWatchtower />
-                </div>
-
-                <div key="proof_card">
-                    <ProofVisualizationCard caseId={activeProjectId || '492'} />
-                </div>
-                
-                <div key="live_queue">
-                    <WidgetWrapper title="Live Queue">
-                        <LiveQueue />
-                    </WidgetWrapper>
-                </div>
-
-                <div key="volume_chart">
-                    <WidgetWrapper title="Processing Volume">
-                        <VolumeChart data={volumeData} />
-                    </WidgetWrapper>
-                </div>
-
-                <div key="risk_chart">
-                    <WidgetWrapper title="Risk Distribution">
-                        <RiskDistributionChart data={[
-                            { name: 'Critical', value: metrics?.riskDistribution?.critical || 0, color: '#ef4444' }, 
-                            { name: 'High', value: metrics?.riskDistribution?.high || 0, color: '#f59e0b' },     
-                            { name: 'Medium', value: metrics?.riskDistribution?.medium || 0, color: '#3b82f6' },   
-                            { name: 'Low', value: metrics?.riskDistribution?.low || 0, color: '#10b981' }, 
-                        ]} />
+                 <div key="threat_map">
+                     <WidgetWrapper className="bg-slate-900 border-none" title="Global Threat Map">
+                         <Suspense fallback={<div className="flex items-center justify-center h-64">Loading Threat Map...</div>}>
+                             <ThreatMap />
+                         </Suspense>
                      </WidgetWrapper>
                  </div>
 
-                 <div key="cost_optimization">
-                     <CostOptimizationWidget />
+                 <div key="ai_watchtower">
+                     <Suspense fallback={<div className="flex items-center justify-center h-32">Loading AI Watchtower...</div>}>
+                         <AIWatchtower />
+                     </Suspense>
                  </div>
+
+                 <div key="proof_card">
+                     <Suspense fallback={<div className="flex items-center justify-center h-32">Loading Proof Visualization...</div>}>
+                         <ProofVisualizationCard caseId={activeProjectId || '492'} />
+                     </Suspense>
+                 </div>
+
+                 <div key="live_queue">
+                     <WidgetWrapper title="Live Queue">
+                         <Suspense fallback={<div className="flex items-center justify-center h-32">Loading Live Queue...</div>}>
+                             <LiveQueue />
+                         </Suspense>
+                     </WidgetWrapper>
+                 </div>
+
+                 <div key="volume_chart">
+                     <WidgetWrapper title="Processing Volume">
+                         <Suspense fallback={<div className="flex items-center justify-center h-32">Loading Volume Chart...</div>}>
+                             <VolumeChart data={volumeData} />
+                         </Suspense>
+                     </WidgetWrapper>
+                 </div>
+
+                 <div key="risk_chart">
+                     <WidgetWrapper title="Risk Distribution">
+                         <Suspense fallback={<div className="flex items-center justify-center h-32">Loading Risk Chart...</div>}>
+                             <RiskDistributionChart data={[
+                                 { name: 'Critical', value: metrics?.riskDistribution?.critical || 0, color: '#ef4444' },
+                                 { name: 'High', value: metrics?.riskDistribution?.high || 0, color: '#f59e0b' },
+                                 { name: 'Medium', value: metrics?.riskDistribution?.medium || 0, color: '#3b82f6' },
+                                 { name: 'Low', value: metrics?.riskDistribution?.low || 0, color: '#10b981' },
+                             ]} />
+                         </Suspense>
+                      </WidgetWrapper>
+                  </div>
+
+                  <div key="cost_optimization">
+                      <Suspense fallback={<div className="flex items-center justify-center h-32">Loading Cost Optimization...</div>}>
+                          <CostOptimizationWidget />
+                      </Suspense>
+                  </div>
 
              </ResponsiveGridLayout>
         </div>

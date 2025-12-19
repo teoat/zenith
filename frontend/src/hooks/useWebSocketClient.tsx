@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 
 export interface WebSocketConfig {
   url: string;
@@ -42,8 +43,8 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttempts = useRef(0);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
-  const heartbeatIntervalRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const messageQueueRef = useRef<any[]>([]);
   const shouldReconnectRef = useRef(true);
 
@@ -59,7 +60,9 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
   }, []);
 
   const startHeartbeat = useCallback(() => {
-    clearInterval(heartbeatIntervalRef.current!);
+    if (heartbeatIntervalRef.current) {
+        clearInterval(heartbeatIntervalRef.current);
+    }
     heartbeatIntervalRef.current = setInterval(() => {
       if (wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }));
@@ -89,7 +92,7 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
       wsRef.current = ws;
 
       ws.onopen = (event) => {
-        console.log('[WebSocket] Connected to', url);
+        secureLogger.info('WEBSOCKET', 'Connected to', { url });
         setIsConnected(true);
         setError(null);
         reconnectAttempts.current = 0;
@@ -104,7 +107,7 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
       };
 
       ws.onclose = (event) => {
-        console.log('[WebSocket] Disconnected:', event.code, event.reason);
+        secureLogger.info('WEBSOCKET', 'Disconnected', { code: event.code, reason: event.reason });
         setIsConnected(false);
         clearTimers();
 
@@ -114,7 +117,7 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
         if (shouldReconnectRef.current && reconnectAttempts.current < maxReconnectAttempts) {
           reconnectAttempts.current += 1;
           const delay = reconnectInterval * Math.pow(1.5, reconnectAttempts.current - 1);
-          console.log(`[WebSocket] Reconnecting in ${delay}ms (attempt ${reconnectAttempts.current}/${maxReconnectAttempts})`);
+          secureLogger.info('WEBSOCKET', `Reconnecting in ${delay}ms`, { attempt: reconnectAttempts.current, maxAttempts: maxReconnectAttempts });
           
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
@@ -125,7 +128,9 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
       };
 
       ws.onerror = (event) => {
-        console.error('[WebSocket] Error:', event);
+        secureLogger.error('WEBSOCKET', 'WebSocket error', { 
+            event: event instanceof ErrorEvent ? event.message : 'Unknown event' 
+        });
         const err = new Error('WebSocket connection error');
         setError(err);
         onError?.(event);
@@ -143,12 +148,14 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
           setLastMessage(data);
           onMessage?.(data);
         } catch (err) {
-          console.warn('[WebSocket] Failed to parse message:', event.data);
+          secureLogger.warn('WEBSOCKET', 'Failed to parse message', { data: event.data });
         }
       };
 
     } catch (err: any) {
-      console.error('[WebSocket] Connection failed:', err);
+      secureLogger.error('WEBSOCKET', 'Connection failed', { 
+          error: err instanceof Error ? err.message : String(err) 
+      });
       setError(err);
     }
   }, [url, reconnectInterval, maxReconnectAttempts, onOpen, onClose, onError, onMessage, flushMessageQueue, startHeartbeat, clearTimers]);
@@ -157,7 +164,7 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data));
     } else {
-      console.warn('[WebSocket] Not connected, queuing message');
+      secureLogger.warn('WEBSOCKET', 'Not connected, queuing message');
       messageQueueRef.current.push(data);
     }
   }, []);

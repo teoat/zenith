@@ -4,14 +4,14 @@ This guide covers how to deploy the frontend application to various platforms.
 
 ## Prerequisites
 
--   **Backend URL**: You need the URL where your backend API is deployed (e.g., `https://api.your-backend.com/api/v1`).
+-   **Backend URL**: You need the URL where your backend API is deployed (e.g., `https://api.fraud-detection-378x492.com/api/v1`).
 -   **Node.js**: Version 20+ installed locally for testing builds.
 
 ## Environment Variables
 
 The application relies on `VITE_API_URL` to know where to send requests.
 -   **Local**: Defaults to `http://localhost:8000/api/v1` (configured in `src/services/client.ts`).
--   **Production**: You **MUST** set `VITE_API_URL` in your deployment platform's environment variables.
+-   **Production**: You **MUST** set `VITE_API_URL` (e.g., `https://api.fraud-detection-378x492.com/api/v1`) in your deployment platform's environment variables.
 
 ---
 

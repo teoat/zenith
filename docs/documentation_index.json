@@ -1,32 +1,48 @@
 {
-  "metadata": {
+    "metadata": {
     "title": "378x492 Fraud Detection Platform Documentation Index",
-    "version": "Ultra-Consolidated 1.0",
-    "last_updated": "2025-12-17",
-    "total_files": 49,
-    "structure": "7 functional areas × 5 docs + 1 API reference + front pages",
+    "version": "Ultra-Consolidated 1.2 (99.99% Uptime + Fixed Links)",
+    "last_updated": "2025-12-19",
+    "total_files": 54,
+    "structure": "7 functional areas × 5 docs + 2 API references + uptime docs + FAQ + Contributing + front pages",
     "file_reduction": "83%+ from original 287+ files",
-    "organization": "Front-page navigation with drill-down subfolders"
+    "organization": "Front-page navigation with drill-down subfolders + uptime monitoring + developer resources",
+    "uptime_sla": "99.99%",
+    "availability_target": "Enterprise-grade high availability",
+    "link_validation": "Broken links identified and fixed",
+    "documentation_health": "Synchronized with implementation"
   },
   "quick_access": {
     "for_users": [
       {"title": "User Guides Overview", "file": "06_User_Guides.md"},
       {"title": "Case Management", "file": "06_User_Guides/cases-evidence.md"},
-      {"title": "AI Features", "file": "06_User_Guides/ai-services.md"}
+      {"title": "AI Features", "file": "06_User_Guides/ai-services.md"},
+      {"title": "FAQ", "file": "FAQ.md"},
+      {"title": "User Manual", "file": "guides/USER_MANUAL.md"}
     ],
     "for_developers": [
       {"title": "Developer Guide Overview", "file": "02_Developer_Guide.md"},
       {"title": "Testing Strategy", "file": "02_Developer_Guide/testing.md"},
-      {"title": "API Reference", "file": "08_Api_Documentation.md"}
+      {"title": "API Reference", "file": "08_Api_Documentation.md"},
+      {"title": "Contributing Guide", "file": "CONTRIBUTING.md"},
+      {"title": "Development Setup", "file": "development/DEVELOP.md"}
     ],
     "for_operations": [
       {"title": "Operations Overview", "file": "04_Operations_and_Deployment.md"},
-      {"title": "Production Runbook", "file": "04_Operations_and_Deployment/deployment.md"}
+      {"title": "Production Runbook", "file": "04_Operations_and_Deployment/deployment.md"},
+      {"title": "99.99% Uptime Implementation", "file": "99_99_UPTIME_IMPLEMENTATION.md"},
+      {"title": "Deployment Checklist", "file": "deployment/DEPLOYMENT_CHECKLIST.md"}
     ],
     "for_stakeholders": [
       {"title": "Project Overview", "file": "01_Project.md"},
       {"title": "Strategic Roadmap", "file": "01_Project/strategic-roadmap.md"},
       {"title": "Project Reports", "file": "07_Reports/project-overview.md"}
+    ],
+    "general_resources": [
+      {"title": "README", "file": "README.md"},
+      {"title": "FAQ", "file": "FAQ.md"},
+      {"title": "Contributing Guide", "file": "CONTRIBUTING.md"},
+      {"title": "Local Development", "file": "LOCAL_DEVELOPMENT.md"}
     ]
   },
   "sections": [
@@ -129,20 +145,38 @@
       "documents": [
         {"title": "Complete API Reference", "file": "08_Api_Documentation.md", "description": "Comprehensive API documentation with 85+ endpoints"}
       ],
-      "endpoints": {
-        "authentication": 3,
-        "case_management": 6,
-        "evidence_management": 6,
-        "ai_fraud_detection": 8,
-        "user_management": 6,
-        "administrative": 6,
-        "reporting_analytics": 7,
-        "reconciliation": 5,
-        "system_health": 4,
-        "total": 85
+        "endpoints": {
+          "authentication": 3,
+          "case_management": 6,
+          "evidence_management": 6,
+          "ai_fraud_detection": 8,
+          "user_management": 6,
+          "administrative": 6,
+          "reporting_analytics": 7,
+          "reconciliation": 5,
+          "system_health": 6,
+          "uptime_monitoring": 2,
+          "total": 87
+        }
+      },
+      {
+        "name": "09_Uptime_and_Monitoring",
+        "description": "99.99% uptime implementation, proactive monitoring, and high availability",
+        "front_page": "99_99_UPTIME_IMPLEMENTATION.md",
+        "audience": ["devops", "system_administrators", "reliability_engineers"],
+        "documents": [
+          {"title": "99.99% Uptime Architecture", "file": "99_99_UPTIME_IMPLEMENTATION.md", "description": "Complete uptime implementation with enterprise-grade HA"},
+          {"title": "Security Architecture", "file": "05_Architecture_and_Design/security_architecture.md", "description": "Versioned encryption and WebSocket security"}
+        ],
+        "uptime_metrics": {
+          "target": "99.99%",
+          "monthly_downtime_budget": "4.32 minutes",
+          "monitoring_interval": "30 seconds",
+          "circuit_breakers": 5,
+          "health_endpoints": 6
+        }
       }
-    }
-  ],
+    ],
   "preserved_assets": {
     "guides": {
       "description": "User experience assets and comprehensive manual",
@@ -173,17 +207,26 @@
   },
   "navigation": {
     "reading_order": [
-      "Start with README.md for overview",
+      "Start with README.md for overview and uptime status",
+      "Check FAQ.md for common questions",
+      "Review CONTRIBUTING.md if planning to contribute",
+      "Follow setup guides: development/DEVELOP.md or LOCAL_DEVELOPMENT.md",
+      "Review 99_99_UPTIME_IMPLEMENTATION.md for availability architecture",
       "Choose relevant front page (01_Project.md through 07_Reports.md)",
       "Follow cross-references to detailed content in subfolders",
       "Use 08_Api_Documentation.md for technical integration details",
+      "Check 05_Architecture_and_Design/security_architecture.md for security features",
       "Check archives/ for historical context if needed"
     ],
     "search_tips": [
       "Use IDE search or grep for specific topics across all docs",
       "Front pages provide high-level overviews with drill-down links",
       "Each subfolder contains exactly 5 focused documents",
-      "API documentation is comprehensive and standalone"
+      "API documentation is comprehensive and standalone",
+      "Check FAQ.md for common questions first",
+      "99.99% uptime documentation covers high availability features",
+      "Contributing guide explains development workflow",
+      "README.md provides quick access to all resources"
     ]
   }
 }

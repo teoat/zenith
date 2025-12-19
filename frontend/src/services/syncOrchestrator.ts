@@ -1,3 +1,5 @@
+import { secureLogger } from '../utils/secureLogger';
+
 type EventType = 'DISCREPANCY_FLAGGED' | 'CASE_CREATED' | 'EVIDENCE_LINKED' | 'TRANSACTION_RECONCILED';
 
 type Listener = (payload: any) => void;
@@ -23,7 +25,7 @@ class SyncOrchestrator {
         try {
           callback(payload);
         } catch (error) {
-          console.error(`Error in SyncOrchestrator listener for event ${event}:`, error);
+          secureLogger.error(`Error in SyncOrchestrator listener for event ${event}:`, error);
         }
       });
     }

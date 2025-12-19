@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Eye, ThumbsUp, ThumbsDown, X, Sparkles, ExternalLink } from 'lucide-react';
 import { api } from '../../lib/api';
+import { secureLogger } from '../../utils/secureLogger';
 
 interface Insight {
   id: string;
@@ -27,8 +28,8 @@ const AIWatchtower: React.FC = () => {
           confidence: Math.round(i.confidence * 100),
           type: (i.type as 'pattern' | 'anomaly' | 'suggestion') || 'anomaly'
         })));
-      } catch (_error) {
-        console.error('Failed to load AI insights', error);
+       } catch (error) { 
+        secureLogger.error('Failed to load AI insights', error);
       }
     };
     fetchInsights();
@@ -44,8 +45,8 @@ const AIWatchtower: React.FC = () => {
   const handleFeedback = useCallback(async (insightId: string, isPositive: boolean) => {
     try {
         await api.sendAIFeedback(insightId, isPositive);
-        console.log(`Feedback sent for ${insightId}`);
-    } catch (e) { console.error(e); }
+        secureLogger.info(`Feedback sent for ${insightId}`);
+    } catch (e) { secureLogger.error(e); }
   }, []);
 
   return (

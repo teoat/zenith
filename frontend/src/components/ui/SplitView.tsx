@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { GripVertical } from 'lucide-react';
 
 interface SplitViewProps {

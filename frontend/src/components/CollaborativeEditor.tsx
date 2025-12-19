@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Textarea } from './ui/textarea';
-import { 
-  Users, 
-  Wifi, 
-  WifiOff, 
-  RefreshCw, 
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { Textarea } from '@/components/ui/Textarea';
+import {
+  Users,
+  Wifi,
+  WifiOff,
+  RefreshCw,
   Clock
 } from 'lucide-react';
+import { secureLogger } from '../utils/secureLogger';
 
 interface CollaborativeEditorProps {
   documentId: string;
@@ -88,7 +89,7 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({ documentId, u
           }
             
           default:
-            console.warn('Unknown operation type:', operation.type);
+            secureLogger.warn('CollaborativeEditor', `Unknown operation type: ${operation.type}`);
             return prev;
         }
         return newContent;
@@ -129,19 +130,21 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({ documentId, u
         break;
         
       case 'welcome':
-        console.log('Welcome message:', message);
+
         break;
         
       case 'pong':
         // Heartbeat response
         break;
         
-      case 'error':
-        console.error('Server error:', message.message);
-        break;
+       case 'error':
+         secureLogger.error('COLLABORATIVE_EDITOR', 'Server error received', {
+           error: message.message
+         });
+         break;
         
       default:
-        console.log('Unknown message type:', message.type);
+
     }
   }, [applyRemoteOperation]);
 
@@ -152,7 +155,7 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({ documentId, u
       websocket.current = new WebSocket(wsUrl);
 
       websocket.current.onopen = () => {
-        console.log('WebSocket connected');
+
         setConnected(true);
         setSyncStatus('connected');
         
@@ -180,12 +183,12 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({ documentId, u
           const message = JSON.parse(event.data);
           handleWebSocketMessage(message);
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
+          secureLogger.error('Error parsing WebSocket message:', error);
         }
       };
 
       websocket.current.onclose = () => {
-        console.log('WebSocket disconnected');
+
         setConnected(false);
         setSyncStatus('disconnected');
         
@@ -197,12 +200,12 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({ documentId, u
       };
 
       websocket.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        secureLogger.error('WebSocket error:', error);
         setSyncStatus('error');
       };
 
     } catch (error) {
-      console.error('Error creating WebSocket connection:', error);
+      secureLogger.error('Error creating WebSocket connection:', error);
       setSyncStatus('error');
     }
   }, [documentId, userId, vectorClock, handleWebSocketMessage, sendMessage]);

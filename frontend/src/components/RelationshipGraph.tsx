@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import ForceGraph2D from 'react-force-graph-2d';
+import React, { useState, useEffect, useRef, useCallback, Suspense } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from './ui/Card';
+import { Button } from './ui/Button';
+import { Badge } from './ui/Badge';
+const ForceGraph2D = React.lazy(() => import('react-force-graph-2d'));
 import { 
   ZoomIn, 
   ZoomOut, 
@@ -95,8 +95,8 @@ const RelationshipGraph: React.FC = () => {
         setGraphData({ nodes, links });
         setStats((data as any).stats || {});
       }
-    } catch (_error) {
-      addToast('Failed to load graph data', 'error');
+      } catch (error) {
+       addToast('Failed to load graph data', 'error');
     } finally {
       if (isMounted.current) setLoading(false);
     }
@@ -129,8 +129,8 @@ const RelationshipGraph: React.FC = () => {
             fgRef.current.zoomToFit(400);
         }
       }
-    } catch (_error) {
-      addToast('Failed to rebuild graph', 'error');
+      } catch (error) {
+       addToast('Failed to rebuild graph', 'error');
     } finally {
       if (isMounted.current) setLoading(false);
     }
@@ -145,7 +145,7 @@ const RelationshipGraph: React.FC = () => {
           // Start physics rehear simulation to arrange communities?
           if (fgRef.current) fgRef.current.d3ReheatSimulation();
       }
-    } catch (_error) {
+     } catch (error) { 
       addToast('Failed to fetch communities', 'error');
     }
   };
@@ -157,7 +157,7 @@ const RelationshipGraph: React.FC = () => {
           const entities = (data as any).central_entities || data;
           setCentralEntities(Array.isArray(entities) ? entities : []);
       }
-    } catch (_error) {
+     } catch (error) { 
       addToast('Failed to fetch central entities', 'error');
     }
   };
@@ -166,7 +166,7 @@ const RelationshipGraph: React.FC = () => {
     try {
       const data = await api.getSuspiciousPatterns();
       if (isMounted.current) setSuspiciousPatterns((data as any).suspicious_patterns || data);
-    } catch (_error) {
+     } catch (error) { 
       addToast('Failed to fetch suspicious patterns', 'error');
     }
   };
@@ -197,9 +197,53 @@ const RelationshipGraph: React.FC = () => {
           fgRef.current.zoom(2, 2000);
       }
       
-      // "Search Around" / Expansion logic could go here
-      // api.getNeighbors(node.id).then(newNodes => ...)
+      // Accessibility update
+      const liveRegion = document.getElementById('graph-live-region');
+      if (liveRegion) liveRegion.innerText = `Selected node: ${node.label || node.id}. Type: ${node.type}.`;
   }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (graphData.nodes.length === 0) return;
+
+    let nextNode = null;
+    const currentIndex = selectedNodeId 
+      ? graphData.nodes.findIndex(n => n.id === selectedNodeId)
+      : -1;
+
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        nextNode = graphData.nodes[(currentIndex + 1) % graphData.nodes.length];
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        nextNode = graphData.nodes[(currentIndex - 1 + graphData.nodes.length) % graphData.nodes.length];
+        break;
+      case 'Enter':
+        if (selectedNodeId) {
+          const node = graphData.nodes.find(n => n.id === selectedNodeId);
+          if (node) handleNodeClick(node);
+        }
+        break;
+      case '+':
+        handleZoomIn();
+        break;
+      case '-':
+        handleZoomOut();
+        break;
+      default:
+        return;
+    }
+
+    if (nextNode) {
+      setSelectedNodeId(nextNode.id);
+      if (fgRef.current) {
+        fgRef.current.centerAt(nextNode.x, nextNode.y, 400);
+      }
+      const liveRegion = document.getElementById('graph-live-region');
+      if (liveRegion) liveRegion.innerText = `Focused on node: ${nextNode.label || nextNode.id}.`;
+    }
+  };
 
   const exportGraph = async (format = 'json') => {
     try {
@@ -214,7 +258,7 @@ const RelationshipGraph: React.FC = () => {
       a.click();
       URL.revokeObjectURL(url);
       addToast('Graph exported successfully', 'success');
-    } catch (_error) {
+     } catch (error) { 
       addToast('Export failed', 'error');
     }
   };
@@ -277,9 +321,13 @@ const RelationshipGraph: React.FC = () => {
                 <div 
                     className="relative w-full h-[600px] bg-slate-50 dark:bg-slate-900 overflow-hidden focus:ring-2 focus:ring-primary-500 focus:outline-none"
                     role="application"
-                    aria-label="Interactive Relationship Graph."
-                >
-                  <ForceGraph2D
+                    aria-label="Interactive Relationship Graph. Use arrow keys to navigate nodes, plus/minus to zoom."
+                    tabIndex={0}
+                    onKeyDown={handleKeyDown}
+                 >
+                   <div id="graph-live-region" className="sr-only" aria-live="polite"></div>
+                   <Suspense fallback={<div className="flex items-center justify-center h-full">Loading Graph...</div>}>
+                     <ForceGraph2D
                     ref={fgRef}
                     width={canvasSize.width}
                     height={canvasSize.height}
@@ -296,14 +344,14 @@ const RelationshipGraph: React.FC = () => {
                     enableNodeDrag={true}
                     cooldownTicks={100}
                     linkDirectionalParticles={2}
-                    linkDirectionalParticleSpeed={() => 0.005}
-                  />
+                     linkDirectionalParticleSpeed={() => 0.005}
+                   />
+                   </Suspense>
                   
-                  {/* Keyboard Intruction Overlay */}
-                  <div className="absolute bottom-4 left-4 bg-white/80 dark:bg-black/50 backdrop-blur px-2 py-1 rounded text-xs text-secondary-500 pointer-events-none flex items-center gap-2">
-                      <Move className="w-3 h-3" />
-                      <span>Scroll to Zoom, Drag to Pan</span>
-                  </div>
+                   <div className="absolute bottom-4 left-4 bg-white/80 dark:bg-black/50 backdrop-blur px-2 py-1 rounded text-xs text-secondary-500 pointer-events-none flex items-center gap-2">
+                       <Move className="w-3 h-3" />
+                       <span>Scroll to Zoom, Drag to Pan, Arrows to Navigate Nodes</span>
+                   </div>
 
                   {loading && (
                     <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-10 transition-opacity">

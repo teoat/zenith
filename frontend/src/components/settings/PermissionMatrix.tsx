@@ -63,7 +63,7 @@ export const PermissionMatrix = () => {
   };
 
   const startEditing = () => {
-      setModifiedRoles(JSON.parse(JSON.stringify(roles)));
+      setModifiedRoles(structuredClone(roles));
       setIsEditing(true);
   };
 

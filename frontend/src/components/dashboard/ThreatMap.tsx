@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { ShieldAlert, MapPin, Loader } from 'lucide-react';
 import maplibregl from 'maplibre-gl';
+import { secureLogger } from '../../utils/secureLogger';
 
 // Lazy load the map components to reduce bundle size
 const Map = React.lazy(() =>
@@ -143,8 +144,8 @@ const ThreatMap: React.FC = () => {
             description: `Type: ${t.type}`
           })));
         }
-      } catch (_error) {
-        console.error('Failed to load threat data', error);
+       } catch (error) { 
+        secureLogger.error('Failed to load threat data', error);
       }
     };
     fetchThreats();
@@ -209,7 +210,7 @@ const ThreatMap: React.FC = () => {
         onMove={evt => setViewState(evt.viewState)}
         mapStyle="mapbox://styles/mapbox/dark-v11"
         mapLib={maplibregl}
-        onError={(e) => console.error("Map Error:", e)}
+        onError={(e) => secureLogger.error("Map Error:", e)}
       >
         <NavigationControl position="bottom-right" />
         <FullscreenControl position="bottom-right" />

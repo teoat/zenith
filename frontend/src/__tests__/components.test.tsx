@@ -22,16 +22,16 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('Button Component', () => {
-  it('renders with default props', async () => {
-    const { Button } = await import('../components/ui/button');
-    
+  it('renders with default props', () => {
+    const { Button } = require('../components/ui/Button');
+
     render(<Button>Click me</Button>);
-    
+
     expect(screen.getByRole('button')).toHaveTextContent('Click me');
   });
 
   it('handles click events', async () => {
-    const { Button } = await import('../components/ui/button');
+    const { Button } = await import('../components/ui/Button');
     const onClick = jest.fn();
     
     render(<Button onClick={onClick}>Click</Button>);
@@ -41,7 +41,7 @@ describe('Button Component', () => {
   });
 
   it('can be disabled', async () => {
-    const { Button } = await import('../components/ui/button');
+    const { Button } = await import('../components/ui/Button');
     
     render(<Button disabled>Disabled</Button>);
     
@@ -49,7 +49,7 @@ describe('Button Component', () => {
   });
 
   it('applies variant styles', async () => {
-    const { Button } = await import('../components/ui/button');
+    const { Button } = await import('../components/ui/Button');
     
     const { container } = render(<Button variant="outline">Outline</Button>);
     
@@ -57,7 +57,7 @@ describe('Button Component', () => {
   });
 
   it('applies size styles', async () => {
-    const { Button } = await import('../components/ui/button');
+    const { Button } = await import('../components/ui/Button');
     
     const { container } = render(<Button size="sm">Small</Button>);
     
@@ -67,7 +67,7 @@ describe('Button Component', () => {
 
 describe('Card Component', () => {
   it('renders children correctly', async () => {
-    const { Card, CardHeader, CardTitle, CardContent } = await import('../components/ui/card');
+    const { Card, CardHeader, CardTitle, CardContent } = await import('../components/ui/Card');
     
     render(
       <Card>
@@ -83,7 +83,7 @@ describe('Card Component', () => {
   });
 
   it('applies custom className', async () => {
-    const { Card } = await import('../components/ui/card');
+    const { Card } = await import('../components/ui/Card');
     
     const { container } = render(<Card className="custom-class">Content</Card>);
     
@@ -93,7 +93,7 @@ describe('Card Component', () => {
 
 describe('Badge Component', () => {
   it('renders with default variant', async () => {
-    const { Badge } = await import('../components/ui/badge');
+    const { Badge } = await import('../components/ui/Badge');
     
     render(<Badge>Default</Badge>);
     
@@ -101,7 +101,7 @@ describe('Badge Component', () => {
   });
 
   it('applies variant styles', async () => {
-    const { Badge } = await import('../components/ui/badge');
+    const { Badge } = await import('../components/ui/Badge');
     
     const { container } = render(<Badge variant="destructive">Error</Badge>);
     
@@ -214,7 +214,10 @@ describe('DataGrid Component', () => {
     
     expect(screen.getByText('ID')).toBeInTheDocument();
     expect(screen.getByText('Name')).toBeInTheDocument();
-    expect(screen.getByText('Item 1')).toBeInTheDocument();
+    // Use getAllByText and check specific one
+    const item1Elements = screen.getAllByText('Item 1');
+    expect(item1Elements.length).toBeGreaterThan(0);
+    expect(item1Elements[0]).toBeInTheDocument();
   });
 
   it('shows empty state when no data', async () => {
@@ -229,7 +232,7 @@ describe('DataGrid Component', () => {
 
 describe('Tabs Component', () => {
   it('renders tabs correctly', async () => {
-    const { Tabs, TabsList, TabsTrigger, TabsContent } = await import('../components/ui/tabs');
+    const { Tabs, TabsList, TabsTrigger, TabsContent } = await import('../components/ui/Tabs');
     
     render(
       <Tabs defaultValue="tab1">
@@ -247,7 +250,7 @@ describe('Tabs Component', () => {
   });
 
   it('switches content on tab click', async () => {
-    const { Tabs, TabsList, TabsTrigger, TabsContent } = await import('../components/ui/tabs');
+    const { Tabs, TabsList, TabsTrigger, TabsContent } = await import('../components/ui/Tabs');
     
     render(
       <Tabs defaultValue="tab1">
@@ -271,7 +274,7 @@ describe('Tabs Component', () => {
 
 describe('Modal/Dialog Component', () => {
   it('renders when open', async () => {
-    const { Dialog, DialogContent, DialogHeader, DialogTitle } = await import('../components/ui/dialog');
+    const { Dialog, DialogContent, DialogHeader, DialogTitle } = await import('../components/ui/Dialog');
     
     render(
       <Dialog open={true}>
@@ -290,7 +293,7 @@ describe('Modal/Dialog Component', () => {
 
 describe('Select Component', () => {
   it('renders options', async () => {
-    const { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } = await import('../components/ui/select');
+    const { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } = await import('../components/ui/Select');
     
     render(
       <Select>

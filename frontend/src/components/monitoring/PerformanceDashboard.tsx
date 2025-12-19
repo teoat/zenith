@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
+import { Card, CardHeader, CardContent, CardTitle } from '../ui/Card';
+import { Button } from '../ui/Button';
+import { Badge } from '../ui/Badge';
+import { secureLogger } from '../../utils/secureLogger';
 import {
   Activity,
   Cpu,
@@ -76,7 +77,7 @@ export function PerformanceDashboard({
         setCollaborationStats(data);
       }
     } catch (err) {
-      console.error('Failed to fetch collaboration stats:', err);
+      secureLogger.error('Failed to fetch collaboration stats:', err);
     }
   };
 

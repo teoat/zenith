@@ -6,7 +6,7 @@ import logging
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from core.database import Case
 
@@ -17,8 +17,20 @@ class CaseService:
     """Service for managing fraud investigation cases"""
 
     def get_case(self, db: Session, case_id: str) -> Optional[Case]:
-        """Get a case by ID"""
-        return db.query(Case).filter(Case.id == case_id).first()
+        """Get a case by ID with eager loading for all relationships"""
+        return (
+            db.query(Case)
+            .options(
+                joinedload(Case.assignee),
+                joinedload(Case.project),
+                joinedload(Case.evidence),
+                joinedload(Case.notes),
+                joinedload(Case.activities),
+                joinedload(Case.alerts),
+            )
+            .filter(Case.id == case_id)
+            .first()
+        )
 
     def get_cases(
         self,
@@ -28,8 +40,8 @@ class CaseService:
         project_id: Optional[str] = None,
         limit: int = 100,
     ) -> List[Case]:
-        """Get all cases with optional filtering"""
-        query = db.query(Case)
+        """Get all cases with optional filtering and eager loading for assignee"""
+        query = db.query(Case).options(joinedload(Case.assignee))
 
         if project_id:
             query = query.filter(Case.project_id == project_id)
@@ -138,7 +150,13 @@ class CaseService:
             page = total_pages
 
         offset = (page - 1) * per_page
-        cases = query.order_by(Case.created_at.desc()).offset(offset).limit(per_page).all()
+        cases = (
+            query.options(joinedload(Case.assignee))
+            .order_by(Case.created_at.desc())
+            .offset(offset)
+            .limit(per_page)
+            .all()
+        )
 
         return {
             "cases": cases,

@@ -1,9 +1,12 @@
-import { useState, useEffect, ReactNode, memo, useCallback } from 'react';
-import { DndContext, DragOverlay, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import type { ReactNode} from 'react';
+import { useState, useEffect, memo, useCallback } from 'react';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import { DndContext, DragOverlay, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { AlertCircle, Clock, CheckCircle2 } from 'lucide-react';
 import { useFormatters } from '../../providers/LocaleProvider';
+import { secureLogger } from '../../utils/secureLogger';
 
 // Interfaces
 interface Case {
@@ -233,7 +236,7 @@ const CaseKanban: React.FC<CaseKanbanProps> = ({ cases: externalCases, onCaseCli
 
         setItems({ incoming, review, closed });
       } catch (err) {
-        console.error('Failed to load cases:', err);
+        secureLogger.error('Failed to load cases:', err);
         setError(err instanceof Error ? err.message : 'Failed to load cases');
       } finally {
         setLoading(false);
@@ -359,7 +362,7 @@ const CaseKanban: React.FC<CaseKanbanProps> = ({ cases: externalCases, onCaseCli
              const { api } = await import('../../lib/api');
              await api.updateCase(active.id as string, { status: newStatus });
            } catch (err) {
-             console.error('Failed to update case status:', err);
+             secureLogger.error('Failed to update case status:', err);
              // Could show error toast here
            }
          }

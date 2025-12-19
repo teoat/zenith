@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/84</span>
+                <span class='fraction'>0/88</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/34</span>
+                <span class='fraction'>0/37</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/27</span>
+                <span class='fraction'>0/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/76</span>
+                <span class='fraction'>0/78</span>
             </div>
         
             
@@ -529,7 +529,11 @@
 <a name='L464'></a><a href='#L464'>464</a>
 <a name='L465'></a><a href='#L465'>465</a>
 <a name='L466'></a><a href='#L466'>466</a>
-<a name='L467'></a><a href='#L467'>467</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L467'></a><a href='#L467'>467</a>
+<a name='L468'></a><a href='#L468'>468</a>
+<a name='L469'></a><a href='#L469'>469</a>
+<a name='L470'></a><a href='#L470'>470</a>
+<a name='L471'></a><a href='#L471'>471</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -546,6 +550,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -828,7 +833,10 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1001,16 +1009,17 @@
  */
 &nbsp;
 <span class="cstat-no" title="statement not covered" >import React, { useState, useCallback, useMemo } from 'react';</span>
-<span class="cstat-no" title="statement not covered" >import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';</span>
-<span class="cstat-no" title="statement not covered" >import { Button } from '@/components/ui/button';</span>
-<span class="cstat-no" title="statement not covered" >import { Badge } from '@/components/ui/badge';</span>
+<span class="cstat-no" title="statement not covered" >import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';</span>
+<span class="cstat-no" title="statement not covered" >import { Button } from '@/components/ui/Button';</span>
+<span class="cstat-no" title="statement not covered" >import { Badge } from '@/components/ui/Badge';</span>
 <span class="cstat-no" title="statement not covered" >import { Input } from '@/components/ui/Input';</span>
-<span class="cstat-no" title="statement not covered" >import { Textarea } from '@/components/ui/textarea';</span>
-<span class="cstat-no" title="statement not covered" >import { Progress } from '@/components/ui/progress';</span>
-<span class="cstat-no" title="statement not covered" >import { Checkbox } from '@/components/ui/checkbox';</span>
-<span class="cstat-no" title="statement not covered" >import { Label } from '@/components/ui/label';</span>
-<span class="cstat-no" title="statement not covered" >import { ScrollArea } from '@/components/ui/scroll-area';</span>
-<span class="cstat-no" title="statement not covered" >import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';</span>
+<span class="cstat-no" title="statement not covered" >import { Textarea } from '@/components/ui/Textarea';</span>
+<span class="cstat-no" title="statement not covered" >import { Progress } from '@/components/ui/Progress';</span>
+<span class="cstat-no" title="statement not covered" >import { Checkbox } from '@/components/ui/Checkbox';</span>
+<span class="cstat-no" title="statement not covered" >import { Label } from '@/components/ui/Label';</span>
+<span class="cstat-no" title="statement not covered" >import { ScrollArea } from '@/components/ui/ScrollArea';</span>
+<span class="cstat-no" title="statement not covered" >import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';</span>
+<span class="cstat-no" title="statement not covered" >import { secureRandom } from '../../utils/secureRandom'; </span>// Module not found
 <span class="cstat-no" title="statement not covered" >import {</span>
   FileText,
   Wand2,
@@ -1151,7 +1160,7 @@ export const <span class="cstat-no" title="statement not covered" >AutoReportGen
   // Simulate AI generation for a section
   const generateSection = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >async </span>(sectionType: string): Promise&lt;string&gt; =&gt; {</span>
     // Simulate AI generation delay
-<span class="cstat-no" title="statement not covered" >    await new Promise(<span class="fstat-no" title="function not covered" >resolve </span>=&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, 1000 + Math.random() * 1500))</span>;</span>
+<span class="cstat-no" title="statement not covered" >    await new Promise(<span class="fstat-no" title="function not covered" >resolve </span>=&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, 1000 + secureRandom.random() * 1500))</span>;</span>
     
     // Mock generated content based on section type
     const mockContent: Record&lt;string, string&gt; = <span class="cstat-no" title="statement not covered" >{</span>
@@ -1295,6 +1304,9 @@ export const <span class="cstat-no" title="statement not covered" >AutoReportGen
                       key={tmpl.id}
                       className={`template-card ${selectedTemplate === tmpl.id ? 'selected' : ''}`}
                       onClick={<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >setSelectedTemplate(tmpl.id)}</span>
+                      onKeyDown={<span class="fstat-no" title="function not covered" >(e</span>) =&gt; { <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (e.key === 'Enter' || e.key === ' ') { <span class="cstat-no" title="statement not covered" >e.preventDefault(); <span class="cstat-no" title="statement not covered" ></span>setSelectedTemplate(tmpl.id); </span>} </span>}}
+                      tabIndex={0}
+                      role="button"
                     &gt;
                       &lt;div className="template-name"&gt;{tmpl.name}&lt;/div&gt;
                       &lt;div className="template-description"&gt;{tmpl.description}&lt;/div&gt;
@@ -1468,7 +1480,7 @@ export const <span class="cstat-no" title="statement not covered" >AutoReportGen
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:27.522Z
+                at 2025-12-19T02:07:53.644Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

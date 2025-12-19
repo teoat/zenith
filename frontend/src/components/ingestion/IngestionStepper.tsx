@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useIngestionStore } from '../../stores/useIngestionStore';
+import { useIngestionStore } from '../../store/useIngestionStore';
 import { useProjectStore } from '../../store/projectStore';
 import FileDropZone from '../ui/FileDropZone';
 import { DataMapping } from './DataMapping';
-import { CheckCircle, AlertCircle, FileText, ArrowRight, ChevronRight, Upload } from 'lucide-react';
+import { CheckCircle, AlertCircle, FileText, ChevronRight, Upload } from 'lucide-react';
 import { api } from '../../lib/api';
 import { useToast } from '../../providers/ToastProvider';
 import { AccessibleButton } from '../ui/AccessibleButton';
 import ProgressBar from '../ui/ProgressBar';
+import { secureLogger } from '../../utils/secureLogger';
+import { secureRandom } from '../../utils/secureRandom'; // Module not found
 
 const STEPS = [
     { id: 'upload', label: 'Upload Files' },
@@ -64,11 +66,11 @@ export const IngestionStepper: React.FC = () => {
                  const file = filesToAnalyze[i];
                  const formData = new FormData();
                  formData.append('file', file);
-                 formData.append('case_id', activeProjectId || 'CASE-INGESTION'); // Default bucket for ingestion
+                 const caseId = activeProjectId || 'CASE-INGESTION';
                  
                  try {
                      // Upload to Evidence Service
-                     const response = await api.uploadEvidence(formData);
+                     const response = await api.uploadEvidence(caseId, file);
                      
                      // Mock detection of headers (since backend doesn't return them yet from analysis)
                      // In a real scenario, response.analysis_result would contain 'detected_headers'
@@ -79,8 +81,8 @@ export const IngestionStepper: React.FC = () => {
                          'Date': `2023-11-${10 + idx}`,
                          'Post Date': `2023-11-${12 + idx}`,
                          'Description': `Transaction ${idx + 1}`,
-                         'Amount': (Math.random() * 1000).toFixed(2),
-                         'Debit': (Math.random() * 1000).toFixed(2),
+                         'Amount': (secureRandom.random() * 1000).toFixed(2),
+                         'Debit': (secureRandom.random() * 1000).toFixed(2),
                          'Credit': '0.00',
                          'Merchant Name': `Vendor ${String.fromCharCode(65 + idx)}`,
                          'Category': 'General',
@@ -95,7 +97,7 @@ export const IngestionStepper: React.FC = () => {
                      });
 
                  } catch (err) {
-                     console.error(`Failed to upload ${file.name}`, err);
+                     secureLogger.error(`Failed to upload ${file.name}`, err);
                      updateProcessingResult(startIndex + i, { status: 'error', error: 'Upload failed' });
                  }
              }
@@ -104,7 +106,7 @@ export const IngestionStepper: React.FC = () => {
              setActiveFileIndex(0); // Start mapping first file
              
         } catch (error) {
-            console.error('Analysis failed', error);
+            secureLogger.error('Analysis failed', error);
             addToast('Failed to analyze files', 'error');
         } finally {
             setIsAnalyzing(false);
@@ -270,7 +272,7 @@ export const IngestionStepper: React.FC = () => {
                                             window.location.href = '/reconciliation';
                                         }, 1500);
                                     } catch (err) {
-                                        console.error(err);
+                                        secureLogger.error(err);
                                         addToast('Failed to ingest some files', 'error');
                                     } finally {
                                         setIsAnalyzing(false);

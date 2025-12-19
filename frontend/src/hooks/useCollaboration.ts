@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 
 // Import the CollaborationClient from the backend service
 // Note: This would need to be compiled/bundled appropriately
@@ -25,6 +26,12 @@ interface Participant {
 interface CollaborationHookResult {
   isConnected: boolean;
   participants: Participant[];
+  activeParticipants: Participant[];
+  participantStats: {
+    total: number;
+    active: number;
+    byRole: Record<string, number>;
+  };
   sendCursorUpdate: (x: number, y: number) => void;
   selectEntity: (entityId: string, entityName?: string) => void;
   updateEntity: (entityId: string, changes: EntityChanges) => void;
@@ -49,7 +56,7 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
         websocketRef.current = ws;
 
         ws.onopen = () => {
-          console.log('Connected to collaboration session:', sessionId);
+          secureLogger.info('COLLABORATION', 'Connected to collaboration session', { sessionId });
           setIsConnected(true);
 
           // Join session with participant info
@@ -64,7 +71,7 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            console.log('Collaboration message:', data);
+            secureLogger.debug('COLLABORATION', 'Collaboration message received', { type: data.type });
 
             // Handle built-in message types
             switch (data.type) {
@@ -108,13 +115,15 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
                 }
               }
             }
-          } catch (_error) {
-            console.error('Error parsing collaboration message:', error);
+          } catch (error) {
+            secureLogger.error('COLLABORATION', 'Error parsing collaboration message', { 
+                error: error instanceof Error ? error.message : String(error) 
+            });
           }
         };
 
         ws.onclose = () => {
-          console.log('Disconnected from collaboration session');
+          secureLogger.info('COLLABORATION', 'Disconnected from collaboration session');
           setIsConnected(false);
           setParticipants([]);
           websocketRef.current = null;
@@ -128,11 +137,15 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
         };
 
         ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
+          secureLogger.error('COLLABORATION', 'WebSocket error', { 
+              error: error instanceof Error ? error.message : String(error) 
+          });
         };
 
-      } catch (_error) {
-        console.error('Failed to connect to collaboration server:', error);
+      } catch (error) {
+        secureLogger.error('COLLABORATION', 'Failed to connect to collaboration server', { 
+            error: error instanceof Error ? error.message : String(error) 
+        });
       }
     };
 
@@ -204,9 +217,31 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
     setParticipants([]);
   }, []);
 
+  // Memoize expensive computations
+  const activeParticipants = useMemo(() => {
+    return participants.filter(p => {
+      const lastActivity = new Date(p.last_activity);
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      return lastActivity > fiveMinutesAgo;
+    });
+  }, [participants]);
+
+  const participantStats = useMemo(() => {
+    return {
+      total: participants.length,
+      active: activeParticipants.length,
+      byRole: participants.reduce((acc, p) => {
+        acc[p.role] = (acc[p.role] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+    };
+  }, [participants, activeParticipants]);
+
   return {
     isConnected,
     participants,
+    activeParticipants,
+    participantStats,
     sendCursorUpdate,
     selectEntity,
     updateEntity,

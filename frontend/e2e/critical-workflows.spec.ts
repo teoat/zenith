@@ -20,23 +20,25 @@ test.describe('Critical Fraud Investigation Workflow', () => {
     await page.goto('/cases');
     await page.click('text=New Case');
     
-    // Wizard Step 1: Basic Info
+    // Wizard Step 1: Subjects & Basic Info
     await page.fill('#investigation-title', 'Structuring Investigation E2E');
-    await page.fill('#investigation-description', 'Multiple transactions just below reporting threshold');
-    await page.click('button:has-text("Next")');
+    await page.fill('#subject-name', 'John Doe');
+    await page.click('button:has-text("Add")');
+    await page.click('button:has-text("Continue")');
     
-    // Wizard Step 2: Plugins (defaults OK)
-    await page.click('button:has-text("Next")');
+    // Wizard Step 2: Transactions (empty for now)
+    await page.click('button:has-text("Continue")');
     
-    // Wizard Step 3: Assignment (defaults OK)
-    await page.click('button:has-text("Next")');
+    // Wizard Step 3: Evidence (empty for now)
+    await page.click('button:has-text("Continue")');
     
     // Wizard Step 4: Review
     await page.click('button:has-text("Create Investigation")');
     
     // Verify case created
-    // await expect(page.locator('text=Case created successfully')).toBeVisible(); // Toast might differ
-    await expect(page.locator('h1')).toContainText('Structuring Investigation E2E');
+    // The redirect usually goes to /cases or /cases/:id
+    await expect(page).toHaveURL(/\/cases/);
+    await expect(page.locator('text=Structuring Investigation E2E')).toBeVisible();
     
     // Step 2: Add transactions (Assuming this UI exists in Case Details)
     // Note: If case details page structure changed, this might also need update.
@@ -56,7 +58,7 @@ test.describe('Critical Fraud Investigation Workflow', () => {
     await page.click('button:has-text("Save Transaction")');
     
     await page.click('text=Add Transaction');
-    await page.fill('[name="amount"]', '9998');
+    page.fill('[name="amount"]', '9998');
     await page.fill('[name="merchant"]', 'XYZ Store');
     await page.fill('[name="date"]', '2025-12-02');
     await page.click('button:has-text("Save Transaction")');
@@ -94,9 +96,9 @@ test.describe('Critical Fraud Investigation Workflow', () => {
     
     // Wizard Steps
     await page.fill('#investigation-title', 'Collaboration Test Case');
-    await page.click('button:has-text("Next")');
-    await page.click('button:has-text("Next")');
-    await page.click('button:has-text("Next")');
+    await page.click('button:has-text("Continue")');
+    await page.click('button:has-text("Continue")');
+    await page.click('button:has-text("Continue")');
     await page.click('button:has-text("Create Investigation")');
     
     const caseUrl = page.url();
@@ -128,9 +130,9 @@ test.describe('Critical Fraud Investigation Workflow', () => {
     
     // Wizard steps
     await page.fill('#investigation-title', 'Offline Test Case');
-    await page.click('button:has-text("Next")');
-    await page.click('button:has-text("Next")');
-    await page.click('button:has-text("Next")');
+    await page.click('button:has-text("Continue")');
+    await page.click('button:has-text("Continue")');
+    await page.click('button:has-text("Continue")');
     await page.click('button:has-text("Create Investigation")');
     
     // Go offline
@@ -178,20 +180,23 @@ test.describe('Critical Fraud Investigation Workflow', () => {
     // Wizard Step 1
     await page.waitForSelector('#investigation-title');
     await page.keyboard.type('Keyboard Navigation Test');
-    await page.keyboard.press('Tab'); // Description
-    await page.keyboard.press('Tab'); // Next button
+    await page.keyboard.press('Tab'); // Priority
+    await page.keyboard.press('Tab'); // Subject Name
+    await page.keyboard.press('Tab'); // Subject Type
+    await page.keyboard.press('Tab'); // Add button
+    await page.keyboard.press('Tab'); // Continue button
     await page.keyboard.press('Enter');
     
     // Wizard Step 2
     await page.waitForTimeout(500); // Wait for transition
-    await page.keyboard.press('Tab'); // Country
-    await page.keyboard.press('Tab'); // Next
+    await page.keyboard.press('Tab'); // Back
+    await page.keyboard.press('Tab'); // Continue
     await page.keyboard.press('Enter'); 
     
     // Wizard Step 3
     await page.waitForTimeout(500);
-    await page.keyboard.press('Tab'); // Assignee
-    await page.keyboard.press('Tab'); // Next
+    await page.keyboard.press('Tab'); // Back
+    await page.keyboard.press('Tab'); // Continue
     await page.keyboard.press('Enter');
 
     // Wizard Step 4

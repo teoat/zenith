@@ -1,6 +1,7 @@
 // frontend/src/components/ai/AdvancedComplianceDashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { secureLogger } from '../../utils/secureLogger';
 import {
   Shield,
   AlertTriangle,
@@ -16,62 +17,14 @@ import {
   StopCircle,
   Play
 } from 'lucide-react';
+import type {
+  ComplianceRule,
+  ComplianceCheck,
+  RegulatoryAlert,
+  ComplianceReport
+} from './types/compliance';
 
-interface ComplianceRule {
-  rule_id: string;
-  framework: string;
-  title: string;
-  description: string;
-  risk_level: 'low' | 'medium' | 'high' | 'critical';
-  check_frequency: string;
-  automated_check: boolean;
-  manual_review_required: boolean;
-  remediation_steps: string[];
-  reference_links: string[];
-}
 
-interface ComplianceCheck {
-  check_id: string;
-  rule_id: string;
-  entity_id: string;
-  entity_type: string;
-  status: 'compliant' | 'non_compliant' | 'under_review' | 'pending_approval';
-  risk_score: number;
-  findings: string[];
-  recommendations: string[];
-  checked_at: string;
-  next_check_due: string;
-  reviewer_id?: string;
-  review_notes?: string;
-}
-
-interface RegulatoryAlert {
-  alert_id: string;
-  framework: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  title: string;
-  description: string;
-  affected_entities: string[];
-  required_action: string;
-  deadline: string;
-  escalation_level: number;
-  created_at: string;
-  acknowledged_at?: string;
-  resolved_at?: string;
-}
-
-interface ComplianceReport {
-  report_id: string;
-  framework: string;
-  period_start: string;
-  period_end: string;
-  overall_status: 'compliant' | 'non_compliant' | 'under_review' | 'pending_approval';
-  risk_summary: Record<string, number>;
-  critical_findings: string[];
-  recommendations: string[];
-  generated_at: string;
-  approved_by?: string;
-}
 
 const AdvancedComplianceDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'rules' | 'checks' | 'alerts' | 'reports'>('overview');
@@ -183,7 +136,8 @@ const AdvancedComplianceDashboard: React.FC = () => {
           required_action: 'Review and remediate compliance violation',
           deadline: '2025-12-17T09:15:00Z',
           escalation_level: 1,
-          created_at: '2025-12-10T09:15:00Z'
+          created_at: '2025-12-10T09:15:00Z',
+          status: 'active'
         }
       ];
 
@@ -210,8 +164,8 @@ const AdvancedComplianceDashboard: React.FC = () => {
       setComplianceReports(mockReports);
       setMonitoringActive(true);
 
-    } catch (_error) {
-      console.error('Failed to load compliance data:', error);
+    } catch (error) {
+      secureLogger.error('Failed to load compliance data:', error);
     } finally {
       setLoading(false);
     }
@@ -220,27 +174,27 @@ const AdvancedComplianceDashboard: React.FC = () => {
   const toggleMonitoring = async () => {
     try {
       setMonitoringActive(!monitoringActive);
-    } catch (_error) {
-      console.error('Failed to toggle monitoring:', error);
+     } catch (error) {
+       secureLogger.error('Failed to toggle monitoring:', error);
     }
   };
 
   const runComplianceCheck = async (ruleId: string, entityId: string) => {
     try {
-      console.log(`Running compliance check: ${ruleId} for ${entityId}`);
+      secureLogger.info(`Running compliance check: ${ruleId} for ${entityId}`);
       await new Promise(resolve => setTimeout(resolve, 2000));
       await loadComplianceData();
-    } catch (_error) {
-      console.error('Failed to run compliance check:', error);
+     } catch (error) {
+       secureLogger.error('Failed to run compliance check:', error);
     }
   };
 
   const acknowledgeAlert = async (alertId: string) => {
     try {
-      console.log(`Acknowledging alert: ${alertId}`);
+      secureLogger.info(`Acknowledging alert: ${alertId}`);
       await loadComplianceData();
-    } catch (_error) {
-      console.error('Failed to acknowledge alert:', error);
+     } catch (error) {
+       secureLogger.error('Failed to acknowledge alert:', error);
     }
   };
 

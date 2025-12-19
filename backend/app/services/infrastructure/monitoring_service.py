@@ -375,9 +375,36 @@ class MonitoringService:
         }
 
     def start_monitoring(self):
-        """Start background monitoring. For tests this is a no-op but present."""
-        # No background thread required for unit tests; keep API stable.
-        return None
+        """Start background performance monitoring"""
+        if hasattr(self, '_thread') and self._thread and self._thread.is_alive():
+            return
+
+        self._stop_event = threading.Event()
+        self._thread = threading.Thread(target=self._monitor_loop, daemon=True)
+        self._thread.start()
+        logger.info("Monitoring service background thread started")
+
+    def stop_monitoring(self):
+        """Stop performance monitoring"""
+        if hasattr(self, '_stop_event'):
+            self._stop_event.set()
+        if hasattr(self, '_thread') and self._thread and self._thread.is_alive():
+            self._thread.join(timeout=1.0)
+
+    def _monitor_loop(self):
+        """Background monitoring loop"""
+        while not self._stop_event.is_set():
+            try:
+                self._collect_system_metrics()
+                # Sleep for metrics_interval, but wake up immediately if stopped
+                if self._stop_event.wait(self.metrics_interval):
+                    break
+            except Exception as e:
+                if not self._stop_event.is_set():
+                    try: logger.error(f"Monitoring loop error: {e}")
+                    except: pass
+                if self._stop_event.wait(self.metrics_interval):
+                    break
 
     def get_metrics(
         self, metric_name: str = None, hours: int = 1

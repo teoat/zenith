@@ -1,6 +1,8 @@
 // frontend/src/lib/LocalDataManager.ts
 // Local data management for offline-first functionality
 import React from 'react';
+import { secureLogger } from '../utils/secureLogger';
+import { secureRandom } from '../utils/secureRandom';
 
 interface StoredItem<T> {
   id: string;
@@ -37,7 +39,7 @@ export class LocalDataManager {
       const request = indexedDB.open(this.dbName, this.dbVersion);
 
       request.onerror = () => {
-        console.error('Failed to open local database');
+        secureLogger.error('Failed to open local database');
         reject(request.error);
       };
 
@@ -185,7 +187,7 @@ export class LocalDataManager {
 
     const syncOp: SyncOperation<T> = {
       ...operation,
-      id: `sync-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `sync-${Date.now()}-${secureRandom.random().toString(36).substr(2, 9)}`,
       timestamp: Date.now(),
       synced: false,
       syncAttempts: 0 // Initialize syncAttempts

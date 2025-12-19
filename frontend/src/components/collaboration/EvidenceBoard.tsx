@@ -4,14 +4,15 @@
  */
 
 import React, { useState, useCallback, useRef, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/Textarea';
 // ScrollArea removed - not currently used
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/Dialog';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { secureRandom } from '../../utils/secureRandom'; // Module not found
 import {
   LayoutGrid,
   Plus,
@@ -314,7 +315,7 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
       priority: newEvidence.priority || 'medium',
       tags: newEvidence.tags || [],
       connections: [],
-      position: { x: 100 + Math.random() * 400, y: 100 + Math.random() * 200 },
+      position: { x: 100 + secureRandom.random() * 400, y: 100 + secureRandom.random() * 200 },
       addedBy: 'Current User',
       addedAt: new Date(),
       comments: []

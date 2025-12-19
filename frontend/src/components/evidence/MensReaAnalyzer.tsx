@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Brain, Scale, Target, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { EvidenceItem } from '../../lib/api';
+import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
+import type { EvidenceItem } from '../../lib/api';
 
 interface IntentIndicator {
   id: string;

@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import EvidenceViewer from '../evidence/EvidenceViewer';
 import { AccessibleModal } from '../ui/AccessibleModal';
-import { EvidenceItem } from '../../lib/api';
+
 import { API_BASE } from '../../services/client';
 
 interface EvidenceSpotlightProps {

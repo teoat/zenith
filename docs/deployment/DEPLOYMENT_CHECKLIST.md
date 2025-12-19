@@ -6,6 +6,9 @@
 - [ ] Review and update MASTER_PASSWORD (16+ chars, complex)
 - [ ] Review and update IPC_SECRET (32+ chars)
 - [ ] Review and update AUTH_ENCRYPTION_KEY (32+ chars)
+- [ ] **NEW:** Review and update FIELD_ENCRYPTION_KEY for versioned encryption
+- [ ] **NEW:** Configure CIRCUIT_BREAKER_TIMEOUT (default: 300 seconds)
+- [ ] **NEW:** Configure MAX_CONSECUTIVE_FAILURES (default: 3)
 - [ ] Remove all default/placeholder values
 - [ ] Ensure NODE_ENV=production
 
@@ -26,12 +29,17 @@
 - [ ] Run security diagnostic: npm run security:check
 - [ ] Verify no hardcoded secrets in codebase
 - [ ] Test file encryption/decryption
+- [ ] **NEW:** Test versioned encryption with legacy data compatibility
+- [ ] **NEW:** Verify WebSocket authentication with JWT tokens and MFA
+- [ ] **NEW:** Test circuit breaker monitoring resilience
 - [ ] Verify rate limiting works
 - [ ] Test session timeout functionality
 
 ## 📊 Monitoring Setup
 - [ ] Configure Sentry DSN if using error tracking
 - [ ] Verify Prometheus metrics endpoint
+- [ ] **NEW:** Test circuit breaker monitoring functionality
+- [ ] **NEW:** Verify performance monitoring resilience under failure conditions
 - [ ] Test log rotation
 - [ ] Verify backup system works
 
@@ -41,6 +49,10 @@
 - [ ] Verify performance benchmarks
 - [ ] Complete security audit
 - [ ] Document deployment process
+- [ ] **NEW:** Verify 99.99% uptime readiness with health checks
+- [ ] **NEW:** Test proactive monitoring and alerting
+- [ ] **NEW:** Validate circuit breaker resilience
+- [ ] **NEW:** Confirm graceful shutdown procedures
 
 ## 📞 Emergency Contacts
 - Security Team: [CONTACT]

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
+import { Progress } from '@/components/ui/Progress';
 import {
   Activity,
   AlertTriangle,
@@ -16,8 +16,9 @@ import {
   Bell
 } from 'lucide-react';
 import { complianceMonitoringService } from '@/services/complianceMonitoring';
-import { MonitoringDashboard } from '@/services/complianceMonitoring';
+import type { MonitoringDashboard } from '@/services/complianceMonitoring';
 import { complianceService } from '@/services/compliance';
+import { secureLogger } from '../utils/secureLogger';
 
 const ComplianceMonitoring: React.FC = () => {
   const [dashboard, setDashboard] = useState<MonitoringDashboard | null>(null);
@@ -83,7 +84,7 @@ const ComplianceMonitoring: React.FC = () => {
       setHealthChecks(healthChecksData);
     } catch (err) {
       setError('Failed to load monitoring data');
-      console.error('Monitoring dashboard error:', err);
+      secureLogger.error('Monitoring dashboard error:', err);
     } finally {
       setLoading(false);
     }
@@ -94,8 +95,8 @@ const ComplianceMonitoring: React.FC = () => {
       await complianceMonitoringService.acknowledgeAlert(alertId);
       // Refresh data
       await loadMonitoringData();
-    } catch (_error) {
-      console.error('Failed to acknowledge alert:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to acknowledge alert:', error);
     }
   };
 

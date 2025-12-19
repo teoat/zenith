@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import type { LucideIcon} from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import MetricSparkline from './MetricSparkline';
 
 interface MetricCardProps {

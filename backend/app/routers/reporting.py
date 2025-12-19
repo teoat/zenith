@@ -1,8 +1,12 @@
 import datetime
+import uuid
+import os
+import json
+import asyncio
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -12,6 +16,20 @@ from core.database import User, get_db
 router = APIRouter()
 
 # --- Models ---
+
+class ReportGenerationResponse(BaseModel):
+    jobId: str
+    status: str
+    message: str
+    estimatedCompletionMinutes: int
+
+class ReportJobStatus(BaseModel):
+    id: str
+    status: str
+    progress: int
+    created_at: str
+    updated_at: Optional[str] = None
+    error: Optional[str] = None
 
 
 class CaseAnalytics(BaseModel):
@@ -137,26 +155,247 @@ class ReportTemplateInfo(BaseModel):
 
 
 
-@router.post("/generate", response_model=ReportResponse, tags=["reporting"])
-@router.post("/export", response_model=ReportResponse, tags=["reporting"])
-async def generate_report(request: ReportRequest):
+@router.post("/generate", response_model=ReportGenerationResponse, status_code=202, tags=["reporting"])
+async def generate_report(
+    request: ReportRequest,
+    background_tasks: BackgroundTasks,
+    current_user: User = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
+):
     """
     Generate a report based on provided criteria.
-    Returns a download URL.
+    Report generation happens in the background and returns a job ID for tracking.
     """
     try:
-        generated_at = datetime.datetime.now(datetime.timezone.utc)
-        expires_at = generated_at + datetime.timedelta(days=1)
+        # Generate unique report ID
+        report_id = f"report_{uuid.uuid4().hex}"
 
-        report_id = f"rpt_{int(generated_at.timestamp())}"
-
-        return {
-            "reportUrl": f"https://storage.example.com/exports/{report_id}.{request.format.value}",
-            "generatedAt": generated_at,
-            "expiresAt": expires_at,
+        # Create report job record
+        job_data = {
+            "id": report_id,
+            "type": request.reportType,
+            "format": request.format.value,
+            "parameters": request.dict(),
+            "status": "queued",
+            "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "created_by": current_user.id if current_user else None,
+            "progress": 0,
+            "estimated_completion": None,
         }
+
+        # Save job metadata (in a real system, this would be in a database)
+        jobs_dir = "reports/jobs"
+        os.makedirs(jobs_dir, exist_ok=True)
+        job_file = os.path.join(jobs_dir, f"{report_id}.json")
+        with open(job_file, 'w') as f:
+            json.dump(job_data, f, indent=2)
+
+        # Add background task
+        background_tasks.add_task(
+            generate_report_background,
+            report_id,
+            request,
+            current_user.id if current_user else None,
+            db,
+        )
+
+        return ReportGenerationResponse(
+            jobId=report_id,
+            status="queued",
+            message="Report generation started",
+            estimatedCompletionMinutes=5,  # Estimate based on report complexity
+        )
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Failed to start report generation: {str(e)}")
+
+
+async def generate_report_background(
+    report_id: str,
+    request: ReportRequest,
+    user_id: Optional[str],
+    db: Session,
+):
+    """Background task to generate the actual report"""
+    try:
+        # Update job status to processing
+        update_job_status(report_id, "processing", 10)
+
+        # Simulate report generation process
+        if request.reportType == "case_summary":
+            await generate_case_summary_report(report_id, request, db)
+        elif request.reportType == "financial_analysis":
+            await generate_financial_analysis_report(report_id, request, db)
+        elif request.reportType == "compliance_audit":
+            await generate_compliance_audit_report(report_id, request, db)
+        else:
+            await generate_generic_report(report_id, request, db)
+
+        # Mark as completed
+        update_job_status(report_id, "completed", 100)
+
+    except Exception as e:
+        # Mark as failed
+        update_job_status(report_id, "failed", 0, str(e))
+
+
+async def generate_case_summary_report(report_id: str, request: ReportRequest, db: Session):
+    """Generate case summary report"""
+    update_job_status(report_id, "processing", 30)
+
+    # Simulate PDF generation
+    await asyncio.sleep(2)  # Simulate processing time
+
+    # Create mock PDF content (in real implementation, use reportlab or similar)
+    pdf_content = f"""
+    Case Summary Report
+    Generated: {datetime.datetime.now()}
+    Case ID: {request.caseId}
+    Format: {request.format.value}
+    """
+
+    # Save report file
+    reports_dir = "reports/generated"
+    os.makedirs(reports_dir, exist_ok=True)
+    report_file = os.path.join(reports_dir, f"{report_id}.pdf")
+
+    with open(report_file, 'w') as f:
+        f.write(pdf_content)
+
+    update_job_status(report_id, "processing", 80)
+
+
+async def generate_financial_analysis_report(report_id: str, request: ReportRequest, db: Session):
+    """Generate financial analysis report"""
+    update_job_status(report_id, "processing", 25)
+
+    # Similar to case summary but with financial data
+    await asyncio.sleep(3)
+
+    pdf_content = f"Financial Analysis Report - {datetime.datetime.now()}"
+
+    reports_dir = "reports/generated"
+    os.makedirs(reports_dir, exist_ok=True)
+    report_file = os.path.join(reports_dir, f"{report_id}.pdf")
+
+    with open(report_file, 'w') as f:
+        f.write(pdf_content)
+
+    update_job_status(report_id, "processing", 75)
+
+
+async def generate_compliance_audit_report(report_id: str, request: ReportRequest, db: Session):
+    """Generate compliance audit report"""
+    update_job_status(report_id, "processing", 20)
+
+    await asyncio.sleep(4)
+
+    pdf_content = f"Compliance Audit Report - {datetime.datetime.now()}"
+
+    reports_dir = "reports/generated"
+    os.makedirs(reports_dir, exist_ok=True)
+    report_file = os.path.join(reports_dir, f"{report_id}.pdf")
+
+    with open(report_file, 'w') as f:
+        f.write(pdf_content)
+
+    update_job_status(report_id, "processing", 85)
+
+
+async def generate_generic_report(report_id: str, request: ReportRequest, db: Session):
+    """Generate generic report"""
+    update_job_status(report_id, "processing", 15)
+
+    await asyncio.sleep(1)
+
+    pdf_content = f"Generic Report - {datetime.datetime.now()}"
+
+    reports_dir = "reports/generated"
+    os.makedirs(reports_dir, exist_ok=True)
+    report_file = os.path.join(reports_dir, f"{report_id}.pdf")
+
+    with open(report_file, 'w') as f:
+        f.write(pdf_content)
+
+    update_job_status(report_id, "processing", 60)
+
+
+def update_job_status(report_id: str, status: str, progress: int, error: Optional[str] = None):
+    """Update job status"""
+    jobs_dir = "reports/jobs"
+    job_file = os.path.join(jobs_dir, f"{report_id}.json")
+
+    try:
+        with open(job_file, 'r') as f:
+            job_data = json.load(f)
+
+        job_data["status"] = status
+        job_data["progress"] = progress
+        job_data["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+        if error:
+            job_data["error"] = error
+
+        with open(job_file, 'w') as f:
+            json.dump(job_data, f, indent=2)
+
+    except Exception as e:
+        print(f"Failed to update job status for {report_id}: {e}")
+
+
+@router.get("/job/{job_id}", response_model=ReportJobStatus, tags=["reporting"])
+async def get_report_job_status(job_id: str, current_user: User = Depends(auth_service.get_current_user)):
+    """Get the status of a report generation job"""
+    try:
+        jobs_dir = "reports/jobs"
+        job_file = os.path.join(jobs_dir, f"{job_id}.json")
+
+        if not os.path.exists(job_file):
+            raise HTTPException(status_code=404, detail="Report job not found")
+
+        with open(job_file, 'r') as f:
+            job_data = json.load(f)
+
+        return ReportJobStatus(**job_data)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get job status: {str(e)}")
+
+
+@router.get("/download/{report_id}", tags=["reporting"])
+async def download_report(report_id: str, current_user: User = Depends(auth_service.get_current_user)):
+    """Download a completed report"""
+    try:
+        reports_dir = "reports/generated"
+        report_file = os.path.join(reports_dir, f"{report_id}.pdf")
+
+        if not os.path.exists(report_file):
+            raise HTTPException(status_code=404, detail="Report not found")
+
+        # Check if job is completed
+        jobs_dir = "reports/jobs"
+        job_file = os.path.join(jobs_dir, f"{report_id}.json")
+
+        if os.path.exists(job_file):
+            with open(job_file, 'r') as f:
+                job_data = json.load(f)
+
+            if job_data.get("status") != "completed":
+                raise HTTPException(status_code=409, detail="Report is not yet completed")
+
+        from fastapi.responses import FileResponse
+        return FileResponse(
+            report_file,
+            media_type='application/pdf',
+            filename=f"report_{report_id}.pdf"
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to download report: {str(e)}")
 
 
 @router.get(
@@ -367,27 +606,64 @@ async def delete_scheduled_report(schedule_id: str):
 
 
 @router.get("/financial-health/{case_id}", tags=["reporting"])
-async def get_financial_health(case_id: str):
+async def get_financial_health(case_id: str, db: Session = Depends(get_db)):
     """
     Get financial health data for the FinancialHealth component.
     Includes cashflow waterfall and burn rate data.
     """
-    return {
-        "caseId": case_id,
-        "budget": 500000.0,
-        "totalSpend": 375000.0,
-        "suspiciousFlow": 45000.0,
-        "burnRate": 0.75,
-        "projectedRunway": 45,  # days
-        "waterfall": [
-            {"name": "Income", "amount": 500000, "type": "positive"},
-            {"name": "Payroll", "amount": -180000, "type": "negative"},
-            {"name": "Vendors", "amount": -120000, "type": "negative"},
-            {"name": "Suspicious", "amount": -45000, "type": "suspicious"},
-            {"name": "Operating", "amount": -30000, "type": "negative"},
-            {"name": "Balance", "amount": 125000, "type": "balance"},
-        ],
-    }
+    from core.database import Transaction, FraudAlertModel
+    from sqlalchemy import func
+
+    try:
+        # Get transaction aggregates
+        inflows = db.query(func.sum(Transaction.amount)).filter(
+            Transaction.case_id == case_id,
+            Transaction.transaction_type == "CREDIT"
+        ).scalar() or 0.0
+
+        outflows = db.query(func.sum(Transaction.amount)).filter(
+            Transaction.case_id == case_id,
+            Transaction.transaction_type == "DEBIT"
+        ).scalar() or 0.0
+
+        # Get suspicious flagged amount
+        suspicious = db.query(func.sum(Transaction.amount)).join(
+            FraudAlertModel, FraudAlertModel.case_id == Transaction.case_id
+        ).filter(
+            Transaction.case_id == case_id,
+            Transaction.confidence_score < 0.8 # Heuristic for suspicious
+        ).scalar() or 0.0
+
+        budget = 500000.0 # Standard project budget for now
+        total_spend = abs(outflows)
+        balance = inflows - total_spend
+
+        return {
+            "caseId": case_id,
+            "budget": budget,
+            "totalSpend": total_spend,
+            "suspiciousFlow": suspicious,
+            "burnRate": round((total_spend / budget * 100), 2) if budget > 0 else 0,
+            "projectedRunway": 45,  # Simplified default
+            "waterfall": [
+                {"name": "Inflow", "amount": inflows, "type": "positive"},
+                {"name": "Outflow", "amount": -total_spend, "type": "negative"},
+                {"name": "Suspicious", "amount": -suspicious, "type": "suspicious"},
+                {"name": "Balance", "amount": balance, "type": "balance"},
+            ],
+        }
+    except Exception as e:
+        logger.error(f"Error getting financial health: {e}")
+        # Return intelligent defaults if calculation fails
+        return {
+            "caseId": case_id,
+            "budget": 500000.0,
+            "totalSpend": 0.0,
+            "suspiciousFlow": 0.0,
+            "burnRate": 0.0,
+            "projectedRunway": 0,
+            "waterfall": [],
+        }
 
 
 @router.get("/project-tracker/{case_id}", tags=["reporting"])

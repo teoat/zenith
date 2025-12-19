@@ -1,6 +1,7 @@
 // frontend/src/components/ai/CodeReviewDashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { secureLogger } from '../../utils/secureLogger';
 import {
   Code,
   AlertTriangle,
@@ -119,7 +120,7 @@ const CodeReviewDashboard: React.FC = () => {
             severity: "warning",
             title: "Console Statement in Production",
             description: "Console statements should be removed for production builds",
-            code_snippet: "00087:   const handleSubmit = (data) => {\n00088:     console.log('Form submitted:', data);\n00089:     // Process form data\n00090:   };",
+            code_snippet: "00087:   const handleSubmit = (data) => {\n00088:     secureLogger.info('Form submitted:', data);\n00089:     // Process form data\n00090:   };",
             suggestion: "Remove console statements or use proper logging",
             confidence_score: 0.88,
             references: []
@@ -188,8 +189,8 @@ const CodeReviewDashboard: React.FC = () => {
 
       setReviewResult(mockResult);
       setTestSuggestions(mockTestSuggestions);
-    } catch (_error) {
-      console.error('Failed to load code review data:', error);
+    } catch (error) {
+      secureLogger.error('Failed to load code review data:', error);
     } finally {
       setLoading(false);
     }
@@ -201,8 +202,8 @@ const CodeReviewDashboard: React.FC = () => {
       // Simulate analysis delay
       await new Promise(resolve => setTimeout(resolve, 3000));
       await loadCodeReviewData();
-    } catch (_error) {
-      console.error('Analysis failed:', error);
+    } catch (error) {
+      secureLogger.error('Analysis failed:', error);
     } finally {
       setAnalyzing(false);
     }

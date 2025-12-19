@@ -1,5 +1,5 @@
 import React from 'react';
-import { useUIStore } from '@/stores/useUIStore';
+import { useUIStore } from '@/store/useUIStore';
 import { ErrorToast } from './ErrorMessage';
 
 export const NotificationContainer: React.FC = () => {

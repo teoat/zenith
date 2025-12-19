@@ -853,7 +853,7 @@
   },
   "infrastructure.backend.jwt_secret": {
     "key": "infrastructure.backend.jwt_secret",
-    "value": "docker-dev-secret-change-prod",
+    "value": "CHANGE_THIS_SSOT_JWT_SECRET",
     "version": "v1765913111_8a79e104",
     "timestamp": "2025-12-17T04:25:11.969283",
     "checksum": "d3a7c4de49a77d2a1310a7d47b9b10cb851c61ffe586e36b13408508061081fd",
@@ -865,7 +865,7 @@
   },
   "infrastructure.backend.encryption_key": {
     "key": "infrastructure.backend.encryption_key",
-    "value": "docker-dev-key-change-prod",
+    "value": "CHANGE_THIS_SSOT_ENCRYPTION_KEY",
     "version": "v1765913111_76796c5c",
     "timestamp": "2025-12-17T04:25:11.977354",
     "checksum": "62e7427b56de1aec4682588b1f097e5d7b2ea5c98f62ffde18285f7380c8963c",

@@ -1,4 +1,6 @@
 import { useState, useCallback } from 'react';
+import { secureLogger } from '../utils/secureLogger';
+import { secureRandom } from '../utils/secureRandom';
 
 export interface FailureScenario {
   id: string;
@@ -85,8 +87,8 @@ class ChaosEngine {
     const scenario = this.scenarios.get(scenarioId);
     if (!scenario || !scenario.enabled) return false;
 
-    if (Math.random() < scenario.probability) {
-      console.warn(`🚨 Chaos Engineering: Injecting ${scenario.name}`);
+    if (secureRandom.random() < scenario.probability) {
+      secureLogger.warn('SECURITY', `Chaos Engineering: Injecting ${scenario.name}`);
 
       switch (scenario.type) {
         case 'network':
@@ -128,7 +130,7 @@ class ChaosEngine {
     // Simulate database timeout
     if (scenario.id === 'database-timeout') {
       // This would be implemented in the database layer
-      console.warn('Database timeout injected');
+      secureLogger.warn('SECURITY', 'Chaos: Database timeout injected');
       return true;
     }
     return false;
@@ -138,7 +140,7 @@ class ChaosEngine {
     // Simulate service crash
     if (scenario.id === 'service-crash') {
       // This would trigger service restart logic
-      console.warn('Service crash injected');
+      secureLogger.warn('SECURITY', 'Chaos: Service crash injected');
       return true;
     }
     return false;
@@ -183,7 +185,7 @@ class ChaosEngine {
     if (breaker.failureCount >= 5) {
       breaker.state = 'open';
       breaker.nextAttemptTime = Date.now() + 60000; // 1 minute timeout
-      console.warn(`🔴 Circuit breaker opened for ${serviceName}`);
+      secureLogger.warn('SECURITY', `Circuit breaker opened for ${serviceName}`);
     }
 
     this.circuitBreakers.set(serviceName, breaker);

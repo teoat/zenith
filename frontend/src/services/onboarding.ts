@@ -4,6 +4,12 @@ export async function fetchRoles() {
   return res.json();
 }
 
+export async function fetchRookieChecklist(userId: string) {
+  const res = await fetch(`/api/v1/onboarding/rookie-checklist/${userId}`);
+  if (!res.ok) throw new Error('Failed to fetch checklist');
+  return res.json();
+}
+
 export async function submitRookieChecklist(payload: any) {
   const res = await fetch('/api/v1/onboarding/rookie-checklist', {
     method: 'POST',

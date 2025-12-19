@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/101</span>
+                <span class='fraction'>0/102</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/94</span>
+                <span class='fraction'>0/95</span>
             </div>
         
             
@@ -379,10 +379,12 @@
 <a name='L314'></a><a href='#L314'>314</a>
 <a name='L315'></a><a href='#L315'>315</a>
 <a name='L316'></a><a href='#L316'>316</a>
-<a name='L317'></a><a href='#L317'>317</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -697,10 +699,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// frontend/src/components/collaboration/CollaborativeEditor.tsx
 <span class="cstat-no" title="statement not covered" >import React, { useState, useEffect, useRef, useCallback } from 'react';</span>
-<span class="cstat-no" title="statement not covered" >import { Button } from '../ui/button';</span>
+<span class="cstat-no" title="statement not covered" >import { Button } from '../ui/Button';</span>
 // Input import removed as unused
-<span class="cstat-no" title="statement not covered" >import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';</span>
+<span class="cstat-no" title="statement not covered" >import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';</span>
 <span class="cstat-no" title="statement not covered" >import { Users, User, Edit3, Save, X } from 'lucide-react';</span>
+<span class="cstat-no" title="statement not covered" >import { secureLogger } from '../../utils/secureLogger';</span>
 &nbsp;
 interface UserPresence {
   user_id: string;
@@ -739,7 +742,7 @@ interface CollaborativeEditorProps {
       const ws = <span class="cstat-no" title="statement not covered" >new WebSocket(`ws://localhost:8000/ws/${documentId}`);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      ws.onopen = <span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        console.log('Connected to collaborative editing');</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.info('Connected to collaborative editing');</span>
 <span class="cstat-no" title="statement not covered" >        setIsConnected(true);</span>
 <span class="cstat-no" title="statement not covered" >        wsRef.current = ws;</span>
 &nbsp;
@@ -755,7 +758,7 @@ interface CollaborativeEditorProps {
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        switch (message.type) {</span>
           case 'welcome':
-<span class="cstat-no" title="statement not covered" >            console.log('Joined collaborative session');</span>
+<span class="cstat-no" title="statement not covered" >            secureLogger.info('Joined collaborative session');</span>
 <span class="cstat-no" title="statement not covered" >            break;</span>
 &nbsp;
           case 'user_joined':
@@ -782,13 +785,13 @@ interface CollaborativeEditorProps {
 <span class="cstat-no" title="statement not covered" >            break;</span>
 &nbsp;
           case 'error':
-<span class="cstat-no" title="statement not covered" >            console.error('WebSocket error:', message.message);</span>
+<span class="cstat-no" title="statement not covered" >            secureLogger.error('WebSocket error:', message.message);</span>
 <span class="cstat-no" title="statement not covered" >            break;</span>
         }
       };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      ws.onclose = <span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        console.log('Disconnected from collaborative editing');</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.info('Disconnected from collaborative editing');</span>
 <span class="cstat-no" title="statement not covered" >        setIsConnected(false);</span>
 <span class="cstat-no" title="statement not covered" >        setUsers([]);</span>
 <span class="cstat-no" title="statement not covered" >        wsRef.current = null;</span>
@@ -798,7 +801,7 @@ interface CollaborativeEditorProps {
       };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      ws.onerror = <span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        console.error('WebSocket error:', error);</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.error('WebSocket error:', error);</span>
       };
     };
 &nbsp;
@@ -1018,7 +1021,7 @@ interface CollaborativeEditorProps {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:27.522Z
+                at 2025-12-19T02:07:53.644Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

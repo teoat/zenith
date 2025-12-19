@@ -17,6 +17,8 @@ from typing import Any, Callable, Dict, List, Optional, Union
 
 import aiohttp
 
+from app.services.infrastructure.circuit_breaker import circuit_breaker, CircuitBreakerConfig
+
 logger = logging.getLogger(__name__)
 
 
@@ -108,22 +110,78 @@ class APIIntegrationHub:
         self.webhook_handlers: Dict[str, Callable] = {}
         self.rate_limiters: Dict[str, Dict[str, List[datetime]]] = {}
         self.session_pool: Dict[str, aiohttp.ClientSession] = {}
+        self.db = None
+
+    async def initialize(self, db_session):
+        """Initialize the hub with persistent data from DB"""
+        self.db = db_session
+        try:
+            from core.database import IntegrationConfigModel
+            db_integrations = self.db.query(IntegrationConfigModel).all()
+            for db_int in db_integrations:
+                config = IntegrationConfig(
+                    integration_id=db_int.id,
+                    name=db_int.name,
+                    type=IntegrationType(db_int.type),
+                    status=IntegrationStatus(db_int.status),
+                    endpoint_url=db_int.endpoint_url,
+                    authentication=AuthenticationType(db_int.auth_type),
+                    auth_config=db_int.auth_config or {},
+                    rate_limit=db_int.rate_limit,
+                    created_at=db_int.created_at,
+                    last_used=db_int.last_used
+                )
+                self.integrations[config.integration_id] = config
+                
+                # Setup session and rate limiter
+                if config.type in [IntegrationType.REST_API, IntegrationType.GRAPHQL]:
+                    await self._create_session(config)
+                
+                self.rate_limiters[config.integration_id] = {
+                    "calls": [],
+                    "last_reset": datetime.now(),
+                }
+            logger.info(f"Loaded {len(db_integrations)} integrations from DB")
+        except Exception as e:
+            logger.error(f"Failed to load integrations from DB: {e}")
 
     async def register_integration(self, config: IntegrationConfig) -> bool:
         """
-        Register a new third-party integration
-
-        Args:
-            config: Integration configuration
-
-        Returns:
-            Success status
+        Register a new third-party integration and persist to DB
         """
         try:
             # Validate configuration
             await self._validate_integration_config(config)
 
-            # Store configuration
+            # Store in DB if session available
+            if self.db:
+                from core.database import IntegrationConfigModel
+                db_int = self.db.query(IntegrationConfigModel).filter(IntegrationConfigModel.id == config.integration_id).first()
+                if not db_int:
+                    db_int = IntegrationConfigModel(
+                        id=config.integration_id,
+                        name=config.name,
+                        type=config.type.value,
+                        status=config.status.value,
+                        endpoint_url=config.endpoint_url,
+                        auth_type=config.authentication.value,
+                        auth_config=config.auth_config,
+                        rate_limit=config.rate_limit,
+                        created_at=config.created_at
+                    )
+                    self.db.add(db_int)
+                else:
+                    db_int.name = config.name
+                    db_int.type = config.type.value
+                    db_int.status = config.status.value
+                    db_int.endpoint_url = config.endpoint_url
+                    db_int.auth_type = config.authentication.value
+                    db_int.auth_config = config.auth_config
+                    db_int.rate_limit = config.rate_limit
+                
+                self.db.commit()
+
+            # Store in memory
             self.integrations[config.integration_id] = config
 
             # Initialize session pool for REST APIs
@@ -228,6 +286,17 @@ class APIIntegrationHub:
             self.call_history.append(call_record)
             config.success_count += 1
             config.last_used = datetime.now()
+
+            # Update DB last_used
+            if self.db:
+                try:
+                    from core.database import IntegrationConfigModel
+                    db_int = self.db.query(IntegrationConfigModel).filter(IntegrationConfigModel.id == integration_id).first()
+                    if db_int:
+                        db_int.last_used = config.last_used
+                        self.db.commit()
+                except:
+                    pass
 
             # Keep only recent history
             self.call_history = self.call_history[-1000:]
@@ -545,6 +614,9 @@ class APIIntegrationHub:
         calls.append(now)
         return True
 
+    @circuit_breaker("external_api_integration", CircuitBreakerConfig(
+        failure_threshold=3, recovery_timeout=45.0, expected_exception=(aiohttp.ClientError, Exception)
+    ))
     async def _make_rest_call(
         self,
         config: IntegrationConfig,
@@ -553,7 +625,7 @@ class APIIntegrationHub:
         data: Optional[Dict[str, Any]],
         headers: Dict[str, str],
     ) -> Dict[str, Any]:
-        """Make REST API call"""
+        """Make REST API call with circuit breaker protection"""
         session = self.session_pool.get(config.integration_id)
         if not session:
             raise Exception(

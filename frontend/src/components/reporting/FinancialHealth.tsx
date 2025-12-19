@@ -2,8 +2,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { DollarSign, TrendingDown, AlertCircle, Activity, Wallet, CreditCard } from 'lucide-react';
 import { reportingService } from '../../services/reporting';
-import { FinancialHealthData } from '../../types/api';
+import type { FinancialHealthData } from '../../types/api';
 import { useProjectStore } from '../../store/projectStore';
+import { secureLogger } from '../../utils/secureLogger';
 
 
 const FinancialHealth = () => {
@@ -23,7 +24,7 @@ const FinancialHealth = () => {
         setData(health);
         setSimulatedBurnRate(health.burnRate || 15);
       } catch (err) {
-        console.error("Failed to fetch financial health:", err);
+        secureLogger.error("Failed to fetch financial health:", err);
         // Fallback to mock data if API fails (for demo resilience)
         setData({
             caseId: 'CASE-001',

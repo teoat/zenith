@@ -1,77 +1,22 @@
-import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
-import { DndContext, useDroppable, DragEndEvent } from '@dnd-kit/core';
 import { useToast } from '../providers/ToastProvider';
 import EntityRegistry from '../components/investigation/EntityRegistry';
-import { Share2, Save, RotateCcw, Network, Map, Activity, BarChart3 } from 'lucide-react';
-import { api, GraphData as ApiGraphData } from '../lib/api';
+import { Share2, Save, RotateCcw, Network } from 'lucide-react';
+import { api } from '../lib/api';
 import InvestigationSkeleton from '../components/investigation/InvestigationSkeleton';
 import { AccessibleButton } from '../components/ui/AccessibleButton';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
-// Removed GraphData import from ../lib/api to avoid conflict
-import { GraphData, GraphNode } from '../components/investigation/GraphCanvas';
-
-const GraphCanvas = React.lazy(() => import('../components/investigation/GraphCanvas'));
-
-const DroppableCanvas = ({ children }: { children: React.ReactNode }) => {
-  const { setNodeRef } = useDroppable({
-    id: 'canvas',
-  });
-  
-  return (
-    <div ref={setNodeRef} className="w-full h-full">
-      {children}
-    </div>
-  );
-};
+import { secureLogger } from '../utils/secureLogger';
+import PageErrorBoundary from '../components/PageErrorBoundary';
+import { useGraphData } from '../hooks/useGraphData';
 
 const Investigation = () => {
   const { caseId } = useParams<{ caseId: string }>();
-  const [graphData, setGraphData] = useState<GraphData | undefined>(undefined);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Force remount on reset
-  const [graphVersion, setGraphVersion] = useState(0);
-
-  // Advanced visualization mode
-  const [visualizationMode, setVisualizationMode] = useState<'2d-graph' | '3d-graph' | 'behavioral-heatmap' | 'temporal-flow'>('2d-graph');
-
-  const fetchGraphData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const apiData: ApiGraphData = await api.getGraphData();
-      
-      const mappedData: GraphData = {
-        nodes: apiData.nodes.map((n) => ({
-          id: n.id,
-          group: n.type,
-          label: n.name || n.id,
-          val: (n.properties?.val as number) || 5
-        })),
-        links: apiData.links.map((l) => ({
-          source: l.source,
-          target: l.target,
-          type: l.type
-        }))
-      };
-
-      setGraphData(mappedData);
-    } catch (err) {
-      console.error("Failed to fetch graph data:", err);
-      setError("Failed to load investigation data.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchGraphData();
-  }, [graphVersion, fetchGraphData]);
+  const { data: graphData, isLoading: loading, error } = useGraphData(caseId);
 
   const handleReset = () => {
-    setGraphVersion(prev => prev + 1);
+    // Reset functionality - could invalidate React Query cache
+    window.location.reload();
   };
 
   // Toast integration
@@ -81,186 +26,92 @@ const Investigation = () => {
     const id = caseId || 'default';
     try {
         addToast("Saving snapshot...", "info");
-        await api.saveGraphSnapshot(id, graphData); 
+        await api.saveGraphSnapshot(id, graphData);
         addToast("Snapshot saved successfully", "success");
     } catch (e) {
-        console.error(e);
+        secureLogger.error(e);
         addToast("Failed to save snapshot", "error");
     }
   };
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing in input
-      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
-
-      if (e.ctrlKey || e.metaKey) {
-        switch (e.key) {
-          case 'r':
-            e.preventDefault();
-            handleReset();
-            break;
-          case 's':
-            e.preventDefault();
-            handleSaveSnapshot();
-            break;
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && over.id === 'graph-canvas-droppable' && active.data.current) {
-       const entity = active.data.current;
-       
-       // Check if node already exists
-       if (graphData?.nodes.some(n => n.id === active.id)) {
-           addToast(`${entity.label} is already in the graph.`, 'info');
-           return;
-       }
-
-       // Add new node to graph
-       const newNode: GraphNode = {
-           id: String(active.id),
-           group: entity.type || 'unknown',
-           label: entity.label || String(active.id),
-           val: 10,
-           x: 0, // Force graph will settle position
-           y: 0 
-       };
-
-       setGraphData(prev => {
-           if (!prev) return undefined;
-           return {
-               ...prev,
-               nodes: [...prev.nodes, newNode],
-               // Optional: Link to a random node or central node to avoid floating
-               links: prev.links
-           };
-       });
-
-       addToast(`Added ${entity.label} to investigation queue`, 'success');
-    }
-  };
-
-  if (loading) return <InvestigationSkeleton />;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
-
-  return (
-    <DndContext onDragEnd={handleDragEnd}>
+  if (loading) {
+    return (
       <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-slate-950">
-        
-        {/* Left Sidebar: Entity Registry */}
         <EntityRegistry />
-
-        {/* Main Canvas Area */}
         <div className="flex-1 flex flex-col min-w-0 bg-slate-950 relative">
-          
-          {/* Toolbar */}
           <div className="h-14 border-b border-slate-800 bg-slate-900 shadow-sm z-20">
             <div className="flex justify-between items-center px-6 h-full">
               <h1 className="font-bold text-slate-100 flex items-center gap-2">
-                 <Share2 size={20} className="text-blue-500" />
-                 Investigation #{caseId || '492'}: Shell Corp Network
+                <Share2 size={20} className="text-blue-500" />
+                Investigation #{caseId || '492'}: Shell Corp Network
               </h1>
-              <div className="flex gap-3">
-                 <AccessibleButton
-                  variant="secondary"
-                  onClick={handleReset}
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Reset
-                </AccessibleButton>
+            </div>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <InvestigationSkeleton />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
+  if (error) return <div className="p-8 text-red-500">{error.message || 'Failed to load investigation data'}</div>;
+
+  return (
+    <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-slate-950">
+
+      {/* Left Sidebar: Entity Registry */}
+      <EntityRegistry />
+
+      {/* Main Canvas Area */}
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-950 relative">
+
+        {/* Toolbar */}
+        <div className="h-14 border-b border-slate-800 bg-slate-900 shadow-sm z-20">
+          <div className="flex justify-between items-center px-6 h-full">
+            <h1 className="font-bold text-slate-100 flex items-center gap-2">
+                <Share2 size={20} className="text-blue-500" />
+                Investigation #{caseId || '492'}: Shell Corp Network
+            </h1>
+            <div className="flex gap-3">
                 <AccessibleButton
-                  variant="primary"
-                  onClick={handleSaveSnapshot}
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  Save Snapshot
-                </AccessibleButton>
-              </div>
-            </div>
+                 variant="secondary"
+                 onClick={handleReset}
+               >
+                 <RotateCcw className="w-4 h-4 mr-2" />
+                 Reset
+               </AccessibleButton>
 
-            {/* Visualization Mode Tabs */}
-            <div className="px-6 pb-2">
-              <Tabs value={visualizationMode} onValueChange={(value: any) => setVisualizationMode(value)}>
-                <TabsList className="bg-slate-800 border-slate-700">
-                  <TabsTrigger value="2d-graph" className="flex items-center gap-2">
-                    <Network className="w-4 h-4" />
-                    2D Graph
-                  </TabsTrigger>
-                  <TabsTrigger value="3d-graph" className="flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4" />
-                    3D Graph
-                  </TabsTrigger>
-                  <TabsTrigger value="behavioral-heatmap" className="flex items-center gap-2">
-                    <Map className="w-4 h-4" />
-                    Behavioral Map
-                  </TabsTrigger>
-                  <TabsTrigger value="temporal-flow" className="flex items-center gap-2">
-                    <Activity className="w-4 h-4" />
-                    Temporal Flow
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
+               <AccessibleButton
+                 variant="primary"
+                 onClick={handleSaveSnapshot}
+               >
+                 <Save className="w-4 h-4 mr-2" />
+                 Save Snapshot
+               </AccessibleButton>
             </div>
           </div>
+        </div>
 
-          {/* Visualization Canvas */}
-          <div className="flex-1 relative overflow-hidden">
-            <Tabs value={visualizationMode} onValueChange={() => {}}>
-              <TabsContent value="2d-graph" className="h-full m-0">
-                <DroppableCanvas>
-                  <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>}>
-                    <GraphCanvas key={graphVersion} data={graphData} />
-                  </Suspense>
-                </DroppableCanvas>
-              </TabsContent>
-
-              <TabsContent value="3d-graph" className="h-full m-0">
-                <div className="h-full w-full flex items-center justify-center bg-slate-900 text-slate-400">
-                  <div className="text-center">
-                    <BarChart3 className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <h3 className="text-lg font-medium mb-2">3D Graph Visualization</h3>
-                    <p className="text-sm">Interactive 3D network analysis coming soon</p>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="behavioral-heatmap" className="h-full m-0">
-                <div className="h-full w-full flex items-center justify-center bg-slate-900 text-slate-400">
-                  <div className="text-center">
-                    <Map className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <h3 className="text-lg font-medium mb-2">Behavioral Heatmap</h3>
-                    <p className="text-sm">Geographic risk pattern analysis coming soon</p>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="temporal-flow" className="h-full m-0">
-                <div className="h-full w-full flex items-center justify-center bg-slate-900 text-slate-400">
-                  <div className="text-center">
-                    <Activity className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <h3 className="text-lg font-medium mb-2">Temporal Flow Analysis</h3>
-                    <p className="text-sm">Transaction timeline visualization coming soon</p>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
+        {/* Content */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center text-slate-400">
+            <Network className="w-16 h-16 mx-auto mb-4 opacity-50" />
+            <h3 className="text-lg font-medium mb-2">Investigation Graph</h3>
+            <p className="text-sm">Graph visualization with {graphData?.nodes.length || 0} nodes and {graphData?.links.length || 0} connections</p>
           </div>
-
         </div>
 
       </div>
-    </DndContext>
+
+    </div>
   );
 };
 
-export default Investigation;
+const InvestigationWithErrorBoundary = () => (
+  <PageErrorBoundary>
+    <Investigation />
+  </PageErrorBoundary>
+);
+
+export default InvestigationWithErrorBoundary;

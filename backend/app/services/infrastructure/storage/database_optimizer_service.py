@@ -266,6 +266,12 @@ class DatabaseOptimizer:
         """Get comprehensive database statistics"""
         stats = {}
 
+        # Whitelist of allowed tables to prevent SQL injection
+        allowed_tables = {
+            'cases', 'evidence', 'transactions', 'case_activities',
+            'case_notes', 'fraud_alerts', 'users', 'audit_logs'
+        }
+
         try:
             # Table sizes
             table_stats = self.execute_optimized_query(
@@ -277,8 +283,14 @@ class DatabaseOptimizer:
 
             for row in table_stats:
                 table_name = row.name
+                # Validate table name against whitelist
+                if table_name not in allowed_tables:
+                    logger.warning(f"Skipping unknown table: {table_name}")
+                    continue
+
                 count_result = self.execute_optimized_query(
-                    f"SELECT COUNT(*) as count FROM {table_name};"
+                    "SELECT COUNT(*) as count FROM ?;",
+                    (table_name,)
                 )
                 count = count_result.fetchone()[0]
 

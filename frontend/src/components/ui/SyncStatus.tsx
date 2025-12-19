@@ -1,6 +1,7 @@
 // frontend/src/components/ui/SyncStatus.tsx
 import { useState, useEffect } from 'react';
 import { api } from '../../lib/api';
+import { secureLogger } from '../../utils/secureLogger';
 import './SyncStatus.css';
 
 interface SyncStatus {
@@ -16,10 +17,16 @@ interface SyncStatus {
     type: string;
     severity: string;
     detectedAt: number;
-    analysis: any;
+    analysis: Record<string, unknown>;
   }>;
   lastSyncAttempt?: number;
-  lastSyncResult?: any;
+  lastSyncResult?: {
+    status: 'completed' | 'error';
+    results?: {
+      successful: number;
+    };
+    error?: string;
+  };
 }
 
 export function SyncStatus() {
@@ -31,9 +38,9 @@ export function SyncStatus() {
     try {
       setLoading(true);
       const syncStatus = await api.getSyncStatus();
-      setStatus(syncStatus);
-    } catch (_error) {
-      console.error('Failed to load sync status:', error);
+      setStatus(syncStatus as unknown as SyncStatus);
+     } catch (error) { 
+      secureLogger.error('Failed to load sync status:', error);
     } finally {
       setLoading(false);
     }
@@ -44,8 +51,8 @@ export function SyncStatus() {
       setSyncing(true);
       await api.forceSync();
       await loadSyncStatus(); // Refresh status after sync
-    } catch (_error) {
-      console.error('Failed to force sync:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to force sync:', error);
     } finally {
       setSyncing(false);
     }
@@ -55,8 +62,8 @@ export function SyncStatus() {
     try {
       await api.resolveConflict(conflictId, resolution as any);
       await loadSyncStatus(); // Refresh status after resolution
-    } catch (_error) {
-      console.error('Failed to resolve conflict:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to resolve conflict:', error);
     }
   };
 
@@ -64,7 +71,9 @@ export function SyncStatus() {
     loadSyncStatus();
 
     // Refresh status every 30 seconds
-    const interval = setInterval(loadSyncStatus, 30000);
+    const interval = setInterval(() => {
+      loadSyncStatus();
+    }, 30000);
 
     return () => clearInterval(interval);
   }, []);
@@ -92,14 +101,14 @@ export function SyncStatus() {
 
         <div className="sync-actions">
           <button
-            onClick={handleForceSync}
+            onClick={() => { handleForceSync(); }}
             disabled={syncing || !status.isOnline}
             className="sync-button"
           >
             {syncing ? 'Syncing...' : 'Sync Now'}
           </button>
           <button
-            onClick={loadSyncStatus}
+            onClick={() => { loadSyncStatus(); }}
             disabled={loading}
             className="refresh-button"
           >
@@ -140,19 +149,19 @@ export function SyncStatus() {
               </div>
               <div className="conflict-actions">
                 <button
-                  onClick={() => handleResolveConflict(conflict.id, 'use-remote')}
+                  onClick={() => { handleResolveConflict(conflict.id, 'use-remote'); }}
                   className="resolve-button"
                 >
                   Use Remote
                 </button>
                 <button
-                  onClick={() => handleResolveConflict(conflict.id, 'use-local')}
+                  onClick={() => { handleResolveConflict(conflict.id, 'use-local'); }}
                   className="resolve-button"
                 >
                   Use Local
                 </button>
                 <button
-                  onClick={() => handleResolveConflict(conflict.id, 'merge')}
+                  onClick={() => { handleResolveConflict(conflict.id, 'merge'); }}
                   className="resolve-button"
                 >
                   Merge
@@ -167,7 +176,7 @@ export function SyncStatus() {
         <div className="last-sync-info">
           <small>
             Last sync: {new Date(status.lastSyncAttempt || 0).toLocaleString()}
-            {status.lastSyncResult.status === 'completed' && (
+            {status.lastSyncResult.status === 'completed' && status.lastSyncResult.results && (
               <span className="success">
                 ✓ {status.lastSyncResult.results.successful} successful
               </span>

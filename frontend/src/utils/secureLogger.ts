@@ -8,7 +8,7 @@ export interface LogEntry {
   message: string;
   userId?: string;
   sessionId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   sanitized?: boolean;
 }
 
@@ -33,7 +33,7 @@ export class SecureLogger {
     return uuidv4();
   }
 
-  private sanitizeData(data: any): any {
+  private sanitizeData(data: unknown): unknown {
     if (typeof data === 'string') {
       // Remove potential PII patterns
       return data
@@ -44,7 +44,7 @@ export class SecureLogger {
     }
 
     if (typeof data === 'object' && data !== null) {
-      const sanitized = { ...data };
+      const sanitized = { ...(data as Record<string, unknown>) };
       // Remove sensitive fields
       const sensitiveFields = ['password', 'token', 'secret', 'key', 'ssn', 'credit_card'];
       sensitiveFields.forEach(field => {
@@ -62,19 +62,24 @@ export class SecureLogger {
     level: LogEntry['level'],
     category: string,
     message: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): LogEntry {
     const userId = this.getCurrentUserId();
 
+    // Use simple ID generation to avoid crypto issues in tests
+    const id = typeof crypto !== 'undefined' && crypto.randomUUID ?
+      crypto.randomUUID() :
+      `log_${Date.now()}_${Date.now().toString(36)}`; // Use timestamp for unique log ID
+
     return {
-      id: uuidv4(),
+      id,
       timestamp: new Date().toISOString(),
       level,
       category,
-      message: this.sanitizeData(message),
+      message: String(this.sanitizeData(message)),
       userId,
       sessionId: this.sessionId,
-      metadata: metadata ? this.sanitizeData(metadata) : undefined,
+      metadata: metadata ? (this.sanitizeData(metadata) as Record<string, unknown>) : undefined,
       sanitized: true
     };
   }
@@ -101,7 +106,7 @@ export class SecureLogger {
 
     // In production, send to secure logging service
     if (process.env.NODE_ENV === 'production') {
-      this.sendToSecureService(entry);
+      void this.sendToSecureService(entry);
     } else {
       // In development, still use console but sanitized
       this.outputToConsole(entry);
@@ -110,20 +115,28 @@ export class SecureLogger {
 
   private outputToConsole(entry: LogEntry): void {
     const prefix = `[${entry.category}]`;
-    const sanitizedMessage = entry.sanitized ? entry.message : '[UNSANI TIZED] ' + entry.message;
+    const sanitizedMessage = entry.sanitized ? entry.message : '[UNSANITIZED] ' + entry.message;
 
     switch (entry.level) {
       case 'debug':
-        console.debug(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
+        // eslint-disable-next-line no-console
+        const logger = console;
+        logger.debug(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
       case 'info':
-        console.info(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
+        // eslint-disable-next-line no-console
+        const loggerInfo = console;
+        loggerInfo.info(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
       case 'warn':
-        console.warn(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
+        // eslint-disable-next-line no-console
+        const loggerWarn = console;
+        loggerWarn.warn(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
       case 'error':
-        console.error(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
+        // eslint-disable-next-line no-console
+        const loggerErr = console;
+        loggerErr.error(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
     }
   }
@@ -141,6 +154,7 @@ export class SecureLogger {
       });
     } catch (error) {
       // Fallback to local storage if remote logging fails
+      // eslint-disable-next-line no-console
       console.error('[SecureLogger] Failed to send log to remote service:', error);
       this.storeLocally(entry);
     }
@@ -159,56 +173,103 @@ export class SecureLogger {
     }
   }
 
-  // Public logging methods
-  debug(category: string, message: string, metadata?: Record<string, any>): void {
+  // Flexible logging methods to support various call signatures:
+  // 1. (category: string, message: string, metadata?: object)
+  // 2. (message: string, metadata?: object)
+  // 3. (error: Error | unknown)
+  debug(arg1: unknown, arg2?: unknown, arg3?: unknown): void {
+    const { category, message, metadata } = this.parseArgs('debug', arg1, arg2, arg3);
     if (process.env.NODE_ENV === 'development') {
       const entry = this.createLogEntry('debug', category, message, metadata);
       this.addLog(entry);
     }
   }
 
-  info(category: string, message: string, metadata?: Record<string, any>): void {
+  info(arg1: unknown, arg2?: unknown, arg3?: unknown): void {
+    const { category, message, metadata } = this.parseArgs('info', arg1, arg2, arg3);
     const entry = this.createLogEntry('info', category, message, metadata);
     this.addLog(entry);
   }
 
-  warn(category: string, message: string, metadata?: Record<string, any>): void {
+  warn(arg1: unknown, arg2?: unknown, arg3?: unknown): void {
+    const { category, message, metadata } = this.parseArgs('warn', arg1, arg2, arg3);
     const entry = this.createLogEntry('warn', category, message, metadata);
     this.addLog(entry);
   }
 
-  error(category: string, message: string, metadata?: Record<string, any>): void {
+  error(arg1: unknown, arg2?: unknown, arg3?: unknown): void {
+    const { category, message, metadata } = this.parseArgs('error', arg1, arg2, arg3);
     const entry = this.createLogEntry('error', category, message, metadata);
     this.addLog(entry);
   }
 
+  private parseArgs(level: string, arg1: unknown, arg2?: unknown, arg3?: unknown): { category: string, message: string, metadata?: Record<string, unknown> } {
+    let category = level.toUpperCase();
+    let message = 'No message provided';
+    let metadata: unknown = undefined;
+
+    if (typeof arg1 === 'string') {
+      if (typeof arg2 === 'string') {
+        category = arg1;
+        message = arg2;
+        metadata = arg3;
+      } else {
+        message = arg1;
+        metadata = arg2;
+      }
+    } else if (arg1 instanceof Error) {
+      message = arg1.message;
+      metadata = arg1;
+    } else if (arg1 !== null && arg1 !== undefined) {
+      message = 'Logged object';
+      metadata = arg1;
+    }
+
+    // Standardize metadata into a Record
+    let finalMetadata: Record<string, unknown> | undefined = undefined;
+    if (metadata instanceof Error) {
+      finalMetadata = { 
+        error_name: metadata.name,
+        error_message: metadata.message,
+        error_stack: metadata.stack 
+      };
+    } else if (typeof metadata === 'object' && metadata !== null) {
+      finalMetadata = metadata as Record<string, unknown>;
+    } else if (metadata !== undefined) {
+      finalMetadata = { value: String(metadata) };
+    }
+
+    return { 
+      category, 
+      message: String(message), 
+      metadata: finalMetadata 
+    };
+  }
+
   // Security-specific logging
-  securityEvent(eventType: string, userId: string, details: Record<string, any>): void {
+  securityEvent(eventType: string, userId: string, details: Record<string, unknown>): void {
     this.error('SECURITY', `Security event: ${eventType}`, {
       ...details,
       eventType,
-      userId: this.sanitizeData(userId),
+      userId: String(this.sanitizeData(userId)),
       timestamp: new Date().toISOString()
     });
   }
 
-  auditLog(action: string, resource: string, userId: string, changes?: Record<string, any>): void {
+  auditLog(action: string, resource: string, userId: string, changes?: Record<string, unknown>): void {
     this.info('AUDIT', `User action: ${action} on ${resource}`, {
       action,
       resource,
-      userId: this.sanitizeData(userId),
-      changes: changes ? this.sanitizeData(changes) : undefined,
+      userId: String(this.sanitizeData(userId)),
+      changes: changes ? (this.sanitizeData(changes) as Record<string, unknown>) : undefined,
       ipAddress: this.getClientIP()
     });
   }
 
   private getClientIP(): string {
-    // This would typically come from the server
-    // For client-side, we can't reliably get the real IP
     return 'client-side';
   }
 
-  // Get logs for debugging (only in development)
   getLogs(level?: LogEntry['level']): LogEntry[] {
     if (process.env.NODE_ENV !== 'development') {
       return [];
@@ -220,7 +281,6 @@ export class SecureLogger {
     return [...this.logs];
   }
 
-  // Clear logs
   clearLogs(): void {
     this.logs = [];
   }
@@ -229,12 +289,12 @@ export class SecureLogger {
 // Export singleton instance
 export const secureLogger = SecureLogger.getInstance();
 
-// Legacy console replacement for critical error handling only
+// Legacy console replacement
 export const secureConsole = {
-  error: (message: string, ...args: any[]) => {
+  error: (message: string, ...args: unknown[]) => {
     secureLogger.error('CONSOLE', message, { args });
   },
-  warn: (message: string, ...args: any[]) => {
+  warn: (message: string, ...args: unknown[]) => {
     secureLogger.warn('CONSOLE', message, { args });
   }
 };

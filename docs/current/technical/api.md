@@ -3,7 +3,7 @@
 
 **Generated:** December 17, 2025
 **Version:** 1.0.0
-**Base URL:** `https://api.378x492.com/v1`
+**Base URL:** `https://api.fraud-detection-378x492.com/v1`
 
 ---
 
@@ -73,7 +73,7 @@ Content-Type: application/json
 #### 3. Using the Token
 ```bash
 curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
-     https://api.378x492.com/v1/cases
+     https://api.fraud-detection-378x492.com/v1/cases
 ```
 
 #### 4. Token Refresh

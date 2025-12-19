@@ -6,9 +6,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/Select';
 import { Folder } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+
 
 export const ProjectSwitcher: React.FC = () => {
   const { activeProjectId, projects, setActiveProject, setProjects } = useProjectStore();
@@ -26,7 +26,7 @@ export const ProjectSwitcher: React.FC = () => {
     }
   }, [projects.length, activeProjectId, setProjects, setActiveProject]);
 
-  const activeProject = projects.find((p) => p.id === activeProjectId);
+
 
   return (
     <div className="flex items-center gap-2 mr-4">

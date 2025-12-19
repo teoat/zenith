@@ -183,13 +183,16 @@ class Transaction(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     case_id = Column(String, ForeignKey("cases.id"), index=True)
     source_id = Column(String, index=True)  # File origin
-    date = Column(Date, index=True)
+    external_transaction_id = Column(String, index=True)  # External reference ID
+    date = Column(DateTime, index=True)
     amount = Column(Float, index=True)
     currency = Column(String, default="USD")
     description = Column(EncryptedString)
     merchant_name = Column(EncryptedString, index=True)
     category = Column(String, index=True)
     transaction_type = Column(String, index=True)  # DEBIT, CREDIT
+    ip_address = Column(String, index=True)  # IP address for fraud detection
+    device_fingerprint = Column(String)  # Device fingerprint for fraud detection
     transaction_metadata = Column(JSON, default=dict)
     confidence_score = Column(Float, default=1.0)
     is_reconciled = Column(Boolean, default=False, index=True)
@@ -301,7 +304,14 @@ class FraudAlert(Base):
 
 # Database setup functions
 def get_database_url():
-    """Get SQLite database path"""
+    """Get database URL from settings or fallback to SQLite"""
+    from core.config import settings
+    
+    # Priority 1: Settings/Env Variable (Postgres support)
+    if hasattr(settings, "DATABASE_URL") and settings.DATABASE_URL and "sqlite" not in settings.DATABASE_URL:
+        return settings.DATABASE_URL
+        
+    # Priority 2: Local SQLite Default
     app_data_dir = os.path.expanduser("~/.378x492")
     os.makedirs(app_data_dir, exist_ok=True)
     return f"sqlite:///{app_data_dir}/fraud_detection.db"
@@ -587,6 +597,24 @@ class ModelRegistry(Base):
 
 
 # Compliance and Audit Tables
+class SAR(Base):
+    __tablename__ = "suspicious_activity_reports"
+
+    id = Column(String, primary_key=True, index=True)
+    case_id = Column(String, ForeignKey("cases.id"), index=True)
+    sar_id = Column(String, unique=True, index=True) # External tracking ID
+    status = Column(String, default="draft") # draft, pending, submitted, accepted
+    priority = Column(String, default="medium")
+    report_data = Column(EncryptedString) # JSON of the actual report content
+    created_by = Column(String, ForeignKey("users.id"), index=True)
+    created_at = Column(DateTime, default=utc_now, index=True)
+    submitted_at = Column(DateTime, nullable=True)
+    metadata_json = Column(EncryptedString, default="{}")
+
+    case = relationship("Case")
+    user = relationship("User")
+
+
 class ComplianceAuditLog(Base):
     __tablename__ = "compliance_audit_logs"
 
@@ -1062,6 +1090,47 @@ def secure_query_execution(query_template: str, params: dict) -> str:
         raise
 
 
+class FraudRule(Base):
+    __tablename__ = "fraud_rules"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    rule_id = Column(String, unique=True, nullable=False, index=True)
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    rule_type = Column(String, nullable=False)  # 'threshold', 'velocity', 'pattern'
+    value_type = Column(String, nullable=False)  # 'int', 'float', 'json'
+    value = Column(String, nullable=False)  # Stored as string, cast on load
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=utc_now)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
+
+
+class IntegrationConfigModel(Base):
+    __tablename__ = "integrations"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String, nullable=False)
+    type = Column(String, nullable=False)
+    status = Column(String, default="active")
+    endpoint_url = Column(String, nullable=False)
+    auth_type = Column(String, default="none")
+    auth_config = Column(JSON, nullable=True)
+    rate_limit = Column(Integer, default=100)
+    created_at = Column(DateTime, default=utc_now)
+    last_used = Column(DateTime, nullable=True)
+
+
+class UserOnboardingState(Base):
+    __tablename__ = "user_onboarding_states"
+
+    user_id = Column(String, ForeignKey("users.id"), primary_key=True)
+    checklist_state = Column(JSON, default=dict)
+    completed_at = Column(DateTime, nullable=True)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
+
+    user = relationship("User", backref="onboarding_state")
+
+
 # Export all models and utilities
 __all__ = [
     # Base class
@@ -1086,6 +1155,9 @@ __all__ = [
     "GraphSnapshot",
     "UserDevice",
     "RookieChecklist",
+    "FraudRule",
+    "IntegrationConfigModel",
+    "UserOnboardingState",
     # Utilities
     "utc_now",
     "get_database_url",
@@ -1096,3 +1168,14 @@ __all__ = [
     "engine",
     "secure_query_execution",
 ]
+class FrozenEntity(Base):
+    __tablename__ = "frozen_entities"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    entity_id = Column(String, unique=True, index=True, nullable=False)
+    entity_type = Column(String, index=True, default="account")
+    frozen_at = Column(DateTime, default=utc_now)
+    frozen_by = Column(String)
+    reason = Column(Text)
+    status = Column(String, default="frozen") # frozen, thawed
+    metadata_json = Column(JSON, default=dict)

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/230</span>
+                <span class='fraction'>0/232</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/202</span>
+                <span class='fraction'>0/204</span>
             </div>
         
             
@@ -588,8 +588,10 @@
 <a name='L523'></a><a href='#L523'>523</a>
 <a name='L524'></a><a href='#L524'>524</a>
 <a name='L525'></a><a href='#L525'>525</a>
-<a name='L526'></a><a href='#L526'>526</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L526'></a><a href='#L526'>526</a>
+<a name='L527'></a><a href='#L527'>527</a>
+<a name='L528'></a><a href='#L528'>528</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -970,6 +972,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1113,8 +1117,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// frontend/src/lib/AIFraudDetection.ts
-// AI-powered fraud detection using machine learning algorithms
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { secureLogger } from '../utils/secureLogger';</span>
+<span class="cstat-no" title="statement not covered" >import { secureRandom } from '../utils/secureRandom';</span>
 &nbsp;
 interface TransactionFeatures {
   amount: number;
@@ -1159,7 +1163,7 @@ interface TrainingData {
 &nbsp;
   // Train the AI models with historical data
 <span class="fstat-no" title="function not covered" >  async </span>train(trainingData: TrainingData[]): Promise&lt;void&gt; {
-<span class="cstat-no" title="statement not covered" >    console.log(`Training AI models with ${trainingData.length} samples...`);</span>
+<span class="cstat-no" title="statement not covered" >    secureLogger.info('AI_INTELLIGENCE', `Training AI models with ${trainingData.length} samples...`);</span>
 &nbsp;
     // Prepare features for training
     const features = <span class="cstat-no" title="statement not covered" >trainingData.map(<span class="fstat-no" title="function not covered" >data </span>=&gt; <span class="cstat-no" title="statement not covered" >this.extractFeatures(data.features))</span>;</span>
@@ -1175,7 +1179,7 @@ interface TrainingData {
 <span class="cstat-no" title="statement not covered" >    this.neuralNetwork.fit(normalizedFeatures, labels);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    this.trained = true;</span>
-<span class="cstat-no" title="statement not covered" >    console.log('AI models trained successfully');</span>
+<span class="cstat-no" title="statement not covered" >    secureLogger.info('AI_INTELLIGENCE', 'AI models trained successfully');</span>
   }
 &nbsp;
   // Predict fraud for a transaction
@@ -1396,7 +1400,7 @@ interface TrainingData {
   private <span class="fstat-no" title="function not covered" >sampleData(</span>data: number[][], size: number): number[][] {
     const sampled: number[][] = <span class="cstat-no" title="statement not covered" >[];</span>
 <span class="cstat-no" title="statement not covered" >    for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; size &amp;&amp; i &lt; data.length; i++) {</span>
-      const randomIndex = <span class="cstat-no" title="statement not covered" >Math.floor(Math.random() * data.length);</span>
+      const randomIndex = <span class="cstat-no" title="statement not covered" >Math.floor(secureRandom.random() * data.length);</span>
 <span class="cstat-no" title="statement not covered" >      sampled.push(data[randomIndex]);</span>
     }
 <span class="cstat-no" title="statement not covered" >    return sampled;</span>
@@ -1417,7 +1421,7 @@ interface TrainingData {
     }
 &nbsp;
     // Randomly select feature to split on
-<span class="cstat-no" title="statement not covered" >    this.splitFeature = Math.floor(Math.random() * data[0].length);</span>
+<span class="cstat-no" title="statement not covered" >    this.splitFeature = Math.floor(secureRandom.random() * data[0].length);</span>
 &nbsp;
     // Find min/max values for this feature
     const values = <span class="cstat-no" title="statement not covered" >data.map(<span class="fstat-no" title="function not covered" >row </span>=&gt; <span class="cstat-no" title="statement not covered" >row[this.splitFeature])</span>;</span>
@@ -1425,7 +1429,7 @@ interface TrainingData {
     const max = <span class="cstat-no" title="statement not covered" >Math.max(...values);</span>
 &nbsp;
     // Random split value
-<span class="cstat-no" title="statement not covered" >    this.splitValue = min + Math.random() * (max - min);</span>
+<span class="cstat-no" title="statement not covered" >    this.splitValue = min + secureRandom.random() * (max - min);</span>
 &nbsp;
     // Split data
     const leftData = <span class="cstat-no" title="statement not covered" >data.filter(<span class="fstat-no" title="function not covered" >row </span>=&gt; <span class="cstat-no" title="statement not covered" >row[this.splitFeature] &lt; this.splitValue)</span>;</span>
@@ -1471,8 +1475,8 @@ interface TrainingData {
 &nbsp;
 <span class="fstat-no" title="function not covered" >  fit(</span>features: number[][], labels: number[]): void {
 <span class="cstat-no" title="statement not covered" >    this.inputSize = features[0].length;</span>
-<span class="cstat-no" title="statement not covered" >    this.weights = Array.from({ length: this.inputSize }, <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >Math.random() - 0.5)</span>;</span>
-<span class="cstat-no" title="statement not covered" >    this.bias = Math.random() - 0.5;</span>
+<span class="cstat-no" title="statement not covered" >    this.weights = Array.from({ length: this.inputSize }, <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >secureRandom.random() - 0.5)</span>;</span>
+<span class="cstat-no" title="statement not covered" >    this.bias = secureRandom.random() - 0.5;</span>
 &nbsp;
     // Very simple training - just adjust weights based on average error
     const learningRate = <span class="cstat-no" title="statement not covered" >0.01;</span>
@@ -1494,7 +1498,9 @@ interface TrainingData {
       }
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (epoch % 10 === 0) {</span>
-<span class="cstat-no" title="statement not covered" >        console.log(`Epoch ${epoch}, Avg Error: ${totalError / features.length}`);</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.debug('AI_INTELLIGENCE', `Training Epoch ${epoch}`, { </span>
+          avgError: totalError / features.length 
+        });
       }
     }
   }
@@ -1587,17 +1593,17 @@ interface TrainingData {
 <span class="cstat-no" title="statement not covered" >    for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; 1000; i++) {</span>
 <span class="cstat-no" title="statement not covered" >      data.push({</span>
         features: {
-          amount: Math.random() * 1000 + 10, // $10-$1010
-          frequency: Math.floor(Math.random() * 5) + 1, // 1-5 transactions
-          timeOfDay: Math.floor(Math.random() * 24), // 0-23 hours
-          dayOfWeek: Math.floor(Math.random() * 7), // 0-6 days
+          amount: secureRandom.random() * 1000 + 10, // $10-$1010
+          frequency: Math.floor(secureRandom.random() * 5) + 1, // 1-5 transactions
+          timeOfDay: Math.floor(secureRandom.random() * 24), // 0-23 hours
+          dayOfWeek: Math.floor(secureRandom.random() * 7), // 0-6 days
           location: 'local',
           merchantCategory: 'retail',
-          previousTransactions: Array.from({ length: 10 }, <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >Math.random() * 500 + 20)</span>,
+          previousTransactions: Array.from({ length: 10 }, <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >secureRandom.random() * 500 + 20)</span>,
           userHistory: {
-            totalTransactions: Math.floor(Math.random() * 100) + 10,
-            averageAmount: Math.random() * 300 + 50,
-            riskScore: Math.random() * 0.3 // Low risk for legitimate
+            totalTransactions: Math.floor(secureRandom.random() * 100) + 10,
+            averageAmount: secureRandom.random() * 300 + 50,
+            riskScore: secureRandom.random() * 0.3 // Low risk for legitimate
           }
         },
         label: false
@@ -1608,17 +1614,17 @@ interface TrainingData {
 <span class="cstat-no" title="statement not covered" >    for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; 200; i++) {</span>
 <span class="cstat-no" title="statement not covered" >      data.push({</span>
         features: {
-          amount: Math.random() * 5000 + 2000, // $2000-$7000 (unusually high)
-          frequency: Math.floor(Math.random() * 20) + 10, // 10-30 transactions (high frequency)
-          timeOfDay: Math.random() &lt; 0.7 ? Math.floor(Math.random() * 6) : Math.floor(Math.random() * 6) + 18, // Unusual hours
-          dayOfWeek: Math.floor(Math.random() * 7),
-          location: Math.random() &lt; 0.5 ? 'international' : 'local',
-          merchantCategory: Math.random() &lt; 0.5 ? 'high-risk' : 'retail',
-          previousTransactions: Array.from({ length: 5 }, <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >Math.random() * 100 + 5)</span>, // Fewer previous transactions
+          amount: secureRandom.random() * 5000 + 2000, // $2000-$7000 (unusually high)
+          frequency: Math.floor(secureRandom.random() * 20) + 10, // 10-30 transactions (high frequency)
+          timeOfDay: secureRandom.random() &lt; 0.7 ? Math.floor(secureRandom.random() * 6) : Math.floor(secureRandom.random() * 6) + 18, // Unusual hours
+          dayOfWeek: Math.floor(secureRandom.random() * 7),
+          location: secureRandom.random() &lt; 0.5 ? 'international' : 'local',
+          merchantCategory: secureRandom.random() &lt; 0.5 ? 'high-risk' : 'retail',
+          previousTransactions: Array.from({ length: 5 }, <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >secureRandom.random() * 100 + 5)</span>, // Fewer previous transactions
           userHistory: {
-            totalTransactions: Math.floor(Math.random() * 20) + 1, // New user
-            averageAmount: Math.random() * 100 + 10, // Low average
-            riskScore: Math.random() * 0.7 + 0.3 // Higher risk
+            totalTransactions: Math.floor(secureRandom.random() * 20) + 1, // New user
+            averageAmount: secureRandom.random() * 100 + 10, // Low average
+            riskScore: secureRandom.random() * 0.7 + 0.3 // Higher risk
           }
         },
         label: true
@@ -1645,7 +1651,7 @@ export const <span class="cstat-no" title="statement not covered" >aiFraudDetect
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:27.522Z
+                at 2025-12-19T02:07:53.644Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

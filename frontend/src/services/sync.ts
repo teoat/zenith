@@ -1,3 +1,4 @@
+import { secureLogger } from '../utils/secureLogger';
 import { request, isElectron } from './client';
 
 export const syncService = {
@@ -21,7 +22,7 @@ export const syncService = {
 
   forceSync: async (): Promise<void> => {
     if (isElectron()) {
-      console.log('[API] Force sync triggered in Electron mode');
+      secureLogger.info('SYNC', 'Force sync triggered in Electron mode');
       return;
     }
     return request('/sync/force', { method: 'POST' });

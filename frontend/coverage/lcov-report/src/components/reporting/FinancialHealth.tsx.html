@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/42</span>
+                <span class='fraction'>0/45</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/41</span>
+                <span class='fraction'>0/43</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/39</span>
+                <span class='fraction'>0/42</span>
             </div>
         
             
@@ -367,13 +367,19 @@
 <a name='L302'></a><a href='#L302'>302</a>
 <a name='L303'></a><a href='#L303'>303</a>
 <a name='L304'></a><a href='#L304'>304</a>
-<a name='L305'></a><a href='#L305'>305</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -675,10 +681,13 @@
 <span class="cstat-no" title="statement not covered" >import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';</span>
 <span class="cstat-no" title="statement not covered" >import { DollarSign, TrendingDown, AlertCircle, Activity, Wallet, CreditCard } from 'lucide-react';</span>
 <span class="cstat-no" title="statement not covered" >import { reportingService } from '../../services/reporting';</span>
-import { FinancialHealthData } from '../../types/api';
+import type { FinancialHealthData } from '../../types/api';
+<span class="cstat-no" title="statement not covered" >import { useProjectStore } from '../../store/projectStore';</span>
+<span class="cstat-no" title="statement not covered" >import { secureLogger } from '../../utils/secureLogger';</span>
 &nbsp;
 &nbsp;
 const FinancialHealth = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
+  const { activeProjectId } = <span class="cstat-no" title="statement not covered" >useProjectStore();</span>
   const [data, setData] = <span class="cstat-no" title="statement not covered" >useState&lt;FinancialHealthData | null&gt;(null);</span>
   const [loading, setLoading] = <span class="cstat-no" title="statement not covered" >useState(true);</span>
   
@@ -689,12 +698,12 @@ const FinancialHealth = <span class="cstat-no" title="statement not covered" ><s
     const fetchData = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async </span>() =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      try {</span>
 <span class="cstat-no" title="statement not covered" >        setLoading(true);</span>
-        // Using strict 'CASE-001' as per context
-        const health = <span class="cstat-no" title="statement not covered" >await reportingService.getFinancialHealth('CASE-001');</span>
+        // Using dynamic activeProjectId
+        const health = <span class="cstat-no" title="statement not covered" >await reportingService.getFinancialHealth(activeProjectId || 'CASE-001');</span>
 <span class="cstat-no" title="statement not covered" >        setData(health);</span>
 <span class="cstat-no" title="statement not covered" >        setSimulatedBurnRate(health.burnRate || 15);</span>
       } catch (err) {
-<span class="cstat-no" title="statement not covered" >        console.error("Failed to fetch financial health:", err);</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.error("Failed to fetch financial health:", err);</span>
         // Fallback to mock data if API fails (for demo resilience)
 <span class="cstat-no" title="statement not covered" >        setData({</span>
             caseId: 'CASE-001',
@@ -982,7 +991,7 @@ const FinancialHealth = <span class="cstat-no" title="statement not covered" ><s
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:26.724Z
+                at 2025-12-19T02:07:52.612Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

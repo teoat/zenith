@@ -14,7 +14,9 @@ import re
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Callable
+from .ast_analyzer import ASTComplexityAnalyzer
+from .flow_analyzer import SecurityFlowAnalyzer
 
 logger = logging.getLogger(__name__)
 
@@ -99,14 +101,43 @@ class TestSuggestion:
     complexity: str
 
 
+
 class AIPoweredCodeReviewer:
-    """AI-powered code review system compatible with Electron and web platforms"""
+    """
+    Automated Heuristic Code Review and Quality Assurance System.
+    
+    Cross-platform solution for automated code analysis, security scanning, and quality assessment
+    using comprehensive Regex patterns, AST parsing, and heuristic algorithms.
+    
+    NOTE: While originally planned as an ML-based system, the current implementation 
+    utilizes deterministic pattern matching for high reliability and zero latency.
+    """
 
     def __init__(self):
         self.analysis_rules = self._load_analysis_rules()
         self.security_patterns = self._load_security_patterns()
         self.quality_metrics = self._initialize_quality_metrics()
-        self.ml_model = None  # Would load pre-trained ML model
+        self.ml_model = None  # Future extension point for LLM integration
+        
+        # Initialize analyzers
+        self.ast_analyzer = ASTComplexityAnalyzer()
+        self.flow_analyzer = SecurityFlowAnalyzer()
+
+    def generate_fix_with_llm(self, issue: CodeIssue, llm_provider: Optional[Callable] = None) -> str:
+        """
+        Generate a fix for a code issue using an LLM (e.g. Ollama).
+        
+        Args:
+            issue: The CodeIssue to fix
+            llm_provider: Optional callback function to invoke LLM. 
+                          If None, returns a placeholder.
+        """
+        prompt = f"Fix the following code issue:\nTitle: {issue.title}\nDescription: {issue.description}\nCode:\n{issue.code_snippet}"
+        
+        if llm_provider:
+             return llm_provider(prompt)
+        
+        return f"// LLM Fix suggestion for: {issue.title}\n// TODO: Implement fix based on: {issue.suggestion}"
 
     def _load_analysis_rules(self) -> Dict[str, Any]:
         """Load code analysis rules and patterns"""
@@ -493,6 +524,24 @@ class AIPoweredCodeReviewer:
                         )
                         issues.append(issue)
 
+        # Taint Analysis (Flow)
+        if hasattr(self, 'flow_analyzer'):
+            flow_findings = self.flow_analyzer.analyze(content)
+            for finding in flow_findings:
+                issues.append(CodeIssue(
+                    file_path=file_path,
+                    line_number=finding['lineno'],
+                    column=None,
+                    issue_type=finding['type'],
+                    category=IssueCategory.SECURITY,
+                    severity=IssueSeverity.CRITICAL,
+                    title=f"Taint Flow to {finding['sink']}",
+                    description=f"Variable '{finding['tainted_var']}' tainted from source flows to sink '{finding['sink']}'",
+                    code_snippet=f"Sink: {finding['sink']}, Var: {finding['tainted_var']}",
+                    suggestion="Sanitize input before passing to sensitive function",
+                    confidence_score=0.95
+                ))
+
         return issues
 
     def _analyze_complexity(
@@ -534,58 +583,26 @@ class AIPoweredCodeReviewer:
         issues = []
 
         try:
-            tree = ast.parse(content)
-
-            for node in ast.walk(tree):
-                if isinstance(node, ast.FunctionDef):
-                    # Calculate function length
-                    if node.end_lineno and node.lineno:
-                        function_length = node.end_lineno - node.lineno + 1
-                        if (
-                            function_length
-                            > self.quality_metrics["thresholds"]["max_function_length"]
-                        ):
-                            issues.append(
-                                CodeIssue(
-                                    file_path=file_path,
-                                    line_number=node.lineno,
-                                    column=None,
-                                    issue_type="function_too_long",
-                                    category=IssueCategory.MAINTAINABILITY,
-                                    severity=IssueSeverity.WARNING,
-                                    title="Function too long",
-                                    description=f"Function '{node.name}' is {function_length} lines long",
-                                    code_snippet=f"def {node.name}(...):  # {function_length} lines",
-                                    suggestion="Consider breaking into smaller functions",
-                                    confidence_score=0.9,
-                                )
-                            )
-
-                    # Calculate cyclomatic complexity (simplified)
-                    complexity = self._calculate_cyclomatic_complexity(node)
-                    if (
-                        complexity
-                        > self.quality_metrics["thresholds"]["max_complexity"]
-                    ):
-                        issues.append(
-                            CodeIssue(
-                                file_path=file_path,
-                                line_number=node.lineno,
-                                column=None,
-                                issue_type="high_complexity",
-                                category=IssueCategory.MAINTAINABILITY,
-                                severity=IssueSeverity.WARNING,
-                                title="High cyclomatic complexity",
-                                description=f"Function '{node.name}' has complexity score of {complexity}",
-                                code_snippet=f"def {node.name}(...):  # complexity: {complexity}",
-                                suggestion="Refactor to reduce conditional logic and improve testability",
-                                confidence_score=0.85,
-                            )
-                        )
-
-        except SyntaxError:
-            # Skip complexity analysis for files with syntax errors
-            pass
+             # Use AST Analyzer
+             metrics = self.ast_analyzer.analyze(content)
+             
+             if metrics.get("cyclomatic_complexity", 0) > 10:
+                  issues.append(CodeIssue(
+                      file_path=file_path,
+                      line_number=1,
+                      column=None,
+                      issue_type="high_complexity",
+                      category=IssueCategory.MAINTAINABILITY,
+                      severity=IssueSeverity.WARNING,
+                      title="High file complexity",
+                      description=f"File cyclomatic complexity is {metrics['cyclomatic_complexity']}",
+                      code_snippet="N/A",
+                      suggestion="Refactor complex logic",
+                      confidence_score=1.0
+                  ))
+                  
+        except Exception:
+             pass
 
         return issues
 

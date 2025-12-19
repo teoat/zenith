@@ -80,11 +80,6 @@ class InsightsResponse(BaseModel):
     insights: Dict[str, Any]
 
 
-class InsightsResponse(BaseModel):
-    success: bool = True
-    insights: Dict[str, Any]
-
-
 class FeedbackRequest(BaseModel):
     insight_id: str
     is_positive: bool

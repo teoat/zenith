@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { Upload, Image, FileText, Video, Eye } from 'lucide-react';
+import { secureLogger } from '../../../utils/secureLogger';
+import { secureRandom } from '../../../utils/secureRandom'; // Module not found
 
 const MultimodalAnalyzer: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -31,7 +33,7 @@ const MultimodalAnalyzer: React.FC = () => {
           forensics: 'Digital signature validated',
           metadata: 'EXIF data extracted',
           classification: 'Document - Financial Record',
-          risk_score: Math.random() * 100,
+          risk_score: secureRandom.random() * 100,
           findings: [
             'Valid digital signature detected',
             'No tampering evidence found',
@@ -42,7 +44,7 @@ const MultimodalAnalyzer: React.FC = () => {
 
       setAnalysisResults(results);
     } catch (error) {
-      console.error('Analysis failed:', error);
+      secureLogger.error('Analysis failed:', error);
     } finally {
       setIsAnalyzing(false);
     }

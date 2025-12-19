@@ -2,6 +2,7 @@ import React from 'react';
 import { Sidebar } from './Sidebar.tsx';
 import { Header } from './Header.tsx';
 import { NotificationContainer } from '../NotificationContainer';
+import PerformanceDashboard from '../performance/PerformanceDashboard';
 
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -16,6 +17,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
             {children}
         </main>
         <NotificationContainer />
+        <PerformanceDashboard />
       </div>
     </div>
   );

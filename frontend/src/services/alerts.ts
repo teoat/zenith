@@ -1,5 +1,5 @@
 import { request } from './client';
-import { AlertItem } from '../types/api';
+import type { AlertItem } from '../types/api';
 
 export const alertService = {
   updateAlertStatus: async (alertId: string, status: 'approved' | 'rejected' | 'escalated', note?: string): Promise<void> => {

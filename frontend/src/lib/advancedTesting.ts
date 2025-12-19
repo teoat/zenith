@@ -1,4 +1,6 @@
 import fc from 'fast-check';
+import { secureLogger } from '../utils/secureLogger';
+import { secureRandom } from '../utils/secureRandom';
 
 // Property-based testing utilities
 export const propertyTests = {
@@ -52,13 +54,13 @@ export const contractTests = {
   // Setup contract tests
   setupContracts: async () => {
     // Contract testing setup would go here
-    console.log('Setting up contract tests...');
+    secureLogger.info('TESTING', 'Setting up contract tests...');
   },
 
   // Teardown contract tests
   teardownContracts: async () => {
     // Contract testing teardown would go here
-    console.log('Tearing down contract tests...');
+    secureLogger.info('TESTING', 'Tearing down contract tests...');
   }
 };
 
@@ -86,13 +88,13 @@ export const mutationTesting = {
 export const visualRegressionTests = {
   // Screenshot comparison (placeholder)
   compareScreenshots: async (_page: any, name: string) => {
-    console.log(`Taking screenshot: ${name}`);
+    secureLogger.info('TESTING', `Taking screenshot: ${name}`);
     // Visual regression testing would be implemented here
   },
 
   // Component visual testing (placeholder)
   testComponentVisual: (component: React.ComponentType) => {
-    console.log(`Testing visual regression for ${component.name}`);
+    secureLogger.info('TESTING', `Testing visual regression for ${component.name}`);
     // Visual regression testing would be implemented here
   }
 };
@@ -172,7 +174,7 @@ export const performanceTests = {
             duration: end - start,
             status: response.status
           };
-        } catch (_error) {
+        } catch (error) {
           const end = Date.now();
           return {
             success: false,
@@ -293,5 +295,5 @@ export const testUtils = {
   },
 
   // Generate test IDs
-  generateTestId: (prefix: string) => `${prefix}-${Math.random().toString(36).substr(2, 9)}`
+  generateTestId: (prefix: string) => `${prefix}-${secureRandom.random().toString(36).substr(2, 9)}`
 };

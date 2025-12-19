@@ -1,5 +1,4 @@
-// src/utils/performanceMonitor.ts
-// Performance monitoring utilities
+import { secureLogger } from './secureLogger';
 
 declare global {
   interface Window {
@@ -38,12 +37,12 @@ class PerformanceMonitor {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
         this.metrics.fcp = lastEntry.startTime;
-        console.log('FCP:', this.metrics.fcp);
+        secureLogger.info('PERFORMANCE', `FCP Measured: ${this.metrics.fcp}ms`);
       });
       fcpObserver.observe({ entryTypes: ['paint'] });
       this.observers.push(fcpObserver);
     } catch {
-      console.warn('FCP observer not supported');
+      secureLogger.warn('PERFORMANCE', 'FCP observer not supported');
     }
 
     // Largest Contentful Paint
@@ -56,7 +55,7 @@ class PerformanceMonitor {
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.push(lcpObserver);
     } catch {
-      console.warn('LCP observer not supported');
+      secureLogger.warn('PERFORMANCE', 'LCP observer not supported');
     }
 
     // First Input Delay
@@ -72,7 +71,7 @@ class PerformanceMonitor {
       fidObserver.observe({ entryTypes: ['first-input'] });
       this.observers.push(fidObserver);
     } catch {
-      console.warn('FID observer not supported');
+      secureLogger.warn('PERFORMANCE', 'FID observer not supported');
     }
 
     // Cumulative Layout Shift
@@ -90,7 +89,7 @@ class PerformanceMonitor {
       clsObserver.observe({ entryTypes: ['layout-shift'] });
       this.observers.push(clsObserver);
     } catch {
-      console.warn('CLS observer not supported');
+      secureLogger.warn('PERFORMANCE', 'CLS observer not supported');
     }
   }
 
@@ -107,13 +106,13 @@ class PerformanceMonitor {
   }
 
   public logMetrics() {
-    console.group('🚀 Performance Metrics');
-    console.log('FCP (First Contentful Paint):', this.metrics.fcp ? `${this.metrics.fcp.toFixed(2)}ms` : 'Not measured');
-    console.log('LCP (Largest Contentful Paint):', this.metrics.lcp ? `${this.metrics.lcp.toFixed(2)}ms` : 'Not measured');
-    console.log('FID (First Input Delay):', this.metrics.fid ? `${this.metrics.fid.toFixed(2)}ms` : 'Not measured');
-    console.log('CLS (Cumulative Layout Shift):', this.metrics.cls ? this.metrics.cls.toFixed(4) : 'Not measured');
-    console.log('TTFB (Time to First Byte):', this.metrics.ttfb ? `${this.metrics.ttfb}ms` : 'Not measured');
-    console.groupEnd();
+    secureLogger.info('PERFORMANCE', 'Summary of Web Vitals', {
+      fcp: this.metrics.fcp ? `${this.metrics.fcp.toFixed(2)}ms` : 'Not measured',
+      lcp: this.metrics.lcp ? `${this.metrics.lcp.toFixed(2)}ms` : 'Not measured',
+      fid: this.metrics.fid ? `${this.metrics.fid.toFixed(2)}ms` : 'Not measured',
+      cls: this.metrics.cls ? this.metrics.cls.toFixed(4) : 'Not measured',
+      ttfb: this.metrics.ttfb ? `${this.metrics.ttfb}ms` : 'Not measured'
+    });
   }
 
   public reportToAnalytics() {

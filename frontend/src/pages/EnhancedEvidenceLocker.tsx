@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { secureLogger } from '../utils/secureLogger';
 import {
   FileText,
   Image,
@@ -309,7 +310,7 @@ const EnhancedEvidenceLocker: React.FC = () => {
 
       setEvidence(mockEvidence);
     } catch (error) {
-      console.error('Failed to load evidence:', error);
+      secureLogger.error('Failed to load evidence:', error);
     } finally {
       setLoading(false);
     }

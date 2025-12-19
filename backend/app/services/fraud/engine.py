@@ -90,13 +90,14 @@ class PluginAdapterRule(FraudRule):
             alerts = []
             if result and "alerts" in result:
                 for plugin_alert in result["alerts"]:
-                     # Dynamic Severity Mapping
+                     # Dynamic Severity Mapping from centralized settings
+                     from core.config import settings
                      risk_score = plugin_alert.get("risk_score", 0.0)
-                     if risk_score >= 90:
+                     if risk_score >= settings.FRAUD_SCORE_CRITICAL:
                          severity = AlertSeverity.CRITICAL
-                     elif risk_score >= 75:
+                     elif risk_score >= settings.FRAUD_SCORE_HIGH:
                          severity = AlertSeverity.HIGH
-                     elif risk_score >= 50:
+                     elif risk_score >= settings.FRAUD_SCORE_MEDIUM:
                          severity = AlertSeverity.MEDIUM
                      else:
                          severity = AlertSeverity.LOW
@@ -211,6 +212,11 @@ class RuleEngine:
         self, transactions: List[Dict[str, Any]], context: Dict[str, Any] = None
     ) -> List[FraudAlert]:
         """Execute all enabled rules and return combined alerts"""
+        # Ensure initialized
+        if not hasattr(self, "_initialized") or not self._initialized:
+            await self.initialize()
+            self._initialized = True
+
         if context is None:
             context = {}
 
@@ -298,3 +304,7 @@ class RuleEngine:
 
 
 # Legacy built-in rules removed. Logic migrated to plugins.
+
+
+# Global shared instance
+rule_engine = RuleEngine()

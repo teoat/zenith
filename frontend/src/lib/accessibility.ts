@@ -233,7 +233,7 @@ export class AccessibilityManager {
 
   // Utility methods for components
   generateAriaId(prefix = 'aria') {
-    return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `${prefix}-${Date.now()}-${secureRandom.random().toString(36).substr(2, 9)}`;
   }
 
   validateColorContrast(_foreground: string, _background: string): boolean {
@@ -334,11 +334,13 @@ class FocusTrap {
   }
 }
 
+import { secureLogger } from '../utils/secureLogger';
+import { secureRandom } from '../utils/secureRandom';
+
 // React hooks for accessibility
 export function useAccessibility() {
   const announce = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
-    // This would integrate with the global AccessibilityManager
-    console.log(`[Accessibility] ${priority}: ${message}`);
+    secureLogger.info('ACCESSIBILITY', `${priority}: ${message}`);
   };
 
   const trapFocus = (_containerRef: React.RefObject<HTMLElement>) => {
@@ -348,7 +350,7 @@ export function useAccessibility() {
   return {
     announce,
     trapFocus,
-    generateId: () => `a11y-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    generateId: () => `a11y-${Date.now()}-${secureRandom.random().toString(36).substr(2, 9)}`
   };
 }
 

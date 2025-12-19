@@ -1329,7 +1329,7 @@ class FraudDetectionUser(HttpUser):
         self.client.post("/api/v1/evidence/upload", files=files)
 
 # Distributed load testing
-# locust -f load_test.py --master --host=https://api.378x492.com
+# locust -f load_test.py --master --host=https://api.fraud-detection-378x492.com
 # locust -f load_test.py --worker --master-host=localhost
 ```
 

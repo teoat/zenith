@@ -21,7 +21,7 @@ Object.defineProperty(window, 'localStorage', {
 global.fetch = jest.fn();
 
 // Mock import.meta
-global.import = {
+(global as any).import = {
   meta: {
     env: {
       VITE_API_URL: 'http://localhost:8000/api/v1',
@@ -38,7 +38,7 @@ const mockFetch = (response: unknown, status = 200) => {
     ok: status >= 200 && status < 300,
     status,
     json: async () => response,
-  } as Response);
+  } as unknown as Response);
 };
 
 const mockFetchError = (status: number, message = 'Error') => {
@@ -46,9 +46,9 @@ const mockFetchError = (status: number, message = 'Error') => {
     ok: false,
     status,
     json: async () => ({ detail: message }),
-  } as Response);
+  } as unknown as Response);
 };
-global.import = {
+(global as any).import = {
   meta: {
     env: {
       VITE_API_URL: 'http://localhost:8000/api/v1',
@@ -212,8 +212,8 @@ describe('Authentication System', () => {
     test.skip('should use default localhost API URL when not configured', async () => {
       // Temporarily modify the env var
       // This requires module reloading which is tricky with static imports
-      const originalEnv = global.import.meta.env.VITE_API_URL;
-      global.import.meta.env.VITE_API_URL = 'http://test-api:9000/api/v1';
+      const originalEnv = (global as any).import.meta.env.VITE_API_URL;
+      (global as any).import.meta.env.VITE_API_URL = 'http://test-api:9000/api/v1';
 
       mockFetch({ success: true });
 
@@ -225,7 +225,7 @@ describe('Authentication System', () => {
       );
 
       // Restore
-      global.import.meta.env.VITE_API_URL = originalEnv;
+      (global as any).import.meta.env.VITE_API_URL = originalEnv;
     });
   });
 
@@ -243,7 +243,7 @@ describe('Authentication System', () => {
         json: async () => {
           throw new Error('Invalid JSON');
         },
-      } as Response);
+      } as unknown as Response);
 
       await expect(request('/error-test')).rejects.toThrow('HTTP 500');
     });

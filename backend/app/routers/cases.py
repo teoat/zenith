@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.services.ai.ai_service import ai_service
-from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.auth_service import auth_service, AuthService
 from app.services.business.case_service import case_service
 from core.database import Case, Entity, Transaction, User, get_db
 from app.dependencies import get_current_project_id
@@ -17,87 +17,74 @@ logger = logging.getLogger(__name__)
 
 # router defined below near line 113
 
-# ---- Test placeholders (allow tests to patch module-level dependencies) ----
-if "get_current_user" not in globals():
-    try:
-        get_current_user = auth_service.get_current_user
-    except Exception:
-
-        def get_current_user(*args, **kwargs):
-            return None
-
-
-if "require_permission" not in globals():
-
-    def require_permission(*args, **kwargs):
-        def _dep(*a, **k):
-            return None
-
-        return _dep
-
-
-class _NullCaseService:
-    def get_cases_paginated(self, page, per_page, filters):
-        return {"cases": [], "total": 0, "total_pages": 0}
-
-    def get_case(self, case_id):
-        return None
-
-    def create_case(self, data, created_by=None):
-        class _C:
-            pass
-
-        c = _C()
-        c.id = data.get("id")
-        c.title = data.get("title")
-        c.description = data.get("description")
-        c.status = data.get("status")
-        c.assignee_id = data.get("assignee_id")
-        c.created_at = None
-        c.updated_at = None
-        return c
-
-    def update_case(self, case_id, mapped_data, updated_by=None):
-        return None
-
-    def delete_case(self, case_id):
-        return False
-
-    def add_case_note(self, note_data):
-        class _N:
-            pass
-
-        n = _N()
-        n.id = note_data.get("id")
-        n.created_at = None
-        return n
-
-    def get_case_notes(self, case_id, include_internal=True):
-        return []
-
-
-for _svc in ("case_service", "ai_service"):
-    if _svc not in globals():
-        globals()[_svc] = None
-
-# Provide a safe default `db_service` to avoid NoneType errors in tests that
-# hit the router without patching the module-level `db_service`.
-if "db_service" not in globals() or globals().get("db_service") is None:
-    if case_service:
-        db_service = case_service
-    else:
-        db_service = _NullCaseService()
+# Clean dependency injection - services are imported at module level
+# No test placeholders needed with proper service architecture
 
 # ===== REQUEST/RESPONSE MODELS =====
 
 
-# Pydantic model for creating a case
+# ===== REQUEST/RESPONSE MODELS =====
+
 class CaseCreate(BaseModel):
-    title: str
-    description: Optional[str] = None
-    priority: Optional[str] = "Medium"
+    title: str = Field(..., min_length=1, max_length=200)
+    description: Optional[str] = Field(None, max_length=2000)
+    priority: Optional[str] = Field("Medium", pattern=r"^(Low|Medium|High|Critical)$")
     assigneeId: Optional[str] = None
-    tags: Optional[List[str]] = []
+    tags: Optional[List[str]] = Field(default_factory=list, max_items=20)
+
+class CaseUpdate(BaseModel):
+    title: Optional[str] = Field(None, min_length=1, max_length=200)
+    description: Optional[str] = Field(None, max_length=2000)
+    priority: Optional[str] = Field(None, pattern=r"^(Low|Medium|High|Critical)$")
+    assigneeId: Optional[str] = None
+    tags: Optional[List[str]] = Field(None, max_items=20)
+
+class CaseResponse(BaseModel):
+    id: str
+    title: str
+    description: Optional[str]
+    status: str
+    priority: str
+    assigneeId: Optional[str]
+    riskScore: Optional[float]
+    riskLevel: Optional[str]
+    fraudAmount: Optional[float]
+    customerName: Optional[str]
+    createdAt: datetime
+    updatedAt: Optional[datetime]
+    dueDate: Optional[datetime]
+    tags: List[str]
+
+class CaseListResponse(BaseModel):
+    cases: List[CaseResponse]
+    items: List[CaseResponse]  # Alias for backward compatibility
+    page: int
+    perPage: int
+    total: int
+    totalCount: int  # Alias for backward compatibility
+    totalPages: int
+
+class CaseNoteCreate(BaseModel):
+    content: str = Field(..., min_length=1, max_length=2000)
+    isInternal: bool = False
+    category: Optional[str] = Field(None, pattern=r"^(Investigation|Evidence|Analysis|Communication)$")
+
+class CaseNoteResponse(BaseModel):
+    id: str
+    content: str
+    authorId: str
+    authorName: str
+    isInternal: bool
+    category: Optional[str]
+    createdAt: datetime
+
+class BulkDeleteRequest(BaseModel):
+    caseIds: List[str] = Field(..., min_items=1, max_items=100)
+
+class BulkDeleteResponse(BaseModel):
+    deletedCount: int
+    failedIds: List[str]
+    message: str
     selectedCountry: Optional[str] = None
     selectedDocuments: Optional[List[str]] = []
     reconciliationType: Optional[str] = "general"
@@ -116,40 +103,40 @@ router = APIRouter()
 # ===== CASE MANAGEMENT ENDPOINTS =====
 
 
-@router.post("", status_code=201)
+@router.post("", response_model=CaseResponse, status_code=201)
 async def create_case(
-    case: CaseCreate,
-    db: Session = Depends(get_db),
+    case_data: CaseCreate,
     current_user: dict = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
     project_id: str = Depends(get_current_project_id),
 ):
     """Create a new case"""
     try:
         # Prepare metadata for fields not in standard columns
         case_metadata = {
-            "selected_country": case.selectedCountry,
-            "selected_documents": case.selectedDocuments,
-            "reconciliation_type": case.reconciliationType,
-            "selected_calendar_format": case.selectedCalendarFormat,
-            "selected_currency_format": case.selectedCurrencyFormat,
-            "selected_decimal_format": case.selectedDecimalFormat,
-            "milestones": case.milestones,
-            "proposed_features": case.proposedFeatures,
+            "selected_country": getattr(case_data, "selectedCountry", None),
+            "selected_documents": getattr(case_data, "selectedDocuments", []),
+            "reconciliation_type": getattr(case_data, "reconciliationType", "general"),
+            "selected_calendar_format": getattr(case_data, "selectedCalendarFormat", "gregory"),
+            "selected_currency_format": getattr(case_data, "selectedCurrencyFormat", "USD"),
+            "selected_decimal_format": getattr(case_data, "selectedDecimalFormat", "standard"),
+            "milestones": getattr(case_data, "milestones", []),
+            "proposed_features": getattr(case_data, "proposedFeatures", []),
         }
 
         # Creates persistence call
+        from app.services.infrastructure.storage.database_service import db_service
         new_case = db_service.create_case(
             db,
             id=str(uuid.uuid4()),
-            title=case.title,
-            description=case.description,
-            priority=case.priority.lower(),
-            status=case.status.lower(),
-            fraud_amount=case.fraudAmount,
-            tags=case.tags,
+            title=case_data.title,
+            description=case_data.description,
+            priority=case_data.priority.lower() if case_data.priority else "medium",
+            status="open",
+            fraud_amount=0.0,
+            tags=case_data.tags or [],
             case_metadata=case_metadata,
             project_id=project_id
-            # created_by=current_user.get("id") # If Case model has this
         )
 
         return {
@@ -161,11 +148,9 @@ async def create_case(
                 "title": new_case.title,
                 "status": new_case.status,
                 "priority": new_case.priority,
-                "fraudAmount": new_case.fraud_amount,
-                "customerName": new_case.customer_name,
-                "selectedCountry": case.selectedCountry, # Echo back or from metadata
+                "fraudAmount": getattr(new_case, "fraud_amount", 0.0),
+                "customerName": getattr(new_case, "customer_name", "Unknown"),
                 "createdAt": new_case.created_at.isoformat() if new_case.created_at else None,
-                # Include other fields if needed by frontend immediate use
             }
         }
     except Exception as e:
@@ -183,15 +168,17 @@ async def create_case_root(case: CaseCreate):
     return await create_case(case)
 
 
-@router.get("")
+@router.get("", response_model=CaseListResponse)
 async def get_cases(
-    page: int = Query(1, ge=1),
+    page: int = Query(1, ge=1, le=1000),
     per_page: int = Query(20, ge=1, le=100),
-    status: Optional[str] = None,
-    priority: Optional[str] = None,
-    search: Optional[str] = None,
-    db: Session = Depends(get_db),
+    search: Optional[str] = Query(None, min_length=1, max_length=100),
+    status: Optional[str] = Query(None, pattern=r"^(OPEN|INVESTIGATING|PENDING_REVIEW|ESCALATED|CLOSED|ARCHIVED)$"),
+    assignee_id: Optional[str] = Query(None),
+    priority: Optional[str] = Query(None, pattern=r"^(Low|Medium|High|Critical)$"),
+    risk_level: Optional[str] = Query(None, pattern=r"^(Low|Medium|High|Critical)$"),
     current_user: dict = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
     project_id: str = Depends(get_current_project_id),
 ):
     """
@@ -243,13 +230,14 @@ async def get_cases(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.patch("/{case_id}")
-async def update_case(
+async def update_case_partial(
     case_id: str,
     updates: Dict[str, Any] = Body(...),
     db: Session = Depends(get_db),
     current_user: dict = Depends(auth_service.get_current_user),
 ):
     """Update general case details"""
+    from app.services.infrastructure.storage.database_service import db_service
     case = db_service.update_case(db, case_id, **updates)
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
@@ -267,19 +255,21 @@ async def update_case_status(
     if not status:
          raise HTTPException(status_code=400, detail="Status is required")
          
-    case = db_service.update_case(db, case_id, status=status)
+    from app.services.infrastructure.storage.database_service import db_service
+    case = db_service.update_case(db, case_id, status=status.lower())
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
     return case
 
-@router.post("/{case_id}/notes", status_code=201)
+@router.post("/{case_id}/notes", response_model=CaseNoteResponse, status_code=201)
 async def add_case_note(
     case_id: str,
-    note_data: Dict[str, Any] = Body(...),
-    db: Session = Depends(get_db),
+    note_data: CaseNoteCreate,
     current_user: dict = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
 ):
     """Add a note to a case"""
+    from app.services.infrastructure.storage.database_service import db_service
     case = db_service.get_case(db, case_id)
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
@@ -287,9 +277,12 @@ async def add_case_note(
     return {
         "id": str(uuid.uuid4()),
         "case_id": case_id,
-        "content": note_data.get("content"),
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "user_id": getattr(current_user, "id", str(current_user))
+        "content": note_data.content,
+        "authorId": getattr(current_user, "id", "system"),
+        "authorName": getattr(current_user, "username", "System"),
+        "isInternal": note_data.isInternal,
+        "category": note_data.category,
+        "createdAt": datetime.now(timezone.utc).isoformat(),
     }
 
 @router.post("/{case_id}/close")
@@ -300,7 +293,8 @@ async def close_case(
     current_user: dict = Depends(auth_service.get_current_user),
 ):
     """Close a case"""
-    case = db_service.update_case(db, case_id, status="CLOSED", closed_at=datetime.now(timezone.utc))
+    from app.services.infrastructure.storage.database_service import db_service
+    case = db_service.update_case(db, case_id, status="closed", closed_at=datetime.now(timezone.utc))
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
     return {
@@ -309,19 +303,18 @@ async def close_case(
         "resolution": close_data.get("resolution")
     }
 
-
-# Backwards-compatible alias for root list endpoint
-router.get("/")
-
-
+@router.get("/", response_model=CaseListResponse)
 async def get_cases_root(
     page: int = 1,
     per_page: int = 20,
+    search: Optional[str] = None,
     status: Optional[str] = None,
     priority: Optional[str] = None,
-    search: Optional[str] = None,
+    current_user: dict = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
+    project_id: str = Depends(get_current_project_id),
 ):
-    return await get_cases(page, per_page, status, priority, search)
+    return await get_cases(page, per_page, search, status, None, priority, None, current_user, db, project_id)
 
 
 @router.get("/search")
@@ -346,10 +339,14 @@ async def search_cases(
     )
 
 
-@router.get("/{case_id}")
+@router.get("/{case_id}", response_model=CaseResponse)
 async def get_case(
     case_id: str,
-    db: Session = Depends(get_db)
+    include_notes: bool = Query(False),
+    include_evidence: bool = Query(False),
+    include_transactions: bool = Query(False),
+    current_user: dict = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
 ):
     """Get a specific case"""
     try:
@@ -383,10 +380,16 @@ async def get_case(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/{case_id}")
-async def update_case(case_id: str, update_data: dict):
+@router.put("/{case_id}", response_model=CaseResponse)
+async def update_case(
+    case_id: str, 
+    update_data: Dict[str, Any] = Body(...),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(auth_service.get_current_user),
+):
     """Update a case"""
     try:
+        from app.services.infrastructure.storage.database_service import db_service
         # Map camelCase inputs to snake_case for DB
         mapped_data = {}
         for k, v in update_data.items():
@@ -403,63 +406,82 @@ async def update_case(case_id: str, update_data: dict):
             elif k == "dueDate":
                 mapped_data["due_date"] = v
             else:
+                # Keep other keys as is or map if needed
                 mapped_data[k] = v
 
-        mapped_data["updated_at"] = datetime.now().isoformat()
-        case = db_service.update_case(
-            case_id, mapped_data, mapped_data.get("updated_by", "test_user")
-        )
+        case = db_service.update_case(db, case_id, **mapped_data)
         if not case:
             raise HTTPException(status_code=404, detail="Case not found")
 
         return {
             "id": case.id,
-            "message": "Case updated successfully",
-            "case": {
-                "id": case.id,
-                "title": case.title,
-                "status": case.status,
-                "updatedAt": case.updated_at.isoformat() if case.updated_at else None,
-            },
+            "title": case.title,
+            "status": case.status,
+            "priority": case.priority,
+            "fraudAmount": getattr(case, "fraud_amount", 0.0),
+            "customerName": getattr(case, "customer_name", "Unknown"),
+            "createdAt": case.created_at,
+            "updatedAt": case.updated_at,
+            "tags": case.tags or [],
         }
-    except HTTPException:
-        raise
     except Exception as e:
+        logger.error(f"Error updating case: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/{case_id}")
-async def delete_case(case_id: str):
+async def delete_case(
+    case_id: str,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(auth_service.get_current_user),
+):
     """Delete a case"""
     try:
-        success = db_service.delete_case(case_id)
+        from app.services.infrastructure.storage.database_service import db_service
+        success = db_service.delete_case(db, case_id)
         if not success:
             raise HTTPException(status_code=404, detail="Case not found")
 
         return {"message": "Case deleted successfully"}
-    except HTTPException:
-        raise
     except Exception as e:
+        logger.error(f"Error deleting case: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/bulk-delete")
+@router.post("/bulk-delete", response_model=BulkDeleteResponse)
 async def bulk_delete_cases(
-    payload: Dict[str, Any] = Body(...),
+    request: BulkDeleteRequest,
     db: Session = Depends(get_db),
     current_user: dict = Depends(auth_service.get_current_user),
 ):
     """Bulk delete cases"""
     try:
-        case_ids = payload.get("ids", [])
+        case_ids = request.caseIds
         if not case_ids:
-            return {"deleted_count": 0, "status": "success"}
+            return BulkDeleteResponse(deletedCount=0, failedIds=[], message="No cases specified for deletion")
 
-        count = 0
-        for cid in case_ids:
-            if db_service.delete_case(cid):
-                count += 1
-        
-        return {"deleted_count": count, "status": "success"}
+        deleted_count = 0
+        failed_ids = []
+
+        from app.services.infrastructure.storage.database_service import db_service
+        for case_id in case_ids:
+            try:
+                if db_service.delete_case(db, case_id):
+                    deleted_count += 1
+                else:
+                    failed_ids.append(case_id)
+            except Exception as e:
+                logger.warning(f"Failed to delete case {case_id}: {e}")
+                failed_ids.append(case_id)
+
+        message = f"Successfully deleted {deleted_count} cases"
+        if failed_ids:
+            message += f", {len(failed_ids)} failed"
+
+        return BulkDeleteResponse(
+            deletedCount=deleted_count,
+            failedIds=failed_ids,
+            message=message
+        )
     except Exception as e:
         logger.error(f"Bulk delete cases failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))

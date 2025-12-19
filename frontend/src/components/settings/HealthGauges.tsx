@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Cpu, HardDrive, Wifi, Clock, Activity, Database } from 'lucide-react';
 import { api } from '../../lib/api';
+import { secureLogger } from '../../utils/secureLogger';
 
 interface Gauge {
   label: string;
@@ -21,7 +22,7 @@ const HealthGauges: React.FC = () => {
             const data = await api.getSystemStatus();
             setMetrics(data.metrics);
         } catch (err) {
-            console.error('Failed to fetch health metrics:', err);
+            secureLogger.error('Failed to fetch health metrics:', err);
              // Keep loading or show error? For dashboard widgets, silent fail or fallback is often better, but let's show default/zeros
         } finally {
             setLoading(false);

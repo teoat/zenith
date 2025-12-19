@@ -9,34 +9,36 @@ import DOMPurify from 'dompurify';
 
 interface UseSanitizedHTMLOptions {
   allowedTags?: string[];
-  allowedAttributes?: { [key: string]: string[] };
+  allowedAttributes?: string[];
   stripIgnoreTag?: boolean;
 }
 
-const defaultConfig: DOMPurify.Config = {
+// Define TrustedHTML interface if not available
+interface TrustedHTML {
+  toString: () => string;
+}
+
+const defaultConfig = {
   ALLOWED_TAGS: [
     'p', 'br', 'strong', 'em', 'u', 's', 'blockquote', 'code', 'pre',
     'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
     'a', 'span', 'div', 'table', 'thead', 'tbody', 'tr', 'th', 'td'
   ],
-  ALLOWED_ATTR: ['href', 'class', 'id', 'target', 'rel'],
-  ALLOW_DATA_ATTR: false,
-  ALLOW_UNKNOWN_PROTOCOLS: false,
-  SAFE_FOR_TEMPLATES: true,
-};
+} as unknown as DOMPurify.Config;
 
 export function useSanitizedHTML(
-  dirtyHTML: string,
+  dirtyHTML: string | TrustedHTML,
   options: UseSanitizedHTMLOptions = {}
 ): string {
   return useMemo(() => {
     const config: DOMPurify.Config = {
       ...defaultConfig,
-      ...(options.allowedTags && { ALLOWED_TAGS: options.allowedTags }),
-      ...(options.allowedAttributes && { ALLOWED_ATTR: options.allowedAttributes }),
+      ...(options.allowedTags ? { ALLOWED_TAGS: options.allowedTags } : {}),
+      ...(options.allowedAttributes ? { ALLOWED_ATTR: options.allowedAttributes } : {}),
     };
 
-    return DOMPurify.sanitize(dirtyHTML, config);
+    const htmlString = typeof dirtyHTML === 'string' ? dirtyHTML : dirtyHTML.toString();
+    return DOMPurify.sanitize(htmlString, config as any) as unknown as string;
   }, [dirtyHTML, options]);
 }
 
@@ -47,7 +49,7 @@ export function sanitizeHTML(
   dirtyHTML: string,
   config: DOMPurify.Config = {}
 ): string {
-  return DOMPurify.sanitize(dirtyHTML, { ...defaultConfig, ...config });
+  return DOMPurify.sanitize(dirtyHTML, { ...defaultConfig, ...config } as any) as unknown as string;
 }
 
 /**
@@ -56,7 +58,7 @@ export function sanitizeHTML(
 interface SanitizedHTMLProps {
   html: string;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: React.ElementType;
 }
 
 export const SanitizedHTML: React.FC<SanitizedHTMLProps> = ({

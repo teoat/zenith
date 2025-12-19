@@ -1,104 +1,113 @@
-"""
-CSRF Protection for Simple378 Fraud Detection API
-
-This module provides CSRF token generation, validation, and middleware
-for protecting against Cross-Site Request Forgery attacks.
-"""
-
+import abc
 import hashlib
 import hmac
 import os
 import secrets
 from datetime import datetime, timedelta
-from typing import Dict, Optional
+from typing import Dict, Optional, Protocol
 
+import redis
 from fastapi import HTTPException, Request, status
 from fastapi.responses import Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from core.config import settings
 from core.logging import logger
 
 # CSRF configuration
 CSRF_TOKEN_LENGTH = 32
-CSRF_TOKEN_EXPIRY = timedelta(hours=24)
+CSRF_TOKEN_EXPIRY = 86400  # 24 hours in seconds
 CSRF_HEADER_NAME = "X-CSRF-Token"
 CSRF_COOKIE_NAME = "csrf_token"
-CSRF_SECRET_KEY = secrets.token_hex(32)  # In production, load from environment
+CSRF_SECRET_KEY = settings.SECRET_KEY
 
-# Store for CSRF tokens (in-memory for now, use Redis in production)
-csrf_token_store: Dict[str, datetime] = {}
+
+class CSRFStore(abc.ABC):
+    @abc.abstractmethod
+    def set(self, token: str, expiry_seconds: int) -> None:
+        pass
+
+    @abc.abstractmethod
+    def exists_and_valid(self, token: str) -> bool:
+        pass
+
+    @abc.abstractmethod
+    def delete(self, token: str) -> None:
+        pass
+
+
+class InMemoryCSRFStore(CSRFStore):
+    def __init__(self):
+        self._store: Dict[str, datetime] = {}
+
+    def set(self, token: str, expiry_seconds: int) -> None:
+        self._store[token] = datetime.now() + timedelta(seconds=expiry_seconds)
+        self._cleanup()
+
+    def exists_and_valid(self, token: str) -> bool:
+        expiry = self._store.get(token)
+        if not expiry:
+            return False
+        if datetime.now() > expiry:
+            self.delete(token)
+            return False
+        return True
+
+    def delete(self, token: str) -> None:
+        if token in self._store:
+            del self._store[token]
+
+    def _cleanup(self):
+        now = datetime.now()
+        expired = [t for t, e in self._store.items() if now > e]
+        for t in expired:
+            del self._store[t]
+
+
+class RedisCSRFStore(CSRFStore):
+    def __init__(self, redis_url: str):
+        self.client = redis.from_url(redis_url)
+
+    def set(self, token: str, expiry_seconds: int) -> None:
+        self.client.setex(f"csrf:{token}", expiry_seconds, "1")
+
+    def exists_and_valid(self, token: str) -> bool:
+        return bool(self.client.exists(f"csrf:{token}"))
+
+    def delete(self, token: str) -> None:
+        self.client.delete(f"csrf:{token}")
+
+
+# Initialize store based on environment
+def get_csrf_store() -> CSRFStore:
+    if os.getenv("ENVIRONMENT") == "production" or os.getenv("REDIS_URL"):
+        try:
+            url = settings.REDIS_URL
+            return RedisCSRFStore(url)
+        except Exception as e:
+            logger.error(f"Failed to initialize Redis CSRF store: {e}")
+            return InMemoryCSRFStore()
+    return InMemoryCSRFStore()
+
+
+csrf_token_store = get_csrf_store()
 
 
 def generate_csrf_token() -> str:
-    """
-    Generate a new CSRF token.
-
-    Returns:
-        str: CSRF token
-    """
+    """Generate and store a new CSRF token."""
     token = secrets.token_urlsafe(CSRF_TOKEN_LENGTH)
-
-    # Store token with expiry
-    csrf_token_store[token] = datetime.now() + CSRF_TOKEN_EXPIRY
-
-    # Clean up expired tokens
-    _cleanup_expired_tokens()
-
-    logger.debug(f"Generated CSRF token", extra={"token_count": len(csrf_token_store)})
-
+    csrf_token_store.set(token, CSRF_TOKEN_EXPIRY)
+    logger.debug("Generated CSRF token")
     return token
 
 
 def validate_csrf_token(token: str) -> bool:
-    """
-    Validate a CSRF token.
-
-    Args:
-        token: CSRF token to validate
-
-    Returns:
-        bool: True if valid, False otherwise
-    """
-    if not token:
-        return False
-
-    # Check if token exists and not expired
-    expiry = csrf_token_store.get(token)
-    if not expiry:
-        logger.warning("CSRF token not found in store")
-        return False
-
-    if datetime.now() > expiry:
-        # Token expired
-        del csrf_token_store[token]
-        logger.warning("CSRF token expired")
-        return False
-
-    return True
-
-
-def _cleanup_expired_tokens():
-    """Clean up expired CSRF tokens from store"""
-    now = datetime.now()
-    expired = [token for token, expiry in csrf_token_store.items() if now > expiry]
-    for token in expired:
-        del csrf_token_store[token]
-
-    if expired:
-        logger.debug(f"Cleaned up {len(expired)} expired CSRF tokens")
+    """Validate a CSRF token against the store."""
+    return csrf_token_store.exists_and_valid(token)
 
 
 def generate_double_submit_token(session_id: str) -> str:
-    """
-    Generate a double-submit CSRF token tied to session.
-
-    Args:
-        session_id: User session identifier
-
-    Returns:
-        str: CSRF token
-    """
-    # Create HMAC of session ID with secret key
+    """Generate a double-submit CSRF token tied to session."""
     h = hmac.new(CSRF_SECRET_KEY.encode(), session_id.encode(), hashlib.sha256)
     return h.hexdigest()
 
@@ -139,11 +148,7 @@ class CSRFProtectionMiddleware(BaseHTTPMiddleware):
         "/auth/token",
         "/auth/setup",
         "/health",
-        "/health/ready",
-        "/health/live",
         "/metrics",
-        "/api/v1/cases",  # For testing purposes
-        "/api/v1/ai",  # For testing purposes
         "/api/v1/communication",  # For websocket integration
         "/docs",
         "/openapi.json",
@@ -258,9 +263,9 @@ def set_csrf_cookie(response: Response, token: Optional[str] = None) -> Response
         key=CSRF_COOKIE_NAME,
         value=token,
         httponly=True,  # Prevent JavaScript access
-        secure=True,  # Only send over HTTPS
+        secure=os.getenv("ENVIRONMENT") == "production",  # Only enforced in production
         samesite="strict",  # Strict same-site policy
-        max_age=int(CSRF_TOKEN_EXPIRY.total_seconds()),
+        max_age=CSRF_TOKEN_EXPIRY,
     )
 
     return response

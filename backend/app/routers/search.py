@@ -18,7 +18,7 @@ async def search_evidence(
 ):
     """Search processed evidence content"""
     try:
-        results = evidence_search_index.search_evidence(query, limit, filters)
+        results = await evidence_search_index.search_evidence(query, limit, filters)
         return {"query": query, "total_results": len(results), "results": results}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { secureLogger } from '../../utils/secureLogger';
 import axe from 'axe-core';
 
 interface AccessibilityCheckerProps {
@@ -19,22 +20,23 @@ export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({
         const violations = results.violations;
 
         if (violations.length > 0) {
-          console.group('🚨 Accessibility Violations Found');
-          violations.forEach((violation, index) => {
-            console.group(`Violation ${index + 1}: ${violation.id}`);
-            console.log('Description:', violation.description);
-            console.log('Impact:', violation.impact);
-            console.log('Help:', violation.help);
-            console.log('Help URL:', violation.helpUrl);
-            console.log('Elements:', violation.nodes.map(node => node.target).join(', '));
-            console.groupEnd();
+          secureLogger.warn('ACCESSIBILITY', `Accessibility Violations Found: ${violations.length}`, {
+            violations: violations.map(v => ({
+              id: v.id,
+              description: v.description,
+              impact: v.impact,
+              help: v.help,
+              helpUrl: v.helpUrl,
+              elements: v.nodes.map(node => node.target).join(', ')
+            }))
           });
-          console.groupEnd();
         } else {
-          console.log('✅ No accessibility violations found');
+          secureLogger.info('ACCESSIBILITY', 'No accessibility violations found');
         }
-      } catch (_error) {
-        console.error('Accessibility check failed:', error);
+      } catch (error) {
+        secureLogger.error('ACCESSIBILITY', 'Accessibility check failed', { 
+          error: error instanceof Error ? error.message : String(error) 
+        });
       }
     };
 
@@ -57,8 +59,8 @@ export const runAccessibilityAudit = async (context?: Element) => {
       incomplete: results.incomplete,
       inapplicable: results.inapplicable
     };
-  } catch (_error) {
-    console.error('Accessibility audit failed:', error);
+  } catch (error) {
+    secureLogger.error('Accessibility audit failed:', error);
     return null;
   }
 };

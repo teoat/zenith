@@ -2,6 +2,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { AccessibleButton } from './AccessibleButton';
 import { accessibilityManager } from '../../lib/accessibility';
+import { secureLogger } from '../../utils/secureLogger';
 
 interface FormField {
   name: string;
@@ -152,9 +153,9 @@ export function AccessibleForm({
     try {
       await onSubmit(values);
       accessibilityManager.announce('Form submitted successfully', 'polite');
-    } catch (_error) {
+     } catch (error) { 
       accessibilityManager.announce('Form submission failed', 'assertive');
-      console.error('Form submission error:', error);
+      secureLogger.error('Form submission error:', error);
     }
   };
 

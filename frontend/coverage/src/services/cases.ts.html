@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">16.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/12</span>
+                <span class='fraction'>2/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/2</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/9</span>
+                <span class='fraction'>0/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">16.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/12</span>
+                <span class='fraction'>2/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -125,8 +125,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -134,14 +134,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -176,28 +176,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { request } from './client';
-import { Case } from '../types/schema';
-import { PaginationInfo } from '../types/api';
+import type { Case } from '../types/schema';
+import type { PaginationInfo } from '../types/api';
 &nbsp;
 export const caseService = {
-  getCases: async (params?: Record&lt;string, unknown&gt;): Promise&lt;{ cases: Case[]; pagination: PaginationInfo }&gt; =&gt; {
-    const query = params ? <span class="branch-0 cbranch-no" title="branch not covered" >'?' + new URLSearchParams(params as Record&lt;string, string&gt;).toString() </span>: '';
-    return request(`/cases${query}`);
+  getCases: <span class="fstat-no" title="function not covered" >async </span>(params?: Record&lt;string, unknown&gt;): Promise&lt;{ cases: Case[]; pagination: PaginationInfo }&gt; =&gt; {
+    const query = <span class="cstat-no" title="statement not covered" >params ? '?' + new URLSearchParams(params as Record&lt;string, string&gt;).toString() : '';</span>
+<span class="cstat-no" title="statement not covered" >    return request(`/cases${query}`);</span>
   },
 &nbsp;
   getCase: <span class="fstat-no" title="function not covered" >async </span>(caseId: string): Promise&lt;{ case: Case }&gt; =&gt; {
 <span class="cstat-no" title="statement not covered" >    return request(`/cases/${caseId}`);</span>
   },
 &nbsp;
-  createCase: async (caseData: Partial&lt;Case&gt;): Promise&lt;{ id: string; case: Case }&gt; =&gt; {
-    return request('/cases', {
+  createCase: <span class="fstat-no" title="function not covered" >async </span>(caseData: Partial&lt;Case&gt;): Promise&lt;{ id: string; case: Case }&gt; =&gt; {
+<span class="cstat-no" title="statement not covered" >    return request('/cases', {</span>
       method: 'POST',
       body: JSON.stringify(caseData),
     });
   },
 &nbsp;
-  updateCase: async (caseId: string, data: Partial&lt;Case&gt;): Promise&lt;{ case: Case }&gt; =&gt; {
-    return request(`/cases/${caseId}`, {
+  updateCase: <span class="fstat-no" title="function not covered" >async </span>(caseId: string, data: Partial&lt;Case&gt;): Promise&lt;{ case: Case }&gt; =&gt; {
+<span class="cstat-no" title="statement not covered" >    return request(`/cases/${caseId}`, {</span>
       method: 'PUT',
       body: JSON.stringify(data),
     });
@@ -238,7 +238,7 @@ export const caseService = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:27.522Z
+                at 2025-12-19T02:07:53.644Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

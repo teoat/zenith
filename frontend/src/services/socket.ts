@@ -1,3 +1,4 @@
+import { secureLogger } from '../utils/secureLogger';
 import { API_BASE } from './client';
 
 type MessageHandler = (data: any) => void;
@@ -16,7 +17,7 @@ class WebSocketService {
         this.ws = new WebSocket(wsUrl);
 
         this.ws.onopen = () => {
-            console.log('[WS] Connected to', path);
+            secureLogger.info('WEBSOCKET', `Connected successfully to ${path}`);
             if (this.reconnectTimeout) {
                 clearTimeout(this.reconnectTimeout);
                 this.reconnectTimeout = null;
@@ -27,25 +28,31 @@ class WebSocketService {
             try {
                 const data = JSON.parse(event.data);
                 this.handlers.forEach(handler => handler(data));
-            } catch (e) {
-                console.error('[WS] Failed to parse message:', e);
+            } catch (error) {
+                secureLogger.warn('WEBSOCKET', 'Failed to parse message', { 
+                  data: event.data,
+                  error: error instanceof Error ? error.message : String(error) 
+                });
             }
         };
 
         this.ws.onclose = () => {
-            console.log('[WS] Disconnected');
+            secureLogger.info('WEBSOCKET', 'Disconnected');
             if (!this.isIntentionalClose) {
                 this.reconnect();
             }
         };
 
         this.ws.onerror = (error) => {
-            console.error('[WS] Error:', error);
+            secureLogger.error('WEBSOCKET', 'WebSocket error', { error });
             this.ws?.close();
         };
 
-    } catch (e) {
-        console.error('[WS] Connection failed:', e);
+    } catch (error) {
+        secureLogger.error('WEBSOCKET', 'Connection attempt failed', { 
+          path,
+          error: error instanceof Error ? error.message : String(error) 
+        });
         this.reconnect();
     }
   }
@@ -53,7 +60,7 @@ class WebSocketService {
   private reconnect() {
       if (this.reconnectTimeout) return;
       this.reconnectTimeout = setTimeout(() => {
-          console.log('[WS] Attempting reconnect...');
+          secureLogger.info('WEBSOCKET', 'Attempting reconnect...');
           this.connect();
       }, 5000);
   }

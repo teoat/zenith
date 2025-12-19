@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Alert, AlertTitle, AlertDescription } from '../ui/alert';
+import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
+import { Badge } from '../ui/Badge';
+import { Button } from '../ui/Button';
+import { Alert, AlertTitle, AlertDescription } from '../ui/Alert';
+import { secureLogger } from '../../utils/secureLogger';
 import { 
   ShieldCheck, 
   Network, 
@@ -67,7 +68,7 @@ const ProofVisualizationCard: React.FC<ProofVisualizationProps> = ({
           setData(result.proof_summary);
         }
       } catch (err) {
-        console.error("Proof fetch error:", err);
+        secureLogger.error("Proof fetch error:", err);
         // Fallback or error state
         setError("Unable to load fraud proof data");
       } finally {

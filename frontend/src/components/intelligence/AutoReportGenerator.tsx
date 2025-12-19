@@ -4,16 +4,17 @@
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/textarea';
-import { Progress } from '@/components/ui/progress';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/Textarea';
+import { Progress } from '@/components/ui/Progress';
+import { Checkbox } from '@/components/ui/Checkbox';
+import { Label } from '@/components/ui/Label';
+import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { secureRandom } from '../../utils/secureRandom'; // Module not found
 import {
   FileText,
   Wand2,
@@ -154,7 +155,7 @@ export const AutoReportGenerator: React.FC<AutoReportGeneratorProps> = ({
   // Simulate AI generation for a section
   const generateSection = useCallback(async (sectionType: string): Promise<string> => {
     // Simulate AI generation delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1500));
+    await new Promise(resolve => setTimeout(resolve, 1000 + secureRandom.random() * 1500));
     
     // Mock generated content based on section type
     const mockContent: Record<string, string> = {

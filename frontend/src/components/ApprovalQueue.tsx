@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import { AccessibleButton } from '@/components/ui/AccessibleButton';
-import { approvalService, PendingAction } from '@/services/approvalService';
+import { approvalService, type PendingAction } from '@/services/approvalService';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface ApprovalQueueProps {
   className?: string;
@@ -31,16 +32,24 @@ export const ApprovalQueue: React.FC<ApprovalQueueProps> = ({
   const handleApprove = async (actionId: string) => {
     try {
       await approvalService.approveAction(actionId);
+      secureLogger.info('APPROVAL_QUEUE', `Action approved: ${actionId}`);
     } catch (error) {
-      console.error('Failed to approve action:', error);
+      secureLogger.error('APPROVAL_QUEUE', `Failed to approve action: ${actionId}`, {
+        error: error instanceof Error ? error.message : String(error)
+      });
+      // Error handled silently - could show toast notification
     }
   };
 
   const handleReject = async (actionId: string) => {
     try {
       await approvalService.rejectAction(actionId, 'Rejected by user');
+      secureLogger.info('APPROVAL_QUEUE', `Action rejected: ${actionId}`);
     } catch (error) {
-      console.error('Failed to reject action:', error);
+      secureLogger.error('APPROVAL_QUEUE', `Failed to reject action: ${actionId}`, {
+        error: error instanceof Error ? error.message : String(error)
+      });
+      // Error handled silently - could show toast notification
     }
   };
 

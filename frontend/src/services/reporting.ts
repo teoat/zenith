@@ -1,5 +1,5 @@
 import { request } from './client';
-import { 
+import type { 
   MetricsData, LocationData, AIInsight, QueueItem, 
   CaseAnalytics, TransactionAnalytics, SystemOverview, 
   ReportResponse, CaseSummaryResponse, ReportTemplateInfo, 

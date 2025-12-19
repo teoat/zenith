@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '../providers/ToastProvider';
-import { api, AlertItem } from '../lib/api';
+import type { AlertItem } from '../lib/api';
+import { api } from '../lib/api';
 import AdjudicationLayout from '../components/adjudication/AdjudicationLayout';
 import AlertList from '../components/adjudication/AlertList';
 import AlertDetail from '../components/adjudication/AlertDetail';
 import { socketService } from '../services/socket';
 import { motion } from 'framer-motion';
 import { Trophy, Sparkles } from 'lucide-react';
+import { secureLogger } from '../utils/secureLogger';
+import PageErrorBoundary from '../components/PageErrorBoundary';
 
 const AdjudicationQueue = () => {
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
@@ -23,7 +26,7 @@ const AdjudicationQueue = () => {
           // Optional: auto-select first
       }
     } catch (err) {
-      console.error('Failed to load alerts:', err);
+      secureLogger.error('Failed to load alerts:', err);
     } finally {
       setLoading(false);
     }
@@ -73,7 +76,7 @@ const AdjudicationQueue = () => {
         addToast(`Alert ${decision}`, "success");
 
       } catch (e) {
-        console.error(e);
+        secureLogger.error(e);
         addToast(`Failed to ${decision} alert`, "error");
         // Rollback would go here
       }
@@ -176,4 +179,10 @@ const AdjudicationQueue = () => {
   );
 };
 
-export default AdjudicationQueue;
+const AdjudicationQueueWithErrorBoundary = () => (
+  <PageErrorBoundary>
+    <AdjudicationQueue />
+  </PageErrorBoundary>
+);
+
+export default AdjudicationQueueWithErrorBoundary;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, Beaker, Database, Globe, Lock, ShieldCheck } from 'lucide-react';
+import { Activity, Database, Globe, ShieldCheck } from 'lucide-react';
+// import { secureRandom } from '../../utils/secureRandom'; // Module not found
 
 interface AgentStatus {
   id: string;
@@ -20,7 +21,7 @@ export const AgentStatusStream: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setAgents(prev => {
-        const randomIndex = Math.floor(Math.random() * prev.length);
+        const randomIndex = Math.floor((window.crypto.getRandomValues(new Uint32Array(1))[0] / 0xFFFFFFFF) * prev.length);
         const newAgents = [...prev];
         const statuses: ('idle' | 'busy' | 'searching' | 'analyzing')[] = ['idle', 'busy', 'searching', 'analyzing'];
         const messages = {
@@ -30,7 +31,7 @@ export const AgentStatusStream: React.FC = () => {
           analyzing: 'Extracting pattern vectors...'
         };
         
-        const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
+        const newStatus = statuses[Math.floor((window.crypto.getRandomValues(new Uint32Array(1))[0] / 0xFFFFFFFF) * statuses.length)];
         newAgents[randomIndex] = {
           ...newAgents[randomIndex],
           status: newStatus,

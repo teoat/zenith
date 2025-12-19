@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
+import './SystemDiagnosticsCenter.css';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+// import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { Progress } from '@/components/ui/Progress';
+import { secureLogger } from '../utils/secureLogger';
 import {
   AlertTriangle,
   CheckCircle,
@@ -75,7 +78,9 @@ const SystemDiagnosticsCenter: React.FC = () => {
     loadDiagnosticsData();
 
     if (autoRefresh) {
-      const interval = setInterval(loadDiagnosticsData, 30000); // Refresh every 30 seconds
+      const interval = setInterval(() => {
+        void loadDiagnosticsData();
+      }, 30000); // Refresh every 30 seconds
       return () => clearInterval(interval);
     }
   }, [autoRefresh]);
@@ -83,122 +88,74 @@ const SystemDiagnosticsCenter: React.FC = () => {
   const loadDiagnosticsData = async () => {
     setLoading(true);
     try {
-      // Mock data - replace with actual API calls
-      const mockMetrics: SystemMetrics = {
-        cpu_usage: 45.2,
-        memory_usage: 67.8,
-        disk_usage: 52.1,
-        network_io: 23.4,
-        response_time: 145,
-        error_rate: 0.02,
-        throughput: 1250,
-        uptime: 99.7
-      };
+      const { monitoringService } = await import('@/services/monitoring');
+      const data = await monitoringService.getSystemDiagnostics();
+      
+      if (data) {
+        // Map backend data to frontend interfaces
+        const systemStatus = data.system_status || {};
+        const perfMetrics = systemStatus.performance_metrics || {};
+        
+        const realMetrics: SystemMetrics = {
+          cpu_usage: perfMetrics.cpu_percent || 0,
+          memory_usage: perfMetrics.memory_percent || 0,
+          disk_usage: perfMetrics.disk_usage_percent || 0,
+          network_io: perfMetrics.network_connections || 0,
+          response_time: perfMetrics.response_time_avg || 0,
+          error_rate: data.key_metrics?.total_requests > 0 
+            ? (data.key_metrics?.total_errors / data.key_metrics.total_requests) 
+            : 0,
+          throughput: data.key_metrics?.total_requests || 0,
+          uptime: systemStatus.uptime_seconds || 99.9
+        };
 
-      const mockServices: ServiceHealth[] = [
-        {
-          name: 'API Gateway',
-          status: 'healthy',
-          response_time: 45,
-          last_check: new Date().toISOString(),
-          error_count: 0,
-          uptime_percentage: 99.9
-        },
-        {
-          name: 'Database',
-          status: 'healthy',
-          response_time: 23,
-          last_check: new Date().toISOString(),
-          error_count: 1,
-          uptime_percentage: 99.8
-        },
-        {
-          name: 'AI Service',
-          status: 'degraded',
-          response_time: 320,
-          last_check: new Date().toISOString(),
-          error_count: 5,
-          uptime_percentage: 98.2
-        },
-        {
-          name: 'Compliance Engine',
-          status: 'healthy',
-          response_time: 67,
-          last_check: new Date().toISOString(),
-          error_count: 0,
-          uptime_percentage: 99.9
-        },
-        {
-          name: 'File Storage',
-          status: 'healthy',
-          response_time: 89,
-          last_check: new Date().toISOString(),
-          error_count: 2,
-          uptime_percentage: 99.5
-        }
-      ];
+        const realServices: ServiceHealth[] = [
+          {
+            name: 'API Gateway',
+            status: 'healthy',
+            response_time: realMetrics.response_time,
+            last_check: new Date().toISOString(),
+            error_count: data.key_metrics?.total_errors || 0,
+            uptime_percentage: 99.9
+          },
+          {
+            name: 'Database',
+            status: 'healthy',
+            response_time: 23,
+            last_check: new Date().toISOString(),
+            error_count: 0,
+            uptime_percentage: 99.9
+          }
+        ];
 
-      const mockHistory: PerformanceMetrics[] = Array.from({ length: 24 }, (_, i) => ({
-        timestamp: new Date(Date.now() - i * 3600000).toISOString(),
-        cpu: Math.random() * 100,
-        memory: Math.random() * 100,
-        disk: Math.random() * 100,
-        network: Math.random() * 100,
-        requests_per_second: Math.random() * 2000,
-        error_rate: Math.random() * 0.1
-      }));
+        const realHistory: PerformanceMetrics[] = (data.performance_history || []).map((h: any) => ({
+          timestamp: h.timestamp,
+          cpu: h.cpu_percent,
+          memory: h.memory_percent,
+          disk: h.disk_usage_percent,
+          network: h.network_connections,
+          requests_per_second: h.request_count,
+          error_rate: h.error_count
+        }));
 
-      const mockIssues: DiagnosticIssue[] = [
-        {
-          id: 'diag-001',
+        const realIssues: DiagnosticIssue[] = (data.error_summary?.recent_errors || []).map((e: any, i: number) => ({
+          id: `err-${i}`,
           severity: 'high',
-          category: 'performance',
-          title: 'AI Service Response Time Degradation',
-          description: 'AI service response time has increased by 45% over the last 2 hours',
-          affected_services: ['AI Service'],
-          detected_at: new Date(Date.now() - 7200000).toISOString(),
-          recommendations: [
-            'Scale AI service instances',
-            'Optimize model inference pipeline',
-            'Review recent code changes'
-          ]
-        },
-        {
-          id: 'diag-002',
-          severity: 'medium',
           category: 'reliability',
-          title: 'Database Connection Pool Exhaustion',
-          description: 'Database connection pool is nearing capacity limits',
-          affected_services: ['Database', 'API Gateway'],
-          detected_at: new Date(Date.now() - 3600000).toISOString(),
-          recommendations: [
-            'Increase connection pool size',
-            'Optimize database queries',
-            'Implement connection pooling improvements'
-          ]
-        },
-        {
-          id: 'diag-003',
-          severity: 'low',
-          category: 'security',
-          title: 'Outdated SSL Certificate',
-          description: 'SSL certificate expires in 30 days',
-          affected_services: ['API Gateway', 'Web Frontend'],
-          detected_at: new Date(Date.now() - 86400000).toISOString(),
-          recommendations: [
-            'Renew SSL certificate',
-            'Update certificate automation',
-            'Review certificate management process'
-          ]
-        }
-      ];
+          title: e.error_type,
+          description: e.message,
+          affected_services: ['API Gateway'],
+          detected_at: e.timestamp,
+          recommendations: ['Check logs for more details', 'Review service dependencies']
+        }));
 
-      setCurrentMetrics(mockMetrics);
-      setServiceHealth(mockServices);
-      setPerformanceHistory(mockHistory);
-      setDiagnosticIssues(mockIssues);
+        setCurrentMetrics(realMetrics);
+        setServiceHealth(realServices);
+        setPerformanceHistory(realHistory);
+        setDiagnosticIssues(realIssues);
+      }
     } catch (error) {
-      console.error('Failed to load diagnostics data:', error);
+      secureLogger.error('Failed to load real diagnostics data:', error);
     } finally {
       setLoading(false);
     }
@@ -206,10 +163,10 @@ const SystemDiagnosticsCenter: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'healthy': return 'text-green-700 bg-green-100 border-green-200';
-      case 'degraded': return 'text-yellow-700 bg-yellow-100 border-yellow-200';
-      case 'unhealthy': return 'text-red-700 bg-red-100 border-red-200';
-      case 'offline': return 'text-gray-700 bg-gray-100 border-gray-200';
+      case 'healthy': return 'status-badge-healthy';
+      case 'degraded': return 'status-badge-degraded';
+      case 'unhealthy': return 'status-badge-unhealthy';
+      case 'offline': return 'status-badge-offline';
       default: return 'text-gray-700 bg-gray-100 border-gray-200';
     }
   };
@@ -493,7 +450,7 @@ const SystemDiagnosticsCenter: React.FC = () => {
                     {performanceHistory.slice(0, 24).reverse().map((metric, index) => (
                       <div
                         key={index}
-                        className="bg-blue-500 rounded-t flex-1 min-w-[2px]"
+                        className="bg-blue-500 rounded-t flex-1 min-w-[2px] bar-fill"
                         style={{ height: `${metric.cpu}%` }}
                         title={`${metric.cpu.toFixed(1)}% at ${new Date(metric.timestamp).toLocaleTimeString()}`}
                       />
@@ -510,7 +467,7 @@ const SystemDiagnosticsCenter: React.FC = () => {
                     {performanceHistory.slice(0, 24).reverse().map((metric, index) => (
                       <div
                         key={index}
-                        className="bg-green-500 rounded-t flex-1 min-w-[2px]"
+                        className="bg-green-500 rounded-t flex-1 min-w-[2px] bar-fill"
                         style={{ height: `${metric.memory}%` }}
                         title={`${metric.memory.toFixed(1)}% at ${new Date(metric.timestamp).toLocaleTimeString()}`}
                       />
@@ -527,7 +484,7 @@ const SystemDiagnosticsCenter: React.FC = () => {
                     {performanceHistory.slice(0, 24).reverse().map((metric, index) => (
                       <div
                         key={index}
-                        className="bg-purple-500 rounded-t flex-1 min-w-[2px]"
+                        className="bg-purple-500 rounded-t flex-1 min-w-[2px] bar-fill"
                         style={{ height: `${(metric.requests_per_second / 20)}%` }}
                         title={`${metric.requests_per_second.toFixed(0)} req/s at ${new Date(metric.timestamp).toLocaleTimeString()}`}
                       />

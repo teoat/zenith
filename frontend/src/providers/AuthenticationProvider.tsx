@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 import { api } from '../lib/api';
-import { User } from '../types/schema';
-import { getElectronAPI, isElectron } from '../utils/electron';
-import { AuthContext, LoginCredentials } from '../context/AuthContext';
+import type { User } from '../types/schema';
+import { isElectron } from '../utils/electron';
+import type { LoginCredentials } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import { errorReporting } from '../services/errorReporting';
 
 // Set to true to bypass authentication for debugging purposes
@@ -18,12 +20,12 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
     let unsubscribeAuth: (() => void) | undefined;
 
     const initAuth = async () => {
-      console.log('!!! AUTH PROVIDER INIT START !!!');
-      console.log('isDebugging flag:', isDebugging);
+      secureLogger.info('AUTH', 'Authentication provider initialization started');
+      secureLogger.debug('AUTH', 'Debug mode status', { isDebugging });
 
       // TEMPORARY: Bypass auth for debugging
       if (isDebugging) {
-        console.log('[DEV] Auth bypassed - Debug Mode Active');
+        secureLogger.warn('AUTH', 'Auth bypassed - Development Debug Mode Active');
         setUser({
           id: 'dev-user',
           email: 'dev@local',
@@ -40,7 +42,7 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
 
       try {
         const hasElectron = isElectron();
-        console.log('Environment check:', { hasElectron, hasAPI: !!window.electronAPI });
+        secureLogger.info('AUTH', 'Environment check complete', { hasElectron, hasAPI: !!window.electronAPI });
 
         if (hasElectron && window.electronAPI) {
             // Electron Path
@@ -53,7 +55,7 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
                     const response = await window.electronAPI.startSessionListener();
                     if (response.success) {
                         unsubscribeAuth = window.electronAPI.onSessionStatusChanged((status: any) => {
-                             console.log('Session status changed:', status);
+                             secureLogger.info('AUTH', 'Session status updated', { isValid: status.isValid });
                              if (!status.isValid) {
                                  setToken(null);
                                  setUser(null);
@@ -62,12 +64,13 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
                     }
                 }
             } catch (electronErr) {
-                console.error('Electron API Error:', electronErr);
+                secureLogger.error('AUTH', 'Electron API interaction failed', { 
+                  error: electronErr instanceof Error ? electronErr.message : String(electronErr) 
+                });
                 // Fallback to browser mode if Electron API fails
             }
         } else {
-             console.log('[DEBUG] Browser Mode (No Electron API detected)');
-             // Browser Path: Check local storage
+             secureLogger.debug('AUTH', 'Running in standard browser environment');
         }
          
         // Common Token Validation
@@ -79,14 +82,15 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
         }
 
       } catch (caughtError) {
-        console.error('CRITICAL AUTH INIT ERROR:', caughtError);
+        secureLogger.error('AUTH', 'Critical authentication initialization error', { 
+          error: caughtError instanceof Error ? caughtError.message : String(caughtError) 
+        });
         errorReporting.reportError({
           message: 'Auth initialization failed',
           component: 'AuthenticationProvider',
           severity: 'medium',
           context: { error: caughtError instanceof Error ? caughtError.message : String(caughtError) }
         });
-        // Even on error, stop loading to prevent infinite spinner
       } finally {
          setIsLoading(false);
       }
@@ -123,8 +127,12 @@ export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = (
         name: credentials.email.split('@')[0] // Derive name from email
       };
       setUser(loggedInUser); 
+      secureLogger.info('AUTH', 'User logged in successfully', { email: credentials.email });
     } catch (error) {
-      console.error('Login failed:', error);
+      secureLogger.error('AUTH', 'Login attempt failed', { 
+        email: credentials.email,
+        error: error instanceof Error ? error.message : String(error)
+      });
       throw error;
     }
   };

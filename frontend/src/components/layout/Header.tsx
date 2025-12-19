@@ -1,6 +1,6 @@
 // Header component - React is auto-imported in JSX transform
 import { Bell, Search, User, Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import OfflineIndicator from '@/components/OfflineIndicator';
 import { useSidebar } from '@/store/globalStore';

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { secureLogger } from '../utils/secureLogger';
 
 /**
  * Comprehensive input validation utilities
@@ -95,7 +96,7 @@ export const transactionSchema = z.object({
   description: z.string()
     .max(500, 'Description too long')
     .optional(),
-  metadata: z.record(z.unknown()).optional()
+  metadata: z.record(z.string(), z.unknown()).optional()
 });
 
 // Case creation/update validation
@@ -117,7 +118,7 @@ export const caseSchema = z.object({
 export function sanitizeInput(input: string): string {
   return input
     .trim()
-    .replace(/[<>\"']/g, '') // Remove potentially dangerous characters
+    .replace(/[<>"']/g, '') // Remove potentially dangerous characters
     .slice(0, 10000); // Enforce max length
 }
 
@@ -127,7 +128,7 @@ export function sanitizeInput(input: string): string {
 export function validateSearchQuery(query: string): string {
   try {
     return searchQuerySchema.parse(query);
-  } catch (_error) {
+  } catch {
     throw new Error('Invalid search query');
   }
 }
@@ -194,10 +195,11 @@ export function validateFormData<T>(
   try {
     const validated = schema.parse(data);
     return { success: true, data: validated };
-  } catch (_error) {
+  } catch (error) {
+    secureLogger.error('VALIDATION', 'Form validation failed', { error });
     if (error instanceof z.ZodError) {
       const errors: Record<string, string> = {};
-      error.errors.forEach(err => {
+      (error as z.ZodError).issues.forEach((err: z.ZodIssue) => {
         const path = err.path.join('.');
         errors[path] = err.message;
       });

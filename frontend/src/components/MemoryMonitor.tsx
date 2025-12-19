@@ -20,9 +20,9 @@ const MemoryMonitor: React.FC<MemoryMonitorProps> = ({ className = '' }) => {
   };
 
   const getMemoryStatus = () => {
-    if (!memoryStats?.current) return { status: 'unknown', color: 'text-secondary-400' };
+    if (!memoryStats) return { status: 'unknown', color: 'text-secondary-400' };
 
-    const percentage = (memoryStats.current.usedJSHeapSize / memoryStats.current.jsHeapSizeLimit) * 100;
+    const percentage = (memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) * 100;
 
     if (percentage > 90) return { status: 'critical', color: 'text-error-400' };
     if (percentage > 75) return { status: 'warning', color: 'text-warning-400' };
@@ -56,24 +56,24 @@ const MemoryMonitor: React.FC<MemoryMonitorProps> = ({ className = '' }) => {
         </div>
       </div>
 
-      {memoryStats?.current ? (
+      {memoryStats ? (
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
             <span>Used:</span>
             <span className={memoryStatus.color}>
-              {formatBytes(memoryStats.current.usedJSHeapSize)}
+              {formatBytes(memoryStats.usedJSHeapSize)}
             </span>
           </div>
           <div className="flex justify-between text-xs">
             <span>Total:</span>
             <span className="text-secondary-400">
-              {formatBytes(memoryStats.current.totalJSHeapSize)}
+              {formatBytes(memoryStats.totalJSHeapSize)}
             </span>
           </div>
           <div className="flex justify-between text-xs">
             <span>Limit:</span>
             <span className="text-secondary-400">
-              {formatBytes(memoryStats.current.jsHeapSizeLimit)}
+              {formatBytes(memoryStats.jsHeapSizeLimit)}
             </span>
           </div>
 
@@ -81,7 +81,7 @@ const MemoryMonitor: React.FC<MemoryMonitorProps> = ({ className = '' }) => {
             <div className="flex justify-between text-xs mb-1">
               <span>Usage</span>
               <span className={memoryStatus.color}>
-                {((memoryStats.current.usedJSHeapSize / memoryStats.current.jsHeapSizeLimit) * 100).toFixed(1)}%
+                {((memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) * 100).toFixed(1)}%
               </span>
             </div>
             <div className="w-full bg-secondary-700 rounded-full h-2">
@@ -92,7 +92,7 @@ const MemoryMonitor: React.FC<MemoryMonitorProps> = ({ className = '' }) => {
                   'bg-success-500'
                 }`}
                 style={{
-                  width: `${Math.min((memoryStats.current.usedJSHeapSize / memoryStats.current.jsHeapSizeLimit) * 100, 100)}%`
+                  width: `${Math.min((memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) * 100, 100)}%`
                 }}
               />
             </div>

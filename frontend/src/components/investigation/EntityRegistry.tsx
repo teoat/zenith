@@ -3,6 +3,7 @@ import { useDraggable } from '@dnd-kit/core';
 import { User, Building, CreditCard, Globe, GripVertical, Search, Loader2 } from 'lucide-react';
 import { api } from '../../lib/api';
 import { usePersistedState } from '../../hooks/usePersistedState';
+import { secureLogger } from '../../utils/secureLogger';
 
 // Draggable Item Component
 interface Entity {
@@ -67,7 +68,7 @@ const EntityRegistry = () => {
           setEntities(res.results);
         }
       } catch (err) {
-        console.error("Failed to fetch entities", err);
+        secureLogger.error("Failed to fetch entities", err);
       } finally {
         setLoading(false);
       }

@@ -1,7 +1,6 @@
-// Frontend diagnostics service for monitoring and analytics
-// Uses monitoringService directly to avoid circular dependency with api facade
+import { secureLogger } from '../utils/secureLogger';
 import { monitoringService } from './monitoring';
-import { HealthMetrics } from '../types/api';
+import type { HealthMetrics } from '../types/api';
 
 export interface HealthStatus {
   status: 'healthy' | 'degraded' | 'critical' | 'error';
@@ -55,8 +54,10 @@ class DiagnosticsService {
         system_health: Math.round(systemHealth),
         metrics: healthMetrics
       };
-    } catch (_error) {
-      console.error('Failed to fetch health status:', error);
+    } catch (error) {
+      secureLogger.error('DIAGNOSTICS', 'Failed to fetch health status', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       return {
         status: 'error',
         timestamp: new Date().toISOString(),
@@ -73,8 +74,10 @@ class DiagnosticsService {
         components: status,
         timestamp: new Date().toISOString()
       };
-    } catch (_error) {
-      console.error('Failed to fetch detailed health:', error);
+    } catch (error) {
+      secureLogger.error('DIAGNOSTICS', 'Failed to fetch detailed health', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       return { status: 'error' };
     }
   }
@@ -103,8 +106,10 @@ class DiagnosticsService {
         alerts: [],
         status: 'healthy'
       };
-    } catch (_error) {
-      console.error('Failed to fetch performance baselines:', error);
+    } catch (error) {
+      secureLogger.error('DIAGNOSTICS', 'Failed to fetch performance baselines', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       return {
         baselines: {},
         current_metrics: {},
@@ -152,8 +157,10 @@ class DiagnosticsService {
         user_analytics: userAnalytics,
         recommendations: this.generateRecommendations(health, performance)
       };
-    } catch (_error) {
-      console.error('Failed to fetch diagnostics dashboard:', error);
+    } catch (error) {
+      secureLogger.error('DIAGNOSTICS', 'Failed to fetch diagnostics dashboard', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       return {
         status: 'error',
         timestamp: new Date().toISOString(),
@@ -201,9 +208,11 @@ class DiagnosticsService {
     try {
       // Log event locally - would send to analytics backend in production
       const userId = localStorage.getItem('userId') || 'anonymous';
-      console.log(`[Analytics] Event: ${eventType}`, { userId, metadata, timestamp: new Date().toISOString() });
-    } catch (_error) {
-      console.warn('Failed to track user event:', error);
+      secureLogger.info('ANALYTICS', `Event: ${eventType}`, { userId, metadata });
+    } catch (error) {
+      secureLogger.warn('DIAGNOSTICS', 'Failed to track user event', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       // Don't throw - tracking failures shouldn't break the app
     }
   }
@@ -214,8 +223,10 @@ class DiagnosticsService {
       try {
         const data = await this.getDiagnosticsDashboard();
         callback(data);
-      } catch (_error) {
-        console.error('Real-time monitoring error:', error);
+      } catch (error) {
+        secureLogger.error('DIAGNOSTICS', 'Real-time monitoring error', { 
+          error: error instanceof Error ? error.message : String(error) 
+        });
       }
     }, 30000); // Update every 30 seconds
 

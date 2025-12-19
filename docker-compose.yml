@@ -11,9 +11,9 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - ENVIRONMENT=development
       - DEBUG=true
-      # Fallback secrets for local dev
-      - JWT_SECRET=docker-dev-secret-change-prod
-      - ENCRYPTION_KEY=docker-dev-key-change-prod
+      # Fallback secrets for local dev - CHANGE THESE VALUES
+      - JWT_SECRET=CHANGE_THIS_DOCKER_JWT_SECRET
+      - ENCRYPTION_KEY=CHANGE_THIS_DOCKER_ENCRYPTION_KEY
     volumes:
       - ./backend:/app
       - backend_data:/app/data

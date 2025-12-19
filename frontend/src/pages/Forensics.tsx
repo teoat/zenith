@@ -7,6 +7,7 @@ import { UploadWizard } from '../components/evidence/UploadWizard';
 import { AccessibleButton } from '../components/ui/AccessibleButton';
 import { aiService } from '../services/ai';
 import { Brain, Sparkles, Filter as FilterIcon } from 'lucide-react';
+import PageErrorBoundary from '../components/PageErrorBoundary';
 
 // Lazy load heavy components
 const ForensicCanvas = React.lazy(() => import('../components/evidence/ForensicCanvas').then(module => ({ default: module.ForensicCanvas })));
@@ -412,4 +413,10 @@ const Forensics = () => {
   );
 };
 
-export default Forensics;
+const ForensicsWithErrorBoundary = () => (
+  <PageErrorBoundary>
+    <Forensics />
+  </PageErrorBoundary>
+);
+
+export default ForensicsWithErrorBoundary;

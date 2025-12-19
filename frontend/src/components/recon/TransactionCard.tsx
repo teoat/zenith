@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReconciliationItem } from '../../lib/api';
+import type { ReconciliationItem } from '../../lib/api';
 import { useFormatters } from '../../providers/LocaleProvider';
 import { GripVertical, AlertTriangle } from 'lucide-react';
 

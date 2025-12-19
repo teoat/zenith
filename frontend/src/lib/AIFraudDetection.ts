@@ -1,5 +1,5 @@
-// frontend/src/lib/AIFraudDetection.ts
-// AI-powered fraud detection using machine learning algorithms
+import { secureLogger } from '../utils/secureLogger';
+import { secureRandom } from '../utils/secureRandom';
 
 interface TransactionFeatures {
   amount: number;
@@ -44,7 +44,7 @@ export class AIFraudDetector {
 
   // Train the AI models with historical data
   async train(trainingData: TrainingData[]): Promise<void> {
-    console.log(`Training AI models with ${trainingData.length} samples...`);
+    secureLogger.info('AI_INTELLIGENCE', `Training AI models with ${trainingData.length} samples...`);
 
     // Prepare features for training
     const features = trainingData.map(data => this.extractFeatures(data.features));
@@ -60,7 +60,7 @@ export class AIFraudDetector {
     this.neuralNetwork.fit(normalizedFeatures, labels);
 
     this.trained = true;
-    console.log('AI models trained successfully');
+    secureLogger.info('AI_INTELLIGENCE', 'AI models trained successfully');
   }
 
   // Predict fraud for a transaction
@@ -281,7 +281,7 @@ class IsolationForest {
   private sampleData(data: number[][], size: number): number[][] {
     const sampled: number[][] = [];
     for (let i = 0; i < size && i < data.length; i++) {
-      const randomIndex = Math.floor(Math.random() * data.length);
+      const randomIndex = Math.floor(secureRandom.random() * data.length);
       sampled.push(data[randomIndex]);
     }
     return sampled;
@@ -302,7 +302,7 @@ class IsolationTree {
     }
 
     // Randomly select feature to split on
-    this.splitFeature = Math.floor(Math.random() * data[0].length);
+    this.splitFeature = Math.floor(secureRandom.random() * data[0].length);
 
     // Find min/max values for this feature
     const values = data.map(row => row[this.splitFeature]);
@@ -310,7 +310,7 @@ class IsolationTree {
     const max = Math.max(...values);
 
     // Random split value
-    this.splitValue = min + Math.random() * (max - min);
+    this.splitValue = min + secureRandom.random() * (max - min);
 
     // Split data
     const leftData = data.filter(row => row[this.splitFeature] < this.splitValue);
@@ -356,8 +356,8 @@ class SimpleNeuralNetwork {
 
   fit(features: number[][], labels: number[]): void {
     this.inputSize = features[0].length;
-    this.weights = Array.from({ length: this.inputSize }, () => Math.random() - 0.5);
-    this.bias = Math.random() - 0.5;
+    this.weights = Array.from({ length: this.inputSize }, () => secureRandom.random() - 0.5);
+    this.bias = secureRandom.random() - 0.5;
 
     // Very simple training - just adjust weights based on average error
     const learningRate = 0.01;
@@ -379,7 +379,9 @@ class SimpleNeuralNetwork {
       }
 
       if (epoch % 10 === 0) {
-        console.log(`Epoch ${epoch}, Avg Error: ${totalError / features.length}`);
+        secureLogger.debug('AI_INTELLIGENCE', `Training Epoch ${epoch}`, { 
+          avgError: totalError / features.length 
+        });
       }
     }
   }
@@ -472,17 +474,17 @@ export class AIFraudDetectionEngine {
     for (let i = 0; i < 1000; i++) {
       data.push({
         features: {
-          amount: Math.random() * 1000 + 10, // $10-$1010
-          frequency: Math.floor(Math.random() * 5) + 1, // 1-5 transactions
-          timeOfDay: Math.floor(Math.random() * 24), // 0-23 hours
-          dayOfWeek: Math.floor(Math.random() * 7), // 0-6 days
+          amount: secureRandom.random() * 1000 + 10, // $10-$1010
+          frequency: Math.floor(secureRandom.random() * 5) + 1, // 1-5 transactions
+          timeOfDay: Math.floor(secureRandom.random() * 24), // 0-23 hours
+          dayOfWeek: Math.floor(secureRandom.random() * 7), // 0-6 days
           location: 'local',
           merchantCategory: 'retail',
-          previousTransactions: Array.from({ length: 10 }, () => Math.random() * 500 + 20),
+          previousTransactions: Array.from({ length: 10 }, () => secureRandom.random() * 500 + 20),
           userHistory: {
-            totalTransactions: Math.floor(Math.random() * 100) + 10,
-            averageAmount: Math.random() * 300 + 50,
-            riskScore: Math.random() * 0.3 // Low risk for legitimate
+            totalTransactions: Math.floor(secureRandom.random() * 100) + 10,
+            averageAmount: secureRandom.random() * 300 + 50,
+            riskScore: secureRandom.random() * 0.3 // Low risk for legitimate
           }
         },
         label: false
@@ -493,17 +495,17 @@ export class AIFraudDetectionEngine {
     for (let i = 0; i < 200; i++) {
       data.push({
         features: {
-          amount: Math.random() * 5000 + 2000, // $2000-$7000 (unusually high)
-          frequency: Math.floor(Math.random() * 20) + 10, // 10-30 transactions (high frequency)
-          timeOfDay: Math.random() < 0.7 ? Math.floor(Math.random() * 6) : Math.floor(Math.random() * 6) + 18, // Unusual hours
-          dayOfWeek: Math.floor(Math.random() * 7),
-          location: Math.random() < 0.5 ? 'international' : 'local',
-          merchantCategory: Math.random() < 0.5 ? 'high-risk' : 'retail',
-          previousTransactions: Array.from({ length: 5 }, () => Math.random() * 100 + 5), // Fewer previous transactions
+          amount: secureRandom.random() * 5000 + 2000, // $2000-$7000 (unusually high)
+          frequency: Math.floor(secureRandom.random() * 20) + 10, // 10-30 transactions (high frequency)
+          timeOfDay: secureRandom.random() < 0.7 ? Math.floor(secureRandom.random() * 6) : Math.floor(secureRandom.random() * 6) + 18, // Unusual hours
+          dayOfWeek: Math.floor(secureRandom.random() * 7),
+          location: secureRandom.random() < 0.5 ? 'international' : 'local',
+          merchantCategory: secureRandom.random() < 0.5 ? 'high-risk' : 'retail',
+          previousTransactions: Array.from({ length: 5 }, () => secureRandom.random() * 100 + 5), // Fewer previous transactions
           userHistory: {
-            totalTransactions: Math.floor(Math.random() * 20) + 1, // New user
-            averageAmount: Math.random() * 100 + 10, // Low average
-            riskScore: Math.random() * 0.7 + 0.3 // Higher risk
+            totalTransactions: Math.floor(secureRandom.random() * 20) + 1, // New user
+            averageAmount: secureRandom.random() * 100 + 10, // Low average
+            riskScore: secureRandom.random() * 0.7 + 0.3 // Higher risk
           }
         },
         label: true

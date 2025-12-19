@@ -1,4 +1,4 @@
-import { Integration, IntegrationMetrics } from '../types/api';
+import type { Integration, IntegrationMetrics } from '../types/api';
 
 export const integrationService = {
   getIntegrations: async (): Promise<Integration[]> => {

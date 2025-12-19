@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/Badge';
 import { Search, FileText, Brain } from 'lucide-react';
+import { secureLogger } from '../../../utils/secureLogger';
 
 interface SearchResult {
   id: string;
@@ -49,7 +50,7 @@ const RagSearchInterface: React.FC = () => {
       ];
       setResults(mockResults);
     } catch (error) {
-      console.error('RAG search failed:', error);
+      secureLogger.error('RAG search failed:', error);
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +58,7 @@ const RagSearchInterface: React.FC = () => {
 
   const handleAddDocument = async () => {
     // Mock document addition
-    console.log('Adding document to RAG index');
+    secureLogger.info('Adding document to RAG index');
   };
 
   return (

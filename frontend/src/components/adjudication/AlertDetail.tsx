@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertItem } from '../../lib/api';
+import type { AlertItem } from '../../lib/api';
 import ContextTabs from './ContextTabs';
 import DecisionPanel from './DecisionPanel';
 

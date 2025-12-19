@@ -4,29 +4,30 @@
  */
 
 import { onCLS, onFCP, onLCP, onTTFB } from 'web-vitals';
+import { secureLogger } from './secureLogger';
 
 // Initialize Web Vitals monitoring
 export const initWebVitals = () => {
   // Core Web Vitals
   onCLS((metric) => {
-    console.log('CLS:', metric.value);
+    secureLogger.info('PERFORMANCE', 'CLS', { value: metric.value });
     // Send to analytics service
   });
 
 
 
   onFCP((metric) => {
-    console.log('FCP:', metric.value);
+    secureLogger.info('PERFORMANCE', 'FCP', { value: metric.value });
     // Send to analytics service
   });
 
   onLCP((metric) => {
-    console.log('LCP:', metric.value);
+    secureLogger.info('PERFORMANCE', 'LCP', { value: metric.value });
     // Send to analytics service
   });
 
   onTTFB((metric) => {
-    console.log('TTFB:', metric.value);
+    secureLogger.info('PERFORMANCE', 'TTFB', { value: metric.value });
     // Send to analytics service
   });
 };

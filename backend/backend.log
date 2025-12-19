@@ -1,2 +1,378 @@
+Audio/Video processing libraries not available: No module named 'pydub'
+/Users/Arief/Desktop/378x492/backend/main.py:42: DeprecationWarning: `example` has been deprecated, please use `examples` instead
+  from app.routers.evidence import router as evidence_router
+2025-12-19 12:41:47 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+/Users/Arief/Desktop/378x492/backend/main.py:58: DeprecationWarning: `example` has been deprecated, please use `examples` instead
+  from app.routers.users import router as users_router
+2025-12-19 12:41:48 - 378x492 - WARNING - main:485 - OpenTelemetry dependencies not found, skipping tracing setup
 INFO:     Will watch for changes in these directories: ['/Users/Arief/Desktop/378x492/backend']
-ERROR:    [Errno 48] Address already in use
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [78711] using WatchFiles
+Audio/Video processing libraries not available: No module named 'pydub'
+2025-12-19 12:41:52 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+2025-12-19 12:41:53 - 378x492 - WARNING - main:485 - OpenTelemetry dependencies not found, skipping tracing setup
+2025-12-19 12:41:53 - 378x492 - WARNING - main:485 - OpenTelemetry dependencies not found, skipping tracing setup
+INFO:     Started server process [78730]
+INFO:     Waiting for application startup.
+2025-12-19 12:41:54 - 378x492 - INFO - main:172 - Starting 378x492 Fraud Detection API with 99.99% uptime target
+2025-12-19 12:41:54 - 378x492 - INFO - main:177 - Phase 1: Database initialization
+2025-12-19 12:41:54 - 378x492 - INFO - main:183 - Database tables created successfully (Development Mode)
+2025-12-19 12:41:54 - 378x492 - INFO - main:202 - Database health check passed/degraded on attempt 1
+2025-12-19 12:41:54 - 378x492 - INFO - main:230 - Boot Integrity Verified. Audit Root Hash: 97fbfe17ef540a0517de17d7b1fef535f2b3ea60bc06c9f507fc0be26766645e
+2025-12-19 12:41:54 - 378x492 - INFO - main:240 - Phase 2: Service initialization with error handling
+2025-12-19 12:41:54 - 378x492 - INFO - proactive_monitoring:50 - Starting proactive monitoring for 99.99% uptime
+2025-12-19 12:41:54 - 378x492 - INFO - main:247 - ✅ Proactive monitoring started for 99.99% uptime
+2025-12-19 12:41:54 - 378x492 - INFO - monitoring_service:385 - Monitoring service background thread started
+2025-12-19 12:41:54 - 378x492 - INFO - main:252 - ℹ️ APM monitoring skipped (optional service)
+2025-12-19 12:41:54 - 378x492 - INFO - main:257 - Phase 3: Circuit breaker and resilience initialization
+2025-12-19 12:41:54 - 378x492 - INFO - main:265 - ✅ Circuit breaker 'database_connection' initialized
+2025-12-19 12:41:54 - 378x492 - INFO - main:265 - ✅ Circuit breaker 'external_api_calls' initialized
+2025-12-19 12:41:54 - 378x492 - INFO - main:270 - Phase 4: Final health verification
+2025-12-19 12:41:55 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:41:55 - 378x492 - WARNING - main:286 - Application started with health issues: {'status': 'unhealthy', 'timestamp': '2025-12-19T12:41:54.198876', 'version': '1.0.0', 'environment': 'development', 'uptime_target': '99.99%', 'components': {'database': {'service': 'database', 'timestamp': '2025-12-19T03:41:54.198897+00:00', 'status': 'healthy', 'response_time_ms': 2.93, 'checks': {'connection_pool': {'status': 'healthy', 'details': {'pool_size': 20, 'checked_out': 0, 'overflow': -19, 'invalid': 0}}, 'connectivity': {'status': 'healthy', 'query_result': 1}, 'users_table': {'status': 'healthy', 'record_count': 0}, 'cases_table': {'status': 'healthy', 'record_count': 0}, 'transactions_table': {'status': 'healthy', 'record_count': 32}, 'performance': {'status': 'healthy', 'query_time_ms': 0.18, 'threshold_ms': 100}, 'circuit_breaker': {'status': 'healthy', 'details': {'name': 'database_connection', 'state': 'closed', 'failure_count': 0, 'success_count': 0, 'last_failure_time': None, 'config': {'failure_threshold': 2, 'recovery_timeout': 10.0, 'success_threshold': 3, 'timeout': 30.0}}}}}, 'circuit_breakers': {'status': 'healthy', 'total_breakers': 5, 'open_breakers': 0, 'open_breaker_names': [], 'details': {'database_connection': {'name': 'database_connection', 'state': 'closed', 'failure_count': 0, 'success_count': 0, 'last_failure_time': None, 'config': {'failure_threshold': 2, 'recovery_timeout': 10.0, 'success_threshold': 3, 'timeout': 30.0}}, 'database_query_cases': {'name': 'database_query_cases', 'state': 'closed', 'failure_count': 0, 'success_count': 0, 'last_failure_time': None, 'config': {'failure_threshold': 5, 'recovery_timeout': 20.0, 'success_threshold': 3, 'timeout': 30.0}}, 'database_create_case': {'name': 'database_create_case', 'state': 'closed', 'failure_count': 0, 'success_count': 0, 'last_failure_time': None, 'config': {'failure_threshold': 3, 'recovery_timeout': 10.0, 'success_threshold': 3, 'timeout': 30.0}}, 'external_api_geocoding': {'name': 'external_api_geocoding', 'state': 'closed', 'failure_count': 0, 'success_count': 0, 'last_failure_time': None, 'config': {'failure_threshold': 5, 'recovery_timeout': 120.0, 'success_threshold': 3, 'timeout': 30.0}}, 'external_api_calls': {'name': 'external_api_calls', 'state': 'closed', 'failure_count': 0, 'success_count': 0, 'last_failure_time': None, 'config': {'failure_threshold': 5, 'recovery_timeout': 60.0, 'success_threshold': 3, 'timeout': 30.0}}}}, 'performance_monitoring': {'status': 'healthy', 'active': True, 'metrics_collected': 0, 'alerts': 0}, 'cache': {'status': 'not_configured'}, 'external_services': {'status': 'not_configured'}, 'system_resources': {'status': 'critical', 'memory_percent': 50.2, 'cpu_percent': 100.0, 'issues': ['High CPU usage']}, 'storage': {'status': 'not_configured', 'type': 'local'}, 'api_responsiveness': {'status': 'healthy', 'endpoints_tested': ['health', 'health/live', 'health/ready'], 'response_time_ms': 0}}, 'uptime_calculation': {'target': '99.99%', 'current_status': 'unhealthy', 'estimated_monthly_downtime': 'extended', 'critical_components': ['database', 'circuit_breakers', 'system_resources']}}
+2025-12-19 12:41:55 - 378x492 - INFO - main:294 - Monitoring services initialized successfully
+2025-12-19 12:41:55 - 378x492 - INFO - main:303 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-19 12:41:55 - 378x492 - INFO - main:312 - 378x492 API startup completed successfully
+2025-12-19 12:41:56 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:41:57 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [CRITICAL]: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 50.3, 'cpu_percent': 99.8, 'issues': ['High CPU usage']}
+2025-12-19 12:41:57 - 378x492 - CRITICAL - proactive_monitoring:298 - 🚨 CRITICAL ALERT: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 50.3, 'cpu_percent': 99.8, 'issues': ['High CPU usage']}
+INFO:     Application startup complete.
+2025-12-19 12:42:28 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:42:29 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [CRITICAL]: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 50.3, 'cpu_percent': 99.7, 'issues': ['High CPU usage']}
+2025-12-19 12:42:29 - 378x492 - CRITICAL - proactive_monitoring:298 - 🚨 CRITICAL ALERT: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 50.3, 'cpu_percent': 99.7, 'issues': ['High CPU usage']}
+2025-12-19 12:42:56 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:42:56 - 378x492 - ERROR - performance_monitor:74 - Performance monitoring error: unsupported operand type(s) for /: 'tuple' and 'int'
+2025-12-19 12:43:00 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:43:01 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [CRITICAL]: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 50.3, 'cpu_percent': 100.0, 'issues': ['High CPU usage']}
+2025-12-19 12:43:01 - 378x492 - CRITICAL - proactive_monitoring:298 - 🚨 CRITICAL ALERT: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 50.3, 'cpu_percent': 100.0, 'issues': ['High CPU usage']}
+2025-12-19 12:43:32 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:43:33 - 378x492 - ERROR - proactive_monitoring:115 - Error performing health checks: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:43:33 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [ERROR]: Health monitoring failed: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:43:57 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:43:57 - 378x492 - ERROR - performance_monitor:74 - Performance monitoring error: unsupported operand type(s) for /: 'tuple' and 'int'
+2025-12-19 12:44:04 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:44:05 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [CRITICAL]: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 50.4, 'cpu_percent': 99.0, 'issues': ['High CPU usage']}
+2025-12-19 12:44:05 - 378x492 - CRITICAL - proactive_monitoring:298 - 🚨 CRITICAL ALERT: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 50.4, 'cpu_percent': 99.0, 'issues': ['High CPU usage']}
+2025-12-19 12:44:36 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=78912)
+2025-12-19 12:44:37 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [CRITICAL]: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 50.5, 'cpu_percent': 99.8, 'issues': ['High CPU usage']}
+2025-12-19 12:44:37 - 378x492 - CRITICAL - proactive_monitoring:298 - 🚨 CRITICAL ALERT: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 50.5, 'cpu_percent': 99.8, 'issues': ['High CPU usage']}
+2025-12-19 12:44:58 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=78947)
+2025-12-19 12:44:58 - 378x492 - WARNING - performance_monitor:161 - Performance monitoring circuit breaker opened after 3 failures
+2025-12-19 12:44:58 - 378x492 - ERROR - performance_monitor:74 - Performance monitoring error: unsupported operand type(s) for /: 'tuple' and 'int'
+2025-12-19 12:45:08 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=78947)
+2025-12-19 12:45:40 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=78947)
+2025-12-19 12:45:41 - 378x492 - ERROR - proactive_monitoring:115 - Error performing health checks: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:46:12 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79052)
+2025-12-19 12:46:13 - 378x492 - ERROR - proactive_monitoring:115 - Error performing health checks: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:46:13 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-19 12:46:13 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61390 - "OPTIONS /api/v1/dashboard/metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61392 - "OPTIONS /api/v1/activity/recent HTTP/1.1" 200 OK
+2025-12-19 12:46:13 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:46:13 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:46:13 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:46:13 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:46:13 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:46:13 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:46:13 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-19 12:46:13 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61397 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61399 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-19 12:46:14 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:46:14 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:46:14 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:46:14 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:46:14 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:46:14 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:46:14 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-19 12:46:14 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61399 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61397 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-19 12:46:16 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:46:16 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:46:16 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:46:16 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:46:16 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:46:16 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:46:16 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-19 12:46:16 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61397 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61399 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-19 12:46:44 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79063)
+2025-12-19 12:46:45 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [CRITICAL]: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 46.9, 'cpu_percent': 96.2, 'issues': ['High CPU usage']}
+2025-12-19 12:46:45 - 378x492 - CRITICAL - proactive_monitoring:298 - 🚨 CRITICAL ALERT: Critical health issue detected: System resources critical: {'status': 'critical', 'memory_percent': 46.9, 'cpu_percent': 96.2, 'issues': ['High CPU usage']}
+2025-12-19 12:47:16 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:47:48 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:47:49 - 378x492 - ERROR - proactive_monitoring:115 - Error performing health checks: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:48:03 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:48:03 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:48:03 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:48:03 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:48:03 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:48:03 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:48:03 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-19 12:48:03 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61483 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61487 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-19 12:48:04 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:48:04 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:48:04 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:48:04 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:48:04 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:48:04 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:48:04 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-19 12:48:04 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61487 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61483 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-19 12:48:06 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:48:06 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:48:06 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:48:06 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:48:06 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:48:06 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:48:06 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-19 12:48:06 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61487 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61483 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+2025-12-19 12:48:20 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:48:52 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:48:53 - 378x492 - ERROR - proactive_monitoring:115 - Error performing health checks: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:48:53 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [ERROR]: Health monitoring failed: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:49:24 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79251)
+2025-12-19 12:49:40 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:49:40 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:49:40 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:49:40 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:49:40 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:49:40 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:49:40 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-19 12:49:40 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61566 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61570 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-19 12:49:41 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:49:41 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:49:41 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:49:41 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:49:41 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:49:41 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:49:41 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-19 12:49:41 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61570 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61566 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-19 12:49:43 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:49:43 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:49:43 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:49:43 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:49:43 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:49:43 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:49:43 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-19 12:49:43 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61566 - "GET /api/v1/dashboard/metrics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61570 - "GET /api/v1/activity/recent HTTP/1.1" 404 Not Found
+2025-12-19 12:49:56 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79251)
+2025-12-19 12:49:58 - 378x492 - INFO - performance_monitor:150 - Performance monitoring circuit breaker reset
+2025-12-19 12:49:59 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79251)
+2025-12-19 12:49:59 - 378x492 - ERROR - performance_monitor:74 - Performance monitoring error: unsupported operand type(s) for /: 'tuple' and 'int'
+2025-12-19 12:50:03 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61594 - "OPTIONS /api/v1/subjects?page=1&limit=20 HTTP/1.1" 200 OK
+2025-12-19 12:50:03 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:50:03 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:50:03 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:50:03 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61596 - "GET /api/v1/subjects?page=1&limit=20 HTTP/1.1" 404 Not Found
+2025-12-19 12:50:04 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:50:04 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:50:04 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:50:04 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61596 - "GET /api/v1/subjects?page=1&limit=20 HTTP/1.1" 404 Not Found
+2025-12-19 12:50:06 - 378x492 - WARNING - auth_service:118 - JWT decode failed
+Failed to decode JWT token: 401: Invalid authentication token
+2025-12-19 12:50:06 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-19 12:50:06 - 378x492 - ERROR - logging:167 - Starlette HTTP 404: Not Found
+2025-12-19 12:50:06 - 378x492 - INFO - logging:136 - HTTP request
+INFO:     127.0.0.1:61596 - "GET /api/v1/subjects?page=1&limit=20 HTTP/1.1" 404 Not Found
+2025-12-19 12:50:28 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79251)
+2025-12-19 12:51:00 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:51:00 - 378x492 - ERROR - performance_monitor:74 - Performance monitoring error: unsupported operand type(s) for /: 'tuple' and 'int'
+2025-12-19 12:51:00 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:51:32 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=77802)
+2025-12-19 12:52:01 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79434)
+2025-12-19 12:52:01 - 378x492 - WARNING - performance_monitor:161 - Performance monitoring circuit breaker opened after 3 failures
+2025-12-19 12:52:01 - 378x492 - ERROR - performance_monitor:74 - Performance monitoring error: unsupported operand type(s) for /: 'tuple' and 'int'
+2025-12-19 12:52:04 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79434)
+2025-12-19 12:52:36 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79434)
+2025-12-19 12:53:08 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79531)
+WARNING:  WatchFiles detected changes in 'app/routers/cases.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-19 12:53:22 - 378x492 - INFO - main:327 - Initiating graceful shutdown of 378x492 Fraud Detection API
+2025-12-19 12:53:22 - 378x492 - INFO - main:333 - Phase 1: Stopping new request acceptance
+2025-12-19 12:53:22 - 378x492 - INFO - main:336 - Phase 2: Draining existing connections
+2025-12-19 12:53:22 - 378x492 - INFO - main:339 - Waiting 30s for active requests to complete
+2025-12-19 12:53:32 - 378x492 - INFO - main:343 - Phase 3: Stopping monitoring services
+2025-12-19 12:53:32 - 378x492 - INFO - proactive_monitoring:60 - Stopping proactive monitoring
+2025-12-19 12:53:32 - 378x492 - INFO - main:349 - ✅ Proactive monitoring stopped
+2025-12-19 12:53:32 - 378x492 - INFO - main:355 - ✅ Monitoring service stopped
+2025-12-19 12:53:32 - 378x492 - INFO - main:361 - ✅ Performance monitoring stopped
+2025-12-19 12:53:32 - 378x492 - INFO - main:366 - Phase 4: Closing database connections
+2025-12-19 12:53:32 - 378x492 - INFO - main:370 - ✅ Database connections prepared for cleanup
+2025-12-19 12:53:32 - 378x492 - INFO - main:375 - Phase 5: Stopping WebSocket and collaboration services
+2025-12-19 12:53:32 - 378x492 - INFO - main:378 - ✅ Collaboration WebSocket server stopped
+2025-12-19 12:53:32 - 378x492 - INFO - main:383 - Phase 6: Final cleanup and verification
+2025-12-19 12:53:32 - 378x492 - INFO - main:390 - ✅ Logging system flushed
+2025-12-19 12:53:32 - 378x492 - INFO - main:396 - 🎉 Graceful shutdown completed in 10.00s
+INFO:     Application shutdown complete.
+INFO:     Finished server process [78730]
+Audio/Video processing libraries not available: No module named 'pydub'
+2025-12-19 12:53:35 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+2025-12-19 12:53:36 - 378x492 - WARNING - main:485 - OpenTelemetry dependencies not found, skipping tracing setup
+2025-12-19 12:53:37 - 378x492 - WARNING - main:485 - OpenTelemetry dependencies not found, skipping tracing setup
+INFO:     Started server process [79574]
+INFO:     Waiting for application startup.
+2025-12-19 12:53:37 - 378x492 - INFO - main:172 - Starting 378x492 Fraud Detection API with 99.99% uptime target
+2025-12-19 12:53:37 - 378x492 - INFO - main:177 - Phase 1: Database initialization
+2025-12-19 12:53:37 - 378x492 - INFO - main:183 - Database tables created successfully (Development Mode)
+2025-12-19 12:53:37 - 378x492 - INFO - main:202 - Database health check passed/degraded on attempt 1
+2025-12-19 12:53:37 - 378x492 - INFO - main:230 - Boot Integrity Verified. Audit Root Hash: 400457cf2c0e0386601ae1e00b80dab81d645fc1e90b2f520df4fb667a6507df
+2025-12-19 12:53:37 - 378x492 - INFO - main:240 - Phase 2: Service initialization with error handling
+2025-12-19 12:53:37 - 378x492 - INFO - proactive_monitoring:50 - Starting proactive monitoring for 99.99% uptime
+2025-12-19 12:53:37 - 378x492 - INFO - main:247 - ✅ Proactive monitoring started for 99.99% uptime
+2025-12-19 12:53:37 - 378x492 - INFO - monitoring_service:385 - Monitoring service background thread started
+2025-12-19 12:53:37 - 378x492 - INFO - main:252 - ℹ️ APM monitoring skipped (optional service)
+2025-12-19 12:53:37 - 378x492 - INFO - main:257 - Phase 3: Circuit breaker and resilience initialization
+2025-12-19 12:53:37 - 378x492 - INFO - main:265 - ✅ Circuit breaker 'database_connection' initialized
+2025-12-19 12:53:37 - 378x492 - INFO - main:265 - ✅ Circuit breaker 'external_api_calls' initialized
+2025-12-19 12:53:37 - 378x492 - INFO - main:270 - Phase 4: Final health verification
+2025-12-19 12:53:38 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
+2025-12-19 12:53:38 - 378x492 - INFO - main:280 - 🎉 Application startup completed successfully in 1.03s
+2025-12-19 12:53:38 - 378x492 - INFO - main:294 - Monitoring services initialized successfully
+2025-12-19 12:53:38 - 378x492 - INFO - main:303 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-19 12:53:38 - 378x492 - INFO - main:312 - 378x492 API startup completed successfully
+2025-12-19 12:53:39 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
+2025-12-19 12:53:40 - 378x492 - ERROR - proactive_monitoring:115 - Error performing health checks: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:53:40 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [ERROR]: Health monitoring failed: 'JSONResponse' object has no attribute 'get'
+INFO:     Application startup complete.
+2025-12-19 12:54:11 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
+WARNING:  WatchFiles detected changes in 'app/routers/cases.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-19 12:54:15 - 378x492 - INFO - main:327 - Initiating graceful shutdown of 378x492 Fraud Detection API
+2025-12-19 12:54:15 - 378x492 - INFO - main:333 - Phase 1: Stopping new request acceptance
+2025-12-19 12:54:15 - 378x492 - INFO - main:336 - Phase 2: Draining existing connections
+2025-12-19 12:54:15 - 378x492 - INFO - main:339 - Waiting 30s for active requests to complete
+2025-12-19 12:54:25 - 378x492 - INFO - main:343 - Phase 3: Stopping monitoring services
+2025-12-19 12:54:25 - 378x492 - INFO - proactive_monitoring:60 - Stopping proactive monitoring
+2025-12-19 12:54:25 - 378x492 - INFO - main:349 - ✅ Proactive monitoring stopped
+2025-12-19 12:54:25 - 378x492 - INFO - main:355 - ✅ Monitoring service stopped
+2025-12-19 12:54:25 - 378x492 - INFO - main:361 - ✅ Performance monitoring stopped
+2025-12-19 12:54:25 - 378x492 - INFO - main:366 - Phase 4: Closing database connections
+2025-12-19 12:54:25 - 378x492 - INFO - main:370 - ✅ Database connections prepared for cleanup
+2025-12-19 12:54:25 - 378x492 - INFO - main:375 - Phase 5: Stopping WebSocket and collaboration services
+2025-12-19 12:54:25 - 378x492 - INFO - main:378 - ✅ Collaboration WebSocket server stopped
+2025-12-19 12:54:25 - 378x492 - INFO - main:383 - Phase 6: Final cleanup and verification
+2025-12-19 12:54:25 - 378x492 - INFO - main:390 - ✅ Logging system flushed
+2025-12-19 12:54:25 - 378x492 - INFO - main:396 - 🎉 Graceful shutdown completed in 10.00s
+INFO:     Application shutdown complete.
+INFO:     Finished server process [79574]
+Audio/Video processing libraries not available: No module named 'pydub'
+2025-12-19 12:54:29 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+2025-12-19 12:54:30 - 378x492 - WARNING - main:485 - OpenTelemetry dependencies not found, skipping tracing setup
+2025-12-19 12:54:30 - 378x492 - WARNING - main:485 - OpenTelemetry dependencies not found, skipping tracing setup
+INFO:     Started server process [79651]
+INFO:     Waiting for application startup.
+2025-12-19 12:54:31 - 378x492 - INFO - main:172 - Starting 378x492 Fraud Detection API with 99.99% uptime target
+2025-12-19 12:54:31 - 378x492 - INFO - main:177 - Phase 1: Database initialization
+2025-12-19 12:54:31 - 378x492 - INFO - main:183 - Database tables created successfully (Development Mode)
+2025-12-19 12:54:31 - 378x492 - INFO - main:202 - Database health check passed/degraded on attempt 1
+2025-12-19 12:54:31 - 378x492 - INFO - main:230 - Boot Integrity Verified. Audit Root Hash: a2a7e68667d5822e3a48817ef92d08821be3ddd5efa237d5bd0ec5f6334805d0
+2025-12-19 12:54:31 - 378x492 - INFO - main:240 - Phase 2: Service initialization with error handling
+2025-12-19 12:54:31 - 378x492 - INFO - proactive_monitoring:50 - Starting proactive monitoring for 99.99% uptime
+2025-12-19 12:54:31 - 378x492 - INFO - main:247 - ✅ Proactive monitoring started for 99.99% uptime
+2025-12-19 12:54:31 - 378x492 - INFO - monitoring_service:385 - Monitoring service background thread started
+2025-12-19 12:54:31 - 378x492 - INFO - main:252 - ℹ️ APM monitoring skipped (optional service)
+2025-12-19 12:54:31 - 378x492 - INFO - main:257 - Phase 3: Circuit breaker and resilience initialization
+2025-12-19 12:54:31 - 378x492 - INFO - main:265 - ✅ Circuit breaker 'database_connection' initialized
+2025-12-19 12:54:31 - 378x492 - INFO - main:265 - ✅ Circuit breaker 'external_api_calls' initialized
+2025-12-19 12:54:31 - 378x492 - INFO - main:270 - Phase 4: Final health verification
+2025-12-19 12:54:32 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
+2025-12-19 12:54:32 - 378x492 - ERROR - main:292 - Final health check failed: 'JSONResponse' object is not subscriptable
+2025-12-19 12:54:32 - 378x492 - INFO - main:294 - Monitoring services initialized successfully
+2025-12-19 12:54:32 - 378x492 - INFO - main:303 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-19 12:54:32 - 378x492 - INFO - main:312 - 378x492 API startup completed successfully
+2025-12-19 12:54:33 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
+2025-12-19 12:54:34 - 378x492 - ERROR - proactive_monitoring:115 - Error performing health checks: 'JSONResponse' object has no attribute 'get'
+2025-12-19 12:54:34 - 378x492 - WARNING - proactive_monitoring:281 - 🚨 Proactive Alert [ERROR]: Health monitoring failed: 'JSONResponse' object has no attribute 'get'
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/routers/cases.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-12-19 12:54:54 - 378x492 - INFO - main:327 - Initiating graceful shutdown of 378x492 Fraud Detection API
+2025-12-19 12:54:54 - 378x492 - INFO - main:333 - Phase 1: Stopping new request acceptance
+2025-12-19 12:54:54 - 378x492 - INFO - main:336 - Phase 2: Draining existing connections
+2025-12-19 12:54:54 - 378x492 - INFO - main:339 - Waiting 30s for active requests to complete
+2025-12-19 12:55:04 - 378x492 - INFO - main:343 - Phase 3: Stopping monitoring services
+2025-12-19 12:55:04 - 378x492 - INFO - proactive_monitoring:60 - Stopping proactive monitoring
+2025-12-19 12:55:04 - 378x492 - INFO - main:349 - ✅ Proactive monitoring stopped
+2025-12-19 12:55:04 - 378x492 - INFO - main:355 - ✅ Monitoring service stopped
+2025-12-19 12:55:04 - 378x492 - INFO - main:361 - ✅ Performance monitoring stopped
+2025-12-19 12:55:04 - 378x492 - INFO - main:366 - Phase 4: Closing database connections
+2025-12-19 12:55:04 - 378x492 - INFO - main:370 - ✅ Database connections prepared for cleanup
+2025-12-19 12:55:04 - 378x492 - INFO - main:375 - Phase 5: Stopping WebSocket and collaboration services
+2025-12-19 12:55:04 - 378x492 - INFO - main:378 - ✅ Collaboration WebSocket server stopped
+2025-12-19 12:55:04 - 378x492 - INFO - main:383 - Phase 6: Final cleanup and verification
+2025-12-19 12:55:04 - 378x492 - INFO - main:390 - ✅ Logging system flushed
+2025-12-19 12:55:04 - 378x492 - INFO - main:396 - 🎉 Graceful shutdown completed in 10.00s
+INFO:     Application shutdown complete.
+INFO:     Finished server process [79651]
+Audio/Video processing libraries not available: No module named 'pydub'
+2025-12-19 12:55:07 - 378x492 - INFO - monitoring_service:173 - Restored monitoring state from disk
+2025-12-19 12:55:07 - 378x492 - WARNING - main:485 - OpenTelemetry dependencies not found, skipping tracing setup
+2025-12-19 12:55:08 - 378x492 - WARNING - main:485 - OpenTelemetry dependencies not found, skipping tracing setup
+INFO:     Started server process [79700]
+INFO:     Waiting for application startup.
+2025-12-19 12:55:08 - 378x492 - INFO - main:172 - Starting 378x492 Fraud Detection API with 99.99% uptime target
+2025-12-19 12:55:08 - 378x492 - INFO - main:177 - Phase 1: Database initialization
+2025-12-19 12:55:08 - 378x492 - INFO - main:183 - Database tables created successfully (Development Mode)
+2025-12-19 12:55:08 - 378x492 - INFO - main:202 - Database health check passed/degraded on attempt 1
+2025-12-19 12:55:08 - 378x492 - INFO - main:230 - Boot Integrity Verified. Audit Root Hash: 42c09df819c8131d4aad4c581b524709db8201f45c86b523c713ac5d925159b0
+2025-12-19 12:55:08 - 378x492 - INFO - main:240 - Phase 2: Service initialization with error handling
+2025-12-19 12:55:08 - 378x492 - INFO - proactive_monitoring:50 - Starting proactive monitoring for 99.99% uptime
+2025-12-19 12:55:08 - 378x492 - INFO - main:247 - ✅ Proactive monitoring started for 99.99% uptime
+2025-12-19 12:55:08 - 378x492 - INFO - monitoring_service:385 - Monitoring service background thread started
+2025-12-19 12:55:08 - 378x492 - INFO - main:252 - ℹ️ APM monitoring skipped (optional service)
+2025-12-19 12:55:08 - 378x492 - INFO - main:257 - Phase 3: Circuit breaker and resilience initialization
+2025-12-19 12:55:08 - 378x492 - INFO - main:265 - ✅ Circuit breaker 'database_connection' initialized
+2025-12-19 12:55:08 - 378x492 - INFO - main:265 - ✅ Circuit breaker 'external_api_calls' initialized
+2025-12-19 12:55:08 - 378x492 - INFO - main:270 - Phase 4: Final health verification
+2025-12-19 12:55:09 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
+2025-12-19 12:55:09 - 378x492 - INFO - main:280 - 🎉 Application startup completed successfully in 1.02s
+2025-12-19 12:55:09 - 378x492 - INFO - main:294 - Monitoring services initialized successfully
+2025-12-19 12:55:09 - 378x492 - INFO - main:303 - Collaboration WebSocket server starting on ws://localhost:8080
+2025-12-19 12:55:09 - 378x492 - INFO - main:312 - 378x492 API startup completed successfully
+2025-12-19 12:55:10 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
+INFO:     Application startup complete.
+2025-12-19 12:55:42 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
+2025-12-19 12:56:10 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
+2025-12-19 12:56:10 - 378x492 - ERROR - performance_monitor:74 - Performance monitoring error: unsupported operand type(s) for /: 'tuple' and 'int'
+2025-12-19 12:56:14 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79577)
+2025-12-19 12:56:46 - 378x492 - WARNING - performance_monitor:101 - Failed to collect network_connections: (pid=79434)

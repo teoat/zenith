@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 
 export interface DataConsistencyCheck {
   id: string;
@@ -94,10 +95,10 @@ class ReliabilityManager {
         isActive: false,
         priority: 1,
         execute: async () => {
-          console.log('Executing database failover...');
+          secureLogger.info('RELIABILITY', 'Executing database failover...');
           // Implementation would switch database connections
           await new Promise(resolve => setTimeout(resolve, 2000));
-          console.log('Database failover completed');
+          secureLogger.info('RELIABILITY', 'Database failover completed');
         }
       },
       {
@@ -107,12 +108,12 @@ class ReliabilityManager {
         isActive: false,
         priority: 2,
         execute: async () => {
-          console.log('Executing cache invalidation...');
+          secureLogger.info('RELIABILITY', 'Executing cache invalidation...');
           try {
             await fetch('/api/cache/invalidate', { method: 'POST' });
-            console.log('Cache invalidation completed');
-          } catch (_error) {
-            console.error('Cache invalidation failed:', error);
+            secureLogger.info('RELIABILITY', 'Cache invalidation completed');
+          } catch (error) {
+            secureLogger.error('RELIABILITY', 'Cache invalidation failed', { error: error instanceof Error ? error.message : String(error) });
           }
         }
       },
@@ -123,12 +124,12 @@ class ReliabilityManager {
         isActive: false,
         priority: 3,
         execute: async () => {
-          console.log('Executing service restart...');
+          secureLogger.info('RELIABILITY', 'Executing service restart...');
           try {
             await fetch('/api/admin/restart-services', { method: 'POST' });
-            console.log('Service restart completed');
-          } catch (_error) {
-            console.error('Service restart failed:', error);
+            secureLogger.info('RELIABILITY', 'Service restart completed');
+          } catch (error) {
+            secureLogger.error('RELIABILITY', 'Service restart failed', { error: error instanceof Error ? error.message : String(error) });
           }
         }
       }
@@ -153,7 +154,7 @@ class ReliabilityManager {
         };
         results.set(id, updatedCheck);
         this.consistencyChecks.set(id, updatedCheck);
-      } catch (_error) {
+      } catch (error) {
         const updatedCheck: DataConsistencyCheck = {
           ...check,
           lastChecked: Date.now(),
@@ -173,7 +174,7 @@ class ReliabilityManager {
     const failedChecks = Array.from(checkResults.values()).filter(check => check.lastResult === false);
 
     if (failedChecks.length > 0) {
-      console.warn(`🚨 ${failedChecks.length} consistency checks failed, initiating failover...`);
+      secureLogger.warn('RELIABILITY', `${failedChecks.length} consistency checks failed, initiating failover...`);
 
       // Execute failover strategies in priority order
       const strategies = Array.from(this.failoverStrategies.values())
@@ -181,7 +182,7 @@ class ReliabilityManager {
 
       for (const strategy of strategies) {
         try {
-          console.log(`Executing failover strategy: ${strategy.name}`);
+          secureLogger.info('RELIABILITY', `Executing failover strategy: ${strategy.name}`);
           await strategy.execute();
           strategy.isActive = true;
           this.failoverStrategies.set(strategy.id, strategy);
@@ -191,11 +192,11 @@ class ReliabilityManager {
           const stillFailed = Array.from(recheckResults.values()).filter(check => check.lastResult === false);
 
           if (stillFailed.length === 0) {
-            console.log('✅ Failover successful, all checks now passing');
+            secureLogger.info('RELIABILITY', 'Failover successful, all checks now passing');
             break;
           }
-        } catch (_error) {
-          console.error(`❌ Failover strategy ${strategy.name} failed:`, error);
+        } catch (error) {
+          secureLogger.error('RELIABILITY', `Failover strategy ${strategy.name} failed`, { error: error instanceof Error ? error.message : String(error) });
         }
       }
     }
@@ -205,13 +206,13 @@ class ReliabilityManager {
     if (this.isMonitoring) return;
 
     this.isMonitoring = true;
-    console.log('🔄 Starting reliability monitoring...');
+    secureLogger.info('RELIABILITY', 'Starting reliability monitoring...');
 
     this.checkInterval = setInterval(async () => {
       try {
         await this.executeFailoverIfNeeded();
-      } catch (_error) {
-        console.error('Reliability monitoring error:', error);
+      } catch (error) {
+        secureLogger.error('RELIABILITY', 'Reliability monitoring error', { error: error instanceof Error ? error.message : String(error) });
       }
     }, intervalMs);
   }
@@ -222,7 +223,7 @@ class ReliabilityManager {
       this.checkInterval = null;
     }
     this.isMonitoring = false;
-    console.log('⏹️ Stopped reliability monitoring');
+    secureLogger.info('RELIABILITY', 'Stopped reliability monitoring');
   }
 
   getConsistencyChecks(): DataConsistencyCheck[] {

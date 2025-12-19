@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import { secureLogger } from '../utils/secureLogger';
+import { secureRandom } from '../utils/secureRandom';
 
 export interface TraceSpan {
   id: string;
@@ -84,7 +86,7 @@ class AdvancedMonitoring {
 
   private sendTrace(span: TraceSpan): void {
     // In a real implementation, this would send to Jaeger, Zipkin, or similar
-    console.log('📊 Trace completed:', {
+    secureLogger.info('MONITORING', 'Trace completed', {
       id: span.id,
       name: span.name,
       duration: span.duration,
@@ -117,7 +119,7 @@ class AdvancedMonitoring {
   }
 
   private sendMetric(metric: BusinessMetric): void {
-    console.log('📈 Metric recorded:', metric);
+    secureLogger.info('MONITORING', 'Metric recorded', metric);
   }
 
   // Performance Baselines
@@ -210,7 +212,7 @@ class AdvancedMonitoring {
   }
 
   private sendAlert(alert: AnomalyAlert): void {
-    console.warn('🚨 Anomaly detected:', alert);
+    secureLogger.warn('MONITORING', 'Anomaly detected', alert);
 
     // In a real implementation, this would send notifications
     // via email, Slack, PagerDuty, etc.
@@ -218,7 +220,7 @@ class AdvancedMonitoring {
 
   // Utility methods
   private generateId(): string {
-    return Math.random().toString(36).substring(2, 11);
+    return secureRandom.random().toString(36).substring(2, 11);
   }
 
   // Getters for UI
@@ -305,7 +307,7 @@ export const withTracing = <T extends any[], R>(
       const result = fn(...args);
       advancedMonitoring.endTrace(spanId);
       return result;
-    } catch (_error) {
+    } catch (error) {
       advancedMonitoring.endTrace(spanId);
       throw error;
     }

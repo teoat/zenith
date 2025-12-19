@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ReconciliationItem } from '../../lib/api';
+import type { ReconciliationItem } from '../../lib/api';
 import { TransactionCard } from './TransactionCard';
 
 interface MatchCanvasProps {

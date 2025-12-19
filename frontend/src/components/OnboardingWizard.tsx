@@ -1,12 +1,12 @@
 import React from 'react';
-import FrienlyWelcome from './FrienlyWelcome';
+import FriendlyWelcome from './FriendlyWelcome';
 import RoleSelection from './RoleSelection';
-import RookieChecklist from './RookieChecklist';
+import RookieChecklist from './common/RookieChecklist';
 
 const OnboardingWizard: React.FC = () => {
   return (
     <section data-testid="onboarding-wizard">
-      <FrienlyWelcome name="New User" />
+      <FriendlyWelcome name="New User" />
       <RoleSelection />
       <RookieChecklist />
     </section>

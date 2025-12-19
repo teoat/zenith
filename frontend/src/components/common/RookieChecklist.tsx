@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, Circle, Award } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
+// Import service with fallback in case of module resolution issues during refactor - assuming services exist based on diagnosis
+import { submitRookieChecklist, fetchRookieChecklist } from '../../services/onboarding';
+import { secureLogger } from '../../utils/secureLogger';
+
+import './RookieChecklist.css';
 
 interface ChecklistItem {
   id: string;
@@ -13,7 +19,7 @@ interface RookieChecklistProps {
   onComplete?: () => void;
 }
 
-// Get initial items with saved progress
+// Get initial items with saved progress (fallback to local if auth fails or offline)
 const getInitialItems = (): ChecklistItem[] => {
   const defaultItems: ChecklistItem[] = [
     {
@@ -64,23 +70,64 @@ const getInitialBadgeState = (): boolean => {
 };
 
 const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
+  const { user } = useAuth();
   const [items, setItems] = useState<ChecklistItem[]>(getInitialItems);
   const [showBadge, setShowBadge] = useState(getInitialBadgeState);
+  const [synced, setSynced] = useState(false);
+
+  // Sync with backend on mount
+  useEffect(() => {
+    async function loadFromBackend() {
+      if (user?.id) {
+        try {
+          const data = await fetchRookieChecklist(user.id);
+          if (data && data.items && Array.isArray(data.items)) {
+            setItems(prev => prev.map(item => ({
+              ...item,
+              completed: data.items.includes(item.id) || item.completed
+            })));
+            setSynced(true);
+          }
+        } catch (err) {
+          secureLogger.warn('Failed to sync checklist from backend, using local storage', err);
+        }
+      }
+    }
+    if (!synced) {
+      loadFromBackend();
+    }
+  }, [user?.id, synced]);
 
   useEffect(() => {
-    // Save progress to localStorage
+    // Save progress to localStorage (always as backup)
     const progress = items.reduce((acc, item) => {
       acc[item.id] = item.completed;
       return acc;
     }, {} as Record<string, boolean>);
     localStorage.setItem('rookieChecklist', JSON.stringify(progress));
-  }, [items]);
+
+    // Sync to backend if logged in
+    const syncToBackend = async () => {
+       if (user?.id) {
+         try {
+           const completedIds = items.filter(i => i.completed).map(i => i.id);
+           await submitRookieChecklist({ user_id: user.id, items: completedIds });
+         } catch (err) {
+           secureLogger.error("Failed to sync checklist to backend", err);
+         }
+       }
+    };
+
+    if (synced) { 
+        syncToBackend();
+    }
+
+  }, [items, user?.id, synced]);
 
   // Check completion and show badge
   useEffect(() => {
     const allCompleted = items.every(item => item.completed);
     if (allCompleted && !showBadge) {
-      // Use requestAnimationFrame to avoid sync setState in effect
       requestAnimationFrame(() => {
         setShowBadge(true);
         setTimeout(() => {
@@ -94,6 +141,7 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
     setItems(prev => prev.map(item =>
       item.id === id ? { ...item, completed: !item.completed } : item
     ));
+    setSynced(true);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, id: string) => {
@@ -108,14 +156,14 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
 
   if (showBadge) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 text-center max-w-md mx-4">
-          <div className="mb-4">
+      <div className="badge-overlay">
+        <div className="badge-card">
+          <div className="badge-icon-container">
             <Award className="w-16 h-16 text-yellow-500 mx-auto" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Congratulations!</h2>
           <p className="text-gray-600 mb-4">You've earned the</p>
-          <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-4 py-2 rounded-full font-bold text-lg mb-4">
+          <div className="badge-reward">
             🏆 Level 1 Investigator
           </div>
           <p className="text-sm text-gray-500">You're ready to tackle real fraud cases!</p>
@@ -132,8 +180,11 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
           <span className="text-sm text-gray-600">{completedCount}/{items.length}</span>
           <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-blue-500 transition-all duration-300"
-              style={{ width: `${progress}%` }}
+              className="rookie-progress-bar"
+              style={{ '--progress': `${progress}%` } as React.CSSProperties}
+              aria-valuenow={progress}
+              aria-valuemin={0}
+              aria-valuemax={100}
             />
           </div>
         </div>

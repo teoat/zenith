@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 import pyotp
@@ -45,7 +46,14 @@ class RegisterRequest(BaseModel):
 
 # ===== AUTHENTICATION ENDPOINTS =====
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+class RegisterResponse(BaseModel):
+    user_id: str
+    username: str
+    email: str
+    message: str
+    created_at: datetime
+
+@router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
 async def register(user_data: RegisterRequest):
     """
     Register a new user with password strength validation
@@ -102,7 +110,65 @@ async def register(user_data: RegisterRequest):
         )
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=TokenResponse, responses={
+    200: {
+        "description": "Login successful",
+        "content": {
+            "application/json": {
+                "example": {
+                    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "token_type": "bearer",
+                    "expires_in": 1800
+                }
+            }
+        }
+    },
+    401: {
+        "description": "Authentication failed",
+        "content": {
+            "application/json": {
+                "example": {
+                    "error": {
+                        "type": "authentication_error",
+                        "status_code": 401,
+                        "detail": "Invalid username or password",
+                        "request_id": "req_12345",
+                        "timestamp": "2024-12-19T06:20:00Z",
+                        "path": "/api/v1/auth/login",
+                        "method": "POST",
+                        "details": []
+                    }
+                }
+            }
+        }
+    },
+    400: {
+        "description": "MFA required but not provided",
+        "content": {
+            "application/json": {
+                "example": {
+                    "error": {
+                        "type": "mfa_required",
+                        "status_code": 400,
+                        "detail": "MFA code required for this user",
+                        "request_id": "req_12345",
+                        "timestamp": "2024-12-19T06:20:00Z",
+                        "path": "/api/v1/auth/login",
+                        "method": "POST",
+                        "details": [
+                            {
+                                "field": "mfa_code",
+                                "message": "Required for users with MFA enabled",
+                                "code": "mfa_required"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+})
 async def login(login_data: LoginRequest, request: Request):
     """
     Authenticate user and return JWT tokens.
@@ -153,7 +219,7 @@ async def login(login_data: LoginRequest, request: Request):
                 user_id=user.id,
                 event_type="login",
                 metadata={
-                    "role": user.role.value if user.role else None,
+                    "role": user.role if user.role else None,
                     "mfa": user.mfa_enabled,
                 },
             )
@@ -165,7 +231,7 @@ async def login(login_data: LoginRequest, request: Request):
             {
                 "sub": user.id,
                 "username": user.username,
-                "role": user.role.value if hasattr(user.role, 'value') else user.role,
+                "role": user.role,
                 "mfa_verified": user.mfa_enabled,  # Add claim
             }
         )
@@ -184,7 +250,11 @@ class MFAVerifyRequest(BaseModel):
     code: str
 
 
-@router.get("/mfa/setup")
+class MFASetupResponse(BaseModel):
+    secret: str
+    otpauth_url: str
+
+@router.get("/mfa/setup", response_model=MFASetupResponse)
 async def mfa_setup(current_user: User = Depends(auth_service.get_current_user)):
     """Generate MFA secret and QR code URI for setup"""
     if current_user.mfa_enabled:
@@ -211,7 +281,11 @@ async def mfa_setup(current_user: User = Depends(auth_service.get_current_user))
     return {"secret": secret, "otpauth_url": uri}
 
 
-@router.post("/mfa/verify")
+class MFAVerifyResponse(BaseModel):
+    verified: bool
+    message: str
+
+@router.post("/mfa/verify", response_model=MFAVerifyResponse)
 async def mfa_verify(
     verify_data: MFAVerifyRequest,
     current_user: User = Depends(auth_service.get_current_user),
@@ -268,7 +342,7 @@ async def refresh_token(request_data: dict = Body(...)):
         if user:
              claims.update({
                 "username": user.username,
-                "role": user.role.value if user.role else None,
+                "role": user.role,
                 "mfa_verified": user.mfa_enabled 
              })
         else:
@@ -286,7 +360,18 @@ async def refresh_token(request_data: dict = Body(...)):
         raise HTTPException(status_code=401, detail="Invalid refresh token")
 
 
-@router.get("/me")
+class UserProfileResponse(BaseModel):
+    id: str
+    username: str
+    email: str
+    full_name: str
+    role: str
+    is_active: bool
+    mfa_enabled: bool
+    created_at: datetime
+    last_login: Optional[datetime]
+
+@router.get("/me", response_model=UserProfileResponse)
 async def get_current_user_profile(current_user: User = Depends(auth_service.get_current_user)):
     """Get current user profile"""
     return {

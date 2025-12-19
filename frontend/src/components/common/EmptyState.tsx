@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, Inbox } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 interface EmptyStateProps {
     title?: string;

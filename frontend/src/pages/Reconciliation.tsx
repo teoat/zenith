@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Download, CheckCircle, AlertTriangle } from 'lucide-react';
-// import { AccessibleButton } from '../components/ui/AccessibleButton';
-import { useFormatters } from '../providers/LocaleProvider';
-import { useToast } from '../providers/ToastProvider';
 import { MatchCanvas } from '../components/recon/MatchCanvas';
 import { ExceptionQueue } from '../components/recon/ExceptionQueue';
-import { api, ReconciliationItem } from '../lib/api';
+import type { ReconciliationItem } from '../lib/api';
 import { EvidenceSpotlight } from '../components/common/EvidenceSpotlight';
 import { useReconciliationStore } from '../store/reconciliationStore';
+import { useFormatters } from '../providers/LocaleProvider';
 
 const Reconciliation = () => {
   const [selectedItem, setSelectedItem] = useState<ReconciliationItem | null>(null);
@@ -32,7 +30,7 @@ const Reconciliation = () => {
   };
 
   const handleDownloadReport = () => {
-    console.log('Download reconciliation report');
+    // secureLogger.info('Download reconciliation report');
     // Mock action
   };
 
@@ -73,7 +71,7 @@ const Reconciliation = () => {
                  <MatchCanvas 
                     bankItems={bankItems}
                     ledgerItems={ledgerItems}
-                    onMatch={(sourceId, _targetId) => reconcileItem(sourceId)} 
+                    onMatch={(sourceId, _targetId) => { void reconcileItem(sourceId); }} 
                     className="flex-1 min-h-0"
                  />
             </div>
@@ -142,7 +140,7 @@ const Reconciliation = () => {
 
                  <ExceptionQueue 
                     items={exceptionItems} 
-                    onFlag={(id) => flagItem(id)} 
+                    onFlag={(id) => { void flagItem(id); }} 
                     onShowEvidence={handleShowEvidence}
                 />
             </div>

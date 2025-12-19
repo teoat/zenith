@@ -4,13 +4,14 @@
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { Progress } from '@/components/ui/Progress';
 // Tabs available but not currently used
-// import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+// import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { secureRandom } from '../../utils/secureRandom'; // Module not found
 import {
   Brain,
   TrendingUp,
@@ -132,9 +133,9 @@ const generateMockTrends = (): RiskTrend[] => {
   for (let i = 0; i < 30; i++) {
     trends.push({
       date: new Date(baseDate + i * 24 * 60 * 60 * 1000),
-      riskScore: 45 + Math.random() * 30 + (i > 20 ? 15 : 0),
-      anomalyScore: 20 + Math.random() * 40,
-      transactionVolume: 1000000 + Math.random() * 500000
+      riskScore: 45 + secureRandom.random() * 30 + (i > 20 ? 15 : 0),
+      anomalyScore: 20 + secureRandom.random() * 40,
+      transactionVolume: 1000000 + secureRandom.random() * 500000
     });
   }
   

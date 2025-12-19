@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { AlertItem } from '../../../lib/api';
+import type { AlertItem } from '../../../lib/api';
 import ForceGraph2D from 'react-force-graph-2d';
 
 interface GraphTabProps {

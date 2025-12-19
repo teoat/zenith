@@ -1,5 +1,5 @@
 import { request } from './client';
-import { GraphData, CentralEntity, SuspiciousPattern, GraphSearchResults } from '../types/api';
+import type { GraphData, CentralEntity, SuspiciousPattern, GraphSearchResults } from '../types/api';
 
 export const graphService = {
   getGraphData: async (): Promise<any> => {

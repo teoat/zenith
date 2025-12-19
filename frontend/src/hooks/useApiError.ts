@@ -5,7 +5,8 @@
  */
 
 import { useState, useCallback } from 'react';
-import { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import type { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import { secureLogger } from '../utils/secureLogger';
 
 interface ErrorDetails {
   code?: string;
@@ -39,7 +40,7 @@ export const useApiError = () => {
   const [error, setError] = useState<ErrorDetails | null>(null);
 
   const handleError = useCallback((err: unknown) => {
-    console.error('API Error:', err);
+    secureLogger.error('API Error:', err);
 
     // Type guard for error with response
     const axiosError = err as CustomAxiosError;
@@ -88,7 +89,7 @@ export const setupErrorInterceptor = (axiosInstance: AxiosInstance): void => {
     (response: AxiosResponse) => response,
     (error: AxiosError<ApiError>) => {
       // Log for debugging
-      console.error('[API Error]', {
+      secureLogger.error('[API Error]', {
         url: error.config?.url,
         method: error.config?.method,
         status: error.response?.status,

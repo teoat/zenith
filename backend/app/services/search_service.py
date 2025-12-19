@@ -1,7 +1,7 @@
 
 import logging
 import asyncio
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from app.services.ai.ai_service import get_ai_service
 
 logger = logging.getLogger(__name__)
@@ -68,6 +68,30 @@ class EvidenceSearchIndex:
         except Exception as e:
             logger.error(f"Sync indexing failed for {file_id}: {e}")
             return False
+
+    async def search_evidence(self, query: str, limit: int = 20, filters: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """Search evidence using AI semantic search"""
+        try:
+            ai_service = await get_ai_service()
+            return await ai_service.semantic_search(query, limit, filters)
+        except Exception as e:
+            logger.error(f"Search evidence failed: {e}")
+            return []
+
+    def get_evidence_stats(self) -> Dict[str, Any]:
+        """Get stats about indexed evidence"""
+        try:
+            # We can't easily await here since it's sync. 
+            # But we can access the ai_service global if initialized, or mock.
+            # Ideally this should be async or use the global instance directly.
+            from app.services.ai.ai_service import ai_service
+            return {
+                "total_documents": len(ai_service.vector_store),
+                "initialized": ai_service.initialized
+            }
+        except Exception as e:
+             logger.error(f"Get stats failed: {e}")
+             return {}
 
 evidence_search_index = EvidenceSearchIndex()
 search_service = evidence_search_index # Alias for broad usage

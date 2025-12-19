@@ -8,13 +8,14 @@ import {
 } from "react-pdf-highlighter-extended";
 import { pdfjs } from 'react-pdf';
 import { api } from "../../lib/api";
+import { secureLogger } from '../../utils/secureLogger';
 import "./PdfViewer.css";
 
 // Ensure worker is loaded for PDF rendering
 try {
     pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 } catch (e) {
-    console.error("Failed to set PDF worker", e);
+    secureLogger.error("Failed to set PDF worker", e);
 }
 
 // Interfaces
@@ -92,7 +93,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ url, evidenceId, onHighlight }) =
             const data = await api.getHighlights(evidenceId);
             setHighlights(data || []);
         } catch (err) {
-            console.error('Failed to load highlights:', err);
+            secureLogger.error('Failed to load highlights:', err);
         } finally {
             setIsLoadingHighlights(false);
         }
@@ -108,7 +109,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ url, evidenceId, onHighlight }) =
         try {
             await api.saveHighlight(evidenceId, newHighlight);
         } catch (err) {
-            console.error('Failed to persist highlight:', err);
+            secureLogger.error('Failed to persist highlight:', err);
         }
     }
     

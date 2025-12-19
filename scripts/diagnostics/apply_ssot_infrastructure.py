@@ -30,8 +30,8 @@ def generate_docker_compose_from_ssot():
             "infrastructure.backend.redis_url": "redis://redis:6379/0",
             "infrastructure.backend.environment": "development",
             "infrastructure.backend.debug": True,
-            "infrastructure.backend.jwt_secret": "docker-dev-secret-change-prod",
-            "infrastructure.backend.encryption_key": "docker-dev-key-change-prod",
+            "infrastructure.backend.jwt_secret": "CHANGE_THIS_SSOT_JWT_SECRET",
+            "infrastructure.backend.encryption_key": "CHANGE_THIS_SSOT_ENCRYPTION_KEY",
             "infrastructure.backend.volume_mapping": "./backend:/app",
             "infrastructure.backend.command": "uvicorn main:app --host 0.0.0.0 --port 8000 --reload",
             "infrastructure.backend.healthcheck": [
@@ -100,7 +100,7 @@ def generate_docker_compose_from_ssot():
                         ),
                         "ENCRYPTION_KEY": ssot_manager.get_value(
                             "infrastructure.backend.encryption_key",
-                            "docker-dev-key-change-prod",
+                            "CHANGE_THIS_SSOT_ENCRYPTION_KEY",
                         ),
                         "PERFECTION_LEVEL": ssot_manager.get_value(
                             "system.perfection_level", "infinite"

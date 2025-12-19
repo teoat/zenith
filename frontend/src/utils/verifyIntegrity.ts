@@ -1,3 +1,5 @@
+import { secureLogger } from './secureLogger';
+
 const verifyIntegrity = async (expectedHash: string) => {
   if (process.env.NODE_ENV !== 'production') {
     return;
@@ -15,14 +17,16 @@ const verifyIntegrity = async (expectedHash: string) => {
       .join('');
 
     if (currentHash !== expectedHash) {
-      console.error('Integrity check failed: index.html has been tampered with!');
-      document.body.innerHTML = '<h1>Integrity check failed! The application may have been tampered with.</h1>';
+      secureLogger.error('SECURITY', 'Integrity check failed: index.html has been tampered with!', { expectedHash, currentHash });
+      document.body.textContent = 'Integrity check failed! The application may have been tampered with.';
       window.location.href = 'about:blank'; // Redirect to a blank page
     }
-  } catch (_error) {
-    console.error('Error during integrity verification:', error);
+  } catch (error) {
+    secureLogger.error('SECURITY', 'Error during integrity verification', { 
+      error: error instanceof Error ? error.message : String(error) 
+    });
     // Potentially take action even on error if it suggests a blocked request or other issue
-    document.body.innerHTML = '<h1>Application integrity check failed due to an error.</h1>';
+    document.body.textContent = 'Application integrity check failed due to an error.';
     window.location.href = 'about:blank';
   }
 };

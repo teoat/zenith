@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertItem } from '../../../lib/api';
+import type { AlertItem } from '../../../lib/api';
 import { useFormatters } from '../../../providers/LocaleProvider';
 import { Building2, DollarSign, MapPin } from 'lucide-react';
 

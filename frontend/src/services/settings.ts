@@ -1,5 +1,5 @@
 import { request, isElectron } from './client';
-import { AppSettings, AuditLogEntry, SecurityStats } from '../types/api';
+import type { AppSettings, AuditLogEntry, SecurityStats } from '../types/api';
 
 export const settingsService = {
   getSettings: async (): Promise<AppSettings> => {

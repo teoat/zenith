@@ -1,6 +1,7 @@
 // frontend/src/components/ai/AIIntelligenceDashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { secureLogger } from '../../utils/secureLogger';
 import {
   Brain,
   Network,
@@ -107,8 +108,8 @@ const AIIntelligenceDashboard: React.FC = () => {
       setMetrics(metricsData);
       setFederatedNodes(nodesData);
       setModelVersions(modelsData);
-    } catch (_error) {
-      console.error('Failed to load AI dashboard data:', error);
+    } catch (error) {
+      secureLogger.error('Failed to load AI dashboard data:', error);
     } finally {
       setLoading(false);
     }

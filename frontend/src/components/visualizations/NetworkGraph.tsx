@@ -1,4 +1,5 @@
-import React, { Suspense, useMemo, useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
+import { Suspense, useMemo, useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import { useResizeObserver } from '@/hooks/useResizeObserver';
 import { Skeleton } from '@/components/ui/Skeleton';
 
@@ -69,6 +70,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
   }, [data]);
 
   // Keyboard navigation
+  // Keyboard navigation
   const getAdjacentNodes = useCallback((nodeId: string) => {
     if (!data) return [];
     const links = data.links.filter(l =>
@@ -103,7 +105,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
           e.preventDefault();
           focusNextNode();
           break;
-        case 'Tab':
+        case 'Tab': {
           e.preventDefault();
           const currentIndex = data.nodes.findIndex(n => n.id === focusedNodeId);
           if (currentIndex >= 0) {
@@ -111,12 +113,14 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
             setFocusedNodeId(data.nodes[nextIndex].id);
           }
           break;
+        }
         case 'Enter':
-        case ' ':
+        case ' ': {
           e.preventDefault();
           const node = data.nodes.find(n => n.id === focusedNodeId);
           if (node) onNodeClick?.(node);
           break;
+        }
         case 'Escape':
           setFocusedNodeId(null);
           break;
@@ -136,11 +140,26 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     }
   }, [data, focusedNodeId]);
 
+  useLayoutEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.style.setProperty('--height', `${height}px`);
+    }
+  }, [height]);
+
+  // Handle no-data container after render
+  useLayoutEffect(() => {
+    const el = document.getElementById('network-graph-no-data');
+    if (el) {
+      el.style.setProperty('--height', `${finalHeight}px`);
+      el.style.setProperty('--width', `${finalWidth}px`);
+    }
+  }, [finalHeight, finalWidth, data]);
+
   if (!data || !data.nodes.length) {
     return (
       <div
-        className="flex items-center justify-center border border-slate-200 dark:border-slate-800 rounded bg-slate-50 dark:bg-slate-900"
-        style={{ height: finalHeight, width: finalWidth }}
+        className="flex items-center justify-center border border-slate-200 dark:border-slate-800 rounded bg-slate-50 dark:bg-slate-900 fill-width fill-height"
+        id="network-graph-no-data"
       >
         <p className="text-slate-500">No data to display</p>
       </div>
@@ -169,8 +188,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
   return (
     <div
       ref={containerRef}
-      className="border border-slate-200 dark:border-slate-800 rounded overflow-hidden bg-white dark:bg-slate-950 network-graph-container"
-      style={{ '--container-height': `${height}px` } as React.CSSProperties}
+      className="border border-slate-200 dark:border-slate-800 rounded overflow-hidden bg-white dark:bg-slate-950 network-graph-container fill-height"
     >
       <Suspense fallback={<Skeleton className="w-full h-full" />}>
         {mode === '3d' ? (

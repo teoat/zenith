@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 import { api } from '../lib/api';
-import { User } from '../types/schema';
+import type { User } from '../types/schema';
 import { getElectronAPI, isElectron } from '../utils/electron';
-import { AuthContext, LoginCredentials } from '../context/AuthContext';
+import type { LoginCredentials } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import { errorReporting } from '../services/errorReporting';
 
-// Set to true to bypass authentication for debugging purposes
-const isDebugging = false;
+// Use environment variable for development mode - NEVER bypass auth in production
+const isDevelopment = import.meta.env.DEV;
+const BYPASS_AUTH = import.meta.env.VITE_BYPASS_AUTH === 'true' && isDevelopment;
+
+if (BYPASS_AUTH) {
+  secureLogger.warn('⚠️ WARNING: Auth bypass enabled for development only');
+}
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -18,9 +25,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let unsubscribeAuth: (() => void) | undefined;
 
     const initAuth = async () => {
-      // TEMPORARY: Bypass auth for debugging
-      if (isDebugging) {
-        console.log('[DEV] Auth bypassed');
+      // Development-only auth bypass (requires VITE_BYPASS_AUTH=true in .env)
+      if (BYPASS_AUTH) {
+        secureLogger.warn('AUTH', 'Auth bypassed - Debug Mode Active');
         setUser({
           id: 'dev-user',
           email: 'dev@local',
@@ -33,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       try {
-        if (!isDebugging && isElectron()) {
+        if (!BYPASS_AUTH && isElectron()) {
           const electronAPI = getElectronAPI();
           
           if (electronAPI) {
@@ -78,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (electronAPI.on) {
               unsubscribeAuth = electronAPI.on('auth:changed', (...args: unknown[]) => {
                 const data = args[0] as { isAuthenticated: boolean } | undefined;
-                console.log('Auth state changed from Electron:', data);
+                secureLogger.info('AUTH', 'Auth state changed from Electron', { isAuthenticated: data?.isAuthenticated });
                 if (data?.isAuthenticated) {
                    const storedRole = localStorage.getItem('firstUserRole') as User['role'] || 'ADMIN';
                    setUser({
@@ -96,8 +103,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
           }
 
-        } else if (!isDebugging) {
-          console.log('[DEV] Running in browser mode, skipping Electron auth checks');
+        } else if (!BYPASS_AUTH) {
+          secureLogger.debug('AUTH', 'Running in browser mode, skipping Electron auth checks');
         }
 
         if (token) {
@@ -114,7 +121,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                  });
              }
           } catch (e) {
-             console.warn('Failed to fetch user details, using fallback', e);
+             secureLogger.warn('AUTH', 'Failed to fetch user details, using fallback', { 
+               error: e instanceof Error ? e.message : String(e) 
+             });
              // Fallback: decode token or use placeholder if token exists
              // Ideally we should logout if token is invalid, but for now let's persist session-like state
              // assuming if token is there, we are logged in.
@@ -148,7 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           context: { error: errorMessage }
         });
       } finally {
-        if (!isDebugging) {
+        if (!BYPASS_AUTH) {
           setIsLoading(false);
         }
       }
@@ -194,8 +203,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: credentials.email.split('@')[0] // Derive name from email
       };
       setUser(loggedInUser); 
+      secureLogger.info('AUTH', 'User logged in successfully', { email: credentials.email });
     } catch (error) {
-      console.error('Login failed:', error);
+      secureLogger.error('AUTH', 'Login failed', { 
+        email: credentials.email,
+        error: error instanceof Error ? error.message : String(error)
+      });
       throw error;
     }
   };

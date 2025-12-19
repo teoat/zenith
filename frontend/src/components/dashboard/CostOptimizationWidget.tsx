@@ -1,8 +1,9 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import { DollarSign, Target, Zap } from 'lucide-react';
 import { costOptimizationService } from '@/services/costOptimization';
+import { secureLogger } from '../../utils/secureLogger';
 
 interface CostOptimizationData {
   current_spend: number;
@@ -32,7 +33,7 @@ export const CostOptimizationWidget: React.FC = () => {
         setCostData(response);
       } catch (err) {
         setError('Failed to load cost optimization data');
-        console.error('Cost optimization widget error:', err);
+        secureLogger.error('Cost optimization widget error:', err);
       } finally {
         setLoading(false);
       }

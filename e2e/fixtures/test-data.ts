@@ -5,8 +5,8 @@
 
 export const TEST_USERS = {
   analyst: {
-    username: 'analyst@378x492.com',
-    email: 'analyst@378x492.com',
+    username: 'testanalyst',
+    email: 'testanalyst@378x492.com',
     password: 'Test123!',
     fullName: 'Test Analyst',
     role: 'analyst'

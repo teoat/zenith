@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { secureLogger } from '../utils/secureLogger';
+import { secureRandom } from '../utils/secureRandom';
 
 // Define a generic message type - expand as needed
 export interface WebSocketMessage {
@@ -44,7 +46,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     // For now, we rely on the token for auth, but the URL param might still be used for routing
     let userId = localStorage.getItem('userId');
     if (!userId) {
-        userId = 'anon_' + Math.random().toString(36).substr(2, 9);
+        userId = 'anon_' + secureRandom.id();
         localStorage.setItem('userId', userId);
     }
 
@@ -68,15 +70,15 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       try {
         const targetUrl = getWsUrl();
         if (!targetUrl) {
-           console.log('[WebSocketProvider] No URL (waiting for auth), skipping connection');
+           secureLogger.info('WEBSOCKET', 'No URL (waiting for auth), skipping connection');
            return;
         }
-        console.log('[WebSocketProvider] Connecting to', targetUrl);
+        secureLogger.info('WEBSOCKET', `Connecting to ${targetUrl.split('?')[0]}...`);
         const ws = new WebSocket(targetUrl);
         wsRef.current = ws;
 
         ws.onopen = () => {
-          console.log('[WebSocketProvider] Connected');
+          secureLogger.info('WEBSOCKET', 'Connected successfully');
           setIsConnected(true);
         };
 
@@ -86,19 +88,19 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
             const data = JSON.parse(event.data);
             listenersRef.current.forEach(listener => listener(data));
           } catch (_e) {
-            console.warn('[WebSocketProvider] Failed to parse message', event.data);
+            secureLogger.warn('WEBSOCKET', 'Failed to parse message', { data: event.data });
           }
         };
 
         ws.onclose = (event) => {
-          console.log('[WebSocketProvider] Disconnected', event.reason);
+          secureLogger.info('WEBSOCKET', `Disconnected: ${event.reason || 'No reason'}`);
           setIsConnected(false);
           wsRef.current = null;
           
           // Auto-reconnect if not strictly cleaned up by unmount
           if (!event.wasClean) {
             reconnectTimeout = setTimeout(() => {
-              console.log('[WebSocketProvider] Attempting reconnect...');
+              secureLogger.info('WEBSOCKET', 'Attempting reconnect...');
               connect();
             }, reconnectInterval);
           }
@@ -132,7 +134,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data));
     } else {
-      console.warn('[WebSocketProvider] Cannot send message: Not connected');
+      secureLogger.warn('WEBSOCKET', 'Cannot send message: Not connected');
     }
   }, []);
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle, ChevronRight, FileText, Shield, Eye, Send, ArrowLeft } from 'lucide-react';
+import { secureLogger } from '../../utils/secureLogger';
 
 const STEPS = [
   { id: 1, name: 'Summary', icon: FileText },
@@ -27,7 +28,7 @@ const ConclusionWizard: React.FC<ConclusionWizardProps> = ({ caseId: _caseId, on
       setCurrentStep(currentStep + 1);
     } else {
       // Submit
-      console.log('Submitting case conclusion:', formData);
+      secureLogger.info('Submitting case conclusion:', formData);
       onComplete?.();
     }
   };

@@ -3,25 +3,26 @@
  * Provides investigation canvas with entity relationships
  */
 
-import React, { useState, useCallback, useRef, Suspense } from 'react';
-import { 
-  DndContext, 
-  useDraggable, 
-  useDroppable, 
-  DragEndEvent,
-  DragOverlay
+import * as React from 'react';
+import { useState, useCallback, useRef, Suspense } from 'react';
+import {
+  DndContext,
+  useDroppable,
+  DragOverlay,
+  type DragEndEvent,
+  type DragStartEvent
 } from '@dnd-kit/core';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/Separator';
+import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { useCollaboration } from '../../hooks/useCollaboration';
+import type { Entity, Relationship, Evidence } from '../../types/investigation';
+import { secureLogger } from '../../utils/secureLogger';
 import {
   Plus,
   Search,
@@ -30,47 +31,23 @@ import {
   Eye,
   EyeOff,
   Link,
-  Target,
-  Users,
-  Building,
-  MapPin,
   FileText,
-  DollarSign,
-  Image as ImageIcon,
-  Video,
-  Mail,
-  Phone,
   ZoomIn,
   ZoomOut,
   RotateCcw
 } from 'lucide-react';
 
-// Lazy import for ForceGraph2D to avoid SSR issues
+// Lazy imports for code splitting
 const ForceGraph2D = React.lazy(() => import('react-force-graph-2d'));
 
-// Types
-interface Entity {
-  id: string;
-  type: 'person' | 'company' | 'account' | 'transaction' | 'location' | 'document';
-  name: string;
-  properties: Record<string, unknown>;
-  riskScore?: number;
-  connections: string[];
-  x?: number;
-  y?: number;
-  fx?: number | null;
-  fy?: number | null;
-}
+// Lazy imports for forms
+const EntityForm = React.lazy(() => import('./EntityForm'));
+const RelationshipForm = React.lazy(() => import('./RelationshipForm'));
 
-interface Relationship {
-  id: string;
-  source: string;
-  target: string;
-  type: 'owns' | 'transacts_with' | 'located_at' | 'related_to' | 'controls' | 'beneficial_owner';
-  strength: number;
-  evidence: string[];
-  properties: Record<string, unknown>;
-}
+// Extracted components
+import { EntityNode } from './EntityNode';
+import { EvidenceItem } from './EvidenceItem';
+import { CanvasArea } from './CanvasArea';
 
 interface InvestigationCanvasProps {
   caseId: string;
@@ -88,8 +65,8 @@ interface GraphNode extends Entity {
   // Required by react-force-graph
   x?: number;
   y?: number;
-  fx?: number | null;
-  fy?: number | null;
+  fx?: number;
+  fy?: number;
   vx?: number;
   vy?: number;
   [key: string]: unknown; // Allow arbitrary properties used by d3/force-graph
@@ -105,156 +82,11 @@ interface GraphLink {
   [key: string]: unknown;
 }
 
-interface Evidence {
-  id: string;
-  type: 'document' | 'image' | 'video' | 'email' | 'phone';
-  filename: string;
-  url?: string;
-  [key: string]: unknown;
-}
+// Evidence type is now imported from types/investigation.ts
 
-// Entity Node Component
-const EntityNode: React.FC<{
-  entity: Entity;
-  isSelected: boolean;
-  onSelect: (entity: Entity) => void;
-  onConnect: (entity: Entity) => void;
-  isOverlay?: boolean;
-}> = ({ entity, isSelected, onSelect, onConnect, isOverlay }) => {
-  const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
-    id: `entity-source-${entity.id}`,
-    data: { type: 'entity', entity }
-  });
 
-  const getEntityIcon = (type: string) => {
-    switch (type) {
-      case 'person': return <Users className="w-4 h-4" />;
-      case 'company': return <Building className="w-4 h-4" />;
-      case 'account': return <DollarSign className="w-4 h-4" />;
-      case 'transaction': return <Target className="w-4 h-4" />;
-      case 'location': return <MapPin className="w-4 h-4" />;
-      case 'document': return <FileText className="w-4 h-4" />;
-      default: return <Target className="w-4 h-4" />;
-    }
-  };
 
-  const getRiskColor = (score?: number) => {
-    if (!score) return 'bg-gray-100 text-gray-800';
-    if (score >= 80) return 'bg-red-100 text-red-800';
-    if (score >= 60) return 'bg-orange-100 text-orange-800';
-    if (score >= 40) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-green-100 text-green-800';
-  };
 
-  if (isOverlay) {
-    return (
-      <div className={`
-        flex items-center gap-2 p-2 rounded-lg border bg-white shadow-lg
-        border-blue-500
-      `}>
-        {getEntityIcon(entity.type)}
-        <div className="font-medium text-sm">{entity.name}</div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      className={`
-        flex items-center gap-2 p-2 rounded-lg border cursor-grab transition-all
-        ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white'}
-        ${isDragging ? 'opacity-50' : 'opacity-100'}
-        hover:shadow-md touch-none
-      `}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          onSelect(entity);
-        }
-      }}
-      onClick={() => onSelect(entity)}
-      onDoubleClick={() => onConnect(entity)}
-    >
-      {getEntityIcon(entity.type)}
-      <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm truncate">{entity.name}</div>
-        <div className="flex items-center gap-1">
-          <Badge variant="outline" className="text-xs">
-            {entity.type}
-          </Badge>
-          {entity.riskScore && (
-            <Badge className={`text-xs ${getRiskColor(entity.riskScore)}`}>
-              {entity.riskScore}
-            </Badge>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Evidence Item Component
-const EvidenceItem: React.FC<{
-  evidence: Evidence;
-  isOverlay?: boolean;
-}> = ({ evidence, isOverlay }) => {
-  const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
-    id: `evidence-source-${evidence.id}`,
-    data: { type: 'evidence', evidence }
-  });
-
-  const getEvidenceIcon = (type: string) => {
-    switch (type) {
-      case 'document': return <FileText className="w-4 h-4" />;
-      case 'image': return <ImageIcon className="w-4 h-4" />;
-      case 'video': return <Video className="w-4 h-4" />;
-      case 'email': return <Mail className="w-4 h-4" />;
-      case 'phone': return <Phone className="w-4 h-4" />;
-      default: return <FileText className="w-4 h-4" />;
-    }
-  };
-
-  if (isOverlay) {
-    return (
-      <div className="flex items-center gap-2 p-2 rounded border bg-white shadow-lg border-blue-500">
-        {getEvidenceIcon(evidence.type)}
-        <div className="font-medium text-sm">{evidence.filename}</div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      className={`
-        flex items-center gap-2 p-2 rounded border cursor-grab transition-all
-        ${isDragging ? 'opacity-50' : 'opacity-100'}
-        hover:bg-gray-50 touch-none
-      `}
-    >
-      {getEvidenceIcon(evidence.type)}
-      <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm truncate">{evidence.filename}</div>
-        <div className="text-xs text-gray-500">{evidence.type}</div>
-      </div>
-    </div>
-  );
-};
-
-// Droppable Canvas Area
-const CanvasArea = ({ children, setNodeRef }: { children: React.ReactNode, setNodeRef: (node: HTMLElement | null) => void }) => {
-  return (
-    <div ref={setNodeRef} className="flex-1 relative h-full w-full">
-      {children}
-    </div>
-  );
-};
 
 // Main Investigation Canvas Component
 export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
@@ -318,8 +150,8 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
       ...entity,
       val: Math.max(1, (entity.riskScore || 0) / 20),
       color: getNodeColor(entity),
-      fx: entity.fx,
-      fy: entity.fy
+      fx: entity.fx ?? undefined,
+      fy: entity.fy ?? undefined
     }));
 
     const links: GraphLink[] = relationships.map(rel => ({
@@ -383,6 +215,14 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
     }
   }, [selectedEntity]);
 
+  const handleToggleVisibility = useCallback((entityId: string) => {
+    setEntities(prev => prev.map(entity =>
+      entity.id === entityId
+        ? { ...entity, visible: !entity.visible }
+        : entity
+    ));
+  }, []);
+
   const handleZoomIn = useCallback(() => {
     if (fgRef.current) {
       fgRef.current.zoom(zoom * 1.2);
@@ -422,8 +262,8 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
     }
   }, [onExport]);
 
-  const handleDragStart = (event: any) => {
-    setActiveDragItem(event.active.data.current);
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveDragItem(event.active.data.current as { type: 'entity' | 'evidence'; item: Entity | Evidence } | null);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -435,10 +275,10 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
        const data = active.data.current;
        if (data && data.type === 'entity') {
          // Check if entity is already in list (it is, since we drag from list)
-         console.log('Dropped entity on canvas', data.entity.name);
-       } else if (data && data.type === 'evidence') {
-         console.log('Dropped evidence on canvas', data.evidence.filename);
-       }
+          secureLogger.warn('Dropped entity on canvas', data.entity.name);
+        } else if (data && data.type === 'evidence') {
+          secureLogger.warn('Dropped evidence on canvas', data.evidence.filename);
+        }
     }
   };
 
@@ -503,6 +343,9 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
                   isSelected={selectedEntity?.id === entity.id}
                   onSelect={handleEntitySelect}
                   onConnect={handleEntityConnect}
+                  onToggleVisibility={handleToggleVisibility}
+                  onDelete={handleDeleteEntity}
+                  scale={zoom}
                 />
               ))}
             </div>
@@ -596,7 +439,7 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
                 onNodeDragEnd={(node: any) => {
                   setEntities(prev => prev.map(entity =>
                     entity.id === node.id && node.x !== undefined && node.y !== undefined
-                      ? { ...entity, fx: node.x, fy: node.y }
+                      ? { ...entity, fx: node.x ?? undefined, fy: node.y ?? undefined }
                       : entity
                   ));
                 }}
@@ -632,8 +475,9 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
                     <div className="flex items-center gap-2 mt-1">
                       <div className="flex-1 bg-gray-200 rounded-full h-2">
                         <div
-                          className="bg-red-500 h-2 rounded-full"
-                          style={{ width: `${selectedEntity.riskScore || 0}%` }}
+                          className="bg-blue-600 h-full rounded bar-fill"
+                          /* eslint-disable-next-line react/forbid-dom-props */
+                          style={{ '--width': `${selectedEntity.riskScore || 0}%` } as React.CSSProperties}
                         />
                       </div>
                       <span className="text-sm font-medium">
@@ -759,136 +603,6 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
   );
 };
 
-// Entity Form Component
-const EntityForm: React.FC<{ onSubmit: (data: Partial<Entity>) => void }> = ({ onSubmit }) => {
-  const [formData, setFormData] = useState({
-    type: 'person',
-    name: '',
-    riskScore: 0
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData as Partial<Entity>);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label htmlFor="entity-type-select" className="text-sm font-medium">Entity Type</label>
-        <Select
-          value={formData.type}
-          onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
-        >
-          <SelectTrigger id="entity-type-select">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="person">Person</SelectItem>
-            <SelectItem value="company">Company</SelectItem>
-            <SelectItem value="account">Account</SelectItem>
-            <SelectItem value="transaction">Transaction</SelectItem>
-            <SelectItem value="location">Location</SelectItem>
-            <SelectItem value="document">Document</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <Label htmlFor="entity-name">Name</Label>
-        <Input
-          id="entity-name"
-          value={formData.name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-          placeholder="Enter entity name"
-          required
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="risk-score">Risk Score (0-100)</Label>
-        <Input
-          id="risk-score"
-          type="number"
-          min="0"
-          max="100"
-          value={formData.riskScore}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, riskScore: parseInt(e.target.value) || 0 }))}
-        />
-      </div>
-
-      <Button type="submit" className="w-full">
-        Add Entity
-      </Button>
-    </form>
-  );
-};
-
-// Relationship Form Component
-const RelationshipForm: React.FC<{
-  relationship: Relationship;
-  onSubmit: (relationship: Relationship) => void;
-}> = ({ relationship, onSubmit }) => {
-  const [formData, setFormData] = useState(relationship);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label htmlFor="rel-type">Relationship Type</Label>
-        <Select
-          value={formData.type}
-          onValueChange={(value) => setFormData(prev => ({ ...prev, type: value as Relationship['type'] }))}
-        >
-          <SelectTrigger id="rel-type">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="owns">Owns</SelectItem>
-            <SelectItem value="transacts_with">Transacts With</SelectItem>
-            <SelectItem value="located_at">Located At</SelectItem>
-            <SelectItem value="related_to">Related To</SelectItem>
-            <SelectItem value="controls">Controls</SelectItem>
-            <SelectItem value="beneficial_owner">Beneficial Owner</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <Label htmlFor="rel-strength">Strength (1-100)</Label>
-        <Input
-          id="rel-strength"
-          type="number"
-          min="1"
-          max="100"
-          value={formData.strength}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, strength: parseInt(e.target.value) || 1 }))}
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="rel-notes">Evidence/Notes</Label>
-        <Textarea
-          id="rel-notes"
-          value={(formData.properties.notes as string) || ''}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData(prev => ({
-            ...prev,
-            properties: { ...prev.properties, notes: e.target.value }
-          }))}
-          placeholder="Add evidence or notes about this relationship"
-          rows={3}
-        />
-      </div>
-
-      <Button type="submit" className="w-full">
-        Save Relationship
-      </Button>
-    </form>
-  );
-};
+// EntityForm and RelationshipForm are now lazy-loaded from separate files
 
 export default InvestigationCanvas;

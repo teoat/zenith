@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Power, PowerOff, Save, AlertTriangle } from 'lucide-react';
+import { secureLogger } from '../../utils/secureLogger';
 
 interface Rule {
   rule_id: string;
@@ -24,12 +25,18 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
   const [rules, setRules] = useState<Rule[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newRule, setNewRule] = useState({
-    rule_type: 'velocity' as const,
+  const [newRule, setNewRule] = useState<{
+    rule_type: 'velocity' | 'amount' | 'geographic' | 'pattern' | 'time' | 'account';
+    name: string;
+    description: string;
+    risk_level: 'low' | 'medium' | 'high' | 'critical';
+    parameters: any;
+  }>({
+    rule_type: 'velocity',
     name: '',
     description: '',
-    risk_level: 'medium' as const,
-    parameters: {} as any
+    risk_level: 'medium',
+    parameters: {}
   });
 
   useEffect(() => {
@@ -41,8 +48,8 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
       const response = await fetch('/api/v1/fraud/rules');
       const data = await response.json();
       setRules(data.rules || []);
-    } catch (_error) {
-      console.error('Failed to load rules:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to load rules:', error);
     } finally {
       setLoading(false);
     }
@@ -52,8 +59,8 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
     try {
       await fetch(`/api/v1/fraud/rules/${ruleId}/toggle`, { method: 'PATCH' });
       await loadRules();
-    } catch (_error) {
-      console.error('Failed to toggle rule:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to toggle rule:', error);
     }
   };
 
@@ -64,8 +71,8 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
       await fetch(`/api/v1/fraud/rules/${ruleId}`, { method: 'DELETE' });
       await loadRules();
       onRuleDeleted?.(ruleId);
-    } catch (_error) {
-      console.error('Failed to delete rule:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to delete rule:', error);
     }
   };
 
@@ -90,8 +97,8 @@ export const FraudRuleBuilder: React.FC<FraudRuleBuilderProps> = ({
         });
         onRuleCreated?.(data.rule);
       }
-    } catch (_error) {
-      console.error('Failed to create rule:', error);
+     } catch (error) { 
+      secureLogger.error('Failed to create rule:', error);
     }
   };
 

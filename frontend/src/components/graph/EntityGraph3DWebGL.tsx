@@ -1,18 +1,20 @@
 import React, { useRef, useCallback } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
-import { useResizeObserver } from '@/hooks/useResizeObserver';
 
 interface GraphNode {
   id: string;
   group?: number;
   val?: number;
-  [key: string]: any;
+  x?: number;
+  y?: number;
+  z?: number;
+  [key: string]: unknown;
 }
 
 interface GraphLink {
   source: string;
   target: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface EntityGraph3DWebGLProps {
@@ -31,17 +33,21 @@ const EntityGraph3DWebGL: React.FC<EntityGraph3DWebGLProps> = ({
   width,
   height,
 }) => {
-  const fgRef = useRef<any>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fgRef = useRef<any>(null);
 
   const handleNodeClick = useCallback(
     (node: GraphNode) => {
       // Aim at node from outside it
       const distance = 40;
-      const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+      const x = node.x ?? 0;
+      const y = node.y ?? 0;
+      const z = node.z ?? 0;
+      const distRatio = 1 + distance / Math.hypot(x, y, z);
 
       if (fgRef.current) {
         fgRef.current.cameraPosition(
-          { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, // new position
+          { x: x * distRatio, y: y * distRatio, z: z * distRatio }, // new position
           node, // lookAt ({ x, y, z })
           3000 // ms transition duration
         );

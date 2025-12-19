@@ -1,0 +1,80 @@
+# English translations
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "An unexpected error occurred"
+msgstr "An unexpected error occurred"
+
+msgid "Network connection error"
+msgstr "Network connection error"
+
+msgid "Request timed out"
+msgstr "Request timed out"
+
+msgid "You are not authorized to perform this action"
+msgstr "You are not authorized to perform this action"
+
+msgid "Access forbidden"
+msgstr "Access forbidden"
+
+msgid "The requested resource was not found"
+msgstr "The requested resource was not found"
+
+msgid "Server error occurred"
+msgstr "Server error occurred"
+
+msgid "Please check your input and try again"
+msgstr "Please check your input and try again"
+
+msgid "Failed to create case"
+msgstr "Failed to create case"
+
+msgid "Failed to update case"
+msgstr "Failed to update case"
+
+msgid "Failed to delete case"
+msgstr "Failed to delete case"
+
+msgid "Failed to load case data"
+msgstr "Failed to load case data"
+
+msgid "Case not found"
+msgstr "Case not found"
+
+msgid "Login failed. Please check your credentials"
+msgstr "Login failed. Please check your credentials"
+
+msgid "Your session has expired. Please log in again"
+msgstr "Your session has expired. Please log in again"
+
+msgid "Invalid authentication token"
+msgstr "Invalid authentication token"
+
+msgid "You don't have permission to access this resource"
+msgstr "You don't have permission to access this resource"
+
+msgid "File upload failed"
+msgstr "File upload failed"
+
+msgid "File download failed"
+msgstr "File download failed"
+
+msgid "Invalid file format"
+msgstr "Invalid file format"
+
+msgid "File size exceeds the maximum limit"
+msgstr "File size exceeds the maximum limit"
+
+msgid "File appears to be corrupted"
+msgstr "File appears to be corrupted"
+
+msgid "Too many requests. Please try again later"
+msgstr "Too many requests. Please try again later"
+
+msgid "Service is temporarily unavailable"
+msgstr "Service is temporarily unavailable"
+
+msgid "System is under maintenance"
+msgstr "System is under maintenance"

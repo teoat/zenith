@@ -1,5 +1,5 @@
 import { API_BASE as API_BASE_URL } from './client';
-import { AIPersona } from '../context/AIContext';
+import type { AIPersona } from '../context/AIContext';
 
 class AIService {
   async chat(message: string, context: any, persona: AIPersona = 'frenly') {

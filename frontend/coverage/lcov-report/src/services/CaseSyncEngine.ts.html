@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/140</span>
+                <span class='fraction'>0/143</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/29</span>
+                <span class='fraction'>0/31</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/135</span>
+                <span class='fraction'>0/138</span>
             </div>
         
             
@@ -500,12 +500,20 @@
 <a name='L435'></a><a href='#L435'>435</a>
 <a name='L436'></a><a href='#L436'>436</a>
 <a name='L437'></a><a href='#L437'>437</a>
-<a name='L438'></a><a href='#L438'>438</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L438'></a><a href='#L438'>438</a>
+<a name='L439'></a><a href='#L439'>439</a>
+<a name='L440'></a><a href='#L440'>440</a>
+<a name='L441'></a><a href='#L441'>441</a>
+<a name='L442'></a><a href='#L442'>442</a>
+<a name='L443'></a><a href='#L443'>443</a>
+<a name='L444'></a><a href='#L444'>444</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -708,11 +716,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -943,6 +955,8 @@
  */
 &nbsp;
 <span class="cstat-no" title="statement not covered" >import { useEffect, useRef, useCallback, useState } from 'react';</span>
+<span class="cstat-no" title="statement not covered" >import { secureLogger } from '../utils/secureLogger';</span>
+<span class="cstat-no" title="statement not covered" >import { secureRandom } from '../utils/secureRandom';</span>
 &nbsp;
 // Types
 export interface SyncEvent {
@@ -1149,8 +1163,12 @@ class EventQueue {
       // Start polling for updates
 <span class="cstat-no" title="statement not covered" >      this.startPolling();</span>
       
-<span class="cstat-no" title="statement not covered" >      console.log('[CaseSyncEngine] Connected to case:', this.options.caseId);</span>
+<span class="cstat-no" title="statement not covered" >      secureLogger.info('COLLABORATION', `Connected to case: ${this.options.caseId}`);</span>
     } catch (error) {
+<span class="cstat-no" title="statement not covered" >      secureLogger.error('COLLABORATION', 'Connection failed', { </span>
+        caseId: this.options.caseId,
+        error: error instanceof Error ? error.message : String(error) 
+      });
 <span class="cstat-no" title="statement not covered" >      this.options.onError?.(error as Error);</span>
 <span class="cstat-no" title="statement not covered" >      throw error;</span>
     }
@@ -1162,19 +1180,19 @@ class EventQueue {
 <span class="cstat-no" title="statement not covered" >    this.stopPolling();</span>
 <span class="cstat-no" title="statement not covered" >    this.eventQueue.clear();</span>
 <span class="cstat-no" title="statement not covered" >    this.collaborators.clear();</span>
-<span class="cstat-no" title="statement not covered" >    console.log('[CaseSyncEngine] Disconnected');</span>
+<span class="cstat-no" title="statement not covered" >    secureLogger.info('COLLABORATION', 'Disconnected');</span>
   }
 &nbsp;
   // Emit a sync event
 <span class="fstat-no" title="function not covered" >  emit(</span>event: Omit&lt;SyncEvent, 'id' | 'userId' | 'userName' | 'timestamp'&gt;): void {
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!this.isConnected) {</span>
-<span class="cstat-no" title="statement not covered" >      console.warn('[CaseSyncEngine] Cannot emit: not connected');</span>
+<span class="cstat-no" title="statement not covered" >      secureLogger.warn('COLLABORATION', 'Cannot emit: not connected');</span>
 <span class="cstat-no" title="statement not covered" >      return;</span>
     }
 &nbsp;
     const fullEvent: SyncEvent = <span class="cstat-no" title="statement not covered" >{</span>
       ...event,
-      id: `evt-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      id: `evt-${Date.now()}-${secureRandom.random().toString(36).slice(2, 9)}`,
       userId: this.options.userId,
       userName: this.options.userName,
       timestamp: new Date()
@@ -1256,7 +1274,7 @@ class EventQueue {
   // Private methods
   private <span class="fstat-no" title="function not covered" >async </span>sendEvents(events: SyncEvent[]): Promise&lt;void&gt; {
     // In real implementation, send to server via WebSocket or HTTP
-<span class="cstat-no" title="statement not covered" >    console.log('[CaseSyncEngine] Sending events:', events.length);</span>
+<span class="cstat-no" title="statement not covered" >    secureLogger.info('COLLABORATION', `Sending events: ${events.length}`);</span>
     
     // Simulate network delay
 <span class="cstat-no" title="statement not covered" >    await new Promise(<span class="fstat-no" title="function not covered" >resolve </span>=&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, 50))</span>;</span>
@@ -1267,7 +1285,7 @@ class EventQueue {
 &nbsp;
   private <span class="fstat-no" title="function not covered" >announcePresence(</span>): void {
     const colors = <span class="cstat-no" title="statement not covered" >['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];</span>
-    const randomColor = <span class="cstat-no" title="statement not covered" >colors[Math.floor(Math.random() * colors.length)];</span>
+    const randomColor = <span class="cstat-no" title="statement not covered" >colors[Math.floor(secureRandom.random() * colors.length)];</span>
 &nbsp;
     const self: Collaborator = <span class="cstat-no" title="statement not covered" >{</span>
       id: this.options.userId,
@@ -1298,7 +1316,7 @@ class EventQueue {
   private <span class="fstat-no" title="function not covered" >async </span>poll(): Promise&lt;void&gt; {
     // In real implementation, fetch updates from server
     // This is a stub for the polling mechanism
-<span class="cstat-no" title="statement not covered" >    console.log('[CaseSyncEngine] Polling for updates...');</span>
+<span class="cstat-no" title="statement not covered" >    secureLogger.debug('COLLABORATION', 'Polling for updates...');</span>
   }
 }
 &nbsp;
@@ -1381,7 +1399,7 @@ class EventQueue {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-12T16:26:26.724Z
+                at 2025-12-19T02:07:52.612Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

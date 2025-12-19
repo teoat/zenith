@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertItem } from '../../../lib/api';
+import type { AlertItem } from '../../../lib/api';
 import { Clock, ExternalLink } from 'lucide-react';
 
 interface HistoryTabProps {

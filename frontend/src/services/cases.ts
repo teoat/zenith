@@ -1,6 +1,6 @@
 import { request } from './client';
-import { Case } from '../types/schema';
-import { PaginationInfo } from '../types/api';
+import type { Case } from '../types/schema';
+import type { PaginationInfo } from '../types/api';
 
 export const caseService = {
   getCases: async (params?: Record<string, unknown>): Promise<{ cases: Case[]; pagination: PaginationInfo }> => {

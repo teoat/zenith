@@ -4,6 +4,8 @@
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';
+import { secureLogger } from '../utils/secureLogger';
+import { secureRandom } from '../utils/secureRandom';
 
 // Types
 export interface SyncEvent {
@@ -210,8 +212,12 @@ export class CaseSyncEngine {
       // Start polling for updates
       this.startPolling();
       
-      console.log('[CaseSyncEngine] Connected to case:', this.options.caseId);
-    } catch (_error) {
+      secureLogger.info('COLLABORATION', `Connected to case: ${this.options.caseId}`);
+    } catch (error) {
+      secureLogger.error('COLLABORATION', 'Connection failed', { 
+        caseId: this.options.caseId,
+        error: error instanceof Error ? error.message : String(error) 
+      });
       this.options.onError?.(error as Error);
       throw error;
     }
@@ -223,19 +229,19 @@ export class CaseSyncEngine {
     this.stopPolling();
     this.eventQueue.clear();
     this.collaborators.clear();
-    console.log('[CaseSyncEngine] Disconnected');
+    secureLogger.info('COLLABORATION', 'Disconnected');
   }
 
   // Emit a sync event
   emit(event: Omit<SyncEvent, 'id' | 'userId' | 'userName' | 'timestamp'>): void {
     if (!this.isConnected) {
-      console.warn('[CaseSyncEngine] Cannot emit: not connected');
+      secureLogger.warn('COLLABORATION', 'Cannot emit: not connected');
       return;
     }
 
     const fullEvent: SyncEvent = {
       ...event,
-      id: `evt-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      id: `evt-${Date.now()}-${secureRandom.random().toString(36).slice(2, 9)}`,
       userId: this.options.userId,
       userName: this.options.userName,
       timestamp: new Date()
@@ -317,7 +323,7 @@ export class CaseSyncEngine {
   // Private methods
   private async sendEvents(events: SyncEvent[]): Promise<void> {
     // In real implementation, send to server via WebSocket or HTTP
-    console.log('[CaseSyncEngine] Sending events:', events.length);
+    secureLogger.info('COLLABORATION', `Sending events: ${events.length}`);
     
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 50));
@@ -328,7 +334,7 @@ export class CaseSyncEngine {
 
   private announcePresence(): void {
     const colors = ['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const randomColor = colors[Math.floor(secureRandom.random() * colors.length)];
 
     const self: Collaborator = {
       id: this.options.userId,
@@ -359,7 +365,7 @@ export class CaseSyncEngine {
   private async poll(): Promise<void> {
     // In real implementation, fetch updates from server
     // This is a stub for the polling mechanism
-    console.log('[CaseSyncEngine] Polling for updates...');
+    secureLogger.debug('COLLABORATION', 'Polling for updates...');
   }
 }
 

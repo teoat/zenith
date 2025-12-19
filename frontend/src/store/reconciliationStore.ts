@@ -1,5 +1,7 @@
 import { create } from 'zustand';
-import { api, ReconciliationItem } from '../lib/api';
+import type { ReconciliationItem } from '../lib/api';
+import { api } from '../lib/api';
+import { secureLogger } from '../utils/secureLogger';
 
 interface ReconciliationState {
   items: ReconciliationItem[];
@@ -42,7 +44,7 @@ export const useReconciliationStore = create<ReconciliationState>((set, get) => 
         items: items.map(i => i.id === itemId ? { ...i, status: 'matched' } : i)
       });
     } catch (err: any) {
-      console.error('Failed to reconcile item:', err);
+      secureLogger.error('Failed to reconcile item:', err);
     }
   },
 
@@ -57,7 +59,7 @@ export const useReconciliationStore = create<ReconciliationState>((set, get) => 
         items: items.map(i => i.id === itemId ? { ...i, status: 'discrepancy' } : i)
       });
     } catch (err: any) {
-      console.error('Failed to flag item:', err);
+      secureLogger.error('Failed to flag item:', err);
     }
   }
 }));

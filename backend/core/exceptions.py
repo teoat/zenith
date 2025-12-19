@@ -5,10 +5,93 @@ Provides consistent error handling across all endpoints
 
 import logging
 from typing import Any, Dict, Optional
+from enum import Enum
+from functools import wraps
+import inspect
 
 from fastapi import HTTPException, status
 
 logger = logging.getLogger(__name__)
+
+class ErrorCategory(Enum):
+    """Categorizes different types of errors for consistent handling"""
+    VALIDATION = "validation"
+    AUTHENTICATION = "authentication"
+    AUTHORIZATION = "authorization"
+    BUSINESS_LOGIC = "business_logic"
+    EXTERNAL_SERVICE = "external_service"
+    DATABASE = "database"
+    FILESYSTEM = "filesystem"
+    NETWORK = "network"
+    CONFIGURATION = "configuration"
+    SECURITY = "security"
+
+def handle_exceptions(func_name: str, category: ErrorCategory = ErrorCategory.BUSINESS_LOGIC):
+    """
+    Decorator for standardized exception handling
+
+    Usage:
+    @handle_exceptions("fraud_detection", ErrorCategory.EXTERNAL_SERVICE)
+    async def detect_fraud(data):
+        # Function logic here
+        pass
+    """
+    def decorator(func):
+        @wraps(func)
+        async def async_wrapper(*args, **kwargs):
+            try:
+                return await func(*args, **kwargs)
+            except APIException:
+                # Re-raise our API exceptions as-is
+                raise
+            except ValueError as e:
+                # Convert common exceptions to our types
+                raise ValidationError(str(e)) from e
+            except PermissionError as e:
+                raise PermissionError(str(e)) from e
+            except ConnectionError as e:
+                raise ServiceUnavailableError("external") from e
+            except FileNotFoundError as e:
+                raise APIException(status.HTTP_404_NOT_FOUND, f"File not found: {str(e)}") from e
+            except Exception as e:
+                # Log unexpected errors and convert to generic API exception
+                logger.error(f"Unexpected error in {func_name}: {e}", exc_info=True)
+                raise APIException(
+                    status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    f"An unexpected error occurred in {func_name}",
+                    "INTERNAL_ERROR",
+                    {"operation": func_name, "error_type": type(e).__name__}
+                ) from e
+
+        def sync_wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except APIException:
+                raise
+            except ValueError as e:
+                raise ValidationError(str(e)) from e
+            except PermissionError as e:
+                raise PermissionError(str(e)) from e
+            except ConnectionError as e:
+                raise ServiceUnavailableError("external") from e
+            except FileNotFoundError as e:
+                raise APIException(status.HTTP_404_NOT_FOUND, f"File not found: {str(e)}") from e
+            except Exception as e:
+                logger.error(f"Unexpected error in {func_name}: {e}", exc_info=True)
+                raise APIException(
+                    status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    f"An unexpected error occurred in {func_name}",
+                    "INTERNAL_ERROR",
+                    {"operation": func_name, "error_type": type(e).__name__}
+                ) from e
+
+        # Return appropriate wrapper based on function type
+        if inspect.iscoroutinefunction(func):
+            return async_wrapper
+        else:
+            return sync_wrapper
+
+    return decorator
 
 
 class APIException(HTTPException):

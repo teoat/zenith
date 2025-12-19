@@ -1169,7 +1169,7 @@ git push origin --delete release/1.2.0
 #### Deployment Verification
 ```bash
 # Verify deployment
-curl -f https://api.378x492.com/health
+curl -f https://api.fraud-detection-378x492.com/health
 
 # Check application logs
 # Verify database migrations

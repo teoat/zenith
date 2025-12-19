@@ -754,7 +754,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "style-src 'self' 'unsafe-inline'; "
             "img-src 'self' data: https:; "
             "font-src 'self'; "
-            "connect-src 'self' https://api.378x492.com; "
+            "connect-src 'self' https://api.fraud-detection-378x492.com; "
             "frame-ancestors 'none';"
         )
         response.headers['Content-Security-Policy'] = csp
@@ -1216,7 +1216,7 @@ class TestSecurity:
 # Automated security testing script
 
 ZAP_API_KEY="your-zap-api-key"
-TARGET_URL="https://api.378x492.com"
+TARGET_URL="https://api.fraud-detection-378x492.com"
 
 # Start ZAP daemon
 docker run -d --name zap \
