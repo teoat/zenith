@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sidebar } from './Sidebar.tsx';
 import { Header } from './Header.tsx';
+import { SecondaryNav } from './SecondaryNav.tsx';
 import { NotificationContainer } from '../NotificationContainer';
 import PerformanceDashboard from '../performance/PerformanceDashboard';
 
@@ -13,6 +14,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
       <Sidebar />
       <div className="flex flex-col">
         <Header />
+        <SecondaryNav />
         <main id="main-content" className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-y-auto" tabIndex={-1}>
             {children}
         </main>

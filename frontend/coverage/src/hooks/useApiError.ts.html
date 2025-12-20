@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">37.03% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/27</span>
+                <span class='fraction'>0/27</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">16.66% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/6</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">32% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/25</span>
+                <span class='fraction'>0/25</span>
             </div>
         
             
@@ -184,11 +184,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -216,10 +214,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -256,15 +256,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -299,9 +299,9 @@
  * Integrates with backend error handling to display user-friendly messages
  */
 &nbsp;
-import { useState, useCallback } from 'react';
+<span class="cstat-no" title="statement not covered" >import { useState, useCallback } from 'react';</span>
 import type { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
-import { secureLogger } from '../utils/secureLogger';
+<span class="cstat-no" title="statement not covered" >import { secureLogger } from '../utils/secureLogger';</span>
 &nbsp;
 interface ErrorDetails {
   code?: string;
@@ -331,10 +331,10 @@ interface CustomAxiosError {
   message?: string;
 }
 &nbsp;
-export const useApiError = () =&gt; {
-  const [error, setError] = useState&lt;ErrorDetails | null&gt;(null);
+export const <span class="cstat-no" title="statement not covered" >useApiError = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>) =</span>&gt; {</span>
+  const [error, setError] = <span class="cstat-no" title="statement not covered" >useState&lt;ErrorDetails | null&gt;(null);</span>
 &nbsp;
-  const handleError = useCallback(<span class="fstat-no" title="function not covered" >(e</span>rr: unknown) =&gt; {
+  const handleError = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >(e</span>rr: unknown) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    secureLogger.error('API Error:', err);</span>
 &nbsp;
     // Type guard for error with response
@@ -371,15 +371,15 @@ export const useApiError = () =&gt; {
     }
   }, []);
 &nbsp;
-  const clearError = useCallback(<span class="fstat-no" title="function not covered" >() =</span>&gt; {
+  const clearError = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    setError(null);</span>
   }, []);
 &nbsp;
-  return { error, handleError, clearError };
+<span class="cstat-no" title="statement not covered" >  return { error, handleError, clearError };</span>
 };
 &nbsp;
 // Axios interceptor for automatic error handling
-export const setupErrorInterceptor = <span class="fstat-no" title="function not covered" >(a</span>xiosInstance: AxiosInstance): void =&gt; {
+export const <span class="cstat-no" title="statement not covered" >setupErrorInterceptor = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>a</span>xiosInstance: AxiosInstance): void =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >  axiosInstance.interceptors.response.use(</span>
 <span class="fstat-no" title="function not covered" >    (r</span>esponse: AxiosResponse) =&gt; <span class="cstat-no" title="statement not covered" >response,</span>
 <span class="fstat-no" title="function not covered" >    (e</span>rror: AxiosError&lt;ApiError&gt;) =&gt; {
@@ -415,7 +415,7 @@ export const setupErrorInterceptor = <span class="fstat-no" title="function not 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T03:48:47.569Z
+                at 2025-12-20T05:56:42.976Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

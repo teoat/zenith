@@ -116,7 +116,7 @@ class TestCaseManagement:
         case_data = {
             "title": "Suspicious Transaction Investigation",
             "description": "Multiple high-value transactions from unusual location",
-            "priority": "HIGH",
+            "priority": "High",
             "assigned_to": "investigator@example.com"
         }
         

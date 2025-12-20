@@ -82,7 +82,6 @@ describe('Authentication System', () => {
       return null;
     });
   });
-  });
 
   describe('JWT Token Management', () => {
     test('getToken should return token from localStorage', () => {

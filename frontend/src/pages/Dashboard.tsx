@@ -6,6 +6,7 @@ import { Shield, CloudOff, RefreshCw, AlertTriangle, CheckCircle } from 'lucide-
 import RookieChecklist from '../components/common/RookieChecklist';
 import WelcomeMessage from '../components/common/WelcomeMessage';
 import MovableDashboard from '../components/dashboard/MovableDashboard';
+import FeatureDiscovery from '../components/dashboard/FeatureDiscovery';
 import PageErrorBoundary from '../components/PageErrorBoundary';
 
 // Wrapper component to handle localStorage check outside of render
@@ -122,6 +123,7 @@ const Dashboard: React.FC = () => {
 
       <main className="space-y-6">
         <RookieChecklistWrapper />
+        <FeatureDiscovery className="mb-6" maxItems={4} />
         <MovableDashboard />
         <WelcomeMessage />
       </main>

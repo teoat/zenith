@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">15.38% </span>
+                <span class="strong">15.18% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/78</span>
+                <span class='fraction'>12/79</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/14</span>
+                <span class='fraction'>0/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">16.41% </span>
+                <span class="strong">16.17% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>11/67</span>
+                <span class='fraction'>11/68</span>
             </div>
         
             
@@ -407,16 +407,27 @@
 <a name='L342'></a><a href='#L342'>342</a>
 <a name='L343'></a><a href='#L343'>343</a>
 <a name='L344'></a><a href='#L344'>344</a>
-<a name='L345'></a><a href='#L345'>345</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L345'></a><a href='#L345'>345</a>
+<a name='L346'></a><a href='#L346'>346</a>
+<a name='L347'></a><a href='#L347'>347</a>
+<a name='L348'></a><a href='#L348'>348</a>
+<a name='L349'></a><a href='#L349'>349</a>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a>
+<a name='L353'></a><a href='#L353'>353</a>
+<a name='L354'></a><a href='#L354'>354</a>
+<a name='L355'></a><a href='#L355'>355</a>
+<a name='L356'></a><a href='#L356'>356</a>
+<a name='L357'></a><a href='#L357'>357</a>
+<a name='L358'></a><a href='#L358'>358</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -632,6 +643,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -754,14 +780,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, MessageCircle, X, User, Send, ThumbsUp, ThumbsDown, Search, Eye, File } from 'lucide-react';
-import { useAIContext } from '@/context/AIContext';
+import { useAIContext, AIPersona } from '@/context/AIContext';
 // import { useProject } from '@/context/ProjectContext'; // Context not available
 &nbsp;
 import { aiService } from '@/services/ai';
-import type { AIPersona } from '@/context/AIContext';
 import { SanitizedHTML } from '@/hooks/useSanitizedHTML';
-import type { PendingAction } from '@/services/approvalService';
-import { approvalService } from '@/services/approvalService';
+import { approvalService, PendingAction } from '@/services/approvalService';
 import { ApprovalQueue } from '@/components/ApprovalQueue';
 import { AgentStatusStream } from '@/components/ui/AgentStatusStream';
 import { secureLogger } from '@/utils/secureLogger';
@@ -777,7 +801,7 @@ interface Message {
 &nbsp;
 export const AIAssistant: React.FC = <span class="fstat-no" title="function not covered" >() =</span>&gt; {
   const { t } = <span class="cstat-no" title="statement not covered" >useTranslation();</span>
-  const { context, activePersona } = <span class="cstat-no" title="statement not covered" >useAIContext();</span>
+  const { context, activePersona, setPersona } = <span class="cstat-no" title="statement not covered" >useAIContext();</span>
   // const { currentProject } = useProject();
   const currentProject = <span class="cstat-no" title="statement not covered" >null as any;</span> // Temporary fallback
   
@@ -977,14 +1001,29 @@ export const AIAssistant: React.FC = <span class="fstat-no" title="function not 
         &lt;div data-testid="ai-assistant-window" className="fixed bottom-24 right-6 w-[400px] h-[600px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-50 flex flex-col border border-slate-200 dark:border-slate-800 overflow-hidden"&gt;
           {/* Header */}
           &lt;div className="p-4 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800"&gt;
-            &lt;div className="flex items-center gap-3"&gt;
-              &lt;div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-300"&gt;
-                &lt;Bot size={20} /&gt;
+            &lt;div className="flex items-center justify-between"&gt;
+              &lt;div className="flex items-center gap-3"&gt;
+                &lt;div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-300"&gt;
+                  &lt;Bot size={20} /&gt;
+                &lt;/div&gt;
+                &lt;div&gt;
+                  &lt;h3 className="font-bold text-slate-900 dark:text-white"&gt;Frenly AI&lt;/h3&gt;
+                  &lt;p className="text-xs text-slate-500"&gt;Advanced Intelligence Copilot&lt;/p&gt;
+                &lt;/div&gt;
               &lt;/div&gt;
-              &lt;div&gt;
-                &lt;h3 className="font-bold text-slate-900 dark:text-white"&gt;Frenly AI&lt;/h3&gt;
-                &lt;p className="text-xs text-slate-500"&gt;Advanced Intelligence Copilot&lt;/p&gt;
-              &lt;/div&gt;
+              
+              &lt;select 
+                value={activePersona}
+                onChange={<span class="fstat-no" title="function not covered" >(e</span>) =&gt; <span class="cstat-no" title="statement not covered" >setPersona(e.target.value as any)}</span>
+                className="text-xs px-2 py-1 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"
+                aria-label="Select AI Persona"
+              &gt;
+                &lt;option value="frenly"&gt;Frenly&lt;/option&gt;
+                &lt;option value="investigator"&gt;Investigator&lt;/option&gt;
+                &lt;option value="legal"&gt;Legal&lt;/option&gt;
+                &lt;option value="forensic"&gt;Forensic&lt;/option&gt;
+                &lt;option value="redteam"&gt;Red Team 🔴&lt;/option&gt;
+              &lt;/select&gt;
             &lt;/div&gt;
           &lt;/div&gt;
 &nbsp;
@@ -1102,7 +1141,7 @@ export const AIAssistant: React.FC = <span class="fstat-no" title="function not 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T03:48:46.392Z
+                at 2025-12-20T05:56:40.976Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

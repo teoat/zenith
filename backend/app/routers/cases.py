@@ -12,6 +12,7 @@ from app.services.infrastructure.auth_service import auth_service, AuthService
 from app.services.business.case_service import case_service
 from core.database import Case, Entity, Transaction, User, get_db
 from app.dependencies import get_current_project_id
+from app.services.infrastructure.storage.database_service import db_service
 
 logger = logging.getLogger(__name__)
 
@@ -42,18 +43,24 @@ class CaseUpdate(BaseModel):
 class CaseResponse(BaseModel):
     id: str
     title: str
-    description: Optional[str]
+    description: Optional[str] = None
     status: str
     priority: str
-    assigneeId: Optional[str]
-    riskScore: Optional[float]
-    riskLevel: Optional[str]
-    fraudAmount: Optional[float]
-    customerName: Optional[str]
+    assigneeId: Optional[str] = None
+    riskScore: Optional[float] = 0.0
+    riskLevel: Optional[str] = "low"
+    fraudAmount: Optional[float] = 0.0
+    customerName: Optional[str] = "Unknown"
     createdAt: datetime
-    updatedAt: Optional[datetime]
-    dueDate: Optional[datetime]
-    tags: List[str]
+    updatedAt: Optional[datetime] = None
+    dueDate: Optional[datetime] = None
+    tags: List[str] = Field(default_factory=list)
+
+class CaseCreateResponse(BaseModel):
+    id: str
+    case_id: str
+    message: str
+    case: Dict[str, Any]
 
 class CaseListResponse(BaseModel):
     cases: List[CaseResponse]
@@ -101,7 +108,7 @@ router = APIRouter()
 # ===== CASE MANAGEMENT ENDPOINTS =====
 
 
-@router.post("", response_model=CaseResponse, status_code=201)
+@router.post("", response_model=CaseCreateResponse, status_code=201)
 async def create_case(
     case_data: CaseCreate,
     current_user: dict = Depends(auth_service.get_current_user),
@@ -123,7 +130,6 @@ async def create_case(
         }
 
         # Creates persistence call
-        from app.services.infrastructure.storage.database_service import db_service
         new_case = db_service.create_case(
             db,
             id=str(uuid.uuid4()),

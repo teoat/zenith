@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, Settings, ShieldAlert, BarChart3, Database, WifiOff, Gavel } from 'lucide-react';
+import { LayoutDashboard, Briefcase, FileText, Settings, ShieldAlert, BarChart3, Database, WifiOff, Gavel, Palette, Code2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { useSidebar } from '@/store/globalStore';
@@ -31,6 +31,26 @@ const NavItem = ({ to, icon: Icon, children }: { to: string; icon: React.Element
 export const Sidebar = () => {
     const { isOnline } = useNetworkStatus();
     const { collapsed } = useSidebar();
+    const [developerMode, setDeveloperMode] = React.useState(false);
+
+    React.useEffect(() => {
+        const checkDevMode = () => {
+             const isDev = process.env.NODE_ENV === 'development' || localStorage.getItem('developerMode') === 'true';
+             setDeveloperMode(isDev);
+        };
+
+        // Initial check
+        checkDevMode();
+
+        // Listen for updates
+        window.addEventListener('developerModeChanged', checkDevMode);
+        window.addEventListener('storage', checkDevMode);
+
+        return () => {
+            window.removeEventListener('developerModeChanged', checkDevMode);
+            window.removeEventListener('storage', checkDevMode);
+        };
+    }, []);
 
   return (
     <div className={cn(
@@ -54,6 +74,16 @@ export const Sidebar = () => {
             <NavItem to="/forensics" icon={FileText}>Forensics</NavItem>
             <NavItem to="/network" icon={BarChart3}>Visualization</NavItem>
             <NavItem to="/reconciliation" icon={Briefcase}>Reconciliation</NavItem>
+            
+            {developerMode && (
+                <>
+                    <div className={cn("mt-4 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed ? "hidden" : "px-2")}>
+                        Developer
+                    </div>
+                    <NavItem to="/design" icon={Palette}>Design System</NavItem>
+                    <NavItem to="/code-review" icon={Code2}>Code Review</NavItem>
+                </>
+            )}
           </nav>
         </div>
         

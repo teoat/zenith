@@ -798,6 +798,49 @@ async def chat_with_ai(
                  "confidence": 0.92
             })
 
+        # Red Team (Devil's Advocate) persona - Challenge assumptions and strengthen case
+        if persona == "redteam":
+            suggestions.append({
+                "id": "redteam_1",
+                "label": "Challenge Evidence Authenticity",
+                "action": "verify_chain_of_custody",
+                "type": "update",
+                "impact": "medium",
+                "description": "Review chain of custody and verify evidence wasn't tampered with or misattributed.",
+                "reasoning": "Red Team: Evidence should be independently verified before drawing conclusions.",
+                "confidence": 0.95
+            })
+            suggestions.append({
+                "id": "redteam_2",
+                "label": "Find Alternative Explanations",
+                "action": "generate_alternative_hypotheses",
+                "type": "update",
+                "impact": "high",
+                "description": "Generate 3 alternative benign explanations for the observed behavior.",
+                "reasoning": "Red Team: Confirmation bias can lead to false positives. Consider innocent explanations.",
+                "confidence": 0.88
+            })
+            suggestions.append({
+                "id": "redteam_3",
+                "label": "Stress Test Timeline",
+                "action": "verify_timeline_integrity",
+                "type": "update",
+                "impact": "medium",
+                "description": "Check for gaps, inconsistencies, or anomalies in the reconstructed timeline.",
+                "reasoning": "Red Team: Timeline reconstruction may have errors that weaken prosecution.",
+                "confidence": 0.92
+            })
+            suggestions.append({
+                "id": "redteam_4",
+                "label": "Defense Attorney Perspective",
+                "action": "simulate_defense_arguments",
+                "type": "update",
+                "impact": "critical",
+                "description": "Simulate how a defense attorney would attack the current evidence and conclusions.",
+                "reasoning": "Red Team: Proactively address weaknesses before they're exploited in court.",
+                "confidence": 0.85
+            })
+
         # Default fallback suggestions
         if not suggestions:
             suggestions = [

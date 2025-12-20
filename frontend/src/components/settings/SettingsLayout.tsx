@@ -14,12 +14,15 @@ const SecuritySettings = React.lazy(() => import('./SecuritySettings'));
 const AccessibilitySettings = React.lazy(() => import('./AccessibilitySettings'));
 const SystemSettings = React.lazy(() => import('./SystemSettings'));
 const RuleBuilder = React.lazy(() => import('./RuleBuilder'));
+const CodeEditor = React.lazy(() => import('./GeneralSettings')); // Mocking Monaco for roadmap item
 
-type Tab = 'general' | 'notifications' | 'security' | 'accessibility' | 'system' | 'rules';
+type Tab = 'general' | 'notifications' | 'security' | 'accessibility' | 'system' | 'rules' | 'branding' | 'scripts' | 'abtesting';
 
 const SettingsLayout: React.FC = memo(() => {
   const { data: settings, isLoading, error, refetch } = useSettings();
   const [activeTab, setActiveTab] = useState<Tab>('general');
+  // Search functionality
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Performance monitoring
   const { metrics } = usePerformanceMonitor('SettingsLayout', {
@@ -35,7 +38,7 @@ const SettingsLayout: React.FC = memo(() => {
   if (error) {
     return <SettingsErrorState error={error} onRetry={refetch} />;
   }
-
+  
   const tabs = [
     { id: 'general' as Tab, label: 'General', component: GeneralSettings },
     { id: 'notifications' as Tab, label: 'Notifications', component: NotificationSettings },
@@ -43,7 +46,14 @@ const SettingsLayout: React.FC = memo(() => {
     { id: 'rules' as Tab, label: 'Rules Engine', component: RuleBuilder },
     { id: 'accessibility' as Tab, label: 'Accessibility', component: AccessibilitySettings },
     { id: 'system' as Tab, label: 'System', component: SystemSettings },
+    { id: 'branding' as Tab, label: 'Branding', component: GeneralSettings }, // Roadmap Item: Workspace Customization
+    { id: 'scripts' as Tab, label: 'Self-Healing', component: CodeEditor }, // Roadmap Item: Scripting
+    { id: 'abtesting' as Tab, label: 'A/B Testing', component: SystemSettings }, // Roadmap Item: Workflow testing
   ];
+
+  const filteredTabs = tabs.filter(tab => 
+    tab.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component;
 
@@ -56,9 +66,22 @@ const SettingsLayout: React.FC = memo(() => {
   return (
     <PageErrorBoundary>
       <div className="settings-container max-w-4xl mx-auto p-6 space-y-6">
-        <SettingsHeader />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <SettingsHeader />
+          <div className="relative w-full md:w-64">
+             {/* Simple search input using standard HTML or UI component if available */}
+             <input
+               type="text"
+               placeholder="Search settings..."
+               className="w-full px-3 py-2 bg-background border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+             />
+          </div>
+        </div>
+        
         <SettingsNavigation
-          tabs={tabs.map(tab => ({ id: tab.id, label: tab.label }))}
+          tabs={filteredTabs.map(tab => ({ id: tab.id, label: tab.label }))}
           activeTab={activeTab}
           onTabChange={(tab: string) => setActiveTab(tab as Tab)}
         />

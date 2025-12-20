@@ -257,12 +257,69 @@ const DigitalDossierGenerator: React.FC<DigitalDossierGeneratorProps> = ({
 
             <AccessibleButton
               onClick={downloadDossier}
-              variant="primary"
+              variant="secondary"
               aria-label="Download dossier as markdown file"
             >
               <Download size={16} className="mr-2" />
-              Download Dossier
+              Download Markdown
             </AccessibleButton>
+
+            <AccessibleButton
+              onClick={() => window.print()}
+              variant="primary"
+              aria-label="Print or Save as PDF"
+            >
+              <FileText size={16} className="mr-2" />
+              Print / Save PDF
+            </AccessibleButton>
+          </div>
+
+          {/* Print Styles */}
+          <style>{`
+            @media print {
+              body * {
+                visibility: hidden;
+              }
+              .digital-dossier-generator, .digital-dossier-generator * {
+                visibility: visible;
+              }
+              .digital-dossier-generator {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                color: black;
+                border: none;
+                padding: 0;
+              }
+              /* Hide UI controls when printing */
+              button, .flex.items-center.gap-3.pt-4, h3, h4 svg, .text-slate-600 {
+                display: none !important;
+              }
+              /* Show content specifically */
+              pre {
+                white-space: pre-wrap;
+                font-family: serif;
+                font-size: 12pt;
+                color: black;
+              }
+              /* Add a print header */
+              .print-header {
+                display: block !important;
+                margin-bottom: 20px;
+                border-bottom: 2px solid black;
+                padding-bottom: 10px;
+              }
+            }
+            .print-header {
+              display: none;
+            }
+          `}</style>
+          
+          <div className="print-header">
+            <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>Confidential Investigation Dossier</h1>
+            <p>Generated: {new Date().toLocaleString()}</p>
           </div>
         </>
       )}

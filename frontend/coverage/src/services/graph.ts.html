@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">52.63% </span>
+                <span class="strong">10.52% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/19</span>
+                <span class='fraction'>2/19</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">63.63% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>14/22</span>
+                <span class='fraction'>0/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/9</span>
+                <span class='fraction'>0/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55.55% </span>
+                <span class="strong">11.11% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>10/18</span>
+                <span class='fraction'>2/18</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -127,15 +127,15 @@
 <a name='L62'></a><a href='#L62'>62</a>
 <a name='L63'></a><a href='#L63'>63</a>
 <a name='L64'></a><a href='#L64'>64</a>
-<a name='L65'></a><a href='#L65'>65</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">7x</span>
+<a name='L65'></a><a href='#L65'>65</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -157,12 +157,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -173,11 +173,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -195,13 +195,13 @@
 import type { GraphData, CentralEntity, SuspiciousPattern, GraphSearchResults } from '../types/api';
 &nbsp;
 export const graphService = {
-  getGraphData: async (): Promise&lt;any&gt; =&gt; {
-    const response = await request&lt;any&gt;('/graph/data');
-    const rawData = response.graph_data || response.data || response;
+  getGraphData: <span class="fstat-no" title="function not covered" >async </span>(): Promise&lt;any&gt; =&gt; {
+    const response = <span class="cstat-no" title="statement not covered" >await request&lt;any&gt;('/graph/data');</span>
+    const rawData = <span class="cstat-no" title="statement not covered" >response.graph_data || response.data || response;</span>
     
-    return {
-      nodes: rawData.nodes || <span class="branch-1 cbranch-no" title="branch not covered" >[],</span>
-      links: rawData.links || rawData.edges || <span class="branch-2 cbranch-no" title="branch not covered" >[],</span>
+<span class="cstat-no" title="statement not covered" >    return {</span>
+      nodes: rawData.nodes || [],
+      links: rawData.links || rawData.edges || [],
       stats: response.stats
     };
   },
@@ -220,13 +220,13 @@ export const graphService = {
 <span class="cstat-no" title="statement not covered" >    return request(`/graph/search?${params.toString()}`);</span>
   },
 &nbsp;
-  saveGraphSnapshot: async (caseId: string, graphData: { nodes?: unknown[]; links?: unknown[] } | undefined): Promise&lt;{ success: boolean; snapshot_id?: string }&gt; =&gt; {
-      const data = {
-        nodes: graphData?.nodes || <span class="branch-1 cbranch-no" title="branch not covered" >[],</span>
-        links: graphData?.links || <span class="branch-1 cbranch-no" title="branch not covered" >[],</span>
+  saveGraphSnapshot: <span class="fstat-no" title="function not covered" >async </span>(caseId: string, graphData: { nodes?: unknown[]; links?: unknown[] } | undefined): Promise&lt;{ success: boolean; snapshot_id?: string }&gt; =&gt; {
+      const data = <span class="cstat-no" title="statement not covered" >{</span>
+        nodes: graphData?.nodes || [],
+        links: graphData?.links || [],
         name: `Snapshot ${new Date().toISOString()}`
       };
-      return request(`/graph/snapshot/${caseId}`, {
+<span class="cstat-no" title="statement not covered" >      return request(`/graph/snapshot/${caseId}`, {</span>
         method: 'POST',
         body: JSON.stringify(data)
       });
@@ -236,14 +236,14 @@ export const graphService = {
 <span class="cstat-no" title="statement not covered" >      return request(`/graph/snapshots/${caseId}`);</span>
   },
 &nbsp;
-  buildGraph: async (daysBack: number): Promise&lt;GraphData&gt; =&gt; {
-      const response = await request&lt;any&gt;(`/graph/build?days_back=${daysBack}`, {
+  buildGraph: <span class="fstat-no" title="function not covered" >async </span>(daysBack: number): Promise&lt;GraphData&gt; =&gt; {
+      const response = <span class="cstat-no" title="statement not covered" >await request&lt;any&gt;(`/graph/build?days_back=${daysBack}`, {</span>
         method: 'POST'
       });
-      const rawData = response.graph_data || response.data || response;
-      return {
-        nodes: rawData.nodes || <span class="branch-1 cbranch-no" title="branch not covered" >[],</span>
-        links: rawData.links || rawData.edges || <span class="branch-2 cbranch-no" title="branch not covered" >[]</span>
+      const rawData = <span class="cstat-no" title="statement not covered" >response.graph_data || response.data || response;</span>
+<span class="cstat-no" title="statement not covered" >      return {</span>
+        nodes: rawData.nodes || [],
+        links: rawData.links || rawData.edges || []
       };
   },
 &nbsp;
@@ -262,7 +262,7 @@ export const graphService = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T03:48:47.569Z
+                at 2025-12-20T05:56:42.976Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

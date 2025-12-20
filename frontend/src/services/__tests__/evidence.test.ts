@@ -228,13 +228,6 @@ describe('EvidenceService', () => {
     });
   });
 
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining(`type=${type}`),
-        expect.any(Object)
-      );
-    });
-  });
-
   describe('deleteEvidence', () => {
     it('should delete evidence', async () => {
       const evidenceId = 'evidence-123';
