@@ -1,3 +1,4 @@
+import { secureLogger } from '../utils/secureLogger';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import type { Case } from '../types/schema';
@@ -27,7 +28,7 @@ export const useCreateCase = () => {
         if (!oldData) return oldData;
         return {
           ...oldData,
-          items: [newCaseData, ...oldData.items],
+          cases: [newCaseData, ...(oldData.cases || oldData.items || [])],
           total: oldData.total + 1,
         };
       });
@@ -36,7 +37,7 @@ export const useCreateCase = () => {
       queryClient.invalidateQueries({ queryKey: ['cases'] });
     },
     onError: (error, _variables) => {
-      console.error('Case creation failed:', error);
+      secureLogger.error('Case creation failed:', error);
       // Could show toast notification
     },
     retry: 2,

@@ -500,7 +500,7 @@ class AdvancedComplianceEngine:
         while self.monitoring_active:
             try:
                 # Use SanctionsListDownloader
-                sanctions_data = self.sanctions_downloader.fetch_and_parse_all()
+                sanctions_data = await self.sanctions_downloader.fetch_and_parse_all()
                 
                 # Update local memory
                 self.sanctions_db.update(sanctions_data)

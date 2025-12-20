@@ -12,6 +12,8 @@ lsof -ti:5174 | xargs kill -9 2>/dev/null
 echo "Starting Backend..."
 source backend/venv/bin/activate
 export PYTHONPATH=$PYTHONPATH:$(pwd)/backend
+# Load environment variables
+cd backend && python -c "from dotenv import load_dotenv; load_dotenv()" && cd ..
 # Run in background with nohup
 nohup uvicorn backend.main:app --reload --port 8000 > backend/logs/server.log 2>&1 &
 BACKEND_PID=$!

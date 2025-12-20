@@ -29,18 +29,18 @@ interface EntityNodeProps {
   isOverlay?: boolean;
 }
 
-const getEntityIcon = (type: string) => {
+const renderEntityIcon = (type: string, className: string = "w-4 h-4") => {
   switch (type) {
-    case 'person': return Users;
-    case 'organization': return Building;
-    case 'location': return MapPin;
-    case 'document': return FileText;
-    case 'transaction': return DollarSign;
-    case 'image': return ImageIcon;
-    case 'video': return Video;
-    case 'email': return Mail;
-    case 'phone': return Phone;
-    default: return Users;
+    case 'person': return <Users className={className} />;
+    case 'organization': return <Building className={className} />;
+    case 'location': return <MapPin className={className} />;
+    case 'document': return <FileText className={className} />;
+    case 'transaction': return <DollarSign className={className} />;
+    case 'image': return <ImageIcon className={className} />;
+    case 'video': return <Video className={className} />;
+    case 'email': return <Mail className={className} />;
+    case 'phone': return <Phone className={className} />;
+    default: return <Users className={className} />;
   }
 };
 
@@ -80,7 +80,6 @@ export const EntityNode: React.FC<EntityNodeProps> = ({
     data: { entity },
   });
 
-  const Icon = getEntityIcon(entity.type);
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
   } : undefined;
@@ -88,7 +87,7 @@ export const EntityNode: React.FC<EntityNodeProps> = ({
   if (isOverlay) {
     return (
       <div className="flex items-center gap-2 p-2 rounded border bg-white shadow-lg border-blue-500">
-        <Icon className="w-4 h-4" />
+        {renderEntityIcon(entity.type)}
         <div className="font-medium text-sm">{entity.name}</div>
       </div>
     );
@@ -121,11 +120,7 @@ export const EntityNode: React.FC<EntityNodeProps> = ({
           ${scale < 0.7 ? 'w-6 h-6' : ''}
           ${scale < 0.5 ? 'w-4 h-4' : ''}
         `}>
-          <Icon className={`
-            text-white
-            ${scale < 0.7 ? 'w-4 h-4' : 'w-5 h-5'}
-            ${scale < 0.5 ? 'w-3 h-3' : ''}
-          `} />
+          {renderEntityIcon(entity.type, `text-white ${scale < 0.7 ? 'w-4 h-4' : 'w-5 h-5'} ${scale < 0.5 ? 'w-3 h-3' : ''}`)}
         </div>
 
         {scale > 0.3 && (

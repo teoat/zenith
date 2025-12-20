@@ -8,6 +8,15 @@ interface MetricSparklineProps {
   showTooltip?: boolean;
 }
 
+const TOOLTIP_STYLE = {
+  background: 'rgba(0,0,0,0.8)',
+  border: 'none',
+  borderRadius: '8px',
+  padding: '8px 12px',
+  fontSize: '12px',
+  color: '#fff'
+} as const;
+
 const MetricSparkline: React.FC<MetricSparklineProps> = memo(({ 
   data, 
   color = '#3b82f6', 
@@ -21,7 +30,10 @@ const MetricSparkline: React.FC<MetricSparklineProps> = memo(({
   }));
 
   return (
-    <div style={{ width: '100%', height }}>
+    <div 
+      className="w-full"
+      style={{ ['--chart-height' as string]: `${height}px`, height: 'var(--chart-height)' } as React.CSSProperties}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
           <defs>
@@ -32,14 +44,7 @@ const MetricSparkline: React.FC<MetricSparklineProps> = memo(({
           </defs>
           {showTooltip && (
             <Tooltip
-              contentStyle={{
-                background: 'rgba(0,0,0,0.8)',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '8px 12px',
-                fontSize: '12px',
-                color: '#fff'
-              }}
+              contentStyle={TOOLTIP_STYLE}
               labelFormatter={() => ''}
               formatter={(value: number) => [value.toLocaleString(), '']}
             />

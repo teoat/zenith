@@ -127,13 +127,20 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
   // Check completion and show badge
   useEffect(() => {
     const allCompleted = items.every(item => item.completed);
+    let timeoutId: NodeJS.Timeout;
+    
     if (allCompleted && !showBadge) {
-      requestAnimationFrame(() => {
+      const rafId = requestAnimationFrame(() => {
         setShowBadge(true);
-        setTimeout(() => {
+        timeoutId = setTimeout(() => {
           onComplete?.();
         }, 2000);
       });
+      
+      return () => {
+         cancelAnimationFrame(rafId);
+         if (timeoutId) clearTimeout(timeoutId);
+      };
     }
   }, [items, showBadge, onComplete]);
 

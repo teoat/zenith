@@ -12,7 +12,32 @@ test.describe('Critical Fraud Investigation Workflow', () => {
     await page.fill('[name="email"]', 'analyst@378x492.com');
     await page.fill('[name="password"]', 'Test123!');
     await page.click('button[type="submit"]');
-    await expect(page).toHaveURL('/');
+    
+    // Handle landing page which could be root, dashboard, or projects
+    await page.waitForURL(url => 
+      url.pathname === '/' || 
+      url.pathname === '/dashboard' || 
+      url.pathname === '/projects'
+    );
+    
+    // If we land on projects selection, initialize or select one
+    if (page.url().includes('/projects')) {
+      // Check if any workspace already exists
+      const workspaceBtn = page.locator('button:has-text("Open Workspace")').first();
+      const workspaceExists = await workspaceBtn.isVisible();
+      
+      if (workspaceExists) {
+        await workspaceBtn.click();
+      } else {
+        // Create new project
+        await page.click('text=Initialize New Project');
+        await page.fill('input[placeholder*="Operation Shadow"]', 'E2E Test Project');
+        await page.click('button:has-text("Create Project")');
+      }
+    }
+    
+    // Final check to ensure we are on a functional page
+    await page.waitForURL(url => url.pathname === '/' || url.pathname === '/dashboard');
   });
 
   test('Complete case creation and evidence upload workflow', async ({ page }) => {

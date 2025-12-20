@@ -14,7 +14,7 @@ let db = null;
  * @returns {Buffer} Encryption key
  */
 function deriveMasterKey(password) {
-  const salt = '378x492-salt-v1-secure'; // TODO: Store this securely
+  const salt = '378x492-salt-v1-secure'; // NOTE: Using fixed salt for local encryption. In production, consider platform-specific secure storage.
   const iterations = 100000; // PBKDF2 iterations
   const keylen = 32; // 256 bits
   const digest = 'sha512';

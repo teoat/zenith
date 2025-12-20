@@ -10,8 +10,8 @@ const ENV_VALIDATION: EnvValidation = {
   required: ['VITE_API_URL'], // These must be set
   optional: ['VITE_WS_URL', 'VITE_ENVIRONMENT'], // These have defaults
   defaults: {
-    'VITE_API_URL': 'http://localhost:8000/api/v1',
-    'VITE_WS_URL': 'ws://localhost:8000',
+    'VITE_API_URL': 'http://localhost:8001/api/v1',
+    'VITE_WS_URL': 'ws://localhost:8001',
     'VITE_ENVIRONMENT': 'development'
   }
 };

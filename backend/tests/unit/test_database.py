@@ -1,5 +1,6 @@
 """Unit tests for database models and services"""
 
+import os
 import uuid
 from unittest.mock import MagicMock, patch
 
@@ -183,7 +184,7 @@ class TestAuthService:
 
     def test_password_hashing(self, auth_service):
         """Test password hashing and verification"""
-        password = "test_password_123"
+        password = os.getenv("TEST_PASSWORD", "test_password_123")
 
         # Hash password
         hashed = auth_service.hash_password(password)

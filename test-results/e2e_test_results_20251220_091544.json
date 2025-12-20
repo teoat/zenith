@@ -1,0 +1,190 @@
+{
+  "test_run_timestamp": "2025-12-20T09:15:44.784806",
+  "total_tests": 20,
+  "total_passed": 1,
+  "total_failed": 18,
+  "test_suites": [
+    {
+      "name": "Backend API Tests",
+      "results": {
+        "test_name": "backend_api_tests",
+        "passed": 0,
+        "failed": 7,
+        "total": 7,
+        "details": [
+          {
+            "test": "health",
+            "status": "failed",
+            "error": "Status 500"
+          },
+          {
+            "test": "readiness",
+            "status": "failed",
+            "error": "Status 500"
+          },
+          {
+            "test": "liveness",
+            "status": "failed",
+            "error": "Status 500"
+          },
+          {
+            "test": "api_health_check",
+            "status": "failed",
+            "error": "Status 500",
+            "response_time": 5
+          },
+          {
+            "test": "api_fraud_rules",
+            "status": "failed",
+            "error": "Status 500",
+            "response_time": 5
+          },
+          {
+            "test": "api_health_ready",
+            "status": "failed",
+            "error": "Status 500",
+            "response_time": 5
+          },
+          {
+            "test": "api_health_live",
+            "status": "failed",
+            "error": "Status 500",
+            "response_time": 5
+          }
+        ]
+      }
+    },
+    {
+      "name": "WebSocket Tests",
+      "results": {
+        "test_name": "websocket_collaboration_tests",
+        "passed": 0,
+        "failed": 0,
+        "total": 1,
+        "details": [
+          {
+            "test": "websocket_join_session",
+            "status": "skipped",
+            "reason": "WebSocket server not available: Multiple exceptions: [Errno 61] Connect call failed ('::1', 8081, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8081)"
+          }
+        ],
+        "skipped": 1
+      }
+    },
+    {
+      "name": "AI Service Tests",
+      "results": {
+        "test_name": "ai_service_tests",
+        "passed": 0,
+        "failed": 3,
+        "total": 3,
+        "details": [
+          {
+            "test": "ai_ai_analyze_endpoint",
+            "status": "failed",
+            "error": "HTTP 500",
+            "response_time": {
+              "type": "fraud_pattern",
+              "data": {
+                "text": "test fraud pattern"
+              }
+            }
+          },
+          {
+            "test": "ai_ai_health_endpoint",
+            "status": "failed",
+            "error": "HTTP 500",
+            "response_time": null
+          },
+          {
+            "test": "ai_performance_ai_metrics",
+            "status": "failed",
+            "error": "HTTP 500",
+            "response_time": null
+          }
+        ]
+      }
+    },
+    {
+      "name": "Frontend Tests",
+      "results": {
+        "test_name": "frontend_component_tests",
+        "passed": 1,
+        "failed": 1,
+        "total": 2,
+        "details": [
+          {
+            "test": "frontend_build_exists",
+            "status": "passed"
+          },
+          {
+            "test": "frontend_static_serving",
+            "status": "failed",
+            "error": "Status 500"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Security Tests",
+      "results": {
+        "test_name": "security_tests",
+        "passed": 0,
+        "failed": 3,
+        "total": 3,
+        "details": [
+          {
+            "test": "security_security_headers",
+            "status": "failed",
+            "error": "HTTP 500 - endpoint not accessible"
+          },
+          {
+            "test": "security_cors_policy",
+            "status": "failed",
+            "error": "HTTP 500 - endpoint not accessible"
+          },
+          {
+            "test": "security_rate_limiting",
+            "status": "failed",
+            "error": "Unexpected response pattern: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500]"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Performance Tests",
+      "results": {
+        "test_name": "performance_tests",
+        "passed": 0,
+        "failed": 4,
+        "total": 4,
+        "details": [
+          {
+            "test": "performance_health",
+            "status": "failed",
+            "error": "Response time 5.00s, status 500",
+            "response_time": 5
+          },
+          {
+            "test": "performance_api_stats",
+            "status": "failed",
+            "error": "Response time 5.00s, status 500",
+            "response_time": 5
+          },
+          {
+            "test": "performance_metrics",
+            "status": "failed",
+            "error": "Response time 5.00s, status 500",
+            "response_time": 5
+          },
+          {
+            "test": "performance_concurrent_requests",
+            "status": "failed",
+            "error": "Failed responses: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500]"
+          }
+        ]
+      }
+    }
+  ],
+  "success_rate": 5.0
+}

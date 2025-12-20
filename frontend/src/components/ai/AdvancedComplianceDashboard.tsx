@@ -1,5 +1,6 @@
 // frontend/src/components/ai/AdvancedComplianceDashboard.tsx
 import React, { useState, useEffect } from 'react';
+import { simulateDelay } from '../../utils/simulation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { secureLogger } from '../../utils/secureLogger';
 import {
@@ -182,7 +183,7 @@ const AdvancedComplianceDashboard: React.FC = () => {
   const runComplianceCheck = async (ruleId: string, entityId: string) => {
     try {
       secureLogger.info(`Running compliance check: ${ruleId} for ${entityId}`);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await simulateDelay(2000);
       await loadComplianceData();
      } catch (error) {
        secureLogger.error('Failed to run compliance check:', error);

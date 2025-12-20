@@ -26,16 +26,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-try:
-    from sentence_transformers import SentenceTransformer
-    import faiss
-    HAS_SEMANTIC = True
-except ImportError:
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    from sklearn.metrics.pairwise import cosine_similarity
-    HAS_SEMANTIC = False
+HAS_SEMANTIC = False
+SentenceTransformer = None
+faiss = None
+TfidfVectorizer = None
+cosine_similarity = None
 
-from app.services.infrastructure.error_handler import error_handler, ErrorCategory, ServiceError
+from app.services.infrastructure.error_handler import error_handler, ErrorCategory, ServiceError, ErrorSeverity
 
 logger = logging.getLogger(__name__)
 
@@ -82,25 +79,50 @@ class AIService:
         self.model = None
         self.faiss_index = None
         self.doc_ids = []
+        self.tfidf_vectorizer = None
 
         # Create data directory if it doesn't exist
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
 
     async def initialize(self):
         """Initialize the AI service and load existing data"""
+        global HAS_SEMANTIC, SentenceTransformer, faiss, TfidfVectorizer, cosine_similarity
+
         try:
-            if HAS_SEMANTIC:
+            try:
+                # Lazy load semantic dependencies
+                import faiss as fs_mod
+                from sentence_transformers import SentenceTransformer as st_mod
+
+                faiss = fs_mod
+                SentenceTransformer = st_mod
+                HAS_SEMANTIC = True
+
                 logger.info("Initializing Semantic AI with SentenceTransformers...")
                 self.model = SentenceTransformer('all-MiniLM-L6-v2')
-            else:
-                logger.warning("Semantic AI dependencies missing, falling back to TF-IDF")
-            
+                logger.info("SentenceTransformer model loaded successfully")
+            except ImportError as ie:
+                logger.warning(f"Semantic AI dependencies missing: {ie}. Attempting Fallback.")
+                HAS_SEMANTIC = False
+
+                # Lazy load fallback dependencies
+                from sklearn.feature_extraction.text import TfidfVectorizer as tv_mod
+                from sklearn.metrics.pairwise import cosine_similarity as cs_mod
+
+                TfidfVectorizer = tv_mod
+                cosine_similarity = cs_mod
+                logger.info("Initialized TF-IDF Fallback.")
+
+            logger.info(f"HAS_SEMANTIC={HAS_SEMANTIC}, model loaded={self.model is not None}")
             await self._load_vector_store()
             await self._rebuild_index()
             self.initialized = True
             logger.info("AI Service initialized successfully")
         except Exception as e:
             logger.error(f"Failed to initialize AI service: {e}")
+            import traceback
+            logger.error(f"Initialize traceback: {traceback.format_exc()}")
+            # Still mark as initialized to prevent repeated failures
             self.initialized = True
 
     # Backwards-compatible no-op hooks used by tests / patches
@@ -255,9 +277,16 @@ class AIService:
     ):
         """Add a document to the vector store"""
         try:
-            # Initialize TF-IDF vectorizer if not exists
-            if not hasattr(self, 'tfidf_vectorizer') or self.tfidf_vectorizer is None:
-                if not HAS_SEMANTIC:
+            # Create vector using appropriate method
+            logger.info(f"Adding document {doc_id}, HAS_SEMANTIC={HAS_SEMANTIC}, model={self.model is not None}")
+            if HAS_SEMANTIC and self.model:
+                # Use SentenceTransformer for semantic embeddings
+                logger.info("Using SentenceTransformer for embeddings")
+                vector = self.model.encode([content])[0]
+            else:
+                logger.info("Using TF-IDF fallback")
+                # Fallback: Initialize TF-IDF vectorizer if needed
+                if not hasattr(self, 'tfidf_vectorizer') or self.tfidf_vectorizer is None:
                     self.tfidf_vectorizer = TfidfVectorizer(
                         max_features=5000, stop_words="english", ngram_range=(1, 2)
                     )
@@ -266,17 +295,23 @@ class AIService:
                         docs = [data["content"] for data in self.vector_store.values()]
                         self.tfidf_vectorizer.fit(docs)
 
-            # Create TF-IDF vector
-            if hasattr(self, 'tfidf_vectorizer') and self.tfidf_vectorizer:
-                vector = self.tfidf_vectorizer.transform([content]).toarray()[0]
-            else:
-                # Fallback: simple hash-based vector
-                vector = np.array(
-                    [
+                # Create TF-IDF vector
+                if hasattr(self, 'tfidf_vectorizer') and self.tfidf_vectorizer is not None:
+                    try:
+                        vector = self.tfidf_vectorizer.transform([content]).toarray()[0]
+                    except Exception as e:
+                        logger.warning(f"TF-IDF transform failed, using hash fallback: {e}")
+                        # Hash-based fallback
+                        vector = np.array([
+                            hash(content + str(k) + str(v)) % 1000 / 1000.0
+                            for k, v in (metadata or {}).items()
+                        ])
+                else:
+                    # Hash-based fallback
+                    vector = np.array([
                         hash(content + str(k) + str(v)) % 1000 / 1000.0
                         for k, v in (metadata or {}).items()
-                    ]
-                )
+                    ])
 
             # Store in memory
             self.vector_store[doc_id] = {
@@ -297,6 +332,9 @@ class AIService:
 
         except Exception as e:
             logger.error(f"Failed to add document {doc_id}: {e}")
+            logger.error(f"Exception type: {type(e)}, args: {e.args}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             return False
 
     async def _persist_document(self, doc_id: str, doc_data: Dict[str, Any]):
@@ -1034,5 +1072,7 @@ ai_service = AIService()
 
 
 async def get_ai_service() -> AIService:
-    """Get the global AI service instance"""
+    """Get the global AI service instance, initializing if needed"""
+    if not ai_service.initialized:
+        await ai_service.initialize()
     return ai_service

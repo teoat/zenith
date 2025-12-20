@@ -62,6 +62,31 @@ export const evidenceService = {
     return response.json();
   },
 
+  analyzeEvidencePath: async (filePath: string, options: { ocr?: boolean, forensics?: boolean, faces?: boolean, objects?: boolean } = {}): Promise<any> => {
+    const formData = new FormData();
+    formData.append('file_path', filePath);
+    
+    formData.append('enable_ocr', String(options.ocr ?? true));
+    formData.append('enable_forensics', String(options.forensics ?? true));
+    formData.append('enable_face_detection', String(options.faces ?? false));
+    formData.append('enable_object_detection', String(options.objects ?? false));
+
+    const token = getToken();
+    const headers: Record<string, string> = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+    const response = await fetch(`${API_BASE}/multimodal/analyze/path`, {
+      method: 'POST',
+      body: formData,
+      headers
+    });
+    
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Analysis failed');
+    }
+    return response.json();
+  },
+
   selectFile: async (): Promise<FileSelectResult> => {
     if (isElectron() && (window as any).electronAPI?.selectFile) {
       return (window as any).electronAPI.selectFile();

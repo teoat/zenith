@@ -21,6 +21,29 @@ const Ingestion: React.FC = () => {
     filters,
     setFilters
   } = useIngestionStore();
+  
+  const [edgeReady, setEdgeReady] = React.useState(false);
+
+  React.useEffect(() => {
+    // Check if Edge AI is ready
+    const checkEdgeAI = async () => {
+      // Lazy load to avoid circular dependency issues if any
+      const { edgeInferenceService } = await import('../services/edge/inferenceService');
+      if (edgeInferenceService.isReady()) {
+        setEdgeReady(true);
+      } else {
+        // Poll briefly or wait for event (simple polling for MV)
+        const interval = setInterval(() => {
+           if (edgeInferenceService.isReady()) {
+             setEdgeReady(true);
+             clearInterval(interval);
+           }
+        }, 500);
+        return () => clearInterval(interval);
+      }
+    };
+    checkEdgeAI();
+  }, []);
 
   const filterOptions: FilterOption[] = [
     {
@@ -81,9 +104,17 @@ const Ingestion: React.FC = () => {
 
       {/* Right Pane: Ingestion Content */}
       <div className="flex-1 flex flex-col h-full overflow-hidden p-6">
-        <header className="page-header mb-6">
-          <h1 className="text-3xl font-bold">Data Ingestion Wizard</h1>
-          <p className="text-slate-600 dark:text-slate-400">Upload, map, and process evidence files for simplified reconciliation</p>
+        <header className="page-header mb-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Data Ingestion Wizard</h1>
+            <p className="text-slate-600 dark:text-slate-400">Upload, map, and process evidence files</p>
+          </div>
+          {edgeReady && (
+            <div className="flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 rounded-full border border-green-200 text-xs font-medium">
+               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+               Edge AI Active
+            </div>
+          )}
         </header>
 
         <section className="flex-1 min-h-0" aria-label="Ingestion Wizard">

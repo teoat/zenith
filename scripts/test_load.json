@@ -1,0 +1,108 @@
+{
+  "summary": {
+    "test_duration": 41.39953088760376,
+    "total_requests": 9,
+    "successful_requests": 9,
+    "failed_requests": 0,
+    "success_rate": 100.0,
+    "avg_response_time": 12.981942600674099,
+    "median_response_time": 16.178929090499878,
+    "min_response_time": 5.885176181793213,
+    "max_response_time": 17.65187120437622,
+    "requests_per_second": 0.2173937676838475,
+    "endpoint_breakdown": {
+      "/health": {
+        "requests": 3,
+        "success_rate": 100.0,
+        "avg_response_time": 16.431639671325684,
+        "median_response_time": 16.557789087295532
+      },
+      "/metrics": {
+        "requests": 3,
+        "success_rate": 100.0,
+        "avg_response_time": 6.26513671875,
+        "median_response_time": 5.885206937789917
+      },
+      "/api/v1/ai/health": {
+        "requests": 3,
+        "success_rate": 100.0,
+        "avg_response_time": 16.249051411946613,
+        "median_response_time": 17.651440143585205
+      }
+    }
+  },
+  "detailed_results": [
+    {
+      "user_id": 1,
+      "endpoint": "/health",
+      "status_code": 200,
+      "response_time": 16.178929090499878,
+      "success": true,
+      "timestamp": "2025-12-20T13:12:47.819692"
+    },
+    {
+      "user_id": 2,
+      "endpoint": "/health",
+      "status_code": 200,
+      "response_time": 16.557789087295532,
+      "success": true,
+      "timestamp": "2025-12-20T13:12:48.198655"
+    },
+    {
+      "user_id": 0,
+      "endpoint": "/health",
+      "status_code": 200,
+      "response_time": 16.55820083618164,
+      "success": true,
+      "timestamp": "2025-12-20T13:12:48.198760"
+    },
+    {
+      "user_id": 1,
+      "endpoint": "/api/v1/ai/health",
+      "status_code": 200,
+      "response_time": 13.443842887878418,
+      "success": true,
+      "timestamp": "2025-12-20T13:13:01.642729"
+    },
+    {
+      "user_id": 0,
+      "endpoint": "/api/v1/ai/health",
+      "status_code": 200,
+      "response_time": 17.651440143585205,
+      "success": true,
+      "timestamp": "2025-12-20T13:13:05.952667"
+    },
+    {
+      "user_id": 2,
+      "endpoint": "/api/v1/ai/health",
+      "status_code": 200,
+      "response_time": 17.65187120437622,
+      "success": true,
+      "timestamp": "2025-12-20T13:13:05.952817"
+    },
+    {
+      "user_id": 1,
+      "endpoint": "/metrics",
+      "status_code": 200,
+      "response_time": 7.02502703666687,
+      "success": true,
+      "timestamp": "2025-12-20T13:13:08.768090"
+    },
+    {
+      "user_id": 0,
+      "endpoint": "/metrics",
+      "status_code": 200,
+      "response_time": 5.885176181793213,
+      "success": true,
+      "timestamp": "2025-12-20T13:13:11.938648"
+    },
+    {
+      "user_id": 2,
+      "endpoint": "/metrics",
+      "status_code": 200,
+      "response_time": 5.885206937789917,
+      "success": true,
+      "timestamp": "2025-12-20T13:13:11.938876"
+    }
+  ]
+}

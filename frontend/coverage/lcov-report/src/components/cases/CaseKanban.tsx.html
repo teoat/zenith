@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">7.27% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/165</span>
+                <span class='fraction'>12/165</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">7.89% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/152</span>
+                <span class='fraction'>12/152</span>
             </div>
         
             
@@ -576,14 +576,14 @@
 <a name='L511'></a><a href='#L511'>511</a>
 <a name='L512'></a><a href='#L512'>512</a>
 <a name='L513'></a><a href='#L513'>513</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -631,13 +631,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -718,8 +718,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -745,12 +745,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1086,16 +1086,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type { ReactNode} from 'react';
-<span class="cstat-no" title="statement not covered" >import { useState, useEffect, memo, useCallback } from 'react';</span>
+import { useState, useEffect, memo, useCallback } from 'react';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-<span class="cstat-no" title="statement not covered" >import { DndContext, DragOverlay, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';</span>
-<span class="cstat-no" title="statement not covered" >import { arrayMove, sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';</span>
-<span class="cstat-no" title="statement not covered" >import { CSS } from '@dnd-kit/utilities';</span>
-<span class="cstat-no" title="statement not covered" >import { AlertCircle, Clock, CheckCircle2 } from 'lucide-react';</span>
-<span class="cstat-no" title="statement not covered" >import { useFormatters } from '../../providers/LocaleProvider';</span>
-<span class="cstat-no" title="statement not covered" >import { secureLogger } from '../../utils/secureLogger';</span>
+import { DndContext, DragOverlay, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { AlertCircle, Clock, CheckCircle2 } from 'lucide-react';
+import { useFormatters } from '../../providers/LocaleProvider';
+import { secureLogger } from '../../utils/secureLogger';
 &nbsp;
 // Interfaces
 interface Case {
@@ -1143,13 +1143,13 @@ interface ApiCase {
 &nbsp;
 // Mock data removed - now loading from API
 &nbsp;
-const getRiskBarColor = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(s</span>core: number) =&gt; {</span>
+const getRiskBarColor = <span class="fstat-no" title="function not covered" >(s</span>core: number) =&gt; {
 <span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (score &gt;= 80) <span class="cstat-no" title="statement not covered" >return 'bg-red-500';</span></span>
 <span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (score &gt;= 50) <span class="cstat-no" title="statement not covered" >return 'bg-amber-500';</span></span>
 <span class="cstat-no" title="statement not covered" >  return 'bg-green-500';</span>
 };
 &nbsp;
-const SortableItem = <span class="cstat-no" title="statement not covered" >memo(<span class="fstat-no" title="function not covered" >({</span> id, data, isFocused, onClick }: { id: string, data: Case, isFocused?: boolean, onClick?: () =&gt; void }) =&gt; {</span>
+const SortableItem = memo(<span class="fstat-no" title="function not covered" >({</span> id, data, isFocused, onClick }: { id: string, data: Case, isFocused?: boolean, onClick?: () =&gt; void }) =&gt; {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = <span class="cstat-no" title="statement not covered" >useSortable({ id });</span>
   const { formatDate } = <span class="cstat-no" title="statement not covered" >useFormatters();</span>
 &nbsp;
@@ -1188,7 +1188,7 @@ const SortableItem = <span class="cstat-no" title="statement not covered" >memo(
       {data.tags &amp;&amp; data.tags.length &gt; 0 &amp;&amp; (
         &lt;div className="flex flex-wrap gap-1 mb-2"&gt;
           {data.tags.map(<span class="fstat-no" title="function not covered" >tag </span>=&gt; (
-<span class="cstat-no" title="statement not covered" >            &lt;span key={tag} c</span>lassName="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded"&gt;
+<span class="cstat-no" title="statement not covered" >            &lt;span key={tag} className="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded"&gt;</span>
               {tag}
             &lt;/span&gt;
           ))}
@@ -1230,7 +1230,7 @@ const SortableItem = <span class="cstat-no" title="statement not covered" >memo(
   );
 });
 &nbsp;
-const Column = <span class="cstat-no" title="statement not covered" >memo(<span class="fstat-no" title="function not covered" >({</span> id, items, title, icon, focusedIndex, isFocusedColumn, onCaseClick }: ColumnProps) =&gt; {</span>
+const Column = memo(<span class="fstat-no" title="function not covered" >({</span> id, items, title, icon, focusedIndex, isFocusedColumn, onCaseClick }: ColumnProps) =&gt; {
 <span class="cstat-no" title="statement not covered" >  return (</span>
     &lt;div className="flex-1 min-w-[300px] bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 border border-slate-200 dark:border-slate-800 flex flex-col h-full"&gt;
       &lt;div className="flex items-center gap-2 mb-4"&gt;
@@ -1257,7 +1257,7 @@ const Column = <span class="cstat-no" title="statement not covered" >memo(<span 
   );
 });
 &nbsp;
-const CaseKanban: React.FC&lt;CaseKanbanProps&gt; = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >({</span> cases: externalCases, onCaseClick }) =&gt; {</span>
+const CaseKanban: React.FC&lt;CaseKanbanProps&gt; = <span class="fstat-no" title="function not covered" >({</span> cases: externalCases, onCaseClick }) =&gt; {
   const [activeId, setActiveId] = <span class="cstat-no" title="statement not covered" >useState&lt;string | null&gt;(null);</span>
   const [loading, setLoading] = <span class="cstat-no" title="statement not covered" >useState(true);</span>
   const [error, setError] = <span class="cstat-no" title="statement not covered" >useState&lt;string | null&gt;(null);</span>
@@ -1598,7 +1598,7 @@ const CaseKanban: React.FC&lt;CaseKanbanProps&gt; = <span class="cstat-no" title
   );
 };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >export default CaseKanban;</span>
+export default CaseKanban;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -1606,7 +1606,7 @@ const CaseKanban: React.FC&lt;CaseKanbanProps&gt; = <span class="cstat-no" title
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-19T02:07:52.612Z
+                at 2025-12-20T03:48:46.392Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

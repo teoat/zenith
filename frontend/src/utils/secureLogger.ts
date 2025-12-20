@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+
 
 export interface LogEntry {
   id: string;
@@ -37,16 +37,20 @@ export class SecureLogger {
     if (typeof data === 'string') {
       // Remove potential PII patterns
       return data
-        .replace(/\b\d{3}-\d{2}-\d{4}\b/g, '[SSN REDACTED]') // SSN
+        .replace(/\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/g, '[SSN REDACTED]') // SSN (Robust)
         .replace(/\b\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}\b/g, '[CARD REDACTED]') // Credit card
         .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL REDACTED]') // Email
-        .replace(/\b\d{10}\b/g, '[PHONE REDACTED]'); // Phone
+        .replace(/\b(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b/g, '[PHONE REDACTED]'); // Phone (Robust)
     }
 
     if (typeof data === 'object' && data !== null) {
       const sanitized = { ...(data as Record<string, unknown>) };
       // Remove sensitive fields
-      const sensitiveFields = ['password', 'token', 'secret', 'key', 'ssn', 'credit_card'];
+      const sensitiveFields = [
+        'password', 'token', 'secret', 'key', 'ssn', 'credit_card',
+        'access_token', 'refresh_token', 'authorization', 'auth', 'jwt',
+        'cvv', 'pin', 'otp', 'dob', 'birth_date'
+      ];
       sensitiveFields.forEach(field => {
         if (field in sanitized) {
           sanitized[field] = '[REDACTED]';
@@ -119,22 +123,22 @@ export class SecureLogger {
 
     switch (entry.level) {
       case 'debug':
-        // eslint-disable-next-line no-console
+         
         const logger = console;
         logger.debug(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
       case 'info':
-        // eslint-disable-next-line no-console
+         
         const loggerInfo = console;
         loggerInfo.info(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
       case 'warn':
-        // eslint-disable-next-line no-console
+         
         const loggerWarn = console;
         loggerWarn.warn(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
       case 'error':
-        // eslint-disable-next-line no-console
+         
         const loggerErr = console;
         loggerErr.error(`${prefix} ${sanitizedMessage}`, entry.metadata || '');
         break;
@@ -154,7 +158,7 @@ export class SecureLogger {
       });
     } catch (error) {
       // Fallback to local storage if remote logging fails
-      // eslint-disable-next-line no-console
+       
       console.error('[SecureLogger] Failed to send log to remote service:', error);
       this.storeLocally(entry);
     }

@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">47.1% </span>
+                <span class="strong">45.9% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>57/121</span>
+                <span class='fraction'>56/122</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">42.42% </span>
+                <span class="strong">36.36% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>14/33</span>
+                <span class='fraction'>12/33</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">46.55% </span>
+                <span class="strong">45.29% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>54/116</span>
+                <span class='fraction'>53/117</span>
             </div>
         
             
@@ -373,7 +373,9 @@
 <a name='L308'></a><a href='#L308'>308</a>
 <a name='L309'></a><a href='#L309'>309</a>
 <a name='L310'></a><a href='#L310'>310</a>
-<a name='L311'></a><a href='#L311'>311</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -440,12 +442,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -684,6 +686,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useEffect, useRef, useCallback } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 &nbsp;
 interface PerformanceMetrics {
   componentName: string;
@@ -749,13 +752,13 @@ export const usePerformanceMonitor = (
     }
 &nbsp;
     // Log slow renders
-    if (renderTime &gt; threshold) {
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (enableLogging) {
-<span class="cstat-no" title="statement not covered" >        console.warn(`[PERF] ${componentName} slow render: ${renderTime.toFixed(2)}ms`);</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (renderTime &gt; threshold) {
+<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (enableLogging) {</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.warn(`[PERF] ${componentName} slow render: ${renderTime.toFixed(2)}ms`);</span>
       }
 &nbsp;
       // Report to analytics if enabled
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (reportToAnalytics &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >window.gtag)</span> {
+<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (reportToAnalytics &amp;&amp; window.gtag) {</span>
 <span class="cstat-no" title="statement not covered" >        window.gtag('event', 'component_slow_render', {</span>
           component_name: componentName,
           render_time: renderTime,
@@ -840,7 +843,7 @@ export const useFunctionPerformance = (
 &nbsp;
         <span class="missing-if-branch" title="if path not taken" >I</span>if (duration &gt; threshold) {
 <span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (enableLogging) {</span>
-<span class="cstat-no" title="statement not covered" >            console.warn(`[PERF] ${functionName} slow execution: ${duration.toFixed(2)}ms`);</span>
+<span class="cstat-no" title="statement not covered" >            secureLogger.warn(`[PERF] ${functionName} slow execution: ${duration.toFixed(2)}ms`);</span>
           }
 &nbsp;
 <span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (reportToAnalytics &amp;&amp; window.gtag) {</span>
@@ -856,7 +859,7 @@ export const useFunctionPerformance = (
         return result;
       } catch (error) {
         const duration = <span class="cstat-no" title="statement not covered" >performance.now() - start;</span>
-<span class="cstat-no" title="statement not covered" >        console.error(`[PERF] ${functionName} failed after ${duration.toFixed(2)}ms:`, error);</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.error(`[PERF] ${functionName} failed after ${duration.toFixed(2)}ms:`, error);</span>
 <span class="cstat-no" title="statement not covered" >        throw error;</span>
       }
     }) as T;
@@ -895,7 +898,7 @@ class PerformanceMonitor {
           const entries = <span class="cstat-no" title="statement not covered" >list.getEntries();</span>
           const lastEntry = <span class="cstat-no" title="statement not covered" >entries[entries.length - 1] as any;</span>
 <span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (lastEntry) {</span>
-<span class="cstat-no" title="statement not covered" >            console.log(`[PERF] LCP: ${lastEntry.startTime}ms`);</span>
+<span class="cstat-no" title="statement not covered" >            secureLogger.info(`[PERF] LCP: ${lastEntry.startTime}ms`);</span>
 <span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if (window.gtag) {</span>
 <span class="cstat-no" title="statement not covered" >              window.gtag('event', 'web_vitals', {</span>
                 metric_name: 'LCP',
@@ -907,7 +910,7 @@ class PerformanceMonitor {
 <span class="cstat-no" title="statement not covered" >        lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });</span>
 <span class="cstat-no" title="statement not covered" >        this.observers.set('lcp', lcpObserver);</span>
       } catch (e) {
-<span class="cstat-no" title="statement not covered" >        console.warn('[PERF] LCP observer not supported');</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.warn('[PERF] LCP observer not supported');</span>
       }
 &nbsp;
       // First Input Delay (FID)
@@ -915,7 +918,7 @@ class PerformanceMonitor {
         const fidObserver = <span class="cstat-no" title="statement not covered" >new PerformanceObserver(<span class="fstat-no" title="function not covered" >(l</span>ist) =&gt; {</span>
           const entries = <span class="cstat-no" title="statement not covered" >list.getEntries();</span>
 <span class="cstat-no" title="statement not covered" >          entries.forEach(<span class="fstat-no" title="function not covered" >(e</span>ntry: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            console.log(`[PERF] FID: ${entry.processingStart - entry.startTime}ms`);</span>
+<span class="cstat-no" title="statement not covered" >            secureLogger.info(`[PERF] FID: ${entry.processingStart - entry.startTime}ms`);</span>
 <span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if (window.gtag) {</span>
 <span class="cstat-no" title="statement not covered" >              window.gtag('event', 'web_vitals', {</span>
                 metric_name: 'FID',
@@ -927,7 +930,7 @@ class PerformanceMonitor {
 <span class="cstat-no" title="statement not covered" >        fidObserver.observe({ entryTypes: ['first-input'] });</span>
 <span class="cstat-no" title="statement not covered" >        this.observers.set('fid', fidObserver);</span>
       } catch (e) {
-<span class="cstat-no" title="statement not covered" >        console.warn('[PERF] FID observer not supported');</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.warn('[PERF] FID observer not supported');</span>
       }
 &nbsp;
       // Cumulative Layout Shift (CLS)
@@ -940,7 +943,7 @@ class PerformanceMonitor {
 <span class="cstat-no" title="statement not covered" >              clsValue += entry.value;</span>
             }
           });
-<span class="cstat-no" title="statement not covered" >          console.log(`[PERF] CLS: ${clsValue}`);</span>
+<span class="cstat-no" title="statement not covered" >          secureLogger.info(`[PERF] CLS: ${clsValue}`);</span>
 <span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (window.gtag) {</span>
 <span class="cstat-no" title="statement not covered" >            window.gtag('event', 'web_vitals', {</span>
               metric_name: 'CLS',
@@ -951,7 +954,7 @@ class PerformanceMonitor {
 <span class="cstat-no" title="statement not covered" >        clsObserver.observe({ entryTypes: ['layout-shift'] });</span>
 <span class="cstat-no" title="statement not covered" >        this.observers.set('cls', clsObserver);</span>
       } catch (e) {
-<span class="cstat-no" title="statement not covered" >        console.warn('[PERF] CLS observer not supported');</span>
+<span class="cstat-no" title="statement not covered" >        secureLogger.warn('[PERF] CLS observer not supported');</span>
       }
     }
   }
@@ -960,7 +963,7 @@ class PerformanceMonitor {
 <span class="cstat-no" title="statement not covered" >    this.metrics.set(componentName, metrics);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (metrics.isSlow) {</span>
-<span class="cstat-no" title="statement not covered" >      console.warn(`[PERF] Component ${componentName} is performing poorly:`, metrics);</span>
+<span class="cstat-no" title="statement not covered" >      secureLogger.warn(`[PERF] Component ${componentName} is performing poorly:`, metrics);</span>
     }
   }
 &nbsp;
@@ -1000,7 +1003,7 @@ export const useGlobalPerformanceMonitor = <span class="fstat-no" title="functio
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-19T02:07:53.644Z
+                at 2025-12-20T03:48:47.569Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

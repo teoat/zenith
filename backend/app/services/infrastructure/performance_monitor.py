@@ -84,10 +84,16 @@ class PerformanceMonitor:
         # Collect each metric individually with error handling
         metric_collectors = {
             "cpu_percent": lambda: psutil.cpu_percent(interval=1),
+            "cpu_count": lambda: psutil.cpu_count(),
             "memory_percent": lambda: psutil.virtual_memory().percent,
+            "memory_used_gb": lambda: psutil.virtual_memory().used / (1024**3),
+            "memory_total_gb": lambda: psutil.virtual_memory().total / (1024**3),
             "disk_usage": lambda: psutil.disk_usage("/").percent,
+            "disk_free_gb": lambda: psutil.disk_usage("/").free / (1024**3),
             "network_connections": lambda: len(psutil.net_connections()),
             "load_average": lambda: psutil.getloadavg() if hasattr(psutil, "getloadavg") else None,
+            "process_count": lambda: len(psutil.pids()),
+            "uptime_seconds": lambda: time.time() - psutil.boot_time(),
         }
 
         success_count = 0
@@ -212,27 +218,67 @@ class PerformanceMonitor:
         self.database_queries.append(db_metric)
 
     def _get_default_alert_rules(self) -> Dict[str, Dict[str, Any]]:
-        """Get default alert rules"""
+        """Get default alert rules with adaptive thresholds"""
+        import os
+        environment = os.getenv("ENVIRONMENT", "development").lower()
+        is_production = environment == "production"
+
+        # Adaptive thresholds based on environment
+        base_cpu_threshold = 80 if is_production else 90
+        base_memory_threshold = 85 if is_production else 95
+        base_response_time_threshold = 1500 if is_production else 3000
+        base_error_rate_threshold = 0.03 if is_production else 0.10
+
         return {
             "high_cpu_usage": {
-                "condition": lambda m: m.get("cpu_percent", 0) > 85,
-                "severity": "warning",
-                "message": "CPU usage above 85%",
+                "condition": lambda m: m.get("cpu_percent", 0) > base_cpu_threshold,
+                "severity": "warning" if not is_production else "critical",
+                "message": f"CPU usage above {base_cpu_threshold}%",
+                "adaptive": True,
+                "baseline_key": "cpu_percent",
             },
             "high_memory_usage": {
-                "condition": lambda m: m.get("memory_percent", 0) > 90,
+                "condition": lambda m: m.get("memory_percent", 0) > base_memory_threshold,
                 "severity": "critical",
-                "message": "Memory usage above 90%",
+                "message": f"Memory usage above {base_memory_threshold}%",
+                "adaptive": True,
+                "baseline_key": "memory_percent",
+            },
+            "high_disk_usage": {
+                "condition": lambda m: m.get("disk_usage", 0) > 90,
+                "severity": "warning",
+                "message": "Disk usage above 90%",
+                "adaptive": False,
             },
             "slow_api_responses": {
-                "condition": lambda: self._calculate_avg_response_time() > 2000,
+                "condition": lambda: self._calculate_avg_response_time() > base_response_time_threshold,
                 "severity": "warning",
-                "message": "Average API response time above 2 seconds",
+                "message": f"Average API response time above {base_response_time_threshold}ms",
+                "adaptive": True,
             },
             "high_error_rate": {
-                "condition": lambda: self._calculate_error_rate() > 0.05,
+                "condition": lambda: self._calculate_error_rate() > base_error_rate_threshold,
                 "severity": "critical",
-                "message": "API error rate above 5%",
+                "message": f"API error rate above {base_error_rate_threshold*100}%",
+                "adaptive": True,
+            },
+            "circuit_breaker_open": {
+                "condition": lambda: self._circuit_breaker_open,
+                "severity": "warning",
+                "message": "Performance monitoring circuit breaker is open",
+                "adaptive": False,
+            },
+            "low_disk_space": {
+                "condition": lambda m: m.get("disk_free_gb", float('inf')) < 1.0,  # Less than 1GB free
+                "severity": "critical",
+                "message": "Critical disk space - less than 1GB free",
+                "adaptive": False,
+            },
+            "high_process_count": {
+                "condition": lambda m: m.get("process_count", 0) > 500,
+                "severity": "warning",
+                "message": "High process count - potential resource issue",
+                "adaptive": True,
             },
         }
 
@@ -262,9 +308,12 @@ class PerformanceMonitor:
         return error_count / len(recent_calls)
 
     def check_thresholds(self) -> List[str]:
-        """Check if current metrics exceed thresholds"""
+        """Check if current metrics exceed thresholds with adaptive logic"""
         alerts = []
         current = self._collect_metrics()
+
+        # Update adaptive thresholds based on historical data
+        self._update_adaptive_thresholds()
 
         # Legacy threshold checks
         thresholds = {"cpu_percent": 90, "memory_percent": 85, "disk_usage": 90}
@@ -280,7 +329,7 @@ class PerformanceMonitor:
                     "warning",
                 )
 
-        # Enhanced alert rule checks
+        # Enhanced alert rule checks with adaptive logic
         for rule_name, rule in self.alert_rules.items():
             try:
                 if rule["condition"]():
@@ -290,6 +339,58 @@ class PerformanceMonitor:
                 logger.warning(f"Error checking alert rule {rule_name}: {e}")
 
         return alerts
+
+    def _update_adaptive_thresholds(self):
+        """Update adaptive thresholds based on historical baselines"""
+        if len(self.metrics_history) < 10:  # Need some historical data
+            return
+
+        # Calculate adaptive thresholds as baseline + 2 standard deviations
+        for rule_name, rule in self.alert_rules.items():
+            if rule.get("adaptive", False) and "baseline_key" in rule:
+                baseline_key = rule["baseline_key"]
+                if baseline_key in self.baselines:
+                    baseline = self.baselines[baseline_key]
+
+                    # Calculate standard deviation from recent history
+                    recent_values = [
+                        m.get(baseline_key, 0)
+                        for m in list(self.metrics_history)[-50:]  # Last 50 measurements
+                        if m.get(baseline_key) is not None
+                    ]
+
+                    if len(recent_values) >= 10:
+                        mean = sum(recent_values) / len(recent_values)
+                        variance = sum((x - mean) ** 2 for x in recent_values) / len(recent_values)
+                        std_dev = variance ** 0.5
+
+                        # Adaptive threshold: mean + 2*std_dev, but not less than 80% of original
+                        original_threshold = self._get_original_threshold(rule_name)
+                        adaptive_threshold = max(mean + 2 * std_dev, original_threshold * 0.8)
+
+                        # Update the rule's condition function
+                        if "cpu" in baseline_key:
+                            rule["condition"] = lambda m, thresh=adaptive_threshold: m.get("cpu_percent", 0) > thresh
+                            rule["message"] = f"CPU usage above {adaptive_threshold:.1f}% (adaptive)"
+                        elif "memory" in baseline_key:
+                            rule["condition"] = lambda m, thresh=adaptive_threshold: m.get("memory_percent", 0) > thresh
+                            rule["message"] = f"Memory usage above {adaptive_threshold:.1f}% (adaptive)"
+                        elif "response_time" in rule_name:
+                            # For response time, use percentile-based threshold
+                            sorted_times = sorted(recent_values)
+                            p95_index = int(len(sorted_times) * 0.95)
+                            p95_threshold = sorted_times[min(p95_index, len(sorted_times) - 1)]
+                            rule["condition"] = lambda thresh=p95_threshold: self._calculate_avg_response_time() > thresh
+                            rule["message"] = f"Average API response time above {p95_threshold:.0f}ms (P95 adaptive)"
+
+    def _get_original_threshold(self, rule_name: str) -> float:
+        """Get original threshold for adaptive rules"""
+        originals = {
+            "high_cpu_usage": 85,
+            "high_memory_usage": 90,
+            "slow_api_responses": 2000,
+        }
+        return originals.get(rule_name, 80)
 
     def _generate_alert(self, alert_type: str, message: str, severity: str):
         """Generate and store an alert"""

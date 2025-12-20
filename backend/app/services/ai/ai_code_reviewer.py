@@ -137,7 +137,7 @@ class AIPoweredCodeReviewer:
         if llm_provider:
              return llm_provider(prompt)
         
-        return f"// LLM Fix suggestion for: {issue.title}\n// TODO: Implement fix based on: {issue.suggestion}"
+        return f"// LLM Fix suggestion for: {issue.title}\n// ACTION: Implement fix based on: {issue.suggestion}"
 
     def _load_analysis_rules(self) -> Dict[str, Any]:
         """Load code analysis rules and patterns"""

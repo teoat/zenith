@@ -57,11 +57,9 @@ class CaseResponse(BaseModel):
 
 class CaseListResponse(BaseModel):
     cases: List[CaseResponse]
-    items: List[CaseResponse]  # Alias for backward compatibility
     page: int
     perPage: int
     total: int
-    totalCount: int  # Alias for backward compatibility
     totalPages: int
 
 class CaseNoteCreate(BaseModel):
@@ -218,16 +216,52 @@ async def get_cases(
 
         return {
             "cases": cases_data,
-            "pagination": {
-                "page": page,
-                "per_page": per_page,
-                "total": result["total"],
-                "total_pages": result["total_pages"],
-            },
+            "items": cases_data,
+            "page": page,
+            "perPage": per_page,
+            "total": result["total"],
+            "totalCount": result["total"],
+            "totalPages": result["total_pages"],
         }
     except Exception as e:
         logger.error(f"Error listing cases: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/{case_id}", response_model=CaseResponse)
+async def get_case_detail(
+    case_id: str,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(auth_service.get_current_user),
+):
+    """Get detailed information for a specific case"""
+    try:
+        from app.services.infrastructure.storage.database_service import db_service
+        case = db_service.get_case(db, case_id)
+        if not case:
+            raise HTTPException(status_code=404, detail="Case not found")
+        
+        return {
+            "id": case.id,
+            "title": case.title,
+            "description": case.description,
+            "status": case.status,
+            "priority": case.priority,
+            "assigneeId": case.assignee_id,
+            "riskScore": getattr(case, "risk_score", 0),
+            "riskLevel": getattr(case, "risk_level", "low"),
+            "fraudAmount": getattr(case, "fraud_amount", 0.0),
+            "customerName": getattr(case, "customer_name", "Unknown"),
+            "createdAt": case.created_at,
+            "updatedAt": case.updated_at,
+            "dueDate": getattr(case, "due_date", None),
+            "tags": case.tags or [],
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting case details: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.patch("/{case_id}")
 async def update_case_partial(

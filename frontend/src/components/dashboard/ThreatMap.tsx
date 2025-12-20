@@ -49,19 +49,7 @@ interface RawThreatData {
 }
 
 const ThreatMap: React.FC = () => {
-  // Feature flag to completely disable map functionality
-  if (import.meta.env.VITE_ENABLE_THREAT_MAP === 'false') {
-    return (
-      <div className="h-full w-full bg-slate-800 rounded-xl flex items-center justify-center">
-        <div className="text-center text-slate-400">
-          <ShieldAlert size={48} className="mx-auto mb-4 opacity-50" />
-          <h3 className="text-lg font-medium mb-2">Map Disabled</h3>
-          <p className="text-sm">Threat monitoring map has been disabled</p>
-        </div>
-      </div>
-    );
-  }
-
+  // All hooks must be called before any conditional logic
   const [threats, setThreats] = useState<ThreatLocation[]>([]);
   const [popupInfo, setPopupInfo] = useState<ThreatLocation | null>(null);
   const [viewState, setViewState] = useState({
@@ -70,6 +58,9 @@ const ThreatMap: React.FC = () => {
     zoom: 1.5
   });
   const [isSlowConnection, setIsSlowConnection] = useState(false);
+
+  // Feature flag to completely disable map functionality
+  const isMapEnabled = import.meta.env.VITE_ENABLE_THREAT_MAP !== 'false';
 
   // Detect slow network connections
   useEffect(() => {
@@ -186,6 +177,19 @@ const ThreatMap: React.FC = () => {
       </div>
     </Marker>
   )), [threats]);
+
+  // Feature flag to completely disable map functionality
+  if (!isMapEnabled) {
+    return (
+      <div className="h-full w-full bg-slate-800 rounded-xl flex items-center justify-center">
+        <div className="text-center text-slate-400">
+          <ShieldAlert size={48} className="mx-auto mb-4 opacity-50" />
+          <h3 className="text-lg font-medium mb-2">Map Disabled</h3>
+          <p className="text-sm">Threat monitoring map has been disabled</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Suspense fallback={

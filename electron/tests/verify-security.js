@@ -64,7 +64,7 @@ async function runTests() {
       const keyManager = new KeyManager(keyStorePath);
       
       // Generate Master Key
-      const password = 'test-password';
+      const password = process.env.TEST_PASSWORD || 'test-password';
       const keyId = await keyManager.storeMasterKey(keyManager.generateMasterKey(), password);
       assert.ok(keyId, 'Key ID should be returned');
       

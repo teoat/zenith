@@ -140,7 +140,6 @@ const ThreeDGraph: React.FC<ThreeDGraphProps> = ({
     <div
       ref={mountRef}
       className="w-full h-full bg-slate-900 rounded-lg border border-slate-700"
-      style={{ width, height }}
     />
   );
 };

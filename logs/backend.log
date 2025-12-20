@@ -1,0 +1,21 @@
+/Users/Arief/anaconda3/lib/python3.11/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+  warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+Audio/Video processing libraries not available: No module named 'moviepy.editor'
+Traceback (most recent call last):
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 31, in <module>
+    from app.routers import advanced_ai
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/advanced_ai.py", line 10, in <module>
+    from core.database import get_db
+  File "/Users/Arief/Desktop/378x492/backend/core/database.py", line 27, in <module>
+    from core.security import EncryptedString
+  File "/Users/Arief/Desktop/378x492/backend/core/security/__init__.py", line 5, in <module>
+    from .encryption import EncryptedString, encrypt_value, decrypt_value
+  File "/Users/Arief/Desktop/378x492/backend/core/security/encryption.py", line 7, in <module>
+    from core.config import settings
+  File "/Users/Arief/Desktop/378x492/backend/core/config.py", line 11, in <module>
+    class Settings(BaseSettings):
+  File "/Users/Arief/Desktop/378x492/backend/core/config.py", line 24, in Settings
+    JWT_SECRET_KEY: str = os.environ["JWT_SECRET_KEY"]
+                          ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 679, in __getitem__
+KeyError: 'JWT_SECRET_KEY'

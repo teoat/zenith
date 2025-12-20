@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -18,14 +18,9 @@ import {
   Send
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-interface Case {
-  id: string;
-  title: string;
-  status: string;
-  created_at: string;
-  priority: string;
-}
+import { useCases } from '@/hooks/useCases';
+import type { Case } from '@/types/schema'; // Assuming schema exists there, or just define a compatible one if needed.
+// If type import fails, we can define a minimal interface compatible with what comes from useCases
 
 interface SARFormData {
   case_id: string;
@@ -45,11 +40,24 @@ const SARCreationWizard: React.FC = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [cases, setCases] = useState<Case[]>([]);
+  // Use the useCases hook to fetch real cases
+  const { data: casesData, isLoading: casesLoading, error: casesError } = useCases();
+  const cases = casesData?.cases || [];
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+     return () => {
+         isMounted.current = false;
+         if (timeoutRef.current) clearTimeout(timeoutRef.current);
+     };
+  }, []);
 
   const [formData, setFormData] = useState<SARFormData>({
     case_id: '',
@@ -89,27 +97,9 @@ const SARCreationWizard: React.FC = () => {
     'Local AML Regulations'
   ];
 
-  useEffect(() => {
-    loadCases();
-  }, []);
-
-  const loadCases = async () => {
-    try {
-      // Mock case data - replace with actual API call
-      const mockCases: Case[] = [
-        { id: 'CASE-2025-001', title: 'Suspicious Wire Transfer Pattern', status: 'open', created_at: '2025-12-10T10:00:00Z', priority: 'high' },
-        { id: 'CASE-2025-002', title: 'Large Cash Deposits Investigation', status: 'open', created_at: '2025-12-09T14:30:00Z', priority: 'medium' },
-        { id: 'CASE-2025-003', title: 'Identity Fraud Alert', status: 'closed', created_at: '2025-12-08T09:15:00Z', priority: 'low' }
-      ];
-      setCases(mockCases);
-    } catch (err) {
-      setError('Failed to load cases');
-    }
-  };
-
   const filteredCases = cases.filter(case_ =>
-    case_.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    case_.id.toLowerCase().includes(searchQuery.toLowerCase())
+    (case_.title?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+    (case_.id?.toLowerCase() || '').includes(searchQuery.toLowerCase())
   );
 
   const handleCaseSelect = (case_: Case) => {
@@ -151,14 +141,23 @@ const SARCreationWizard: React.FC = () => {
       }
 
       const result = await response.json();
-      setSuccess(`SAR ${result.sar_id} has been created and queued for regulatory submission`);
-      setTimeout(() => {
-        navigate('/compliance/monitoring');
-      }, 3000);
-    } catch (err) {
-      setError('Failed to create SAR. Please try again.');
+      
+      if (isMounted.current) {
+        setSuccess(`SAR ${result.sar_id} has been created and queued for regulatory submission`);
+        timeoutRef.current = setTimeout(() => {
+          if (isMounted.current) {
+            navigate('/compliance/monitoring');
+          }
+        }, 3000);
+      }
+    } catch {
+      if (isMounted.current) {
+        setError('Failed to create SAR. Please try again.');
+      }
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   };
 
@@ -182,7 +181,15 @@ const SARCreationWizard: React.FC = () => {
         </div>
 
         <div className="space-y-3 max-h-96 overflow-y-auto">
-          {filteredCases.map((case_) => (
+          {casesLoading && <div className="p-4 text-center text-gray-500">Loading cases...</div>}
+          
+          {casesError && <div className="p-4 text-center text-red-500">Failed to load cases</div>}
+
+          {!casesLoading && !casesError && filteredCases.length === 0 && (
+             <div className="p-4 text-center text-gray-500">No cases found matching your search.</div>
+          )}
+
+          {!casesLoading && !casesError && filteredCases.map((case_) => (
             <Card
               key={case_.id}
               className="cursor-pointer hover:shadow-md transition-shadow"
@@ -194,18 +201,18 @@ const SARCreationWizard: React.FC = () => {
                     <h3 className="font-medium text-gray-900">{case_.title}</h3>
                     <p className="text-sm text-gray-500">Case ID: {case_.id}</p>
                     <p className="text-xs text-gray-400">
-                      Created: {new Date(case_.created_at).toLocaleDateString()}
+                      Created: {new Date(case_.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="text-right">
                     <span className={`px-2 py-1 text-xs rounded-full ${
-                      case_.status === 'open'
+                      (case_.status as string).toLowerCase() === 'open'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-gray-100 text-gray-800'
                     }`}>
                       {case_.status}
                     </span>
-                    <p className="text-xs text-gray-500 mt-1 capitalize">{case_.priority} priority</p>
+                    <p className="text-xs text-gray-500 mt-1 capitalize">{case_.priority.toLowerCase()} priority</p>
                   </div>
                 </div>
               </CardContent>
@@ -340,7 +347,7 @@ const SARCreationWizard: React.FC = () => {
           <div>
             <Label htmlFor="basis">Regulatory Basis</Label>
             <Select value={formData.regulatory_basis} onValueChange={(value) => setFormData(prev => ({ ...prev, regulatory_basis: value }))}>
-              <SelectTrigger>
+              <SelectTrigger title="Regulatory basis">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -352,8 +359,8 @@ const SARCreationWizard: React.FC = () => {
           </div>
           <div>
             <Label htmlFor="risk">Risk Level</Label>
-            <Select value={formData.risk_level} onValueChange={(value: any) => setFormData(prev => ({ ...prev, risk_level: value }))}>
-              <SelectTrigger>
+            <Select value={formData.risk_level} onValueChange={(value) => setFormData(prev => ({ ...prev, risk_level: value as "low" | "medium" | "high" | "critical" }))}>
+              <SelectTrigger title="Risk level">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

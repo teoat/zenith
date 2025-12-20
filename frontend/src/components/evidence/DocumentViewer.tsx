@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Upload, FileText, Image, File, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import { Upload, File, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import { secureLogger } from '../../utils/secureLogger';
+import { getFileIcon as getFileIconUtil } from '../../utils/fileUtils';
+import { formatFileSize, formatPercentage } from '../../utils/formatters';
 
 interface ProcessedDocument {
   success: boolean;
@@ -68,15 +70,9 @@ export const DocumentViewer: React.FC = () => {
     setProcessing(false);
   };
 
+  // Wrapper to use shared utility with custom styling for this component
   const getFileIcon = (fileType?: string) => {
-    switch (fileType) {
-      case 'pdf':
-        return <FileText className="text-red-500" />;
-      case 'image':
-        return <Image className="text-blue-500" />;
-      default:
-        return <File className="text-slate-500" />;
-    }
+    return getFileIconUtil(fileType, "h-5 w-5");
   };
 
   return (
@@ -124,7 +120,7 @@ export const DocumentViewer: React.FC = () => {
                 <div key={idx} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                   <File size={16} />
                   <span>{file.name}</span>
-                  <span className="text-slate-400">({(file.size / 1024).toFixed(1)} KB)</span>
+                  <span className="text-slate-400">({formatFileSize(file.size)})</span>
                 </div>
               ))}
             </div>
@@ -180,7 +176,7 @@ export const DocumentViewer: React.FC = () => {
                             <>
                               <CheckCircle size={14} className="text-green-500" />
                               <span className="text-xs text-green-600 dark:text-green-400">
-                                {(result.confidence! * 100).toFixed(0)}% confidence
+                                {formatPercentage(result.confidence || 0, 0)} confidence
                               </span>
                             </>
                           ) : (

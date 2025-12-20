@@ -6,7 +6,7 @@ import logging
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import func
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from core.database import Case
 
@@ -17,20 +17,56 @@ class CaseService:
     """Service for managing fraud investigation cases"""
 
     def get_case(self, db: Session, case_id: str) -> Optional[Case]:
-        """Get a case by ID with eager loading for all relationships"""
+        """Get a case by ID with optimized eager loading for performance"""
         return (
             db.query(Case)
             .options(
-                joinedload(Case.assignee),
-                joinedload(Case.project),
-                joinedload(Case.evidence),
-                joinedload(Case.notes),
-                joinedload(Case.activities),
-                joinedload(Case.alerts),
+                joinedload(Case.assignee),  # Load assignee relationship
+                joinedload(Case.project),  # Load project relationship
+                # Use selectinload for collections to avoid N+1 queries
+                selectinload(Case.evidence),  # Load evidence with selectin for better performance
+                selectinload(Case.notes),     # Load notes with selectin
+                selectinload(Case.activities), # Load activities with selectin
+                selectinload(Case.alerts),    # Load alerts with selectin
             )
             .filter(Case.id == case_id)
             .first()
         )
+
+    def get_case_summary(self, db: Session, case_id: str) -> Optional[Dict[str, Any]]:
+        """Get case summary with selective fields for performance"""
+        result = (
+            db.query(
+                Case.id,
+                Case.title,
+                Case.description,
+                Case.status,
+                Case.priority,
+                Case.created_at,
+                Case.updated_at,
+                func.count(Case.evidence).label('evidence_count'),
+                func.count(Case.notes).label('notes_count'),
+            )
+            .outerjoin(Case.evidence)
+            .outerjoin(Case.notes)
+            .filter(Case.id == case_id)
+            .group_by(Case.id)
+            .first()
+        )
+
+        if result:
+            return {
+                'id': result.id,
+                'title': result.title,
+                'description': result.description,
+                'status': result.status,
+                'priority': result.priority,
+                'created_at': result.created_at,
+                'updated_at': result.updated_at,
+                'evidence_count': result.evidence_count or 0,
+                'notes_count': result.notes_count or 0,
+            }
+        return None
 
     def get_cases(
         self,
@@ -39,9 +75,52 @@ class CaseService:
         priority: Optional[str] = None,
         project_id: Optional[str] = None,
         limit: int = 100,
+        offset: int = 0,
     ) -> List[Case]:
-        """Get all cases with optional filtering and eager loading for assignee"""
-        query = db.query(Case).options(joinedload(Case.assignee))
+        """Get cases with optimized querying and pagination"""
+        query = (
+            db.query(Case)
+            .options(
+                joinedload(Case.assignee),  # Eager load assignee for performance
+                # Avoid loading heavy relationships by default
+            )
+        )
+
+        # Apply filters efficiently
+        if project_id:
+            query = query.filter(Case.project_id == project_id)
+        if status:
+            query = query.filter(Case.status == status)
+        if priority:
+            query = query.filter(Case.priority == priority)
+
+        # Order by creation date for consistent pagination
+        query = query.order_by(Case.created_at.desc())
+
+        # Apply pagination
+        return query.offset(offset).limit(limit).all()
+
+    def get_cases_with_counts(
+        self,
+        db: Session,
+        status: Optional[str] = None,
+        priority: Optional[str] = None,
+        project_id: Optional[str] = None,
+        limit: int = 100,
+    ) -> List[Dict[str, Any]]:
+        """Get cases with evidence/note counts for dashboard performance"""
+        from sqlalchemy import func
+
+        query = (
+            db.query(
+                Case,
+                func.count(Case.evidence).label('evidence_count'),
+                func.count(Case.notes).label('notes_count'),
+            )
+            .outerjoin(Case.evidence)
+            .outerjoin(Case.notes)
+            .options(joinedload(Case.assignee))
+        )
 
         if project_id:
             query = query.filter(Case.project_id == project_id)
@@ -50,7 +129,25 @@ class CaseService:
         if priority:
             query = query.filter(Case.priority == priority)
 
-        return query.limit(limit).all()
+        query = query.group_by(Case.id).order_by(Case.created_at.desc()).limit(limit)
+
+        results = []
+        for case, evidence_count, notes_count in query.all():
+            case_dict = {
+                'id': case.id,
+                'title': case.title,
+                'description': case.description,
+                'status': case.status,
+                'priority': case.priority,
+                'created_at': case.created_at,
+                'updated_at': case.updated_at,
+                'assignee': case.assignee.username if case.assignee else None,
+                'evidence_count': evidence_count or 0,
+                'notes_count': notes_count or 0,
+            }
+            results.append(case_dict)
+
+        return results
 
     def create_case(
         self,

@@ -13,6 +13,13 @@ from app.services.infrastructure.apm_service import (
     record_metric,
     start_span,
 )
+from app.services.infrastructure.health_service import (
+    health_check_service,
+    distributed_tracer,
+    graceful_degradation_service,
+    HealthCheckType,
+    HealthStatus
+)
 from app.services.infrastructure.auth_service import auth_service
 from core.database import User, get_db
 
@@ -686,3 +693,268 @@ async def get_dashboard_data():
                 raise HTTPException(
                     status_code=500, detail=f"Failed to get metrics: {str(e)}"
                 )
+
+
+# Health Check Endpoints - Achieving 10/10 Reliability
+@router.get("/health/live")
+async def liveness_probe():
+    """
+    Liveness probe - Kubernetes/health check systems use this to determine if service is running
+    Returns 200 if service is alive, 500 if not
+    """
+    try:
+        result = await health_check_service.check_liveness()
+        if result.status == HealthStatus.HEALTHY:
+            return {"status": "healthy", "message": result.message}
+        else:
+            raise HTTPException(status_code=500, detail=result.message)
+    except Exception as e:
+        logger.error(f"Liveness probe failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Liveness check failed: {str(e)}")
+
+
+@router.get("/health/ready")
+async def readiness_probe():
+    """
+    Readiness probe - Determines if service is ready to serve traffic
+    Returns 200 if ready, 503 if not ready
+    """
+    try:
+        result = await health_check_service.check_readiness()
+        if result.status == HealthStatus.HEALTHY:
+            return {"status": "ready", "message": result.message}
+        else:
+            raise HTTPException(status_code=503, detail=result.message)
+    except Exception as e:
+        logger.error(f"Readiness probe failed: {str(e)}")
+        raise HTTPException(status_code=503, detail=f"Readiness check failed: {str(e)}")
+
+
+@router.get("/health/deep")
+async def deep_health_check(
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Deep health check - Comprehensive system health assessment
+    Requires authentication as it exposes detailed system information
+    """
+    try:
+        result = await health_check_service.check_deep_health()
+
+        # Return appropriate HTTP status based on health
+        if result.status == HealthStatus.HEALTHY:
+            status_code = 200
+        elif result.status == HealthStatus.DEGRADED:
+            status_code = 207  # Multi-status
+        else:
+            status_code = 503  # Service unavailable
+
+        return result.to_dict()
+
+    except Exception as e:
+        logger.error(f"Deep health check failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Deep health check failed: {str(e)}")
+
+
+@router.get("/health/status")
+async def get_health_status(
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Get overall health status summary
+    """
+    try:
+        status = health_check_service.get_overall_health_status()
+        return status
+    except Exception as e:
+        logger.error(f"Failed to get health status: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get health status: {str(e)}")
+
+
+@router.get("/health/history")
+async def get_health_history(
+    limit: int = Query(50, ge=1, le=500),
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Get health check history
+    """
+    try:
+        history = health_check_service.get_health_history(limit)
+        return {
+            "history": [check.to_dict() for check in history],
+            "count": len(history)
+        }
+    except Exception as e:
+        logger.error(f"Failed to get health history: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get health history: {str(e)}")
+
+
+@router.get("/health/degradation")
+async def get_degradation_status(
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Get current graceful degradation status
+    """
+    try:
+        status = graceful_degradation_service.get_degradation_status()
+        return status
+    except Exception as e:
+        logger.error(f"Failed to get degradation status: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get degradation status: {str(e)}")
+
+
+# Distributed Tracing Endpoints - Achieving 10/10 Reliability
+@router.post("/trace/start")
+async def start_trace(
+    trace_id: Optional[str] = None,
+    parent_span_id: Optional[str] = None,
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Start a new distributed trace
+    """
+    try:
+        new_trace_id = distributed_tracer.start_trace(trace_id, parent_span_id)
+        return {
+            "trace_id": new_trace_id,
+            "status": "started"
+        }
+    except Exception as e:
+        logger.error(f"Failed to start trace: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to start trace: {str(e)}")
+
+
+@router.post("/trace/{trace_id}/span/start")
+async def start_span(
+    trace_id: str,
+    span_name: str,
+    parent_span_id: Optional[str] = None,
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Start a new span within a trace
+    """
+    try:
+        span_id = distributed_tracer.start_span(trace_id, span_name, parent_span_id)
+        if not span_id:
+            raise HTTPException(status_code=404, detail="Trace not found")
+
+        return {
+            "trace_id": trace_id,
+            "span_id": span_id,
+            "span_name": span_name,
+            "status": "started"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to start span: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to start span: {str(e)}")
+
+
+@router.post("/trace/{trace_id}/span/{span_id}/end")
+async def end_span(
+    trace_id: str,
+    span_id: str,
+    tags: Optional[Dict[str, Any]] = None,
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    End a span
+    """
+    try:
+        distributed_tracer.end_span(trace_id, span_id, tags)
+        return {
+            "trace_id": trace_id,
+            "span_id": span_id,
+            "status": "ended"
+        }
+    except Exception as e:
+        logger.error(f"Failed to end span: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to end span: {str(e)}")
+
+
+@router.post("/trace/{trace_id}/end")
+async def end_trace(
+    trace_id: str,
+    status: str = "completed",
+    tags: Optional[Dict[str, Any]] = None,
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    End a trace
+    """
+    try:
+        distributed_tracer.end_trace(trace_id, status, tags)
+        return {
+            "trace_id": trace_id,
+            "status": status,
+            "finalized": True
+        }
+    except Exception as e:
+        logger.error(f"Failed to end trace: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to end trace: {str(e)}")
+
+
+@router.get("/trace/{trace_id}")
+async def get_trace(
+    trace_id: str,
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Get a trace by ID
+    """
+    try:
+        trace = distributed_tracer.get_trace(trace_id)
+        if not trace:
+            raise HTTPException(status_code=404, detail="Trace not found")
+
+        return trace
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get trace: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get trace: {str(e)}")
+
+
+@router.get("/trace/{trace_id}/summary")
+async def get_trace_summary(
+    trace_id: str,
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Get a trace summary
+    """
+    try:
+        summary = distributed_tracer.get_trace_summary(trace_id)
+        if not summary:
+            raise HTTPException(status_code=404, detail="Trace not found")
+
+        return summary
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get trace summary: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get trace summary: {str(e)}")
+
+
+@router.get("/traces/recent")
+async def get_recent_traces(
+    limit: int = Query(100, ge=1, le=1000),
+    current_user: User = Depends(auth_service.get_current_user),
+):
+    """
+    Get recent traces
+    """
+    try:
+        traces = distributed_tracer.get_recent_traces(limit)
+        return {
+            "traces": traces,
+            "count": len(traces),
+            "limit": limit
+        }
+    except Exception as e:
+        logger.error(f"Failed to get recent traces: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get recent traces: {str(e)}")

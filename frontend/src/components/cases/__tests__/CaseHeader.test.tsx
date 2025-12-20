@@ -57,7 +57,7 @@ describe('CaseHeader', () => {
   it('displays correct active view mode styling', () => {
     const { rerender } = render(<CaseHeader {...mockProps} />);
 
-    let listButton = screen.getByLabelText('List View');
+    const listButton = screen.getByLabelText('List View');
     expect(listButton).toHaveClass('bg-white');
 
     rerender(<CaseHeader {...mockProps} viewMode="kanban" />);

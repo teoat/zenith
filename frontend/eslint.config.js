@@ -38,7 +38,7 @@ export default [
         varsIgnorePattern: '^_',
         ignoreRestSiblings: true
       }],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       'prefer-const': 'error',
       'no-var': 'error',
 

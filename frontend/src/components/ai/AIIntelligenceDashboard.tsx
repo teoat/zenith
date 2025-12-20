@@ -438,26 +438,21 @@ const AIIntelligenceDashboard: React.FC = () => {
                     <span className="confidence">(95% confidence)</span>
                   </div>
                   <div className="contributions">
-                    <div className="contribution-bar">
-                      <div className="bar-label">Behavioral: 25%</div>
-                      <div className="bar" style={{width: '25%'}}></div>
-                    </div>
-                    <div className="contribution-bar">
-                      <div className="bar-label">Social: 30%</div>
-                      <div className="bar" style={{width: '30%'}}></div>
-                    </div>
-                    <div className="contribution-bar">
-                      <div className="bar-label">Transaction: 20%</div>
-                      <div className="bar" style={{width: '20%'}}></div>
-                    </div>
-                    <div className="contribution-bar">
-                      <div className="bar-label">Device: 15%</div>
-                      <div className="bar" style={{width: '15%'}}></div>
-                    </div>
-                    <div className="contribution-bar">
-                      <div className="bar-label">Other: 10%</div>
-                      <div className="bar" style={{width: '10%'}}></div>
-                    </div>
+                    {[
+                      { label: 'Behavioral', value: 25 },
+                      { label: 'Social', value: 30 },
+                      { label: 'Transaction', value: 20 },
+                      { label: 'Device', value: 15 },
+                      { label: 'Other', value: 10 }
+                    ].map((contribution, idx) => (
+                      <div key={idx} className="contribution-bar">
+                        <div className="bar-label">{contribution.label}: {contribution.value}%</div>
+                        <div 
+                          className="bar" 
+                          style={{ ['--contribution-width' as string]: `${contribution.value}%`, width: 'var(--contribution-width)' } as React.CSSProperties}
+                        ></div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

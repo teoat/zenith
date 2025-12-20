@@ -52,6 +52,7 @@ class CollaborationManager:
 
     async def start_server(self):
         """Start the WebSocket server"""
+        print(f"DEBUG: Starting WebSocket server on {self.host}:{self.port}")
         try:
             self.running = True
             self.server = await websockets.serve(
@@ -175,7 +176,11 @@ class CollaborationManager:
                     )
 
         except Exception as e:
-            logger.error(f"Connection handler error: {e}")
+            logger.error(f"Connection handler error: {e}", exc_info=True)
+            try:
+                await websocket.close(1011, f"Internal error: {str(e)}")
+            except:
+                pass  # Connection might already be closed
         finally:
             # Cleanup connection
             if session_id in self.active_connections:
@@ -211,14 +216,19 @@ class CollaborationManager:
         websocket: WebSocketConnection,
     ):
         """Handle incoming messages"""
+        print(f"DEBUG: Handling message: {data}")
         message_type = data.get("type", "")
+        print(f"DEBUG: Message type: {message_type}")
 
         if message_type in self.message_handlers:
             try:
+                print(f"DEBUG: Calling handler for {message_type}")
                 await self.message_handlers[message_type](
                     session_id, participant_id, data, websocket
                 )
+                print(f"DEBUG: Handler completed for {message_type}")
             except Exception as e:
+                print(f"DEBUG: Handler error: {e}")
                 logger.error(f"Message handler error for {message_type}: {e}")
                 await websocket.send(
                     json.dumps(
@@ -226,6 +236,7 @@ class CollaborationManager:
                     )
                 )
         else:
+            print(f"DEBUG: Unknown message type: {message_type}")
             await websocket.send(
                 json.dumps(
                     {
@@ -243,11 +254,13 @@ class CollaborationManager:
         websocket: WebSocketConnection,
     ):
         """Handle session join"""
+        print(f"DEBUG: Handling join_session for session {session_id}, participant {participant_id}")
         # Update participant info
         if (
             session_id in self.session_participants
             and participant_id in self.session_participants[session_id]
         ):
+            print(f"DEBUG: Participant exists, updating info")
             participant = self.session_participants[session_id][participant_id]
             participant.update(
                 {

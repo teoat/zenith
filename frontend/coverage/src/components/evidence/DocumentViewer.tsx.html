@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/48</span>
+                <span class='fraction'>0/47</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/33</span>
+                <span class='fraction'>0/32</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/44</span>
+                <span class='fraction'>0/43</span>
             </div>
         
             
@@ -333,11 +333,9 @@
 <a name='L268'></a><a href='#L268'>268</a>
 <a name='L269'></a><a href='#L269'>269</a>
 <a name='L270'></a><a href='#L270'>270</a>
-<a name='L271'></a><a href='#L271'>271</a>
-<a name='L272'></a><a href='#L272'>272</a>
-<a name='L273'></a><a href='#L273'>273</a>
-<a name='L274'></a><a href='#L274'>274</a>
-<a name='L275'></a><a href='#L275'>275</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L271'></a><a href='#L271'>271</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -407,15 +405,9 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -612,8 +604,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import React, { useState } from 'react';</span>
-<span class="cstat-no" title="statement not covered" >import { Upload, FileText, Image, File, CheckCircle, AlertCircle, Loader } from 'lucide-react';</span>
+<span class="cstat-no" title="statement not covered" >import { Upload, File, CheckCircle, AlertCircle, Loader } from 'lucide-react';</span>
 <span class="cstat-no" title="statement not covered" >import { secureLogger } from '../../utils/secureLogger';</span>
+<span class="cstat-no" title="statement not covered" >import { getFileIcon as getFileIconUtil } from '../../utils/fileUtils';</span>
+<span class="cstat-no" title="statement not covered" >import { formatFileSize, formatPercentage } from '../../utils/formatters';</span>
 &nbsp;
 interface ProcessedDocument {
   success: boolean;
@@ -681,15 +675,9 @@ export const <span class="cstat-no" title="statement not covered" >DocumentViewe
 <span class="cstat-no" title="statement not covered" >    setProcessing(false);</span>
   };
 &nbsp;
+  // Wrapper to use shared utility with custom styling for this component
   const getFileIcon = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(f</span>ileType?: string) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    switch (fileType) {</span>
-      case 'pdf':
-<span class="cstat-no" title="statement not covered" >        return &lt;FileText className="text-red-500" /&gt;;</span>
-      case 'image':
-<span class="cstat-no" title="statement not covered" >        return &lt;Image className="text-blue-500" /&gt;;</span>
-      default:
-<span class="cstat-no" title="statement not covered" >        return &lt;File className="text-slate-500" /&gt;;</span>
-    }
+<span class="cstat-no" title="statement not covered" >    return getFileIconUtil(fileType, "h-5 w-5");</span>
   };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  return (</span>
@@ -734,10 +722,10 @@ export const <span class="cstat-no" title="statement not covered" >DocumentViewe
             &lt;/h3&gt;
             &lt;div className="space-y-2"&gt;
               {files.map(<span class="fstat-no" title="function not covered" >(f</span>ile, idx) =&gt; (
-<span class="cstat-no" title="statement not covered" >                &lt;div key={idx} c</span>lassName="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"&gt;
+<span class="cstat-no" title="statement not covered" >                &lt;div key={idx} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"&gt;</span>
                   &lt;File size={16} /&gt;
                   &lt;span&gt;{file.name}&lt;/span&gt;
-                  &lt;span className="text-slate-400"&gt;({(file.size / 1024).toFixed(1)} KB)&lt;/span&gt;
+                  &lt;span className="text-slate-400"&gt;({formatFileSize(file.size)})&lt;/span&gt;
                 &lt;/div&gt;
               ))}
             &lt;/div&gt;
@@ -793,7 +781,7 @@ export const <span class="cstat-no" title="statement not covered" >DocumentViewe
                             &lt;&gt;
                               &lt;CheckCircle size={14} className="text-green-500" /&gt;
                               &lt;span className="text-xs text-green-600 dark:text-green-400"&gt;
-                                {(result.confidence! * 100).toFixed(0)}% confidence
+                                {formatPercentage(result.confidence || 0, 0)} confidence
                               &lt;/span&gt;
                             &lt;/&gt;
                           ) : (
@@ -826,7 +814,7 @@ export const <span class="cstat-no" title="statement not covered" >DocumentViewe
                       &lt;h4 className="font-semibold mb-2 text-slate-900 dark:text-white"&gt;Metadata&lt;/h4&gt;
                       &lt;div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4"&gt;
                         {Object.entries(selectedResult.metadata).map(<span class="fstat-no" title="function not covered" >([</span>key, value]) =&gt; (
-<span class="cstat-no" title="statement not covered" >                          &lt;div key={key} c</span>lassName="flex justify-between text-sm mb-1"&gt;
+<span class="cstat-no" title="statement not covered" >                          &lt;div key={key} className="flex justify-between text-sm mb-1"&gt;</span>
                             &lt;span className="text-slate-600 dark:text-slate-400"&gt;{key}:&lt;/span&gt;
                             &lt;span className="font-mono text-slate-900 dark:text-white"&gt;
                               {String(value)}
@@ -892,7 +880,7 @@ export const <span class="cstat-no" title="statement not covered" >DocumentViewe
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-19T02:07:53.644Z
+                at 2025-12-20T03:48:47.569Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -71,6 +71,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onDismiss, className
       className={`rounded-lg border ${style.borderColor} ${style.bgColor} p-4 ${className}`}
       role="alert"
       aria-live="assertive"
+      data-testid="error-message"
     >
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0 mt-0.5">
@@ -136,7 +137,7 @@ export const FormError: React.FC<{ message?: string }> = ({ message }) => {
   if (!message) return null;
   
   return (
-    <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+    <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1" data-testid="form-error">
       <AlertCircle className="h-4 w-4" />
       {message}
     </p>

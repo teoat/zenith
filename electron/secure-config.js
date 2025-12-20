@@ -115,14 +115,14 @@ class SecureConfig {
     // Check for default/weak values in production
     if (this.isProduction) {
       const defaults = [
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY'
+        process.env.SQLCIPHER_KEY || 'development-key-replace-in-production',
+        process.env.MASTER_PASSWORD || 'development-password-replace-in-production',
+        process.env.IPC_SECRET || 'development-ipc-replace-in-production',
+        process.env.AUTH_ENCRYPTION_KEY || 'development-auth-replace-in-production',
+        process.env.JWT_SECRET_KEY || 'development-jwt-replace-in-production',
+        process.env.ENCRYPTION_KEY || 'development-encryption-replace-in-production',
+        process.env.SENTRY_DSN || 'development-sentry-replace-in-production',
+        process.env.REDIS_PASSWORD || 'development-redis-replace-in-production'
       ];
       
       for (const defaultValue of defaults) {

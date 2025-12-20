@@ -166,16 +166,46 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     );
   }
 
+  // Premium color palette for nodes
+  const premiumColors = [
+    '#6366f1', // Indigo
+    '#8b5cf6', // Violet
+    '#ec4899', // Pink
+    '#f59e0b', // Amber
+    '#10b981', // Emerald
+    '#06b6d4', // Cyan
+    '#84cc16', // Lime
+    '#f97316', // Orange
+    '#ef4444', // Red
+    '#64748b'  // Slate
+  ];
+
+  const getNodeColor = (node: any) => {
+    if (focusedNodeId === node.id) {
+      return '#dc2626'; // Premium red for focus
+    }
+
+    if (node.color) {
+      return node.color;
+    }
+
+    // Use group-based coloring with premium colors
+    const groupIndex = node.group ? node.group.charCodeAt(0) % premiumColors.length : 0;
+    return premiumColors[groupIndex];
+  };
+
   const commonProps = {
     graphData,
     width: finalWidth,
     height: finalHeight,
     nodeLabel: "label",
-    nodeAutoColorBy: "group",
+    nodeAutoColorBy: undefined, // Disable auto coloring to use custom
     nodeVal: (node: any) => focusedNodeId === node.id ? (node.val || 5) * 1.5 : (node.val || 5),
-    nodeColor: (node: any) => focusedNodeId === node.id ? '#ff6b6b' : node.color || undefined,
+    nodeColor: getNodeColor,
+    linkColor: () => '#94a3b8', // Premium slate color for links
     linkDirectionalArrowLength: 3.5,
     linkDirectionalArrowRelPos: 1,
+    linkDirectionalArrowColor: '#64748b', // Matching arrow color
     onNodeClick: (node: any) => {
       setFocusedNodeId(node.id);
       onNodeClick?.(node as NetworkGraphNode);

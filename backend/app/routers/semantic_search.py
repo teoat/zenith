@@ -11,7 +11,9 @@ from core.database import get_db
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/semantic-search", tags=["semantic-search"])
+logger.warning("The 'semantic-search' router is DEPRECATED and uses a MOCK engine. Use 'ai' router instead.")
+
+router = APIRouter(tags=["semantic-search"], deprecated=True)
 
 # Global semantic search engine
 semantic_engine = None
@@ -37,40 +39,51 @@ async def index_document(
     db: Session = Depends(get_db),
 ):
     """
-    Index a document for semantic search
+    DEPRECATED: This endpoint has been permanently removed.
 
-    Args:
-        document_id: Unique document identifier
-        content: Document content to index
-        metadata: Additional metadata
-        backend: Vector store backend to use
+    Migration Path:
+    - Old: POST /api/v1/semantic_search/index
+    - New: POST /api/v1/ai/embeddings
 
-    Returns:
-        Indexing result
-    """
-    try:
-        # Get appropriate engine
-        if backend != "sqlite":
-            engine = SemanticSearchEngine(backend=backend)
-        else:
-            engine = get_semantic_engine()
+    Example migration:
+    ```javascript
+    // Old
+    fetch('/api/v1/semantic_search/index', {
+      method: 'POST',
+      body: JSON.stringify({
+        document_id: 'doc123',
+        content: 'text content',
+        metadata: { type: 'evidence' }
+      })
+    });
 
-        # Index document
-        result = engine.index_document(document_id, content, metadata)
-
-        return {
-            "success": result.success,
-            "document_id": result.document_id,
-            "indexing_time": result.indexing_time,
-            "embedding_dimension": result.embedding_dimension,
-            "error": result.error,
-            "backend": backend,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+    // New
+    fetch('/api/v1/ai/embeddings', {
+      method: 'POST',
+      body: JSON.stringify({
+        text: 'text content',
+        metadata: {
+          document_id: 'doc123',
+          type: 'evidence'
         }
+      })
+    });
+    ```
 
-    except Exception as e:
-        logger.error(f"Document indexing failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Indexing failed: {str(e)}")
+    This endpoint returns HTTP 410 Gone to indicate permanent deprecation.
+    """
+    raise HTTPException(
+        status_code=410,
+        detail={
+            "error": "Endpoint permanently deprecated",
+            "message": "Use /ai/embeddings instead",
+            "migration": {
+                "from": "/api/v1/semantic_search/index",
+                "to": "/api/v1/ai/embeddings",
+                "docs": "/docs/api/SEMANTIC_SEARCH_MIGRATION_GUIDE.md"
+            }
+        }
+    )
 
 
 @router.post("/index/batch")
@@ -79,71 +92,11 @@ async def index_batch_documents(
     backend: Optional[str] = Query("sqlite", description="Vector store backend"),
     db: Session = Depends(get_db),
 ):
-    """
-    Index multiple documents for semantic search
-
-    Args:
-        documents: List of documents to index
-        backend: Vector store backend to use
-
-    Returns:
-        Batch indexing results
-    """
-    try:
-        if not documents:
-            raise HTTPException(status_code=400, detail="No documents provided")
-
-        # Get appropriate engine
-        if backend != "sqlite":
-            engine = SemanticSearchEngine(backend=backend)
-        else:
-            engine = get_semantic_engine()
-
-        # Index documents
-        results = []
-        for doc in documents:
-            document_id = doc.get("document_id") or doc.get("id")
-            content = doc.get("content") or doc.get("text", "")
-            metadata = doc.get("metadata", {})
-
-            if not document_id or not content:
-                results.append(
-                    {
-                        "document_id": document_id,
-                        "success": False,
-                        "error": "Missing document_id or content",
-                    }
-                )
-                continue
-
-            result = engine.index_document(document_id, content, metadata)
-            results.append(
-                {
-                    "document_id": result.document_id,
-                    "success": result.success,
-                    "indexing_time": result.indexing_time,
-                    "embedding_dimension": result.embedding_dimension,
-                    "error": result.error,
-                }
-            )
-
-        successful_count = sum(1 for r in results if r["success"])
-
-        return {
-            "success": True,
-            "total_documents": len(documents),
-            "successful_indexings": successful_count,
-            "failed_indexings": len(documents) - successful_count,
-            "results": results,
-            "backend": backend,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        }
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Batch indexing failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Batch indexing failed: {str(e)}")
+    """DEPRECATED: Use /ai/embeddings for batch document indexing."""
+    raise HTTPException(
+        status_code=410,
+        detail={"error": "Endpoint deprecated", "use_instead": "/ai/embeddings"}
+    )
 
 
 @router.get("/search")
@@ -156,70 +109,44 @@ async def search_documents(
     db: Session = Depends(get_db),
 ):
     """
-    Perform semantic search on indexed documents
+    DEPRECATED: This endpoint has been permanently removed.
 
-    Args:
-        query: Search query
-        limit: Maximum number of results
-        threshold: Minimum similarity threshold
-        backend: Vector store backend to use
-        filters: JSON metadata filters
+    Migration Path:
+    - Old: GET /api/v1/semantic_search/search?query=...&limit=...
+    - New: POST /api/v1/ai/semantic-search
 
-    Returns:
-        Search results
+    Example migration:
+    ```javascript
+    // Old
+    fetch('/api/v1/semantic_search/search?query=fraud&limit=10');
+
+    // New
+    fetch('/api/v1/ai/semantic-search', {
+      method: 'POST',
+      body: JSON.stringify({
+        query: 'fraud',
+        top_k: 10,
+        threshold: 0.6
+      })
+    });
+    ```
+
+    Note: Search is now POST instead of GET to support complex filter objects.
     """
-    try:
-        if not query.strip():
-            raise HTTPException(status_code=400, detail="Query cannot be empty")
-
-        # Parse filters
-        metadata_filters = None
-        if filters:
-            try:
-                import json
-
-                metadata_filters = json.loads(filters)
-            except json.JSONDecodeError:
-                raise HTTPException(status_code=400, detail="Invalid JSON in filters")
-
-        # Get appropriate engine
-        if backend != "sqlite":
-            engine = SemanticSearchEngine(backend=backend)
-        else:
-            engine = get_semantic_engine()
-
-        # Perform search
-        search_results = engine.search(query, limit, threshold, metadata_filters)
-
-        # Convert results to dict
-        results = []
-        for result in search_results:
-            results.append(
-                {
-                    "document_id": result.document_id,
-                    "content": result.content,
-                    "similarity_score": result.similarity_score,
-                    "metadata": result.metadata,
-                    "highlights": result.highlights,
-                    "relevance_explanation": result.relevance_explanation,
-                }
-            )
-
-        return {
-            "success": True,
-            "query": query,
-            "total_results": len(results),
-            "results": results,
-            "backend": backend,
-            "threshold": threshold,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+    raise HTTPException(
+        status_code=410,
+        detail={
+            "error": "Endpoint permanently deprecated",
+            "message": "Use /ai/semantic-search instead",
+            "migration": {
+                "from": "/api/v1/semantic_search/search",
+                "to": "/api/v1/ai/semantic-search",
+                "method_change": "GET → POST",
+                "parameter_change": "limit → top_k",
+                "docs": "/docs/api/SEMANTIC_SEARCH_MIGRATION_GUIDE.md"
+            }
         }
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Semantic search failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+    )
 
 
 @router.delete("/index/{document_id}")
@@ -228,36 +155,8 @@ async def delete_document(
     backend: Optional[str] = Query("sqlite", description="Vector store backend"),
     db: Session = Depends(get_db),
 ):
-    """
-    Delete a document from the semantic index
-
-    Args:
-        document_id: Document ID to delete
-        backend: Vector store backend to use
-
-    Returns:
-        Deletion result
-    """
-    try:
-        # Get appropriate engine
-        if backend != "sqlite":
-            engine = SemanticSearchEngine(backend=backend)
-        else:
-            engine = get_semantic_engine()
-
-        # Delete document
-        success = engine.delete_document(document_id)
-
-        return {
-            "success": success,
-            "document_id": document_id,
-            "backend": backend,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        }
-
-    except Exception as e:
-        logger.error(f"Document deletion failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Deletion failed: {str(e)}")
+    """DEPRECATED: Endpoint removed."""
+    raise HTTPException(status_code=410, detail={"error": "Endpoint deprecated"})
 
 
 @router.get("/stats")
@@ -265,35 +164,8 @@ async def get_search_stats(
     backend: Optional[str] = Query("sqlite", description="Vector store backend"),
     db: Session = Depends(get_db),
 ):
-    """
-    Get statistics about the semantic search engine
-
-    Args:
-        backend: Vector store backend to query
-
-    Returns:
-        Search engine statistics
-    """
-    try:
-        # Get appropriate engine
-        if backend != "sqlite":
-            engine = SemanticSearchEngine(backend=backend)
-        else:
-            engine = get_semantic_engine()
-
-        # Get stats
-        stats = engine.get_stats()
-
-        return {
-            "success": True,
-            "backend": backend,
-            "stats": stats,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        }
-
-    except Exception as e:
-        logger.error(f"Failed to get stats: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
+    """DEPRECATED: Endpoint removed."""
+    raise HTTPException(status_code=410, detail={"error": "Endpoint deprecated"})
 
 
 @router.post("/rebuild")
@@ -301,34 +173,8 @@ async def rebuild_index(
     backend: Optional[str] = Query("sqlite", description="Vector store backend"),
     db: Session = Depends(get_db),
 ):
-    """
-    Rebuild the semantic search index
-
-    Args:
-        backend: Vector store backend to rebuild
-
-    Returns:
-        Rebuild result
-    """
-    try:
-        # Get appropriate engine
-        if backend != "sqlite":
-            engine = SemanticSearchEngine(backend=backend)
-        else:
-            engine = get_semantic_engine()
-
-        # Rebuild index
-        success = engine.rebuild_index()
-
-        return {
-            "success": success,
-            "backend": backend,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        }
-
-    except Exception as e:
-        logger.error(f"Index rebuild failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Rebuild failed: {str(e)}")
+    """DEPRECATED: Endpoint removed."""
+    raise HTTPException(status_code=410, detail={"error": "Endpoint deprecated"})
 
 
 @router.get("/backends")
@@ -417,39 +263,5 @@ async def switch_backend(
     config: Optional[Dict[str, Any]] = Body(None, description="Backend configuration"),
     db: Session = Depends(get_db),
 ):
-    """
-    Switch to a different vector store backend
-
-    Args:
-        backend: New backend to use
-        config: Backend configuration
-
-    Returns:
-        Switch result
-    """
-    try:
-        global semantic_engine
-
-        # Validate backend
-        valid_backends = ["sqlite", "chroma", "faiss"]
-        if backend not in valid_backends:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Invalid backend. Must be one of: {valid_backends}",
-            )
-
-        # Initialize new engine
-        semantic_engine = SemanticSearchEngine(backend, config)
-
-        return {
-            "success": True,
-            "backend": backend,
-            "config": config,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        }
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Backend switch failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Backend switch failed: {str(e)}")
+    """DEPRECATED: Endpoint removed."""
+    raise HTTPException(status_code=410, detail={"error": "Endpoint deprecated"})

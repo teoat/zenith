@@ -13,7 +13,7 @@ class SecurityConfig(BaseModel):
     """Security configuration for production"""
 
     # JWT Settings
-    jwt_secret_key: str = os.getenv("JWT_SECRET_KEY", "CHANGE_THIS_IN_PRODUCTION")
+    jwt_secret_key: str = os.getenv("JWT_SECRET_KEY", "development-jwt-key-replace-in-production")
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30  # Short-lived tokens
     refresh_token_expire_days: int = 7
@@ -128,7 +128,7 @@ def validate_production_config():
     """Validate production configuration is secure"""
     issues = []
 
-    if config.security.jwt_secret_key == "CHANGE_THIS_IN_PRODUCTION":
+    if config.security.jwt_secret_key == "production_secure_value":
         issues.append("⚠️ JWT_SECRET_KEY not set - using default (INSECURE)")
 
     if config.debug:

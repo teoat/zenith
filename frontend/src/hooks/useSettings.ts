@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
+import { secureLogger } from '../utils/secureLogger';
 import type { AppSettings } from '../types/api';
 
 export type UserSettings = AppSettings;
@@ -45,7 +46,7 @@ export const useUpdateSettings = () => {
       if (context?.previousSettings) {
         queryClient.setQueryData(['user-settings'], context.previousSettings);
       }
-      console.error('Settings update failed:', error);
+      secureLogger.error('Settings update failed:', error);
     },
     onSettled: () => {
       // Always refetch after error or success to ensure cache consistency

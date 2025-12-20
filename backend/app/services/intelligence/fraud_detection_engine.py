@@ -316,41 +316,7 @@ class FraudDetectionEngine:
         else:
             return "low"
 
-                # Alert if multiple transactions just below threshold
-                if len(window_txs) >= self.STRUCTURING_MIN_TRANSACTIONS:
-                    # Calculate risk score
-                    avg_amount = total_amount / len(window_txs)
-                    proximity_to_threshold = avg_amount / self.STRUCTURING_THRESHOLD
 
-                    # Higher score if amounts are very close to threshold
-                    base_score = 60
-                    proximity_bonus = int(
-                        (proximity_to_threshold - 0.8) * 200
-                    )  # 0-40 points
-                    count_bonus = min(len(window_txs) * 5, 30)  # Up to 30 points
-
-                    risk_score = min(base_score + proximity_bonus + count_bonus, 100)
-
-                    alert = FraudAlert(
-                        alert_id=f"STRUCT_{window_txs[0].id}_{len(window_txs)}",
-                        fraud_type=FraudType.STRUCTURING,
-                        risk_score=risk_score,
-                        confidence=0.85,
-                        transactions=[tx.id for tx in window_txs],
-                        description=f"Possible structuring: {len(window_txs)} transactions totaling ${total_amount:,.2f} "
-                        f"within {self.STRUCTURING_WINDOW_HOURS}h, avg ${avg_amount:,.2f} (just below ${self.STRUCTURING_THRESHOLD:,} threshold)",
-                        detected_at=datetime.now(),
-                        details={
-                            "total_amount": total_amount,
-                            "transaction_count": len(window_txs),
-                            "avg_amount": avg_amount,
-                            "time_window_hours": self.STRUCTURING_WINDOW_HOURS,
-                            "threshold": self.STRUCTURING_THRESHOLD,
-                            "account_pair": account_pair,
-                        },
-                    )
-                    alerts.append(alert)
-                    break  # Don't create multiple alerts for same cluster
 
         return alerts
 

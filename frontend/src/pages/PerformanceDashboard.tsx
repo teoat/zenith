@@ -78,7 +78,8 @@ const PerformanceDashboard: React.FC = () => {
     memory: { used: 0, limit: 1, percentage: 0 },
     components: { renderCount: 0, avgRenderTime: 0 },
     api: { totalCalls: 0, avgResponseTime: 0, errorRate: 0 },
-    system: { cpu: 0, memory: 0, uptime: 0 }
+    system: { cpu: 0, memory: 0, uptime: 0 },
+    cost: { currentSpend: 0, savings: 0, roi: 0 }
   });
 
   const [alerts] = useState<PerformanceAlert[]>([]);
@@ -88,14 +89,13 @@ const PerformanceDashboard: React.FC = () => {
     // Initialize metrics collection
     const updateLocalMetrics = async () => {
       // IPC Metrics (Local/Mock)
-      const ipcStats: Record<string, { pendingRequests: number }> = {}; // Memory manager removed
       const ipcMetrics = {
-        calls: Object.values(ipcStats).reduce((sum: number, stat) => sum + (stat.pendingRequests || 0), 0),
+        calls: 0,
         avgResponseTime: 45, 
         cacheHitRate: 78
       };
 
-      // Memory Metrics (Local Browser Memory)
+      // Memory Metrics
       const perfMemory = (performance as any).memory;
       const memoryMetrics = {
         used: perfMemory ? perfMemory.usedJSHeapSize : 0,
@@ -104,17 +104,35 @@ const PerformanceDashboard: React.FC = () => {
           ((perfMemory.usedJSHeapSize || 0) / (perfMemory.jsHeapSizeLimit || 1)) * 100 : 0
       };
 
-      // Component Metrics (Local)
+      // Component Metrics
       const componentMetrics = {
-        renderCount: 0, // Memory manager removed
+        renderCount: 0,
         avgRenderTime: 16
       };
       
+      // Cost Metrics (Async Fetch)
+      let costMetrics = { currentSpend: 0, savings: 0, roi: 0 };
+      try {
+          // Dynamic import to avoid circular dependencies if any
+          const { api } = await import('../lib/api');
+          const costs = await api.getInfrastructureCosts().catch(() => null);
+          if (costs) {
+              costMetrics = {
+                  currentSpend: costs.current_spend,
+                  savings: costs.projected_savings,
+                  roi: costs.roi_percentage
+              };
+          }
+      } catch (e) {
+          // Silent fail for dashboard
+      }
+
       setMetrics(prev => ({
           ...prev,
           ipc: ipcMetrics,
           memory: memoryMetrics,
-          components: componentMetrics
+          components: componentMetrics,
+          cost: costMetrics
       }));
     };
 
@@ -315,6 +333,28 @@ interface SystemMetricsPayload {
             </div>
           </div>
         </MetricCard>
+
+          {/* Cost Efficiency */}
+          <MetricCard
+            title="Cost Efficiency"
+            value={`$${metrics.cost.currentSpend.toLocaleString()}`}
+            unit="/mo"
+            icon={TrendingDown} // Using generic icon as DollarSign might not be imported
+            trend={15} // Positive trend means savings in this context visually, but usually green means good. Let's say +15% savings.
+            status="good"
+          >
+             <div className="space-y-2 text-xs text-secondary-400">
+              <div className="flex justify-between">
+                <span>Projected Savings</span>
+                <span className="text-success-400">${metrics.cost.savings.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>ROI</span>
+                <span>{metrics.cost.roi}%</span>
+              </div>
+            </div>
+          </MetricCard>
+
       </div>
 
       {/* Detailed Charts */}
@@ -369,12 +409,12 @@ interface SystemMetricsPayload {
                   {metrics.memory.percentage.toFixed(1)}%
                 </span>
               </div>
-              <div className="w-full bg-secondary-700 rounded-full h-3">
+              <div className="progress-bar">
                 <div
-                  className={`h-3 rounded-full transition-all duration-300 ${
-                    metrics.memory.percentage > 80 ? 'bg-error-500' :
-                    metrics.memory.percentage > 60 ? 'bg-warning-500' :
-                    'bg-success-500'
+                  className={`progress-fill ${
+                    metrics.memory.percentage > 80 ? 'progress-error' :
+                    metrics.memory.percentage > 60 ? 'progress-warning' :
+                    'progress-primary'
                   }`}
                   style={{ width: `${Math.min(metrics.memory.percentage, 100)}%` }}
                 />
@@ -389,12 +429,12 @@ interface SystemMetricsPayload {
                   {metrics.system.cpu}%
                 </span>
               </div>
-              <div className="w-full bg-secondary-700 rounded-full h-3">
+              <div className="progress-bar">
                 <div
-                  className={`h-3 rounded-full transition-all duration-300 ${
-                    metrics.system.cpu > 70 ? 'bg-error-500' :
-                    metrics.system.cpu > 50 ? 'bg-warning-500' :
-                    'bg-success-500'
+                  className={`progress-fill ${
+                    metrics.system.cpu > 70 ? 'progress-error' :
+                    metrics.system.cpu > 50 ? 'progress-warning' :
+                    'progress-primary'
                   }`}
                   style={{ width: `${Math.min(metrics.system.cpu, 100)}%` }}
                 />

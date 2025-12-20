@@ -5,7 +5,7 @@ Investigation Service - Business logic for fraud investigations
 import logging
 from typing import Any, Dict, List, Optional
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from core.database import Case, Transaction
 
@@ -15,11 +15,23 @@ logger = logging.getLogger(__name__)
 class InvestigationService:
     """Service for managing fraud investigations"""
 
+    def _get_case_with_relationships(self, db: Session, case_id: str) -> Optional[Case]:
+        """Get case with optimized eager loading to prevent N+1 queries"""
+        return (
+            db.query(Case)
+            .options(
+                joinedload(Case.assignee),
+                joinedload(Case.project),
+            )
+            .filter(Case.id == case_id)
+            .first()
+        )
+
     def start_investigation(
         self, db: Session, case_id: str, investigator_id: str
     ) -> Dict[str, Any]:
         """Start a new investigation for a case"""
-        case = db.query(Case).filter(Case.id == case_id).first()
+        case = self._get_case_with_relationships(db, case_id)
         if not case:
             raise ValueError(f"Case {case_id} not found")
 
@@ -35,7 +47,7 @@ class InvestigationService:
 
     def get_investigation_status(self, db: Session, case_id: str) -> Dict[str, Any]:
         """Get current investigation status"""
-        case = db.query(Case).filter(Case.id == case_id).first()
+        case = self._get_case_with_relationships(db, case_id)
         if not case:
             raise ValueError(f"Case {case_id} not found")
 
@@ -50,7 +62,7 @@ class InvestigationService:
         self, db: Session, case_id: str, resolution: str, notes: Optional[str] = None
     ) -> Dict[str, Any]:
         """Close an investigation"""
-        case = db.query(Case).filter(Case.id == case_id).first()
+        case = self._get_case_with_relationships(db, case_id)
         if not case:
             raise ValueError(f"Case {case_id} not found")
 

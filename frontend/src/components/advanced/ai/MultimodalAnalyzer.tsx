@@ -2,9 +2,11 @@ import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Upload, Image, FileText, Video, Eye } from 'lucide-react';
+import { Upload, Eye } from 'lucide-react';
 import { secureLogger } from '../../../utils/secureLogger';
-import { secureRandom } from '../../../utils/secureRandom'; // Module not found
+import { secureRandom } from '../../../utils/secureRandom';
+import { getFileIcon } from '../../../utils/fileUtils';
+import { formatFileSize } from '../../../utils/formatters';
 
 const MultimodalAnalyzer: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -50,11 +52,7 @@ const MultimodalAnalyzer: React.FC = () => {
     }
   };
 
-  const getFileIcon = (type: string) => {
-    if (type.includes('image')) return <Image className="w-4 h-4" />;
-    if (type.includes('video')) return <Video className="w-4 h-4" />;
-    return <FileText className="w-4 h-4" />;
-  };
+  // Using shared utility from utils/fileUtils.tsx
 
   const getRiskColor = (score: number) => {
     if (score > 70) return 'text-red-500 bg-red-500/10';
@@ -107,7 +105,7 @@ const MultimodalAnalyzer: React.FC = () => {
                     <div className="flex-1">
                       <p className="text-sm font-medium text-white">{file.name}</p>
                       <p className="text-xs text-slate-400">
-                        {(file.size / 1024).toFixed(1)} KB
+                        {formatFileSize(file.size)}
                       </p>
                     </div>
                   </div>
