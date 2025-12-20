@@ -1,9 +1,9 @@
 {
-  "name": "378x492-fraud-detection",
+  "name": "zenith",
   "version": "1.0.0",
-  "description": "378x492 Fraud Detection Desktop Application",
+  "description": "Zenith Fraud Detection Desktop Application",
   "main": "electron/main.js",
-  "author": "378x492",
+  "author": "Zenith",
   "scripts": {
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:electron\"",
     "dev:frontend": "cd frontend && npm run dev",
@@ -72,9 +72,9 @@
     "electron-updater": "^6.6.2"
   },
   "build": {
-    "appId": "com.378x492.fraud-detection",
-    "productName": "378x492 Fraud Detection",
-    "copyright": "Copyright © 2025 378x492",
+    "appId": "com.zenith.fraud-detection",
+    "productName": "Zenith Fraud Detection",
+    "copyright": "Copyright © 2025 Zenith",
     "asar": true,
     "directories": {
       "buildResources": "build",
@@ -164,7 +164,7 @@
         }
       ],
       "icon": "build/icon.ico",
-      "publisherName": "378x492",
+      "publisherName": "Zenith",
       "verifyUpdateCodeSignature": true
     },
     "nsis": {
@@ -174,7 +174,7 @@
       "deleteAppDataOnUninstall": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "378x492 Fraud Detection"
+      "shortcutName": "Zenith Fraud Detection"
     },
     "linux": {
       "target": [
@@ -184,13 +184,13 @@
       ],
       "icon": "build/icons",
       "category": "Office",
-      "maintainer": "378x492 <support@378x492.com>",
-      "vendor": "378x492",
+      "maintainer": "Zenith <support@zenith.com>",
+      "vendor": "Zenith",
       "description": "Desktop fraud detection and investigation platform"
     },
     "publish": {
       "provider": "github",
-      "owner": "378x492",
+      "owner": "zenith",
       "repo": "fraud-detection"
     }
   }

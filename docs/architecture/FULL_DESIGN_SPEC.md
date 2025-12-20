@@ -25,9 +25,9 @@ This document consolidates all strategy and page specifications into a single re
 *   [00_STRATEGY_ONBOARDING.md](00_STRATEGY_ONBOARDING.md) (User Guidance)
 
 ### Planning Documents (New)
-*   [FRAUD_ORCHESTRATION.md](docs/planning/FRAUD_ORCHESTRATION.md) (Plain-Language Framework)
-*   [FEATURE_ORGANIZATION.md](docs/planning/FEATURE_ORGANIZATION.md) (Page Structure & User Journey)
-*   [CROSS_PAGE_INTEGRATION.md](docs/planning/CROSS_PAGE_INTEGRATION.md) (Data Flow & Integration)
+*   [FRAUD_ORCHESTRATION.md](archive/2025/q4/planning/FRAUD_ORCHESTRATION.md) (Plain-Language Framework)
+*   [FEATURE_ORGANIZATION.md](archive/2025/q4/planning/FEATURE_ORGANIZATION.md) (Page Structure & User Journey)
+*   [CROSS_PAGE_INTEGRATION.md](archive/2025/q4/planning/CROSS_PAGE_INTEGRATION.md) (Data Flow & Integration)
 
 ### Functional Pages (The Workflow)
 1.  [01_DASHBOARD.md](01_DASHBOARD.md) (Command Center)

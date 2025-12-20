@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create admin user for 378x492 Fraud Detection Platform
+Create admin user for Zenith Fraud Detection Platform
 """
 
 import os

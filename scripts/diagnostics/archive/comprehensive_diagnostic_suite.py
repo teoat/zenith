@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive Diagnostic Suite for 378x492 Fraud Detection Platform
+Comprehensive Diagnostic Suite for Zenith Fraud Detection Platform
 Provides deep analysis across all areas, vectors, dimensions, and metrics
 """
 

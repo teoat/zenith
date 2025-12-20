@@ -1,4 +1,4 @@
-# 378x492 Fraud Detection Platform - API Documentation
+# Zenith Fraud Detection Platform - API Documentation
 
 **Generated on:** 2025-12-17 13:00:06
 **Total Routers:** 36
@@ -6,7 +6,7 @@
 
 ## API Overview
 
-This API provides comprehensive fraud detection and investigation capabilities for the 378x492 platform.
+This API provides comprehensive fraud detection and investigation capabilities for the Zenith platform.
 
 ### Base URL
 ```
@@ -332,7 +332,7 @@ Get statistics about the advanced AI services.
 **Endpoints:** 22
 **Tags:** AI
 
-AI API Router for 378x492 Fraud Detection
+AI API Router for Zenith Fraud Detection
 Provides endpoints for AI analysis and semantic search
 
 #### POST /search
@@ -2196,7 +2196,7 @@ Send a message to a specific participant
 
 ⚠️ **Error loading router:** No module named 'app.services.core.auth_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -2208,7 +2208,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/compliance.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/compliance.py", line 8, in <module>
     from app.services.core.auth_service import auth_service
 ModuleNotFoundError: No module named 'app.services.core.auth_service'
 
@@ -2219,7 +2219,7 @@ ModuleNotFoundError: No module named 'app.services.core.auth_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.core.auth_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -2231,7 +2231,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/diagnostics.py", line 6, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/diagnostics.py", line 6, in <module>
     from app.services.core.auth_service import auth_service
 ModuleNotFoundError: No module named 'app.services.core.auth_service'
 
@@ -3017,7 +3017,7 @@ Get all metadata correlations for a case
 
 ⚠️ **Error loading router:** invalid syntax (health.py, line 2)
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -3031,7 +3031,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap_external>", line 1074, in get_code
   File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/health.py", line 2
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/health.py", line 2
     <<<<<<< Updated upstream
     ^^
 SyntaxError: invalid syntax
@@ -3301,9 +3301,9 @@ Validate and persist rookie checklist
 **Endpoints:** 0
 **Tags:** None
 
-⚠️ **Error loading router:** cannot import name 'FraudAlert' from 'app.services.intelligence' (/Users/Arief/Desktop/378x492/backend/app/services/intelligence/__init__.py)
+⚠️ **Error loading router:** cannot import name 'FraudAlert' from 'app.services.intelligence' (/Users/Arief/Desktop/Zenith/backend/app/services/intelligence/__init__.py)
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -3315,9 +3315,9 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/intelligence.py", line 19, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/intelligence.py", line 19, in <module>
     from app.services.intelligence import (
-ImportError: cannot import name 'FraudAlert' from 'app.services.intelligence' (/Users/Arief/Desktop/378x492/backend/app/services/intelligence/__init__.py)
+ImportError: cannot import name 'FraudAlert' from 'app.services.intelligence' (/Users/Arief/Desktop/Zenith/backend/app/services/intelligence/__init__.py)
 
 
 ### LOGGING Router

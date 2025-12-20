@@ -1,4 +1,4 @@
-# 378x492 Fraud Detection Platform
+# Zenith Fraud Detection Platform
 
 ## Quick Links
 

@@ -5,7 +5,7 @@
 ### 1️⃣ Security Setup (5 minutes) - **CRITICAL**
 ```bash
 # Generate new production secrets
-cd /Users/Arief/Desktop/378x492
+cd /Users/Arief/Desktop/Zenith
 ./scripts/security/rotate_secrets.sh
 
 # Review and customize the generated file

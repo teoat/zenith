@@ -21,7 +21,7 @@ class ComprehensiveDiagnosticReport:
     def __init__(self):
         self.project_root = Path(__file__).parent.parent.parent
         self.report = {
-            "title": "378x492 Fraud Detection System - Comprehensive Diagnostic Report",
+            "title": "Zenith Fraud Detection System - Comprehensive Diagnostic Report",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "version": "3.0",
             "sectors": {},

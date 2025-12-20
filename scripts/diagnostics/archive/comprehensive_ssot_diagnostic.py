@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive SSOT and Lockfile Diagnostic Suite for 378x492 Fraud Detection Platform
+Comprehensive SSOT and Lockfile Diagnostic Suite for Zenith Fraud Detection Platform
 Diagnoses all critical files to ensure they are error-free and properly locked
 """
 

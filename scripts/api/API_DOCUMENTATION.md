@@ -1,4 +1,4 @@
-# 378x492 Fraud Detection Platform - API Documentation
+# Zenith Fraud Detection Platform - API Documentation
 
 **Generated on:** 2025-12-17 13:26:17
 **Total Routers:** 35
@@ -6,7 +6,7 @@
 
 ## API Overview
 
-This API provides comprehensive fraud detection and investigation capabilities for the 378x492 platform.
+This API provides comprehensive fraud detection and investigation capabilities for the Zenith platform.
 
 ### Base URL
 ```
@@ -27,7 +27,7 @@ Authorization: Bearer <jwt_token>
 
 ⚠️ **Error loading router:** No module named 'app.services.audit_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -39,7 +39,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/admin.py", line 6, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/admin.py", line 6, in <module>
     from app.services.audit_service import audit_service
 ModuleNotFoundError: No module named 'app.services.audit_service'
 
@@ -192,7 +192,7 @@ Get statistics about the advanced AI services.
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -204,11 +204,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/ai.py", line 26, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/ai.py", line 26, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -219,7 +219,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -231,11 +231,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/analytics.py", line 10, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/analytics.py", line 10, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -246,7 +246,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.apm_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -258,7 +258,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/apm.py", line 9, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/apm.py", line 9, in <module>
     from app.services.apm_service import (
 ModuleNotFoundError: No module named 'app.services.apm_service'
 
@@ -296,7 +296,7 @@ Returns paginated audit logs
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -308,11 +308,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/auth.py", line 7, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/auth.py", line 7, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -323,7 +323,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.audit_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -335,7 +335,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/backup.py", line 16, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/backup.py", line 16, in <module>
     from app.services.audit_service import audit_service
 ModuleNotFoundError: No module named 'app.services.audit_service'
 
@@ -346,7 +346,7 @@ ModuleNotFoundError: No module named 'app.services.audit_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -358,11 +358,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/cases.py", line 11, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/cases.py", line 11, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -373,7 +373,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.collaboration_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -385,7 +385,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/collaboration.py", line 10, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/collaboration.py", line 10, in <module>
     from app.services.collaboration_service import (
 ModuleNotFoundError: No module named 'app.services.collaboration_service'
 
@@ -396,7 +396,7 @@ ModuleNotFoundError: No module named 'app.services.collaboration_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.compliance_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -408,7 +408,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/compliance.py", line 7, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/compliance.py", line 7, in <module>
     from app.services.compliance_service import ComplianceService
 ModuleNotFoundError: No module named 'app.services.compliance_service'
 
@@ -419,7 +419,7 @@ ModuleNotFoundError: No module named 'app.services.compliance_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.core.auth_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -431,7 +431,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/diagnostics.py", line 6, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/diagnostics.py", line 6, in <module>
     from app.services.core.auth_service import auth_service
 ModuleNotFoundError: No module named 'app.services.core.auth_service'
 
@@ -442,7 +442,7 @@ ModuleNotFoundError: No module named 'app.services.core.auth_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -454,11 +454,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/evidence.py", line 23, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/evidence.py", line 23, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -469,7 +469,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -481,11 +481,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/fraud.py", line 9, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/fraud.py", line 9, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -496,7 +496,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.fraud_rules_engine'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -508,7 +508,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/fraud_rules.py", line 14, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/fraud_rules.py", line 14, in <module>
     from app.services.fraud_rules_engine import get_fraud_engine
 ModuleNotFoundError: No module named 'app.services.fraud_rules_engine'
 
@@ -519,7 +519,7 @@ ModuleNotFoundError: No module named 'app.services.fraud_rules_engine'
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -531,11 +531,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/graph.py", line 11, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/graph.py", line 11, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -546,7 +546,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -558,11 +558,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/identity.py", line 16, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/identity.py", line 16, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -571,9 +571,9 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 **Endpoints:** 0
 **Tags:** None
 
-⚠️ **Error loading router:** cannot import name 'FraudAlert' from 'app.services.intelligence' (/Users/Arief/Desktop/378x492/backend/app/services/intelligence/__init__.py)
+⚠️ **Error loading router:** cannot import name 'FraudAlert' from 'app.services.intelligence' (/Users/Arief/Desktop/Zenith/backend/app/services/intelligence/__init__.py)
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -585,9 +585,9 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/intelligence.py", line 19, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/intelligence.py", line 19, in <module>
     from app.services.intelligence import (
-ImportError: cannot import name 'FraudAlert' from 'app.services.intelligence' (/Users/Arief/Desktop/378x492/backend/app/services/intelligence/__init__.py)
+ImportError: cannot import name 'FraudAlert' from 'app.services.intelligence' (/Users/Arief/Desktop/Zenith/backend/app/services/intelligence/__init__.py)
 
 
 ### LOGGING Router
@@ -596,7 +596,7 @@ ImportError: cannot import name 'FraudAlert' from 'app.services.intelligence' (/
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -608,11 +608,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/logging.py", line 9, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/logging.py", line 9, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -623,7 +623,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.metadata_extraction_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -635,7 +635,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/metadata.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/metadata.py", line 13, in <module>
     from app.services.metadata_extraction_service import (
 ModuleNotFoundError: No module named 'app.services.metadata_extraction_service'
 
@@ -701,14 +701,14 @@ Detailed health check with system metrics
 
 ⚠️ **Error loading router:** No module named 'app.services.search_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/backend/app/services/intelligence/evidence_service.py", line 17, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/intelligence/evidence_service.py", line 17, in <module>
     from app.services.search_service import evidence_search_index
 ModuleNotFoundError: No module named 'app.services.search_service'
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -720,9 +720,9 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/multimodal.py", line 11, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/multimodal.py", line 11, in <module>
     from app.services.intelligence.evidence_service import EvidenceProcessor, ProcessingResult
-  File "/Users/Arief/Desktop/378x492/backend/app/services/intelligence/evidence_service.py", line 22, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/intelligence/evidence_service.py", line 22, in <module>
     from app.services.search_service import evidence_search_index
 ModuleNotFoundError: No module named 'app.services.search_service'
 
@@ -733,7 +733,7 @@ ModuleNotFoundError: No module named 'app.services.search_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -745,11 +745,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/notifications.py", line 7, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/notifications.py", line 7, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -760,7 +760,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'backend.core'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -772,7 +772,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/onboarding.py", line 14, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/onboarding.py", line 14, in <module>
     from backend.core.database import RookieChecklist, get_db
 ModuleNotFoundError: No module named 'backend.core'
 
@@ -833,7 +833,7 @@ ModuleNotFoundError: No module named 'backend.core'
 
 ⚠️ **Error loading router:** No module named 'app.services.graph_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -845,7 +845,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/proof.py", line 18, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/proof.py", line 18, in <module>
     from app.services.graph_service import relationship_graph
 ModuleNotFoundError: No module named 'app.services.graph_service'
 
@@ -1044,7 +1044,7 @@ Delete a collaborative document
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -1056,11 +1056,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/reconciliation.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/reconciliation.py", line 8, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -1071,7 +1071,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -1083,11 +1083,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/reporting.py", line 9, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/reporting.py", line 9, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -1098,7 +1098,7 @@ ModuleNotFoundError: No module named 'app.services.cache_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.search_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -1110,7 +1110,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/search.py", line 6, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/search.py", line 6, in <module>
     from app.services.search_service import evidence_search_index
 ModuleNotFoundError: No module named 'app.services.search_service'
 
@@ -1121,7 +1121,7 @@ ModuleNotFoundError: No module named 'app.services.search_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.semantic_search_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -1133,7 +1133,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/semantic_search.py", line 9, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/semantic_search.py", line 9, in <module>
     from app.services.semantic_search_service import SemanticSearchEngine
 ModuleNotFoundError: No module named 'app.services.semantic_search_service'
 
@@ -1144,7 +1144,7 @@ ModuleNotFoundError: No module named 'app.services.semantic_search_service'
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -1156,11 +1156,11 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/stats.py", line 9, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/stats.py", line 9, in <module>
     from app.services.infrastructure.auth_service import auth_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/auth_service.py", line 13, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 
@@ -1281,7 +1281,7 @@ Test SSE streaming endpoint
 
 ⚠️ **Error loading router:** No module named 'app.services.cache_service'
 Traceback (most recent call last):
-  File "/Users/Arief/Desktop/378x492/scripts/generate_api_docs.py", line 23, in get_router_info
+  File "/Users/Arief/Desktop/Zenith/scripts/generate_api_docs.py", line 23, in get_router_info
     module = importlib.import_module(f"app.routers.{module_name}")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/Arief/anaconda3/lib/python3.11/importlib/__init__.py", line 126, in import_module
@@ -1293,9 +1293,9 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/Users/Arief/Desktop/378x492/backend/app/routers/users.py", line 5, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/routers/users.py", line 5, in <module>
     from app.services.infrastructure.storage.database_service import db_service
-  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
+  File "/Users/Arief/Desktop/Zenith/backend/app/services/infrastructure/storage/database_service.py", line 8, in <module>
     from app.services.cache_service import cache_manager, cached
 ModuleNotFoundError: No module named 'app.services.cache_service'
 

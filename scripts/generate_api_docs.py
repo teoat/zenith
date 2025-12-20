@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-API Documentation Generator for 378x492 Fraud Detection Platform
+API Documentation Generator for Zenith Fraud Detection Platform
 Generates comprehensive API documentation from FastAPI routers
 """
 
@@ -84,7 +84,7 @@ def generate_api_documentation():
         all_routers.append(router_info)
 
     # Generate markdown documentation
-    doc_content = f"""# 378x492 Fraud Detection Platform - API Documentation
+    doc_content = f"""# Zenith Fraud Detection Platform - API Documentation
 
 **Generated on:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 **Total Routers:** {len(all_routers)}

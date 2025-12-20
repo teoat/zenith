@@ -272,7 +272,7 @@ class QuickDiagnosticAssessor:
         report = {
             "timestamp": datetime.now().isoformat(),
             "assessment_type": "quick_diagnostic_assessment",
-            "platform": "378x492 Fraud Detection Platform",
+            "platform": "Zenith Fraud Detection Platform",
             "assessed_areas": list(self.results.keys()),
             "summary": {
                 "total_areas_assessed": len(self.results),

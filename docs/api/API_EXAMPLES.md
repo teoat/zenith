@@ -1,4 +1,4 @@
-# 378x492 API Examples & Schemas
+# Zenith API Examples & Schemas
 
 **Generated:** 2025-12-17
 **Purpose:** Practical examples for key API endpoints

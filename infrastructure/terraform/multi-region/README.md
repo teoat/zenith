@@ -1,6 +1,6 @@
 # Multi-Region Deployment Infrastructure
 
-This Terraform configuration sets up a global, multi-region deployment for the 378x492 Fraud Detection Platform with geo-DNS, CDN, and high availability.
+This Terraform configuration sets up a global, multi-region deployment for the Zenith Fraud Detection Platform with geo-DNS, CDN, and high availability.
 
 ## Architecture Overview
 

@@ -46,8 +46,7 @@ COMPREHENSIVE_DIAGNOSTIC_REPORT_*.md
 .idea/
 .vscode/
 .DS_Store
-<<<<<<< HEAD
-=======
+
 
 # Secrets
 .env
@@ -56,4 +55,10 @@ COMPREHENSIVE_DIAGNOSTIC_REPORT_*.md
 !.env.mcp.example
 !.env.template
 !.env.project
->>>>>>> b1091e74b (🛡️ Sentinel: [CRITICAL] Stop tracking .env file and fix .gitignore)
+secrets.toml
+
+# Logs and Temporary files
+*.log
+*.tar.gz
+type-check-output*.txt
+error_analysis.txt

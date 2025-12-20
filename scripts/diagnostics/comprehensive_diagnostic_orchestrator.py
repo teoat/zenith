@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive Diagnostic Orchestration System for 378x492 Fraud Detection
+Comprehensive Diagnostic Orchestration System for Zenith Fraud Detection
 =========================================================================
 
 This script orchestrates systematic diagnosis across all system sectors:

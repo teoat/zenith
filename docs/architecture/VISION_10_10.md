@@ -2,7 +2,7 @@
 
 ## 1. Executive Summary
 
-The 378x492 platform is evolving from a single-point auditing tool into a **Command-and-Control Workspace** for financial forensics. This vision merges advanced fraud detection with Anti-Money Laundering (AML) pillars, anchored by a legal jurisprudence framework.
+The Zenith platform is evolving from a single-point auditing tool into a **Command-and-Control Workspace** for financial forensics. This vision merges advanced fraud detection with Anti-Money Laundering (AML) pillars, anchored by a legal jurisprudence framework.
 
 ## 2. Global Orchestration: The Project Switcher
 
