@@ -190,7 +190,7 @@ async def lifespan(app: FastAPI):
     print("DEBUG: Lifespan called!")
     startup_start = asyncio.get_event_loop().time()
     print("DEBUG: Lifespan startup beginning")
-    logger.info("Starting 378x492 Fraud Detection API with 99.99% uptime target", extra={"event": "startup"})
+    logger.info("Starting Zenith Fraud Detection API with 99.99% uptime target", extra={"event": "startup"})
 
     print("DEBUG: About to start phases")
 
@@ -343,12 +343,12 @@ async def lifespan(app: FastAPI):
                 extra={"event": "websocket_disabled"},
             )
         logger.info(
-            "378x492 API startup completed successfully",
+            "Zenith API startup completed successfully",
             extra={"event": "startup_complete"},
         )
     except Exception as e:
         logger.error(
-            "Failed to start 378x492 API",
+            "Failed to start Zenith API",
             extra={"error": str(e), "event": "startup_failed"},
         )
         raise
@@ -358,7 +358,7 @@ async def lifespan(app: FastAPI):
     # Graceful Shutdown with 99.99% uptime procedures
     shutdown_start = asyncio.get_event_loop().time()
     logger.info(
-        "Initiating graceful shutdown of 378x492 Fraud Detection API", extra={"event": "shutdown"}
+        "Initiating graceful shutdown of Zenith Fraud Detection API", extra={"event": "shutdown"}
     )
 
     try:
@@ -446,7 +446,7 @@ async def lifespan(app: FastAPI):
         # Don't re-raise - allow the application to exit even with shutdown errors
 
 
-PROJECT_NAME = "378x492 Fraud Detection API"
+PROJECT_NAME = "Zenith Fraud Detection API"
 DESCRIPTION = "Backend API for desktop fraud detection application"
 VERSION = "1.0.0"
 
@@ -520,7 +520,7 @@ if not is_development:
     app.add_middleware(
         TrustedHostMiddleware,
         allowed_hosts=[
-            "api.378x492.com",
+            "api.zenith.com",
             "localhost",
             "testserver",
             "testclient",
@@ -541,7 +541,7 @@ if is_development:
     ]
 else:
     # Production: Restrict to specific domains
-    allowed_origins = ["https://app.378x492.com", "https://api.378x492.com"]
+    allowed_origins = ["https://app.zenith.com", "https://api.zenith.com"]
 
 app.add_middleware(
     CORSMiddleware,

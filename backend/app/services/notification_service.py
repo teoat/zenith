@@ -13,7 +13,7 @@ class NotificationService:
     def __init__(self, mq: MessageQueueInterface = mq_service):
         self.mq = mq
         self._templates: Dict[str, str] = {
-            "welcome": "Welcome {name} to 378x492 Platform!",
+            "welcome": "Welcome {name} to Zenith Platform!",
             "alert": "SECURITY ALERT: {details}",
             "case_update": "Case {case_id} has been updated."
         }

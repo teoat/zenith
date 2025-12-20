@@ -1,5 +1,5 @@
 """
-Role-Based Access Control (RBAC) for 378x492 Fraud Detection Platform
+Role-Based Access Control (RBAC) for Zenith Fraud Detection Platform
 """
 
 from enum import Enum

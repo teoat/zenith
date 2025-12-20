@@ -1,0 +1,22 @@
+{
+  "name": "shell_company",
+  "version": "1.0.0",
+  "namespace": "378x492/detection/fraud/shell_company",
+  "description": "Detects potential shell companies",
+  "author": "378x492 Team",
+  "entry_point": "plugin.py:ShellCompanyPlugin",
+  "dependencies": {},
+  "capabilities": [
+    "fraud_detection"
+  ],
+  "config_schema": {
+    "min_transaction_volume": {
+      "type": "number",
+      "default": 1000.0
+    },
+    "pass_through_threshold": {
+      "type": "number",
+      "default": 0.05
+    }
+  }
+}

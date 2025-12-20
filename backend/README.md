@@ -1,4 +1,4 @@
-# 378x492 Fraud Detection Platform - Backend
+# Zenith Fraud Detection Platform - Backend
 
 ## Overview
 

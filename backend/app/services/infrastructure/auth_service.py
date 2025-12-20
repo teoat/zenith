@@ -78,7 +78,7 @@ class AuthService:
             {
                 "exp": expire,
                 "iat": datetime.now(timezone.utc),
-                "iss": "378x492",
+                "iss": "zenith",
                 "type": "access",
                 "jti": secrets.token_urlsafe(16),  # Unique token ID
             }
@@ -94,8 +94,8 @@ class AuthService:
             "sub": user_id,
             "exp": expire,
             "iat": datetime.now(timezone.utc),
-            "iss": "378x492",
-            "aud": "378x492-api",
+            "iss": "zenith",
+            "aud": "zenith-api",
             "type": "refresh",
             "jti": secrets.token_urlsafe(16),
         }

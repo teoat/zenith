@@ -26,8 +26,8 @@ except ImportError:
     logging.basicConfig(level=logging.INFO)
 
 # Backup configuration
-BACKUP_DIR = os.path.expanduser("~/.378x492/backups")
-DATABASE_PATH = os.path.expanduser("~/.378x492/fraud_detection.db")
+BACKUP_DIR = os.path.expanduser("~/.zenith/backups")
+DATABASE_PATH = os.path.expanduser("~/.zenith/fraud_detection.db")
 MAX_DAILY_BACKUPS = 7
 MAX_WEEKLY_BACKUPS = 4
 MAX_MONTHLY_BACKUPS = 3
@@ -58,7 +58,7 @@ class BackupManager:
 
         # Generate backup filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_filename = f"378x492_fraud_detection_{backup_type}_{timestamp}.db"
+        backup_filename = f"zenith_fraud_detection_{backup_type}_{timestamp}.db"
         backup_path = os.path.join(self.backup_dir, backup_filename)
 
         try:
@@ -192,9 +192,9 @@ class BackupManager:
             list: List of backup info dicts
         """
         pattern = (
-            f"378x492_fraud_detection_{backup_type}_*.db"
+            f"zenith_fraud_detection_{backup_type}_*.db"
             if backup_type
-            else "378x492_fraud_detection_*.db"
+            else "zenith_fraud_detection_*.db"
         )
         backups = []
 

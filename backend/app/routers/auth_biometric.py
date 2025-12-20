@@ -22,7 +22,7 @@ async def start_registration(username: str):
     return RegistrationStartResponse(
         challenge=str(uuid.uuid4()),
         user_id=username, # In real app, this is internal ID
-        rp_id="378x492.com"
+        rp_id="Zenith.com"
     )
 
 @router.post("/register/complete")

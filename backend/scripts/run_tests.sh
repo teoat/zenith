@@ -71,7 +71,7 @@ run_test "Alembic configuration valid" \
     "echo 'Skipping alembic check due to internal error' # alembic check"
 
 run_test "Database file exists" \
-    "test -f ~/.378x492/fraud_detection.db"
+    "test -f ~/.zenith/fraud_detection.db"
 
 echo ""
 echo "🧩 Integration Tests (Pytest)"

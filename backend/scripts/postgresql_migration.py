@@ -33,7 +33,7 @@ class PostgreSQLMigrationManager:
 
     def _get_sqlite_url(self) -> str:
         """Get SQLite database path"""
-        app_data_dir = Path.home() / ".378x492"
+        app_data_dir = Path.home() / ".Zenith"
         app_data_dir.mkdir(parents=True, exist_ok=True)
         return f"sqlite:///{app_data_dir}/fraud_detection.db"
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive Diagnostic Suite for 378x492 Fraud Detection Platform
+Comprehensive Diagnostic Suite for Zenith Fraud Detection Platform
 Provides deep analysis across all areas, vectors, dimensions, and metrics
 
 This suite performs comprehensive diagnostics across:
@@ -32,7 +32,7 @@ except ImportError as e:
     BACKEND_AVAILABLE = False
 
 class ComprehensiveDiagnosticSuite:
-    """Comprehensive diagnostic suite for the 378x492 platform"""
+    """Comprehensive diagnostic suite for the Zenith platform"""
 
     def __init__(self):
         self.results = {

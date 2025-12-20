@@ -1,5 +1,5 @@
 """
-Rate Limiting Middleware for 378x492 Fraud Detection API
+Rate Limiting Middleware for Zenith Fraud Detection API
 
 Implements sliding window rate limiting using Redis for distributed rate limiting
 across multiple API instances.

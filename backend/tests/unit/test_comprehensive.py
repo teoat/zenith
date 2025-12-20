@@ -29,7 +29,7 @@ class TestCoreFunctionality:
     def test_settings_initialization(self):
         """Test settings object creation"""
         settings = Settings()
-        assert settings.PROJECT_NAME == "378x492 Fraud Detection"
+        assert settings.PROJECT_NAME == "Zenith Fraud Detection"
         assert settings.API_V1_STR == "/api/v1"
         assert settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES == 30
 

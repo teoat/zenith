@@ -90,7 +90,7 @@ echo -e "${BLUE}═════════════════════�
 echo ""
 
 run_test "Database" "Database File Exists" \
-    "ls -lh ~/.378x492/fraud_detection.db | awk '{print \"Size:\" \$5, \"Modified:\" \$6, \$7}'" true
+    "ls -lh ~/.zenith/fraud_detection.db | awk '{print \"Size:\" \$5, \"Modified:\" \$6, \$7}'" true
 
 run_test "Database" "Create/Verify Tables" \
     "python -c 'from core.database import create_tables; create_tables(); print(\"Database tables created/verified\")'" true

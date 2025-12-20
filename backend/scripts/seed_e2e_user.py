@@ -11,9 +11,9 @@ import uuid
 
 def seed():
     # Create analyst1
-    seed_user("analyst@378x492.com", "Test Analyst", "Test123!", UserRole.ANALYST)
+    seed_user("analyst@zenith.com", "Test Analyst", "Test123!", UserRole.ANALYST)
     # Create analyst2
-    seed_user("analyst2@378x492.com", "Analyst Two", "Test123!", UserRole.ANALYST)
+    seed_user("analyst2@zenith.com", "Analyst Two", "Test123!", UserRole.ANALYST)
 
 def seed_user(email, username, password, role):
     engine, SessionLocal = create_engine_and_session()

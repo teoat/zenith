@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate Ed25519 audit signing keypair for immutable audit logs.
 
-Writes two files under ~/.378x492/:
+Writes two files under ~/.zenith/:
 - audit_private.key (binary, 0o600)
 - audit_public.key (binary, 0o644)
 
@@ -13,7 +13,7 @@ import secrets
 import stat
 from pathlib import Path
 
-KEY_DIR = Path.home() / ".378x492"
+KEY_DIR = Path.home() / ".Zenith"
 KEY_DIR.mkdir(parents=True, exist_ok=True)
 
 

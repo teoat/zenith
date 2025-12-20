@@ -275,7 +275,7 @@ async def mfa_setup(current_user: User = Depends(auth_service.get_current_user))
 
     # Generate Provisioning URI
     uri = pyotp.totp.TOTP(secret).provisioning_uri(
-        name=current_user.email, issuer_name="378x492 Fraud Platform"
+        name=current_user.email, issuer_name="Zenith Fraud Platform"
     )
 
     return {"secret": secret, "otpauth_url": uri}

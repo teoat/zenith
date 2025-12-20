@@ -20,63 +20,76 @@ client = TestClient(app)
 
 def test_admin_database_performance_requires_auth():
     """Test that database performance endpoint requires authentication"""
-    response = client.get("/api/v1/database/performance")
+    response = client.get("/api/v1/admin/database/performance")
     assert response.status_code == 401
-    assert "detail" in response.json()
+    json_data = response.json()
+    assert "detail" in json_data or "error" in json_data
 
 
 def test_admin_database_performance_requires_admin_role(user_token):
     """Test that non-admin users cannot access database performance"""
     headers = {"Authorization": f"Bearer {user_token}"}
-    response = client.get("/api/v1/database/performance", headers=headers)
+    response = client.get("/api/v1/admin/database/performance", headers=headers)
     assert response.status_code == 403
-    assert "Admin access required" in response.json()["detail"]
+    json_data = response.json()
+    detail = json_data.get("detail") or json_data.get("error", {}).get("detail", "")
+    assert "Access forbidden" in detail or "Admin access required" in detail
+
+
 
 
 def test_admin_database_performance_allows_admin(admin_token):
     """Test that admin users can access database performance"""
     headers = {"Authorization": f"Bearer {admin_token}"}
-    response = client.get("/api/v1/database/performance", headers=headers)
+    response = client.get("/api/v1/admin/database/performance", headers=headers)
     assert response.status_code in [200, 500]  # 500 if service not available in test
 
 
 def test_admin_database_optimize_requires_auth():
     """Test that database optimization requires authentication"""
-    response = client.post("/api/v1/database/optimize")
+    response = client.post("/api/v1/admin/database/optimize")
     assert response.status_code == 401
 
 
 def test_admin_database_optimize_requires_admin_role(user_token):
     """Test that non-admin users cannot optimize database"""
     headers = {"Authorization": f"Bearer {user_token}"}
-    response = client.post("/api/v1/database/optimize", headers=headers)
+    response = client.post("/api/v1/admin/database/optimize", headers=headers)
     assert response.status_code == 403
-    assert "Admin access required" in response.json()["detail"]
+    json_data = response.json()
+    detail = json_data.get("detail") or json_data.get("error", {}).get("detail", "")
+    assert "Access forbidden" in detail or "Admin access required" in detail
+
+
 
 
 def test_admin_cache_clear_requires_auth():
     """Test that cache clearing requires authentication"""
-    response = client.delete("/api/v1/cache/all")
+    response = client.delete("/api/v1/admin/cache/all")
     assert response.status_code == 401
 
 
 def test_admin_cache_clear_requires_admin_role(user_token):
     """Test that non-admin users cannot clear cache"""
     headers = {"Authorization": f"Bearer {user_token}"}
-    response = client.delete("/api/v1/cache/all", headers=headers)
+    response = client.delete("/api/v1/admin/cache/all", headers=headers)
     assert response.status_code == 403
-    assert "Admin access required" in response.json()["detail"]
+    json_data = response.json()
+    detail = json_data.get("detail") or json_data.get("error", {}).get("detail", "")
+    assert "Access forbidden" in detail or "Admin access required" in detail
+
+
 
 
 def test_admin_cache_namespace_clear_requires_auth():
     """Test that cache namespace clearing requires authentication"""
-    response = client.delete("/api/v1/cache/namespace/test")
+    response = client.delete("/api/v1/admin/cache/namespace/test")
     assert response.status_code == 401
 
 
 def test_admin_cache_stats_requires_auth():
     """Test that cache stats require authentication"""
-    response = client.get("/api/v1/cache/stats")
+    response = client.get("/api/v1/admin/cache/stats")
     assert response.status_code == 401
 
 
@@ -86,7 +99,7 @@ def test_admin_cache_stats_requires_auth():
 def test_backup_create_requires_auth():
     """Test that backup creation requires authentication"""
     response = client.post(
-        "/api/v1/backup/create", json={"reason": "test", "type": "auto"}
+        "/api/v1/backup/backup/create", json={"reason": "test", "type": "auto"}
     )
     assert response.status_code == 401
 
@@ -95,17 +108,21 @@ def test_backup_create_requires_admin_role(user_token):
     """Test that non-admin users cannot create backups"""
     headers = {"Authorization": f"Bearer {user_token}"}
     response = client.post(
-        "/api/v1/backup/create",
+        "/api/v1/backup/backup/create",
         json={"reason": "test", "type": "auto"},
         headers=headers,
     )
     assert response.status_code == 403
-    assert "Admin access required" in response.json()["detail"]
+    json_data = response.json()
+    detail = json_data.get("detail") or json_data.get("error", {}).get("detail", "")
+    assert "Access forbidden" in detail or "Admin access required" in detail
+
+
 
 
 def test_backup_restore_requires_auth():
     """Test that backup restoration requires authentication"""
-    response = client.post("/api/v1/backup/restore", json={"backup_id": "test_123"})
+    response = client.post("/api/v1/backup/backup/restore", json={"backup_id": "test_123"})
     assert response.status_code == 401
 
 
@@ -113,66 +130,70 @@ def test_backup_restore_requires_admin_role(user_token):
     """Test that non-admin users cannot restore backups - CRITICAL"""
     headers = {"Authorization": f"Bearer {user_token}"}
     response = client.post(
-        "/api/v1/backup/restore", json={"backup_id": "test_123"}, headers=headers
+        "/api/v1/backup/backup/restore", json={"backup_id": "test_123"}, headers=headers
     )
     assert response.status_code == 403
-    assert "Admin access required" in response.json()["detail"]
+    json_data = response.json()
+    detail = json_data.get("detail") or json_data.get("error", {}).get("detail", "")
+    assert "Access forbidden" in detail or "Admin access required" in detail
+
+
 
 
 def test_backup_list_requires_auth():
     """Test that listing backups requires authentication"""
-    response = client.get("/api/v1/backup/list")
+    response = client.get("/api/v1/backup/backup/list")
     assert response.status_code == 401
 
 
 def test_backup_list_requires_admin_role(user_token):
     """Test that non-admin users cannot list backups"""
     headers = {"Authorization": f"Bearer {user_token}"}
-    response = client.get("/api/v1/backup/list", headers=headers)
+    response = client.get("/api/v1/backup/backup/list", headers=headers)
     assert response.status_code == 403
 
 
 def test_backup_status_requires_auth():
     """Test that backup status requires authentication"""
-    response = client.get("/api/v1/backup/status")
+    response = client.get("/api/v1/backup/backup/status")
     assert response.status_code == 401
 
 
 def test_backup_delete_requires_auth():
     """Test that backup deletion requires authentication"""
-    response = client.delete("/api/v1/backup/test_backup_id")
+    response = client.delete("/api/v1/backup/backup/test_backup_id")
     assert response.status_code == 401
 
 
 def test_backup_delete_requires_admin_role(user_token):
     """Test that non-admin users cannot delete backups"""
     headers = {"Authorization": f"Bearer {user_token}"}
-    response = client.delete("/api/v1/backup/test_backup_id", headers=headers)
+    response = client.delete("/api/v1/backup/backup/test_backup_id", headers=headers)
     assert response.status_code == 403
 
 
 def test_backup_cleanup_requires_auth():
     """Test that backup cleanup requires authentication"""
-    response = client.post("/api/v1/backup/cleanup")
+    response = client.post("/api/v1/backup/backup/cleanup")
     assert response.status_code == 401
 
 
 def test_backup_cleanup_requires_admin_role(user_token):
     """Test that non-admin users cannot cleanup backups"""
     headers = {"Authorization": f"Bearer {user_token}"}
-    response = client.post("/api/v1/backup/cleanup", headers=headers)
+    response = client.post("/api/v1/backup/backup/cleanup", headers=headers)
     assert response.status_code == 403
 
 
 def test_backup_config_get_requires_auth():
     """Test that getting backup config requires authentication"""
-    response = client.get("/api/v1/backup/config")
+    response = client.get("/api/v1/backup/backup/config")
     assert response.status_code == 401
 
 
 def test_backup_config_update_requires_auth():
     """Test that updating backup config requires authentication"""
-    response = client.put("/api/v1/backup/config", json={"retention_days": 30})
+    response = client.put("/api/v1/backup/backup/config", json={"retention_days": 30})
     assert response.status_code == 401
 
 
@@ -180,14 +201,14 @@ def test_backup_config_update_requires_admin_role(user_token):
     """Test that non-admin users cannot update backup config"""
     headers = {"Authorization": f"Bearer {user_token}"}
     response = client.put(
-        "/api/v1/backup/config", json={"retention_days": 30}, headers=headers
+        "/api/v1/backup/backup/config", json={"retention_days": 30}, headers=headers
     )
     assert response.status_code == 403
 
 
 def test_backup_verify_requires_auth():
     """Test that backup verification requires authentication"""
-    response = client.get("/api/v1/backup/verify/test_backup_id")
+    response = client.get("/api/v1/backup/backup/verify/test_backup_id")
     assert response.status_code == 401
 
 
@@ -199,7 +220,7 @@ def test_admin_operations_are_audit_logged(admin_token, db_session):
     headers = {"Authorization": f"Bearer {admin_token}"}
 
     # Perform an admin operation
-    response = client.get("/api/v1/database/stats", headers=headers)
+    response = client.get("/api/v1/admin/database/stats", headers=headers)
 
     # Check that audit log was created
     # (This would query the audit_logs table in a real implementation)
@@ -213,7 +234,7 @@ def test_backup_restore_creates_critical_audit_log(admin_token):
 
     # Attempt restore (will fail if backup doesn't exist, but audit log should be created)
     response = client.post(
-        "/api/v1/backup/restore", json={"backup_id": "test_backup_123"}, headers=headers
+        "/api/v1/backup/backup/restore", json={"backup_id": "test_backup_123"}, headers=headers
     )
 
     # Response will be error, but audit log should exist

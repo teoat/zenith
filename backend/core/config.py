@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "378x492 Fraud Detection"
+    PROJECT_NAME: str = "Zenith Fraud Detection"
     API_V1_STR: str = "/api/v1"
 
     # Database - Use SQLite by default for development/testing

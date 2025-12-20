@@ -62,7 +62,7 @@ async def main():
     
     try:
         # 2. Execute via Shadow Executor
-        plugin_id = "378x492/detection/fraud/crypto_fraud_detector"
+        plugin_id = "zenith/detection/fraud/crypto_fraud_detector"
         
         logger.info(f"Executing plugin {plugin_id} in shadow mode...")
         

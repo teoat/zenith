@@ -53,7 +53,7 @@ def setup_logging(
     numeric_level = getattr(logging, level.upper(), logging.INFO)
 
     # Get or create logger
-    logger = logging.getLogger("378x492")
+    logger = logging.getLogger("zenith")
     logger.setLevel(numeric_level)
 
     # Clear existing handlers
@@ -144,7 +144,7 @@ def log_request(
         logger.info("HTTP request", extra=extra_fields)
     except Exception:
         try:
-            logging.getLogger("378x492").info("HTTP request", extra=extra_fields)
+            logging.getLogger("Zenith").info("HTTP request", extra=extra_fields)
         except Exception:
             pass
 
@@ -175,7 +175,7 @@ def log_error(
         logger.error(message, extra=extra_fields)
     except Exception:
         try:
-            logging.getLogger("378x492").error(message, extra=extra_fields)
+            logging.getLogger("Zenith").error(message, extra=extra_fields)
         except Exception:
             pass
 
@@ -212,7 +212,7 @@ def log_security_event(
         logger.warning("Security event", extra=extra_fields)
     except Exception:
         try:
-            logging.getLogger("378x492").warning("Security event", extra=extra_fields)
+            logging.getLogger("Zenith").warning("Security event", extra=extra_fields)
         except Exception:
             pass
 
@@ -242,7 +242,7 @@ def log_performance(
         logger.info("Performance metric", extra=extra_fields)
     except Exception:
         try:
-            logging.getLogger("378x492").info("Performance metric", extra=extra_fields)
+            logging.getLogger("Zenith").info("Performance metric", extra=extra_fields)
         except Exception:
             pass
 

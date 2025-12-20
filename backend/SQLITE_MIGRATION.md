@@ -43,7 +43,7 @@ import os
 from pathlib import Path
 
 # Local app data directory
-APP_DATA_DIR = Path.home() / ".378x492"
+APP_DATA_DIR = Path.home() / ".Zenith"
 APP_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 DATABASE_PATH = APP_DATA_DIR / "frauddb.db"
@@ -271,7 +271,7 @@ export DATABASE_URL="sqlite:///./test.db"
 pytest tests/ -v
 
 # Inspect database
-sqlite3 ~/.378x492/frauddb.db
+sqlite3 ~/.Zenith/frauddb.db
 ```
 
 ### SQLCipher Encryption Testing
@@ -282,7 +282,7 @@ brew install sqlcipher  # macOS
 apt-get install sqlcipher3  # Linux
 
 # Test encrypted database
-sqlcipher ~/.378x492/frauddb.db
+sqlcipher ~/.Zenith/frauddb.db
 SQLCipher version 4.5.0
 Enter password: <your-encryption-key>
 sqlite> SELECT * FROM cases LIMIT 5;

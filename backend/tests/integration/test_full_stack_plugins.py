@@ -21,7 +21,7 @@ async def verify_full_stack():
 
         # 1. Verify UI Plugin
         logger.info("--- Verifying UI Plugin (Phase 4) ---")
-        ui_plugin = await plugin_registry_service.get_plugin("378x492/ui/fraud_metrics_widget", db)
+        ui_plugin = await plugin_registry_service.get_plugin("zenith/ui/fraud_metrics_widget", db)
         await ui_plugin.initialize(context)
         
         ui_result = await ui_plugin.execute({})
@@ -33,7 +33,7 @@ async def verify_full_stack():
 
         # 2. Verify Integration Plugin
         logger.info("\n--- Verifying Integration Plugin (Phase 5) ---")
-        email_plugin = await plugin_registry_service.get_plugin("378x492/integration/email_notifier", db)
+        email_plugin = await plugin_registry_service.get_plugin("zenith/integration/email_notifier", db)
         await email_plugin.initialize(context)
         
         email_result = await email_plugin.execute({
@@ -49,7 +49,7 @@ async def verify_full_stack():
 
         # 3. Verify Workflow Plugin
         logger.info("\n--- Verifying Workflow Plugin (Phase 6) ---")
-        assign_plugin = await plugin_registry_service.get_plugin("378x492/workflow/round_robin_assigner", db)
+        assign_plugin = await plugin_registry_service.get_plugin("zenith/workflow/round_robin_assigner", db)
         await assign_plugin.initialize(context)
         
         agents = ["Agent A", "Agent B"]

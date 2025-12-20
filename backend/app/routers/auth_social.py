@@ -15,7 +15,7 @@ async def oauth_login(provider: str):
     
     # Simulate redirect url
     return RedirectResponse(
-        url=f"https://{provider}.com/oauth2/authorize?client_id=123&redirect_uri=https://api.378x492.com/callback"
+        url=f"https://{provider}.com/oauth2/authorize?client_id=123&redirect_uri=https://api.zenith.com/callback"
     )
 
 @router.get("/{provider}/callback")

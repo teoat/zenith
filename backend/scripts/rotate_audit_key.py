@@ -8,7 +8,7 @@ import datetime
 import os
 from pathlib import Path
 
-KEY_DIR = Path.home() / ".378x492"
+KEY_DIR = Path.home() / ".Zenith"
 PRIV = KEY_DIR / "audit_private.key"
 PUB = KEY_DIR / "audit_public.key"
 

@@ -1,5 +1,5 @@
 """
-Security Monitoring and Alerting System for 378x492 Fraud Detection Platform
+Security Monitoring and Alerting System for Zenith Fraud Detection Platform
 
 Provides comprehensive security event monitoring, anomaly detection, and automated
 response capabilities to maintain platform security posture.

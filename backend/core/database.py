@@ -1,4 +1,4 @@
-# Database models for 378x492 Fraud Detection Platform
+# Database models for Zenith Fraud Detection Platform
 import json
 import os
 import uuid
@@ -312,7 +312,7 @@ def get_database_url():
         return settings.DATABASE_URL
         
     # Priority 2: Local SQLite Default
-    app_data_dir = os.path.expanduser("~/.378x492")
+    app_data_dir = os.path.expanduser("~/.zenith")
     os.makedirs(app_data_dir, exist_ok=True)
     return f"sqlite:///{app_data_dir}/fraud_detection.db"
 

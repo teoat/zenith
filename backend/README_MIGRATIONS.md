@@ -21,7 +21,7 @@ The backend can sign audit log entries using an Ed25519 keypair. Use the provide
 python backend/scripts/generate_audit_keys.py
 ```
 
-This writes `~/.378x492/audit_private.key` (600) and `~/.378x492/audit_public.key` (644).
+This writes `~/.Zenith/audit_private.key` (600) and `~/.Zenith/audit_public.key` (644).
 
 To rotate keys, run:
 

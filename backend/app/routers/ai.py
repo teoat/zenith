@@ -1,5 +1,5 @@
 """
-AI API Router for 378x492 Fraud Detection
+AI API Router for Zenith Fraud Detection
 Provides endpoints for AI analysis and semantic search
 """
 

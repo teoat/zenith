@@ -32,7 +32,7 @@ async def verify_intelligence_plugins():
         # 1. Typology Analysis
         logger.info("--- Verifying Typology Analysis ---")
         typology_plugin = await plugin_registry_service.get_plugin(
-            "378x492/intelligence/typology_analysis", db
+            "zenith/intelligence/typology_analysis", db
         )
         
         # Inject Mock AI Service
@@ -62,7 +62,7 @@ async def verify_intelligence_plugins():
         # 2. Entity Linkage
         logger.info("\n--- Verifying Entity Linkage ---")
         linkage_plugin = await plugin_registry_service.get_plugin(
-            "378x492/intelligence/entity_linkage", db
+            "zenith/intelligence/entity_linkage", db
         )
         await linkage_plugin.initialize(context) # Context doesn't matter much here
         
@@ -90,7 +90,7 @@ async def verify_intelligence_plugins():
         # 3. Evidence Analysis
         logger.info("\n--- Verifying Evidence Analysis ---")
         evidence_plugin = await plugin_registry_service.get_plugin(
-             "378x492/intelligence/evidence_analysis", db
+             "zenith/intelligence/evidence_analysis", db
         )
         await evidence_plugin.initialize(context)
         

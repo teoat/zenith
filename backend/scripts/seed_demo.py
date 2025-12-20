@@ -140,7 +140,7 @@ def seed_users(session):
         User(
             id=str(uuid.uuid4()),
             username="admin",
-            email="admin@378x492.com",
+            email="admin@zenith.com",
             full_name="System Administrator",
             role=UserRole.ADMIN,
             is_active=True,
@@ -149,7 +149,7 @@ def seed_users(session):
         User(
             id=str(uuid.uuid4()),
             username="investigator1",
-            email="investigator1@378x492.com",
+            email="investigator1@zenith.com",
             full_name="John Chen",
             role=UserRole.INVESTIGATOR,
             is_active=True,
@@ -158,7 +158,7 @@ def seed_users(session):
         User(
             id=str(uuid.uuid4()),
             username="analyst1",
-            email="analyst1@378x492.com",
+            email="analyst1@zenith.com",
             full_name="Maria Santos",
             role=UserRole.ANALYST,
             is_active=True,
@@ -386,7 +386,7 @@ def seed_case_activities(session, cases, users):
 
 def main():
     print("\n" + "=" * 50)
-    print("   378x492 Demo Data Seeder")
+    print("   Zenith Demo Data Seeder")
     print("=" * 50 + "\n")
 
     session = Session()

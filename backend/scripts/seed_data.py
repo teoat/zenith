@@ -83,7 +83,7 @@ def generate_sample_users(db: Session, count: int = 5):
     users = []
     for i in range(count):
         user = User(
-            email=f"investigator{i+1}@378x492.com",
+            email=f"investigator{i+1}@Zenith.com",
             username=f"investigator_{i+1}",
             full_name=SAMPLE_INVESTIGATORS[i % len(SAMPLE_INVESTIGATORS)],
             password_hash=auth_service.hash_password("Test123!"),

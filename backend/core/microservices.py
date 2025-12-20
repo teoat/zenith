@@ -1,5 +1,5 @@
 """
-Domain-Driven Microservices Architecture for 378x492
+Domain-Driven Microservices Architecture for Zenith
 Implements clean architecture with bounded contexts
 """
 

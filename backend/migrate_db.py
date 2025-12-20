@@ -2,7 +2,7 @@ import sqlite3
 import os
 
 # Expand user path manually to match the app logic
-db_path = os.path.expanduser("~/.378x492/fraud_detection.db")
+db_path = os.path.expanduser("~/.zenith/fraud_detection.db")
 
 print(f"Migrating database at: {db_path}")
 

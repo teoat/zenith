@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive Page Testing Script for 378x492 Fraud Detection App
+Comprehensive Page Testing Script for Zenith Fraud Detection App
 Tests all frontend pages and API endpoints systematically
 """
 
@@ -383,7 +383,7 @@ class AppTester:
 
 def main():
     """Main testing function"""
-    print("🧪 378x492 Fraud Detection - Comprehensive Testing Suite")
+    print("🧪 Zenith Fraud Detection - Comprehensive Testing Suite")
     print("=" * 60)
 
     tester = AppTester()

@@ -1,5 +1,5 @@
 """
-Standardized Exception Hierarchy for 378x492 API
+Standardized Exception Hierarchy for Zenith API
 Provides consistent error handling across all endpoints
 """
 

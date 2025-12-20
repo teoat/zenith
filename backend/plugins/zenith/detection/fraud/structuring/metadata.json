@@ -1,0 +1,26 @@
+{
+  "name": "structuring",
+  "version": "1.0.0",
+  "namespace": "378x492/detection/fraud/structuring",
+  "description": "Detects transaction structuring (smurfing)",
+  "author": "378x492 Team",
+  "entry_point": "plugin.py:StructuringPlugin",
+  "dependencies": {},
+  "capabilities": [
+    "fraud_detection"
+  ],
+  "config_schema": {
+    "reporting_limit": {
+      "type": "number",
+      "default": 10000.0
+    },
+    "structuring_threshold": {
+      "type": "number",
+      "default": 0.9
+    },
+    "time_window_days": {
+      "type": "integer",
+      "default": 30
+    }
+  }
+}

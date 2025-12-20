@@ -14,7 +14,7 @@ async def verify_disaster_recovery():
     print("🚀 Starting Disaster Recovery Verification...")
     
     # Set environment variables for config
-    app_data_dir = os.path.expanduser("~/.378x492")
+    app_data_dir = os.path.expanduser("~/.zenith")
     db_path = f"{app_data_dir}/fraud_detection.db"
     backup_dir = os.path.join(os.getcwd(), "data/backups_verify")
     

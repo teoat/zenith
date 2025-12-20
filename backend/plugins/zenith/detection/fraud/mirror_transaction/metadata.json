@@ -1,0 +1,22 @@
+{
+  "name": "mirror_transaction",
+  "version": "1.0.0",
+  "namespace": "378x492/detection/fraud/mirror_transaction",
+  "description": "Detects mirror transactions (A->B, B->A)",
+  "author": "378x492 Team",
+  "entry_point": "plugin.py:MirrorTransactionPlugin",
+  "dependencies": {},
+  "capabilities": [
+    "fraud_detection"
+  ],
+  "config_schema": {
+    "time_window_minutes": {
+      "type": "integer",
+      "default": 60
+    },
+    "amount_tolerance": {
+      "type": "number",
+      "default": 0.01
+    }
+  }
+}

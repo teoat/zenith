@@ -121,7 +121,7 @@ class CodeQualityImprovementService:
         }
 
     async def analyze_codebase(
-        self, root_path: str = "/Users/Arief/Desktop/378x492"
+        self, root_path: str = "/Users/Arief/Desktop/Zenith"
     ) -> Dict[str, Any]:
         """Comprehensive codebase analysis"""
         logger.info(f"Starting codebase analysis for: {root_path}")

@@ -46,7 +46,7 @@ class TestAuthService:
         assert decoded["type"] == "access"
         assert "exp" in decoded
         assert "iat" in decoded
-        assert decoded["iss"] == "378x492"
+        assert decoded["iss"] == "Zenith"
 
     def test_create_refresh_token(self, auth_svc):
         """Test JWT refresh token creation"""

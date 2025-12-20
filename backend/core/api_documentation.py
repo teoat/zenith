@@ -11,10 +11,10 @@ def custom_openapi_schema(app: FastAPI):
         return app.openapi_schema
 
     openapi_schema = get_openapi(
-        title="378x492 Fraud Detection Platform API",
+        title="Zenith Fraud Detection Platform API",
         version="2.0.0",
         description="""
-## 378x492 Fraud Detection Platform
+## Zenith Fraud Detection Platform
 
 ### Overview
 Comprehensive fraud detection and investigation platform with AI-powered analysis, 
@@ -49,18 +49,18 @@ All errors follow this format:
 ```
 
 ### Support
-- Documentation: https://docs.378x492.com
-- Support Email: support@378x492.com
-- GitHub: https://github.com/378x492/fraud-detection
+- Documentation: https://docs.zenith.com
+- Support Email: support@zenith.com
+- GitHub: https://github.com/zenith/fraud-detection
         """,
         routes=app.routes,
         servers=[
             {
-                "url": "https://api.378x492.com",
+                "url": "https://api.zenith.com",
                 "description": "Production server"
             },
             {
-                "url": "https://staging.378x492.com",
+                "url": "https://staging.zenith.com",
                 "description": "Staging server"
             },
             {

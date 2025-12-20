@@ -357,7 +357,7 @@ class MessageQueueManager:
             "priority": priority,
             "payload": message,
             "headers": {
-                "source": "378x492",
+                "source": "Zenith",
                 "version": "1.0"
             }
         }
