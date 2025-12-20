@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, MessageCircle, X, User, Send, ThumbsUp, ThumbsDown, Search, Eye, File } from 'lucide-react';
 import { useAIContext, AIPersona } from '@/context/AIContext';
+
 // import { useProject } from '@/context/ProjectContext'; // Context not available
 
 import { aiService } from '@/services/ai';
@@ -20,6 +21,13 @@ interface SuggestionAction {
   description?: string;
 }
 
+interface Project {
+  id: string;
+  name: string;
+  caseId: string;
+  description: string;
+}
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -33,7 +41,7 @@ export const AIAssistant: React.FC = () => {
   const { t } = useTranslation();
   const { context, activePersona, setPersona } = useAIContext();
   // const { currentProject } = useProject();
-   const currentProject = null as { id: string; name: string } | null; // Temporary fallback
+   const currentProject = null as Project | null; // Temporary fallback
   
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -259,9 +267,9 @@ export const AIAssistant: React.FC = () => {
                 </div>
               </div>
               
-              <select 
-                value={activePersona}
-                onChange={(e) => setPersona(e.target.value as any)}
+               <select
+                 value={activePersona}
+                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPersona(e.target.value as AIPersona)}
                 className="text-xs px-2 py-1 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"
                 aria-label="Select AI Persona"
               >
@@ -364,13 +372,13 @@ export const AIAssistant: React.FC = () => {
            </div>
 
            {/* Input */}
-           <form onSubmit={handleSend} className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+            <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSend(e)} className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
             <div className="relative">
               <input
                 type="text"
                 data-testid="ai-assistant-input"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}
                 placeholder="Ask Frenly..."
                 className="w-full pl-4 pr-12 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
               />

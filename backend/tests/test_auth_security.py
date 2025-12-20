@@ -8,12 +8,12 @@ from unittest.mock import MagicMock, patch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
 
 # Now this should import from backend/app
-from app.services.auth_service import AuthService
+from app.services.infrastructure.auth_service import AuthService
 from core.database import User
 
 class TestAuthServiceFix(unittest.TestCase):
 
-    @patch("app.services.auth_service.db_service")
+    @patch("app.services.infrastructure.auth_service.db_service")
     def test_create_user_uses_password(self, mock_db_service):
         """
         Test that create_user uses the password provided in user_data
@@ -50,7 +50,7 @@ class TestAuthServiceFix(unittest.TestCase):
             # Verify user was created with the hashed password
             self.assertEqual(new_user.password_hash, "hashed_secret")
 
-    @patch("app.services.auth_service.db_service")
+    @patch("app.services.infrastructure.auth_service.db_service")
     def test_create_user_generates_password_if_missing(self, mock_db_service):
         """
         Test that create_user generates a password if not provided
