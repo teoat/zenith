@@ -62,6 +62,29 @@ interface CodeReviewResult {
   analysis_time_seconds: number;
 }
 
+interface AIIssue {
+  file_path: string;
+  line_number: number;
+  issue_type: string;
+  category: string;
+  severity: string;
+  title: string;
+  description: string;
+  code_snippet: string;
+  suggestion: string;
+  confidence_score: number;
+  cwe_id?: string;
+  owasp_id?: string;
+  references?: string[];
+}
+
+interface AIAnalysisResponse {
+  issues: AIIssue[];
+  quality_score: number;
+  analysis_time_seconds: number;
+  success?: boolean;
+}
+
 interface TestSuggestion {
   test_type: string;
   description: string;
@@ -72,7 +95,8 @@ interface TestSuggestion {
 }
 
 const CodeReviewDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'issues' | 'metrics' | 'tests'>('overview');
+  type TabId = 'overview' | 'issues' | 'metrics' | 'tests';
+  const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [reviewResult, setReviewResult] = useState<CodeReviewResult | null>(null);
   const [testSuggestions, setTestSuggestions] = useState<TestSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
@@ -103,7 +127,7 @@ def get_user_data(user_id):
       // Call the Real AI Endpoint via centralized client
       const { request } = await import('../../services/client');
       
-      const aiData = await request<any>('/ai/code-review', {
+      const aiData = await request<AIAnalysisResponse>('/ai/code-review', {
         method: 'POST',
         body: JSON.stringify({
           code: sampleCode,
@@ -116,7 +140,7 @@ def get_user_data(user_id):
       let realResult: CodeReviewResult;
 
       // Transform AI response to Dashboard format
-      const aiIssues: CodeIssue[] = aiData.issues.map((issue: any) => {
+      const aiIssues: CodeIssue[] = aiData.issues.map((issue: AIIssue) => {
             let codeSnippetLine = '';
             // Map line numbers from sampleCode to provide a relevant snippet
             if (issue.line_number === 4) { // Corresponds to 'query = f"SELECT * FROM users WHERE id = {user_id}"'
@@ -131,8 +155,8 @@ def get_user_data(user_id):
                 file_path: issue.file_path,
                 line_number: issue.line_number,
                 issue_type: issue.issue_type,
-                category: issue.category as any,
-                severity: issue.severity as any,
+                category: issue.category as CodeIssue['category'],
+                severity: issue.severity as CodeIssue['severity'],
                 title: issue.title,
                 description: issue.description,
                 code_snippet: codeSnippetLine,
@@ -445,7 +469,7 @@ def get_user_data(user_id):
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id as TabId)}
             className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
           >
             <tab.icon className="w-4 h-4 mr-2" />

@@ -155,22 +155,8 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-// Import.meta.env mock for Vite
-Object.defineProperty(global, 'import', {
-  value: {
-    meta: {
-      env: {
-        VITE_ENABLE_THREAT_MAP: 'true',
-        VITE_API_URL: 'http://localhost:8000/api/v1',
-        VITE_APP_ENV: 'test',
-        VITE_MAPBOX_TOKEN: 'test-token',
-        DEV: false,
-        PROD: false
-      }
-    }
-  },
-  writable: true
-});
+// Import.meta.env mock for Vite - handled via src/utils/env.ts helper
+// and dynamic Function call during runtime to avoid parser errors.
 
 // Mock components that use import.meta.env
 jest.mock('../components/dashboard/ThreatMap', () => ({

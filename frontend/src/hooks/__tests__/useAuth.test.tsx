@@ -80,7 +80,7 @@ describe('useAuth', () => {
       const { result } = renderHook(() => useAuth());
 
       await act(async () => {
-        await result.current.login('test@example.com', 'password');
+        await result.current.login({ email: 'test@example.com', password: 'password' });
       });
 
       expect(result.current.user).toEqual(mockUser);

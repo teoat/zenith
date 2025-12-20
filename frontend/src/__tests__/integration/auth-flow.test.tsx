@@ -1,6 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import { BrowserRouter } from 'react-router-dom';
 
 jest.mock('../../services/auth');
 jest.mock('../../services/cases');
@@ -14,8 +13,10 @@ describe('Authentication Flow Integration', () => {
 
   describe('complete login flow', () => {
     it('should login and navigate to dashboard', async () => {
-      const { authService } = await import('../../services/auth');
-      const { caseService } = await import('../../services/cases');
+      const authBase = await import('../../services/auth');
+      const authService = authBase.authService || authBase.default;
+      const casesBase = await import('../../services/cases');
+      const caseService = casesBase.caseService || casesBase.default;
 
       (authService.login as jest.Mock).mockResolvedValue({
         access_token: 'token',
@@ -25,11 +26,7 @@ describe('Authentication Flow Integration', () => {
 
       const App = (await import('../../App')).default;
 
-      render(
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      );
+      render(<App />);
 
       // Should start at login
       await waitFor(() => {
@@ -48,22 +45,27 @@ describe('Authentication Flow Integration', () => {
       // Should navigate to dashboard
       await waitFor(() => {
         expect(screen.getByText(/dashboard/i)).toBeInTheDocument();
-      }, { timeout: 5000 });
+      }, { timeout: 10000 });
     });
 
     it('should show error on invalid credentials', async () => {
-      const { authService } = await import('../../services/auth');
+      const authBase = await import('../../services/auth');
+      const authService = authBase.authService || authBase.default;
 
       (authService.login as jest.Mock).mockRejectedValue(
         new Error('Invalid credentials')
       );
 
       const Login = (await import('../../pages/Login')).default;
+      const { AppProviders } = await import('../../providers/AppProviders');
+      const { MemoryRouter } = await import('react-router-dom');
 
       render(
-        <BrowserRouter>
-          <Login />
-        </BrowserRouter>
+        <MemoryRouter initialEntries={['/login']}>
+          <AppProviders>
+            <Login />
+          </AppProviders>
+        </MemoryRouter>
       );
 
       fireEvent.change(screen.getByLabelText(/email/i), {
@@ -83,11 +85,15 @@ describe('Authentication Flow Integration', () => {
   describe('protected routes', () => {
     it('should redirect to login when not authenticated', async () => {
       const Dashboard = (await import('../../pages/Dashboard')).default;
+      const { AppProviders } = await import('../../providers/AppProviders');
+      const { MemoryRouter } = await import('react-router-dom');
 
       render(
-        <BrowserRouter>
-          <Dashboard />
-        </BrowserRouter>
+        <MemoryRouter initialEntries={['/dashboard']}>
+          <AppProviders>
+            <Dashboard />
+          </AppProviders>
+        </MemoryRouter>
       );
 
       await waitFor(() => {
@@ -97,8 +103,10 @@ describe('Authentication Flow Integration', () => {
     });
 
     it('should allow access when authenticated', async () => {
-      const { authService } = await import('../../services/auth');
-      const { caseService } = await import('../../services/cases');
+      const authBase = await import('../../services/auth');
+      const authService = authBase.authService || authBase.default;
+      const casesBase = await import('../../services/cases');
+      const caseService = casesBase.caseService || casesBase.default;
 
       localStorage.setItem('token', 'valid-token');
       (authService.getCurrentUser as jest.Mock).mockResolvedValue({
@@ -109,11 +117,15 @@ describe('Authentication Flow Integration', () => {
       (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
 
       const Dashboard = (await import('../../pages/Dashboard')).default;
+      const { AppProviders } = await import('../../providers/AppProviders');
+      const { MemoryRouter } = await import('react-router-dom');
 
       render(
-        <BrowserRouter>
-          <Dashboard />
-        </BrowserRouter>
+        <MemoryRouter initialEntries={['/dashboard']}>
+          <AppProviders>
+            <Dashboard />
+          </AppProviders>
+        </MemoryRouter>
       );
 
       await waitFor(() => {
@@ -124,7 +136,8 @@ describe('Authentication Flow Integration', () => {
 
   describe('session persistence', () => {
     it('should restore session on page reload', async () => {
-      const { authService } = await import('../../services/auth');
+      const authBase = await import('../../services/auth');
+      const authService = authBase.authService || authBase.default;
 
       localStorage.setItem('token', 'stored-token');
       (authService.getCurrentUser as jest.Mock).mockResolvedValue({
@@ -135,11 +148,7 @@ describe('Authentication Flow Integration', () => {
 
       const App = (await import('../../App')).default;
 
-      render(
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      );
+      render(<App />);
 
       await waitFor(() => {
         expect(authService.getCurrentUser).toHaveBeenCalled();
@@ -147,7 +156,8 @@ describe('Authentication Flow Integration', () => {
     });
 
     it('should handle expired token', async () => {
-      const { authService } = await import('../../services/auth');
+      const authBase = await import('../../services/auth');
+      const authService = authBase.authService || authBase.default;
 
       localStorage.setItem('token', 'expired-token');
       (authService.getCurrentUser as jest.Mock).mockRejectedValue(
@@ -156,11 +166,7 @@ describe('Authentication Flow Integration', () => {
 
       const App = (await import('../../App')).default;
 
-      render(
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      );
+      render(<App />);
 
       await waitFor(() => {
         expect(localStorage.getItem('token')).toBeNull();

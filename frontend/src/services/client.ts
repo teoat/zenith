@@ -61,7 +61,7 @@ export const request = async <T>(
   };
   
   const token = getToken();
-  if (token && token !== 'dev-token-378x492') {
+  if (token && token !== 'dev-token-zenith') {
     headers['Authorization'] = `Bearer ${token}`;
   }
 

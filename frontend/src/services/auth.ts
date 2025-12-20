@@ -19,13 +19,13 @@ export const authService = {
       return await request('/auth/logout', {
         method: 'POST'
       });
-    } catch (error) {
+    } catch {
       // Return success even if API call fails
       return { message: 'Logged out successfully' };
     }
   },
 
-  getCurrentUser: async (): Promise<any> => {
+  getCurrentUser: async (): Promise<{ id: string; email: string; role: string } | null> => {
     const token = localStorage.getItem('token');
     if (!token) {
       return null;

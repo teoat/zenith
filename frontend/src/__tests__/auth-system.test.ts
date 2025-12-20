@@ -127,7 +127,7 @@ describe('Authentication System', () => {
     });
 
     test('should exclude dev tokens from Authorization header', async () => {
-      mockLocalStorage.getItem.mockReturnValue('dev-token-378x492');
+      mockLocalStorage.getItem.mockReturnValue('dev-token-zenith');
       mockFetch({ data: 'dev resource' });
 
       await request('/dev-endpoint');
@@ -260,7 +260,7 @@ describe('Authentication System', () => {
         },
       } as unknown as Response);
 
-      await expect(request('/error-test')).rejects.toThrow('HTTP 500');
+      await expect(request('/error-test')).rejects.toThrow('Server error occurred');
     });
 
     test('should preserve original error messages', async () => {

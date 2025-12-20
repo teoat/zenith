@@ -6,6 +6,7 @@
 import { secureLogger } from '../utils/secureLogger';
 import fs from 'fs';
 import path from 'path';
+import { request } from '../services/client';
 
 // Test templates for different component types
 const TEST_TEMPLATES = {

@@ -10,7 +10,7 @@ describe('Electron Utilities', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // @ts-ignore
+    // @ts-expect-error - Test environment window extension
     window.electronAPI = undefined;
   });
 
@@ -20,7 +20,7 @@ describe('Electron Utilities', () => {
     });
 
     it('returns true when window.electronAPI is defined', () => {
-      // @ts-ignore
+      // @ts-expect-error - Electron API type mismatch
       window.electronAPI = mockElectronAPI;
       expect(isElectron()).toBe(true);
     });
@@ -32,7 +32,7 @@ describe('Electron Utilities', () => {
     });
 
     it('returns API object when in Electron', () => {
-      // @ts-ignore
+      // @ts-expect-error - Electron API type mismatch
       window.electronAPI = mockElectronAPI;
       expect(getElectronAPI()).toBe(mockElectronAPI);
     });
@@ -40,7 +40,7 @@ describe('Electron Utilities', () => {
 
   describe('dbQuery', () => {
     it('executes query successfully', async () => {
-      // @ts-ignore
+      // @ts-expect-error - Electron API type mismatch
       window.electronAPI = mockElectronAPI;
       mockElectronAPI.db.query.mockResolvedValue({ success: true, data: ['row1', 'row2'] });
 
@@ -50,7 +50,7 @@ describe('Electron Utilities', () => {
     });
 
     it('throws error on failure', async () => {
-      // @ts-ignore
+      // @ts-expect-error - Electron API type mismatch
       window.electronAPI = mockElectronAPI;
       mockElectronAPI.db.query.mockResolvedValue({ success: false, error: 'Query failed' });
 
@@ -60,7 +60,7 @@ describe('Electron Utilities', () => {
 
   describe('dbExecute', () => {
     it('executes command successfully', async () => {
-      // @ts-ignore
+      // @ts-expect-error - Electron API type mismatch
       window.electronAPI = mockElectronAPI;
       mockElectronAPI.db.execute.mockResolvedValue({ success: true, data: { changes: 1, lastInsertRowid: 1 } });
 
@@ -70,7 +70,7 @@ describe('Electron Utilities', () => {
     });
 
     it('throws error on failure', async () => {
-      // @ts-ignore
+      // @ts-expect-error - Electron API type mismatch
       window.electronAPI = mockElectronAPI;
       mockElectronAPI.db.execute.mockResolvedValue({ success: false, error: 'Exec failed' });
 

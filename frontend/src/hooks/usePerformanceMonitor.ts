@@ -137,7 +137,7 @@ export const useFunctionPerformance = (
   const totalTimeRef = useRef(0);
   const slowestExecutionRef = useRef(0);
 
-  const wrapFunction = useCallback(<T extends (...args: any[]) => any>(
+  const wrapFunction = useCallback(<T extends (...args: never[]) => unknown>(
     fn: T
   ): T => {
     return ((...args: Parameters<T>) => {
@@ -209,7 +209,7 @@ class PerformanceMonitor {
       try {
         const lcpObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          const lastEntry = entries[entries.length - 1] as any;
+          const lastEntry = entries[entries.length - 1] as LargestContentfulPaint;
           if (lastEntry) {
             secureLogger.info(`[PERF] LCP: ${lastEntry.startTime}ms`);
             if (window.gtag) {
@@ -230,12 +230,13 @@ class PerformanceMonitor {
       try {
         const fidObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          entries.forEach((entry: any) => {
-            secureLogger.info(`[PERF] FID: ${entry.processingStart - entry.startTime}ms`);
+          entries.forEach((entry) => {
+            const fidEntry = entry as PerformanceEventTiming;
+            secureLogger.info(`[PERF] FID: ${fidEntry.processingStart - fidEntry.startTime}ms`);
             if (window.gtag) {
               window.gtag('event', 'web_vitals', {
                 metric_name: 'FID',
-                value: entry.processingStart - entry.startTime
+                value: fidEntry.processingStart - fidEntry.startTime
               });
             }
           });
@@ -251,9 +252,10 @@ class PerformanceMonitor {
         let clsValue = 0;
         const clsObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          entries.forEach((entry: any) => {
-            if (!entry.hadRecentInput) {
-              clsValue += entry.value;
+          entries.forEach((entry) => {
+            const layoutShift = entry as LayoutShift;
+            if (!layoutShift.hadRecentInput) {
+              clsValue += layoutShift.value;
             }
           });
           secureLogger.info(`[PERF] CLS: ${clsValue}`);

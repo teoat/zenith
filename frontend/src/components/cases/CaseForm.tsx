@@ -1,10 +1,22 @@
 import React, { useState } from 'react';
-import { useCaseStore } from '../store/caseStore';
+
+import { useCaseStore } from '../../store/caseStore';
+
+interface CaseFormData {
+  id?: string;
+  title: string;
+  description?: string;
+  priority: string;
+  status: string;
+  assignedTo: string;
+  tags: string[];
+  riskScore?: number;
+}
 
 interface CaseFormProps {
-  onSubmit?: (caseData: any) => void;
+  onSubmit?: (caseData: CaseFormData) => void;
   onCancel?: () => void;
-  initialData?: any;
+  initialData?: Partial<CaseFormData>;
 }
 
 export default function CaseForm({ onSubmit, onCancel, initialData }: CaseFormProps) {
@@ -23,9 +35,17 @@ export default function CaseForm({ onSubmit, onCancel, initialData }: CaseFormPr
     e.preventDefault();
     try {
       if (initialData?.id) {
-        await updateCase(initialData.id, formData);
+        await updateCase(initialData.id, {
+          ...formData,
+          priority: formData.priority as any,
+          status: formData.status as any
+        });
       } else {
-        await createCase(formData);
+        await createCase({
+          ...formData,
+          priority: formData.priority as any,
+          status: formData.status as any
+        });
       }
       onSubmit?.(formData);
     } catch (error) {
@@ -33,7 +53,7 @@ export default function CaseForm({ onSubmit, onCancel, initialData }: CaseFormPr
     }
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

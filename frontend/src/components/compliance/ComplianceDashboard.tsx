@@ -19,90 +19,58 @@ interface ComplianceFramework {
   nextAudit: string;
 }
 
+import { complianceService } from '../../services/compliance';
+import type { ComplianceMetrics, RegionalCompliance } from '../../services/compliance';
+
 export default function ComplianceDashboard() {
   const [metrics, setMetrics] = useState<ComplianceMetric[]>([]);
   const [frameworks, setFrameworks] = useState<ComplianceFramework[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mock data loading
     const loadData = async () => {
       setLoading(true);
+      try {
+        const dashboardData = await complianceService.getComplianceDashboard();
+        const regionalData = await complianceService.getRegionalCompliance();
 
-      // Simulate API call
-      setTimeout(() => {
         setMetrics([
           {
-            id: '1',
-            title: 'PCI DSS Compliance',
-            value: '98.5%',
-            status: 'pass',
-            trend: 'up',
-            description: 'Payment Card Industry Data Security Standard'
+            id: 'overall',
+            title: 'Overall Score',
+            value: `${dashboardData.overall_compliance_score}%`,
+            status: dashboardData.overall_compliance_score >= 90 ? 'pass' : 'warning',
+            description: 'Overall compliance health'
           },
           {
-            id: '2',
-            title: 'GDPR Compliance',
-            value: '95.2%',
-            status: 'warning',
-            trend: 'stable',
-            description: 'General Data Protection Regulation'
+            id: 'reports',
+            title: 'Pending Reports',
+            value: dashboardData.pending_regulatory_reports.toString(),
+            status: dashboardData.pending_regulatory_reports > 5 ? 'fail' : 'pass',
+            description: 'Regulatory filings due'
           },
           {
-            id: '3',
-            title: 'SOX Compliance',
-            value: '92.1%',
-            status: 'pass',
-            trend: 'up',
-            description: 'Sarbanes-Oxley Act'
-          },
-          {
-            id: '4',
-            title: 'HIPAA Compliance',
-            value: '87.3%',
-            status: 'fail',
-            trend: 'down',
-            description: 'Health Insurance Portability and Accountability Act'
+            id: 'incidents',
+            title: 'Active Incidents',
+            value: dashboardData.open_security_incidents.toString(),
+            status: dashboardData.open_security_incidents > 0 ? 'fail' : 'pass',
+            description: 'Security incidents requiring attention'
           }
         ]);
 
-        setFrameworks([
-          {
-            id: 'pci',
-            name: 'PCI DSS',
-            version: '4.0',
-            status: 'compliant',
-            lastAudit: '2024-01-15',
-            nextAudit: '2024-07-15'
-          },
-          {
-            id: 'gdpr',
-            name: 'GDPR',
-            version: '2018',
-            status: 'partial',
-            lastAudit: '2024-02-01',
-            nextAudit: '2024-08-01'
-          },
-          {
-            id: 'sox',
-            name: 'SOX',
-            version: '2002',
-            status: 'compliant',
-            lastAudit: '2024-03-01',
-            nextAudit: '2024-09-01'
-          },
-          {
-            id: 'hipaa',
-            name: 'HIPAA',
-            version: '1996',
-            status: 'non_compliant',
-            lastAudit: '2024-01-30',
-            nextAudit: '2024-07-30'
-          }
-        ]);
-
+        setFrameworks(regionalData.regions.map(r => ({
+          id: r.region,
+          name: r.framework,
+          version: '1.0',
+          status: r.status as any || 'compliant',
+          lastAudit: r.last_audit_date,
+          nextAudit: r.next_audit_date
+        })));
+      } catch (error) {
+        console.error('Failed to load compliance data:', error);
+      } finally {
         setLoading(false);
-      }, 1000);
+      }
     };
 
     loadData();

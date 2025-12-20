@@ -7,13 +7,11 @@ import type { LoginCredentials } from '../context/AuthContext';
 import { AuthContext } from '../context/AuthContext';
 import { errorReporting } from '../services/errorReporting';
 
-// Use environment variable for development mode - NEVER bypass auth in production
-const isDevelopment = import.meta.env.DEV;
-const BYPASS_AUTH = import.meta.env.VITE_BYPASS_AUTH === 'true' && isDevelopment;
+import { isDev, env } from '../utils/env';
 
-if (BYPASS_AUTH) {
-  secureLogger.warn('⚠️ WARNING: Auth bypass enabled for development only');
-}
+// Use environment variable for development mode - NEVER bypass auth in production
+const isDevelopment = isDev;
+const BYPASS_AUTH = env.VITE_BYPASS_AUTH === 'true' && isDevelopment;
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);

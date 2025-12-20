@@ -29,7 +29,7 @@ describe('CaseForm', () => {
         description: 'Test description'
       };
 
-      render(<CaseForm initialValues={initialValues} onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
+      render(<CaseForm initialData={initialValues} onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
 
       expect(screen.getByDisplayValue('Test Case')).toBeInTheDocument();
       expect(screen.getByDisplayValue('Test description')).toBeInTheDocument();

@@ -2,7 +2,14 @@ import { secureLogger } from '../utils/secureLogger';
 
 type EventType = 'DISCREPANCY_FLAGGED' | 'CASE_CREATED' | 'EVIDENCE_LINKED' | 'TRANSACTION_RECONCILED';
 
-type Listener = (payload: any) => void;
+interface EventPayload {
+  type: string;
+  entityType?: string;
+  entityId?: string;
+  data?: Record<string, unknown>;
+}
+
+type Listener = (payload: EventPayload) => void;
 
 class SyncOrchestrator {
   private listeners: Record<string, Listener[]> = {};
@@ -19,7 +26,7 @@ class SyncOrchestrator {
     };
   }
 
-  emit(event: EventType, payload: any): void {
+  emit(event: EventType, payload: EventPayload): void {
     if (this.listeners[event]) {
       this.listeners[event].forEach(callback => {
         try {

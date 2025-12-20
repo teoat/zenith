@@ -1,0 +1,52 @@
+{
+  "title": "Dasbor",
+  "subtitle": "Ringkasan Deteksi Penipuan",
+  "welcome": "Selamat datang di dasbor deteksi penipuan Anda",
+  "metrics": {
+    "totalCases": "Total Kasus",
+    "activeCases": "Kasus Aktif",
+    "resolvedCases": "Kasus yang Diselesaikan",
+    "pendingCases": "Kasus Menunggu",
+    "highRiskAlerts": "Peringatan Risiko Tinggi",
+    "investigations": "Investigasi",
+    "successRate": "Tingkat Keberhasilan",
+    "avgResolutionTime": "Rata-rata Waktu Penyelesaian"
+  },
+  "charts": {
+    "casesByStatus": "Kasus Berdasarkan Status",
+    "casesByPriority": "Kasus Berdasarkan Prioritas",
+    "casesOverTime": "Kasus Seiring Waktu",
+    "riskDistribution": "Distribusi Risiko",
+    "geographicDistribution": "Distribusi Geografis"
+  },
+  "recentActivity": {
+    "title": "Aktivitas Terbaru",
+    "noActivity": "Tidak ada aktivitas terbaru",
+    "caseCreated": "Kasus dibuat",
+    "caseUpdated": "Kasus diperbarui",
+    "alertTriggered": "Peringatan dipicu",
+    "investigationStarted": "Investigasi dimulai"
+  },
+  "quickActions": {
+    "title": "Tindakan Cepat",
+    "createCase": "Buat Kasus Baru",
+    "viewReports": "Lihat Laporan",
+    "manageAlerts": "Kelola Peringatan",
+    "exportData": "Ekspor Data"
+  },
+  "status": {
+    "online": "Sistem Beroperasi",
+    "offline": "Mode Offline"
+  },
+  "messages": {
+    "offline": {
+      "title": "Bekerja Offline",
+      "description": "Perubahan akan disinkronkan ketika koneksi dipulihkan. Beberapa fitur mungkin terbatas."
+    },
+    "online": {
+      "title": "Kembali Online",
+      "description": "Koneksi Anda telah dipulihkan. Menyinkronkan data terbaru..."
+    },
+    "staleData": "Menampilkan data cache dari {{time}}."
+  }
+}

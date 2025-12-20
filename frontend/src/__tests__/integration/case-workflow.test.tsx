@@ -71,7 +71,7 @@ describe('Case Workflow Integration', () => {
 
       const mockOnUpload = jest.fn();
 
-      render(<EvidenceUploader caseId="case-123" onUpload={mockOnUpload} />);
+      render(<EvidenceUploader caseId="case-123" onUploadComplete={mockOnUpload} />);
 
       const file = new File(['test content'], 'document.pdf', { type: 'application/pdf' });
       const input = screen.getByTestId('file-input');
@@ -118,7 +118,7 @@ describe('Case Workflow Integration', () => {
 
       render(
         <BrowserRouter>
-          <InvestigationWizard caseId="case-123" />
+          <InvestigationWizard />
         </BrowserRouter>
       );
 

@@ -9,15 +9,15 @@ export default [
   { ignores: ['dist', 'scripts', 'coverage', 'node_modules', 'e2e', '*.config.*', 'jest.config.*', 'playwright.config.*', 'postcss.config.*', 'public'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-   {
-     files: ['src/**/*.{ts,tsx,js,jsx}'],
-     languageOptions: {
-       ecmaVersion: 2020,
-       globals: globals.browser,
-      parserOptions: {
+  {
+    files: ['src/**/*.{ts,tsx,js,jsx}', 'jest.setup.ts'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+     parserOptions: {
         ecmaFeatures: { jsx: true },
       },
-     },
+    },
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
@@ -57,5 +57,12 @@ export default [
       'no-alert': 'warn',
     },
   },
+  // Override rules for test files
+  {
+    files: ['src/**/*.{test,spec}.{ts,tsx,js,jsx}', 'src/__tests__/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
+    },
+  },
 ];
-

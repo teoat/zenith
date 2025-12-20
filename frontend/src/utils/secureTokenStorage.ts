@@ -125,7 +125,7 @@ export class SecureTokenStorage {
       const maxAge = '; Max-Age=86400'; // 24 hours
 
       document.cookie = `${name}=${encodeURIComponent(value)}${secure}${sameSite}${maxAge}; Path=/`;
-    } catch (error) {
+    } catch {
       // Silently fail for cookie issues
     }
   }
@@ -138,7 +138,7 @@ export class SecureTokenStorage {
       // For now, we'll set a regular secure cookie
       // In production, the backend should set httpOnly cookies via Set-Cookie header
       this.setSecureCookie(name, value);
-    } catch (error) {
+    } catch {
       // Silently fail
     }
   }
@@ -154,7 +154,7 @@ export class SecureTokenStorage {
         }
       }
       return null;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -163,7 +163,7 @@ export class SecureTokenStorage {
   private static deleteCookie(name: string): void {
     try {
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/`;
-    } catch (error) {
+    } catch {
       // Silently fail
     }
   }

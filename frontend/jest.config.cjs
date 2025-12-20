@@ -36,8 +36,10 @@ module.exports = {
      }
    },
   coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
+  moduleFileExtensions: ['js', 'mjs', 'cjs', 'jsx', 'ts', 'tsx', 'd.ts', 'json', 'node'],
    moduleNameMapper: {
      '^@/(.*)$': '<rootDir>/src/$1',
+     '\\.\\./types/electron$': '<rootDir>/src/types/electron.d.ts',
      '\\.(css|less|scss|sass)$': '<rootDir>/src/__mocks__/styleMock.js',
      '\\.(jpg|jpeg|png|gif|svg|webp)$': '<rootDir>/src/__mocks__/fileMock.js',
      '^react-force-graph-2d$': '<rootDir>/src/__mocks__/forceGraphMock.js'

@@ -31,7 +31,7 @@ describe('AuthService', () => {
         json: async () => mockResponse
       });
 
-      const result = await authService.login('test@example.com', 'password');
+      const result = await authService.login({ email: 'test@example.com', password: 'password' });
 
       expect(result).toEqual(mockResponse);
       expect(localStorage.getItem('token')).toBe('test-token');

@@ -11,6 +11,11 @@ interface RequestConfig extends RequestInit {
   timeout?: number;
 }
 
+interface HttpError extends Error {
+  status?: number;
+  response?: Response;
+}
+
 /**
  * Hook for making HTTP requests with automatic retry logic
  * Implements exponential backoff and configurable retry strategies
@@ -26,7 +31,7 @@ export function useHttpClient() {
     };
   }, []);
 
-  const request = useCallback(async <T = any>(
+  const request = useCallback(async <T = unknown>(
     url: string,
     config: RequestConfig = {},
     retryOptions: RetryOptions = {}
@@ -49,7 +54,7 @@ export function useHttpClient() {
 
     const { timeout = 30000, ...fetchConfig } = config;
 
-    let lastError: Error;
+  let lastError: Error | undefined;
     
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       // Create abort controller for this request
@@ -70,7 +75,7 @@ export function useHttpClient() {
         abortControllersRef.current.delete(requestId);
 
         if (!response.ok) {
-          const error: any = new Error(`HTTP ${response.status}: ${response.statusText}`);
+          const error: HttpError = new Error(`HTTP ${response.status}: ${response.statusText}`);
           error.status = response.status;
           error.response = response;
           throw error;
@@ -79,19 +84,20 @@ export function useHttpClient() {
         const data = await response.json();
         return data as T;
 
-      } catch (error: any) {
+      } catch (error: unknown) {
         clearTimeout(timeoutId);
         abortControllersRef.current.delete(requestId);
 
-        lastError = error;
+        const err = error instanceof Error ? error : new Error(String(error));
+        lastError = err;
 
         // Don't retry if request was aborted by user
-        if (error.name === 'AbortError' && attempt === 0) {
-          throw error;
+        if (err.name === 'AbortError' && attempt === 0) {
+          throw err;
         }
 
         // Check if we should retry
-        if (attempt < maxRetries && shouldRetry(error, attempt)) {
+        if (attempt < maxRetries && shouldRetry(err, attempt)) {
           const delay = delayMs * Math.pow(backoffMultiplier, attempt);
           await new Promise(resolve => setTimeout(resolve, delay));
           continue;
@@ -101,10 +107,10 @@ export function useHttpClient() {
       }
     }
 
-    throw lastError!;
+  throw lastError || new Error('Retry failed after all attempts');
   }, []);
 
-  const get = useCallback(<T = any>(
+  const get = useCallback(<T = unknown>(
     url: string,
     config?: RequestConfig,
     retryOptions?: RetryOptions
@@ -112,9 +118,9 @@ export function useHttpClient() {
     return request<T>(url, { ...config, method: 'GET' }, retryOptions);
   }, [request]);
 
-  const post = useCallback(<T = any>(
+  const post = useCallback(<T = unknown>(
     url: string,
-    data?: any,
+    data?: unknown,
     config?: RequestConfig,
     retryOptions?: RetryOptions
   ) => {
@@ -129,9 +135,9 @@ export function useHttpClient() {
     }, retryOptions);
   }, [request]);
 
-  const put = useCallback(<T = any>(
+  const put = useCallback(<T = unknown>(
     url: string,
-    data?: any,
+    data?: unknown,
     config?: RequestConfig,
     retryOptions?: RetryOptions
   ) => {
@@ -199,10 +205,11 @@ export async function withRetry<T>(
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn();
-    } catch (error: any) {
-      lastError = error;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      lastError = err;
 
-      if (attempt < maxRetries && shouldRetry(error, attempt)) {
+      if (attempt < maxRetries && shouldRetry(err, attempt)) {
         const delay = delayMs * Math.pow(backoffMultiplier, attempt);
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;

@@ -48,6 +48,8 @@ interface RawThreatData {
   type: string;
 }
 
+import { env } from '../../utils/env';
+
 const ThreatMap: React.FC = () => {
   // All hooks must be called before any conditional logic
   const [threats, setThreats] = useState<ThreatLocation[]>([]);
@@ -60,7 +62,7 @@ const ThreatMap: React.FC = () => {
   const [isSlowConnection, setIsSlowConnection] = useState(false);
 
   // Feature flag to completely disable map functionality
-  const isMapEnabled = import.meta.env.VITE_ENABLE_THREAT_MAP !== 'false';
+  const isMapEnabled = env.VITE_ENABLE_THREAT_MAP !== 'false';
 
   // Detect slow network connections
   useEffect(() => {
@@ -251,7 +253,7 @@ const ThreatMap: React.FC = () => {
       </Map>
 
       {/* Fallback Overlay if no token */}
-      {!import.meta.env.VITE_MAPBOX_TOKEN && (
+      {!env.VITE_MAPBOX_TOKEN && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/60 pointer-events-none z-0">
           <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 text-center max-w-md pointer-events-auto">
             <h4 className="text-white font-bold mb-2">Mapbox Token Missing</h4>

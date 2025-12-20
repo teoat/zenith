@@ -15,8 +15,12 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-        "jsx": "react-jsx",
-        /* Linting */
+         "jsx": "react-jsx",
+         "types": [
+             "jest",
+             "@testing-library/jest-dom"
+         ],
+         /* Linting */
         "forceConsistentCasingInFileNames": true,
         "noImplicitAny": true,
         "noImplicitThis": true,

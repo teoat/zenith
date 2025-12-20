@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { useAuthStore } from '../authStore';
 
 describe('authStore', () => {
@@ -260,7 +260,7 @@ describe('authStore', () => {
       const { result } = renderHook(() => useAuthStore());
       let renderCount = 0;
 
-      const { result: trackedResult } = renderHook(() => {
+      renderHook(() => {
         renderCount++;
         return useAuthStore((state) => state.user);
       });

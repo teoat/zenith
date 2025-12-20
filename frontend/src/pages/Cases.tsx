@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Activity, LayoutList } from 'lucide-react';
 import { useCases } from '../hooks/useCases';
+import type { Case } from '../types/schema';
 import { approvalService } from '../services/approvalService';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { useTouchGestures } from '../hooks/useTouchGestures';
@@ -9,6 +10,7 @@ import { CaseList } from '../components/cases/CaseList';
 import CasePreviewDrawer from '../components/cases/CasePreviewDrawer';
 import CaseHeader from '../components/cases/CaseHeader';
 import { KeyboardShortcutsModal } from '../components/ui/KeyboardShortcutsModal';
+import { Badge } from '../components/ui/Badge';
 import { KEYBOARD_SHORTCUTS } from '../lib/keyboardShortcuts';
 import { ApprovalQueue } from '../components/ApprovalQueue';
 import { SplitView } from '../components/ui/SplitView';
@@ -16,7 +18,7 @@ import { secureLogger } from '../utils/secureLogger';
 import PageErrorBoundary from '../components/PageErrorBoundary';
 import LoadingState from '../components/LoadingState';
 import { useToast } from '../providers/ToastProvider';
-import { Alert } from '@/components/ui/Alert';
+
 
 // Lazy load heavy components
 const CaseKanban = React.lazy(() => import('../components/cases/CaseKanban'));
@@ -26,7 +28,7 @@ interface CasesProps {}
 
 const Cases: React.FC<CasesProps> = () => {
   const { data, isLoading, error } = useCases();
-  const cases = useMemo(() => data?.cases || [], [data?.cases]);
+  const cases = useMemo(() => data?.data?.items || [], [data?.data?.items]);
   const { caseId } = useParams<{ caseId: string }>();
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -40,7 +42,7 @@ const Cases: React.FC<CasesProps> = () => {
   const previewCaseId = caseId || null;
 
   const filteredCases = useMemo(() =>
-    cases.filter(caseItem =>
+    cases.filter((caseItem: Case) =>
       caseItem.title?.toLowerCase().includes(searchTerm.toLowerCase())
     ), [cases, searchTerm]
   );
@@ -284,7 +286,7 @@ const Cases: React.FC<CasesProps> = () => {
                     <div className="space-y-6">
                       <div className="flex items-center justify-between">
                         <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Prioritized Approvals</h4>
-                        <badge className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold rounded-full">ACTION REQUIRED</badge>
+                        <Badge className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold rounded-full">ACTION REQUIRED</Badge>
                       </div>
                       <ApprovalQueue maxHeight="450px" showHeader={false} className="border-none shadow-none bg-transparent" />
                     </div>

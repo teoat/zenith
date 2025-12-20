@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import * as Slider from '@radix-ui/react-slider';
 import { Filter, Search } from 'lucide-react';
 
+type FilterValue = string | number | string[];
+
 interface FilterOption {
   id: string;
   label: string;
@@ -9,23 +11,23 @@ interface FilterOption {
   options?: { value: string; label: string }[]; // For checkbox/select
   min?: number; // For slider
   max?: number; // For slider
-  defaultValue?: any; // For slider or select
+  defaultValue?: FilterValue; // For slider or select
 }
 
 interface FacetedFilterProps {
   filterOptions: FilterOption[];
-  selectedFilters: Record<string, any>;
-  onFilterChange: (filters: Record<string, any>) => void;
+  selectedFilters: Record<string, FilterValue>;
+  onFilterChange: (filters: Record<string, FilterValue>) => void;
 }
 
 const FacetedFilter: React.FC<FacetedFilterProps> = ({ filterOptions, selectedFilters, onFilterChange }) => {
-  const [internalFilters, setInternalFilters] = useState<Record<string, any>>(selectedFilters);
+  const [internalFilters, setInternalFilters] = useState<Record<string, FilterValue>>(selectedFilters);
 
   useEffect(() => {
     setInternalFilters(selectedFilters);
   }, [selectedFilters]);
 
-  const handleFilterChange = (filterId: string, value: any) => {
+  const handleFilterChange = (filterId: string, value: FilterValue) => {
     const newFilters = {
       ...internalFilters,
       [filterId]: value,
@@ -55,7 +57,7 @@ const FacetedFilter: React.FC<FacetedFilterProps> = ({ filterOptions, selectedFi
   };
 
   const handleResetFilters = () => {
-    const resetFilters: Record<string, any> = {};
+    const resetFilters: Record<string, FilterValue> = {};
     filterOptions.forEach(option => {
       if (option.type === 'slider') resetFilters[option.id] = option.defaultValue || option.min;
       else if (option.type === 'select') resetFilters[option.id] = option.defaultValue || '';

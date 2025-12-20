@@ -241,7 +241,7 @@ const CaseKanban: React.FC<CaseKanbanProps> = ({ cases: externalCases, onCaseCli
       }
     };
     loadCases();
-  }, []);
+  }, [externalCases, transformCase]);
 
   // Enhanced keyboard navigation
   useEffect(() => {
@@ -321,7 +321,7 @@ const CaseKanban: React.FC<CaseKanbanProps> = ({ cases: externalCases, onCaseCli
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [focusedCard]);
+  }, [focusedCard, items, onCaseClick]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),

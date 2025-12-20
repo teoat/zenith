@@ -24,6 +24,7 @@ interface CaseStore {
   updateCase: (id: string, updates: Partial<Case>) => Promise<Case>;
   deleteCase: (id: string) => Promise<void>;
   getCase: (id: string) => Case | undefined;
+  setCases: (cases: Case[]) => void;
 }
 
 export const useCaseStore = create<CaseStore>()(
@@ -93,6 +94,10 @@ export const useCaseStore = create<CaseStore>()(
 
         getCase: (id) => {
           return get().cases.find(case_ => case_.id === id);
+        },
+
+        setCases: (cases) => {
+          set({ cases });
         },
       }),
       {

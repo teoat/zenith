@@ -1,6 +1,6 @@
 import { request, isElectron, API_BASE, getToken } from './client';
 import type { EvidenceItem, ProcessedEvidence, FileSelectResult } from '../types/api';
-import '../types/electron'; // Ensure electron types are available
+import '../types/electron.d.ts'; // Ensure electron types are available
 
 export const evidenceService = {
   getEvidence: async (caseId?: string, page: number = 1, pageSize: number = 20, query?: string): Promise<{ items: EvidenceItem[]; total: number }> => {

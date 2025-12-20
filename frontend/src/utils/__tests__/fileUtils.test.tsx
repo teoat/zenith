@@ -1,5 +1,4 @@
 import { getFileIcon, getFileTypeColor, isImageFile, isVideoFile, isAudioFile, isDocumentFile } from '../fileUtils';
-import React from 'react';
 import { render } from '@testing-library/react';
 
 describe('fileUtils', () => {

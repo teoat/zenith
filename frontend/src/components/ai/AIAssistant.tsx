@@ -15,10 +15,20 @@ import { secureLogger } from '@/utils/secureLogger';
 interface SuggestionAction {
   id: string;
   label: string;
-  endpoint: string;
+  endpoint?: string;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: Record<string, unknown>;
   description?: string;
+  style?: 'primary' | 'danger' | 'ghost';
+  icon?: 'alert' | 'user' | 'search' | 'eye' | 'file';
+  action?: string;
+  type?: 'create' | 'update' | 'delete' | 'external_api' | 'financial';
+  impact?: 'low' | 'medium' | 'high' | 'critical';
+  entityType?: string;
+  entityId?: string;
+  payload?: Record<string, unknown>;
+  reasoning?: string;
+  confidence?: number;
 }
 
 interface Project {
@@ -323,7 +333,7 @@ export const AIAssistant: React.FC = () => {
                             {/* Action Suggestions */}
                             {msg.suggestions && msg.suggestions.length > 0 && (
                                 <div className="flex flex-wrap gap-2 mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/50">
-                                    {msg.suggestions.map((s: any, idx) => (
+                                    {msg.suggestions.map((s: SuggestionAction, idx) => (
                                         <button 
                                             key={idx}
                                             className={`

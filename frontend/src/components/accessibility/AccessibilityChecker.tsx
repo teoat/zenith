@@ -49,18 +49,4 @@ export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({
   return <>{children}</>;
 };
 
-// Utility function for manual accessibility testing
-export const runAccessibilityAudit = async (context?: Element) => {
-  try {
-    const results = await axe.run(context || document);
-    return {
-      violations: results.violations,
-      passes: results.passes,
-      incomplete: results.incomplete,
-      inapplicable: results.inapplicable
-    };
-  } catch (error) {
-    secureLogger.error('Accessibility audit failed:', error);
-    return null;
-  }
-};
+export default AccessibilityChecker;

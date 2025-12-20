@@ -34,7 +34,7 @@ describe('caseStore', () => {
 
       act(() => {
         result.current.setCases([
-          { id: '1', title: 'Case 1', status: 'open', priority: 'high' }
+          { id: '1', title: 'Case 1', status: 'open', priority: 'high', createdAt: '2023-01-01T00:00:00Z', updatedAt: '2023-01-01T00:00:00Z', riskScore: 0, tags: [] }
         ]);
       });
 

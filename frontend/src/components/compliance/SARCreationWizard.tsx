@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
 import {
   FileText,
@@ -97,7 +97,7 @@ const SARCreationWizard: React.FC = () => {
     'Local AML Regulations'
   ];
 
-  const filteredCases = cases.filter(case_ =>
+  const filteredCases = cases.filter((case_: Case) =>
     (case_.title?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
     (case_.id?.toLowerCase() || '').includes(searchQuery.toLowerCase())
   );
@@ -189,7 +189,7 @@ const SARCreationWizard: React.FC = () => {
              <div className="p-4 text-center text-gray-500">No cases found matching your search.</div>
           )}
 
-          {!casesLoading && !casesError && filteredCases.map((case_) => (
+          {!casesLoading && !casesError && filteredCases.map((case_: Case) => (
             <Card
               key={case_.id}
               className="cursor-pointer hover:shadow-md transition-shadow"

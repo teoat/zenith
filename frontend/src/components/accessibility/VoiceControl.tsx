@@ -5,17 +5,16 @@ import { secureLogger } from '../../utils/secureLogger';
 const VoiceControl: React.FC = () => {
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [supported, setSupported] = useState(false);
+  const [supported, setSupported] = useState(() => 
+    typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
-    setSupported(isSupported);
-    
-    if (!isSupported) {
+    if (!supported) {
       secureLogger.warn('VOICE_CONTROL', 'Web Speech API not supported in this browser. Enabling simulated mode.');
     }
-  }, []);
+  }, [supported]);
 
   const handleCommand = (command: string) => {
     const lowerCmd = command.toLowerCase();

@@ -27,7 +27,7 @@ interface SyncOperation<T> {
 
 export class LocalDataManager {
   private db: IDBDatabase | null = null;
-  private dbName = '378x492LocalDB';
+  private dbName = 'zenithLocalDB';
   private dbVersion = 1;
 
   constructor() {

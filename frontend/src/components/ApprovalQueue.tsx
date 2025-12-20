@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
+import { CheckCircle, XCircle, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { AccessibleButton } from '@/components/ui/AccessibleButton';
@@ -12,14 +12,33 @@ interface ApprovalQueueProps {
   showHeader?: boolean;
 }
 
-const getImpactStyles = (impact: PendingAction['impact']) => {
-  const styles = {
-    critical: 'bg-red-100 text-red-800 border-red-200',
-    high: 'bg-orange-100 text-orange-800 border-orange-200',
-    medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    low: 'bg-green-100 text-green-800 border-green-200',
+
+
+const getTypeIcon = (type: PendingAction['type']) => {
+  switch (type) {
+    case 'create':
+      return <CheckCircle className="w-4 h-4 text-green-600" />;
+    case 'update':
+      return <Clock className="w-4 h-4 text-blue-600" />;
+    case 'delete':
+      return <XCircle className="w-4 h-4 text-red-600" />;
+    case 'external_api':
+      return <Clock className="w-4 h-4 text-purple-600" />;
+    case 'financial':
+      return <Clock className="w-4 h-4 text-orange-600" />;
+    default:
+      return <Clock className="w-4 h-4 text-gray-600" />;
+  }
+};
+
+const getImpactColor = (impact: PendingAction['impact']) => {
+  const colors = {
+    critical: 'bg-red-100 text-red-800',
+    high: 'bg-orange-100 text-orange-800',
+    medium: 'bg-yellow-100 text-yellow-800',
+    low: 'bg-green-100 text-green-800',
   };
-  return styles[impact] || 'bg-gray-100 text-gray-800 border-gray-200';
+  return colors[impact] || 'bg-gray-100 text-gray-800';
 };
 
 export const ApprovalQueue: React.FC<ApprovalQueueProps> = ({
@@ -101,7 +120,7 @@ export const ApprovalQueue: React.FC<ApprovalQueueProps> = ({
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      {getTypeIcon()}
+                      {getTypeIcon(action.type)}
                       <h4 className="font-medium text-sm truncate">{action.title}</h4>
                       <Badge className={`text-xs ${getImpactColor(action.impact)}`}>
                         {action.impact.toUpperCase()}

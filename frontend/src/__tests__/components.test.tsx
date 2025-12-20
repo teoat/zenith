@@ -274,7 +274,7 @@ describe('Tabs Component', () => {
 
 describe('Modal/Dialog Component', () => {
   it('renders when open', async () => {
-    const { Dialog, DialogContent, DialogHeader, DialogTitle } = await import('../components/ui/Dialog');
+    const { Dialog, DialogContent, DialogHeader, DialogTitle } = await import('../components/ui/dialog');
     
     render(
       <Dialog open={true}>
@@ -293,7 +293,7 @@ describe('Modal/Dialog Component', () => {
 
 describe('Select Component', () => {
   it('renders options', async () => {
-    const { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } = await import('../components/ui/Select');
+    const { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } = await import('../components/ui/select');
     
     render(
       <Select>

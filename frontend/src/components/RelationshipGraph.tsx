@@ -17,16 +17,35 @@ import {
 import { api } from '../lib/api';
 import { useToast } from '../providers/ToastProvider';
 import type { GraphNode, GraphEdge, CentralEntity, SuspiciousPattern } from '../types/api';
+import type { ForceGraphMethods, NodeObject, LinkObject } from 'react-force-graph-2d';
 
 // Extended Node type to include canvas specific props
 interface CanvasNode extends GraphNode {
   x?: number;
   y?: number;
   val?: number; // for node size
-  color?: string;
-  transaction_count?: number;
-  total_amount?: number;
-  label: string;
+  label?: string;
+  size?: number; // Alternative size property
+}
+
+// Raw graph data from API
+interface RawGraphNode {
+  id: string;
+  label?: string;
+  size?: number;
+  [key: string]: unknown;
+}
+
+interface RawGraphLink {
+  source: string;
+  target: string;
+  [key: string]: unknown;
+}
+
+interface GraphApiResponse {
+  nodes?: RawGraphNode[];
+  links?: RawGraphLink[];
+  edges?: RawGraphLink[]; // Alternative property name
 }
 
 interface GraphStats {
@@ -42,11 +61,11 @@ const RelationshipGraph: React.FC = () => {
   const [stats, setStats] = useState<GraphStats>({});
   const [loading, setLoading] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [, setCommunities] = useState<any[]>([]);
+  const [, setCommunities] = useState<unknown[]>([]);
   const [centralEntities, setCentralEntities] = useState<CentralEntity[]>([]);
   const [suspiciousPatterns, setSuspiciousPatterns] = useState<SuspiciousPattern[]>([]);
   
-  const fgRef = useRef<any>(null);
+  const fgRef = useRef<ForceGraphMethods<NodeObject, LinkObject> | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
   const isMounted = useRef(true);
   
@@ -80,22 +99,27 @@ const RelationshipGraph: React.FC = () => {
       const data = await api.getGraphData();
       if (isMounted.current) {
         // Transform data for react-force-graph (expects 'links' not 'edges')
-        const nodes = (data.nodes || []).map((n: any) => ({
-            ...n,
+        const graphData = data as GraphApiResponse;
+        const nodes = (graphData.nodes || []).map((n: RawGraphNode): CanvasNode => ({
+            id: n.id,
+            name: n.label || n.id,
+            type: 'node',
+            properties: n,
             val: n.size || 5, // Default size
             label: n.label || n.id
         }));
-        
-        const links = (data.links || (data as any).edges || []).map((l: any) => ({
-            ...l,
+
+        const links = (graphData.links || graphData.edges || []).map((l: RawGraphLink): GraphEdge => ({
             source: l.source,
-            target: l.target
+            target: l.target,
+            type: 'connection',
+            weight: 1
         }));
         
         setGraphData({ nodes, links });
         setStats((data as any).stats || {});
       }
-      } catch (error) {
+      } catch {
        addToast('Failed to load graph data', 'error');
     } finally {
       if (isMounted.current) setLoading(false);
@@ -129,7 +153,7 @@ const RelationshipGraph: React.FC = () => {
             fgRef.current.zoomToFit(400);
         }
       }
-      } catch (error) {
+      } catch {
        addToast('Failed to rebuild graph', 'error');
     } finally {
       if (isMounted.current) setLoading(false);
@@ -190,16 +214,16 @@ const RelationshipGraph: React.FC = () => {
       }
   };
 
-  const handleNodeClick = useCallback((node: any) => {
-      setSelectedNodeId(node.id);
+  const handleNodeClick = useCallback((node: NodeObject) => {
+      setSelectedNodeId(node.id as string);
       if (fgRef.current) {
-          fgRef.current.centerAt(node.x, node.y, 400);
+          fgRef.current.centerAt((node as any).x || 0, (node as any).y || 0, 400);
           fgRef.current.zoom(2, 2000);
       }
-      
+
       // Accessibility update
       const liveRegion = document.getElementById('graph-live-region');
-      if (liveRegion) liveRegion.innerText = `Selected node: ${node.label || node.id}. Type: ${node.type}.`;
+      if (liveRegion) liveRegion.innerText = `Selected node: ${(node as any).label || node.id}. Type: ${(node as any).type}.`;
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -434,16 +458,16 @@ const RelationshipGraph: React.FC = () => {
                         <span className="text-slate-500">Type</span>
                         <Badge variant="secondary" className="capitalize">{node.type}</Badge>
                       </div>
-                       <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
-                        <span className="text-slate-500">Transactions</span>
-                        <span className="font-mono">{node.transaction_count || 0}</span>
-                      </div>
-                       <div className="flex justify-between items-center">
-                        <span className="text-slate-500">Total Volume</span>
-                        <span className="font-mono text-green-600 dark:text-green-400">
-                            ${(node.total_amount || 0).toLocaleString()}
-                        </span>
-                      </div>
+                        <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                         <span className="text-slate-500">Transactions</span>
+                         <span className="font-mono">{(node.properties as any)?.transaction_count || 0}</span>
+                       </div>
+                        <div className="flex justify-between items-center">
+                         <span className="text-slate-500">Total Volume</span>
+                         <span className="font-mono text-green-600 dark:text-green-400">
+                             ${((node.properties as any)?.total_amount || 0).toLocaleString()}
+                         </span>
+                       </div>
                     </div>
                   );
                 })()}

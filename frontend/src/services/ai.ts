@@ -3,9 +3,24 @@ import type { AIPersona } from '../context/AIContext';
 import type { ApiResponse } from '../types/api-responses';
 
 interface AIChatResponse {
-  message: string;
+  response: string;
   persona: AIPersona;
-  suggestions?: Array<{ action: string; confidence: number }>;
+  suggestions?: Array<{
+    id: string;
+    label: string;
+    type: string;
+    impact?: string;
+    action?: string;
+    description?: string;
+    entityType?: string;
+    entityId?: string;
+    payload?: Record<string, unknown>;
+    reasoning?: string;
+    confidence?: number;
+    style?: 'primary' | 'danger' | 'ghost';
+    icon?: 'alert' | 'user' | 'search' | 'eye' | 'file';
+  }>;
+  confidence?: number;
 }
 
 interface MultiPersonaAnalysis {
@@ -54,6 +69,38 @@ class AIService {
     return request('/ai/index-evidence', {
       method: 'POST',
       body: JSON.stringify({ evidence_id: evidenceId })
+    });
+  }
+
+  async generateInsights(caseId: string): Promise<ApiResponse<any>> {
+    return request('/ai/generate-insights', {
+      method: 'POST',
+      body: JSON.stringify({ case_id: caseId })
+    });
+  }
+
+  async getConversationHistory(sessionId: string): Promise<ApiResponse<any>> {
+    return request(`/ai/conversation/${sessionId}`);
+  }
+
+  async getSuggestions(context: string, type: string): Promise<ApiResponse<any>> {
+    return request('/ai/suggestions', {
+      method: 'POST',
+      body: JSON.stringify({ context, type })
+    });
+  }
+
+  async predictFraudRisk(transactionData: Record<string, unknown>): Promise<ApiResponse<any>> {
+    return request('/ai/fraud-prediction', {
+      method: 'POST',
+      body: JSON.stringify(transactionData)
+    });
+  }
+
+  async analyzeSentiment(text: string): Promise<ApiResponse<any>> {
+    return request('/ai/sentiment-analysis', {
+      method: 'POST',
+      body: JSON.stringify({ text })
     });
   }
 }
