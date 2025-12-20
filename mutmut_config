@@ -1,8 +1,0 @@
-[mutmut]
-paths_to_mutate = backend/app
-backup = False
-runner = python3 -m pytest
-tests_dir = backend/tests/
-dict_synonyms = Struct, NamedStruct
-# Exclude strict type checking code or logging wrappers from mutation to save time
-exclude_paths = backend/core/logging.py, backend/core/constants.py
