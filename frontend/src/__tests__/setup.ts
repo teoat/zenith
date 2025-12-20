@@ -11,7 +11,6 @@ jest.mock('react', () => {
   const React = jest.requireActual('react');
   return {
     ...React,
-    lazy: (factory: any) => factory(),
     Suspense: ({ children }: any) => children,
   };
 });

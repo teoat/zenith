@@ -1,0 +1,181 @@
+{
+  "test_run_timestamp": "2025-12-20T13:38:41.118616",
+  "total_tests": 20,
+  "total_passed": 18,
+  "total_failed": 2,
+  "test_suites": [
+    {
+      "name": "Backend API Tests",
+      "results": {
+        "test_name": "backend_api_tests",
+        "passed": 6,
+        "failed": 1,
+        "total": 7,
+        "details": [
+          {
+            "test": "health",
+            "status": "failed",
+            "error": "Status 503"
+          },
+          {
+            "test": "readiness",
+            "status": "passed",
+            "response_time": 0.027856826782226562
+          },
+          {
+            "test": "liveness",
+            "status": "passed",
+            "response_time": 0.018249034881591797
+          },
+          {
+            "test": "api_health_check",
+            "status": "passed",
+            "response_time": 0.011738777160644531
+          },
+          {
+            "test": "api_fraud_rules",
+            "status": "passed",
+            "response_time": 0.012456893920898438
+          },
+          {
+            "test": "api_health_ready",
+            "status": "passed",
+            "response_time": 0.00966191291809082
+          },
+          {
+            "test": "api_health_live",
+            "status": "passed",
+            "response_time": 0.011806011199951172
+          }
+        ]
+      }
+    },
+    {
+      "name": "WebSocket Tests",
+      "results": {
+        "test_name": "websocket_collaboration_tests",
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "details": [
+          {
+            "test": "websocket_server_available",
+            "status": "passed",
+            "info": "WebSocket server is listening on port 8080"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AI Service Tests",
+      "results": {
+        "test_name": "ai_service_tests",
+        "passed": 2,
+        "failed": 1,
+        "total": 3,
+        "details": [
+          {
+            "test": "ai_ai_health_endpoint",
+            "status": "passed",
+            "response_time": 0.010673046112060547,
+            "status_code": 200
+          },
+          {
+            "test": "ai_performance_ai_metrics",
+            "status": "passed",
+            "response_time": 0.01052999496459961,
+            "status_code": 200
+          },
+          {
+            "test": "ai_ai_analyze_available",
+            "status": "failed",
+            "error": "HTTP 500",
+            "response_time": {
+              "type": "fraud_pattern",
+              "data": {
+                "text": "simple test"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Frontend Tests",
+      "results": {
+        "test_name": "frontend_component_tests",
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "details": [
+          {
+            "test": "frontend_build_exists",
+            "status": "passed"
+          },
+          {
+            "test": "frontend_static_serving",
+            "status": "passed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Security Tests",
+      "results": {
+        "test_name": "security_tests",
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "details": [
+          {
+            "test": "security_security_headers",
+            "status": "passed",
+            "info": "Security headers implemented (middleware active)"
+          },
+          {
+            "test": "security_cors_policy",
+            "status": "passed",
+            "info": "Security headers implemented (middleware active)"
+          },
+          {
+            "test": "security_rate_limiting",
+            "status": "passed",
+            "info": "Rate limiting bypassed for localhost (10/10 requests allowed)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Performance Tests",
+      "results": {
+        "test_name": "performance_tests",
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "details": [
+          {
+            "test": "performance_health",
+            "status": "passed",
+            "response_time": 0.03197288513183594
+          },
+          {
+            "test": "performance_api_stats",
+            "status": "passed",
+            "response_time": 0.01724076271057129
+          },
+          {
+            "test": "performance_metrics",
+            "status": "passed",
+            "response_time": 0.018075227737426758
+          },
+          {
+            "test": "performance_concurrent_requests",
+            "status": "passed",
+            "concurrent_requests": 8
+          }
+        ]
+      }
+    }
+  ],
+  "success_rate": 90.0
+}

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.59% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>25/27</span>
+                <span class='fraction'>9/27</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">63.63% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>7/11</span>
+                <span class='fraction'>0/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">23.8% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>21/21</span>
+                <span class='fraction'>5/21</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -138,47 +138,47 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -199,48 +199,48 @@ export interface ExecuteResult {
 /**
  * Check if running in Electron environment
  */
-export const isElectron = (): boolean =&gt; {
-  return typeof window !== 'undefined' &amp;&amp; !!window.electronAPI;
+export const isElectron = <span class="fstat-no" title="function not covered" >(): boolean =</span>&gt; {
+<span class="cstat-no" title="statement not covered" >  return typeof window !== 'undefined' &amp;&amp; !!window.electronAPI;</span>
 };
 &nbsp;
 /**
  * Get ElectronAPI (throws if not in Electron)
  */
-export const getElectronAPI = (): ElectronAPI =&gt; {
-  if (!isElectron()) {
-    throw new Error('Not running in Electron environment');
+export const getElectronAPI = <span class="fstat-no" title="function not covered" >(): ElectronAPI =</span>&gt; {
+<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (!isElectron()) {</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error('Not running in Electron environment');</span>
   }
-  return window.electronAPI as ElectronAPI;
+<span class="cstat-no" title="statement not covered" >  return window.electronAPI as ElectronAPI;</span>
 };
 &nbsp;
 /**
  * Safe database query with error handling
  */
-export const dbQuery = async &lt;T = unknown&gt;(sql: string, params?: unknown[]): Promise&lt;T[]&gt; =&gt; {
-  const api = getElectronAPI();
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!api.db) <span class="cstat-no" title="statement not covered" >throw new Error('Database API not available');</span>
-  const result = await api.db.query(sql, params);
+export const dbQuery = <span class="fstat-no" title="function not covered" >async </span>&lt;T = unknown&gt;(sql: string, params?: unknown[]): Promise&lt;T[]&gt; =&gt; {
+  const api = <span class="cstat-no" title="statement not covered" >getElectronAPI();</span>
+<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (!api.db) <span class="cstat-no" title="statement not covered" >throw new Error('Database API not available');</span></span>
+  const result = <span class="cstat-no" title="statement not covered" >await api.db.query(sql, params);</span>
   
-  if (!result.success) {
-    throw new Error(result.error || <span class="branch-1 cbranch-no" title="branch not covered" >'Database query failed')</span>;
+<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (!result.success) {</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error(result.error || 'Database query failed');</span>
   }
   
-  return result.data as T[];
+<span class="cstat-no" title="statement not covered" >  return result.data as T[];</span>
 };
 &nbsp;
 /**
  * Safe database execute with error handling
  */
-export const dbExecute = async (sql: string, params?: unknown[]): Promise&lt;ExecuteResult&gt; =&gt; {
-  const api = getElectronAPI();
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!api.db) <span class="cstat-no" title="statement not covered" >throw new Error('Database API not available');</span>
-  const result = await api.db.execute(sql, params);
+export const dbExecute = <span class="fstat-no" title="function not covered" >async </span>(sql: string, params?: unknown[]): Promise&lt;ExecuteResult&gt; =&gt; {
+  const api = <span class="cstat-no" title="statement not covered" >getElectronAPI();</span>
+<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (!api.db) <span class="cstat-no" title="statement not covered" >throw new Error('Database API not available');</span></span>
+  const result = <span class="cstat-no" title="statement not covered" >await api.db.execute(sql, params);</span>
   
-  if (!result.success) {
-    throw new Error(result.error || <span class="branch-1 cbranch-no" title="branch not covered" >'Database execute failed')</span>;
+<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (!result.success) {</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error(result.error || 'Database execute failed');</span>
   }
   
-  return result.data!; // data cannot be undefined if success is true, but safer to check.
+<span class="cstat-no" title="statement not covered" >  return result.data!; </span>// data cannot be undefined if success is true, but safer to check.
 };
 &nbsp;
 export default {
@@ -256,7 +256,7 @@ export default {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T03:48:47.569Z
+                at 2025-12-20T05:56:42.976Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

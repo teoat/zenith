@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, MessageCircle, X, User, Send, ThumbsUp, ThumbsDown, Search, Eye, File } from 'lucide-react';
-import { useAIContext } from '@/context/AIContext';
+import { useAIContext, AIPersona } from '@/context/AIContext';
 // import { useProject } from '@/context/ProjectContext'; // Context not available
 
 import { aiService } from '@/services/ai';
-import type { AIPersona } from '@/context/AIContext';
 import { SanitizedHTML } from '@/hooks/useSanitizedHTML';
-import type { PendingAction } from '@/services/approvalService';
-import { approvalService } from '@/services/approvalService';
+import { approvalService, PendingAction } from '@/services/approvalService';
 import { ApprovalQueue } from '@/components/ApprovalQueue';
 import { AgentStatusStream } from '@/components/ui/AgentStatusStream';
 import { secureLogger } from '@/utils/secureLogger';
@@ -24,7 +22,7 @@ interface Message {
 
 export const AIAssistant: React.FC = () => {
   const { t } = useTranslation();
-  const { context, activePersona } = useAIContext();
+  const { context, activePersona, setPersona } = useAIContext();
   // const { currentProject } = useProject();
   const currentProject = null as any; // Temporary fallback
   
@@ -224,14 +222,29 @@ export const AIAssistant: React.FC = () => {
         <div data-testid="ai-assistant-window" className="fixed bottom-24 right-6 w-[400px] h-[600px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-50 flex flex-col border border-slate-200 dark:border-slate-800 overflow-hidden">
           {/* Header */}
           <div className="p-4 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-300">
-                <Bot size={20} />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-300">
+                  <Bot size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 dark:text-white">Frenly AI</h3>
+                  <p className="text-xs text-slate-500">Advanced Intelligence Copilot</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold text-slate-900 dark:text-white">Frenly AI</h3>
-                <p className="text-xs text-slate-500">Advanced Intelligence Copilot</p>
-              </div>
+              
+              <select 
+                value={activePersona}
+                onChange={(e) => setPersona(e.target.value as any)}
+                className="text-xs px-2 py-1 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"
+                aria-label="Select AI Persona"
+              >
+                <option value="frenly">Frenly</option>
+                <option value="investigator">Investigator</option>
+                <option value="legal">Legal</option>
+                <option value="forensic">Forensic</option>
+                <option value="redteam">Red Team 🔴</option>
+              </select>
             </div>
           </div>
 

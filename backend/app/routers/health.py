@@ -13,30 +13,35 @@ Used by:
 - Monitoring systems (health endpoint)
 """
 
+import logging
 from datetime import datetime
-from typing import Dict, Any
-from fastapi import APIRouter, status
+from typing import Any, Dict
+
+from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
-from core.database import get_db
+
 from app.services.infrastructure.circuit_breaker import get_all_circuit_breakers
-import asyncio
-import os
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Health"])
+
+
+
 
 @router.get(
     "/health",
     summary="Comprehensive Health Check",
     description="""
     Returns detailed health status for all system components.
-    
+
     Components checked:
     - Database (PostgreSQL/SQLite)
     - Cache (Redis)
     - Storage (S3 if configured)
     - API responsiveness
-    
+
     Returns 200 if healthy, 503 if any component is unhealthy.
     """,
     status_code=status.HTTP_200_OK,
@@ -77,33 +82,18 @@ router = APIRouter(tags=["Health"])
         }
     }
 )
+
+
+
 async def health_check() -> Dict[str, Any]:
     """
     Comprehensive health check for 99.99% uptime monitoring.
     """
     import time
     import os
-    import asyncio
     from app.services.infrastructure.storage.database_service import db_service
     from app.services.infrastructure.circuit_breaker import get_all_circuit_breakers
     from app.services.infrastructure.performance_monitor import performance_monitor
-
-    # Try to start WebSocket server on first health check if enabled
-    try:
-        ws_enabled = os.getenv("ENABLE_COLLABORATION_WS", "false").lower() == "true"
-        if ws_enabled:
-            # Import here to avoid circular imports
-            from app.services.integration.collaboration.collaboration_service import collaboration_manager
-            # Start synchronously if not already started
-            if not hasattr(health_check, '_ws_started'):
-                print("DEBUG: Starting WebSocket server from health check")
-                await collaboration_manager.start_server()
-                setattr(health_check, '_ws_started', True)
-                print("DEBUG: WebSocket server started successfully from health check")
-    except Exception as e:
-        print(f"DEBUG: WebSocket startup from health check failed: {e}")
-        import traceback
-        print(f"DEBUG: WebSocket traceback: {traceback.format_exc()}")
 
     health_status = {
         "status": "healthy",
@@ -141,7 +131,7 @@ async def health_check() -> Dict[str, Any]:
             "error": str(e)[:200],
             "service": "database"
         }
-    
+
     # Circuit breaker health check
     try:
         circuit_breakers = get_all_circuit_breakers()
@@ -157,6 +147,7 @@ async def health_check() -> Dict[str, Any]:
 
         if open_breakers:
             health_status["status"] = "degraded"
+
     except Exception as e:
         health_status["components"]["circuit_breakers"] = {
             "status": "unhealthy",
@@ -210,192 +201,23 @@ async def health_check() -> Dict[str, Any]:
         # Import cache service if available
         from app.services.infrastructure.storage.cache_service import cache_service
 
-        # Simple ping test
-        if hasattr(cache_service, 'ping'):
-            await cache_service.ping()
-            health_status["components"]["cache"] = {
-                "status": "healthy",
-                "type": "redis"
-            }
-        else:
-            health_status["components"]["cache"] = {
-                "status": "skipped",
-                "reason": "no ping method"
-            }
-    except ImportError:
-        health_status["components"]["cache"] = {
-            "status": "not_configured"
-        }
-    except Exception as e:
-        # Cache failure affects performance but not core functionality
-        health_status["components"]["cache"] = {
-            "status": "degraded",
-            "error": str(e)[:200]
-        }
-        if health_status["status"] == "healthy":
+        cache_health = cache_service.health_check()
+        health_status["components"]["cache"] = cache_health
+
+        if cache_health["status"] != "healthy":
             health_status["status"] = "degraded"
-    
-    # External services health check (for 99.99% uptime)
-    try:
-        external_services = []
-
-        # Check if any external APIs are configured
-        external_apis = os.getenv("EXTERNAL_API_ENDPOINTS", "").split(",")
-        for api_url in external_apis:
-            if api_url.strip():
-                # Simple connectivity check for external services
-                try:
-                    import aiohttp
-                    async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as session:
-                        async with session.get(api_url.strip()) as response:
-                            external_services.append({
-                                "url": api_url.strip(),
-                                "status": "healthy" if response.status < 400 else "degraded",
-                                "response_code": response.status
-                            })
-                except Exception as e:
-                    external_services.append({
-                        "url": api_url.strip(),
-                        "status": "unhealthy",
-                        "error": str(e)[:100]
-                    })
-
-        if external_services:
-            healthy_count = sum(1 for s in external_services if s["status"] == "healthy")
-            health_status["components"]["external_services"] = {
-                "status": "healthy" if healthy_count == len(external_services) else "degraded",
-                "total_services": len(external_services),
-                "healthy_services": healthy_count,
-                "services": external_services
-            }
-            if healthy_count < len(external_services):
-                health_status["status"] = "degraded"
-        else:
-            health_status["components"]["external_services"] = {
-                "status": "not_configured"
-            }
-    except Exception as e:
-        health_status["components"]["external_services"] = {
-            "status": "error",
-            "error": str(e)[:200]
-        }
-
-    # Memory and system resource check with improved thresholds and recovery
-    try:
-        import psutil
-        memory = psutil.virtual_memory()
-        cpu_percent = psutil.cpu_percent(interval=0.5)  # Shorter interval for more accurate reading
-
-        system_status = "healthy"
-        issues = []
-        recommendations = []
-
-        # More lenient thresholds for development/production
-        environment = os.getenv("ENVIRONMENT", "development").lower()
-        is_production = environment == "production"
-
-        # Production has stricter thresholds
-        memory_critical = 95 if is_production else 98
-        memory_degraded = 85 if is_production else 95
-        cpu_critical = 95 if is_production else 98
-        cpu_degraded = 80 if is_production else 90
-
-        if memory.percent > memory_critical:
-            system_status = "critical"
-            issues.append(".1f")
-            recommendations.append("Consider increasing memory allocation or optimizing memory usage")
-        elif memory.percent > memory_degraded:
-            system_status = "degraded"
-            issues.append(".1f")
-            recommendations.append("Monitor memory usage closely")
-            if health_status["status"] == "healthy":
-                health_status["status"] = "degraded"
-
-        if cpu_percent > cpu_critical:
-            system_status = "critical"
-            issues.append(".1f")
-            recommendations.append("Investigate CPU-intensive processes or consider scaling")
-        elif cpu_percent > cpu_degraded:
-            system_status = "degraded"
-            issues.append(".1f")
-            recommendations.append("Monitor CPU usage and optimize performance")
-            if health_status["status"] == "healthy":
-                health_status["status"] = "degraded"
-
-        # Add disk usage check
-        disk = psutil.disk_usage('/')
-        if disk.percent > 90:
-            system_status = "degraded" if system_status == "healthy" else system_status
-            issues.append(".1f")
-            recommendations.append("Free up disk space or increase storage capacity")
-            if health_status["status"] == "healthy":
-                health_status["status"] = "degraded"
-
-        health_status["components"]["system_resources"] = {
-            "status": system_status,
-            "memory_percent": round(memory.percent, 1),
-            "cpu_percent": round(cpu_percent, 1),
-            "disk_percent": round(disk.percent, 1),
-            "issues": issues,
-            "recommendations": recommendations,
-            "thresholds": {
-                "memory_critical": memory_critical,
-                "memory_degraded": memory_degraded,
-                "cpu_critical": cpu_critical,
-                "cpu_degraded": cpu_degraded,
-                "disk_critical": 90
-            }
-        }
-
-        # In development/testing, be more lenient with system resource issues
-        environment = os.getenv("ENVIRONMENT", "production").lower()
-        if system_status == "critical":
-            critical_components = sum(1 for comp in health_status["components"].values()
-                                    if isinstance(comp, dict) and comp.get("status") in ["unhealthy", "error"])
-            if environment in ["development", "testing"]:
-                # In dev/test, only mark unhealthy if multiple components are failing
-                if critical_components > 0:
-                    health_status["status"] = "unhealthy"
-                # For isolated system resource issues in dev/test, keep as healthy
-            else:
-                # In production, be stricter
-                if critical_components > 1:  # System resources + at least one other component
-                    health_status["status"] = "unhealthy"
-                else:
-                    health_status["status"] = "degraded"
 
     except ImportError:
-        health_status["components"]["system_resources"] = {
-            "status": "not_available",
-            "reason": "psutil not installed",
-            "recommendation": "Install psutil for system monitoring: pip install psutil"
+        health_status["components"]["cache"] = {
+            "status": "not_configured",
+            "reason": "Cache service not available"
         }
     except Exception as e:
-        health_status["components"]["system_resources"] = {
-            "status": "error",
-            "error": str(e)[:200],
-            "recommendation": "Check system monitoring configuration"
-        }
-
-    # Check S3/Storage (if configured)
-    try:
-        storage_enabled = os.getenv("ENABLE_S3_STORAGE", "false").lower() == "true"
-        if storage_enabled:
-            # Add S3 bucket existence check here if needed
-            health_status["components"]["storage"] = {
-                "status": "healthy",
-                "type": "s3"
-            }
-        else:
-            health_status["components"]["storage"] = {
-                "status": "not_configured",
-                "type": "local"
-            }
-    except Exception as e:
-        health_status["components"]["storage"] = {
+        health_status["components"]["cache"] = {
             "status": "unhealthy",
             "error": str(e)[:200]
         }
+        health_status["status"] = "degraded"
 
     # API responsiveness check
     health_status["components"]["api_responsiveness"] = {
@@ -426,12 +248,17 @@ async def health_check() -> Dict[str, Any]:
     return health_status
 
 
+
+
 @router.get(
     "/health/uptime",
     summary="Uptime and Proactive Monitoring Status",
     description="Get comprehensive uptime metrics and proactive monitoring status for 99.99% target",
     status_code=status.HTTP_200_OK
 )
+
+
+
 async def uptime_status():
     """Get uptime and proactive monitoring status"""
     try:
@@ -471,12 +298,17 @@ async def uptime_status():
         )
 
 
+
+
 @router.post(
     "/health/alerts/{alert_id}/acknowledge",
     summary="Acknowledge Alert",
     description="Acknowledge a proactive monitoring alert",
     status_code=status.HTTP_200_OK
 )
+
+
+
 async def acknowledge_alert(alert_id: str):
     """Acknowledge an alert"""
     try:
@@ -499,12 +331,17 @@ async def acknowledge_alert(alert_id: str):
         raise HTTPException(status_code=500, detail=f"Failed to acknowledge alert: {e}")
 
 
+
+
 @router.get(
     "/health/live",
     summary="Liveness Probe",
     description="Simple liveness check for Kubernetes. Returns 200 if the service process is running.",
     status_code=status.HTTP_200_OK
 )
+
+
+
 async def liveness():
     """
     Returns 200 if service is running.
@@ -516,38 +353,8 @@ async def liveness():
     }
 
 
-@router.get(
-    "/health/ready",
-    summary="Readiness Probe",
-    description="Check if service is ready to accept traffic. Verifies all critical components are healthy.",
-    status_code=status.HTTP_200_OK,
-    responses={
-        200: {"description": "Service is ready"},
-        503: {"description": "Service is not ready"}
-    }
-)
-async def readiness():
-    """
-    Returns 200 if all critical components are healthy and ready to serve traffic.
-    Used by Kubernetes readiness probe.
-    """
 
-    # Check database
-    try:
-        from core.database import SessionLocal
-        db = SessionLocal()
-        db.execute(text("SELECT 1"))
-        db.close()
-    except Exception as e:
-        return JSONResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            content={"status": "not_ready", "reason": f"database_unavailable: {str(e)}"}
-        )
 
-    return {
-        "status": "ready",
-        "timestamp": datetime.now().isoformat()
-    }
 
 
 @router.get(
@@ -556,6 +363,9 @@ async def readiness():
     description="Get status of all circuit breakers in the system for monitoring fault tolerance.",
     status_code=status.HTTP_200_OK
 )
+
+
+
 async def circuit_breaker_status():
     """
     Returns status of all circuit breakers for monitoring system resilience.
@@ -576,16 +386,19 @@ async def circuit_breaker_status():
                 "timestamp": datetime.now().isoformat()
             }
         )
+
+
+
 async def readiness():
     """
     Returns 200 if all critical components are healthy and ready to serve traffic.
     Used by Kubernetes readiness probe.
     """
     health = await health_check()
-    
+
     # Check if database is healthy (critical component)
     db_status = health.get("components", {}).get("database", {}).get("status")
-    
+
     if db_status == "healthy":
         return {
             "status": "ready",
@@ -603,12 +416,17 @@ async def readiness():
         )
 
 
+
+
 @router.get(
     "/health/startup",
     summary="Startup Probe",
     description="Check if application has finished starting up. Used for slow-starting applications.",
     status_code=status.HTTP_200_OK
 )
+
+
+
 async def startup():
     """
     Returns 200 once application has completed startup.

@@ -12,6 +12,7 @@ from app.services.infrastructure.auth_service import auth_service, AuthService
 from app.services.business.case_service import case_service
 from core.database import Case, Entity, Transaction, User, get_db
 from app.dependencies import get_current_project_id
+from app.services.infrastructure.storage.database_service import db_service
 
 logger = logging.getLogger(__name__)
 
@@ -41,19 +42,26 @@ class CaseUpdate(BaseModel):
 
 class CaseResponse(BaseModel):
     id: str
+    case_id: str
     title: str
-    description: Optional[str]
+    description: Optional[str] = None
     status: str
     priority: str
-    assigneeId: Optional[str]
-    riskScore: Optional[float]
-    riskLevel: Optional[str]
-    fraudAmount: Optional[float]
-    customerName: Optional[str]
+    assigneeId: Optional[str] = None
+    riskScore: Optional[float] = 0.0
+    riskLevel: Optional[str] = "low"
+    fraudAmount: Optional[float] = 0.0
+    customerName: Optional[str] = "Unknown"
     createdAt: datetime
-    updatedAt: Optional[datetime]
-    dueDate: Optional[datetime]
-    tags: List[str]
+    updatedAt: Optional[datetime] = None
+    dueDate: Optional[datetime] = None
+    tags: List[str] = Field(default_factory=list)
+
+class CaseCreateResponse(BaseModel):
+    id: str
+    case_id: str
+    message: str
+    case: Dict[str, Any]
 
 class CaseListResponse(BaseModel):
     cases: List[CaseResponse]
@@ -101,7 +109,7 @@ router = APIRouter()
 # ===== CASE MANAGEMENT ENDPOINTS =====
 
 
-@router.post("", response_model=CaseResponse, status_code=201)
+@router.post("", response_model=CaseCreateResponse, status_code=201)
 async def create_case(
     case_data: CaseCreate,
     current_user: dict = Depends(auth_service.get_current_user),
@@ -123,7 +131,6 @@ async def create_case(
         }
 
         # Creates persistence call
-        from app.services.infrastructure.storage.database_service import db_service
         new_case = db_service.create_case(
             db,
             id=str(uuid.uuid4()),
@@ -227,6 +234,27 @@ async def get_cases(
         logger.error(f"Error listing cases: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/search")
+async def search_cases(
+    q: str,
+    status: Optional[str] = None,
+    priority: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(auth_service.get_current_user),
+    project_id: str = Depends(get_current_project_id),
+):
+    """Specific search endpoint for cases"""
+    return await get_cases(
+        search=q, 
+        status=status, 
+        priority=priority, 
+        db=db, 
+        current_user=current_user, 
+        project_id=project_id,
+        page=1, 
+        per_page=20
+    )
+
 @router.get("/{case_id}", response_model=CaseResponse)
 async def get_case_detail(
     case_id: str,
@@ -242,6 +270,7 @@ async def get_case_detail(
         
         return {
             "id": case.id,
+            "case_id": case.id,
             "title": case.title,
             "description": case.description,
             "status": case.status,
@@ -337,81 +366,13 @@ async def close_case(
         "resolution": close_data.get("resolution")
     }
 
-@router.get("/", response_model=CaseListResponse)
-async def get_cases_root(
-    page: int = 1,
-    per_page: int = 20,
-    search: Optional[str] = None,
-    status: Optional[str] = None,
-    priority: Optional[str] = None,
-    current_user: dict = Depends(auth_service.get_current_user),
-    db: Session = Depends(get_db),
-    project_id: str = Depends(get_current_project_id),
-):
-    return await get_cases(page, per_page, search, status, None, priority, None, current_user, db, project_id)
 
 
-@router.get("/search")
-async def search_cases(
-    q: str,
-    status: Optional[str] = None,
-    priority: Optional[str] = None,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(auth_service.get_current_user),
-    project_id: str = Depends(get_current_project_id),
-):
-    """Specific search endpoint for cases"""
-    return await get_cases(
-        search=q, 
-        status=status, 
-        priority=priority, 
-        db=db, 
-        current_user=current_user, 
-        project_id=project_id,
-        page=1, 
-        per_page=20
-    )
 
 
-@router.get("/{case_id}", response_model=CaseResponse)
-async def get_case(
-    case_id: str,
-    include_notes: bool = Query(False),
-    include_evidence: bool = Query(False),
-    include_transactions: bool = Query(False),
-    current_user: dict = Depends(auth_service.get_current_user),
-    db: Session = Depends(get_db),
-):
-    """Get a specific case"""
-    try:
-        case = db_service.get_case(db, case_id)
-        if not case:
-            raise HTTPException(status_code=404, detail="Case not found")
 
-        return {
-            "case_id": case.id,
-            "case": {
-                "id": case.id,
-                "title": case.title,
-                "description": case.description,
-                "status": case.status,
-                "priority": case.priority,
-                "type": case.case_type,
-                "assigneeId": case.assignee_id,
-                "riskScore": case.risk_score or 0,
-                "riskLevel": getattr(case, "risk_level", "low"),
-                "fraudAmount": getattr(case, "fraud_amount", 0.0),
-                "customerName": getattr(case, "customer_name", "Unknown"),
-                "createdAt": case.created_at.isoformat() if case.created_at else None,
-                "updatedAt": case.updated_at.isoformat() if case.updated_at else None,
-                "dueDate": getattr(case, "due_date", None).isoformat() if getattr(case, "due_date", None) else None,
-                "tags": case.tags if hasattr(case, "tags") else [],
-            }
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 
 @router.put("/{case_id}", response_model=CaseResponse)

@@ -4,9 +4,6 @@ import { motion } from 'framer-motion';
 import { useWebSocket } from '../providers/WebSocketProvider';
 import { secureLogger } from '../utils/secureLogger';
 
-import type {
-  LucideIcon
-} from 'lucide-react';
 import {
   Activity,
   Cpu,
@@ -17,7 +14,8 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  BarChart3
+  BarChart3,
+  type LucideIcon
 } from 'lucide-react';
 
 

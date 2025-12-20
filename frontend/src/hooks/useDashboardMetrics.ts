@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { MetricsData } from '../lib/api';
-import { api } from '../lib/api';
+import { api, type MetricsData } from '../lib/api';
 
 export const useDashboardMetrics = () => {
   return useQuery<MetricsData, Error>({

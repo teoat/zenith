@@ -1,7 +1,5 @@
-import type { ReactNode} from 'react';
-import { useState, useEffect, memo, useCallback } from 'react';
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { DndContext, DragOverlay, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { useState, useEffect, memo, useCallback, type ReactNode } from 'react';
+import { DndContext, DragOverlay, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { AlertCircle, Clock, CheckCircle2 } from 'lucide-react';

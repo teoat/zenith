@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20.37% </span>
+                <span class="strong">11.11% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>11/54</span>
+                <span class='fraction'>6/54</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">15% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/20</span>
+                <span class='fraction'>0/20</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20.37% </span>
+                <span class="strong">11.11% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>11/54</span>
+                <span class='fraction'>6/54</span>
             </div>
         
             
@@ -467,7 +467,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -490,23 +490,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -767,8 +767,8 @@ class IntelligenceService {
   /**
    * Analyze transactions for fraud patterns
    */
-  async analyzeFraud(transactions: TransactionInput[]): Promise&lt;FraudAlert[]&gt; {
-    return request('/intelligence/fraud/analyze', {
+<span class="fstat-no" title="function not covered" >  async </span>analyzeFraud(transactions: TransactionInput[]): Promise&lt;FraudAlert[]&gt; {
+<span class="cstat-no" title="statement not covered" >    return request('/intelligence/fraud/analyze', {</span>
         method: 'POST',
         body: JSON.stringify({ transactions })
     });
@@ -790,13 +790,13 @@ class IntelligenceService {
   /**
    * Process evidence file
    */
-  async processEvidence(file: File): Promise&lt;EvidenceResult&gt; {
-    const formData = new FormData();
-    formData.append('file', file);
+<span class="fstat-no" title="function not covered" >  async </span>processEvidence(file: File): Promise&lt;EvidenceResult&gt; {
+    const formData = <span class="cstat-no" title="statement not covered" >new FormData();</span>
+<span class="cstat-no" title="statement not covered" >    formData.append('file', file);</span>
     
     // Note: request helper handles JSON by default, for FormData we need to pass headers manually or adjust helper
     // Since our request helper sets Content-Type to application/json, we override it here.
-    return request('/intelligence/evidence/process', {
+<span class="cstat-no" title="statement not covered" >    return request('/intelligence/evidence/process', {</span>
         method: 'POST',
         headers: { 'Content-Type': 'multipart/form-data' }, // Browser will set boundary
         body: formData
@@ -806,8 +806,8 @@ class IntelligenceService {
   /**
    * Search processed evidence
    */
-  async searchEvidence(query: string): Promise&lt;EvidenceSearchResult[]&gt; {
-    return request(`/intelligence/evidence/search?query=${encodeURIComponent(query)}`);
+<span class="fstat-no" title="function not covered" >  async </span>searchEvidence(query: string): Promise&lt;EvidenceSearchResult[]&gt; {
+<span class="cstat-no" title="statement not covered" >    return request(`/intelligence/evidence/search?query=${encodeURIComponent(query)}`);</span>
   }
 &nbsp;
   /**
@@ -973,7 +973,7 @@ export default intelligenceService;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T03:48:46.392Z
+                at 2025-12-20T05:56:40.976Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

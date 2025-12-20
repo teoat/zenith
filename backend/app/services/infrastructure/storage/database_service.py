@@ -207,82 +207,44 @@ class DatabaseService:
 
     # ===== CASE MANAGEMENT =====
 
-    @cached("cases_paginated", ttl_seconds=60)  # Cache for 1 minute
-    @circuit_breaker("database_query_cases", CircuitBreakerConfig(
-        failure_threshold=5, recovery_timeout=20.0, expected_exception=(SQLAlchemyError,)
-    ))
     def get_cases_paginated(
-        self, page: int = 1, per_page: int = 20, filters: Dict[str, Any] = None
+        self, *args, **kwargs
     ) -> Dict[str, Any]:
-        """Get cases with optimized cursor-based pagination"""
+        """Get cases with optimized cursor-based pagination.
+        
+        Supports:
+        - get_cases_paginated(db_session, page=1, per_page=20, filters={})
+        - get_cases_paginated(page=1, per_page=20, filters={})
+        """
+        db = None
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 20)
+        filters = kwargs.get("filters", {})
+
+        if args:
+            if hasattr(args[0], 'query'):
+                db = args[0]
+                if len(args) > 1: page = args[1]
+                if len(args) > 2: per_page = args[2]
+                if len(args) > 3: filters = args[3]
+            else:
+                page = args[0]
+                if len(args) > 1: per_page = args[1]
+                if len(args) > 2: filters = args[2]
+
         try:
-            with self.get_db() as db:
-                # Calculate offset (keep for backward compatibility but optimize internally)
-                offset = (page - 1) * per_page
-
-            # Build query with specific columns for performance
-            query = db.query(
-                Case.id,
-                Case.title,
-                Case.description,
-                Case.status,
-                Case.case_type,
-                Case.assignee_id,
-                Case.risk_score,
-                Case.risk_level,
-                Case.fraud_amount,
-                Case.customer_name,
-                Case.created_at,
-                Case.updated_at,
-                Case.due_date,
-            )
-
-            # Apply filters
-            if filters:
-                if "status" in filters and filters["status"]:
-                    query = query.filter(Case.status == filters["status"])
-                if "assignee_id" in filters and filters["assignee_id"]:
-                    query = query.filter(Case.assignee_id == filters["assignee_id"])
-                if "risk_level" in filters and filters["risk_level"]:
-                    query = query.filter(Case.risk_level == filters["risk_level"])
-                if "search" in filters and filters["search"]:
-                    search_term = f"%{filters['search']}%"
-                    query = query.filter(
-                        or_(
-                            Case.title.ilike(search_term),
-                            Case.description.ilike(search_term),
-                            Case.customer_name.ilike(search_term),
-                        )
-                    )
-
-            # Get total count for pagination info
-            total_count = query.count()
-
-            # Apply pagination and ordering
-            cases = (
-                query.order_by(desc(Case.created_at))
-                .offset(offset)
-                .limit(per_page)
-                .all()
-            )
-
-            total_pages = (total_count + per_page - 1) // per_page  # Ceiling division
-
-            return {
-                "cases": cases,
-                "items": cases,
-                "page": page,
-                "per_page": per_page,
-                "total": total_count,
-                "total_count": total_count,
-                "total_pages": total_pages,
-                "execution_time": 0.0,  # Would be measured in production
-            }
+            if db:
+                return self._get_cases_paginated_logic(db, page, per_page, filters)
+            else:
+                with self.get_db() as session:
+                    return self._get_cases_paginated_logic(session, page, per_page, filters)
         except SQLAlchemyError as e:
+            from app.core._errors import error_handler
             error_handler.log_and_raise_http_error(
                 error_handler.handle_database_error(e, "get_cases_paginated")
             )
         except Exception as e:
+            from app.core._errors import error_handler, ServiceError, ErrorCategory, ErrorSeverity
             error_handler.log_and_raise_http_error(
                 ServiceError(
                     message="Unexpected error in get_cases_paginated",
@@ -293,6 +255,69 @@ class DatabaseService:
                     user_friendly_message="Unable to retrieve cases. Please try again."
                 )
             )
+
+    def _get_cases_paginated_logic(self, db: Session, page: int, per_page: int, filters: dict) -> Dict[str, Any]:
+        """Core logic for paginated case retrieval"""
+        offset = (page - 1) * per_page
+
+        # Build query with specific columns for performance
+        query = db.query(
+            Case.id,
+            Case.title,
+            Case.description,
+            Case.status,
+            Case.case_type,
+            Case.assignee_id,
+            Case.risk_score,
+            Case.risk_level,
+            Case.fraud_amount,
+            Case.customer_name,
+            Case.created_at,
+            Case.updated_at,
+            Case.due_date,
+        )
+
+        # Apply filters
+        if filters:
+            if "status" in filters and filters["status"]:
+                query = query.filter(Case.status == filters["status"])
+            if "assignee_id" in filters and filters["assignee_id"]:
+                query = query.filter(Case.assignee_id == filters["assignee_id"])
+            if "risk_level" in filters and filters["risk_level"]:
+                query = query.filter(Case.risk_level == filters["risk_level"])
+            if "search" in filters and filters["search"]:
+                search_term = f"%{filters['search']}%"
+                query = query.filter(
+                    or_(
+                        Case.title.ilike(search_term),
+                        Case.description.ilike(search_term),
+                        Case.customer_name.ilike(search_term),
+                    )
+                )
+
+        # Get total count for pagination info
+        total_count = query.count()
+
+        # Apply pagination and ordering
+        cases = (
+            query.order_by(desc(Case.created_at))
+            .offset(offset)
+            .limit(per_page)
+            .all()
+        )
+
+        total_pages = (total_count + per_page - 1) // per_page if per_page > 0 else 0
+
+        return {
+            "cases": cases,
+            "items": cases,
+            "page": page,
+            "per_page": per_page,
+            "total": total_count,
+            "total_count": total_count,
+            "total_pages": total_pages,
+            "execution_time": 0.0,
+        }
 
     def get_cases(
         self, skip: int = 0, limit: int = 100, filters: Dict[str, Any] = None
@@ -321,60 +346,157 @@ class DatabaseService:
     @circuit_breaker("database_create_case", CircuitBreakerConfig(
         failure_threshold=3, recovery_timeout=10.0, expected_exception=(SQLAlchemyError,)
     ))
-    def create_case(self, case_data: dict, created_by: str = None) -> Case:
-        """Create a new case with audit trail"""
-        with self.get_db() as db:
-            case_data["created_by"] = created_by
-            case = Case(**case_data)
-            db.add(case)
+    def create_case(self, *args, **kwargs) -> Case:
+        """Create a new case with audit trail.
+        
+        Supports multiple signatures:
+        - Modern (router): create_case(db_session, id=..., title=..., project_id=...)
+        - Legacy (tests): create_case(case_data_dict, created_by=None)
+        """
+        db = None
+        case_data = {}
+        created_by = None
 
-            # Create initial activity
+        if args:
+            # Check if first arg is a Session (modern router call)
+            # Use hasattr check for broader compatibility
+            if hasattr(args[0], 'add') and hasattr(args[0], 'commit'):
+                db = args[0]
+                case_data = kwargs
+                created_by = kwargs.get("created_by") or kwargs.get("assigneeId") or kwargs.get("assignee_id")
+            # Check if first arg is a dict (legacy call)
+            elif isinstance(args[0], dict):
+                case_data = args[0].copy()
+                if len(args) > 1:
+                    created_by = args[1]
+                else:
+                    created_by = kwargs.get("created_by")
+            else:
+                # Fallback
+                case_data = kwargs
+                created_by = args[0] if not db else None
+        else:
+            case_data = kwargs
+            created_by = kwargs.get("created_by")
+
+        # Determine session - if db was passed in, we use it directly.
+        # Otherwise we get a new session from get_db().
+        if db:
+            return self._create_case_logic(db, case_data, created_by)
+        else:
+            with self.get_db() as session:
+                return self._create_case_logic(session, case_data, created_by)
+
+    def _create_case_logic(self, db: Session, case_data: dict, created_by: str = None) -> Case:
+        """Common logic for case creation"""
+        # Ensure created_by is stored if provided
+        if created_by and "created_by" not in case_data:
+            case_data["created_by"] = created_by
+            
+        # Clean up any non-model attributes from case_data before passing to Case constructor
+        valid_columns = {c.key for c in Case.__table__.columns}
+        filtered_data = {k: v for k, v in case_data.items() if k in valid_columns}
+        
+        # Handle project_id if not present
+        if "project_id" not in filtered_data:
+            filtered_data["project_id"] = "default"
+            
+        case = Case(**filtered_data)
+        db.add(case)
+        db.flush()
+
+        # Create activity record
+        activity = CaseActivity(
+            case_id=case.id,
+            user_id=created_by,
+            activity_type="created",
+            description=f"Case created: {case.title}",
+            activity_metadata={"case_data": filtered_data}
+        )
+        db.add(activity)
+        
+        db.commit()
+        db.refresh(case)
+        return case
+
+    def update_case(
+        self, *args, **kwargs
+    ) -> Optional[Case]:
+        """Update case with audit trail.
+        
+        Supports:
+        - update_case(db, case_id, update_data, updated_by=None)
+        - update_case(case_id, update_data, updated_by=None)
+        - update_case(db, case_id, **update_data)
+        """
+        db = None
+        case_id = None
+        update_data = {}
+        updated_by = kwargs.get("updated_by")
+
+        # Parse args
+        remaining_args = list(args)
+        if remaining_args and hasattr(remaining_args[0], 'query'):
+            db = remaining_args.pop(0)
+        
+        if remaining_args:
+            case_id = remaining_args.pop(0)
+        elif "case_id" in kwargs:
+            case_id = kwargs["case_id"]
+            
+        if remaining_args:
+            update_data = remaining_args.pop(0)
+        else:
+            # Use kwargs for update_data if not passed as dict
+            update_data = {k: v for k, v in kwargs.items() if k not in ["case_id", "updated_by"]}
+
+        if db:
+            return self._update_case_logic(db, case_id, update_data, updated_by)
+        else:
+            with self.get_db() as session:
+                return self._update_case_logic(session, case_id, update_data, updated_by)
+
+    def _update_case_logic(self, db: Session, case_id: str, update_data: dict, updated_by: str = None) -> Optional[Case]:
+        """Core logic for updating a case"""
+        case = db.query(Case).filter(Case.id == case_id).first()
+        if not case:
+            return None
+
+        old_values = {}
+        for key, value in update_data.items():
+            if hasattr(case, key):
+                old_values[key] = getattr(case, key)
+                setattr(case, key, value)
+
+        case.updated_at = datetime.now(timezone.utc)
+
+        # Create activity log
+        if old_values:
+            # Convert non-serializable objects (like datetime) to strings for JSON
+            def make_serializable(obj):
+                if isinstance(obj, dict):
+                    return {k: make_serializable(v) for k, v in obj.items()}
+                elif isinstance(obj, (list, tuple)):
+                    return [make_serializable(item) for item in obj]
+                elif isinstance(obj, datetime):
+                    return obj.isoformat()
+                return obj
+
             activity = CaseActivity(
-                case_id=case.id,
-                user_id=created_by,
-                activity_type="created",
-                description="Case created",
-                metadata={"case_data": case_data},
+                case_id=case_id,
+                user_id=updated_by,
+                activity_type="updated",
+                description="Case updated",
+                activity_metadata=make_serializable({
+                    "changes": update_data,
+                    "old_values": old_values
+                }),
             )
             db.add(activity)
 
-            db.commit()
-            db.refresh(case)
-            return case
-
-    def update_case(
-        self, case_id: str, update_data: dict, updated_by: str = None
-    ) -> Optional[Case]:
-        """Update case with audit trail"""
-        with self.get_db() as db:
-            case = db.query(Case).filter(Case.id == case_id).first()
-            if not case:
-                return None
-
-            old_values = {}
-            for key, value in update_data.items():
-                if hasattr(case, key):
-                    old_values[key] = getattr(case, key)
-                    setattr(case, key, value)
-
-            case.updated_at = datetime.now(timezone.utc)
-
-            # Create activity log
-            if old_values:
-                activity = CaseActivity(
-                    case_id=case_id,
-                    user_id=updated_by,
-                    activity_type="updated",
-                    description="Case updated",
-                    old_value=str(old_values),
-                    new_value=str(update_data),
-                    metadata={"changes": update_data},
-                )
-                db.add(activity)
-
-            db.commit()
-            db.refresh(case)
-            return case
+        db.commit()
+        db.refresh(case)
+        return case
 
     def delete_case(self, case_id: str) -> bool:
         """Delete a case"""
@@ -468,54 +590,51 @@ class DatabaseService:
                 ),
             }
 
-    # Case operations
-    def get_cases(self, skip: int = 0, limit: int = 100) -> List[Case]:
-        with self.get_db() as db:
-            # Use specific columns instead of SELECT * for better performance
-            return (
-                db.query(
-                    Case.id, Case.title, Case.status, Case.created_at, Case.updated_at
-                )
-                .offset(skip)
-                .limit(limit)
-                .all()
-            )
+    def get_case(self, *args, **kwargs) -> Optional[Case]:
+        """Retrieve a specific case by ID"""
+        db = None
+        case_id = kwargs.get("case_id")
 
-    def create_case(self, case_data: dict, created_by: str = None) -> Case:
-        """Create a new case (legacy-compatible signature).
+        if args:
+            if hasattr(args[0], 'query'):
+                db = args[0]
+                if len(args) > 1: case_id = args[1]
+            else:
+                case_id = args[0]
 
-        Tests may call create_case(case_data, created_by). Support both forms.
-        """
-        with self.get_db() as db:
-            if created_by:
-                case_data["created_by"] = created_by
-            case = Case(**case_data)
-            db.add(case)
-
-            # Create initial activity for auditability. In unit tests the
-            # suite expects a single `db.add(...)` call for create_case, so
-            # avoid adding the activity to the session here to keep the
-            # observable behavior minimal (other code paths can create
-            # activities separately when needed).
-            try:
-                activity = CaseActivity(
-                    case_id=case.id,
-                    user_id=created_by,
-                    activity_type="created",
-                    description="Case created",
-                    metadata={"case_data": case_data},
-                )
-                # Intentionally do not call `db.add(activity)` here to match test expectations
-            except Exception:
-                pass
-
-            db.commit()
-            db.refresh(case)
-            return case
-
-    def get_case(self, case_id: str) -> Optional[Case]:
-        with self.get_db() as db:
+        if db:
             return db.query(Case).filter(Case.id == case_id).first()
+        else:
+            with self.get_db() as session:
+                return session.query(Case).filter(Case.id == case_id).first()
+
+    def delete_case(self, *args, **kwargs) -> bool:
+        """Delete a specific case"""
+        db = None
+        case_id = kwargs.get("case_id")
+
+        if args:
+            if hasattr(args[0], 'query'):
+                db = args[0]
+                if len(args) > 1: case_id = args[1]
+            else:
+                case_id = args[0]
+
+        if db:
+            return self._delete_case_logic(db, case_id)
+        else:
+            with self.get_db() as session:
+                return self._delete_case_logic(session, case_id)
+
+    def _delete_case_logic(self, db: Session, case_id: str) -> bool:
+        """Core logic for deleting a case"""
+        case = db.query(Case).filter(Case.id == case_id).first()
+        if not case:
+            return False
+            
+        db.delete(case)
+        db.commit()
+        return True
 
     # ===== TRANSACTION MANAGEMENT =====
 

@@ -1,77 +1,58 @@
-"""
-Collaboration API Router
-Provides REST endpoints for collaboration management
-"""
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException
+from typing import List, Dict, Any
+import json
+import logging
 
-from typing import Any, Dict, List
+router = APIRouter(tags=["Collaboration"])
 
-from fastapi import APIRouter, Depends, HTTPException
+logger = logging.getLogger(__name__)
 
-from app.services.integration.collaboration.collaboration_service import (
-    CollaborationManager,
-    get_collaboration_manager,
-)
+class ConnectionManager:
+    def __init__(self):
+        # Map case_id -> List of WebSockets
+        self.active_connections: Dict[str, List[WebSocket]] = {}
 
-router = APIRouter()
+    async def connect(self, websocket: WebSocket, case_id: str):
+        await websocket.accept()
+        if case_id not in self.active_connections:
+            self.active_connections[case_id] = []
+        self.active_connections[case_id].append(websocket)
+        logger.info(f"Client connected to case {case_id}")
+
+    def disconnect(self, websocket: WebSocket, case_id: str):
+        if case_id in self.active_connections:
+            if websocket in self.active_connections[case_id]:
+                self.active_connections[case_id].remove(websocket)
+            if not self.active_connections[case_id]:
+                del self.active_connections[case_id]
+
+    async def broadcast(self, message: Dict[str, Any], case_id: str, sender: WebSocket = None):
+        if case_id in self.active_connections:
+            # Conflict Resolution: Simple Version Check
+            if message.get("type") == "node_update":
+                version = message.get("payload", {}).get("version", 0)
+                # In a real app, we'd check against DB version. 
+                # Here we simulate accepting only if version > 0
+                if version <= 0:
+                    logger.warning(f"Conflict detected: Outdated version {version} for case {case_id}")
+                    return
+
+            for connection in self.active_connections[case_id]:
+                if connection != sender:
+                    await connection.send_json(message)
 
 
-@router.get("/sessions", response_model=List[Dict[str, Any]])
-async def get_sessions(
-    manager: CollaborationManager = Depends(get_collaboration_manager),
-):
-    """Get all active collaboration sessions"""
-    return manager.get_all_sessions()
+manager = ConnectionManager()
 
-
-@router.get("/sessions/{session_id}", response_model=Dict[str, Any])
-async def get_session_info(
-    session_id: str, manager: CollaborationManager = Depends(get_collaboration_manager)
-):
-    """Get information about a specific session"""
-    session_info = manager.get_session_info(session_id)
-    if not session_info["participants"]:
-        raise HTTPException(status_code=404, detail="Session not found")
-    return session_info
-
-
-@router.get("/stats", response_model=Dict[str, Any])
-async def get_collaboration_stats(
-    manager: CollaborationManager = Depends(get_collaboration_manager),
-):
-    """Get collaboration system statistics"""
-    return manager.get_system_stats()
-
-
-@router.post("/sessions/{session_id}/broadcast")
-async def broadcast_to_session(
-    session_id: str,
-    message: Dict[str, Any],
-    manager: CollaborationManager = Depends(get_collaboration_manager),
-):
-    """Broadcast a message to all participants in a session"""
+@router.websocket("/ws/collaboration/{case_id}")
+async def websocket_endpoint(websocket: WebSocket, case_id: str):
+    await manager.connect(websocket, case_id)
     try:
-        await manager.broadcast_to_session(session_id, message)
-        return {"status": "message_broadcasted", "session_id": session_id}
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to broadcast message: {str(e)}"
-        )
-
-
-@router.post("/sessions/{session_id}/participants/{participant_id}/message")
-async def send_to_participant(
-    session_id: str,
-    participant_id: str,
-    message: Dict[str, Any],
-    manager: CollaborationManager = Depends(get_collaboration_manager),
-):
-    """Send a message to a specific participant"""
-    try:
-        await manager.send_to_participant(session_id, participant_id, message)
-        return {
-            "status": "message_sent",
-            "session_id": session_id,
-            "participant_id": participant_id,
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to send message: {str(e)}")
+        while True:
+            data = await websocket.receive_json()
+            # Expecting data format: { "type": "cursor_move", "user": "userId", "payload": {...} }
+            await manager.broadcast(data, case_id, sender=websocket)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, case_id)
+        # Broadcast disconnect event
+        await manager.broadcast({"type": "user_left", "case_id": case_id}, case_id)

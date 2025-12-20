@@ -18,6 +18,7 @@ const SettingsNavigation: React.FC<SettingsNavigationProps> = ({ tabs, activeTab
               ? 'bg-white text-blue-600 shadow-sm'
               : 'text-gray-600 hover:text-gray-900'
           }`}
+          aria-selected={activeTab === tab.id}
         >
           {tab.label}
         </button>
