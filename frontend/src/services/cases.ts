@@ -2,25 +2,26 @@ import type { Note } from '../types/note';
 import { request } from './client';
 import type { Case } from '../types/schema';
 import type { PaginationInfo } from '../types/api';
+import type { ApiResponse, CollectionResponse } from '../types/api-responses';
 
 export const caseService = {
-  getCases: async (params?: Record<string, unknown>): Promise<{ cases: Case[]; pagination: PaginationInfo }> => {
+  getCases: async (params?: Record<string, unknown>): Promise<CollectionResponse<Case> & { pagination: PaginationInfo }> => {
     const query = params ? '?' + new URLSearchParams(params as Record<string, string>).toString() : '';
     return request(`/cases${query}`);
   },
 
-  getCase: async (caseId: string): Promise<{ case: Case }> => {
+  getCase: async (caseId: string): Promise<ApiResponse<Case>> => {
     return request(`/cases/${caseId}`);
   },
 
-  createCase: async (caseData: Partial<Case>): Promise<{ id: string; case: Case }> => {
+  createCase: async (caseData: Partial<Case>): Promise<ApiResponse<{ id: string; case: Case }>> => {
     return request('/cases', {
       method: 'POST',
       body: JSON.stringify(caseData),
     });
   },
 
-  updateCase: async (caseId: string, data: Partial<Case>): Promise<{ case: Case }> => {
+  updateCase: async (caseId: string, data: Partial<Case>): Promise<ApiResponse<Case>> => {
     return request(`/cases/${caseId}`, {
       method: 'PUT',
       body: JSON.stringify(data),

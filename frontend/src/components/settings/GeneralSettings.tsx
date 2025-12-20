@@ -20,19 +20,19 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
 
   // Progressive validation
-  const validateField = (name: string, value: any) => {
+  const validateField = (name: string, value: unknown) => {
     const newErrors = { ...errors };
 
     switch (name) {
       case 'theme':
-        if (!['light', 'dark', 'system'].includes(value)) {
+        if (typeof value !== 'string' || !['light', 'dark', 'system'].includes(value)) {
           newErrors.theme = 'Please select a valid theme';
         } else {
           delete newErrors.theme;
         }
         break;
       case 'language':
-        if (!['en', 'id'].includes(value)) {
+        if (typeof value !== 'string' || !['en', 'id'].includes(value)) {
           newErrors.language = 'Please select a valid language';
         } else {
           delete newErrors.language;
@@ -43,7 +43,7 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
     setErrors(newErrors);
   };
 
-  const handleFieldChange = (name: string, value: any) => {
+  const handleFieldChange = (name: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [name]: value }));
 
     // Progressive validation - validate as user types

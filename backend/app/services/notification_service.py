@@ -37,7 +37,7 @@ class NotificationService:
         await self.mq.publish(f"notifications.{type}", payload)
 
     async def _handle_email(self, data: Dict[str, Any]):
-        """Process email notification from MQ"""
+        """Process email notification from MQ using Plugins"""
         recipient = data.get("recipient")
         template_key = data.get("template")
         context = data.get("context", {})
@@ -45,8 +45,40 @@ class NotificationService:
         template = self._templates.get(template_key, "Notification: {details}")
         message = template.format(**context)
         
-        logger.info(f"[EMAIL] Sending to {recipient}: {message}")
-        # Integration with SendGrid/SES would go here
+        logger.info(f"[EMAIL] Processing for {recipient}")
+
+        # Integration with Plugin System
+        from core.database import SessionLocal
+        from core.plugin_system.registry import plugin_registry_service
+        
+        db = SessionLocal()
+        try:
+            plugins = await plugin_registry_service.get_plugins_by_capability("notification", db)
+            
+            if plugins:
+                for plugin in plugins:
+                    try:
+                        # Assuming plugin interface expects 'execute' with relevant dict
+                        # EmailNotifierPlugin expects: {"to": ..., "subject": ..., "body": ...}
+                        # We map our internal data structure to the plugin contract
+                        plugin_input = {
+                            "to": recipient,
+                            "subject": f"Notification: {template_key}",
+                            "body": message
+                        }
+                        
+                        result = await plugin.execute(plugin_input)
+                        logger.info(f"Notification plugin {plugin.metadata.name} executed: {result}")
+                    except Exception as pe:
+                        logger.error(f"Plugin {plugin.metadata.name} failed to send email: {pe}")
+            else:
+                logger.warning("No notification plugins active. Fallback to basic logging.")
+                logger.info(f"[EMAIL FALLBACK] Sending to {recipient}: {message}")
+                
+        except Exception as e:
+            logger.error(f"Failed to process email plugins: {e}")
+        finally:
+            db.close()
 
     async def _handle_sms(self, data: Dict[str, Any]):
         """Process SMS notification from MQ"""

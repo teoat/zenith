@@ -162,6 +162,32 @@ class PluginRegistryService:
 
         raise ValueError(f"Plugin {plugin_id} not found and no valid DB session provided")
 
+    async def get_plugins_by_capability(self, capability: str, db: Session) -> List[Any]:
+        """Find and load all active plugins with a specific capability."""
+        if not db:
+            return []
+            
+        try:
+            # Filter in Python for maximum compatibility across SQL dialects (SQLite vs Postgres JSON)
+            # Assuming strictly active plugins
+            all_plugins = db.query(PluginRegistry).filter(PluginRegistry.status == 'active').all()
+            
+            matching_plugins = []
+            for p in all_plugins:
+                caps = p.capabilities or []
+                if capability in caps:
+                    try:
+                        # Use get_plugin to ensure caching and locking logic compliance
+                        instance = await self.get_plugin(p.plugin_id, db)
+                        matching_plugins.append(instance)
+                    except Exception as e:
+                        logger.error(f"Failed to load capable plugin {p.plugin_id}: {e}")
+                        
+            return matching_plugins
+        except Exception as e:
+            logger.error(f"Error finding plugins by capability '{capability}': {e}")
+            return []
+
     async def preload_plugins(self, plugin_ids: List[str], db: Session = None) -> Dict[str, Any]:
         """Batch preload multiple plugins asynchronously for better performance."""
         results = {}

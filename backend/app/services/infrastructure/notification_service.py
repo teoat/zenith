@@ -220,15 +220,42 @@ class AdvancedNotificationSystem:
                 self.config = config
 
             async def send(self, notification, recipient):
+                from core.database import SessionLocal
+                from core.plugin_system.registry import plugin_registry_service
+                
+                db = SessionLocal()
+                plugins_executed = False
+                
                 try:
-                    # Simulate email sending (in production, use actual SMTP)
-                    logger.info(
-                        f"Email sent to {recipient}: {notification.get('title')}"
-                    )
+                    # 1. Try Plugin System first
+                    plugins = await plugin_registry_service.get_plugins_by_capability("notification", db)
+                    
+                    if plugins:
+                        for plugin in plugins:
+                            try:
+                                # Execute plugin
+                                await plugin.execute({
+                                    "to": recipient, 
+                                    "subject": notification.get('title'), 
+                                    "body": notification.get('message')
+                                })
+                                plugins_executed = True
+                                logger.info(f"Email sent via plugin {plugin.metadata.name} to {recipient}")
+                            except Exception as pe:
+                                logger.error(f"Plugin {plugin.metadata.name} failed: {pe}")
+
+                    # 2. Fallback if no plugins or all failed (OR just log as fallback record)
+                    if not plugins_executed:
+                        # Simulate email sending (in production, use actual SMTP)
+                        logger.info(
+                            f"Email sent (Simulated Fallback) to {recipient}: {notification.get('title')}"
+                        )
                     return True
                 except Exception as e:
                     logger.error(f"Failed to send email: {str(e)}")
                     return False
+                finally:
+                    db.close()
 
         return EmailHandler(email_config)
 

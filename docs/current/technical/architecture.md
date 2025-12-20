@@ -628,6 +628,48 @@ def process_evidence(self, evidence_id: int, case_id: int):
         raise self.retry(countdown=60, exc=exc)
 ```
 
+### Plugin Architecture & Extension System
+
+The system implements a robust **Micro-Kernel Plugin Architecture** to allow rapid extension of fraud detection rules, intelligence capabilities, and integrations without modifying the core codebase.
+
+#### High-Level Design
+```mermaid
+graph TD
+    Core[Core System] --> Registry[Plugin Registry]
+    Registry -->|Loads| PluginA[Fraud Plugin A]
+    Registry -->|Loads| PluginB[Intelligence Plugin B]
+    Registry -->|Loads| PluginC[Integration Plugin C]
+    
+    PluginA -->|Injects| Context[Plugin Context]
+    PluginB -->|Injects| Context
+    Context -->|Exposes| AIService[AI Service]
+    Context -->|Exposes| DBService[DB Service]
+    
+    Core -->|Execution| Shadow[Shadow Executor]
+    Shadow -->|Primary| PluginA
+    Shadow -->|Shadow| PluginA_V2[Fraud Plugin A (v2)]
+    Shadow -->|Compare| Diff[Result Diff]
+```
+
+#### Core Components
+
+*   **Plugin Registry (`registry.py`)**: Handles dynamic loading, caching (TTL), concurrency locking, and capability-based discovery.
+*   **Plugin Interface (`interface.py`)**: Strictly typed contract enforcing `initialize`, `execute`, and `cleanup` lifecycles.
+*   **Dependency Injection**: The core injects critical services into the `PluginContext` at runtime:
+    *   `ai_service`: For semantic search and LLM capabilities.
+    *   `db_service`: For direct database access.
+    *   `monitoring_service`: For performance tracking.
+*   **Shadow Executor (`shadow_executor.py`)**: A unique feature allowing new plugin versions to run in "Shadow Mode" alongside production rules. It compares outputs and logs discrepancies without affecting the final result, ensuring "Production Perfect" safety for updates.
+
+#### Capability-Based Discovery
+Services can dynamically discover plugins based on capabilities rather than hardcoded IDs.
+*   **Example:** The `NotificationService` queries `get_plugins_by_capability("notification")` to find all active email/SMS providers (e.g., `email_notifier` plugin).
+
+#### Plugin Types
+1.  **Detection Plugins**: Fraud rules (e.g., `round_trip`, `structuring`, `crypto_fraud_detector`).
+2.  **Intelligence Plugins**: Advanced analysis (e.g., `typology_analysis`, `entity_linkage`).
+3.  **Integration Plugins**: External adapters (e.g., `email_notifier`).
+
 ## 💾 Data Architecture
 
 ### Database Schema Design

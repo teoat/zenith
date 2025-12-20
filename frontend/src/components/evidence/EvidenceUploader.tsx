@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { useEvidenceUpload } from '../../hooks/useEvidence';
+import type { EvidenceItem } from '../../types/api';
 
 interface EvidenceUploaderProps {
   caseId: string;
-  onUploadComplete?: (evidence: any) => void;
+  onUploadComplete?: (evidence: EvidenceItem) => void;
   onUploadError?: (error: Error) => void;
   acceptedTypes?: string[];
   maxFileSize?: number; // in bytes
