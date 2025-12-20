@@ -53,8 +53,10 @@ class CollaborationManager:
     async def start_server(self):
         """Start the WebSocket server"""
         print(f"DEBUG: Starting WebSocket server on {self.host}:{self.port}")
+        import traceback
         try:
             self.running = True
+            print(f"DEBUG: Set running to True")
             self.server = await websockets.serve(
                 self.handle_connection,
                 self.host,
@@ -94,7 +96,9 @@ class CollaborationManager:
 
     async def handle_connection(self, websocket: WebSocketConnection, path: str):
         """Handle incoming WebSocket connections"""
+        print(f"DEBUG: New WebSocket connection, path: {path}")
         try:
+            print("DEBUG: Starting connection handler")
             # Extract session ID from path (e.g., /ws/session/123)
             path_parts = path.strip("/").split("/")
             if (
@@ -129,45 +133,47 @@ class CollaborationManager:
 
             logger.info(f"Participant {participant_id} joined session {session_id}")
 
-            # Broadcast participant joined
-            await self.broadcast_to_session(
-                session_id,
-                {
-                    "type": "participant_joined",
-                    "participant": self.session_participants[session_id][
-                        participant_id
-                    ],
-                    "participants": list(
-                        self.session_participants[session_id].values()
-                    ),
-                },
-                exclude=websocket,
-            )
+            # Broadcast participant joined (temporarily disabled for debugging)
+            # await self.broadcast_to_session(
+            #     session_id,
+            #     {
+            #         "type": "participant_joined",
+            #         "participant": self.session_participants[session_id][
+            #             participant_id
+            #         ],
+            #         "participants": list(
+            #             self.session_participants[session_id].values()
+            #         ),
+            #     },
+            #     exclude=websocket,
+            # )
 
-            # Send current session state
+            # Send current session state (temporarily simplified for debugging)
             await websocket.send(
                 json.dumps(
                     {
                         "type": "session_state",
-                        "participants": list(
-                            self.session_participants[session_id].values()
-                        ),
+                        "participants": [],
                     }
                 )
             )
 
             # Handle messages
             async for message in websocket:
+                print(f"DEBUG: Received message: {message}")
                 try:
                     data = json.loads(message)
+                    print(f"DEBUG: Parsed message: {data}")
                     await self.handle_message(
                         session_id, participant_id, data, websocket
                     )
-                except json.JSONDecodeError:
+                except json.JSONDecodeError as je:
+                    print(f"DEBUG: JSON decode error: {je}")
                     await websocket.send(
                         json.dumps({"type": "error", "message": "Invalid JSON message"})
                     )
                 except Exception as e:
+                    print(f"DEBUG: Error handling message: {e}")
                     logger.error(f"Error handling message: {e}")
                     await websocket.send(
                         json.dumps(
@@ -255,21 +261,21 @@ class CollaborationManager:
     ):
         """Handle session join"""
         print(f"DEBUG: Handling join_session for session {session_id}, participant {participant_id}")
-        # Update participant info
-        if (
-            session_id in self.session_participants
-            and participant_id in self.session_participants[session_id]
-        ):
-            print(f"DEBUG: Participant exists, updating info")
-            participant = self.session_participants[session_id][participant_id]
-            participant.update(
-                {
-                    "name": data.get("name", f"User {participant_id}"),
-                    "role": data.get("role", "investigator"),
-                    "color": data.get("color", "#3b82f6"),
-                    "last_activity": datetime.now().isoformat(),
-                }
+        try:
+            # Simple response for testing
+            await websocket.send(
+                json.dumps(
+                    {
+                        "type": "join_success",
+                        "session_id": session_id,
+                        "participant_id": participant_id,
+                    }
+                )
             )
+            print("DEBUG: Join success response sent")
+        except Exception as e:
+            print(f"DEBUG: Error in handle_join_session: {e}")
+            raise
 
         await websocket.send(
             json.dumps(

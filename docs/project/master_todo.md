@@ -53,6 +53,7 @@
 **Goal:** Pay down debt, enforce clean architecture, and elevate code quality.
 
 ### 🟡 12.1 Core Refactoring & Architecture
+
 - [x] **Split-Brain Architecture:** Deprecated `multimodal_analyzer.py` in favor of `evidence_service.py`.
 - [x] **Dead Code:** Deprecated legacy `evidence_processor.py`.
 - [x] **PDF Engine Unification:** Standardized on `fitz`/`PyMuPDF` in `evidence_service.py`.
@@ -66,6 +67,7 @@
 - [x] **Enhanced Evidence Locker Refactoring**: Extracted 4 specialized components, modularized types, and extracted mock data for improved maintainability.
 
 ### 🟡 12.2 Code Quality & AI Review
+
 - [x] **100% Type Safety**: Enterprise-grade type architecture implemented across core services.
 - [x] **Exception Handling Overhaul**: Implemented global error handlers and retry logic.
 - [x] **Magic Number Extraction**: Moved hardcoded constants to `config.py` and environment variables.

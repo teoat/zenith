@@ -185,6 +185,8 @@ async def lifespan(app: FastAPI):
     print("DEBUG: Lifespan startup beginning")
     logger.info("Starting 378x492 Fraud Detection API with 99.99% uptime target", extra={"event": "startup"})
 
+    print("DEBUG: About to start phases")
+
     # Graceful startup with health verification
     try:
         # Phase 1: Database initialization
@@ -310,8 +312,29 @@ async def lifespan(app: FastAPI):
             extra={"event": "monitoring_start"},
         )
 
-        # WebSocket server startup moved to manual endpoint for debugging
-        logger.info("WebSocket server startup deferred to /admin/start-websocket endpoint")
+        # Start collaboration WebSocket server if enabled
+        print("DEBUG: About to check WebSocket startup")
+        ws_enabled = os.getenv("ENABLE_COLLABORATION_WS", "false").lower() == "true"
+        print(f"DEBUG: ENABLE_COLLABORATION_WS={os.getenv('ENABLE_COLLABORATION_WS')}, ws_enabled={ws_enabled}")
+        if ws_enabled:
+            print("DEBUG: Starting WebSocket server...")
+            try:
+                # Start WebSocket server in background task
+                asyncio.create_task(collaboration_manager.start_server())
+                print("DEBUG: WebSocket server start task created")
+                logger.info(
+                    "Collaboration WebSocket server started successfully",
+                    extra={"event": "websocket_started"},
+                )
+            except Exception as e:
+                print(f"DEBUG: WebSocket startup failed: {e}")
+                logger.error(f"Failed to start WebSocket server: {e}", exc_info=True)
+        else:
+            print("DEBUG: WebSocket server disabled")
+            logger.info(
+                "WebSocket server disabled (set ENABLE_COLLABORATION_WS=true to enable)",
+                extra={"event": "websocket_disabled"},
+            )
         logger.info(
             "378x492 API startup completed successfully",
             extra={"event": "startup_complete"},
