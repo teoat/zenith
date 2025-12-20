@@ -183,22 +183,50 @@ describe('EvidenceService', () => {
     });
   });
 
+  describe('getEvidence', () => {
+    it('should list all evidence for a case', async () => {
+      const caseId = 'case-123';
+      const mockEvidence = [
+        { id: 'evidence-1', filename: 'doc1.pdf', case_id: caseId },
+        { id: 'evidence-2', filename: 'doc2.pdf', case_id: caseId },
+        { id: 'evidence-3', filename: 'doc3.pdf', case_id: caseId }
+      ];
+
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ items: mockEvidence, total: 3 })
+      });
+
       const result = await evidenceService.getEvidence(caseId);
 
       expect(result.items).toHaveLength(3);
       expect(result.items).toEqual(mockEvidence);
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining(`/evidence?case_id=${caseId}`),
+        expect.any(Object)
+      );
     });
 
     it('should filter evidence by type', async () => {
       const caseId = 'case-123';
       const type = 'image';
+      const mockEvidence = [
+        { id: 'evidence-1', filename: 'doc1.pdf', type: 'image', case_id: caseId }
+      ];
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => []
+        json: async () => ({ items: mockEvidence, total: 1 })
       });
 
-      await evidenceService.listEvidenceForCase(caseId, { type });
+      await evidenceService.getEvidence(caseId, 1, 20, `type:${type}`);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining(`q=type:${type}`),
+        expect.any(Object)
+      );
+    });
+  });
 
       expect(global.fetch).toHaveBeenCalledWith(
         expect.stringContaining(`type=${type}`),
@@ -379,4 +407,3 @@ describe('EvidenceService', () => {
       expect(result.valid).toBe(false);
     });
   });
-});

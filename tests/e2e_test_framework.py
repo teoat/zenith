@@ -250,14 +250,55 @@ class E2ETestFramework:
             "details": []
         }
 
-        # Skip WebSocket tests for now - server implementation needs debugging
+        # Test WebSocket connection establishment
         results["total"] += 1
-        results["skipped"] = results.get("skipped", 0) + 1
-        results["details"].append({
-            "test": "websocket_join_session",
-            "status": "skipped",
-            "reason": "WebSocket server implementation requires additional debugging"
-        })
+        try:
+            import asyncio
+            import websockets
+
+            async def test_connection():
+                try:
+                    uri = f"{self.ws_url}/ws/session/{test_session_id}"
+                    # Just test connection establishment, not message processing
+                    websocket = await asyncio.wait_for(websockets.connect(uri), timeout=5.0)
+                    await websocket.close()
+                    return True
+                except Exception:
+                    return False
+
+            # Handle asyncio event loop properly for WebSocket testing
+            try:
+                # Check if we're already in an event loop
+                loop = asyncio.get_running_loop()
+                # We're in an event loop, create task and run it
+                connection_success = loop.run_until_complete(test_connection())
+            except RuntimeError:
+                # No event loop running, safe to use asyncio.run
+                connection_success = asyncio.run(test_connection())
+
+            if connection_success:
+                results["passed"] += 1
+                results["details"].append({
+                    "test": "websocket_connection",
+                    "status": "passed",
+                    "info": "WebSocket connection established and closed successfully"
+                })
+            else:
+                results["failed"] += 1
+                results["details"].append({
+                    "test": "websocket_connection",
+                    "status": "failed",
+                    "error": "WebSocket connection failed to establish"
+                })
+
+        except Exception as e:
+            results["failed"] += 1
+            results["details"].append({
+                "test": "websocket_connection",
+                "status": "failed",
+                "error": str(e)
+            })
+
         return results
 
     async def run_frontend_tests(self) -> Dict[str, Any]:
@@ -521,7 +562,7 @@ class E2ETestFramework:
             ("ai_analyze_endpoint", f"{self.base_url}/api/v1/ai/analyze", "POST",
              {"type": "fraud_pattern", "data": {"text": "test fraud pattern"}}),
             ("ai_health_endpoint", f"{self.base_url}/api/v1/ai/health", "GET", None),
-            ("performance_ai_metrics", f"{self.base_url}/performance/metrics", "GET", None),
+            ("performance_ai_metrics", f"{self.base_url}/api/v1/ai/performance", "GET", None),
         ]
 
         for test_name, url, method, data in ai_tests:

@@ -1,11 +1,15 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Dashboard from '../Dashboard';
+import { setupComponentTest } from '../../__tests__/component-mock-utils';
+
+// Set up all component mocks
+setupComponentTest();
 
 // Create a query client for testing
 const queryClient = new QueryClient({
@@ -17,15 +21,86 @@ const queryClient = new QueryClient({
   },
 });
 
-// Mock dependencies
-jest.mock('react-i18next', () => ({
-  useTranslation: jest.fn(() => ({
-    t: jest.fn((key) => key)
+jest.mock('../../hooks/useAuth', () => ({
+  useAuth: jest.fn()
+}));
+
+jest.mock('../../store/projectStore', () => ({
+  useProjectStore: jest.fn(() => ({
+    currentProject: { id: 'test-project', name: 'Test Project' },
+    projects: [{ id: 'test-project', name: 'Test Project' }],
+    setCurrentProject: jest.fn()
   }))
 }));
 
-jest.mock('../../hooks/useAuth', () => ({
-  useAuth: jest.fn()
+jest.mock('react-grid-layout', () => ({
+  ResponsiveGridLayout: ({ children, ...props }: any) => (
+    <div data-testid="grid-layout" {...props}>
+      {children}
+    </div>
+  )
+}));
+
+// Mock lazy-loaded components with simple components
+jest.mock('../../components/dashboard/ThreatMap', () => ({
+  __esModule: true,
+  default: () => React.createElement('div', { 'data-testid': 'threat-map' }, 'Threat Map')
+}));
+
+jest.mock('../../components/dashboard/AIWatchtower', () => ({
+  __esModule: true,
+  default: () => React.createElement('div', { 'data-testid': 'ai-watchtower' }, 'AI Watchtower')
+}));
+
+jest.mock('../../components/dashboard/LiveQueue', () => ({
+  __esModule: true,
+  default: () => React.createElement('div', { 'data-testid': 'live-queue' }, 'Live Queue')
+}));
+
+jest.mock('../../components/dashboard/VolumeChart', () => ({
+  __esModule: true,
+  default: () => React.createElement('div', { 'data-testid': 'volume-chart' }, 'Volume Chart')
+}));
+
+jest.mock('../../components/dashboard/RiskDistributionChart', () => ({
+  __esModule: true,
+  default: () => React.createElement('div', { 'data-testid': 'risk-chart' }, 'Risk Chart')
+}));
+
+jest.mock('../../components/dashboard/ProofVisualizationCard', () => ({
+  __esModule: true,
+  default: () => React.createElement('div', { 'data-testid': 'proof-viz' }, 'Proof Visualization')
+}));
+
+jest.mock('../../components/dashboard/CostOptimizationWidget', () => ({
+  __esModule: true,
+  default: () => React.createElement('div', { 'data-testid': 'cost-widget' }, 'Cost Widget')
+}));
+
+// Mock Suspense to render children immediately
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  Suspense: ({ children }: { children: React.ReactNode }) => children,
+  lazy: (importFn: () => Promise<any>) => {
+    const Component = () => React.createElement('div', { 'data-testid': 'lazy-component' }, 'Lazy Component');
+    return Component;
+  }
+}));
+
+// Mock other components
+jest.mock('../../components/common/RookieChecklist', () => ({
+  __esModule: true,
+  default: () => React.createElement('div', { 'data-testid': 'rookie-checklist' }, 'Rookie Checklist')
+}));
+
+jest.mock('../../components/common/WelcomeMessage', () => ({
+  __esModule: true,
+  default: () => React.createElement('div', { 'data-testid': 'welcome-message' }, 'Welcome Message')
+}));
+
+jest.mock('../../components/PageErrorBoundary', () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children)
 }));
 
 jest.mock('../../hooks/useNetworkStatus', () => ({

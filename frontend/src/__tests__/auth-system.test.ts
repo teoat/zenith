@@ -71,17 +71,17 @@ const mockFetchError = (status: number, message = 'Error') => {
 describe('Authentication System', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Restore the spy after clearing mocks
-    fetchSpy.mockRestore();
-    fetchSpy.mockImplementation(() => Promise.resolve({
+    // Reset fetch spy to default successful response
+    fetchSpy.mockResolvedValue({
       ok: true,
       status: 200,
       json: async () => ({ success: true }),
-    } as unknown as Response));
+    } as unknown as Response);
     mockLocalStorage.getItem.mockImplementation((key: string) => {
       if (key === 'token') return null; // Default to no token
       return null;
     });
+  });
   });
 
   describe('JWT Token Management', () => {

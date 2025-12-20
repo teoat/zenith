@@ -82,9 +82,28 @@ async def health_check() -> Dict[str, Any]:
     Comprehensive health check for 99.99% uptime monitoring.
     """
     import time
+    import os
+    import asyncio
     from app.services.infrastructure.storage.database_service import db_service
     from app.services.infrastructure.circuit_breaker import get_all_circuit_breakers
     from app.services.infrastructure.performance_monitor import performance_monitor
+
+    # Try to start WebSocket server on first health check if enabled
+    try:
+        ws_enabled = os.getenv("ENABLE_COLLABORATION_WS", "false").lower() == "true"
+        if ws_enabled:
+            # Import here to avoid circular imports
+            from app.services.integration.collaboration.collaboration_service import collaboration_manager
+            # Start synchronously if not already started
+            if not hasattr(health_check, '_ws_started'):
+                print("DEBUG: Starting WebSocket server from health check")
+                await collaboration_manager.start_server()
+                setattr(health_check, '_ws_started', True)
+                print("DEBUG: WebSocket server started successfully from health check")
+    except Exception as e:
+        print(f"DEBUG: WebSocket startup from health check failed: {e}")
+        import traceback
+        print(f"DEBUG: WebSocket traceback: {traceback.format_exc()}")
 
     health_status = {
         "status": "healthy",
