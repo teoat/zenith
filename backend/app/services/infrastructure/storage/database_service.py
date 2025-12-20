@@ -420,38 +420,83 @@ class DatabaseService:
         return case
 
     def update_case(
-        self, case_id: str, update_data: dict, updated_by: str = None
+        self, *args, **kwargs
     ) -> Optional[Case]:
-        """Update case with audit trail"""
-        with self.get_db() as db:
-            case = db.query(Case).filter(Case.id == case_id).first()
-            if not case:
-                return None
+        """Update case with audit trail.
+        
+        Supports:
+        - update_case(db, case_id, update_data, updated_by=None)
+        - update_case(case_id, update_data, updated_by=None)
+        - update_case(db, case_id, **update_data)
+        """
+        db = None
+        case_id = None
+        update_data = {}
+        updated_by = kwargs.get("updated_by")
 
-            old_values = {}
-            for key, value in update_data.items():
-                if hasattr(case, key):
-                    old_values[key] = getattr(case, key)
-                    setattr(case, key, value)
+        # Parse args
+        remaining_args = list(args)
+        if remaining_args and hasattr(remaining_args[0], 'query'):
+            db = remaining_args.pop(0)
+        
+        if remaining_args:
+            case_id = remaining_args.pop(0)
+        elif "case_id" in kwargs:
+            case_id = kwargs["case_id"]
+            
+        if remaining_args:
+            update_data = remaining_args.pop(0)
+        else:
+            # Use kwargs for update_data if not passed as dict
+            update_data = {k: v for k, v in kwargs.items() if k not in ["case_id", "updated_by"]}
 
-            case.updated_at = datetime.now(timezone.utc)
+        if db:
+            return self._update_case_logic(db, case_id, update_data, updated_by)
+        else:
+            with self.get_db() as session:
+                return self._update_case_logic(session, case_id, update_data, updated_by)
 
-            # Create activity log
-            if old_values:
-                activity = CaseActivity(
-                    case_id=case_id,
-                    user_id=updated_by,
-                    activity_type="updated",
-                    description="Case updated",
-                    old_value=str(old_values),
-                    new_value=str(update_data),
-                    metadata={"changes": update_data},
-                )
-                db.add(activity)
+    def _update_case_logic(self, db: Session, case_id: str, update_data: dict, updated_by: str = None) -> Optional[Case]:
+        """Core logic for updating a case"""
+        case = db.query(Case).filter(Case.id == case_id).first()
+        if not case:
+            return None
 
-            db.commit()
-            db.refresh(case)
-            return case
+        old_values = {}
+        for key, value in update_data.items():
+            if hasattr(case, key):
+                old_values[key] = getattr(case, key)
+                setattr(case, key, value)
+
+        case.updated_at = datetime.now(timezone.utc)
+
+        # Create activity log
+        if old_values:
+            # Convert non-serializable objects (like datetime) to strings for JSON
+            def make_serializable(obj):
+                if isinstance(obj, dict):
+                    return {k: make_serializable(v) for k, v in obj.items()}
+                elif isinstance(obj, (list, tuple)):
+                    return [make_serializable(item) for item in obj]
+                elif isinstance(obj, datetime):
+                    return obj.isoformat()
+                return obj
+
+            activity = CaseActivity(
+                case_id=case_id,
+                user_id=updated_by,
+                activity_type="updated",
+                description="Case updated",
+                activity_metadata=make_serializable({
+                    "changes": update_data,
+                    "old_values": old_values
+                }),
+            )
+            db.add(activity)
+
+        db.commit()
+        db.refresh(case)
+        return case
 
     def delete_case(self, case_id: str) -> bool:
         """Delete a case"""
@@ -545,9 +590,51 @@ class DatabaseService:
                 ),
             }
 
-    def get_case(self, case_id: str) -> Optional[Case]:
-        with self.get_db() as db:
+    def get_case(self, *args, **kwargs) -> Optional[Case]:
+        """Retrieve a specific case by ID"""
+        db = None
+        case_id = kwargs.get("case_id")
+
+        if args:
+            if hasattr(args[0], 'query'):
+                db = args[0]
+                if len(args) > 1: case_id = args[1]
+            else:
+                case_id = args[0]
+
+        if db:
             return db.query(Case).filter(Case.id == case_id).first()
+        else:
+            with self.get_db() as session:
+                return session.query(Case).filter(Case.id == case_id).first()
+
+    def delete_case(self, *args, **kwargs) -> bool:
+        """Delete a specific case"""
+        db = None
+        case_id = kwargs.get("case_id")
+
+        if args:
+            if hasattr(args[0], 'query'):
+                db = args[0]
+                if len(args) > 1: case_id = args[1]
+            else:
+                case_id = args[0]
+
+        if db:
+            return self._delete_case_logic(db, case_id)
+        else:
+            with self.get_db() as session:
+                return self._delete_case_logic(session, case_id)
+
+    def _delete_case_logic(self, db: Session, case_id: str) -> bool:
+        """Core logic for deleting a case"""
+        case = db.query(Case).filter(Case.id == case_id).first()
+        if not case:
+            return False
+            
+        db.delete(case)
+        db.commit()
+        return True
 
     # ===== TRANSACTION MANAGEMENT =====
 

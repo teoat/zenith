@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '../providers/ToastProvider';
-import type { AlertItem } from '../lib/api';
-import { api } from '../lib/api';
+import { api, type AlertItem } from '../lib/api';
 import AdjudicationLayout from '../components/adjudication/AdjudicationLayout';
 import AlertList from '../components/adjudication/AlertList';
 import AlertDetail from '../components/adjudication/AlertDetail';

@@ -143,7 +143,7 @@ class TestCaseManagement:
         # First create a case
         create_response = client.post("/api/v1/cases",
                                      headers=auth_headers,
-                                     json={"title": "Test Case", "priority": "MEDIUM"})
+                                     json={"title": "Test Case", "priority": "Medium"})
         case_id = create_response.json()["case_id"]
         
         # Then retrieve it
@@ -158,7 +158,7 @@ class TestCaseManagement:
         # Create case
         create_response = client.post("/api/v1/cases",
                                      headers=auth_headers,
-                                     json={"title": "Test Case", "priority": "LOW"})
+                                     json={"title": "Test Case", "priority": "Low"})
         case_id = create_response.json()["case_id"]
         
         # Update status
@@ -175,7 +175,7 @@ class TestCaseManagement:
         # Create case
         create_response = client.post("/api/v1/cases",
                                      headers=auth_headers,
-                                     json={"title": "Test Case", "priority": "MEDIUM"})
+                                     json={"title": "Test Case", "priority": "Medium"})
         case_id = create_response.json()["case_id"]
         
         # Add note
@@ -196,7 +196,7 @@ class TestCaseManagement:
         # Create and close case
         create_response = client.post("/api/v1/cases",
                                      headers=auth_headers,
-                                     json={"title": "Test Case", "priority": "LOW"})
+                                     json={"title": "Test Case", "priority": "Low"})
         case_id = create_response.json()["case_id"]
         
         response = client.post(f"/api/v1/cases/{case_id}/close",
@@ -357,7 +357,7 @@ class TestSearchAndFilter:
         """Test filtering cases by priority"""
         response = client.get("/api/v1/cases",
                             headers=auth_headers,
-                            params={"priority": "HIGH"})
+                            params={"priority": "High"})
         
         assert response.status_code == 200
     
@@ -385,7 +385,7 @@ class TestPerformance:
         for i in range(50):
             response = client.post("/api/v1/cases",
                                   headers=auth_headers,
-                                  json={"title": f"Bulk Case {i}", "priority": "LOW"})
+                                  json={"title": f"Bulk Case {i}", "priority": "Low"})
             if response.status_code == 201:
                 cases_created += 1
         

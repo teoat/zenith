@@ -2,8 +2,7 @@
 import React from 'react';
 import { VirtualList } from './VirtualList';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronsUpDown, Loader2 } from 'lucide-react';
 import { Pagination } from './Pagination';
 
 export interface Column<T> {

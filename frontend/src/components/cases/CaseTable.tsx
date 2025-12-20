@@ -1,8 +1,7 @@
 import React from 'react';
 import { FolderOpen } from 'lucide-react';
 import type { Case } from '../../types/schema';
-import type { Column } from '../ui/DataGrid';
-import { DataGrid } from '../ui/DataGrid';
+import { DataGrid, type Column } from '../ui/DataGrid';
 
 interface CaseTableProps {
   cases: Case[];

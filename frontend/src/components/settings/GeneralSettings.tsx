@@ -1,9 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUpdateSettings } from '../../hooks/useSettings';
+import { useUpdateSettings, type UserSettings } from '../../hooks/useSettings';
 import { AccessibleButton } from '../ui/AccessibleButton';
 import { LanguageSwitcher } from '../i18n/LanguageSwitcher';
-import type { UserSettings } from '../../hooks/useSettings';
 
 interface GeneralSettingsProps {
   settings: UserSettings;

@@ -42,6 +42,7 @@ class CaseUpdate(BaseModel):
 
 class CaseResponse(BaseModel):
     id: str
+    case_id: str
     title: str
     description: Optional[str] = None
     status: str
@@ -233,6 +234,27 @@ async def get_cases(
         logger.error(f"Error listing cases: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/search")
+async def search_cases(
+    q: str,
+    status: Optional[str] = None,
+    priority: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(auth_service.get_current_user),
+    project_id: str = Depends(get_current_project_id),
+):
+    """Specific search endpoint for cases"""
+    return await get_cases(
+        search=q, 
+        status=status, 
+        priority=priority, 
+        db=db, 
+        current_user=current_user, 
+        project_id=project_id,
+        page=1, 
+        per_page=20
+    )
+
 @router.get("/{case_id}", response_model=CaseResponse)
 async def get_case_detail(
     case_id: str,
@@ -248,6 +270,7 @@ async def get_case_detail(
         
         return {
             "id": case.id,
+            "case_id": case.id,
             "title": case.title,
             "description": case.description,
             "status": case.status,
@@ -343,81 +366,13 @@ async def close_case(
         "resolution": close_data.get("resolution")
     }
 
-@router.get("/", response_model=CaseListResponse)
-async def get_cases_root(
-    page: int = 1,
-    per_page: int = 20,
-    search: Optional[str] = None,
-    status: Optional[str] = None,
-    priority: Optional[str] = None,
-    current_user: dict = Depends(auth_service.get_current_user),
-    db: Session = Depends(get_db),
-    project_id: str = Depends(get_current_project_id),
-):
-    return await get_cases(page, per_page, search, status, None, priority, None, current_user, db, project_id)
 
 
-@router.get("/search")
-async def search_cases(
-    q: str,
-    status: Optional[str] = None,
-    priority: Optional[str] = None,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(auth_service.get_current_user),
-    project_id: str = Depends(get_current_project_id),
-):
-    """Specific search endpoint for cases"""
-    return await get_cases(
-        search=q, 
-        status=status, 
-        priority=priority, 
-        db=db, 
-        current_user=current_user, 
-        project_id=project_id,
-        page=1, 
-        per_page=20
-    )
 
 
-@router.get("/{case_id}", response_model=CaseResponse)
-async def get_case(
-    case_id: str,
-    include_notes: bool = Query(False),
-    include_evidence: bool = Query(False),
-    include_transactions: bool = Query(False),
-    current_user: dict = Depends(auth_service.get_current_user),
-    db: Session = Depends(get_db),
-):
-    """Get a specific case"""
-    try:
-        case = db_service.get_case(db, case_id)
-        if not case:
-            raise HTTPException(status_code=404, detail="Case not found")
 
-        return {
-            "case_id": case.id,
-            "case": {
-                "id": case.id,
-                "title": case.title,
-                "description": case.description,
-                "status": case.status,
-                "priority": case.priority,
-                "type": case.case_type,
-                "assigneeId": case.assignee_id,
-                "riskScore": case.risk_score or 0,
-                "riskLevel": getattr(case, "risk_level", "low"),
-                "fraudAmount": getattr(case, "fraud_amount", 0.0),
-                "customerName": getattr(case, "customer_name", "Unknown"),
-                "createdAt": case.created_at.isoformat() if case.created_at else None,
-                "updatedAt": case.updated_at.isoformat() if case.updated_at else None,
-                "dueDate": getattr(case, "due_date", None).isoformat() if getattr(case, "due_date", None) else None,
-                "tags": case.tags if hasattr(case, "tags") else [],
-            }
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 
 @router.put("/{case_id}", response_model=CaseResponse)

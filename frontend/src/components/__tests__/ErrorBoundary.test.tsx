@@ -63,9 +63,14 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
+    // Check that secureLogger calls console.error (multiple calls may occur)
+    expect(consoleSpy).toHaveBeenCalled();
     expect(consoleSpy).toHaveBeenCalledWith(
-      'ErrorBoundary caught an error:',
-      expect.any(Error)
+      '[ERROR] Uncaught error:',
+      expect.objectContaining({
+        error_message: 'Test error',
+        error_name: 'Error'
+      })
     );
 
     consoleSpy.mockRestore();

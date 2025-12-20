@@ -81,7 +81,24 @@ async def metrics():
     Prometheus metrics endpoint
     Returns metrics in Prometheus text format
     """
-    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+    # Use a simple cache to avoid regenerating metrics too frequently
+    import time
+    cache_key = "_metrics_cache"
+    cache_timeout = 10  # Cache for 10 seconds
+
+    # Check if we have a recent cached result
+    if hasattr(metrics, cache_key):
+        cached_time, cached_result = getattr(metrics, cache_key)
+        if time.time() - cached_time < cache_timeout:
+            return cached_result
+
+    # Generate fresh metrics
+    result = Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+    # Cache the result
+    setattr(metrics, cache_key, (time.time(), result))
+
+    return result
 
 
 @router.get("/health/detailed")

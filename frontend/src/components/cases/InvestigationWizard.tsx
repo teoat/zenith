@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X, ChevronRight, ChevronLeft, Check, AlertTriangle, User, FileText, Sparkles } from 'lucide-react';
 import type { CalendarFormat, CurrencyFormat, DecimalFormat } from '../../types/locale';
 import { ApprovalQueue } from '../ApprovalQueue';
 import { DraftPreview } from '../ui/DraftPreview';
-import type { DraftState } from '../../services/draftPreviewService';
-import { draftPreviewService } from '../../services/draftPreviewService';
-import { useEffect } from 'react';
+import { draftPreviewService, type DraftState } from '../../services/draftPreviewService';
 
 interface InvestigationWizardProps {
   isOpen: boolean;

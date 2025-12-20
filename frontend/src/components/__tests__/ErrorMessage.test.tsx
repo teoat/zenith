@@ -19,7 +19,7 @@ describe('ErrorMessage', () => {
   it('renders error code when provided', () => {
     render(<ErrorMessage error={{ message: 'Test error', code: 'ERR_001', category: 'client_error' }} />);
 
-    expect(screen.getByText('ERR_001')).toBeInTheDocument();
+    expect(screen.getByText('Error code: ERR_001')).toBeInTheDocument();
     expect(screen.getByText('Test error')).toBeInTheDocument();
   });
 
@@ -45,7 +45,7 @@ describe('ErrorMessage', () => {
     render(<ErrorMessage error={{ message: 'Test error', suggestion: 'Try again later', category: 'client_error' }} />);
 
     expect(screen.getByText('Test error')).toBeInTheDocument();
-    expect(screen.getByText('Try again later')).toBeInTheDocument();
+    expect(screen.getByText('💡 Try again later')).toBeInTheDocument();
   });
 
   it('renders dismissible error with close button', () => {

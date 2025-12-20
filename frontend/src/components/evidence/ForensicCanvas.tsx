@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import type { EvidenceItem } from '../../lib/api';
-import { api } from '../../lib/api';
+import { api, type EvidenceItem } from '../../lib/api';
 import { Eye, Binary, FileJson, FileText } from 'lucide-react';
 import PdfViewer from '../forensics/PdfViewer';
 import { secureLogger } from '../../utils/secureLogger';

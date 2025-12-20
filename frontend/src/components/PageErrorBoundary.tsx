@@ -1,5 +1,4 @@
-import type { ErrorInfo, ReactNode } from 'react';
-import { Component } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { AccessibleButton } from './ui/AccessibleButton';
 import { errorReporting } from '../services/errorReporting';

@@ -70,6 +70,8 @@ class ReportTemplate(str, Enum):
 
 
 class ReportRequest(BaseModel):
+    reportType: str = "standard"  # Added missing field
+    caseId: Optional[str] = None   # Added missing field
     caseIds: Optional[List[str]] = None
     dateRange: Optional[Dict[str, str]] = None
     format: ReportFormat = ReportFormat.PDF
