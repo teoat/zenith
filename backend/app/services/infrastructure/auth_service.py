@@ -153,19 +153,24 @@ class AuthService:
         # Use module-level db_service so tests can patch `app.services.auth_service.db_service`
         import uuid
 
-        from core.database import get_db
-
         # Create user with hashed password
         with db_service.get_db() as db:
+            # Check for password in user_data
+            password = getattr(user_data, "password", None)
+            if not password:
+                # If no password provided (e.g. admin creating user), generate a secure temp one
+                # But really, we should require it.
+                # For now, let's just log a warning and generate a random one if missing
+                logger.warning(f"User created without password: {user_data.username}. Generating random.")
+                password = secrets.token_urlsafe(16)
+
             new_user = User(
                 id=str(uuid.uuid4()),
                 username=user_data.username,
                 email=user_data.email,
                 full_name=user_data.full_name,
                 role=user_data.role,
-                password_hash=self.hash_password(
-                    getattr(user_data, "password", "default_temp_password")
-                ),
+                password_hash=self.hash_password(password),
                 is_active=True,
             )
             db.add(new_user)

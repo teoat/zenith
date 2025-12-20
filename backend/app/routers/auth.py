@@ -331,10 +331,6 @@ async def refresh_token(request_data: dict = Body(...)):
         user_id = payload.get("sub")
         
         # Create new access token
-        # We need to fetch user to get role/username for claims
-        # But auth_service.decode_token doesn't return user obj.
-        # We can just use user_id, but current create_access_token expects more?
-        # Let's fetch user.
         user = auth_service.get_user(user_id) if hasattr(auth_service, 'get_user') else None
         
         # Determine claims
@@ -346,14 +342,14 @@ async def refresh_token(request_data: dict = Body(...)):
                 "mfa_verified": user.mfa_enabled 
              })
         else:
-             # Fallback if user not found (e.g. test deletion?)
+             # Fallback if user not found
              claims.update({"username": "unknown", "role": "analyst"})
 
         access_token = auth_service.create_access_token(claims)
         
         return TokenResponse(
             access_token=access_token,
-            refresh_token=refresh_token # Return same refresh token or rotate?
+            refresh_token=refresh_token 
         )
     except Exception as e:
         logger.warning(f"Refresh failed: {e}")
@@ -382,6 +378,3 @@ async def get_current_user_profile(current_user: User = Depends(auth_service.get
         "role": current_user.role,
         "mfa_enabled": current_user.mfa_enabled
     }
-
-
-
