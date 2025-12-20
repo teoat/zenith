@@ -18,3 +18,8 @@
 1. Always add `.env` to `.gitignore` immediately upon project creation.
 2. Use a pre-commit hook to scan for high-entropy strings or known secret filenames.
 3. Periodically run `git ls-files` to audit tracked files.
+
+## 2025-12-20 - [Rate Limiting Path Mismatch]
+**Vulnerability:** Authentication endpoints (/auth/login) were configured for strict rate limiting, but the application served them under /api/v1/auth/login. This caused them to fall back to the default, much looser rate limit.
+**Learning:** Middleware often sees the full path including prefixes. Configuration keys must match the runtime request path exactly.
+**Prevention:** Always verify rate limit configurations with integration tests that check the effective limit on the full path.

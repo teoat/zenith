@@ -62,12 +62,24 @@ def detect_round_trip_transactions(
              adj[src].append((dst, tx_id, dt, amt))
 
     # DFS for cycles
+    import time
+    start_time = time.time()
+    TIMEOUT_SECONDS = 2.0
+    
     def find_cycles(start_node, current_node, path, visited_txs):
+        # Optimization: Global timeout check
+        if time.time() - start_time > TIMEOUT_SECONDS:
+            return
+
         if len(path) > max_path_length:
             return
             
         # Check edges from current_node
         for neighbor, tx_id, tx_date, tx_amt in adj[current_node]:
+            # Timeout check in loop for responsiveness
+            if time.time() - start_time > TIMEOUT_SECONDS:
+                break
+
             if tx_id in visited_txs:
                 continue
                 
@@ -119,6 +131,9 @@ def detect_round_trip_transactions(
     # Simple iteration over all nodes
     nodes = list(adj.keys())
     for node in nodes:
+        if time.time() - start_time > TIMEOUT_SECONDS:
+            logger.warning("Round trip detection timed out - graph too large")
+            break
         find_cycles(node, node, [], set())
         
     return alerts

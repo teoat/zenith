@@ -18,9 +18,9 @@ from core.logging import logger
 # Rate limit configurations
 RATE_LIMITS = {
     # Authentication endpoints - strict limits
-    "/auth/login": {"requests": 5, "window": 300},  # 5 requests per 5 minutes
-    "/auth/register": {"requests": 3, "window": 3600},  # 3 requests per hour
-    "/auth/token": {"requests": 10, "window": 300},  # 10 requests per 5 minutes
+    "/api/v1/auth/login": {"requests": 5, "window": 300},  # 5 requests per 5 minutes
+    "/api/v1/auth/register": {"requests": 3, "window": 3600},  # 3 requests per hour
+    "/api/v1/auth/token": {"requests": 10, "window": 300},  # 10 requests per 5 minutes
 
     # API endpoints - moderate limits
     "/api/v1": {"requests": 100, "window": 60},  # 100 requests per minute
