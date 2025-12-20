@@ -1,3 +1,4 @@
+import type { Note } from '../types/note';
 import { request } from './client';
 import type { Case } from '../types/schema';
 import type { PaginationInfo } from '../types/api';
@@ -30,18 +31,18 @@ export const caseService = {
     return request(`/cases/${caseId}`, { method: 'DELETE' });
   },
 
-  getCaseNotes: async (caseId: string): Promise<{ notes: any[] }> => {
+  getCaseNotes: async (caseId: string): Promise<{ notes: Note[] }> => {
     return request(`/cases/${caseId}/notes`);
   },
 
-  addCaseNote: async (caseId: string, note: { title: string; content: string; tags: string[] }): Promise<{ note: any }> => {
+  addCaseNote: async (caseId: string, note: { title: string; content: string; tags: string[] }): Promise<{ note: Note }> => {
     return request(`/cases/${caseId}/notes`, {
       method: 'POST',
       body: JSON.stringify(note)
     });
   },
 
-  updateCaseNote: async (caseId: string, noteId: string, note: { title: string; content: string; tags: string[] }): Promise<{ note: any }> => {
+  updateCaseNote: async (caseId: string, noteId: string, note: { title: string; content: string; tags: string[] }): Promise<{ note: Note }> => {
     return request(`/cases/${caseId}/notes/${noteId}`, {
       method: 'PUT',
       body: JSON.stringify(note)
@@ -52,5 +53,22 @@ export const caseService = {
     return request(`/cases/${caseId}/notes/${noteId}`, {
       method: 'DELETE'
     });
+  },
+
+  getAllCases: async (params?: Record<string, unknown>): Promise<Case[]> => {
+    const query = params ? '?' + new URLSearchParams(params as Record<string, string>).toString() : '';
+    const result = await request(`/cases${query}`);
+    // Handle both direct array response and object with cases property
+    return Array.isArray(result) ? result : (result as any).cases || [];
+  },
+
+  getCaseStatistics: async (): Promise<{
+    total: number;
+    open: number;
+    in_progress: number;
+    closed: number;
+    by_priority: { high: number; medium: number; low: number };
+  }> => {
+    return request('/stats/cases');
   }
 };

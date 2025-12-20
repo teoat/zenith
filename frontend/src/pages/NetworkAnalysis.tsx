@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import type { NetworkGraphData } from '../components/visualizations/NetworkGraph';
-import NetworkGraph from '../components/visualizations/NetworkGraph';
 import { api } from '../lib/api';
 import { Loader2, RefreshCw, Box, Layers } from 'lucide-react';
 import { AccessibleButton } from '../components/ui/AccessibleButton';
 import { secureLogger } from '../utils/secureLogger';
+
+// Lazy load heavy NetworkGraph component
+const NetworkGraph = React.lazy(() => import('../components/visualizations/NetworkGraph'));
 
 const NetworkAnalysis: React.FC = () => {
     const [graphData, setGraphData] = useState<NetworkGraphData | undefined>(undefined);
@@ -102,7 +104,16 @@ const NetworkAnalysis: React.FC = () => {
                     </div>
                 ) : (
                     <div data-tour="network-graph">
-                      <NetworkGraph data={graphData} height={600} mode={mode} />
+                      <Suspense fallback={
+                        <div className="h-[600px] flex items-center justify-center bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
+                          <div className="text-center">
+                            <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto mb-2" />
+                            <p className="text-sm text-slate-500">Loading network visualization...</p>
+                          </div>
+                        </div>
+                      }>
+                        <NetworkGraph data={graphData} height={600} mode={mode} />
+                      </Suspense>
                     </div>
                 )}
             </div>

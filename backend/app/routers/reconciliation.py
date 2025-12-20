@@ -1,6 +1,9 @@
 
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
+import logging
+
+logger = logging.getLogger(__name__)
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
@@ -195,15 +198,30 @@ async def ingest_mapped_data(
     if not file_path or not os.path.exists(file_path):
          raise HTTPException(status_code=404, detail="Physical file not found")
 
-    # 2. Parse File (Assuming CSV for now)
-    # TODO: Support Excel/PDF via extracted_text or conversion
+    # 2. Parse File
     transactions_created = 0
     
     try:
-        with open(file_path, 'r', encoding='utf-8-sig') as f:
-            reader = csv.DictReader(f)
-            
-            for row in reader:
+        # Check for extracted text (e.g. from PDF/Excel processed by OCR/Extraction Service)
+        extracted_text = evidence.extracted_text
+        rows = []
+        
+        if file_path.lower().endswith('.csv'):
+             with open(file_path, 'r', encoding='utf-8-sig') as f:
+                reader = csv.DictReader(f)
+                rows = list(reader)
+        elif extracted_text and isinstance(extracted_text, list):
+             # Assume extracted_text is a list of dicts if structured, or parse it
+             # For now, we support if extracted_text is already structured JSON-like list
+             rows = extracted_text
+        else:
+             # NOTE: Excel/PDF support requires a conversion service or extracting text first
+             # If no extracted_text is available, we can't process non-CSV yet.
+             if not file_path.lower().endswith('.csv'):
+                 logger.warning(f"Unsupported file type for direct ingestion: {file_path}")
+                 # Proceeding with empty rows - or could raise error
+        
+        for row in rows:
                 # 3. Apply Mapping
                 txn_data = {}
                 for target_field, source_col in request.mapping.items():

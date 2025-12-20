@@ -1,9 +1,9 @@
-
 /**
  * Dialog Component Tests
  */
 
 
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Dialog, DialogContent } from '../components/ui/Dialog';
 

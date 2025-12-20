@@ -146,17 +146,30 @@ def get_dashboard_metrics(
         except:
             system_health = 95.0
 
-        # Extended Metrics for Dashboard
-        total_cases = db.query(Case).count()
-        critical_cases = db.query(Case).filter(Case.priority == "critical").count()
-        closed_cases = db.query(Case).filter(Case.status == "closed").count()
-        investigating_cases = db.query(Case).filter(Case.status == "active").count()
+        # Optimized single query for multiple counts
+        from sqlalchemy import func
 
-        # Risk Distribution
-        critical_risk = db.query(Case).filter(Case.priority == "critical").count()
-        high_risk = db.query(Case).filter(Case.priority == "high").count()
-        medium_risk = db.query(Case).filter(Case.priority == "medium").count()
-        low_risk = db.query(Case).filter(Case.priority == "low").count()
+        # Get all case statistics in a single query
+        case_stats = db.query(
+            func.count(Case.id).label('total_cases'),
+            func.count(func.case([(Case.priority == "critical", 1)])).label('critical_cases'),
+            func.count(func.case([(Case.status == "closed", 1)])).label('closed_cases'),
+            func.count(func.case([(Case.status == "active", 1)])).label('investigating_cases'),
+            func.count(func.case([(Case.priority == "high", 1)])).label('high_risk'),
+            func.count(func.case([(Case.priority == "medium", 1)])).label('medium_risk'),
+            func.count(func.case([(Case.priority == "low", 1)])).label('low_risk'),
+        ).first()
+
+        total_cases = case_stats.total_cases
+        critical_cases = case_stats.critical_cases
+        closed_cases = case_stats.closed_cases
+        investigating_cases = case_stats.investigating_cases
+
+        # Risk Distribution (reuse critical count)
+        critical_risk = critical_cases
+        high_risk = case_stats.high_risk
+        medium_risk = case_stats.medium_risk
+        low_risk = case_stats.low_risk
 
         # Recent Activity (Fetch from DB instead of Mock)
         recent_activity = db_service.get_recent_activity(limit=5)

@@ -396,6 +396,30 @@ async def upload_evidence(
         with open(saved_file_path, "wb") as f:
             f.write(content)
 
+        # Virus scanning
+        try:
+            import clamav
+            cd = clamav.ClamAV()
+            scan_result = cd.scan(saved_file_path)
+            if scan_result:
+                # File is infected
+                os.remove(saved_file_path)  # Delete infected file
+                logger.warning(f"Virus detected in uploaded file {file.filename}: {scan_result}")
+                raise HTTPException(
+                    status_code=400,
+                    detail="File contains malicious content and has been rejected"
+                )
+        except ImportError:
+            logger.warning("ClamAV not available, skipping virus scan")
+        except Exception as e:
+            logger.error(f"Virus scan failed for {file.filename}: {e}")
+            # In production, you might want to quarantine the file instead of rejecting
+            os.remove(saved_file_path)
+            raise HTTPException(
+                status_code=500,
+                detail="File scanning failed, upload rejected for security"
+            )
+
         temp_file_path = saved_file_path  # usage in rest of function
 
         try:

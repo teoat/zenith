@@ -83,6 +83,12 @@ export const monitoringService = {
       });
       throw error;
     }
+  },
+
+  resolveDiagnosticIssue: async (issueId: string): Promise<any> => {
+    return request(`/admin/system/diagnostics/issues/${issueId}/resolve`, {
+        method: 'POST'
+    });
   }
 };
 

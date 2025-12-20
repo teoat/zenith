@@ -1,3 +1,4 @@
+import { ApiError } from '../errors/ApiError';
 export { API_BASE } from '../config';
 import { secureLogger } from '../utils/secureLogger';
 import { createCircuitBreaker, DEFAULT_CIRCUIT_CONFIGS } from '../lib/circuitBreaker';
@@ -98,16 +99,16 @@ export const request = async <T>(
               headers: finalHeaders,
             });
 
-            if (!response.ok) {
+            if (!response || !response.ok) {
+              if (!response) {
+                // Network error - fetch returned undefined or failed
+                throw new Error('Network error');
+              }
               const errorData = await response.json().catch(() => ({ detail: response.statusText }));
 
               // Create more user-friendly error messages
               const userFriendlyMessage = getUserFriendlyErrorMessage(response.status, errorData.detail);
-              const error = new Error(userFriendlyMessage);
-              (error as any).statusCode = response.status;
-              (error as any).originalMessage = errorData.detail;
-
-              throw error;
+              throw new ApiError(userFriendlyMessage, response.status, errorData.detail);
             }
 
             return response.json();
@@ -116,8 +117,8 @@ export const request = async <T>(
 
             // Don't retry on client errors (4xx) except 408, 429
             const shouldRetry = attempt < maxRetries &&
-              (!(error as any).statusCode ||
-               [408, 429, 500, 502, 503, 504].includes((error as any).statusCode));
+              (!(error instanceof ApiError) ||
+               [408, 429, 500, 502, 503, 504].includes((error as ApiError).statusCode));
 
             if (!shouldRetry) {
               break;
@@ -134,8 +135,8 @@ export const request = async <T>(
     } catch (error) {
       secureLogger.error('API', `${options.method || 'GET'} ${endpoint} failed`, {
           error: error instanceof Error ? error.message : String(error),
-          statusCode: (error as any).statusCode,
-          originalMessage: (error as any).originalMessage
+          statusCode: error instanceof ApiError ? error.statusCode : undefined,
+          originalMessage: error instanceof ApiError ? error.originalMessage : undefined
       });
       throw error;
     }

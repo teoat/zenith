@@ -10,38 +10,11 @@ from sqlalchemy.orm import Session
 
 from app.services.infrastructure.auth_service import auth_service
 from app.services.graph_service import relationship_graph
-from app.services.metadata_correlation_service import MetadataCorrelationEngine
+from app.services.intelligence.metadata_correlation_service import MetadataCorrelationEngine
 from core.database import GraphSnapshot, Relationship, User, get_db
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/graph", tags=["relationship-graph"])
-
-# ---- Test placeholders (allow tests to patch module-level dependencies) ----
-if "get_current_user" not in globals():
-    try:
-        get_current_user = auth_service.get_current_user
-    except Exception:
-
-        def get_current_user(*args, **kwargs):
-            return None
-
-
-if "require_permission" not in globals():
-
-    def require_permission(*args, **kwargs):
-        def _dep(*a, **k):
-            return None
-
-        return _dep
-
-
-for _svc in (
-    "relationship_graph",
-    "metadata_correlation_engine",
-    "graph_snapshot_service",
-):
-    if _svc not in globals():
-        globals()[_svc] = None
 
 
 # Pydantic models for snapshot endpoints

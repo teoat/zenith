@@ -30,6 +30,49 @@ class CacheEntry:
     last_accessed: Optional[datetime] = None
     size_bytes: int = 0
 
+@dataclass
+class QueryCacheEntry:
+    """Specialized cache entry for database query results"""
+    query_hash: str
+    query_sql: str
+    parameters: tuple
+    result: Any
+    execution_time: float
+    created_at: datetime
+    expires_at: datetime
+    hit_count: int = 0
+    table_names: list[str] = None  # For cache invalidation
+    is_read_replica: bool = False  # Whether result came from read replica
+
+    def __post_init__(self):
+        if self.table_names is None:
+            self.table_names = []
+
+
+class QueryCacheMetrics:
+    """Metrics specific to query result caching"""
+    def __init__(self):
+        self.query_hits = 0
+        self.query_misses = 0
+        self.cache_invalidations = 0
+        self.read_replica_hits = 0
+        self.primary_db_hits = 0
+        self.avg_query_time_saved = 0.0
+
+    def hit_rate(self) -> float:
+        total = self.query_hits + self.query_misses
+        return self.query_hits / total if total > 0 else 0.0
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "query_hits": self.query_hits,
+            "query_misses": self.query_misses,
+            "cache_invalidations": self.cache_invalidations,
+            "read_replica_hits": self.read_replica_hits,
+            "primary_db_hits": self.primary_db_hits,
+            "avg_query_time_saved": self.avg_query_time_saved,
+            "hit_rate": self.hit_rate()
+        }
 
 class CacheMetrics:
     def __init__(self):
@@ -428,6 +471,155 @@ class MultiLayerCache:
         return stats
 
 
+class QueryResultCache:
+    """Advanced query result caching with database read replicas support"""
+
+    def __init__(self, cache_manager):
+        self.cache = cache_manager
+        self.query_metrics = QueryCacheMetrics()
+        self.query_cache_ttl = 300  # 5 minutes default
+        self.read_replica_available = False
+        self.primary_connection_string = ""
+        self.replica_connection_strings: list[str] = []
+
+    def configure_read_replicas(self, primary: str, replicas: list[str]):
+        """Configure database read replicas for improved read performance"""
+        self.primary_connection_string = primary
+        self.replica_connection_strings = replicas
+        self.read_replica_available = len(replicas) > 0
+
+    async def execute_cached_query(
+        self,
+        query_func: Callable,
+        query_sql: str,
+        parameters: tuple = (),
+        ttl_seconds: int = None,
+        use_read_replica: bool = True,
+        table_names: list[str] = None
+    ) -> Any:
+        """
+        Execute a database query with intelligent caching
+
+        Args:
+            query_func: Function that executes the actual query
+            query_sql: SQL query string for cache key generation
+            parameters: Query parameters
+            ttl_seconds: Cache TTL in seconds
+            use_read_replica: Whether to prefer read replica
+            table_names: Tables affected by this query (for invalidation)
+        """
+        # Generate cache key from query and parameters
+        query_hash = self._generate_query_hash(query_sql, parameters)
+        cache_key = f"query:{query_hash}"
+
+        # Check cache first
+        cached_result = await self._get_cached_query_result(cache_key)
+        if cached_result:
+            self.query_metrics.query_hits += 1
+            cached_result.hit_count += 1
+
+            if cached_result.is_read_replica:
+                self.query_metrics.read_replica_hits += 1
+            else:
+                self.query_metrics.primary_db_hits += 1
+
+            return cached_result.result
+
+        # Cache miss - execute query
+        self.query_metrics.query_misses += 1
+        start_time = time.time()
+
+        try:
+            # Determine which database to use
+            is_read_replica = use_read_replica and self.read_replica_available
+
+            # Execute query
+            result = await query_func()
+
+            execution_time = time.time() - start_time
+
+            # Cache the result
+            await self._cache_query_result(
+                query_hash=query_hash,
+                query_sql=query_sql,
+                parameters=parameters,
+                result=result,
+                execution_time=execution_time,
+                ttl_seconds=ttl_seconds or self.query_cache_ttl,
+                is_read_replica=is_read_replica,
+                table_names=table_names or []
+            )
+
+            return result
+
+        except Exception as e:
+            logger.error(f"Query execution failed: {e}")
+            raise
+
+    async def _get_cached_query_result(self, cache_key: str) -> Optional[QueryCacheEntry]:
+        """Get cached query result"""
+        return await self.cache.get("query_cache", cache_key)
+
+    async def _cache_query_result(
+        self,
+        query_hash: str,
+        query_sql: str,
+        parameters: tuple,
+        result: Any,
+        execution_time: float,
+        ttl_seconds: int,
+        is_read_replica: bool,
+        table_names: list[str]
+    ):
+        """Cache query result with metadata"""
+        cache_key = f"query:{query_hash}"
+
+        entry = QueryCacheEntry(
+            query_hash=query_hash,
+            query_sql=query_sql,
+            parameters=parameters,
+            result=result,
+            execution_time=execution_time,
+            created_at=datetime.now(),
+            expires_at=datetime.now() + timedelta(seconds=ttl_seconds),
+            table_names=table_names,
+            is_read_replica=is_read_replica
+        )
+
+        await self.cache.set("query_cache", cache_key, entry, ttl_seconds)
+
+    def _generate_query_hash(self, query_sql: str, parameters: tuple) -> str:
+        """Generate unique hash for query + parameters"""
+        query_key = f"{query_sql}:{str(parameters)}"
+        return hashlib.md5(query_key.encode()).hexdigest()[:16]
+
+    async def invalidate_table_cache(self, table_name: str):
+        """Invalidate all cached queries for a specific table"""
+        # This would require a reverse index of table -> queries
+        # For now, we'll implement a simple invalidation strategy
+        self.query_metrics.cache_invalidations += 1
+        logger.info(f"Cache invalidated for table: {table_name}")
+
+    async def get_cache_statistics(self) -> Dict[str, Any]:
+        """Get comprehensive cache statistics"""
+        base_stats = await self.cache.get_statistics()
+        query_stats = self.query_metrics.to_dict()
+
+        return {
+            "cache_statistics": base_stats,
+            "query_cache_statistics": query_stats,
+            "read_replica_available": self.read_replica_available,
+            "replica_count": len(self.replica_connection_strings),
+            "cache_configuration": {
+                "default_ttl": self.query_cache_ttl,
+                "read_replica_preferred": self.read_replica_available
+            }
+        }
+
+
+
+
+
 class CachedFunction:
     """Decorator for caching function results"""
 
@@ -500,3 +692,7 @@ def clear_cache_namespace(namespace: str):
 def clear_all_cache():
     """Clear all cache entries"""
     return cache_manager.clear_all()
+
+
+# Global instances
+query_cache = QueryResultCache(cache_manager)

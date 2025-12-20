@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/21</span>
+                <span class='fraction'>0/20</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/66</span>
+                <span class='fraction'>0/67</span>
             </div>
         
             
@@ -729,7 +729,9 @@
 <a name='L664'></a><a href='#L664'>664</a>
 <a name='L665'></a><a href='#L665'>665</a>
 <a name='L666'></a><a href='#L666'>666</a>
-<a name='L667'></a><a href='#L667'>667</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L667'></a><a href='#L667'>667</a>
+<a name='L668'></a><a href='#L668'>668</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1397,6 +1399,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// frontend/src/components/ai/PredictiveMaintenanceDashboard.tsx
 <span class="cstat-no" title="statement not covered" >import React, { useState, useEffect } from 'react';</span>
+<span class="cstat-no" title="statement not covered" >import { simulateDelay } from '../../utils/simulation';</span>
 <span class="cstat-no" title="statement not covered" >import { motion, AnimatePresence } from 'framer-motion';</span>
 <span class="cstat-no" title="statement not covered" >import { secureLogger } from '../../utils/secureLogger';</span>
 <span class="cstat-no" title="statement not covered" >import {</span>
@@ -1542,7 +1545,7 @@ const PredictiveMaintenanceDashboard: React.FC = <span class="cstat-no" title="s
 <span class="cstat-no" title="statement not covered" >    try {</span>
       // Simulate running chaos experiment
 <span class="cstat-no" title="statement not covered" >      secureLogger.info(`Running chaos experiment: ${experimentType}`);</span>
-<span class="cstat-no" title="statement not covered" >      await new Promise(<span class="fstat-no" title="function not covered" >resolve </span>=&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, 2000))</span>;</span>
+<span class="cstat-no" title="statement not covered" >      await simulateDelay(2000);</span>
 <span class="cstat-no" title="statement not covered" >      await loadDashboardData();</span>
     } catch (error) {
 <span class="cstat-no" title="statement not covered" >      secureLogger.error('Failed to run chaos experiment:', error);</span>
@@ -1813,7 +1816,7 @@ const PredictiveMaintenanceDashboard: React.FC = <span class="cstat-no" title="s
 &nbsp;
               &lt;div className="predictions-list"&gt;
                 {predictions.map(<span class="fstat-no" title="function not covered" >(p</span>rediction, index) =&gt; (
-<span class="cstat-no" title="statement not covered" >                  &lt;div key={index} c</span>lassName="prediction-card"&gt;
+<span class="cstat-no" title="statement not covered" >                  &lt;div key={index} className="prediction-card"&gt;</span>
                     &lt;div className="prediction-header"&gt;
                       &lt;div className="prediction-type"&gt;
                         &lt;AlertTriangle className="w-5 h-5 text-orange-500" /&gt;
@@ -1850,7 +1853,7 @@ const PredictiveMaintenanceDashboard: React.FC = <span class="cstat-no" title="s
                         &lt;h5 className="factors-title"&gt;Contributing Factors:&lt;/h5&gt;
                         &lt;ul className="factors-list"&gt;
                           {prediction.contributing_factors.map(<span class="fstat-no" title="function not covered" >(f</span>actor, factorIndex) =&gt; (
-<span class="cstat-no" title="statement not covered" >                            &lt;li key={factorIndex} c</span>lassName="factor-item"&gt;{factor}&lt;/li&gt;
+<span class="cstat-no" title="statement not covered" >                            &lt;li key={factorIndex} className="factor-item"&gt;{factor}&lt;/li&gt;</span>
                           ))}
                         &lt;/ul&gt;
                       &lt;/div&gt;
@@ -1859,7 +1862,7 @@ const PredictiveMaintenanceDashboard: React.FC = <span class="cstat-no" title="s
                         &lt;h5 className="actions-title"&gt;Recommended Actions:&lt;/h5&gt;
                         &lt;div className="actions-list"&gt;
                           {prediction.recommended_actions.map(<span class="fstat-no" title="function not covered" >(a</span>ction, actionIndex) =&gt; (
-<span class="cstat-no" title="statement not covered" >                            &lt;span key={actionIndex} c</span>lassName="action-tag"&gt;
+<span class="cstat-no" title="statement not covered" >                            &lt;span key={actionIndex} className="action-tag"&gt;</span>
                               {action.replace('_', ' ')}
                             &lt;/span&gt;
                           ))}
@@ -1926,7 +1929,7 @@ const PredictiveMaintenanceDashboard: React.FC = <span class="cstat-no" title="s
                 &lt;h4 className="results-title"&gt;Recent Experiments&lt;/h4&gt;
                 &lt;div className="experiments-list"&gt;
                   {chaosExperiments.map(<span class="fstat-no" title="function not covered" >(e</span>xperiment, index) =&gt; (
-<span class="cstat-no" title="statement not covered" >                    &lt;div key={index} c</span>lassName="experiment-card"&gt;
+<span class="cstat-no" title="statement not covered" >                    &lt;div key={index} className="experiment-card"&gt;</span>
                       &lt;div className="experiment-header"&gt;
                         &lt;div className="experiment-info"&gt;
                           &lt;h5 className="experiment-id"&gt;{experiment.experiment_id}&lt;/h5&gt;
@@ -1962,7 +1965,7 @@ const PredictiveMaintenanceDashboard: React.FC = <span class="cstat-no" title="s
                         &lt;h6 className="services-title"&gt;Affected Services:&lt;/h6&gt;
                         &lt;div className="services-list"&gt;
                           {experiment.affected_services.map(<span class="fstat-no" title="function not covered" >(s</span>ervice, serviceIndex) =&gt; (
-<span class="cstat-no" title="statement not covered" >                            &lt;span key={serviceIndex} c</span>lassName="service-tag"&gt;
+<span class="cstat-no" title="statement not covered" >                            &lt;span key={serviceIndex} className="service-tag"&gt;</span>
                               {service}
                             &lt;/span&gt;
                           ))}
@@ -1973,7 +1976,7 @@ const PredictiveMaintenanceDashboard: React.FC = <span class="cstat-no" title="s
                         &lt;h6 className="lessons-title"&gt;Lessons Learned:&lt;/h6&gt;
                         &lt;ul className="lessons-list"&gt;
                           {experiment.lessons_learned.map(<span class="fstat-no" title="function not covered" >(l</span>esson, lessonIndex) =&gt; (
-<span class="cstat-no" title="statement not covered" >                            &lt;li key={lessonIndex} c</span>lassName="lesson-item"&gt;{lesson}&lt;/li&gt;
+<span class="cstat-no" title="statement not covered" >                            &lt;li key={lessonIndex} className="lesson-item"&gt;{lesson}&lt;/li&gt;</span>
                           ))}
                         &lt;/ul&gt;
                       &lt;/div&gt;
@@ -2000,7 +2003,7 @@ const PredictiveMaintenanceDashboard: React.FC = <span class="cstat-no" title="s
 &nbsp;
               &lt;div className="healing-actions-list"&gt;
                 {healingActions.map(<span class="fstat-no" title="function not covered" >(a</span>ction, index) =&gt; (
-<span class="cstat-no" title="statement not covered" >                  &lt;div key={index} c</span>lassName="healing-card"&gt;
+<span class="cstat-no" title="statement not covered" >                  &lt;div key={index} className="healing-card"&gt;</span>
                     &lt;div className="healing-header"&gt;
                       &lt;div className="healing-type"&gt;
                         &lt;Wrench className="w-5 h-5 text-blue-500" /&gt;
@@ -2068,7 +2071,7 @@ const PredictiveMaintenanceDashboard: React.FC = <span class="cstat-no" title="s
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-19T02:07:52.612Z
+                at 2025-12-20T03:48:46.392Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

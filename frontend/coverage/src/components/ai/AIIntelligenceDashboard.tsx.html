@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/37</span>
+                <span class='fraction'>0/38</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/36</span>
+                <span class='fraction'>0/37</span>
             </div>
         
             
@@ -529,12 +529,7 @@
 <a name='L464'></a><a href='#L464'>464</a>
 <a name='L465'></a><a href='#L465'>465</a>
 <a name='L466'></a><a href='#L466'>466</a>
-<a name='L467'></a><a href='#L467'>467</a>
-<a name='L468'></a><a href='#L468'>468</a>
-<a name='L469'></a><a href='#L469'>469</a>
-<a name='L470'></a><a href='#L470'>470</a>
-<a name='L471'></a><a href='#L471'>471</a>
-<a name='L472'></a><a href='#L472'>472</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L467'></a><a href='#L467'>467</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -981,12 +976,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1322,7 +1312,7 @@ const AIIntelligenceDashboard: React.FC = <span class="cstat-no" title="statemen
           &gt;
             &lt;div className="federated-nodes-grid"&gt;
               {federatedNodes.map(<span class="fstat-no" title="function not covered" >(n</span>ode) =&gt; (
-<span class="cstat-no" title="statement not covered" >                &lt;div key={node.id} c</span>lassName="node-card"&gt;
+<span class="cstat-no" title="statement not covered" >                &lt;div key={node.id} className="node-card"&gt;</span>
                   &lt;div className="node-header"&gt;
                     &lt;div className={`node-status status-${node.status}`}&gt;
                       &lt;div className="status-dot"&gt;&lt;/div&gt;
@@ -1445,26 +1435,21 @@ const AIIntelligenceDashboard: React.FC = <span class="cstat-no" title="statemen
                     &lt;span className="confidence"&gt;(95% confidence)&lt;/span&gt;
                   &lt;/div&gt;
                   &lt;div className="contributions"&gt;
-                    &lt;div className="contribution-bar"&gt;
-                      &lt;div className="bar-label"&gt;Behavioral: 25%&lt;/div&gt;
-                      &lt;div className="bar" style={{width: '25%'}}&gt;&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div className="contribution-bar"&gt;
-                      &lt;div className="bar-label"&gt;Social: 30%&lt;/div&gt;
-                      &lt;div className="bar" style={{width: '30%'}}&gt;&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div className="contribution-bar"&gt;
-                      &lt;div className="bar-label"&gt;Transaction: 20%&lt;/div&gt;
-                      &lt;div className="bar" style={{width: '20%'}}&gt;&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div className="contribution-bar"&gt;
-                      &lt;div className="bar-label"&gt;Device: 15%&lt;/div&gt;
-                      &lt;div className="bar" style={{width: '15%'}}&gt;&lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div className="contribution-bar"&gt;
-                      &lt;div className="bar-label"&gt;Other: 10%&lt;/div&gt;
-                      &lt;div className="bar" style={{width: '10%'}}&gt;&lt;/div&gt;
-                    &lt;/div&gt;
+                    {[
+                      { label: 'Behavioral', value: 25 },
+                      { label: 'Social', value: 30 },
+                      { label: 'Transaction', value: 20 },
+                      { label: 'Device', value: 15 },
+                      { label: 'Other', value: 10 }
+                    ].map(<span class="fstat-no" title="function not covered" >(c</span>ontribution, idx) =&gt; (
+<span class="cstat-no" title="statement not covered" >                      &lt;div key={idx} className="contribution-bar"&gt;</span>
+                        &lt;div className="bar-label"&gt;{contribution.label}: {contribution.value}%&lt;/div&gt;
+                        &lt;div 
+                          className="bar" 
+                          style={{ ['--contribution-width' as string]: `${contribution.value}%`, width: 'var(--contribution-width)' } as React.CSSProperties}
+                        &gt;&lt;/div&gt;
+                      &lt;/div&gt;
+                    ))}
                   &lt;/div&gt;
                 &lt;/div&gt;
               &lt;/div&gt;
@@ -1483,7 +1468,7 @@ const AIIntelligenceDashboard: React.FC = <span class="cstat-no" title="statemen
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-19T02:07:53.644Z
+                at 2025-12-20T03:48:47.569Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

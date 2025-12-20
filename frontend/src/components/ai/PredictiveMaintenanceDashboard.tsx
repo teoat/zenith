@@ -1,5 +1,6 @@
 // frontend/src/components/ai/PredictiveMaintenanceDashboard.tsx
 import React, { useState, useEffect } from 'react';
+import { simulateDelay } from '../../utils/simulation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { secureLogger } from '../../utils/secureLogger';
 import {
@@ -145,7 +146,7 @@ const PredictiveMaintenanceDashboard: React.FC = () => {
     try {
       // Simulate running chaos experiment
       secureLogger.info(`Running chaos experiment: ${experimentType}`);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await simulateDelay(2000);
       await loadDashboardData();
     } catch (error) {
       secureLogger.error('Failed to run chaos experiment:', error);

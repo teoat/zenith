@@ -208,7 +208,16 @@ class AuthService:
                 "login_failed",
                 details={"reason": "user_not_found", "username": username},
             )
-            # TODO: Add security monitoring for user not found
+            log_security_event(
+                "security_alert",
+                "system",
+                details={
+                    "type": "user_not_found",
+                    "severity": "low",
+                    "username": username,
+                    "action": "login_attempt"
+                }
+            )
             return None
 
         # Check if account is locked
@@ -236,7 +245,15 @@ class AuthService:
             log_security_event(
                 "login_failed", user.id, details={"reason": "invalid_password"}
             )
-            # TODO: Add security monitoring for invalid password
+            log_security_event(
+                "security_alert",
+                user.id,
+                details={
+                    "type": "invalid_password",
+                    "severity": "medium",
+                    "action": "login_attempt"
+                }
+            )
             return None
 
         # Successful login - reset failed attempts and update last login
@@ -257,7 +274,15 @@ class AuthService:
                     globals().get("db_service").update_user_legacy(user)
 
         log_security_event("login_success", user.id, details={"method": "password"})
-        # TODO: Add security monitoring for successful login
+        log_security_event(
+            "security_monitoring", 
+            user.id, 
+            details={
+                "type": "login_success",
+                "severity": "info",
+                "method": "password"
+            }
+        )
         return user
 
     def _is_account_locked(self, user: User) -> bool:
@@ -305,7 +330,16 @@ class AuthService:
                     "lockout_minutes": ACCOUNT_LOCKOUT_MINUTES,
                 },
             )
-            # TODO: Add security monitoring for account lockout
+            log_security_event(
+                "security_alert",
+                user.id,
+                details={
+                    "type": "account_lockout",
+                    "severity": "high",
+                    "failed_attempts": user.failed_login_attempts,
+                    "lockout_minutes": ACCOUNT_LOCKOUT_MINUTES
+                }
+            )
 
         # Update user in database
         try:

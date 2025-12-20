@@ -1188,7 +1188,7 @@ const RelationshipGraph: React.FC = <span class="cstat-no" title="statement not 
 <span class="cstat-no" title="statement not covered" >        setGraphData({ nodes, links });</span>
 <span class="cstat-no" title="statement not covered" >        setStats((data as any).stats || {});</span>
       }
-      } catch (_error) {
+      } catch (error) {
 <span class="cstat-no" title="statement not covered" >       addToast('Failed to load graph data', 'error');</span>
     } finally {
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (isMounted.current) <span class="cstat-no" title="statement not covered" >setLoading(false);</span></span>
@@ -1222,7 +1222,7 @@ const RelationshipGraph: React.FC = <span class="cstat-no" title="statement not 
 <span class="cstat-no" title="statement not covered" >            fgRef.current.zoomToFit(400);</span>
         }
       }
-      } catch (_error) {
+      } catch (error) {
 <span class="cstat-no" title="statement not covered" >       addToast('Failed to rebuild graph', 'error');</span>
     } finally {
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (isMounted.current) <span class="cstat-no" title="statement not covered" >setLoading(false);</span></span>
@@ -1238,7 +1238,7 @@ const RelationshipGraph: React.FC = <span class="cstat-no" title="statement not 
           // Start physics rehear simulation to arrange communities?
 <span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (fgRef.current) <span class="cstat-no" title="statement not covered" >fgRef.current.d3ReheatSimulation();</span></span>
       }
-     } catch (_error) { 
+     } catch (error) { 
 <span class="cstat-no" title="statement not covered" >      addToast('Failed to fetch communities', 'error');</span>
     }
   };
@@ -1250,7 +1250,7 @@ const RelationshipGraph: React.FC = <span class="cstat-no" title="statement not 
           const entities = (<span class="cstat-no" title="statement not covered" >data as any).central_entities || data;</span>
 <span class="cstat-no" title="statement not covered" >          setCentralEntities(Array.isArray(entities) ? entities : []);</span>
       }
-     } catch (_error) { 
+     } catch (error) { 
 <span class="cstat-no" title="statement not covered" >      addToast('Failed to fetch central entities', 'error');</span>
     }
   };
@@ -1259,7 +1259,7 @@ const RelationshipGraph: React.FC = <span class="cstat-no" title="statement not 
 <span class="cstat-no" title="statement not covered" >    try {</span>
       const data = <span class="cstat-no" title="statement not covered" >await api.getSuspiciousPatterns();</span>
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (isMounted.current) <span class="cstat-no" title="statement not covered" >setSuspiciousPatterns((data as any).suspicious_patterns || data);</span></span>
-     } catch (_error) { 
+     } catch (error) { 
 <span class="cstat-no" title="statement not covered" >      addToast('Failed to fetch suspicious patterns', 'error');</span>
     }
   };
@@ -1351,7 +1351,7 @@ const RelationshipGraph: React.FC = <span class="cstat-no" title="statement not 
 <span class="cstat-no" title="statement not covered" >      a.click();</span>
 <span class="cstat-no" title="statement not covered" >      URL.revokeObjectURL(url);</span>
 <span class="cstat-no" title="statement not covered" >      addToast('Graph exported successfully', 'success');</span>
-     } catch (_error) { 
+     } catch (error) { 
 <span class="cstat-no" title="statement not covered" >      addToast('Export failed', 'error');</span>
     }
   };
@@ -1586,7 +1586,7 @@ const RelationshipGraph: React.FC = <span class="cstat-no" title="statement not 
               &lt;CardContent className="overflow-y-auto flex-1 custom-scrollbar"&gt;
                 &lt;div className="space-y-3"&gt;
                   {suspiciousPatterns.map(<span class="fstat-no" title="function not covered" >(p</span>attern) =&gt; (
-<span class="cstat-no" title="statement not covered" >                    &lt;div key={pattern.id} c</span>lassName="text-sm border-l-2 border-red-500 pl-3 p-1"&gt;
+<span class="cstat-no" title="statement not covered" >                    &lt;div key={pattern.id} className="text-sm border-l-2 border-red-500 pl-3 p-1"&gt;</span>
                       &lt;div className="font-medium text-red-700 dark:text-red-300 capitalize"&gt;
                         {pattern.patternType.replace(/_/g, ' ')}
                       &lt;/div&gt;
@@ -1612,7 +1612,7 @@ const RelationshipGraph: React.FC = <span class="cstat-no" title="statement not 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-19T02:07:52.612Z
+                at 2025-12-20T03:48:46.392Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

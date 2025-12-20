@@ -35,7 +35,7 @@ const InvestigationNotebook: React.FC<InvestigationNotebookProps> = ({
         const response = await caseService.getCaseNotes(caseId);
         const loadedNotes = (response.notes || []).map((n: any) => ({
           ...n,
-          timestamp: new Date(n.timestamp || Date.now())
+          timestamp: new Date(n.createdAt || Date.now())
         }));
         setNotes(loadedNotes);
        } catch (error) { 
@@ -63,7 +63,7 @@ const InvestigationNotebook: React.FC<InvestigationNotebookProps> = ({
       const response = await caseService.addCaseNote(caseId, newNoteData);
       const createdNote: Note = {
         ...response.note,
-        timestamp: new Date(response.note.timestamp || Date.now())
+        timestamp: new Date(response.note.createdAt || Date.now())
       };
       
       setNotes([createdNote, ...notes]);

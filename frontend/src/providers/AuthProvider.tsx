@@ -47,13 +47,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const authAPI = electronAPI.auth;
             
             // Check initial status - auth is verified defined below
-            if (authAPI !== undefined) {
-              // Use non-null assertion since we've verified authAPI is not undefined
-              const authService = authAPI!;
+            if (authAPI) {
+              const authService = authAPI;
               
-              if (authService.getAuthStatus) {
+              if (typeof authService.getAuthStatus === 'function') {
                 const statusFn = await authService.getAuthStatus();
-                if (statusFn.success && statusFn.data?.isAuthenticated) {
+                if (statusFn && statusFn.success && statusFn.data?.isAuthenticated) {
                    if (!user) {
                       const storedRole = localStorage.getItem('firstUserRole') as User['role'] || 'ADMIN';
                       setUser({
@@ -68,15 +67,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 }
               }
 
-              // Check if setup is required  
-              if (authService.isMasterPasswordSet) {
-                const result = await authService.isMasterPasswordSet();
-                const isMasterPasswordSet = result?.data?.isSet ?? false;
-                
-                if (!isMasterPasswordSet) {
-                  setIsSetupRequired(true);
-                  setIsLoading(false);
-                  return;
+              // Check if setup is required (Electron only)
+              if (typeof authService.isMasterPasswordSet === 'function') {
+                try {
+                  const result = await authService.isMasterPasswordSet();
+                  const isMasterPasswordSet = result?.data?.isSet ?? false;
+                  
+                  if (!isMasterPasswordSet) {
+                    setIsSetupRequired(true);
+                    setIsLoading(false);
+                    return;
+                  }
+                } catch (error) {
+                  secureLogger.warn('AUTH', 'Failed to check master password status', { error });
+                  // Continue initialization even if check fails
                 }
               }
             }

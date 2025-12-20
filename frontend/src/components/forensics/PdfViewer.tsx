@@ -138,7 +138,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ url, evidenceId, onHighlight }) =
   };
 
   return (
-    <div className="h-full w-full relative bg-slate-50 dark:bg-slate-900" style={{ height: "calc(100vh - 100px)" }}>
+    <div className="h-full w-full relative bg-slate-50 dark:bg-slate-900 h-[calc(100vh-100px)]">
       {isLoadingHighlights && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
               <div className="flex flex-col items-center">

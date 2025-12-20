@@ -20,7 +20,7 @@ from app.services.immutable_audit_chain import (
     ImmutableAuditChainService,
     immutable_audit_chain,
 )
-from app.services.metadata_correlation_service import MetadataCorrelationEngine
+from app.services.intelligence.metadata_correlation_service import MetadataCorrelationEngine
 from app.services.temporal_burst_detector import (
     TemporalBurstDetector,
     temporal_burst_detector,

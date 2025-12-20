@@ -11,7 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError, OperationalError, DisconnectionError
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import QueuePool
 
-from app.services.infrastructure.cache_service import cache_manager, cached
+from app.services.infrastructure.cache_service import cache_manager, cached, query_cache
 from app.services.infrastructure.circuit_breaker import circuit_breaker, CircuitBreakerConfig, get_circuit_breaker
 from app.services.infrastructure.error_handler import error_handler, service_operation_context, ErrorCategory, ServiceError
 from app.services.infrastructure.storage.database_optimizer_service import db_optimizer
@@ -75,6 +75,33 @@ class DatabaseService:
         failure_threshold=2, recovery_timeout=10.0,
         expected_exception=(OperationalError, DisconnectionError)
     ))
+    async def execute_cached_query(
+        self,
+        query_sql: str,
+        parameters: tuple = (),
+        ttl_seconds: int = 300,
+        use_read_replica: bool = True,
+        table_names: list[str] = None
+    ) -> Any:
+        """Execute a database query with intelligent caching"""
+        async def query_func():
+            # Execute query using read replica if available and requested
+            session = self.get_db()
+            try:
+                result = session.execute(query_sql, parameters)
+                return result.fetchall()
+            finally:
+                session.close()
+
+        return await query_cache.execute_cached_query(
+            query_func=query_func,
+            query_sql=query_sql,
+            parameters=parameters,
+            ttl_seconds=ttl_seconds,
+            use_read_replica=use_read_replica,
+            table_names=table_names
+        )
+
     def get_db(self) -> Session:
         """Get database session with enhanced resilience"""
         max_retries = 3
@@ -125,16 +152,17 @@ class DatabaseService:
                     "query_result": result[0] if result else None
                 }
 
-            # Table accessibility check
+            # Table accessibility check - optimized for performance
             with self.get_db() as db:
-                # Check if critical tables exist and are accessible
+                # Check if critical tables exist and are accessible (lightweight check)
                 tables_to_check = ["users", "cases", "transactions"]
                 for table in tables_to_check:
                     try:
-                        count_result = db.execute(text(f"SELECT COUNT(*) FROM {table} LIMIT 1")).fetchone()
+                        # Use a lightweight query to check table accessibility
+                        db.execute(text(f"SELECT 1 FROM {table} LIMIT 1")).fetchone()
                         health_status["checks"][f"{table}_table"] = {
                             "status": "healthy",
-                            "record_count": count_result[0] if count_result else 0
+                            "accessible": True
                         }
                     except Exception as e:
                         health_status["checks"][f"{table}_table"] = {
@@ -142,15 +170,16 @@ class DatabaseService:
                             "error": str(e)
                         }
 
-            # Performance check
+            # Performance check - optimized
             with self.get_db() as db:
                 perf_start = time.time()
-                db.execute(text("SELECT COUNT(*) FROM users")).fetchone()
+                # Use a lightweight query for performance check
+                db.execute(text("SELECT 1 FROM users LIMIT 1")).fetchone()
                 perf_time = (time.time() - perf_start) * 1000
                 health_status["checks"]["performance"] = {
-                    "status": "healthy" if perf_time < 100 else "degraded",
+                    "status": "healthy" if perf_time < 50 else "degraded",  # Lower threshold for lightweight query
                     "query_time_ms": round(perf_time, 2),
-                    "threshold_ms": 100
+                    "threshold_ms": 50
                 }
 
             # Circuit breaker status

@@ -13,8 +13,9 @@ const NotificationSettings = React.lazy(() => import('./NotificationSettings'));
 const SecuritySettings = React.lazy(() => import('./SecuritySettings'));
 const AccessibilitySettings = React.lazy(() => import('./AccessibilitySettings'));
 const SystemSettings = React.lazy(() => import('./SystemSettings'));
+const RuleBuilder = React.lazy(() => import('./RuleBuilder'));
 
-type Tab = 'general' | 'notifications' | 'security' | 'accessibility' | 'system';
+type Tab = 'general' | 'notifications' | 'security' | 'accessibility' | 'system' | 'rules';
 
 const SettingsLayout: React.FC = memo(() => {
   const { data: settings, isLoading, error, refetch } = useSettings();
@@ -39,6 +40,7 @@ const SettingsLayout: React.FC = memo(() => {
     { id: 'general' as Tab, label: 'General', component: GeneralSettings },
     { id: 'notifications' as Tab, label: 'Notifications', component: NotificationSettings },
     { id: 'security' as Tab, label: 'Security', component: SecuritySettings },
+    { id: 'rules' as Tab, label: 'Rules Engine', component: RuleBuilder },
     { id: 'accessibility' as Tab, label: 'Accessibility', component: AccessibilitySettings },
     { id: 'system' as Tab, label: 'System', component: SystemSettings },
   ];

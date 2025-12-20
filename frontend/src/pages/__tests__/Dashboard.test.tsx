@@ -1,193 +1,452 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
+import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Dashboard from '../Dashboard';
 
-// Mock all the hooks and components
-jest.mock('../../context/NetworkStatusContext', () => ({
-  NetworkStatusContext: {
-    Provider: ({ children }: any) => children,
-    Consumer: ({ children }: any) => children({ isOnline: true })
-  }
+// Create a query client for testing
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      gcTime: 0,
+    },
+  },
+});
+
+// Mock dependencies
+jest.mock('react-i18next', () => ({
+  useTranslation: jest.fn(() => ({
+    t: jest.fn((key) => key)
+  }))
 }));
 
-jest.mock('../hooks/useDashboardMetrics', () => ({
-  useDashboardMetrics: () => ({
-    data: null,
+jest.mock('../../hooks/useAuth', () => ({
+  useAuth: jest.fn()
+}));
+
+jest.mock('../../hooks/useNetworkStatus', () => ({
+  useNetworkStatus: jest.fn(() => ({
+    isOnline: true
+  }))
+}));
+
+jest.mock('../../hooks/useDashboardMetrics', () => ({
+  useDashboardMetrics: jest.fn(() => ({
+    data: {
+      totalCases: 150,
+      activeCases: 45,
+      resolvedCases: 105,
+      criticalCases: 12
+    },
     dataUpdatedAt: Date.now(),
     isLoading: false,
     error: null
-  })
+  }))
 }));
 
-jest.mock('../components/common/RookieChecklist', () => ({
-  __esModule: true,
-  default: () => <div data-testid="rookie-checklist" />
+jest.mock('../../context/NetworkStatusContext', () => ({
+  NetworkStatusContext: {
+    Provider: ({ children }: { children: React.ReactNode }) => children,
+    Consumer: ({ children }: { children: (value: any) => React.ReactNode }) => children({ isOnline: true })
+  }
 }));
 
-jest.mock('../components/common/RookieChecklistWrapper', () => ({
-  __esModule: true,
-  default: () => <div data-testid="rookie-checklist-wrapper" />
+jest.mock('../../services/cases', () => ({
+  caseService: {
+    getAllCases: jest.fn(),
+    getCaseStatistics: jest.fn(),
+    getCases: jest.fn(),
+    getCase: jest.fn(),
+    createCase: jest.fn(),
+    updateCase: jest.fn(),
+    deleteCase: jest.fn(),
+    getCaseNotes: jest.fn(),
+    addCaseNote: jest.fn(),
+    updateCaseNote: jest.fn(),
+    deleteCaseNote: jest.fn()
+  }
 }));
 
-jest.mock('../components/common/WelcomeMessage', () => ({
-  __esModule: true,
-  default: () => <div data-testid="welcome-message" />
+jest.mock('../../lib/api', () => ({
+  api: {
+    getMetrics: jest.fn()
+  }
 }));
 
-jest.mock('../components/dashboard/MovableDashboard', () => ({
-  __esModule: true,
-  default: () => <div data-testid="movable-dashboard" />
-}));
-
-jest.mock('../components/PageErrorBoundary', () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => <div data-testid="error-boundary">{children}</div>
-}));
-
-// Mock localStorage
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+const renderDashboard = (props = {}) => {
+  return render(
+    <BrowserRouter>
+      <Dashboard {...props} />
+    </BrowserRouter>
+  );
 };
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 describe('Dashboard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Reset localStorage mock
-    localStorageMock.getItem.mockReturnValue(null);
+    
+    const { useAuth } = require('../../hooks/useAuth');
+    useAuth.mockReturnValue({
+      user: { id: '1', email: 'test@example.com', role: 'investigator' },
+      isAuthenticated: true
+    });
   });
 
-  it('renders dashboard components', () => {
-    render(<Dashboard />);
+  describe('rendering', () => {
+    it('should render dashboard title', async () => {
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({
+        total: 100,
+        open: 30,
+        in_progress: 45,
+        closed: 25
+      });
+      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
 
-    expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
-    expect(screen.getByTestId('welcome-message')).toBeInTheDocument();
-    expect(screen.getByTestId('movable-dashboard')).toBeInTheDocument();
-  });
+      renderDashboard();
 
-  it('displays rookie checklist for new users', () => {
-    // Mock localStorage to return incomplete checklist
-    localStorageMock.getItem.mockReturnValue(JSON.stringify({ run_analysis: false }));
-
-    render(<Dashboard />);
-
-    expect(screen.getByTestId('rookie-checklist-wrapper')).toBeInTheDocument();
-  });
-
-  it('hides rookie checklist for experienced users', () => {
-    // Mock localStorage to return completed checklist
-    localStorageMock.getItem.mockReturnValue(JSON.stringify({ run_analysis: true }));
-
-    render(<Dashboard />);
-
-    expect(screen.queryByTestId('rookie-checklist-wrapper')).not.toBeInTheDocument();
-  });
-
-  it('handles localStorage errors gracefully', () => {
-    // Mock localStorage to throw an error
-    localStorageMock.getItem.mockImplementation(() => {
-      throw new Error('localStorage error');
+      await waitFor(() => {
+        expect(screen.getByText(/dashboard/i)).toBeInTheDocument();
+      });
     });
 
-    // Should not crash and should show rookie checklist as fallback
-    expect(() => {
-      render(<Dashboard />);
-    }).not.toThrow();
+    it('should display loading state initially', () => {
+      const { caseService } = require('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockReturnValue(
+        new Promise(() => {}) // Never resolves
+      );
 
-    expect(screen.getByTestId('rookie-checklist-wrapper')).toBeInTheDocument();
-  });
+      renderDashboard();
 
-  it('updates current time on mount', () => {
-    const setTimeoutSpy = jest.spyOn(window, 'setTimeout');
-
-    render(<Dashboard />);
-
-    // Should set up interval for time updates
-    expect(setTimeoutSpy).toHaveBeenCalled();
-  });
-
-  it('handles network reconnection', () => {
-    const { rerender } = render(<Dashboard />);
-
-    // Initially online
-    expect(screen.getByText(/System Operational/)).toBeInTheDocument();
-
-    // Simulate going offline and back online
-    const { useNetworkStatus } = require('../hooks/useNetworkStatus');
-    useNetworkStatus.mockReturnValue({ isOnline: false });
-    rerender(<Dashboard />);
-
-    expect(screen.getByText(/Offline Mode/)).toBeInTheDocument();
-  });
-
-  it('displays loading state when metrics are loading', () => {
-    const { useDashboardMetrics } = require('../hooks/useDashboardMetrics');
-    useDashboardMetrics.mockReturnValue({
-      data: null,
-      dataUpdatedAt: Date.now(),
-      isLoading: true,
-      error: null
+      expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
     });
 
-    render(<Dashboard />);
+    it('should render statistics cards', async () => {
+      const mockStats = {
+        total: 150,
+        open: 40,
+        in_progress: 60,
+        closed: 50,
+        by_priority: {
+          high: 20,
+          medium: 80,
+          low: 50
+        }
+      };
 
-    // Should still render normally since loading is handled by MovableDashboard
-    expect(screen.getByTestId('movable-dashboard')).toBeInTheDocument();
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue(mockStats);
+      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        expect(screen.getByText('150')).toBeInTheDocument();
+        expect(screen.getByText('40')).toBeInTheDocument();
+        expect(screen.getByText('60')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('handles dashboard metrics errors', () => {
-    const { useDashboardMetrics } = require('../hooks/useDashboardMetrics');
-    useDashboardMetrics.mockReturnValue({
-      data: null,
-      dataUpdatedAt: Date.now(),
-      isLoading: false,
-      error: new Error('Metrics error')
+  describe('data fetching', () => {
+    it('should fetch dashboard data on mount', async () => {
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        expect(caseService.getCaseStatistics).toHaveBeenCalled();
+        expect(caseService.getAllCases).toHaveBeenCalled();
+      });
     });
 
-    render(<Dashboard />);
+    it('should handle data fetch errors gracefully', async () => {
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockRejectedValue(
+        new Error('API error')
+      );
 
-    // Should still render normally since error is handled by MovableDashboard
-    expect(screen.getByTestId('movable-dashboard')).toBeInTheDocument();
+      renderDashboard();
+
+      await waitFor(() => {
+        expect(screen.getByText(/error loading dashboard/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should refresh data when refresh button clicked', async () => {
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        expect(caseService.getCaseStatistics).toHaveBeenCalledTimes(1);
+      });
+
+      const refreshButton = screen.getByTestId('refresh-button');
+      fireEvent.click(refreshButton);
+
+      await waitFor(() => {
+        expect(caseService.getCaseStatistics).toHaveBeenCalledTimes(2);
+      });
+    });
   });
 
-  it('renders with proper accessibility attributes', () => {
-    render(<Dashboard />);
+  describe('recent cases section', () => {
+    it('should display recent cases', async () => {
+      const mockCases = [
+        {
+          id: '1',
+          title: 'Recent Case 1',
+          status: 'open',
+          priority: 'high',
+          created_at: new Date().toISOString()
+        },
+        {
+          id: '2',
+          title: 'Recent Case 2',
+          status: 'in_progress',
+          priority: 'medium',
+          created_at: new Date().toISOString()
+        }
+      ];
 
-    // Check for main heading
-    const heading = screen.getByRole('heading', { level: 1 });
-    expect(heading).toBeInTheDocument();
-    expect(heading).toHaveTextContent('Dashboard');
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue(mockCases);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        expect(screen.getByText('Recent Case 1')).toBeInTheDocument();
+        expect(screen.getByText('Recent Case 2')).toBeInTheDocument();
+      });
+    });
+
+    it('should limit displayed cases to 5 most recent', async () => {
+      const mockCases = Array.from({ length: 10 }, (_, i) => ({
+        id: `${i + 1}`,
+        title: `Case ${i + 1}`,
+        status: 'open',
+        priority: 'medium',
+        created_at: new Date(Date.now() - i * 1000).toISOString()
+      }));
+
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue(mockCases);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        const caseCards = screen.getAllByTestId(/case-card-/);
+        expect(caseCards).toHaveLength(5);
+      });
+    });
+
+    it('should navigate to case details when case clicked', async () => {
+      const mockNavigate = jest.fn();
+      jest.mock('react-router-dom', () => ({
+        ...jest.requireActual('react-router-dom'),
+        useNavigate: () => mockNavigate
+      }));
+
+      const mockCases = [{
+        id: 'case-123',
+        title: 'Test Case',
+        status: 'open',
+        priority: 'high',
+        created_at: new Date().toISOString()
+      }];
+
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue(mockCases);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        const caseCard = screen.getByTestId('case-card-case-123');
+        fireEvent.click(caseCard);
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith('/cases/case-123');
+    });
   });
 
-  it('cleans up intervals on unmount', () => {
-    const clearIntervalSpy = jest.spyOn(window, 'clearInterval');
+  describe('charts and visualizations', () => {
+    it('should render status distribution chart', async () => {
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({
+        open: 30,
+        in_progress: 45,
+        closed: 25
+      });
+      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
 
-    const { unmount } = render(<Dashboard />);
+      renderDashboard();
 
-    unmount();
+      await waitFor(() => {
+        expect(screen.getByTestId('status-chart')).toBeInTheDocument();
+      });
+    });
 
-    expect(clearIntervalSpy).toHaveBeenCalled();
+    it('should render priority distribution chart', async () => {
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({
+        by_priority: {
+          high: 20,
+          medium: 50,
+          low: 30
+        }
+      });
+      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('priority-chart')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('shows reconnection notification when coming back online', () => {
-    // Start offline
-    const { useNetworkStatus } = require('../hooks/useNetworkStatus');
-    useNetworkStatus.mockReturnValue({ isOnline: false });
+  describe('filters and controls', () => {
+    it('should filter cases by status', async () => {
+      const mockCases = [
+        { id: '1', title: 'Open Case', status: 'open', priority: 'high', created_at: new Date().toISOString() },
+        { id: '2', title: 'Closed Case', status: 'closed', priority: 'low', created_at: new Date().toISOString() }
+      ];
 
-    const { rerender } = render(<Dashboard />);
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue(mockCases);
 
-    expect(screen.getByText(/Offline Mode/)).toBeInTheDocument();
+      renderDashboard();
 
-    // Come back online
-    useNetworkStatus.mockReturnValue({ isOnline: true });
-    rerender(<Dashboard />);
+      await waitFor(() => {
+        const statusFilter = screen.getByTestId('status-filter');
+        fireEvent.change(statusFilter, { target: { value: 'open' } });
+      });
 
-    expect(screen.getByText(/System Operational/)).toBeInTheDocument();
+      expect(screen.getByText('Open Case')).toBeInTheDocument();
+      expect(screen.queryByText('Closed Case')).not.toBeInTheDocument();
+    });
 
-    // Check for reconnection notification (this would be handled by a toast or similar)
-    // The implementation shows reconnection state but the actual notification
-    // would be handled by a separate component
+    it('should sort cases by different criteria', async () => {
+      const mockCases = [
+        { id: '1', title: 'Case A', status: 'open', priority: 'low', created_at: '2025-01-01T00:00:00Z' },
+        { id: '2', title: 'Case B', status: 'open', priority: 'high', created_at: '2025-01-02T00:00:00Z' }
+      ];
+
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue(mockCases);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        const sortSelect = screen.getByTestId('sort-select');
+        fireEvent.change(sortSelect, { target: { value: 'priority' } });
+      });
+
+      const caseCards = screen.getAllByTestId(/case-card-/);
+      expect(caseCards[0]).toHaveTextContent('Case B'); // High priority first
+    });
+  });
+
+  describe('quick actions', () => {
+    it('should show create case button', () => {
+      const { caseService } = require('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
+
+      renderDashboard();
+
+      expect(screen.getByTestId('create-case-button')).toBeInTheDocument();
+    });
+
+    it('should navigate to create case page when button clicked', async () => {
+      const mockNavigate = jest.fn();
+      jest.mock('react-router-dom', () => ({
+        ...jest.requireActual('react-router-dom'),
+        useNavigate: () => mockNavigate
+      }));
+
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
+
+      renderDashboard();
+
+      const createButton = screen.getByTestId('create-case-button');
+      fireEvent.click(createButton);
+
+      expect(mockNavigate).toHaveBeenCalledWith('/cases/create');
+    });
+  });
+
+  describe('notifications and alerts', () => {
+    it('should display high-priority case alerts', async () => {
+      const mockCases = [{
+        id: '1',
+        title: 'Urgent Case',
+        status: 'open',
+        priority: 'high',
+        created_at: new Date().toISOString(),
+        alert: true
+      }];
+
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue(mockCases);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('high-priority-alert')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('accessibility', () => {
+    it('should have proper ARIA labels', async () => {
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        expect(screen.getByRole('main')).toBeInTheDocument();
+        expect(screen.getByLabelText(/dashboard navigation/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should support keyboard navigation', async () => {
+      const { caseService } = await import('../../services/cases');
+      (caseService.getCaseStatistics as jest.Mock).mockResolvedValue({});
+      (caseService.getAllCases as jest.Mock).mockResolvedValue([{
+        id: '1',
+        title: 'Test Case',
+        status: 'open',
+        priority: 'medium',
+        created_at: new Date().toISOString()
+      }]);
+
+      renderDashboard();
+
+      await waitFor(() => {
+        const caseCard = screen.getByTestId('case-card-1');
+        caseCard.focus();
+        expect(document.activeElement).toBe(caseCard);
+      });
+    });
   });
 });

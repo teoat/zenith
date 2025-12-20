@@ -59,14 +59,14 @@ class ProductionSetup {
       
       const issues = [];
       const defaults = [
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY',
-        'PRODUCTION_USE_ENV_VARS_ONLY'
+        process.env.SQLCIPHER_KEY || 'REPLACE_WITH_SECURE_RANDOM_KEY',
+        process.env.MASTER_PASSWORD || 'REPLACE_WITH_STRONG_MASTER_PASSWORD',
+        process.env.IPC_SECRET || 'REPLACE_WITH_SECURE_IPC_SECRET',
+        process.env.AUTH_ENCRYPTION_KEY || 'REPLACE_WITH_SECURE_AUTH_KEY',
+        process.env.JWT_SECRET_KEY || 'REPLACE_WITH_SECURE_JWT_KEY',
+        process.env.ENCRYPTION_KEY || 'REPLACE_WITH_SECURE_ENCRYPTION_KEY',
+        process.env.SENTRY_DSN || 'REPLACE_WITH_SENTRY_DSN',
+        process.env.REDIS_PASSWORD || 'REPLACE_WITH_REDIS_PASSWORD'
       ];
       
       for (const line of lines) {

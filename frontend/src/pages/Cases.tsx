@@ -1,14 +1,13 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CheckSquare, Square, Activity, LayoutList } from 'lucide-react';
+import { Activity, LayoutList } from 'lucide-react';
 import { useCases } from '../hooks/useCases';
 import { approvalService } from '../services/approvalService';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { useTouchGestures } from '../hooks/useTouchGestures';
+import { CaseList } from '../components/cases/CaseList';
 import CasePreviewDrawer from '../components/cases/CasePreviewDrawer';
 import CaseHeader from '../components/cases/CaseHeader';
-import CaseActions from '../components/cases/CaseActions';
-import { VirtualizedList } from '../components/ui/VirtualizedList';
 import { KeyboardShortcutsModal } from '../components/ui/KeyboardShortcutsModal';
 import { KEYBOARD_SHORTCUTS } from '../lib/keyboardShortcuts';
 import { ApprovalQueue } from '../components/ApprovalQueue';
@@ -17,6 +16,7 @@ import { secureLogger } from '../utils/secureLogger';
 import PageErrorBoundary from '../components/PageErrorBoundary';
 import LoadingState from '../components/LoadingState';
 import { useToast } from '../providers/ToastProvider';
+import { Alert } from '@/components/ui/Alert';
 
 // Lazy load heavy components
 const CaseKanban = React.lazy(() => import('../components/cases/CaseKanban'));
@@ -26,7 +26,7 @@ interface CasesProps {}
 
 const Cases: React.FC<CasesProps> = () => {
   const { data, isLoading, error } = useCases();
-  const cases = data?.cases || [];
+  const cases = useMemo(() => data?.cases || [], [data?.cases]);
   const { caseId } = useParams<{ caseId: string }>();
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -242,100 +242,21 @@ const Cases: React.FC<CasesProps> = () => {
             minLeftWidth={300}
             minRightWidth={400}
             left={(
-              <div
-                ref={listRef}
-                className="h-full border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-y-auto focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                tabIndex={0}
-                role="listbox"
-                aria-label="Cases list"
-              >
-                <CaseActions
-                  selectedCases={selectedCases}
-                  filteredCases={filteredCases}
-                  onSelectAll={selectAllCases}
-                  onClearSelection={clearSelection}
-                  onBulkAIAnalyze={handleBulkAIAnalyze}
-                  onBulkDelete={handleBulkDelete}
-                />
-
-                <VirtualizedList
-                  items={filteredCases}
-                  estimateSize={120}
-                  getItemKey={(caseItem) => caseItem.id}
-                  renderItem={(caseItem) => {
-                    const isSelected = selectedCases.has(caseItem.id);
-                    return (
-                      <div
-                        key={caseItem.id}
-                        className={`case-row flex items-center p-4 border-b border-slate-200 dark:border-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors ${previewCaseId === caseItem.id ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-l-blue-500' : 'hover:bg-slate-50 dark:hover:bg-slate-800 border-l-4 border-l-transparent'}`}
-                        onClick={() => handleOpenCase(caseItem.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            handleOpenCase(caseItem.id);
-                          }
-                        }}
-                        tabIndex={0}
-                        role="option"
-                        aria-selected={previewCaseId === caseItem.id ? "true" : "false"}
-                        aria-label={`Case: ${caseItem.title}`}
-                      >
-                        {/* Selection Checkbox */}
-                        <div
-                          className="mr-3 shrink-0"
-                          onClick={(e) => toggleCaseSelection(caseItem.id, e)}
-                          role="checkbox"
-                          aria-checked={isSelected ? "true" : "false"}
-                          tabIndex={0}
-                          aria-label={`Select case ${caseItem.title}`}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.stopPropagation();
-                              toggleCaseSelection(caseItem.id);
-                            }
-                          }}
-                        >
-                          {isSelected ? (
-                            <CheckSquare size={20} className="text-blue-500" />
-                          ) : (
-                            <Square size={20} className="text-slate-300 dark:text-slate-600 hover:text-slate-400" />
-                          )}
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start">
-                            <p className="font-semibold text-slate-800 dark:text-white transition-colors truncate pr-2">{caseItem.title}</p>
-                          </div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400`}>
-                              {caseItem.status}
-                            </span>
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-bold ${
-                              caseItem.priority === 'HIGH' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
-                            }`}>
-                              {caseItem.priority}
-                            </span>
-                          </div>
-
-                          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2 line-clamp-2">
-                            {caseItem.description}
-                          </p>
-
-                          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                            <span>Created {new Date(caseItem.createdAt).toLocaleDateString()}</span>
-                            <span>Risk: {caseItem.riskScore || 0}%</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }}
-                  emptyMessage="No cases found matching your search."
-                  className="h-[calc(100%-44px)]"
-                />
-              </div>
+              <CaseList
+                cases={filteredCases}
+                selectedCases={selectedCases}
+                previewCaseId={previewCaseId}
+                onOpenCase={handleOpenCase}
+                onToggleSelection={toggleCaseSelection}
+                onSelectAll={selectAllCases}
+                onClearSelection={clearSelection}
+                onBulkAIAnalyze={handleBulkAIAnalyze}
+                onBulkDelete={handleBulkDelete}
+                listRef={listRef}
+              />
             )}
             right={(
-              <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-slate-950">
+              <div className="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-slate-950">
                 {previewCaseId ? (
                   <CasePreviewDrawer
                     isOpen={true}
@@ -344,18 +265,28 @@ const Cases: React.FC<CasesProps> = () => {
                     isEmbedded={true}
                   />
                 ) : (
-                  <div className="flex-1 p-8 space-y-8 overflow-y-auto">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-12 text-center shadow-sm">
-                      <Activity size={48} className="mx-auto text-blue-500 mb-6 opacity-80" />
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">Active Case Triage</h3>
-                      <p className="text-slate-500 text-sm mt-3 max-w-xs mx-auto">
-                        Select a case from the list to begin deep investigation, or use bulk actions to process multiple alerts at once.
-                      </p>
+                  <div className="flex-1 p-10 space-y-10 overflow-y-auto">
+                    <div className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 p-16 text-center shadow-xl shadow-slate-200/20 dark:shadow-none relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-8 opacity-5">
+                         <LayoutList size={200} />
+                      </div>
+                      <div className="relative z-10">
+                        <div className="p-4 bg-blue-500/10 rounded-2xl w-fit mx-auto mb-6">
+                           <Activity size={48} className="text-blue-500 animate-pulse" />
+                        </div>
+                        <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight italic">CASE ORCHESTRATOR</h3>
+                        <p className="text-slate-500 text-base mt-4 max-w-sm mx-auto font-medium leading-relaxed">
+                          Select an active investigation from the ledger to initiate deep-layer forensic analysis and cross-entity correlation.
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="space-y-4">
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active Approval Workflow</h4>
-                      <ApprovalQueue maxHeight="400px" showHeader={false} className="border-none shadow-none bg-transparent" />
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Prioritized Approvals</h4>
+                        <badge className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold rounded-full">ACTION REQUIRED</badge>
+                      </div>
+                      <ApprovalQueue maxHeight="450px" showHeader={false} className="border-none shadow-none bg-transparent" />
                     </div>
                   </div>
                 )}

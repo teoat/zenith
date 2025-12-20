@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 
 // Extend window interface for speech recognition
 declare global {
@@ -92,13 +93,32 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
     localStorage.setItem('accessibility-colorBlindMode', colorBlindMode);
   }, [colorBlindMode]);
 
+  // Announce function needs to be defined before it's used in effects
+  const announce = useCallback((message: string, priority: 'polite' | 'assertive' = 'polite') => {
+    const announcement = document.createElement('div');
+    announcement.setAttribute('aria-live', priority);
+    announcement.setAttribute('aria-atomic', 'true');
+    announcement.style.position = 'absolute';
+    announcement.style.left = '-10000px';
+    announcement.style.width = '1px';
+    announcement.style.height = '1px';
+    announcement.style.overflow = 'hidden';
+
+    document.body.appendChild(announcement);
+    announcement.textContent = message;
+
+    setTimeout(() => {
+      document.body.removeChild(announcement);
+    }, 1000);
+  }, []);
+
   // Voice control functionality
   useEffect(() => {
     if (!voiceControl || typeof window === 'undefined') return;
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      console.warn('Speech recognition not supported in this browser');
+      secureLogger.warn('SPEECH_RECOGNITION', 'Speech recognition not supported in this browser');
       return;
     }
 
@@ -140,7 +160,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
     localStorage.setItem('accessibility-voiceControl', String(voiceControl));
 
     return () => recognition.stop();
-  }, [voiceControl]);
+  }, [voiceControl, announce]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -161,24 +181,6 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [keyboardShortcuts]);
-
-  const announce = useCallback((message: string, priority: 'polite' | 'assertive' = 'polite') => {
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', priority);
-    announcement.setAttribute('aria-atomic', 'true');
-    announcement.style.position = 'absolute';
-    announcement.style.left = '-10000px';
-    announcement.style.width = '1px';
-    announcement.style.height = '1px';
-    announcement.style.overflow = 'hidden';
-
-    document.body.appendChild(announcement);
-    announcement.textContent = message;
-
-    setTimeout(() => {
-      document.body.removeChild(announcement);
-    }, 1000);
-  }, []);
 
   const registerShortcut = useCallback((key: string, callback: () => void) => {
     setKeyboardShortcuts(prev => ({ ...prev, [key]: callback }));

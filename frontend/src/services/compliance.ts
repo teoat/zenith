@@ -93,7 +93,7 @@ class ComplianceService {
     action: string,
     resourceType: string,
     resourceId: string,
-    details: Record<string, any>
+    details: Record<string, unknown>
   ): Promise<{ log_id: string; status: string }> {
     const response = await fetch(`${this.baseUrl}/audit/log`, {
       method: 'POST',

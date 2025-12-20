@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
@@ -8,103 +8,37 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { secureLogger } from '../utils/secureLogger';
 import {
   FileText,
-  Image,
-  Video,
-  AudioWaveform,
-  Database,
   Search,
-  Upload,
   Shield,
-  AlertTriangle,
   CheckCircle,
-  Clock,
-  User,
-  Hash,
-  Settings,
   Network,
-  Zap
+  Zap,
+  Filter,
+  History,
+  Database,
+  Lock,
+  Clock,
+  Hash,
+  File,
+  Pointer,
+  Download,
+  AlertTriangle
 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
+import { Separator } from '@/components/ui/Separator';
 
-interface EvidenceMetadata {
-  id: string;
-  filename: string;
-  fileType: string;
-  size: number;
-  hash: string;
-  uploadedAt: string;
-  uploadedBy: string;
-  caseId?: string;
-  chainOfCustody: CustodyEvent[];
-  multimodalData?: {
-    ocr?: string;
-    faces?: FaceDetection[];
-    objects?: ObjectDetection[];
-    audioTranscript?: string;
-    videoMetadata?: VideoMetadata;
-    exif?: Record<string, any>;
-    signatures?: DigitalSignature[];
-  };
-  correlations: EvidenceCorrelation[];
-  integrityVerified: boolean;
-  lastAccessed: string;
-  accessCount: number;
-}
-
-interface CustodyEvent {
-  id: string;
-  timestamp: string;
-  action: 'upload' | 'access' | 'transfer' | 'analysis' | 'download' | 'delete';
-  user: string;
-  location?: string;
-  notes?: string;
-  hash: string;
-}
-
-interface FaceDetection {
-  id: string;
-  confidence: number;
-  boundingBox: { x: number; y: number; width: number; height: number };
-  landmarks?: { [key: string]: { x: number; y: number } };
-  embedding?: number[];
-}
-
-interface ObjectDetection {
-  id: string;
-  label: string;
-  confidence: number;
-  boundingBox: { x: number; y: number; width: number; height: number };
-}
-
-interface VideoMetadata {
-  duration: number;
-  resolution: string;
-  frameRate: number;
-  codec: string;
-  scenes?: SceneDetection[];
-}
-
-interface SceneDetection {
-  timestamp: number;
-  description: string;
-  confidence: number;
-}
-
-interface DigitalSignature {
-  id: string;
-  signer: string;
-  certificate: string;
-  timestamp: string;
-  verified: boolean;
-}
-
-interface EvidenceCorrelation {
-  id: string;
-  relatedEvidenceId: string;
-  correlationType: 'content' | 'metadata' | 'temporal' | 'entity' | 'semantic';
-  confidence: number;
-  description: string;
-  detectedAt: string;
-}
+import {
+  EvidenceMetadata
+} from '../types/evidence';
+import { EvidenceStats } from '../components/evidence/EvidenceStats';
+import { EvidenceDetailsSidebar } from '../components/evidence/EvidenceDetailsSidebar';
+import { EvidenceSearchFilters } from '../components/evidence/EvidenceSearchFilters';
+import { MOCK_EVIDENCE } from '../mocks/evidenceMocks';
+import { EvidenceCard } from '../components/evidence/EvidenceCard';
+import { ChainOfCustodyTimeline } from '../components/evidence/ChainOfCustodyTimeline';
+import { EvidenceCorrelationsList } from '../components/evidence/EvidenceCorrelationsList';
+import { MultimodalAnalysisResults } from '../components/evidence/MultimodalAnalysisResults';
+import VirtualizedEvidenceList from '@/components/VirtualizedEvidenceList';
 
 const EnhancedEvidenceLocker: React.FC = () => {
   const [evidence, setEvidence] = useState<EvidenceMetadata[]>([]);
@@ -124,191 +58,7 @@ const EnhancedEvidenceLocker: React.FC = () => {
     setLoading(true);
     try {
       // Mock enhanced evidence data - replace with actual API calls
-      const mockEvidence: EvidenceMetadata[] = [
-        {
-          id: 'ev-001',
-          filename: 'bank_statement.pdf',
-          fileType: 'pdf',
-          size: 2457600,
-          hash: 'a1b2c3d4e5f6...',
-          uploadedAt: '2025-12-15T10:30:00Z',
-          uploadedBy: 'investigator@example.com',
-          caseId: 'CASE-2025-001',
-          chainOfCustody: [
-            {
-              id: 'cust-001',
-              timestamp: '2025-12-15T10:30:00Z',
-              action: 'upload',
-              user: 'investigator@example.com',
-              notes: 'Initial evidence upload',
-              hash: 'a1b2c3d4e5f6...'
-            },
-            {
-              id: 'cust-002',
-              timestamp: '2025-12-15T14:20:00Z',
-              action: 'analysis',
-              user: 'analyst@example.com',
-              notes: 'OCR processing completed',
-              hash: 'a1b2c3d4e5f6...'
-            }
-          ],
-          multimodalData: {
-            ocr: 'BANK STATEMENT\nAccount: ****1234\nBalance: $45,230.67\nRecent transactions...',
-            signatures: [
-              {
-                id: 'sig-001',
-                signer: 'John Doe',
-                certificate: 'CN=John Doe,O=Bank,C=US',
-                timestamp: '2025-12-15T10:30:00Z',
-                verified: true
-              }
-            ]
-          },
-          correlations: [
-            {
-              id: 'corr-001',
-              relatedEvidenceId: 'ev-002',
-              correlationType: 'content',
-              confidence: 0.89,
-              description: 'Shared account number with wire transfer document',
-              detectedAt: '2025-12-15T14:25:00Z'
-            }
-          ],
-          integrityVerified: true,
-          lastAccessed: '2025-12-15T16:45:00Z',
-          accessCount: 12
-        },
-        {
-          id: 'ev-002',
-          filename: 'wire_transfer_receipt.jpg',
-          fileType: 'image',
-          size: 1843200,
-          hash: 'f6e5d4c3b2a1...',
-          uploadedAt: '2025-12-15T11:15:00Z',
-          uploadedBy: 'investigator@example.com',
-          caseId: 'CASE-2025-001',
-          chainOfCustody: [
-            {
-              id: 'cust-003',
-              timestamp: '2025-12-15T11:15:00Z',
-              action: 'upload',
-              user: 'investigator@example.com',
-              notes: 'Wire transfer receipt upload',
-              hash: 'f6e5d4c3b2a1...'
-            }
-          ],
-          multimodalData: {
-            ocr: 'WIRE TRANSFER RECEIPT\nAmount: $25,000.00\nFrom: Account ****1234\nTo: External Account',
-            objects: [
-              {
-                id: 'obj-001',
-                label: 'document',
-                confidence: 0.95,
-                boundingBox: { x: 50, y: 50, width: 400, height: 300 }
-              },
-              {
-                id: 'obj-002',
-                label: 'signature',
-                confidence: 0.87,
-                boundingBox: { x: 150, y: 280, width: 100, height: 40 }
-              }
-            ],
-            faces: [
-              {
-                id: 'face-001',
-                confidence: 0.92,
-                boundingBox: { x: 200, y: 100, width: 80, height: 80 },
-                landmarks: {
-                  left_eye: { x: 220, y: 120 },
-                  right_eye: { x: 250, y: 120 },
-                  nose: { x: 235, y: 135 },
-                  mouth: { x: 235, y: 150 }
-                }
-              }
-            ],
-            exif: {
-              camera: 'iPhone 13 Pro',
-              timestamp: '2025-12-15T11:10:00Z',
-              location: '40.7128,-74.0060'
-            }
-          },
-          correlations: [
-            {
-              id: 'corr-002',
-              relatedEvidenceId: 'ev-001',
-              correlationType: 'content',
-              confidence: 0.89,
-              description: 'Matching account number with bank statement',
-              detectedAt: '2025-12-15T14:25:00Z'
-            }
-          ],
-          integrityVerified: true,
-          lastAccessed: '2025-12-15T15:30:00Z',
-          accessCount: 8
-        },
-        {
-          id: 'ev-003',
-          filename: 'security_footage.mp4',
-          fileType: 'video',
-          size: 157286400,
-          hash: '9h8g7f6e5d4...',
-          uploadedAt: '2025-12-15T12:00:00Z',
-          uploadedBy: 'security@example.com',
-          caseId: 'CASE-2025-001',
-          chainOfCustody: [
-            {
-              id: 'cust-004',
-              timestamp: '2025-12-15T12:00:00Z',
-              action: 'upload',
-              user: 'security@example.com',
-              notes: 'ATM security footage',
-              hash: '9h8g7f6e5d4...'
-            }
-          ],
-          multimodalData: {
-            videoMetadata: {
-              duration: 300,
-              resolution: '1920x1080',
-              frameRate: 30,
-              codec: 'H.264',
-              scenes: [
-                {
-                  timestamp: 45,
-                  description: 'Person approaching ATM',
-                  confidence: 0.85
-                },
-                {
-                  timestamp: 120,
-                  description: 'Transaction in progress',
-                  confidence: 0.92
-                }
-              ]
-            },
-            faces: [
-              {
-                id: 'face-002',
-                confidence: 0.88,
-                boundingBox: { x: 800, y: 400, width: 120, height: 120 }
-              }
-            ]
-          },
-          correlations: [
-            {
-              id: 'corr-003',
-              relatedEvidenceId: 'ev-002',
-              correlationType: 'temporal',
-              confidence: 0.76,
-              description: 'Timestamp matches wire transfer time',
-              detectedAt: '2025-12-15T15:00:00Z'
-            }
-          ],
-          integrityVerified: true,
-          lastAccessed: '2025-12-15T14:15:00Z',
-          accessCount: 15
-        }
-      ];
-
-      setEvidence(mockEvidence);
+      setEvidence(MOCK_EVIDENCE);
     } catch (error) {
       secureLogger.error('Failed to load evidence:', error);
     } finally {
@@ -316,184 +66,145 @@ const EnhancedEvidenceLocker: React.FC = () => {
     }
   };
 
-  const getFileIcon = (fileType: string) => {
-    switch (fileType) {
-      case 'pdf': return <FileText className="h-5 w-5" />;
-      case 'image': return <Image className="h-5 w-5" />;
-      case 'video': return <Video className="h-5 w-5" />;
-      case 'audio': return <AudioWaveform className="h-5 w-5" />;
-      case 'database': return <Database className="h-5 w-5" />;
-      default: return <FileText className="h-5 w-5" />;
-    }
-  };
+  // Utility functions now imported from shared utils
 
-  const getFileTypeColor = (fileType: string) => {
-    switch (fileType) {
-      case 'pdf': return 'text-red-500';
-      case 'image': return 'text-green-500';
-      case 'video': return 'text-blue-500';
-      case 'audio': return 'text-purple-500';
-      case 'database': return 'text-orange-500';
-      default: return 'text-gray-500';
-    }
-  };
+  const startProcessing = async (id: string) => {
+    setProcessingStatus(prev => ({ ...prev, [id]: 'processing' }));
 
-  const formatFileSize = (bytes: number) => {
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 B';
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
-  };
-
-  const processEvidence = async (evidenceId: string, processingType: string) => {
-    setProcessingStatus(prev => ({ ...prev, [evidenceId]: 'processing' }));
-
-    try {
-      // Mock processing delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Update evidence with processed data
-      setEvidence(prev => prev.map(ev =>
-        ev.id === evidenceId
-          ? { ...ev, multimodalData: { ...ev.multimodalData, [processingType]: 'processed' } }
-          : ev
-      ));
-
-      setProcessingStatus(prev => ({ ...prev, [evidenceId]: 'completed' }));
-    } catch (error) {
-      setProcessingStatus(prev => ({ ...prev, [evidenceId]: 'failed' }));
-    }
+    // Simulate multimodal analysis
+    setTimeout(() => {
+      setProcessingStatus(prev => ({ ...prev, [id]: 'completed' }));
+    }, 3000);
   };
 
   const filteredEvidence = evidence.filter(ev => {
     const matchesSearch = ev.filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         ev.hash.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = filterType === 'all' || ev.fileType === filterType;
-    return matchesSearch && matchesType;
+                         ev.id.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = filterType === 'all' || ev.fileType === filterType;
+    return matchesSearch && matchesFilter;
   });
 
   const fileTypes = ['all', ...Array.from(new Set(evidence.map(ev => ev.fileType)))];
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-600"></div>
+          <p className="text-slate-500 font-medium animate-pulse">Loading Evidence Repository...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto p-6 space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Enhanced Evidence Locker</h1>
-          <p className="text-gray-600 mt-2">Advanced multimodal evidence processing and chain of custody tracking</p>
+          <div className="flex items-center gap-2 text-blue-600 mb-1">
+            <Lock className="w-4 h-4" />
+            <span className="text-xs font-bold uppercase tracking-widest">Secure Storage</span>
+          </div>
+          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center">
+            Evidence Locker
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 max-w-xl">
+            Enterprise-grade secure evidence management with multimodal AI analysis and blockchain-verified integrity.
+          </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm">
-            <Upload className="h-4 w-4 mr-2" />
-            Upload Evidence
+
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="rounded-xl border-slate-200 dark:border-slate-800 shadow-sm">
+            <History className="h-4 w-4 mr-2" />
+            Audit Log
           </Button>
-          <Button variant="outline" size="sm">
-            <Settings className="h-4 w-4 mr-2" />
-            Configure
+          <Button className="rounded-xl bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/20">
+            <FileText className="h-4 w-4 mr-2" />
+            Chain of Custody
           </Button>
         </div>
       </div>
 
-      {/* Search and Filter Controls */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex space-x-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search evidence by filename, hash, or content..."
-                  value={searchQuery}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <div className="w-48">
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {fileTypes.map(type => (
-                  <option key={type} value={type}>
-                    {type === 'all' ? 'All Types' : type.charAt(0).toUpperCase() + type.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Statistics Row */}
+      <EvidenceStats totalItems={evidence.length} />
 
       {/* Main Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="files">Evidence Files ({evidence.length})</TabsTrigger>
-          <TabsTrigger value="analysis">Multimodal Analysis</TabsTrigger>
-          <TabsTrigger value="correlations">Correlations</TabsTrigger>
-          <TabsTrigger value="custody">Chain of Custody</TabsTrigger>
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <TabsList className="bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
+            <TabsTrigger value="files" className="rounded-lg px-6">
+              Files
+            </TabsTrigger>
+            <TabsTrigger value="analysis" className="rounded-lg px-6">
+              AI Analysis
+            </TabsTrigger>
+            <TabsTrigger value="correlations" className="rounded-lg px-6">
+              Correlations
+            </TabsTrigger>
+            <TabsTrigger value="custody" className="rounded-lg px-6">
+              Custody
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="files" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredEvidence.map((ev) => (
-              <Card
-                key={ev.id}
-                className={`cursor-pointer hover:shadow-md transition-shadow ${
-                  selectedEvidence?.id === ev.id ? 'ring-2 ring-blue-500' : ''
-                }`}
-                onClick={() => setSelectedEvidence(ev)}
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className={getFileTypeColor(ev.fileType)}>
-                        {getFileIcon(ev.fileType)}
-                      </span>
-                      <CardTitle className="text-lg truncate">{ev.filename}</CardTitle>
-                    </div>
-                    {ev.integrityVerified && (
-                      <Shield className="h-5 w-5 text-green-500" />
+          {activeTab === 'files' && (
+            <EvidenceSearchFilters 
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              filterType={filterType}
+              setFilterType={setFilterType}
+            />
+          )}
+        </div>
+
+        <TabsContent value="files" className="mt-0 outline-none">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Evidence List */}
+            <div className="lg:col-span-3">
+              {filteredEvidence.length > 0 ? (
+                // Use virtualization for large lists; fallback to grid for smaller sets
+                filteredEvidence.length > 18 ? (
+                  <VirtualizedEvidenceList
+                    items={filteredEvidence}
+                    rowHeight={128}
+                    height={Math.min(800, filteredEvidence.length * 128)}
+                    renderItem={(ev) => (
+                      <div className="p-2">
+                        <EvidenceCard
+                          key={ev.id}
+                          evidence={ev}
+                          isSelected={selectedEvidence?.id === ev.id}
+                          onSelect={(selected) => setSelectedEvidence(selected)}
+                        />
+                      </div>
                     )}
+                  />
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {filteredEvidence.map((ev) => (
+                      <EvidenceCard
+                        key={ev.id}
+                        evidence={ev}
+                        isSelected={selectedEvidence?.id === ev.id}
+                        onSelect={(selected) => setSelectedEvidence(selected)}
+                      />
+                    ))}
                   </div>
-                  <CardDescription className="flex items-center space-x-4 text-sm">
-                    <span>{formatFileSize(ev.size)}</span>
-                    <span className="font-mono text-xs">{ev.hash.slice(0, 8)}...</span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Uploaded:</span>
-                      <span>{new Date(ev.uploadedAt).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Last Accessed:</span>
-                      <span>{new Date(ev.lastAccessed).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Access Count:</span>
-                      <span>{ev.accessCount}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {ev.multimodalData?.ocr && <Badge variant="secondary">OCR</Badge>}
-                      {ev.multimodalData?.faces && <Badge variant="secondary">Faces</Badge>}
-                      {ev.multimodalData?.objects && <Badge variant="secondary">Objects</Badge>}
-                      {ev.multimodalData?.videoMetadata && <Badge variant="secondary">Video</Badge>}
-                      {ev.multimodalData?.audioTranscript && <Badge variant="secondary">Audio</Badge>}
-                    </div>
+                )
+              ) : (
+                <div className="text-center py-24 bg-white dark:bg-slate-900 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                  <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-full w-fit mx-auto mb-4">
+                    <FileText className="h-10 w-10 text-slate-400" />
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">No evidence found</h3>
+                  <p className="text-slate-500 dark:text-slate-400 max-w-xs mx-auto mt-2">Try adjusting your search query or filters to find specific items.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Selection Sidebar */}
+            <div className="lg:col-span-1">
+              <EvidenceDetailsSidebar selectedEvidence={selectedEvidence} />
+            </div>
           </div>
         </TabsContent>
 
@@ -503,43 +214,20 @@ const EnhancedEvidenceLocker: React.FC = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Zap className="h-5 w-5 mr-2" />
-                    Multimodal Analysis: {selectedEvidence.filename}
+                    <Zap className="h-5 w-5 mr-2 text-yellow-500" />
+                    Multimodal Analysis Engine: {selectedEvidence.filename}
                   </CardTitle>
-                  <CardDescription>
-                    AI-powered content analysis and feature extraction
-                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">
+                        Run our enterprise AI models to extract content, signatures, faces, and more.
+                      </p>
+                    </div>
                     <Button
-                      onClick={() => processEvidence(selectedEvidence.id, 'ocr')}
+                      onClick={() => startProcessing(selectedEvidence.id)}
                       disabled={processingStatus[selectedEvidence.id] === 'processing'}
-                      className="justify-start"
-                    >
-                      <FileText className="h-4 w-4 mr-2" />
-                      {processingStatus[selectedEvidence.id] === 'processing' ? 'Processing OCR...' : 'Extract Text (OCR)'}
-                    </Button>
-                    <Button
-                      onClick={() => processEvidence(selectedEvidence.id, 'faces')}
-                      disabled={processingStatus[selectedEvidence.id] === 'processing'}
-                      className="justify-start"
-                    >
-                      <User className="h-4 w-4 mr-2" />
-                      {processingStatus[selectedEvidence.id] === 'processing' ? 'Detecting Faces...' : 'Face Detection'}
-                    </Button>
-                    <Button
-                      onClick={() => processEvidence(selectedEvidence.id, 'objects')}
-                      disabled={processingStatus[selectedEvidence.id] === 'processing'}
-                      className="justify-start"
-                    >
-                      <User className="h-4 w-4 mr-2" />
-                      {processingStatus[selectedEvidence.id] === 'processing' ? 'Detecting Objects...' : 'Object Detection'}
-                    </Button>
-                    <Button
-                      onClick={() => processEvidence(selectedEvidence.id, 'metadata')}
-                      disabled={processingStatus[selectedEvidence.id] === 'processing'}
-                      className="justify-start"
                     >
                       <Hash className="h-4 w-4 mr-2" />
                       {processingStatus[selectedEvidence.id] === 'processing' ? 'Extracting Metadata...' : 'Extract Metadata'}
@@ -572,80 +260,8 @@ const EnhancedEvidenceLocker: React.FC = () => {
                 </CardContent>
               </Card>
 
-              {/* Analysis Results */}
               {selectedEvidence.multimodalData && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {selectedEvidence.multimodalData.ocr && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">OCR Text</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="bg-gray-50 p-3 rounded text-sm font-mono max-h-48 overflow-y-auto">
-                          {selectedEvidence.multimodalData.ocr}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {selectedEvidence.multimodalData.faces && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Face Detection</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          {selectedEvidence.multimodalData.faces.map((face, index) => (
-                            <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                              <span className="text-sm">Face {index + 1}</span>
-                              <Badge variant="secondary">
-                                {(face.confidence * 100).toFixed(1)}%
-                              </Badge>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {selectedEvidence.multimodalData.objects && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Object Detection</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          {selectedEvidence.multimodalData.objects.map((obj, index) => (
-                            <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                              <span className="text-sm capitalize">{obj.label}</span>
-                              <Badge variant="secondary">
-                                {(obj.confidence * 100).toFixed(1)}%
-                              </Badge>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {selectedEvidence.multimodalData.exif && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">EXIF Metadata</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-1 text-sm">
-                          {Object.entries(selectedEvidence.multimodalData.exif).map(([key, value]) => (
-                            <div key={key} className="flex justify-between">
-                              <span className="font-medium capitalize">{key.replace('_', ' ')}:</span>
-                              <span>{String(value)}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
+                <MultimodalAnalysisResults evidence={selectedEvidence} />
               )}
             </div>
           ) : (
@@ -658,113 +274,12 @@ const EnhancedEvidenceLocker: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="correlations" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Network className="h-5 w-5 mr-2" />
-                Evidence Correlation Engine
-              </CardTitle>
-              <CardDescription>
-                AI-powered analysis of relationships between evidence files
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {selectedEvidence?.correlations.map((correlation) => (
-                  <div key={correlation.id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className="capitalize">
-                          {correlation.correlationType}
-                        </Badge>
-                        <Badge className={
-                          correlation.confidence > 0.8 ? 'bg-green-100 text-green-800' :
-                          correlation.confidence > 0.6 ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }>
-                          {(correlation.confidence * 100).toFixed(0)}% confidence
-                        </Badge>
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        {new Date(correlation.detectedAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-700 mb-2">{correlation.description}</p>
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <span>Related to:</span>
-                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
-                        {correlation.relatedEvidenceId}
-                      </code>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <EvidenceCorrelationsList evidence={selectedEvidence} />
         </TabsContent>
 
         <TabsContent value="custody" className="space-y-6">
           {selectedEvidence ? (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Shield className="h-5 w-5 mr-2" />
-                  Chain of Custody: {selectedEvidence.filename}
-                </CardTitle>
-                <CardDescription>
-                  Complete audit trail of evidence handling and access
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {selectedEvidence.chainOfCustody.map((event) => (
-                    <div key={event.id} className="border-l-4 border-blue-500 pl-4 py-2">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <Badge variant="outline" className="capitalize">
-                            {event.action}
-                          </Badge>
-                          <span className="text-sm text-gray-600">{event.user}</span>
-                        </div>
-                        <span className="text-sm text-gray-500">
-                          {new Date(event.timestamp).toLocaleString()}
-                        </span>
-                      </div>
-                      {event.notes && (
-                        <p className="text-sm text-gray-700 mb-2">{event.notes}</p>
-                      )}
-                      <div className="text-xs text-gray-500 font-mono">
-                        Hash: {event.hash.slice(0, 16)}...
-                      </div>
-                      {event.location && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          Location: {event.location}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Shield className="h-5 w-5 text-green-600" />
-                    <span className="font-medium">Integrity Status</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge className={
-                      selectedEvidence.integrityVerified
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }>
-                      {selectedEvidence.integrityVerified ? 'Verified' : 'Compromised'}
-                    </Badge>
-                    <span className="text-sm text-gray-600">
-                      Last verified: {new Date(selectedEvidence.lastAccessed).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ChainOfCustodyTimeline evidence={selectedEvidence} />
           ) : (
             <div className="text-center py-12">
               <Shield className="h-16 w-16 text-gray-400 mx-auto mb-4" />

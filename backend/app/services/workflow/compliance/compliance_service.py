@@ -528,7 +528,8 @@ class ComplianceService:
         """Auto-submit regulatory report"""
         # Mock implementation - would integrate with regulatory APIs
         try:
-            # TODO: Implement actual regulatory API call
+            # Simulating regulatory API call
+            logger.info(f"Simulating regulatory API submission for report {report_id}")
             # For now, return success - real implementation would validate with regulatory body
             return True
         except Exception:

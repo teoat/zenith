@@ -41,6 +41,7 @@ from app.routers.collaboration import router as collaboration_router
 from app.routers.cost_optimization import router as cost_optimization_router
 from app.routers.evidence import router as evidence_router
 from app.routers.fraud import router as fraud_router
+from app.routers.compliance import router as compliance_router
 from app.routers.fraud_rules import router as fraud_rules_router
 from app.routers.graph import router as graph_router
 from app.routers.logging import router as logging_router
@@ -57,6 +58,7 @@ from app.routers.semantic_search import router as semantic_search_router
 from app.routers.stats import router as stats_router
 from app.routers.users import router as users_router
 from app.routers.forensic_intelligence import router as forensic_intel_router
+from app.routers.health import router as health_router
 from app.routers.entities import router as entities_router, relationships_router as relationships_router_from_entities
 from app.routers.csrf import router as csrf_router
 from app.services.infrastructure.apm_service import APMMiddleware
@@ -67,6 +69,16 @@ from app.services.infrastructure.monitoring_service import (
     monitoring_service,
 )
 from app.services.infrastructure.performance_monitor import performance_monitor
+
+# Deprecated endpoints tracking
+DEPRECATED_ENDPOINTS = {
+    "/api/v1/old_endpoint": {
+        "deprecated_since": "v1.2.0",
+        "removal_version": "v2.0.0",
+        "migration_guide": "/docs/migration/v1-to-v2",
+        "replacement": "/api/v1/new_endpoint"
+    }
+}
 from core.database import create_tables
 from core.logging import log_error, log_request, logger
 from core.performance import PerformanceMonitoringMiddleware
@@ -168,7 +180,9 @@ from app.middleware.security import SecurityHeadersMiddleware
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan - startup and shutdown events with 99.99% uptime procedures"""
+    print("DEBUG: Lifespan called!")
     startup_start = asyncio.get_event_loop().time()
+    print("DEBUG: Lifespan startup beginning")
     logger.info("Starting 378x492 Fraud Detection API with 99.99% uptime target", extra={"event": "startup"})
 
     # Graceful startup with health verification
@@ -296,19 +310,8 @@ async def lifespan(app: FastAPI):
             extra={"event": "monitoring_start"},
         )
 
-        # Start collaboration WebSocket server if enabled (non-blocking for testing)
-        if os.getenv("ENABLE_COLLABORATION_WS", "false").lower() == "true":
-            # Start in background task to avoid blocking lifespan during testing
-            asyncio.create_task(collaboration_manager.start_server())
-            logger.info(
-                "Collaboration WebSocket server starting on ws://localhost:8080",
-                extra={"event": "collaboration_starting"},
-            )
-        else:
-            logger.info(
-                "Collaboration WebSocket server disabled (set ENABLE_COLLABORATION_WS=true to enable)",
-                extra={"event": "collaboration_disabled"},
-            )
+        # WebSocket server startup moved to manual endpoint for debugging
+        logger.info("WebSocket server startup deferred to /admin/start-websocket endpoint")
         logger.info(
             "378x492 API startup completed successfully",
             extra={"event": "startup_complete"},
@@ -462,17 +465,8 @@ app = FastAPI(
 )
 
 # Health Check Endpoints
-@app.get("/health", tags=["Health"])
-async def health_check():
-    return {"status": "healthy", "version": VERSION}
-
-@app.get("/health/ready", tags=["Health"])
-async def readiness_check():
-    return {"status": "ready"}
-
-@app.get("/health/live", tags=["Health"])
-async def liveness_check():
-    return {"status": "alive"}
+# Health Check Endpoints (Moved to app.routers.health)
+app.include_router(health_router)
 
 # Setup comprehensive API documentation with custom OpenAPI schema
 app = setup_api_documentation(app)
@@ -590,12 +584,16 @@ app.add_middleware(CSRFProtectionMiddleware)
 # Request ID middleware - distributed tracing (runs early)
 app.add_middleware(RequestIDMiddleware)
 
+# Deprecated endpoint monitoring - tracks usage of deprecated APIs
+from app.middleware.deprecated_monitor import DeprecatedEndpointMonitor
+app.add_middleware(DeprecatedEndpointMonitor)
+
 
 # Request logging middleware
 @app.middleware("http")
 async def request_logging_middleware(request: Request, call_next):
     """
-    Middleware for logging all requests with comprehensive audit trail.
+    Middleware for logging all requests with comprehensive audit trail and deprecated endpoint tracking.
     """
     import time
     import uuid
@@ -612,6 +610,21 @@ async def request_logging_middleware(request: Request, call_next):
     method = request.method
     path = request.url.path
     query_params = str(request.query_params)
+
+    # Check for deprecated endpoints
+    deprecated_info = None
+    if path in DEPRECATED_ENDPOINTS:
+        deprecated_info = DEPRECATED_ENDPOINTS[path]
+        logger.warning(
+            f"Deprecated endpoint accessed: {path}",
+            extra={
+                "deprecated_endpoint": path,
+                "deprecated_since": deprecated_info["deprecated_since"],
+                "replacement": deprecated_info.get("replacement"),
+                "request_id": request_id,
+                "client_ip": client_ip
+            }
+        )
 
     # Extract user ID from JWT token (simplified for now)
     user_id = None
@@ -653,12 +666,29 @@ async def request_logging_middleware(request: Request, call_next):
         "request_id": request_id,
     }
 
+    # Add deprecated endpoint info if applicable
+    if deprecated_info:
+        details["deprecated_endpoint"] = {
+            "deprecated_since": deprecated_info["deprecated_since"],
+            "removal_version": deprecated_info["removal_version"],
+            "migration_guide": deprecated_info["migration_guide"],
+            "replacement": deprecated_info["replacement"]
+        }
+
     try:
         response = await call_next(request)
         duration = time.time() - start_time
 
         # Add request ID to response headers
         response.headers["X-Request-ID"] = request_id
+
+        # Add deprecation warning headers if applicable
+        if deprecated_info:
+            response.headers["X-Deprecated-Endpoint"] = "true"
+            response.headers["X-Deprecation-Info"] = f"Deprecated since {deprecated_info['deprecated_since']}. Use {deprecated_info['replacement']} instead."
+            response.headers["X-Migration-Guide"] = deprecated_info["migration_guide"]
+            # Still return 200 but with warning headers
+            response.status_code = 200
 
         # Update audit details with response info
         details.update(
@@ -766,6 +796,9 @@ app.include_router(
     evidence_router, prefix=f"/api/{API_VERSION}/evidence", tags=["Evidence"]
 )
 app.include_router(fraud_router, prefix=f"/api/{API_VERSION}/fraud", tags=["Fraud"])
+app.include_router(
+    compliance_router, prefix=f"/api/{API_VERSION}/compliance", tags=["Compliance"]
+)
 
 # AI & Intelligence
 app.include_router(ai_router, prefix=f"/api/{API_VERSION}/ai", tags=["AI Intelligence"])
@@ -777,11 +810,18 @@ app.include_router(
 app.include_router(
     multimodal_router, prefix=f"/api/{API_VERSION}/multimodal", tags=["Multimodal"]
 )
-app.include_router(
-    semantic_search_router,
-    prefix=f"/api/{API_VERSION}/semantic_search",
-    tags=["Semantic Search"],
-)
+# DEPRECATED: Semantic search router - will be removed Feb 1, 2026
+# Keep active until removal deadline to allow graceful migration
+from datetime import datetime
+removal_deadline = datetime(2026, 2, 1)
+if datetime.now() < removal_deadline:
+    app.include_router(
+        semantic_search_router,
+        prefix=f"/api/{API_VERSION}/semantic_search",
+        tags=["Semantic Search (DEPRECATED)"],
+    )
+else:
+    logger.warning("Semantic search router removal deadline reached - endpoints disabled")
 app.include_router(
     logging_router, prefix=f"/api/{API_VERSION}/logging", tags=["Logging"]
 )
@@ -1056,6 +1096,20 @@ async def serve_index():
             "message": "Frontend not built. Run 'npm run build:frontend' to build the frontend."
         }
 
+
+# Manual WebSocket startup endpoint for debugging
+@app.post("/admin/start-websocket")
+async def start_websocket_server():
+    """Manually start the WebSocket server for debugging"""
+    try:
+        ws_enabled = os.getenv("ENABLE_COLLABORATION_WS", "false").lower() == "true"
+        if not ws_enabled:
+            return {"status": "disabled", "message": "WebSocket server disabled"}
+
+        await collaboration_manager.start_server()
+        return {"status": "started", "message": "WebSocket server started on ws://localhost:8080"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 # Global exception handlers
 

@@ -45,17 +45,34 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const websocketRef = useRef<WebSocket | null>(null);
   const messageHandlersRef = useRef<Map<string, MessageHandler>>(new Map());
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMounted = useRef(true);
+
+  // Track mount status
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   // Connect to collaboration server
   useEffect(() => {
     if (!sessionId) return;
 
     const connect = () => {
+      // Don't connect if unmounted
+      if (!isMounted.current) return;
+
       try {
         const ws = new WebSocket(`ws://localhost:8080/ws/session/${sessionId}`);
         websocketRef.current = ws;
 
         ws.onopen = () => {
+          if (!isMounted.current) {
+            ws.close();
+            return;
+          }
           secureLogger.info('COLLABORATION', 'Connected to collaboration session', { sessionId });
           setIsConnected(true);
 
@@ -69,6 +86,7 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
         };
 
         ws.onmessage = (event) => {
+          if (!isMounted.current) return;
           try {
             const data = JSON.parse(event.data);
             secureLogger.debug('COLLABORATION', 'Collaboration message received', { type: data.type });
@@ -123,26 +141,31 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
         };
 
         ws.onclose = () => {
+          if (!isMounted.current) return;
           secureLogger.info('COLLABORATION', 'Disconnected from collaboration session');
           setIsConnected(false);
           setParticipants([]);
           websocketRef.current = null;
 
           // Attempt reconnection after 5 seconds
-          setTimeout(() => {
-            if (!websocketRef.current) {
-              connect();
-            }
-          }, 5000);
+          if (isMounted.current) {
+            reconnectTimeoutRef.current = setTimeout(() => {
+              if (!websocketRef.current && isMounted.current) {
+                connect();
+              }
+            }, 5000);
+          }
         };
 
         ws.onerror = (error) => {
+          if (!isMounted.current) return;
           secureLogger.error('COLLABORATION', 'WebSocket error', { 
               error: error instanceof Error ? error.message : String(error) 
           });
         };
 
       } catch (error) {
+        if (!isMounted.current) return;
         secureLogger.error('COLLABORATION', 'Failed to connect to collaboration server', { 
             error: error instanceof Error ? error.message : String(error) 
         });
@@ -155,6 +178,9 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
       if (websocketRef.current) {
         websocketRef.current.close();
         websocketRef.current = null;
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
       }
     };
   }, [sessionId]);

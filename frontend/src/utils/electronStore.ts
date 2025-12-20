@@ -1,7 +1,7 @@
 /**
  * Electron Store Integration
  * Provides persistent storage for desktop app using electron-store
- * Addresses TODO in usePersistedState.ts
+ * Provides persistence for usePersistedState hook
  */
 
 // Check if running in Electron

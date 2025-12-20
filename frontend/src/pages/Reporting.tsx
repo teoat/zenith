@@ -1,7 +1,8 @@
 import React, { useState, Suspense } from 'react';
 import { LayoutDashboard, TrendingUp, Presentation, FileText } from 'lucide-react';
-import ReportBuilder from '../components/reporting/ReportBuilder';
 
+// Lazy load all reporting components for better performance
+const ReportBuilder = React.lazy(() => import('../components/reporting/ReportBuilder'));
 const SummaryPreview = React.lazy(() => import('../components/reporting/SummaryPreview'));
 const FinancialHealth = React.lazy(() => import('../components/reporting/FinancialHealth'));
 const ProjectTracker = React.lazy(() => import('../components/reporting/ProjectTracker'));

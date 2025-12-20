@@ -4,6 +4,7 @@ import EntityRegistry from '../components/investigation/EntityRegistry';
 import { Share2, Save, RotateCcw, Network } from 'lucide-react';
 import { api } from '../lib/api';
 import InvestigationSkeleton from '../components/investigation/InvestigationSkeleton';
+import ThreeDGraph from '../components/investigation/ThreeDGraph';
 import { AccessibleButton } from '../components/ui/AccessibleButton';
 import { secureLogger } from '../utils/secureLogger';
 import PageErrorBoundary from '../components/PageErrorBoundary';
@@ -94,12 +95,21 @@ const Investigation = () => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center text-slate-400">
-            <Network className="w-16 h-16 mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-medium mb-2">Investigation Graph</h3>
-            <p className="text-sm">Graph visualization with {graphData?.nodes.length || 0} nodes and {graphData?.links.length || 0} connections</p>
-          </div>
+        <div className="flex-1 flex items-center justify-center overflow-hidden">
+          {graphData && (
+             <ThreeDGraph 
+               data={graphData} 
+               width={window.innerWidth - 320} // Subtract sidebar width
+               height={window.innerHeight - 64} // Subtract header height
+             />
+          )}
+          {!graphData && (
+            <div className="text-center text-slate-400">
+              <Network className="w-16 h-16 mx-auto mb-4 opacity-50" />
+              <h3 className="text-lg font-medium mb-2">No Graph Data</h3>
+              <p className="text-sm">Could not load investigation graph.</p>
+            </div>
+          )}
         </div>
 
       </div>

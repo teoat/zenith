@@ -245,7 +245,7 @@ const AgentApprovals: React.FC = () => {
                       <div className="w-12 bg-secondary rounded-full h-2">
                         <div
                           className="bg-primary h-2 rounded-full bar-fill"
-                          // eslint-disable-next-line
+                           
                           style={{ '--width': `${approval.confidence * 100}%` } as React.CSSProperties}
                         />
                       </div>

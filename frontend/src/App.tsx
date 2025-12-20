@@ -1,9 +1,8 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AppProviders } from '@/providers/AppProviders';
 import { WebSocketProvider } from '@/providers/WebSocketProvider';
-import { AccessibilityProvider } from '@/context/AccessibilityContext';
-import { secureLogger } from '@/utils/secureLogger';
+import SystemOrchestrator from '@/components/layout/SystemOrchestrator';
 
 // Lazy load components for better performance with preload hints
 const Dashboard = React.lazy(() => import(/* webpackChunkName: "dashboard" */ '@/pages/Dashboard'));
@@ -42,6 +41,7 @@ const SARCreation = React.lazy(() => import(/* webpackChunkName: "sar-creation" 
 const RegulatoryIntelligence = React.lazy(() => import(/* webpackChunkName: "regulatory-intelligence" */ '@/pages/RegulatoryIntelligence'));
 const SystemDiagnosticsCenter = React.lazy(() => import(/* webpackChunkName: "system-diagnostics" */ '@/pages/SystemDiagnosticsCenter'));
 const EnhancedEvidenceLocker = React.lazy(() => import(/* webpackChunkName: "enhanced-evidence-locker" */ '@/pages/EnhancedEvidenceLocker'));
+const AILab = React.lazy(() => import(/* webpackChunkName: "ai-lab" */ '@/pages/AILab'));
 
 
 
@@ -49,6 +49,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import LoadingState from '@/components/LoadingState';
 
 import { setupGlobalErrorHandlers } from '@/utils/errorHandler';
+import { secureLogger } from '@/utils/secureLogger';
 import antiDebug from '@/utils/antiDebug'; // Import anti-debugging utility
 import '@/utils/performanceMonitor'; // Initialize performance monitoring
 import '@/utils/webVitals'; // Initialize Web Vitals monitoring
@@ -132,16 +133,22 @@ const DefaultErrorFallback: React.FC<{ error: Error }> = ({ error }) => (
         </div>
       </div>
 
-      <div className="mb-6">
-        <details className="bg-gray-50 rounded p-3">
-          <summary className="cursor-pointer text-sm font-medium text-gray-700">
-            Error Details
-          </summary>
-          <pre className="mt-2 text-xs text-gray-600 overflow-auto max-h-32">
-            {error.message}
-          </pre>
-        </details>
-      </div>
+      {process.env.NODE_ENV === 'development' ? (
+        <div className="mb-6">
+          <details className="bg-gray-50 rounded p-3">
+            <summary className="cursor-pointer text-sm font-medium text-gray-700">
+              Error Details
+            </summary>
+            <pre className="mt-2 text-xs text-gray-600 overflow-auto max-h-32">
+              {error.message}
+            </pre>
+          </details>
+        </div>
+      ) : (
+        <div className="mb-6 p-3 bg-blue-50 text-blue-800 rounded text-sm">
+          Please contact support if the issue persists.
+        </div>
+      )}
 
       <div className="flex space-x-3">
         <button
@@ -201,28 +208,11 @@ const AuthWebSocketWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
 
 
 const App: React.FC = () => {
-  // Register service worker for caching and offline support only in production
-  useEffect(() => {
-    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-      const handleLoad = () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(() => {
-            secureLogger.info('SYSTEM', 'Service Worker registered');
-          })
-          .catch((error) => {
-             secureLogger.error('SYSTEM', 'Service Worker registration failed', { error });
-          });
-      };
-
-      window.addEventListener('load', handleLoad);
-      return () => window.removeEventListener('load', handleLoad);
-    }
-  }, []);
-
   return (
-    <AccessibilityProvider>
+    <div className="app-container">
       <AppProviders>
         <Router>
+          <SystemOrchestrator />
           <AuthWebSocketWrapper>
             <EnhancedErrorBoundary fallback={DefaultErrorFallback}>
               <Suspense fallback={<LoadingState />}>
@@ -271,6 +261,7 @@ const App: React.FC = () => {
                                 <Route path="/regulatory/intelligence" element={<RegulatoryIntelligence />} />
                                 <Route path="/diagnostics/system" element={<SystemDiagnosticsCenter />} />
                                 <Route path="/evidence/enhanced" element={<EnhancedEvidenceLocker />} />
+                                <Route path="/ai-lab" element={<AILab />} />
                                 <Route path="*" element={<NotFound />} />
                               </Routes>
                             </Suspense>
@@ -285,7 +276,7 @@ const App: React.FC = () => {
           </AuthWebSocketWrapper>
         </Router>
       </AppProviders>
-    </AccessibilityProvider>
+    </div>
   );
 };
 

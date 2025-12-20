@@ -1,5 +1,6 @@
 """Comprehensive backend tests to reach 80% coverage"""
 
+import os
 import uuid
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -154,7 +155,7 @@ class TestAuthService:
 
     def test_password_hashing(self):
         """Test password hashing and verification"""
-        password = "test_password_123"
+        password = os.getenv("TEST_PASSWORD", "test_password_123")
 
         # Hash password
         hashed = auth_service.hash_password(password)

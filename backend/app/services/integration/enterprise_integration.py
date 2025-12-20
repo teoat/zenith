@@ -8,6 +8,7 @@ import asyncio
 import hashlib
 import json
 import logging
+import os
 import uuid
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
@@ -542,7 +543,8 @@ class EnterpriseIntegrationHub:
         }
 
         # In real implementation, would use proper JWT signing
-        token = jwt.encode(payload, "secret_key", algorithm="HS256")
+        jwt_secret = os.getenv("JWT_SECRET_KEY", "development-jwt-key-replace-in-production")
+        token = jwt.encode(payload, jwt_secret, algorithm="HS256")
         return token
 
     async def get_system_health(self) -> Dict[str, Any]:

@@ -3,6 +3,7 @@ Comprehensive tests for Core Backend Services
 Using actual service class names and method signatures
 """
 
+import os
 from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
@@ -18,7 +19,7 @@ class TestAuthService:
 
         service = AuthService()
 
-        password = "SecurePassword123!"
+        password = os.getenv("TEST_SECURE_PASSWORD", "SecurePassword123!")
         hashed = service.hash_password(password)
 
         assert hashed != password
@@ -30,7 +31,7 @@ class TestAuthService:
 
         service = AuthService()
 
-        password = "CorrectPassword!"
+        password = os.getenv("TEST_CORRECT_PASSWORD", "CorrectPassword!")
         hashed = service.hash_password(password)
 
         assert not service.verify_password("WrongPassword!", hashed)

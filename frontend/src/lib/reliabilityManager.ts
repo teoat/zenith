@@ -25,6 +25,8 @@ class ReliabilityManager {
   private checkInterval: NodeJS.Timeout | null = null;
   private isMonitoring = false;
 
+  private listeners: Set<() => void> = new Set();
+
   constructor() {
     this.initializeConsistencyChecks();
     this.initializeFailoverStrategies();
@@ -37,9 +39,11 @@ class ReliabilityManager {
         name: 'Database Connection',
         check: async () => {
           try {
-            // Check database connectivity
-            const response = await fetch('/api/health/database');
-            return response.ok;
+            // Check database connectivity via real health endpoint
+            const response = await fetch('/api/health');
+            if (!response.ok) return false;
+            const data = await response.json();
+            return data.components?.database?.status === 'healthy';
           } catch {
             return false;
           }
@@ -48,14 +52,15 @@ class ReliabilityManager {
         lastResult: null
       },
       {
-        id: 'data-integrity',
-        name: 'Data Integrity',
+        id: 'system-integrity',
+        name: 'System Integrity',
         check: async () => {
           try {
-            // Check data consistency
-            const response = await fetch('/api/health/integrity');
+            // Check overall system status
+            const response = await fetch('/api/health');
+            if (!response.ok) return false;
             const data = await response.json();
-            return data.consistent === true;
+            return data.status === 'healthy';
           } catch {
             return false;
           }
@@ -64,14 +69,17 @@ class ReliabilityManager {
         lastResult: null
       },
       {
-        id: 'cache-consistency',
-        name: 'Cache Consistency',
+        id: 'cache-status',
+        name: 'Cache Services',
         check: async () => {
           try {
-            // Check cache vs database consistency
-            const response = await fetch('/api/health/cache');
+            // Check cache status
+            const response = await fetch('/api/health');
+            if (!response.ok) return false;
             const data = await response.json();
-            return data.consistent === true;
+            // Pass if healthy or explicitly not configured (optional dependency)
+            const status = data.components?.cache?.status;
+            return status === 'healthy' || status === 'not_configured';
           } catch {
             return false;
           }
@@ -140,6 +148,17 @@ class ReliabilityManager {
     });
   }
 
+  public subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  private notifyListeners() {
+    this.listeners.forEach(listener => listener());
+  }
+
   async runConsistencyChecks(): Promise<Map<string, DataConsistencyCheck>> {
     const results = new Map<string, DataConsistencyCheck>();
 
@@ -166,6 +185,7 @@ class ReliabilityManager {
       }
     }
 
+    this.notifyListeners();
     return results;
   }
 
@@ -186,6 +206,7 @@ class ReliabilityManager {
           await strategy.execute();
           strategy.isActive = true;
           this.failoverStrategies.set(strategy.id, strategy);
+          this.notifyListeners();
 
           // Re-run checks to see if failover resolved the issue
           const recheckResults = await this.runConsistencyChecks();
@@ -200,6 +221,7 @@ class ReliabilityManager {
         }
       }
     }
+    this.notifyListeners();
   }
 
   startMonitoring(intervalMs: number = 30000): void {
@@ -207,6 +229,7 @@ class ReliabilityManager {
 
     this.isMonitoring = true;
     secureLogger.info('RELIABILITY', 'Starting reliability monitoring...');
+    this.notifyListeners();
 
     this.checkInterval = setInterval(async () => {
       try {
@@ -224,6 +247,7 @@ class ReliabilityManager {
     }
     this.isMonitoring = false;
     secureLogger.info('RELIABILITY', 'Stopped reliability monitoring');
+    this.notifyListeners();
   }
 
   getConsistencyChecks(): DataConsistencyCheck[] {
@@ -232,6 +256,10 @@ class ReliabilityManager {
 
   getFailoverStrategies(): FailoverStrategy[] {
     return Array.from(this.failoverStrategies.values());
+  }
+
+  isMonitoringActive(): boolean {
+    return this.isMonitoring;
   }
 }
 
@@ -242,31 +270,36 @@ export const reliabilityManager = new ReliabilityManager();
 export const useReliabilityManager = () => {
   const [consistencyChecks, setConsistencyChecks] = useState(reliabilityManager.getConsistencyChecks());
   const [failoverStrategies, setFailoverStrategies] = useState(reliabilityManager.getFailoverStrategies());
-  const [isMonitoring, setIsMonitoring] = useState(false);
+  const [isMonitoring, setIsMonitoring] = useState(reliabilityManager.isMonitoringActive());
 
   const updateState = useCallback(() => {
     setConsistencyChecks(reliabilityManager.getConsistencyChecks());
     setFailoverStrategies(reliabilityManager.getFailoverStrategies());
+    setIsMonitoring(reliabilityManager.isMonitoringActive());
   }, []);
+
+  useEffect(() => {
+    // Subscribe to changes
+    const unsubscribe = reliabilityManager.subscribe(updateState);
+    return () => {
+      unsubscribe();
+    };
+  }, [updateState]);
 
   const runChecks = useCallback(async () => {
     await reliabilityManager.runConsistencyChecks();
-    updateState();
-  }, [updateState]);
+  }, []);
 
   const executeFailover = useCallback(async () => {
     await reliabilityManager.executeFailoverIfNeeded();
-    updateState();
-  }, [updateState]);
+  }, []);
 
   const startMonitoring = useCallback(() => {
     reliabilityManager.startMonitoring();
-    setIsMonitoring(true);
   }, []);
 
   const stopMonitoring = useCallback(() => {
     reliabilityManager.stopMonitoring();
-    setIsMonitoring(false);
   }, []);
 
   return {

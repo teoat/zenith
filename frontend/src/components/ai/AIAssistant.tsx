@@ -208,19 +208,20 @@ export const AIAssistant: React.FC = () => {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        data-testid="ai-assistant-trigger"
         className={`
           fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-2xl transition-all duration-300
           ${isOpen ? 'bg-red-500 rotate-90' : 'bg-blue-600 hover:scale-110'}
           text-white
         `}
         aria-label={isOpen ? 'Close AI Assistant' : 'Open AI Assistant'}
-      >
+    >
         {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
       </button>
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-[400px] h-[600px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-50 flex flex-col border border-slate-200 dark:border-slate-800 overflow-hidden">
+        <div data-testid="ai-assistant-window" className="fixed bottom-24 right-6 w-[400px] h-[600px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-50 flex flex-col border border-slate-200 dark:border-slate-800 overflow-hidden">
           {/* Header */}
           <div className="p-4 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
             <div className="flex items-center gap-3">
@@ -319,6 +320,7 @@ export const AIAssistant: React.FC = () => {
             <div className="relative">
               <input
                 type="text"
+                data-testid="ai-assistant-input"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask Frenly..."
@@ -326,6 +328,7 @@ export const AIAssistant: React.FC = () => {
               />
               <button
                 type="submit"
+                data-testid="ai-assistant-send"
                 title="Send Message"
                 aria-label="Send Message"
                 disabled={!input.trim()}

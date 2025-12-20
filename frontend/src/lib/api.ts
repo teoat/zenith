@@ -15,7 +15,7 @@ import { reconciliationService } from '../services/reconciliation';
 import { userService } from '../services/user';
 import { aiService } from '../services/ai';
 import { integrationService } from '../services/integrations';
-// import { costOptimizationService } from '../services/costOptimization';
+import { costOptimizationService } from '../services/costOptimization';
 // diagnosticsService is standalone (uses internal logic, not the API facade)
 
 // Export types
@@ -73,6 +73,7 @@ class DualModeAPIFacade {
   processEvidence = evidenceService.processEvidence;
   selectFile = evidenceService.selectFile;
   analyzeFile = evidenceService.analyzeFile;
+  analyzeEvidencePath = evidenceService.analyzeEvidencePath;
   getHighlights = evidenceService.getHighlights;
   saveHighlight = evidenceService.saveHighlight;
 
@@ -117,6 +118,14 @@ class DualModeAPIFacade {
   getMultiPersonaAnalysis = aiService.getMultiPersonaAnalysis;
   investigateSubject = aiService.investigateSubject;
   getProactiveSuggestions = aiService.getProactiveSuggestions;
+
+  // Cost Optimization
+  getInfrastructureCosts = costOptimizationService.getInfrastructureCosts;
+  getSavingsProjection = costOptimizationService.getSavingsProjection;
+  applyCostOptimization = costOptimizationService.applyCostOptimization;
+
+  // Diagnostics (Enhanced)
+  resolveDiagnosticIssue = monitoringService.resolveDiagnosticIssue;
 
   // Integrations
   getIntegrations = integrationService.getIntegrations;

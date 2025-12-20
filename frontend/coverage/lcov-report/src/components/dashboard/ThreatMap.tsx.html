@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/73</span>
+                <span class='fraction'>0/74</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/59</span>
+                <span class='fraction'>0/60</span>
             </div>
         
             
@@ -331,7 +331,11 @@
 <a name='L266'></a><a href='#L266'>266</a>
 <a name='L267'></a><a href='#L267'>267</a>
 <a name='L268'></a><a href='#L268'>268</a>
-<a name='L269'></a><a href='#L269'>269</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L269'></a><a href='#L269'>269</a>
+<a name='L270'></a><a href='#L270'>270</a>
+<a name='L271'></a><a href='#L271'>271</a>
+<a name='L272'></a><a href='#L272'>272</a>
+<a name='L273'></a><a href='#L273'>273</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -385,21 +389,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -510,6 +505,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -650,19 +658,7 @@ interface RawThreatData {
 }
 &nbsp;
 const ThreatMap: React.FC = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-  // Feature flag to completely disable map functionality
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (import.meta.env.VITE_ENABLE_THREAT_MAP === 'false') {</span>
-<span class="cstat-no" title="statement not covered" >    return (</span>
-      &lt;div className="h-full w-full bg-slate-800 rounded-xl flex items-center justify-center"&gt;
-        &lt;div className="text-center text-slate-400"&gt;
-          &lt;ShieldAlert size={48} className="mx-auto mb-4 opacity-50" /&gt;
-          &lt;h3 className="text-lg font-medium mb-2"&gt;Map Disabled&lt;/h3&gt;
-          &lt;p className="text-sm"&gt;Threat monitoring map has been disabled&lt;/p&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-    );
-  }
-&nbsp;
+  // All hooks must be called before any conditional logic
   const [threats, setThreats] = <span class="cstat-no" title="statement not covered" >useState&lt;ThreatLocation[]&gt;([]);</span>
   const [popupInfo, setPopupInfo] = <span class="cstat-no" title="statement not covered" >useState&lt;ThreatLocation | null&gt;(null);</span>
   const [viewState, setViewState] = <span class="cstat-no" title="statement not covered" >useState({</span>
@@ -671,6 +667,9 @@ const ThreatMap: React.FC = <span class="cstat-no" title="statement not covered"
     zoom: 1.5
   });
   const [isSlowConnection, setIsSlowConnection] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
+&nbsp;
+  // Feature flag to completely disable map functionality
+  const isMapEnabled = <span class="cstat-no" title="statement not covered" >import.meta.env.VITE_ENABLE_THREAT_MAP !== 'false';</span>
 &nbsp;
   // Detect slow network connections
 <span class="cstat-no" title="statement not covered" >  useEffect(<span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
@@ -691,7 +690,7 @@ const ThreatMap: React.FC = <span class="cstat-no" title="statement not covered"
         &lt;div className="flex-1 overflow-y-auto"&gt;
           &lt;div className="space-y-3"&gt;
             {threats.slice(0, 10).map(<span class="fstat-no" title="function not covered" >threat </span>=&gt; (
-<span class="cstat-no" title="statement not covered" >              &lt;div key={threat.id} c</span>lassName="bg-slate-700 rounded-lg p-3"&gt;
+<span class="cstat-no" title="statement not covered" >              &lt;div key={threat.id} className="bg-slate-700 rounded-lg p-3"&gt;</span>
                 &lt;div className="flex justify-between items-start"&gt;
                   &lt;div&gt;
                     &lt;div className="text-white font-medium"&gt;{threat.city}&lt;/div&gt;
@@ -788,6 +787,19 @@ const ThreatMap: React.FC = <span class="cstat-no" title="statement not covered"
     &lt;/Marker&gt;
   )), [threats]);
 &nbsp;
+  // Feature flag to completely disable map functionality
+<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (!isMapEnabled) {</span>
+<span class="cstat-no" title="statement not covered" >    return (</span>
+      &lt;div className="h-full w-full bg-slate-800 rounded-xl flex items-center justify-center"&gt;
+        &lt;div className="text-center text-slate-400"&gt;
+          &lt;ShieldAlert size={48} className="mx-auto mb-4 opacity-50" /&gt;
+          &lt;h3 className="text-lg font-medium mb-2"&gt;Map Disabled&lt;/h3&gt;
+          &lt;p className="text-sm"&gt;Threat monitoring map has been disabled&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    );
+  }
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  return (</span>
     &lt;Suspense fallback={
       &lt;div className="h-[400px] w-full rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800 bg-slate-900 relative flex items-center justify-center"&gt;
@@ -874,7 +886,7 @@ const ThreatMap: React.FC = <span class="cstat-no" title="statement not covered"
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-19T02:07:52.612Z
+                at 2025-12-20T03:48:46.392Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

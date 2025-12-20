@@ -95,6 +95,18 @@ async def health_check() -> Dict[str, Any]:
         "components": {}
     }
 
+    # Use a simple cache to avoid excessive health checks under load
+    cache_key = "_health_cache"
+    cache_timeout = 3  # Cache for 3 seconds
+
+    # Check if we have a recent cached result
+    if hasattr(health_check, cache_key):
+        cached_time, cached_result = getattr(health_check, cache_key)
+        if time.time() - cached_time < cache_timeout:
+            # Return cached result but update timestamp
+            cached_result["timestamp"] = datetime.now().isoformat()
+            return cached_result
+
     # Enhanced database health check with detailed metrics
     try:
         db_health = db_service.health_check()
@@ -134,18 +146,45 @@ async def health_check() -> Dict[str, Any]:
 
     # Performance monitoring health check
     try:
-        perf_status = performance_monitor.get_performance_summary()
+        perf_baselines = performance_monitor.get_baselines()
+        current_metrics = performance_monitor.get_current_metrics()
+        active_alerts = performance_monitor.check_thresholds()
+
+        perf_status = "healthy"
+        perf_issues = []
+
+        # Check if monitoring is active
+        if not perf_baselines.get("monitoring_active", False):
+            perf_status = "degraded"
+            perf_issues.append("Performance monitoring not active")
+
+        # Check for too many alerts
+        if len(active_alerts) > 5:
+            perf_status = "degraded"
+            perf_issues.append(f"Too many active alerts: {len(active_alerts)}")
+
         health_status["components"]["performance_monitoring"] = {
-            "status": "healthy",
-            "active": perf_status.get("current_status", {}).get("monitoring_active", False),
-            "metrics_collected": perf_status.get("current_status", {}).get("metrics_collected", 0),
-            "alerts": perf_status.get("current_status", {}).get("alerts_active", 0)
+            "status": perf_status,
+            "active": perf_baselines.get("monitoring_active", False),
+            "metrics_collected": perf_baselines.get("metrics_collected", 0),
+            "active_alerts": len(active_alerts),
+            "circuit_breaker_status": perf_baselines.get("circuit_breaker_status", "unknown"),
+            "issues": perf_issues,
+            "current_cpu": current_metrics.get("cpu_percent"),
+            "current_memory": current_metrics.get("memory_percent"),
         }
+
+        if perf_status == "degraded" and health_status["status"] == "healthy":
+            health_status["status"] = "degraded"
+
     except Exception as e:
         health_status["components"]["performance_monitoring"] = {
-            "status": "degraded",
-            "error": str(e)[:200]
+            "status": "error",
+            "error": str(e)[:200],
+            "recommendation": "Check performance monitoring configuration"
         }
+        if health_status["status"] == "healthy":
+            health_status["status"] = "degraded"
 
     # Check Redis/Cache (if configured)
     try:
@@ -222,52 +261,101 @@ async def health_check() -> Dict[str, Any]:
             "error": str(e)[:200]
         }
 
-    # Memory and system resource check
+    # Memory and system resource check with improved thresholds and recovery
     try:
         import psutil
         memory = psutil.virtual_memory()
-        cpu_percent = psutil.cpu_percent(interval=1)
+        cpu_percent = psutil.cpu_percent(interval=0.5)  # Shorter interval for more accurate reading
 
         system_status = "healthy"
         issues = []
+        recommendations = []
 
-        if memory.percent > 90:
+        # More lenient thresholds for development/production
+        environment = os.getenv("ENVIRONMENT", "development").lower()
+        is_production = environment == "production"
+
+        # Production has stricter thresholds
+        memory_critical = 95 if is_production else 98
+        memory_degraded = 85 if is_production else 95
+        cpu_critical = 95 if is_production else 98
+        cpu_degraded = 80 if is_production else 90
+
+        if memory.percent > memory_critical:
             system_status = "critical"
-            issues.append("High memory usage")
-        elif memory.percent > 80:
+            issues.append(".1f")
+            recommendations.append("Consider increasing memory allocation or optimizing memory usage")
+        elif memory.percent > memory_degraded:
             system_status = "degraded"
-            issues.append("Elevated memory usage")
+            issues.append(".1f")
+            recommendations.append("Monitor memory usage closely")
             if health_status["status"] == "healthy":
                 health_status["status"] = "degraded"
 
-        if cpu_percent > 95:
+        if cpu_percent > cpu_critical:
             system_status = "critical"
-            issues.append("High CPU usage")
-        elif cpu_percent > 85:
+            issues.append(".1f")
+            recommendations.append("Investigate CPU-intensive processes or consider scaling")
+        elif cpu_percent > cpu_degraded:
             system_status = "degraded"
-            issues.append("Elevated CPU usage")
+            issues.append(".1f")
+            recommendations.append("Monitor CPU usage and optimize performance")
+            if health_status["status"] == "healthy":
+                health_status["status"] = "degraded"
+
+        # Add disk usage check
+        disk = psutil.disk_usage('/')
+        if disk.percent > 90:
+            system_status = "degraded" if system_status == "healthy" else system_status
+            issues.append(".1f")
+            recommendations.append("Free up disk space or increase storage capacity")
             if health_status["status"] == "healthy":
                 health_status["status"] = "degraded"
 
         health_status["components"]["system_resources"] = {
             "status": system_status,
-            "memory_percent": memory.percent,
-            "cpu_percent": cpu_percent,
-            "issues": issues
+            "memory_percent": round(memory.percent, 1),
+            "cpu_percent": round(cpu_percent, 1),
+            "disk_percent": round(disk.percent, 1),
+            "issues": issues,
+            "recommendations": recommendations,
+            "thresholds": {
+                "memory_critical": memory_critical,
+                "memory_degraded": memory_degraded,
+                "cpu_critical": cpu_critical,
+                "cpu_degraded": cpu_degraded,
+                "disk_critical": 90
+            }
         }
 
+        # In development/testing, be more lenient with system resource issues
+        environment = os.getenv("ENVIRONMENT", "production").lower()
         if system_status == "critical":
-            health_status["status"] = "unhealthy"
+            critical_components = sum(1 for comp in health_status["components"].values()
+                                    if isinstance(comp, dict) and comp.get("status") in ["unhealthy", "error"])
+            if environment in ["development", "testing"]:
+                # In dev/test, only mark unhealthy if multiple components are failing
+                if critical_components > 0:
+                    health_status["status"] = "unhealthy"
+                # For isolated system resource issues in dev/test, keep as healthy
+            else:
+                # In production, be stricter
+                if critical_components > 1:  # System resources + at least one other component
+                    health_status["status"] = "unhealthy"
+                else:
+                    health_status["status"] = "degraded"
 
     except ImportError:
         health_status["components"]["system_resources"] = {
             "status": "not_available",
-            "reason": "psutil not installed"
+            "reason": "psutil not installed",
+            "recommendation": "Install psutil for system monitoring: pip install psutil"
         }
     except Exception as e:
         health_status["components"]["system_resources"] = {
             "status": "error",
-            "error": str(e)[:200]
+            "error": str(e)[:200],
+            "recommendation": "Check system monitoring configuration"
         }
 
     # Check S3/Storage (if configured)
@@ -305,7 +393,10 @@ async def health_check() -> Dict[str, Any]:
         "estimated_monthly_downtime": "4.32 minutes" if health_status["status"] == "healthy" else "extended",
         "critical_components": ["database", "circuit_breakers", "system_resources"]
     }
-    
+
+    # Cache the result for future requests
+    setattr(health_check, cache_key, (time.time(), health_status.copy()))
+
     # Return appropriate status code
     if health_status["status"] == "degraded":
         return JSONResponse(
@@ -424,12 +515,14 @@ async def readiness():
 
     # Check database
     try:
-        with get_db() as db:
-            db.execute(text("SELECT 1"))
-    except Exception:
+        from core.database import SessionLocal
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
+        db.close()
+    except Exception as e:
         return JSONResponse(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            content={"status": "not_ready", "reason": "database_unavailable"}
+            content={"status": "not_ready", "reason": f"database_unavailable: {str(e)}"}
         )
 
     return {

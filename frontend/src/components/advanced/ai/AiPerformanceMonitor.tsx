@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -17,61 +17,45 @@ interface ModelMetrics {
 }
 
 const AiPerformanceMonitor: React.FC = () => {
-  const [metrics, setMetrics] = useState<ModelMetrics[]>([]);
+  const [metrics] = useState<ModelMetrics[]>([
+    {
+      name: 'Fraud Detection Model',
+      accuracy: 0.94,
+      precision: 0.91,
+      recall: 0.87,
+      f1_score: 0.89,
+      latency: 45,
+      throughput: 1250,
+      last_updated: '2025-12-19T12:00:00Z',
+      status: 'healthy'
+    },
+    {
+      name: 'Risk Scoring Engine',
+      accuracy: 0.89,
+      precision: 0.85,
+      recall: 0.92,
+      f1_score: 0.88,
+      latency: 32,
+      throughput: 2100,
+      last_updated: '2025-12-19T11:45:00Z',
+      status: 'healthy'
+    },
+    {
+      name: 'Anomaly Detection System',
+      accuracy: 0.91,
+      precision: 0.88,
+      recall: 0.89,
+      f1_score: 0.885,
+      latency: 67,
+      throughput: 950,
+      last_updated: '2025-12-19T11:30:00Z',
+      status: 'critical'
+    }
+  ]);
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d'>('24h');
 
-  useEffect(() => {
-    // Mock data - would come from backend API
-    const mockMetrics: ModelMetrics[] = [
-      {
-        name: 'Fraud Detection Model',
-        accuracy: 0.94,
-        precision: 0.91,
-        recall: 0.87,
-        f1_score: 0.89,
-        latency: 45,
-        throughput: 1250,
-        last_updated: '2025-12-19T12:00:00Z',
-        status: 'healthy'
-      },
-      {
-        name: 'Risk Scoring Engine',
-        accuracy: 0.89,
-        precision: 0.85,
-        recall: 0.92,
-        f1_score: 0.88,
-        latency: 32,
-        throughput: 2100,
-        last_updated: '2025-12-19T12:00:00Z',
-        status: 'healthy'
-      },
-      {
-        name: 'Transaction Classifier',
-        accuracy: 0.91,
-        precision: 0.88,
-        recall: 0.89,
-        f1_score: 0.88,
-        latency: 28,
-        throughput: 1800,
-        last_updated: '2025-12-19T11:45:00Z',
-        status: 'warning'
-      },
-      {
-        name: 'Anomaly Detector',
-        accuracy: 0.86,
-        precision: 0.82,
-        recall: 0.85,
-        f1_score: 0.83,
-        latency: 67,
-        throughput: 950,
-        last_updated: '2025-12-19T11:30:00Z',
-        status: 'critical'
-      }
-    ];
-
-    setMetrics(mockMetrics);
-  }, []);
+  // Mock data is now initialized directly in useState to avoid setState in useEffect
 
   const getStatusIcon = (status: string) => {
     switch (status) {

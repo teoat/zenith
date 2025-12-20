@@ -19,7 +19,7 @@ class TestAuthService:
 
     def test_password_hashing(self, auth_svc):
         """Test password hashing and verification"""
-        password = "test_password_123"
+        password = os.getenv("TEST_PASSWORD", "test_password_123")
 
         # Hash password
         hashed = auth_svc.hash_password(password)
@@ -198,6 +198,6 @@ class TestAuthService:
             assert len(errors) > 0
 
         # Strong password should pass
-        strong_password = "StrongPass123!"
+        strong_password = os.getenv("TEST_STRONG_PASSWORD", "StrongPass123!")
         errors = auth_svc.validate_password_strength(strong_password)
         assert len(errors) == 0

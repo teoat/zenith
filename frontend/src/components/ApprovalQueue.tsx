@@ -12,6 +12,16 @@ interface ApprovalQueueProps {
   showHeader?: boolean;
 }
 
+const getImpactStyles = (impact: PendingAction['impact']) => {
+  const styles = {
+    critical: 'bg-red-100 text-red-800 border-red-200',
+    high: 'bg-orange-100 text-orange-800 border-orange-200',
+    medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    low: 'bg-green-100 text-green-800 border-green-200',
+  };
+  return styles[impact] || 'bg-gray-100 text-gray-800 border-gray-200';
+};
+
 export const ApprovalQueue: React.FC<ApprovalQueueProps> = ({
   className = '',
   maxHeight = '400px',
@@ -19,14 +29,9 @@ export const ApprovalQueue: React.FC<ApprovalQueueProps> = ({
 }) => {
   const [pendingActions, setPendingActions] = useState<PendingAction[]>([]);
 
-
   useEffect(() => {
-    // Load initial pending actions
     approvalService.getPendingActions().then(setPendingActions);
-
-    // Subscribe to changes
-    const unsubscribe = approvalService.addListener(setPendingActions);
-    return unsubscribe;
+    return approvalService.addListener(setPendingActions);
   }, []);
 
   const handleApprove = async (actionId: string) => {
@@ -34,10 +39,7 @@ export const ApprovalQueue: React.FC<ApprovalQueueProps> = ({
       await approvalService.approveAction(actionId);
       secureLogger.info('APPROVAL_QUEUE', `Action approved: ${actionId}`);
     } catch (error) {
-      secureLogger.error('APPROVAL_QUEUE', `Failed to approve action: ${actionId}`, {
-        error: error instanceof Error ? error.message : String(error)
-      });
-      // Error handled silently - could show toast notification
+      secureLogger.error('APPROVAL_QUEUE', `Failed to approve action: ${actionId}`, { error });
     }
   };
 
@@ -46,27 +48,10 @@ export const ApprovalQueue: React.FC<ApprovalQueueProps> = ({
       await approvalService.rejectAction(actionId, 'Rejected by user');
       secureLogger.info('APPROVAL_QUEUE', `Action rejected: ${actionId}`);
     } catch (error) {
-      secureLogger.error('APPROVAL_QUEUE', `Failed to reject action: ${actionId}`, {
-        error: error instanceof Error ? error.message : String(error)
-      });
-      // Error handled silently - could show toast notification
+      secureLogger.error('APPROVAL_QUEUE', `Failed to reject action: ${actionId}`, { error });
     }
   };
 
-  const getImpactColor = (impact: PendingAction['impact']) => {
-    switch (impact) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getTypeIcon = () => {
-    // You can customize icons based on type
-    return <AlertTriangle className="w-4 h-4" />;
-  };
 
   if (pendingActions.length === 0) {
     return (
@@ -104,7 +89,10 @@ export const ApprovalQueue: React.FC<ApprovalQueueProps> = ({
           </CardHeader>
         )}
         <CardContent>
-          <div className="space-y-3" style={{ maxHeight, overflowY: 'auto' }}>
+          <div 
+            className="space-y-3 overflow-y-auto" 
+            style={{ ['--max-height' as string]: maxHeight, maxHeight: 'var(--max-height)' } as React.CSSProperties}
+          >
             {pendingActions.map((action) => (
               <div
                 key={action.id}

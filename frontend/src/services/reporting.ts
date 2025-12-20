@@ -1,11 +1,13 @@
 import { request } from './client';
-import type { 
-  MetricsData, LocationData, AIInsight, QueueItem, 
-  CaseAnalytics, TransactionAnalytics, SystemOverview, 
-  ReportResponse, CaseSummaryResponse, ReportTemplateInfo, 
-  ScheduledReport, ScheduledReportRequest, FinancialHealthData, 
+import type {
+  MetricsData, LocationData, AIInsight, QueueItem,
+  CaseAnalytics, TransactionAnalytics, SystemOverview,
+  ReportResponse, CaseSummaryResponse, ReportTemplateInfo,
+  ScheduledReport, ScheduledReportRequest, FinancialHealthData,
   ProjectTrackerData, TransactionFlow, BehavioralAnalyticsResponse, PredictiveStats
 } from '../types/api';
+import { API_BASE } from '../config';
+import { getToken } from './client';
 
 export const reportingService = {
   // Stats
@@ -100,5 +102,25 @@ export const reportingService = {
       method: 'POST',
       body: JSON.stringify({ case_id: caseId, prompt }),
     });
+  },
+
+  exportReport: async (caseId: string, format: 'pdf' | 'html' | 'csv' = 'pdf'): Promise<Blob> => {
+    const response = await fetch(`${API_BASE}/reporting/export/${caseId}?format=${format}`, {
+      headers: {
+        'Authorization': `Bearer ${getToken()}`,
+      },
+    });
+    return response.blob();
+  },
+
+  scheduleReport: async (reportData: any): Promise<any> => {
+    return request('/reporting/schedule', {
+      method: 'POST',
+      body: JSON.stringify(reportData),
+    });
+  },
+
+  getReportHistory: async (): Promise<any[]> => {
+    return request('/reporting/history');
   }
 };

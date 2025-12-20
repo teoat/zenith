@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
+import { secureLogger } from '../utils/secureLogger';
 
 interface PerformanceMetrics {
   componentName: string;
@@ -66,8 +67,7 @@ export const usePerformanceMonitor = (
     // Log slow renders
     if (renderTime > threshold) {
       if (enableLogging) {
-        const perfLogger = console;
-        perfLogger.warn(`[PERF] ${componentName} slow render: ${renderTime.toFixed(2)}ms`);
+        secureLogger.warn(`[PERF] ${componentName} slow render: ${renderTime.toFixed(2)}ms`);
       }
 
       // Report to analytics if enabled
@@ -156,8 +156,7 @@ export const useFunctionPerformance = (
 
         if (duration > threshold) {
           if (enableLogging) {
-            const perfLogger = console;
-            perfLogger.warn(`[PERF] ${functionName} slow execution: ${duration.toFixed(2)}ms`);
+            secureLogger.warn(`[PERF] ${functionName} slow execution: ${duration.toFixed(2)}ms`);
           }
 
           if (reportToAnalytics && window.gtag) {
@@ -173,8 +172,7 @@ export const useFunctionPerformance = (
         return result;
       } catch (error) {
         const duration = performance.now() - start;
-        const perfLogger = console;
-        perfLogger.error(`[PERF] ${functionName} failed after ${duration.toFixed(2)}ms:`, error);
+        secureLogger.error(`[PERF] ${functionName} failed after ${duration.toFixed(2)}ms:`, error);
         throw error;
       }
     }) as T;
@@ -213,8 +211,7 @@ class PerformanceMonitor {
           const entries = list.getEntries();
           const lastEntry = entries[entries.length - 1] as any;
           if (lastEntry) {
-            const perfLogger = console;
-            perfLogger.log(`[PERF] LCP: ${lastEntry.startTime}ms`);
+            secureLogger.info(`[PERF] LCP: ${lastEntry.startTime}ms`);
             if (window.gtag) {
               window.gtag('event', 'web_vitals', {
                 metric_name: 'LCP',
@@ -226,7 +223,7 @@ class PerformanceMonitor {
         lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
         this.observers.set('lcp', lcpObserver);
       } catch (e) {
-        console.warn('[PERF] LCP observer not supported');
+        secureLogger.warn('[PERF] LCP observer not supported');
       }
 
       // First Input Delay (FID)
@@ -234,8 +231,7 @@ class PerformanceMonitor {
         const fidObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries();
           entries.forEach((entry: any) => {
-            const perfLogger = console;
-            perfLogger.log(`[PERF] FID: ${entry.processingStart - entry.startTime}ms`);
+            secureLogger.info(`[PERF] FID: ${entry.processingStart - entry.startTime}ms`);
             if (window.gtag) {
               window.gtag('event', 'web_vitals', {
                 metric_name: 'FID',
@@ -247,7 +243,7 @@ class PerformanceMonitor {
         fidObserver.observe({ entryTypes: ['first-input'] });
         this.observers.set('fid', fidObserver);
       } catch (e) {
-        console.warn('[PERF] FID observer not supported');
+        secureLogger.warn('[PERF] FID observer not supported');
       }
 
       // Cumulative Layout Shift (CLS)
@@ -260,8 +256,7 @@ class PerformanceMonitor {
               clsValue += entry.value;
             }
           });
-          const perfLogger = console;
-          perfLogger.log(`[PERF] CLS: ${clsValue}`);
+          secureLogger.info(`[PERF] CLS: ${clsValue}`);
           if (window.gtag) {
             window.gtag('event', 'web_vitals', {
               metric_name: 'CLS',
@@ -272,7 +267,7 @@ class PerformanceMonitor {
         clsObserver.observe({ entryTypes: ['layout-shift'] });
         this.observers.set('cls', clsObserver);
       } catch (e) {
-        console.warn('[PERF] CLS observer not supported');
+        secureLogger.warn('[PERF] CLS observer not supported');
       }
     }
   }
@@ -281,8 +276,7 @@ class PerformanceMonitor {
     this.metrics.set(componentName, metrics);
 
     if (metrics.isSlow) {
-      const perfLogger = console;
-      perfLogger.warn(`[PERF] Component ${componentName} is performing poorly:`, metrics);
+      secureLogger.warn(`[PERF] Component ${componentName} is performing poorly:`, metrics);
     }
   }
 

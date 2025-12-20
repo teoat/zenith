@@ -1,49 +1,34 @@
-class CostOptimizationService {
+import { request, API_BASE, getToken } from './client';
 
-  async getInfrastructureCosts() {
-    // For now, return mock data until backend is fully integrated
-    return {
-      current_spend: 125000,
-      projected_savings: 31250,
-      optimizations: [
-        {
-          id: 'opt_1',
-          title: 'Rightsize EC2 Instances',
-          category: 'infrastructure',
-          savings: 12000,
-          complexity: 'medium',
-          estimated_savings: 12000
-        },
-        {
-          id: 'opt_2',
-          title: 'Implement Reserved Instances',
-          category: 'infrastructure',
-          savings: 15000,
-          complexity: 'low',
-          estimated_savings: 15000
-        },
-        {
-          id: 'opt_3',
-          title: 'Optimize Storage Classes',
-          category: 'infrastructure',
-          savings: 400,
-          complexity: 'medium',
-          estimated_savings: 400
-        }
-      ],
-      roi_percentage: 1200
-    };
-  }
-
-  async applyOptimization() {
-    // Mock implementation
-    return {
-      applied_at: new Date().toISOString(),
-      estimated_savings: 12000,
-      status: 'applied'
-    };
-  }
+export interface OptimizationsResult {
+    current_spend: number;
+    projected_savings: number;
+    optimizations: Array<{
+        id: string;
+        title: string;
+        category: string;
+        savings: number;
+        complexity: string;
+        estimated_savings: number;
+    }>;
+    roi_percentage: number;
 }
 
-// Create service instance
-export const costOptimizationService = new CostOptimizationService();
+export const costOptimizationService = {
+  getInfrastructureCosts: async (): Promise<OptimizationsResult> => {
+    return request('/cost-optimization/infrastructure/costs');
+  },
+
+  getSavingsProjection: async (months: number = 12): Promise<any> => {
+    const params = new URLSearchParams();
+    params.append('months', months.toString());
+    return request(`/cost-optimization/savings/projection?${params.toString()}`);
+  },
+
+  applyCostOptimization: async (optimizationId: string): Promise<any> => {
+    return request(`/cost-optimization/optimization/${optimizationId}/apply`, {
+        method: 'POST',
+        body: JSON.stringify({ optimization_id: optimizationId })
+    });
+  }
+};
