@@ -10,3 +10,11 @@
 1.  Apply authentication at the `APIRouter` level (using `dependencies=[Depends(get_current_user)]`) if all endpoints in a router require auth.
 2.  Use a linter or security scanner (like `bandit` or custom scripts) to verify that sensitive routes have auth dependencies.
 3.  Add integration tests that explicitly check for 401/403 responses for unauthenticated requests to all endpoints.
+
+## 2024-05-23 - Critical: Secrets tracked in git
+**Vulnerability:** The `.env` file containing secrets (potentially including API keys and database credentials) was being tracked by git.
+**Learning:** Checking `.gitignore` is not enough; one must verify what is actually in the git index (`git ls-files`). Merge conflicts in `.gitignore` can hide missing exclusions.
+**Prevention:**
+1. Always add `.env` to `.gitignore` immediately upon project creation.
+2. Use a pre-commit hook to scan for high-entropy strings or known secret filenames.
+3. Periodically run `git ls-files` to audit tracked files.
