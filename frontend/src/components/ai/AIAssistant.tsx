@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, MessageCircle, X, User, Send, ThumbsUp, ThumbsDown, Search, Eye, File } from 'lucide-react';
 import { useAIContext, AIPersona } from '@/context/AIContext';
@@ -12,20 +11,29 @@ import { ApprovalQueue } from '@/components/ApprovalQueue';
 import { AgentStatusStream } from '@/components/ui/AgentStatusStream';
 import { secureLogger } from '@/utils/secureLogger';
 
+interface SuggestionAction {
+  id: string;
+  label: string;
+  endpoint: string;
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  body?: Record<string, unknown>;
+  description?: string;
+}
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
   persona?: AIPersona;
-  suggestions?: any[];
+  suggestions?: SuggestionAction[];
 }
 
 export const AIAssistant: React.FC = () => {
   const { t } = useTranslation();
   const { context, activePersona, setPersona } = useAIContext();
   // const { currentProject } = useProject();
-  const currentProject = null as any; // Temporary fallback
+   const currentProject = null as { id: string; name: string } | null; // Temporary fallback
   
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -57,7 +65,7 @@ export const AIAssistant: React.FC = () => {
     fetchStatus();
   }, []);
 
-  const handleActionClick = async (action: any) => {
+  const handleActionClick = async (action: SuggestionAction) => {
     if (!action.endpoint) return;
 
     try {
