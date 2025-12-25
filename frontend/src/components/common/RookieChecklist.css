@@ -1,0 +1,41 @@
+/* RookieChecklist.css */
+.rookie-progress-bar {
+  height: 100%;
+  width: var(--progress, 0%);
+  background-color: #3b82f6; /* blue-500 */
+  transition: all 0.3s ease;
+}
+
+.badge-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.badge-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  max-width: 28rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.badge-icon-container {
+  margin-bottom: 1rem;
+}
+
+.badge-reward {
+  background: linear-gradient(to right, #facc15, #ca8a04);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}

@@ -1,0 +1,150 @@
+"""Prometheus Alertmanager configuration"""
+
+groups:
+  - name: fraud_detection_alerts
+    interval: 30s
+    rules:
+      # System Health Alerts
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 20
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 80% for more than 5 minutes"
+      
+      - alert: HighCPUUsage
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 80% for more than 5 minutes"
+      
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+          component: system
+        annotations:
+          summary: "Disk space critically low"
+          description: "Less than 10% disk space available"
+      
+      # Application Alerts
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "High error rate detected"
+          description: "More than 5% of requests are failing with 5xx errors"
+      
+      - alert: SlowResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "Slow API response times"
+          description: "95th percentile response time is above 2 seconds"
+      
+      - alert: HighFraudDetectionRate
+        expr: rate(fraud_detections_total[10m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: fraud_engine
+        annotations:
+          summary: "Unusually high fraud detection rate"
+          description: "More than 100 fraud cases detected per 10 minutes"
+      
+      # Database Alerts
+      - alert: DatabaseConnectionPoolExhausted
+        expr: db_pool_size - db_pool_available < 2
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "Less than 2 database connections available"
+      
+      - alert: SlowDatabaseQueries
+        expr: rate(db_query_duration_seconds_sum[5m]) / rate(db_query_duration_seconds_count[5m]) > 1
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Slow database queries detected"
+          description: "Average query time is above 1 second"
+      
+      # Service Availability
+      - alert: ServiceDown
+        expr: up{job="fraud-detection-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "Service is down"
+          description: "Fraud detection backend service is not responding"
+      
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "Database is down"
+          description: "PostgreSQL database is not responding"
+
+# Alertmanager configuration
+alertmanager_config: |
+  global:
+    resolve_timeout: 5m
+  
+  route:
+    group_by: ['alertname', 'component']
+    group_wait: 10s
+    group_interval: 10s
+    repeat_interval: 12h
+    receiver: 'default'
+    routes:
+      - match:
+          severity: critical
+        receiver: 'pagerduty'
+        continue: true
+      - match:
+          severity: warning
+        receiver: 'slack'
+  
+  receivers:
+    - name: 'default'
+      email_configs:
+        - to: 'ops@example.com'
+          from: 'alertmanager@example.com'
+          smarthost: 'smtp.example.com:587'
+          auth_username: 'alertmanager@example.com'
+          auth_password: '${SMTP_PASSWORD}'
+    
+    - name: 'slack'
+      slack_configs:
+        - api_url: '${SLACK_WEBHOOK_URL}'
+          channel: '#fraud-detection-alerts'
+          title: '{{ .GroupLabels.alertname }}'
+          text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+    
+    - name: 'pagerduty'
+      pagerduty_configs:
+        - service_key: '${PAGERDUTY_SERVICE_KEY}'
+          description: '{{ .GroupLabels.alertname }}: {{ .GroupLabels.component }}'

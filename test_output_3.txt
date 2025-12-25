@@ -1,0 +1,1147 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /Users/Arief/anaconda3/bin/python3
+cachedir: .pytest_cache
+metadata: {'Python': '3.11.5', 'Platform': 'macOS-10.16-x86_64-i386-64bit', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'anyio': '4.11.0', 'html': '4.1.1', 'xdist': '3.8.0', 'json-report': '1.5.0', 'httpx': '0.35.0', 'metadata': '3.1.1', 'asyncio': '1.3.0', 'mock': '3.14.1', 'benchmark': '5.1.0', 'base-url': '2.1.0', 'playwright': '0.7.1', 'cov': '7.0.0'}, 'Base URL': ''}
+benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: /Users/Arief/Desktop/378x492
+configfile: pytest.ini
+plugins: anyio-4.11.0, html-4.1.1, xdist-3.8.0, json-report-1.5.0, httpx-0.35.0, metadata-3.1.1, asyncio-1.3.0, mock-3.14.1, benchmark-5.1.0, base-url-2.1.0, playwright-0.7.1, cov-7.0.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 1 item
+
+backend/tests/test_api_fraud_cases_comprehensive.py::TestCaseManagement::test_create_case FAILED [100%]
+
+=================================== FAILURES ===================================
+_____________________ TestCaseManagement.test_create_case ______________________
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 79, in collapse_excgroups
+  |     yield
+  |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 192, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 781, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/_pytest/runner.py", line 353, in from_call
+    |     result: TResult | None = func()
+    |                              ^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/_pytest/runner.py", line 245, in <lambda>
+    |     lambda: runtest_hook(item=item, **kwds),
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/_pytest/logging.py", line 850, in pytest_runtest_call
+    |     yield
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/_pytest/capture.py", line 900, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/_pytest/skipping.py", line 268, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/_pytest/runner.py", line 179, in pytest_runtest_call
+    |     item.runtest()
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/_pytest/python.py", line 1720, in runtest
+    |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_callers.py", line 53, in run_old_style_hookwrapper
+    |     return result.get_result()
+    |            ^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_result.py", line 103, in get_result
+    |     raise exc.with_traceback(tb)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_callers.py", line 38, in run_old_style_hookwrapper
+    |     res = yield
+    |           ^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/_pytest/python.py", line 166, in pytest_pyfunc_call
+    |     result = testfunction(**testargs)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/tests/test_api_fraud_cases_comprehensive.py", line 123, in test_create_case
+    |     response = client.post("/api/v1/cases",
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/testclient.py", line 546, in post
+    |     return super().post(
+    |            ^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 1144, in post
+    |     return self.request(
+    |            ^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/testclient.py", line 445, in request
+    |     return super().request(
+    |            ^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 825, in request
+    |     return self.send(request, auth=auth, follow_redirects=follow_redirects)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 914, in send
+    |     response = self._send_handling_auth(
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    |     response = self._send_handling_redirects(
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    |     response = self._send_single_request(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    |     response = transport.handle_request(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/testclient.py", line 348, in handle_request
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/testclient.py", line 345, in handle_request
+    |     portal.call(self.app, scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/anyio/from_thread.py", line 321, in call
+    |     return cast(T_Retval, self.start_task_soon(func, *args).result())
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 456, in result
+    |     return self.__get_result()
+    |            ^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    |     raise self._exception
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/anyio/from_thread.py", line 252, in _call_func
+    |     retval = await retval_or_awaitable
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/applications.py", line 1139, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/applications.py", line 107, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/app/middleware/rate_limit.py", line 68, in rate_limit_middleware
+    |     return await call_next(request)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/monitoring_service.py", line 479, in middleware
+    |     resp = await call_next(request)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/main.py", line 709, in request_logging_middleware
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/app/middleware/deprecated_monitor.py", line 95, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/middleware/request_id.py", line 15, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/core/csrf_protection.py", line 173, in dispatch
+    |     return await call_next(request)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/app/middleware/security.py", line 116, in dispatch
+    |     return await call_next(request)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/main.py", line 584, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/core/validation.py", line 194, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py", line 29, in __call__
+    |     await responder(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py", line 130, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py", line 46, in __call__
+    |     await self.app(scope, receive, self.send_with_compression)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/main.py", line 584, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/core/performance.py", line 77, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/apm_service.py", line 526, in __call__
+    |     await self.app(scope, receive, send_wrapper)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/slowapi/middleware.py", line 136, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |   File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    |     self.gen.throw(typ, value, traceback)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/Desktop/378x492/backend/core/rate_limiting.py", line 213, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/routing.py", line 716, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/routing.py", line 736, in app
+    |     await route.handle(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/routing.py", line 290, in handle
+    |     await self.app(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/routing.py", line 120, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/routing.py", line 106, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/routing.py", line 452, in app
+    |     content = await serialize_response(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/routing.py", line 278, in serialize_response
+    |     raise ResponseValidationError(
+    | fastapi.exceptions.ResponseValidationError: 13 validation errors:
+    |   {'type': 'missing', 'loc': ('response', 'title'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'description'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'status'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'priority'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'assigneeId'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'riskScore'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'riskLevel'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'fraudAmount'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'customerName'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'createdAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'updatedAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'dueDate'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    |   {'type': 'missing', 'loc': ('response', 'tags'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+    | 
+    |   File "/Users/Arief/Desktop/378x492/backend/app/routers/cases.py", line 104, in create_case
+    |     POST /api/v1/cases
+    +------------------------------------
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Arief/Desktop/378x492/backend/tests/test_api_fraud_cases_comprehensive.py", line 123, in test_create_case
+    response = client.post("/api/v1/cases",
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/testclient.py", line 546, in post
+    return super().post(
+           ^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 1144, in post
+    return self.request(
+           ^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/testclient.py", line 445, in request
+    return super().request(
+           ^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/testclient.py", line 348, in handle_request
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/testclient.py", line 345, in handle_request
+    portal.call(self.app, scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/anyio/from_thread.py", line 321, in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/anyio/from_thread.py", line 252, in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/applications.py", line 1139, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/app/middleware/rate_limit.py", line 68, in rate_limit_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/monitoring_service.py", line 479, in middleware
+    resp = await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 709, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/app/middleware/deprecated_monitor.py", line 95, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/middleware/request_id.py", line 15, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/core/csrf_protection.py", line 173, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/app/middleware/security.py", line 116, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 584, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/core/validation.py", line 194, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py", line 29, in __call__
+    await responder(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py", line 130, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py", line 46, in __call__
+    await self.app(scope, receive, self.send_with_compression)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/main.py", line 584, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/core/performance.py", line 77, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/Desktop/378x492/backend/app/services/infrastructure/apm_service.py", line 526, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/slowapi/middleware.py", line 136, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/Users/Arief/anaconda3/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/Desktop/378x492/backend/core/rate_limiting.py", line 213, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/routing.py", line 120, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/routing.py", line 106, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/routing.py", line 452, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Arief/anaconda3/lib/python3.11/site-packages/fastapi/routing.py", line 278, in serialize_response
+    raise ResponseValidationError(
+fastapi.exceptions.ResponseValidationError: 13 validation errors:
+  {'type': 'missing', 'loc': ('response', 'title'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'description'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'status'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'priority'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'assigneeId'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'riskScore'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'riskLevel'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'fraudAmount'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'customerName'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'createdAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'updatedAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'dueDate'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'tags'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cases.py", line 104, in create_case
+    POST /api/v1/cases
+
+The above exception was the direct cause of the following exception:
+backend/tests/test_api_fraud_cases_comprehensive.py:123: in test_create_case
+    response = client.post("/api/v1/cases",
+../../anaconda3/lib/python3.11/site-packages/starlette/testclient.py:546: in post
+    return super().post(
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+../../anaconda3/lib/python3.11/site-packages/starlette/testclient.py:445: in request
+    return super().request(
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/testclient.py:348: in handle_request
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/anyio/from_thread.py:321: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+../../anaconda3/lib/python3.11/site-packages/anyio/from_thread.py:252: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/fastapi/applications.py:1139: in __call__
+    await super().__call__(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/applications.py:107: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/middleware/rate_limit.py:68: in rate_limit_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/services/infrastructure/monitoring_service.py:479: in middleware
+    resp = await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/main.py:709: in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/middleware/deprecated_monitor.py:95: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/middleware/request_id.py:15: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/core/csrf_protection.py:173: in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/middleware/security.py:116: in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/main.py:584: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/core/validation.py:194: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py:29: in __call__
+    await responder(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py:130: in __call__
+    await super().__call__(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py:46: in __call__
+    await self.app(scope, receive, self.send_with_compression)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/main.py:584: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/core/performance.py:77: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+backend/app/services/infrastructure/apm_service.py:526: in __call__
+    await self.app(scope, receive, send_wrapper)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/slowapi/middleware.py:136: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/core/rate_limiting.py:213: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/cors.py:85: in __call__
+    await self.app(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../../anaconda3/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/routing.py:716: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/routing.py:736: in app
+    await route.handle(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/routing.py:290: in handle
+    await self.app(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/fastapi/routing.py:120: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../../anaconda3/lib/python3.11/site-packages/fastapi/routing.py:106: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/fastapi/routing.py:452: in app
+    content = await serialize_response(
+../../anaconda3/lib/python3.11/site-packages/fastapi/routing.py:278: in serialize_response
+    raise ResponseValidationError(
+E   fastapi.exceptions.ResponseValidationError: 13 validation errors:
+E     {'type': 'missing', 'loc': ('response', 'title'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'description'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'status'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'priority'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'assigneeId'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'riskScore'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'riskLevel'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'fraudAmount'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'customerName'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'createdAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'updatedAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'dueDate'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E     {'type': 'missing', 'loc': ('response', 'tags'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+E   
+E     File "/Users/Arief/Desktop/378x492/backend/app/routers/cases.py", line 104, in create_case
+E       POST /api/v1/cases
+---------------------------- Captured stdout setup -----------------------------
+DEBUG: Lifespan called!
+DEBUG: Lifespan startup beginning
+2025-12-20 14:51:50 - 378x492 - INFO - main:193 - Starting 378x492 Fraud Detection API with 99.99% uptime target
+DEBUG: About to start phases
+2025-12-20 14:51:50 - 378x492 - INFO - main:200 - Phase 1: Database initialization
+2025-12-20 14:51:50 - 378x492 - INFO - main:206 - Database tables created successfully (Development Mode)
+2025-12-20 14:51:50 - 378x492 - INFO - main:225 - Database health check passed/degraded on attempt 1
+2025-12-20 14:51:50 - 378x492 - INFO - main:253 - Boot Integrity Verified. Audit Root Hash: 86d81b322fc93ecd0c905cb5962d1bd36a000aa4e4291bf2832c018500b8d27b
+2025-12-20 14:51:50 - 378x492 - INFO - main:263 - Phase 2: Service initialization with error handling
+2025-12-20 14:51:50 - 378x492 - INFO - proactive_monitoring:50 - Starting proactive monitoring for 99.99% uptime
+2025-12-20 14:51:50 - 378x492 - INFO - main:270 - ✅ Proactive monitoring started for 99.99% uptime
+2025-12-20 14:51:50 - 378x492 - INFO - monitoring_service:385 - Monitoring service background thread started
+2025-12-20 14:51:50 - 378x492 - INFO - main:275 - ℹ️ APM monitoring skipped (optional service)
+2025-12-20 14:51:50 - 378x492 - INFO - main:280 - Phase 3: Circuit breaker and resilience initialization
+2025-12-20 14:51:50 - 378x492 - INFO - main:288 - ✅ Circuit breaker 'database_connection' initialized
+2025-12-20 14:51:50 - 378x492 - INFO - main:288 - ✅ Circuit breaker 'external_api_calls' initialized
+2025-12-20 14:51:50 - 378x492 - INFO - main:293 - Phase 4: Final health verification
+2025-12-20 14:51:51 - 378x492 - WARNING - performance_monitor:107 - Failed to collect network_connections: (pid=22285)
+2025-12-20 14:51:51 - 378x492 - WARNING - performance_monitor:107 - Failed to collect network_connections: (pid=22285)
+2025-12-20 14:51:52 - 378x492 - WARNING - performance_monitor:107 - Failed to collect network_connections: (pid=22285)
+2025-12-20 14:51:52 - 378x492 - WARNING - performance_monitor:339 - Error checking alert rule high_cpu_usage: PerformanceMonitor._get_default_alert_rules.<locals>.<lambda>() missing 1 required positional argument: 'm'
+2025-12-20 14:51:52 - 378x492 - WARNING - performance_monitor:339 - Error checking alert rule high_memory_usage: PerformanceMonitor._get_default_alert_rules.<locals>.<lambda>() missing 1 required positional argument: 'm'
+2025-12-20 14:51:52 - 378x492 - WARNING - performance_monitor:339 - Error checking alert rule high_disk_usage: PerformanceMonitor._get_default_alert_rules.<locals>.<lambda>() missing 1 required positional argument: 'm'
+2025-12-20 14:51:52 - 378x492 - WARNING - performance_monitor:339 - Error checking alert rule low_disk_space: PerformanceMonitor._get_default_alert_rules.<locals>.<lambda>() missing 1 required positional argument: 'm'
+2025-12-20 14:51:52 - 378x492 - WARNING - performance_monitor:339 - Error checking alert rule high_process_count: PerformanceMonitor._get_default_alert_rules.<locals>.<lambda>() missing 1 required positional argument: 'm'
+2025-12-20 14:51:52 - 378x492 - INFO - main:303 - 🎉 Application startup completed successfully in 2.52s
+2025-12-20 14:51:52 - 378x492 - INFO - main:317 - Monitoring services initialized successfully
+DEBUG: About to check WebSocket startup
+DEBUG: ENABLE_COLLABORATION_WS=false, ws_enabled=False
+DEBUG: WebSocket server disabled
+2025-12-20 14:51:52 - 378x492 - INFO - main:341 - WebSocket server disabled (set ENABLE_COLLABORATION_WS=true to enable)
+2025-12-20 14:51:52 - 378x492 - INFO - main:345 - 378x492 API startup completed successfully
+------------------------------ Captured log setup ------------------------------
+WARNING  core.integrity_checker:integrity_checker.py:40 dependencies.lock not found. Skipping strict verification.
+----------------------------- Captured stdout call -----------------------------
+2025-12-20 14:51:52 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-20 14:51:52 - 378x492 - ERROR - logging:167 - Request failed: 13 validation errors:
+  {'type': 'missing', 'loc': ('response', 'title'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'description'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'status'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'priority'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'assigneeId'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'riskScore'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'riskLevel'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'fraudAmount'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'customerName'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'createdAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'updatedAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'dueDate'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'tags'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cases.py", line 104, in create_case
+    POST /api/v1/cases
+2025-12-20 14:51:52 - 378x492 - ERROR - monitoring_service:336 - Recorded error: unhandled_exception - 13 validation errors:
+  {'type': 'missing', 'loc': ('response', 'title'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'description'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'status'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'priority'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'assigneeId'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'riskScore'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'riskLevel'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'fraudAmount'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'customerName'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'createdAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'updatedAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'dueDate'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'tags'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cases.py", line 104, in create_case
+    POST /api/v1/cases
+2025-12-20 14:51:52 - 378x492 - ERROR - logging:167 - Unexpected error: 13 validation errors:
+  {'type': 'missing', 'loc': ('response', 'title'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'description'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'status'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'priority'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'assigneeId'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'riskScore'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'riskLevel'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'fraudAmount'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'customerName'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'createdAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'updatedAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'dueDate'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'tags'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cases.py", line 104, in create_case
+    POST /api/v1/cases
+--------------------------- Captured stdout teardown ---------------------------
+2025-12-20 14:51:54 - 378x492 - INFO - main:360 - Initiating graceful shutdown of 378x492 Fraud Detection API
+2025-12-20 14:51:54 - 378x492 - INFO - main:366 - Phase 1: Stopping new request acceptance
+2025-12-20 14:51:54 - 378x492 - INFO - main:369 - Phase 2: Draining existing connections
+2025-12-20 14:51:54 - 378x492 - INFO - main:372 - Waiting 30s for active requests to complete
+2025-12-20 14:52:04 - 378x492 - INFO - main:376 - Phase 3: Stopping monitoring services
+2025-12-20 14:52:04 - 378x492 - INFO - proactive_monitoring:60 - Stopping proactive monitoring
+2025-12-20 14:52:04 - 378x492 - INFO - main:382 - ✅ Proactive monitoring stopped
+2025-12-20 14:52:04 - 378x492 - INFO - main:388 - ✅ Monitoring service stopped
+2025-12-20 14:52:04 - 378x492 - INFO - main:394 - ✅ Performance monitoring stopped
+2025-12-20 14:52:04 - 378x492 - INFO - main:399 - Phase 4: Closing database connections
+2025-12-20 14:52:04 - 378x492 - INFO - main:403 - ✅ Database connections prepared for cleanup
+2025-12-20 14:52:04 - 378x492 - INFO - main:408 - Phase 5: Stopping WebSocket and collaboration services
+2025-12-20 14:52:04 - 378x492 - INFO - main:411 - ✅ Collaboration WebSocket server stopped
+2025-12-20 14:52:04 - 378x492 - INFO - main:416 - Phase 6: Final cleanup and verification
+2025-12-20 14:52:04 - 378x492 - INFO - main:423 - ✅ Logging system flushed
+2025-12-20 14:52:04 - 378x492 - INFO - main:429 - 🎉 Graceful shutdown completed in 10.00s
+=========================== short test summary info ============================
+FAILED backend/tests/test_api_fraud_cases_comprehensive.py::TestCaseManagement::test_create_case - fastapi.exceptions.ResponseValidationError: 13 validation errors:
+  {'type': 'missing', 'loc': ('response', 'title'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'description'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'status'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'priority'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'assigneeId'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'riskScore'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'riskLevel'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'fraudAmount'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'customerName'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'createdAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'updatedAt'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'dueDate'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+  {'type': 'missing', 'loc': ('response', 'tags'), 'msg': 'Field required', 'input': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'case_id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'message': 'Case created successfully', 'case': {'id': 'ef0ebc02-8143-47e3-ba97-a77d89225200', 'title': 'Suspicious Transaction Investigation', 'status': 'open', 'priority': 'high', 'fraudAmount': 0.0, 'customerName': 'Unknown', 'createdAt': '2025-12-20T05:51:52.836719'}}}
+
+  File "/Users/Arief/Desktop/378x492/backend/app/routers/cases.py", line 104, in create_case
+    POST /api/v1/cases
+======================= 1 failed, 23 warnings in 14.13s ========================

@@ -1,0 +1,63 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.(md|rst)$
+      - id: end-of-file-fixer
+        exclude: \.(md|rst)$
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: debug-statements
+      - id: check-ast
+
+  - repo: https://github.com/psf/black
+    rev: 23.9.1
+    hooks:
+      - id: black
+        language_version: python3.11
+        exclude: ^(docs/|frontend/)
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+        exclude: ^(docs/|frontend/)
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        args: [--max-line-length=120, --extend-ignore=E203,W503]
+        exclude: ^(docs/|frontend/|migrations/)
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-all]
+        args: [--ignore-missing-imports, --no-strict-optional]
+        exclude: ^(docs/|frontend/|tests/)
+        files: ^(backend/|scripts/)
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.4
+    hooks:
+      - id: insert-license
+        files: \.py$
+        args:
+          - --license-filepath
+          - .github/license_header.txt
+        exclude: ^(docs/|frontend/|tests/|venv/)
+
+  - repo: https://github.com/pre-commit-hooks/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: file-contents-sorter
+        files: ^\.gitignore$
+      - id: check-toml
+      - id: check-json

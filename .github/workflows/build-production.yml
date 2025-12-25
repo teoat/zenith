@@ -1,0 +1,307 @@
+# .github/workflows/build-production.yml
+name: Production Build Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+env:
+  NODE_VERSION: '18'
+  PYTHON_VERSION: '3.12'
+
+jobs:
+  # Backend Tests
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+      
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+      
+    - name: Install dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-asyncio
+      
+    - name: Run backend tests
+      run: |
+        cd backend
+        pytest tests/ -v --cov=. --cov-report=xml --cov-report=html
+      env:
+        DATABASE_URL: postgresql://postgres:test_password@localhost:5432/test_db
+        TESTING: true
+      
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./backend/coverage.xml
+        flags: backend
+        name: backend-coverage
+
+  # Frontend Tests
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+      
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+      
+    - name: Run frontend tests
+      run: |
+        cd frontend
+        npm run test:coverage
+      
+    - name: Upload frontend coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./frontend/coverage/lcov.info
+        flags: frontend
+        name: frontend-coverage
+
+  # Security Scan
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+      
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  # Build Electron App
+  build-electron:
+    name: Build Electron App
+    needs: [backend-tests, frontend-tests]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+      
+    - name: Install dependencies
+      run: |
+        # Install backend dependencies
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+        # Install frontend dependencies
+        cd ../frontend
+        npm ci
+      
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+      
+    - name: Build Electron app
+      run: |
+        cd frontend
+        npm run electron:build
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+    - name: Sign and notarize (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        cd frontend
+        npm run electron:sign
+      env:
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: electron-app-${{ matrix.os }}
+        path: |
+          frontend/dist/
+          frontend/out/
+        retention-days: 30
+
+  # Create Release
+  create-release:
+    name: Create Release
+    needs: [build-electron, security-scan]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: electron-app-ubuntu-latest
+        path: ./artifacts/ubuntu
+      
+    - name: Download Windows artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: electron-app-windows-latest
+        path: ./artifacts/windows
+      
+    - name: Download macOS artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: electron-app-macos-latest
+        path: ./artifacts/macos
+      
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          artifacts/ubuntu/**/*
+          artifacts/windows/**/*
+          artifacts/macos/**/*
+        draft: false
+        prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Deploy to staging
+  deploy-staging:
+    name: Deploy to Staging
+    needs: [build-electron]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Deploy to staging
+      run: |
+        echo "Deploying to staging environment..."
+        # Add your deployment commands here
+        # For example, upload to S3, deploy to servers, etc.
+      env:
+        STAGING_HOST: ${{ secrets.STAGING_HOST }}
+        STAGING_USER: ${{ secrets.STAGING_USER }}
+        STAGING_KEY: ${{ secrets.STAGING_KEY }}
+
+  # Deploy to production
+  deploy-production:
+    name: Deploy to Production
+    needs: [create-release]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Deploy to production
+      run: |
+        echo "Deploying to production environment..."
+        # Add your production deployment commands here
+      env:
+        PROD_HOST: ${{ secrets.PROD_HOST }}
+        PROD_USER: ${{ secrets.PROD_USER }}
+        PROD_KEY: ${{ secrets.PROD_KEY }}
+        DEPLOY_WEBHOOK: ${{ secrets.DEPLOY_WEBHOOK }}
+
+  # Notify teams
+  notify:
+    name: Notify Teams
+    needs: [backend-tests, frontend-tests, build-electron]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify success
+      if: needs.backend-tests.result == 'success' && needs.frontend-tests.result == 'success' && needs.build-electron.result == 'success'
+      run: |
+        curl -H "Content-Type: application/json" -d '{
+          "text": "✅ Build successful for ${{ github.repository }} (${{ github.sha }})",
+          "title": "Build Success"
+        }' ${{ secrets.TEAMS_WEBHOOK }}
+      
+    - name: Notify failure
+      if: needs.backend-tests.result == 'failure' || needs.frontend-tests.result == 'failure' || needs.build-electron.result == 'failure'
+      run: |
+        curl -H "Content-Type: application/json" -d '{
+          "text": "❌ Build failed for ${{ github.repository }} (${{ github.sha }})",
+          "title": "Build Failure"
+        }' ${{ secrets.TEAMS_WEBHOOK }}

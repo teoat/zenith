@@ -1,0 +1,198 @@
+{
+  "name": "378x492-fraud-detection",
+  "version": "1.0.0",
+  "description": "378x492 Fraud Detection Desktop Application",
+  "main": "electron/main.js",
+  "author": "378x492",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:electron\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:electron": "wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .",
+    "build": "npm run build:frontend && npm run build:electron",
+    "build:frontend": "cd frontend && npm run build",
+    "build:electron": "electron-builder",
+    "build:backend": "cd backend && venv/bin/pyinstaller pyinstaller.spec",
+    "package": "npm run build:backend && npm run build",
+    "start": "npm run dev",
+    "lint": "cd frontend && npm run lint",
+    "lint:fix": "cd frontend && npx eslint . --fix",
+    "type-check": "cd frontend && npm run type-check",
+    "test": "cd frontend && npm run test",
+    "test:ci": "cd frontend && npm run test:ci",
+    "test:security": "node tests/test-security-integration.js",
+    "test:security:quick": "node tests/test-security-integration.js --quick",
+    "test:e2e": "python tests/run_e2e_tests.py --base-url http://localhost:8001 --ws-url ws://localhost:8081 --verbose",
+    "test:e2e:ci": "python tests/run_e2e_tests.py --base-url http://localhost:8001 --ws-url ws://localhost:8081 --ci --output e2e_results_ci.json",
+    "test:e2e:full": "python tests/run_e2e_tests.py --base-url http://localhost:8001 --ws-url ws://localhost:8081 --verbose --output e2e_full_results.json",
+    "test:e2e:playwright": "playwright test --config frontend/playwright.config.ts",
+    "test:e2e:playwright:ui": "playwright test --config frontend/playwright.config.ts --ui",
+    "test:e2e:playwright:debug": "playwright test --config frontend/playwright.config.ts --debug",
+    "test:e2e:playwright:headed": "playwright test --config frontend/playwright.config.ts --headed",
+    "test:e2e:playwright:chromium": "playwright test --config frontend/playwright.config.ts --project=chromium",
+    "test:e2e:playwright:firefox": "playwright test --config frontend/playwright.config.ts --project=firefox",
+    "test:e2e:playwright:webkit": "playwright test --config frontend/playwright.config.ts --project=webkit",
+    "test:e2e:playwright:install": "playwright install",
+    "docs:api": "cd backend && python -m pydoc -w services/",
+    "docs:build": "cd frontend && npm run docs:build",
+    "diagnostics": "node diagnostic-orchestrator.js",
+    "diagnostics:security": "node diagnostic-orchestrator.js --security",
+    "diagnostics:system": "node diagnostic-orchestrator.js --system",
+    "diagnostics:deps": "node diagnostic-orchestrator.js --deps",
+    "setup:production": "node scripts/setup-production.js",
+    "validate:security": "node scripts/validate-security.js",
+    "security:check": "node scripts/validate-security.js --quick",
+    "security:full": "node scripts/validate-security.js",
+    "verify:build": "node scripts/verify-build.js",
+    "clean": "rm -rf release dist node_modules frontend/dist frontend/node_modules backend/dist backend/__pycache__",
+    "ci:security": "npm audit --audit-level moderate && cd backend && python -m pip install safety && safety check",
+    "ci:lint": "npm run lint && npm run type-check",
+    "ci:test": "npm run test:ci && cd backend && python -m pytest tests/ -v --tb=short",
+    "ci:build": "npm run build:frontend && npm run build:backend && npm run build:electron",
+    "ci:quality": "npx prettier --check \"frontend/src/**/*.{ts,tsx,js,jsx,json,css,md}\" && cd backend && python -m pip install black isort flake8 && black --check . && isort --check-only . && flake8 . --count --select=E9,F63,F7,F82",
+    "ci:full": "npm run ci:security && npm run ci:lint && npm run ci:test && npm run ci:build && npm run verify:build"
+  },
+  "devDependencies": {
+    "@electron/notarize": "^2.1.0",
+    "@playwright/test": "^1.57.0",
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/git": "^10.0.0",
+    "@semantic-release/github": "^9.0.0",
+    "concurrently": "^8.2.2",
+    "cross-env": "^10.1.0",
+    "electron": "^28.3.3",
+    "electron-builder": "^24.13.3",
+    "electron-window-state": "^5.0.3",
+    "playwright": "^1.57.0",
+    "semantic-release": "^21.0.0",
+    "wait-on": "^7.2.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.5.0",
+    "keytar": "^7.9.0",
+    "electron-log": "^5.4.3",
+    "electron-updater": "^6.6.2"
+  },
+  "build": {
+    "appId": "com.378x492.fraud-detection",
+    "productName": "378x492 Fraud Detection",
+    "copyright": "Copyright © 2025 378x492",
+    "asar": true,
+    "directories": {
+      "buildResources": "build",
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "frontend/dist/**/*",
+      "!node_modules/**/*",
+      "!**/*.ts",
+      "!**/*.map"
+    ],
+    "extraResources": [
+      {
+        "from": "backend/dist",
+        "to": "backend",
+        "filter": [
+          "backend",
+          "backend.exe"
+        ]
+      }
+    ],
+    "afterSign": "scripts/notarize.js",
+    "afterAllArtifactBuild": "scripts/after-build.js",
+    "mac": {
+      "category": "public.app-category.finance",
+      "icon": "build/icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": {
+        "teamId": "${APPLE_TEAM_ID}"
+      }
+    },
+    "afterPack": "./scripts/optimize-bundle.js",
+    "dmg": {
+      "title": "${productName} ${version}",
+      "icon": "build/icon.icns",
+      "backgroundColor": "#1a1a1a",
+      "window": {
+        "width": 540,
+        "height": 380
+      },
+      "contents": [
+        {
+          "x": 140,
+          "y": 180
+        },
+        {
+          "x": 400,
+          "y": 180,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "publisherName": "378x492",
+      "verifyUpdateCodeSignature": true
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "378x492 Fraud Detection"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm"
+      ],
+      "icon": "build/icons",
+      "category": "Office",
+      "maintainer": "378x492 <support@378x492.com>",
+      "vendor": "378x492",
+      "description": "Desktop fraud detection and investigation platform"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "378x492",
+      "repo": "fraud-detection"
+    }
+  }
+}

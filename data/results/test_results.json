@@ -1,0 +1,63 @@
+{
+  "timestamp": "2025-12-11 05:04:38",
+  "tests": {
+    "frontend_build": {
+      "result": true
+    },
+    "api_health": {
+      "result": false
+    },
+    "authentication": {
+      "result": false
+    },
+    "components": {
+      "App": {
+        "status": "PASS",
+        "message": "Component exists"
+      },
+      "Dashboard": {
+        "status": "PASS",
+        "message": "Component exists"
+      },
+      "Cases": {
+        "status": "PASS",
+        "message": "Component exists"
+      },
+      "Login": {
+        "status": "PASS",
+        "message": "Component exists"
+      },
+      "Settings": {
+        "status": "PASS",
+        "message": "Component exists"
+      },
+      "DataGrid": {
+        "status": "PASS",
+        "message": "Component exists"
+      },
+      "NetworkGraph": {
+        "status": "PASS",
+        "message": "Component exists"
+      },
+      "Button": {
+        "status": "PASS",
+        "message": "Component exists"
+      },
+      "Input": {
+        "status": "PASS",
+        "message": "Component exists"
+      },
+      "Card": {
+        "status": "PASS",
+        "message": "Component exists"
+      }
+    }
+  },
+  "summary": {
+    "total_tests": 13,
+    "passed_tests": 11,
+    "failed_tests": 2,
+    "overall_score": 84.6,
+    "grade": "B (Satisfactory)"
+  }
+}

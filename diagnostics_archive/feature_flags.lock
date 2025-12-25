@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "created": "2024-12-17T00:00:00Z",
+  "approvedBy": "system",
+  "checksum": "e968d6930421acd902137a7f3949a9b75132a30e681f60646d717b9354242224",
+  "file": "ssot_feature_flags.json",
+  "locked": true,
+  "approval_required": true,
+  "change_policy": "Product team approval required for feature flag changes"
+}

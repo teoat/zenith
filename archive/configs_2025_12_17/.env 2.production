@@ -1,0 +1,88 @@
+# Production Configuration for 378x492 Fraud Detection
+# Generated on 2025-12-08T19:59:40.650Z
+# ⚠️  REVIEW ALL VALUES BEFORE DEPLOYMENT ⚠️
+
+# =============================================================================
+# CRITICAL SECURITY SETTINGS
+# =============================================================================
+
+# Database encryption key (32+ characters, CHANGE THIS)
+SQLCIPHER_KEY=d9702fae56d13d37bab762c59e50933044bf2a87933b4a7b3c5377829e5fb47b
+
+# Master password for application (16+ characters, CHANGE THIS)
+MASTER_PASSWORD=Wv49?K2JN{x:O,e<
+
+# IPC communication secret (32+ characters, CHANGE THIS)
+IPC_SECRET=c76557bce8c79f0136ff0042be51d50ebc046e54d3a5b8aa214f23bee6be632b
+
+# Authentication encryption key (32+ characters, CHANGE THIS)
+AUTH_ENCRYPTION_KEY=4a99c1115036b0248b39981dcbe6ec6e17bab2d5f6da6992ee68789ecd42b27a
+
+# =============================================================================
+# APPLICATION SETTINGS
+# =============================================================================
+
+# Environment (MUST be 'production' for production deployment)
+NODE_ENV=production
+
+# Application version
+APP_VERSION=1.0.0
+
+# Database settings
+DATABASE_PATH=./data/fraud_detection.db
+DATABASE_BACKUP_PATH=./data/backups/
+
+# Server settings
+HOST=localhost
+PORT=8000
+
+# =============================================================================
+# SECURITY SETTINGS
+# =============================================================================
+
+# Session settings
+SESSION_TIMEOUT_MINUTES=60
+MAX_LOGIN_ATTEMPTS=5
+LOCKOUT_DURATION_MINUTES=15
+
+# Rate limiting
+RATE_LIMIT_WINDOW_MS=60000
+RATE_LIMIT_MAX_REQUESTS=100
+
+# File upload settings
+MAX_FILE_SIZE_MB=50
+ALLOWED_FILE_TYPES=pdf,csv,xlsx,jpg,png
+
+# =============================================================================
+# MONITORING & LOGGING
+# =============================================================================
+
+# Log level (error, warn, info, debug)
+LOG_LEVEL=info
+
+# Sentry DSN for error tracking (optional)
+SENTRY_DSN=
+
+# Prometheus metrics
+METRICS_ENABLED=true
+METRICS_PORT=9090
+
+# =============================================================================
+# BACKUP & RECOVERY
+# =============================================================================
+
+# Backup settings
+BACKUP_ENABLED=true
+BACKUP_INTERVAL_HOURS=24
+BACKUP_RETENTION_DAYS=30
+
+# =============================================================================
+# DEVELOPMENT SETTINGS (REMOVE IN PRODUCTION)
+# =============================================================================
+
+# Development database password (REMOVE IN PRODUCTION)
+DEV_DB_PASSWORD=
+
+# Development secrets (REMOVE IN PRODUCTION)
+DEV_IPC_SECRET=
+DEV_AUTH_KEY=

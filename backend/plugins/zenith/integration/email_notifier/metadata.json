@@ -1,0 +1,25 @@
+{
+  "name": "email_notifier",
+  "version": "1.0.0",
+  "namespace": "378x492/integration/email_notifier",
+  "description": "Standard SMTP email notification provider",
+  "author": "378x492 Team",
+  "entry_point": "plugin.py:EmailNotifierPlugin",
+  "dependencies": {},
+  "capabilities": [
+    "integration",
+    "notification"
+  ],
+  "config_schema": {
+    "smtp_host": {
+      "type": "string"
+    },
+    "smtp_port": {
+      "type": "integer",
+      "default": 587
+    },
+    "sender_email": {
+      "type": "string"
+    }
+  }
+}

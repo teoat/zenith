@@ -1,0 +1,232 @@
+{
+    "metadata": {
+    "title": "378x492 Fraud Detection Platform Documentation Index",
+    "version": "Ultra-Consolidated 1.2 (99.99% Uptime + Fixed Links)",
+    "last_updated": "2025-12-19",
+    "total_files": 54,
+    "structure": "7 functional areas × 5 docs + 2 API references + uptime docs + FAQ + Contributing + front pages",
+    "file_reduction": "83%+ from original 287+ files",
+    "organization": "Front-page navigation with drill-down subfolders + uptime monitoring + developer resources",
+    "uptime_sla": "99.99%",
+    "availability_target": "Enterprise-grade high availability",
+    "link_validation": "Broken links identified and fixed",
+    "documentation_health": "Synchronized with implementation"
+  },
+  "quick_access": {
+    "for_users": [
+      {"title": "User Guides Overview", "file": "06_User_Guides.md"},
+      {"title": "Case Management", "file": "06_User_Guides/cases-evidence.md"},
+      {"title": "AI Features", "file": "06_User_Guides/ai-services.md"},
+      {"title": "FAQ", "file": "FAQ.md"},
+      {"title": "User Manual", "file": "guides/USER_MANUAL.md"}
+    ],
+    "for_developers": [
+      {"title": "Developer Guide Overview", "file": "02_Developer_Guide.md"},
+      {"title": "Testing Strategy", "file": "02_Developer_Guide/testing.md"},
+      {"title": "API Reference", "file": "08_Api_Documentation.md"},
+      {"title": "Contributing Guide", "file": "CONTRIBUTING.md"},
+      {"title": "Development Setup", "file": "development/DEVELOP.md"}
+    ],
+    "for_operations": [
+      {"title": "Operations Overview", "file": "04_Operations_and_Deployment.md"},
+      {"title": "Production Runbook", "file": "04_Operations_and_Deployment/deployment.md"},
+      {"title": "99.99% Uptime Implementation", "file": "99_99_UPTIME_IMPLEMENTATION.md"},
+      {"title": "Deployment Checklist", "file": "deployment/DEPLOYMENT_CHECKLIST.md"}
+    ],
+    "for_stakeholders": [
+      {"title": "Project Overview", "file": "01_Project.md"},
+      {"title": "Strategic Roadmap", "file": "01_Project/strategic-roadmap.md"},
+      {"title": "Project Reports", "file": "07_Reports/project-overview.md"}
+    ],
+    "general_resources": [
+      {"title": "README", "file": "README.md"},
+      {"title": "FAQ", "file": "FAQ.md"},
+      {"title": "Contributing Guide", "file": "CONTRIBUTING.md"},
+      {"title": "Local Development", "file": "LOCAL_DEVELOPMENT.md"}
+    ]
+  },
+  "sections": [
+    {
+      "name": "01_Project",
+      "description": "Project strategy, roadmap, planning, and implementation",
+      "front_page": "01_Project.md",
+      "audience": ["stakeholders", "project_managers", "executives"],
+      "documents": [
+        {"title": "Strategic Roadmap", "file": "01_Project/strategic-roadmap.md", "description": "High-level direction, phases, AI roadmap"},
+        {"title": "Fraud and Security Strategy", "file": "01_Project/fraud-security-strategy.md", "description": "Fraud mechanics, typologies, security planning"},
+        {"title": "Feature Management and Compliance", "file": "01_Project/feature-compliance.md", "description": "Feature flags, organization, compliance frameworks"},
+        {"title": "User Experience and UI Development", "file": "01_Project/ux-ui-development.md", "description": "UI/UX design, loading states, user journey"},
+        {"title": "Implementation Diagnostics and Onboarding", "file": "01_Project/implementation-diagnostics.md", "description": "Status assessment, readiness, onboarding"}
+      ]
+    },
+    {
+      "name": "02_Developer_Guide",
+      "description": "Development practices, tools, testing, and security",
+      "front_page": "02_Developer_Guide.md",
+      "audience": ["developers", "engineers", "technical_leads"],
+      "documents": [
+        {"title": "General Developer Guide", "file": "02_Developer_Guide/general-guide.md", "description": "Core development practices and workflow"},
+        {"title": "API Development and Versioning", "file": "02_Developer_Guide/api-versioning.md", "description": "API design and versioning standards"},
+        {"title": "Monitoring and Observability", "file": "02_Developer_Guide/monitoring.md", "description": "Observability tools and implementation"},
+        {"title": "Testing Strategy & QA Framework", "file": "02_Developer_Guide/testing.md", "description": "Testing strategy, frameworks, and QA processes"},
+        {"title": "Developer Security Practices", "file": "02_Developer_Guide/security-practices.md", "description": "Developer security guidelines and practices"}
+      ]
+    },
+    {
+      "name": "03_Standards_and_Policies",
+      "description": "Security policies, compliance, audits, and governance",
+      "front_page": "03_Standards_and_Policies.md",
+      "audience": ["security_team", "compliance_officers", "auditors"],
+      "documents": [
+        {"title": "Security Overview and Audits", "file": "03_Standards_and_Policies/overview-audits.md", "description": "Security policies and audit procedures"},
+        {"title": "Authentication and API Security", "file": "03_Standards_and_Policies/auth-api.md", "description": "Authentication and API security implementation"},
+        {"title": "Incident Response and Production", "file": "03_Standards_and_Policies/incident-production.md", "description": "Incident response and production security"},
+        {"title": "Project Completion and Testing", "file": "03_Standards_and_Policies/completion-testing.md", "description": "Project completion and testing validation"},
+        {"title": "Executive Summaries and Checklists", "file": "03_Standards_and_Policies/summaries-checklists.md", "description": "Executive summaries and compliance checklists"}
+      ]
+    },
+    {
+      "name": "04_Operations_and_Deployment",
+      "description": "Production operations, deployment, monitoring, and maintenance",
+      "front_page": "04_Operations_and_Deployment.md",
+      "audience": ["devops", "system_administrators", "operations_team"],
+      "documents": [
+        {"title": "Operations Overview", "file": "04_Operations_and_Deployment/overview.md", "description": "Operations introduction and procedures"},
+        {"title": "Monitoring Operations", "file": "04_Operations_and_Deployment/monitoring.md", "description": "Operational monitoring and health checks"},
+        {"title": "Deployment Operations and Production Runbook", "file": "04_Operations_and_Deployment/deployment.md", "description": "Deployment procedures, runbooks, and incident response"},
+        {"title": "Maintenance Operations", "file": "04_Operations_and_Deployment/maintenance.md", "description": "Routine maintenance and preventive procedures"},
+        {"title": "Troubleshooting Operations", "file": "04_Operations_and_Deployment/troubleshooting.md", "description": "Operational troubleshooting and diagnostics"}
+      ]
+    },
+    {
+      "name": "05_Architecture_and_Design",
+      "description": "System architecture, design decisions, and infrastructure",
+      "front_page": "05_Architecture_and_Design.md",
+      "audience": ["architects", "technical_leads", "system_designers"],
+      "documents": [
+        {"title": "Deployment Planning", "file": "05_Architecture_and_Design/planning.md", "description": "Strategic planning and deployment preparation"},
+        {"title": "Orchestration Setup", "file": "05_Architecture_and_Design/orchestration.md", "description": "System orchestration and infrastructure setup"},
+        {"title": "Execution Steps", "file": "05_Architecture_and_Design/execution.md", "description": "Step-by-step execution procedures"},
+        {"title": "Deployment Monitoring", "file": "05_Architecture_and_Design/monitoring.md", "description": "Deployment monitoring and validation"},
+        {"title": "Post-Deployment Procedures", "file": "05_Architecture_and_Design/post-deployment.md", "description": "Post-deployment procedures and handoff"}
+      ]
+    },
+    {
+      "name": "06_User_Guides",
+      "description": "User workflows, feature guides, and end-user documentation",
+      "front_page": "06_User_Guides.md",
+      "audience": ["end_users", "analysts", "investigators"],
+      "documents": [
+        {"title": "Admin and User Management", "file": "06_User_Guides/admin-users.md", "description": "User management and administrative functions"},
+        {"title": "AI Services and Intelligent Features", "file": "06_User_Guides/ai-services.md", "description": "AI-powered fraud detection and analysis features"},
+        {"title": "Cases and Evidence Management", "file": "06_User_Guides/cases-evidence.md", "description": "Case management and evidence processing workflows"},
+        {"title": "Reporting and Statistical Analysis", "file": "06_User_Guides/reporting-stats.md", "description": "Reporting and statistical analysis capabilities"},
+        {"title": "Transaction Reconciliation and Financial Analysis", "file": "06_User_Guides/reconciliation-services.md", "description": "Transaction reconciliation and financial analysis"}
+      ]
+    },
+    {
+      "name": "07_Reports",
+      "description": "Analytics, diagnostics, assessments, and project reports",
+      "front_page": "07_Reports.md",
+      "audience": ["stakeholders", "management", "quality_assurance"],
+      "documents": [
+        {"title": "Project Overview and Completion", "file": "07_Reports/project-overview.md", "description": "Project status, timelines, and completion reports"},
+        {"title": "Comprehensive Diagnostics", "file": "07_Reports/comprehensive-diagnostics.md", "description": "System diagnostics and health assessments"},
+        {"title": "SSOT and Data Integrity", "file": "07_Reports/ssot-integrity.md", "description": "Single source of truth and data integrity analysis"},
+        {"title": "Testing and Implementation Records", "file": "07_Reports/testing-records.md", "description": "Test execution and implementation tracking"},
+        {"title": "Priority Assessments", "file": "07_Reports/priority-assessments.md", "description": "Priority matrices and strategic assessments"}
+      ]
+    },
+    {
+      "name": "08_API_Documentation",
+      "description": "Complete API reference with endpoints, examples, and integration guides",
+      "front_page": "08_Api_Documentation.md",
+      "audience": ["developers", "integrators", "api_consumers"],
+      "documents": [
+        {"title": "Complete API Reference", "file": "08_Api_Documentation.md", "description": "Comprehensive API documentation with 85+ endpoints"}
+      ],
+        "endpoints": {
+          "authentication": 3,
+          "case_management": 6,
+          "evidence_management": 6,
+          "ai_fraud_detection": 8,
+          "user_management": 6,
+          "administrative": 6,
+          "reporting_analytics": 7,
+          "reconciliation": 5,
+          "system_health": 6,
+          "uptime_monitoring": 2,
+          "total": 87
+        }
+      },
+      {
+        "name": "09_Uptime_and_Monitoring",
+        "description": "99.99% uptime implementation, proactive monitoring, and high availability",
+        "front_page": "99_99_UPTIME_IMPLEMENTATION.md",
+        "audience": ["devops", "system_administrators", "reliability_engineers"],
+        "documents": [
+          {"title": "99.99% Uptime Architecture", "file": "99_99_UPTIME_IMPLEMENTATION.md", "description": "Complete uptime implementation with enterprise-grade HA"},
+          {"title": "Security Architecture", "file": "05_Architecture_and_Design/security_architecture.md", "description": "Versioned encryption and WebSocket security"}
+        ],
+        "uptime_metrics": {
+          "target": "99.99%",
+          "monthly_downtime_budget": "4.32 minutes",
+          "monitoring_interval": "30 seconds",
+          "circuit_breakers": 5,
+          "health_endpoints": 6
+        }
+      }
+    ],
+  "preserved_assets": {
+    "guides": {
+      "description": "User experience assets and comprehensive manual",
+      "contents": [
+        {"type": "manual", "file": "guides/USER_MANUAL.md", "description": "Comprehensive user manual (13,320 lines)"},
+        {"type": "assets", "folder": "guides/assets/", "count": 10, "description": "UI mockup images (PNG)"}
+      ]
+    },
+    "scripts": {
+      "description": "Documentation and project utility scripts",
+      "location": "../scripts/",
+      "contents": [
+        {"file": "check_links.py", "description": "Link validation and integrity checking"},
+        {"file": "consolidate.py", "description": "Document consolidation utilities"},
+        {"file": "consolidate_root.py", "description": "Root-level consolidation tools"},
+        {"file": "fix_links.py", "description": "Link fixing and maintenance utilities"}
+      ]
+    }
+  },
+  "archives": {
+    "location": "archives/",
+    "description": "Historical documentation safely preserved",
+    "contents": [
+      {"file": "docs-archive-2025-12-17.tar.gz", "size": "200KB", "description": "Consolidated historical documentation"},
+      {"file": "additional-archive-2025-12-17.tar.gz", "size": "75KB", "description": "Additional archived content"},
+      {"file": "final-cleanup-archive-2025-12-17.tar.gz", "size": "710KB", "description": "Final cleanup archives"}
+    ]
+  },
+  "navigation": {
+    "reading_order": [
+      "Start with README.md for overview and uptime status",
+      "Check FAQ.md for common questions",
+      "Review CONTRIBUTING.md if planning to contribute",
+      "Follow setup guides: development/DEVELOP.md or LOCAL_DEVELOPMENT.md",
+      "Review 99_99_UPTIME_IMPLEMENTATION.md for availability architecture",
+      "Choose relevant front page (01_Project.md through 07_Reports.md)",
+      "Follow cross-references to detailed content in subfolders",
+      "Use 08_Api_Documentation.md for technical integration details",
+      "Check 05_Architecture_and_Design/security_architecture.md for security features",
+      "Check archives/ for historical context if needed"
+    ],
+    "search_tips": [
+      "Use IDE search or grep for specific topics across all docs",
+      "Front pages provide high-level overviews with drill-down links",
+      "Each subfolder contains exactly 5 focused documents",
+      "API documentation is comprehensive and standalone",
+      "Check FAQ.md for common questions first",
+      "99.99% uptime documentation covers high availability features",
+      "Contributing guide explains development workflow",
+      "README.md provides quick access to all resources"
+    ]
+  }
+}

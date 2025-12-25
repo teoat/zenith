@@ -1,0 +1,80 @@
+# Translations template
+msgid ""
+msgstr ""
+"Language: \n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "An unexpected error occurred"
+msgstr ""
+
+msgid "Network connection error"
+msgstr ""
+
+msgid "Request timed out"
+msgstr ""
+
+msgid "You are not authorized to perform this action"
+msgstr ""
+
+msgid "Access forbidden"
+msgstr ""
+
+msgid "The requested resource was not found"
+msgstr ""
+
+msgid "Server error occurred"
+msgstr ""
+
+msgid "Please check your input and try again"
+msgstr ""
+
+msgid "Failed to create case"
+msgstr ""
+
+msgid "Failed to update case"
+msgstr ""
+
+msgid "Failed to delete case"
+msgstr ""
+
+msgid "Failed to load case data"
+msgstr ""
+
+msgid "Case not found"
+msgstr ""
+
+msgid "Login failed. Please check your credentials"
+msgstr ""
+
+msgid "Your session has expired. Please log in again"
+msgstr ""
+
+msgid "Invalid authentication token"
+msgstr ""
+
+msgid "You don't have permission to access this resource"
+msgstr ""
+
+msgid "File upload failed"
+msgstr ""
+
+msgid "File download failed"
+msgstr ""
+
+msgid "Invalid file format"
+msgstr ""
+
+msgid "File size exceeds the maximum limit"
+msgstr ""
+
+msgid "File appears to be corrupted"
+msgstr ""
+
+msgid "Too many requests. Please try again later"
+msgstr ""
+
+msgid "Service is temporarily unavailable"
+msgstr ""
+
+msgid "System is under maintenance"
+msgstr ""

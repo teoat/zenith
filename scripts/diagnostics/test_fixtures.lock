@@ -1,0 +1,109 @@
+{
+  "category": "test_fixtures",
+  "generated_at": "2025-12-17T04:08:41.659940",
+  "version": "1.0.0-ssot-comprehensive",
+  "description": "Comprehensive SSOT protection for test_fixtures files",
+  "total_files": 10,
+  "files": {
+    "validation.ts": {
+      "full_path": "frontend/src/utils/validation.ts",
+      "category": "medium",
+      "checksum": "ca76e955d7a9ca6b93dc98f6dd90ce6cc786d98d0fb9ebfa0c3612e178d0daf7",
+      "size_bytes": 6685,
+      "modified": "2025-12-17T03:49:21.117071",
+      "risk_score": 75,
+      "protection_reason": "Category: medium, Risk: 75",
+      "locked_at": "2025-12-17T04:08:41.660097"
+    },
+    "test_multimodal_analysis_service.py": {
+      "full_path": "backend/tests/test_multimodal_analysis_service.py",
+      "category": "medium",
+      "checksum": "49459ff697a7cce9c993f9d2c75a876994b40996fe1ce29a75438b4f9031d2dd",
+      "size_bytes": 4519,
+      "modified": "2025-12-17T02:51:33.310916",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.660197"
+    },
+    "test_services.py": {
+      "full_path": "backend/tests/unit/test_services.py",
+      "category": "medium",
+      "checksum": "165ce76c05d634b52c76bfa7969b622eddef76cfcc0819bd075a2e45c0f10a45",
+      "size_bytes": 7948,
+      "modified": "2025-12-17T01:38:36.356876",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.660353"
+    },
+    "test_ai_services.py": {
+      "full_path": "backend/tests/unit/test_ai_services.py",
+      "category": "medium",
+      "checksum": "3ee23b06e8a4798abb6b6ff08b717fafff00d77f1139ef7b320e11b9ab256e8f",
+      "size_bytes": 8351,
+      "modified": "2025-12-17T01:38:36.355607",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.660470"
+    },
+    "electron.test.ts": {
+      "full_path": "frontend/src/utils/__tests__/electron.test.ts",
+      "category": "medium",
+      "checksum": "645cabba2ae5f373727fd7d69246add5299e405d21f30810d6466f5eaa3a83a8",
+      "size_bytes": 2640,
+      "modified": "2025-12-17T03:49:21.176885",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.660568"
+    },
+    "errorHandler.test.ts": {
+      "full_path": "frontend/src/utils/__tests__/errorHandler.test.ts",
+      "category": "medium",
+      "checksum": "c9fd30dfd1b562b0ada50ef9cc376791b75190f83b481f31b58d96c5fe4cde9e",
+      "size_bytes": 1583,
+      "modified": "2025-12-17T03:49:21.180287",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.660667"
+    },
+    "performanceMonitor.test.ts": {
+      "full_path": "frontend/src/utils/__tests__/performanceMonitor.test.ts",
+      "category": "medium",
+      "checksum": "4d06343e3b3f66f949521c2e0406e03976119edf3fbf4a64c9bffb27924c4abd",
+      "size_bytes": 2266,
+      "modified": "2025-12-17T03:49:21.183559",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.660776"
+    },
+    "services.test.ts": {
+      "full_path": "frontend/src/__tests__/services.test.ts",
+      "category": "medium",
+      "checksum": "5fe5a746dc0d28914b542a2659ad5c9ccea897a5f736d46c4570379cb1ecc258",
+      "size_bytes": 7260,
+      "modified": "2025-12-17T03:49:21.982069",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.660884"
+    },
+    "utils.test.ts": {
+      "full_path": "frontend/src/lib/__tests__/utils.test.ts",
+      "category": "medium",
+      "checksum": "560f0b02d49871e9e6f1b969a2f8a6212805bf5a6070c2dcd38cd1b5f0c56a0b",
+      "size_bytes": 944,
+      "modified": "2025-12-17T03:49:22.561684",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.661029"
+    },
+    "intelligenceService.test.ts": {
+      "full_path": "frontend/src/services/__tests__/intelligenceService.test.ts",
+      "category": "medium",
+      "checksum": "f4e209cd5c039b3ad9e65540a03a6d519e6a1606e373ba1231bef69c78574b68",
+      "size_bytes": 3438,
+      "modified": "2025-12-17T03:49:23.000155",
+      "risk_score": 65,
+      "protection_reason": "Category: medium, Risk: 65",
+      "locked_at": "2025-12-17T04:08:41.661129"
+    }
+  }
+}

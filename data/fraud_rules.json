@@ -1,0 +1,119 @@
+{
+  "rules": [
+    {
+      "id": "default_structuring_detection",
+      "name": "Structuring Detection",
+      "description": "Detects transactions just below reporting thresholds",
+      "type": "RuleType.AMOUNT_ANALYSIS",
+      "conditions": [
+        "RuleCondition(field='amount', operator=<Operator.BETWEEN: 'between'>, value=[9000, 10000], case_sensitive=False, description='Amount between $9,000-$10,000')"
+      ],
+      "logical_operator": "LogicalOperator.AND",
+      "severity": "high",
+      "enabled": true,
+      "tags": [
+        "structuring",
+        "smurfing"
+      ],
+      "created_at": "2025-12-17 04:46:13.330642",
+      "updated_at": "2025-12-17 04:46:13.330648",
+      "trigger_count": 0,
+      "last_triggered": null,
+      "confidence_threshold": 0.8,
+      "action": "flag"
+    },
+    {
+      "id": "default_round_number_suspicion",
+      "name": "Round Number Suspicion",
+      "description": "Flags suspiciously round transaction amounts",
+      "type": "RuleType.AMOUNT_ANALYSIS",
+      "conditions": [
+        "RuleCondition(field='amount', operator=<Operator.GREATER_THAN: 'greater_than'>, value=1000, case_sensitive=False, description='Amount > $1,000')",
+        "RuleCondition(field='amount', operator=<Operator.REGEX_MATCH: 'regex_match'>, value='^\\\\d+000$', case_sensitive=False, description='Round number ending in 000s')"
+      ],
+      "logical_operator": "LogicalOperator.AND",
+      "severity": "medium",
+      "enabled": true,
+      "tags": [
+        "round_numbers",
+        "suspicious"
+      ],
+      "created_at": "2025-12-17 04:46:13.330658",
+      "updated_at": "2025-12-17 04:46:13.330658",
+      "trigger_count": 0,
+      "last_triggered": null,
+      "confidence_threshold": 0.8,
+      "action": "flag"
+    },
+    {
+      "id": "default_velocity_anomaly",
+      "name": "Velocity Anomaly",
+      "description": "Detects unusual transaction frequency",
+      "type": "RuleType.FREQUENCY_ANALYSIS",
+      "conditions": [
+        "RuleCondition(field='transactions_per_hour', operator=<Operator.GREATER_THAN: 'greater_than'>, value=10, case_sensitive=False, description='More than 10 transactions per hour')"
+      ],
+      "logical_operator": "LogicalOperator.AND",
+      "severity": "high",
+      "enabled": true,
+      "tags": [
+        "velocity",
+        "frequency"
+      ],
+      "created_at": "2025-12-17 04:46:13.330663",
+      "updated_at": "2025-12-17 04:46:13.330663",
+      "trigger_count": 0,
+      "last_triggered": null,
+      "confidence_threshold": 0.8,
+      "action": "flag"
+    },
+    {
+      "id": "default_geographic_anomaly",
+      "name": "Geographic Anomaly",
+      "description": "Transactions from unusual locations",
+      "type": "RuleType.GEOGRAPHIC_ANALYSIS",
+      "conditions": [
+        "RuleCondition(field='country', operator=<Operator.NOT_EQUALS: 'not_equals'>, value='US', case_sensitive=False, description='Transaction from outside US')",
+        "RuleCondition(field='amount', operator=<Operator.GREATER_THAN: 'greater_than'>, value=50000, case_sensitive=False, description='Large amount from unusual location')"
+      ],
+      "logical_operator": "LogicalOperator.AND",
+      "severity": "high",
+      "enabled": true,
+      "tags": [
+        "geographic",
+        "international"
+      ],
+      "created_at": "2025-12-17 04:46:13.330668",
+      "updated_at": "2025-12-17 04:46:13.330669",
+      "trigger_count": 0,
+      "last_triggered": null,
+      "confidence_threshold": 0.8,
+      "action": "flag"
+    },
+    {
+      "id": "default_shell_company_pattern",
+      "name": "Shell Company Pattern",
+      "description": "Detects potential shell company transactions",
+      "type": "RuleType.ENTITY_RELATIONSHIP",
+      "conditions": [
+        "RuleCondition(field='recipient_type', operator=<Operator.EQUALS: 'equals'>, value='corporation', case_sensitive=False, description='Recipient is a corporation')",
+        "RuleCondition(field='recipient_age_days', operator=<Operator.LESS_THAN: 'less_than'>, value=365, case_sensitive=False, description='Company less than 1 year old')"
+      ],
+      "logical_operator": "LogicalOperator.AND",
+      "severity": "critical",
+      "enabled": true,
+      "tags": [
+        "shell_company",
+        "new_entity"
+      ],
+      "created_at": "2025-12-17 04:46:13.330673",
+      "updated_at": "2025-12-17 04:46:13.330674",
+      "trigger_count": 0,
+      "last_triggered": null,
+      "confidence_threshold": 0.8,
+      "action": "flag"
+    }
+  ],
+  "last_updated": "2025-12-17T04:46:13.330679",
+  "version": "1.0"
+}

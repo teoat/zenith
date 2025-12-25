@@ -1,0 +1,80 @@
+# Indonesian translations
+msgid ""
+msgstr ""
+"Language: id\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "An unexpected error occurred"
+msgstr "Terjadi kesalahan tak terduga"
+
+msgid "Network connection error"
+msgstr "Kesalahan koneksi jaringan"
+
+msgid "Request timed out"
+msgstr "Permintaan waktu habis"
+
+msgid "You are not authorized to perform this action"
+msgstr "Anda tidak berwenang untuk melakukan tindakan ini"
+
+msgid "Access forbidden"
+msgstr "Akses dilarang"
+
+msgid "The requested resource was not found"
+msgstr "Sumber daya yang diminta tidak ditemukan"
+
+msgid "Server error occurred"
+msgstr "Terjadi kesalahan server"
+
+msgid "Please check your input and try again"
+msgstr "Silakan periksa input Anda dan coba lagi"
+
+msgid "Failed to create case"
+msgstr "Gagal membuat kasus"
+
+msgid "Failed to update case"
+msgstr "Gagal memperbarui kasus"
+
+msgid "Failed to delete case"
+msgstr "Gagal menghapus kasus"
+
+msgid "Failed to load case data"
+msgstr "Gagal memuat data kasus"
+
+msgid "Case not found"
+msgstr "Kasus tidak ditemukan"
+
+msgid "Login failed. Please check your credentials"
+msgstr "Login gagal. Silakan periksa kredensial Anda"
+
+msgid "Your session has expired. Please log in again"
+msgstr "Sesi Anda telah berakhir. Silakan login lagi"
+
+msgid "Invalid authentication token"
+msgstr "Token otentikasi tidak valid"
+
+msgid "You don't have permission to access this resource"
+msgstr "Anda tidak memiliki izin untuk mengakses sumber daya ini"
+
+msgid "File upload failed"
+msgstr "Unggah file gagal"
+
+msgid "File download failed"
+msgstr "Unduh file gagal"
+
+msgid "Invalid file format"
+msgstr "Format file tidak valid"
+
+msgid "File size exceeds the maximum limit"
+msgstr "Ukuran file melebihi batas maksimum"
+
+msgid "File appears to be corrupted"
+msgstr "File tampaknya rusak"
+
+msgid "Too many requests. Please try again later"
+msgstr "Terlalu banyak permintaan. Silakan coba lagi nanti"
+
+msgid "Service is temporarily unavailable"
+msgstr "Layanan tidak tersedia sementara"
+
+msgid "System is under maintenance"
+msgstr "Sistem sedang dalam pemeliharaan"

@@ -1,0 +1,122 @@
+{
+  "category": "perfect_coverage",
+  "generated_at": "2025-12-17T04:18:50.684349",
+  "version": "3.0.0-perfect-coverage",
+  "description": "Perfect 100% SSOT coverage for all remaining critical files",
+  "total_files": 8,
+  "coverage_achievement": "100.0%",
+  "perfect_protection_level": "maximum",
+  "files": {
+    "rate_limit.py": {
+      "full_path": "backend/app/middleware/rate_limit.py",
+      "category": "api_critical",
+      "checksum": "0ca4a8e2396bc59d977a180a1b24841090d4830c3b1e27a8f5e4dd4ab494bcad",
+      "size_bytes": 2461,
+      "modified": "2025-12-17T01:38:35.858071",
+      "risk_score": 100,
+      "protection_reason": "Matches 1 keywords in api_critical category",
+      "business_impact": "System integration and API functionality",
+      "security_impact": "API abuse prevention and secure communication",
+      "perfect_protection_level": "maximum",
+      "protected_at": "2025-12-17T04:18:50.685677"
+    },
+    "rotate_audit_key.py": {
+      "full_path": "backend/scripts/rotate_audit_key.py",
+      "category": "monitoring_critical",
+      "checksum": "3d190b3347e4c1f4b2197592670080f59ec2ad04a8ea94865a4a0f9b2b7d9353",
+      "size_bytes": 806,
+      "modified": "2025-12-17T01:38:36.332432",
+      "risk_score": 100,
+      "protection_reason": "Matches 1 keywords in monitoring_critical category",
+      "business_impact": "System observability and monitoring",
+      "security_impact": "Security monitoring and incident detection",
+      "perfect_protection_level": "maximum",
+      "protected_at": "2025-12-17T04:18:50.686929"
+    },
+    "generate_audit_keys.py": {
+      "full_path": "backend/scripts/generate_audit_keys.py",
+      "category": "monitoring_critical",
+      "checksum": "eb4ee3b95c3a8cbd5236a5a0eb959485588bb23eee10d85249f1cb62e3e1c3f5",
+      "size_bytes": 1510,
+      "modified": "2025-12-17T01:38:36.331707",
+      "risk_score": 100,
+      "protection_reason": "Matches 1 keywords in monitoring_critical category",
+      "business_impact": "System observability and monitoring",
+      "security_impact": "Security monitoring and incident detection",
+      "perfect_protection_level": "maximum",
+      "protected_at": "2025-12-17T04:18:50.687557"
+    },
+    "accessibility-audit.js": {
+      "full_path": "frontend/scripts/accessibility-audit.js",
+      "category": "monitoring_critical",
+      "checksum": "89133d0b83142ac9ca4f3b322eec0ee934e6b828d61ee7fb82ff59d5ca477528",
+      "size_bytes": 3937,
+      "modified": "2025-12-17T01:38:37.315032",
+      "risk_score": 100,
+      "protection_reason": "Matches 1 keywords in monitoring_critical category",
+      "business_impact": "System observability and monitoring",
+      "security_impact": "Security monitoring and incident detection",
+      "perfect_protection_level": "maximum",
+      "protected_at": "2025-12-17T04:18:50.687929"
+    },
+    "useSanitizedHTML.tsx": {
+      "full_path": "frontend/src/hooks/useSanitizedHTML.tsx",
+      "category": "frontend_security",
+      "checksum": "5a4ad793242639e283529359104bd7f1f42a5f52f09fe146b843719eb7930766",
+      "size_bytes": 1967,
+      "modified": "2025-12-17T03:49:21.993982",
+      "risk_score": 100,
+      "protection_reason": "Matches 1 keywords in frontend_security category",
+      "business_impact": "User interface security and validation",
+      "security_impact": "Client-side attack prevention",
+      "perfect_protection_level": "maximum",
+      "protected_at": "2025-12-17T04:18:50.688343"
+    },
+    "useKeyboardNavigation.tsx": {
+      "full_path": "frontend/src/hooks/useKeyboardNavigation.tsx",
+      "category": "security_sensitive",
+      "checksum": "66b892378734a6cc8b86ec26ead76246a8123bc4212d942323bcb6223eaa61a7",
+      "size_bytes": 2251,
+      "modified": "2025-12-17T03:49:21.995352",
+      "risk_score": 100,
+      "protection_reason": "Contains security-sensitive content or keywords",
+      "business_impact": "Security and compliance requirements",
+      "security_impact": "Prevention of security breaches and data exposure",
+      "perfect_protection_level": "maximum",
+      "protected_at": "2025-12-17T04:18:50.688792"
+    },
+    "create_admin_user.py": {
+      "full_path": "scripts/create_admin_user.py",
+      "category": "security_sensitive",
+      "checksum": "2f7e6439773e35ea9045cac75f0a583c0dd306cb1763c2e7206985ddbb94a2b6",
+      "size_bytes": 1787,
+      "modified": "2025-12-17T03:35:12.983338",
+      "risk_score": 100,
+      "protection_reason": "Contains security-sensitive content or keywords",
+      "business_impact": "Security and compliance requirements",
+      "security_impact": "Prevention of security breaches and data exposure",
+      "perfect_protection_level": "maximum",
+      "protected_at": "2025-12-17T04:18:50.689310"
+    },
+    "package-lock.json": {
+      "full_path": "frontend/package-lock.json",
+      "category": "large_critical",
+      "checksum": "587983f2802db53b10a8065e270ea024ba86d9f386d319662af9ddd4dd740c28",
+      "size_bytes": 423944,
+      "modified": "2025-12-17T04:16:34.158902",
+      "risk_score": 85,
+      "protection_reason": "Large file likely containing critical system logic",
+      "business_impact": "Core system functionality",
+      "security_impact": "System integrity and reliability",
+      "perfect_protection_level": "maximum",
+      "protected_at": "2025-12-17T04:18:50.696334"
+    }
+  },
+  "metadata": {
+    "total_protection_value": 7850,
+    "average_risk_score": 98.125,
+    "perfect_coverage_timestamp": "2025-12-17T04:18:50.696357",
+    "coverage_achievement": "100.0%",
+    "system_integrity_level": "perfect"
+  }
+}

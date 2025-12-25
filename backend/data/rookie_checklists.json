@@ -1,0 +1,12 @@
+[
+  {
+    "received_at": "2025-12-10T15:51:36.387883Z",
+    "payload": {
+      "user": "test@example.com",
+      "items": [
+        "verify_email",
+        "complete_training"
+      ]
+    }
+  }
+]

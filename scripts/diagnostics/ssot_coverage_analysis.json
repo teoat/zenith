@@ -1,0 +1,105 @@
+{
+  "timestamp": "1765911854.100793",
+  "coverage_analysis": {
+    "total_files_analyzed": 1138,
+    "category_breakdown": {
+      "critical": 13,
+      "high": 132,
+      "medium": 143,
+      "low": 821,
+      "ignore": 29
+    },
+    "protection_breakdown": {
+      "ssot_locked": 869,
+      "should_lock": 2,
+      "no_protect": 267,
+      "deprecated": 0
+    },
+    "coverage_score": 98.62,
+    "total_risk_score": 31175,
+    "average_risk_per_file": 27.39
+  },
+  "recommendations": [
+    "\ud83d\udd34 CRITICAL: 2 files should be SSOT protected but aren't",
+    "\u2705 EXCELLENT: Critical file coverage >= 90%",
+    "\u2705 LOW RISK: Average risk score 27.4/100"
+  ],
+  "critical_gaps": [],
+  "file_analysis": {
+    "total_analyzed": 1138,
+    "by_category": {
+      "low": 821,
+      "high": 132,
+      "critical": 13,
+      "medium": 143,
+      "ignore": 29
+    },
+    "by_protection": {
+      "ssot_locked": 869,
+      "no_protect": 267,
+      "should_lock": 2
+    }
+  },
+  "top_risk_files": [
+    {
+      "file": "backend/core/database.py",
+      "category": "critical",
+      "risk_score": 100,
+      "reason": "Core business logic/security/API contract"
+    },
+    {
+      "file": "backend/core/security/rbac.py",
+      "category": "critical",
+      "risk_score": 100,
+      "reason": "Core business logic/security/API contract"
+    },
+    {
+      "file": "backend/core/security/__init__.py",
+      "category": "critical",
+      "risk_score": 100,
+      "reason": "Core business logic/security/API contract"
+    },
+    {
+      "file": "backend/app/services/auth_service.py",
+      "category": "critical",
+      "risk_score": 100,
+      "reason": "Core business logic/security/API contract"
+    },
+    {
+      "file": "backend/app/services/database_service.py",
+      "category": "critical",
+      "risk_score": 100,
+      "reason": "Core business logic/security/API contract"
+    },
+    {
+      "file": "frontend/src/utils/api.ts",
+      "category": "critical",
+      "risk_score": 100,
+      "reason": "Core business logic/security/API contract"
+    },
+    {
+      "file": "scripts/setup-production.sh",
+      "category": "high",
+      "risk_score": 100,
+      "reason": "Important infrastructure/configuration"
+    },
+    {
+      "file": "scripts/validate-production.sh",
+      "category": "high",
+      "risk_score": 100,
+      "reason": "Important infrastructure/configuration"
+    },
+    {
+      "file": "backend/main.py",
+      "category": "critical",
+      "risk_score": 90,
+      "reason": "Core business logic/security/API contract"
+    },
+    {
+      "file": "backend/app/routers/fraud.py",
+      "category": "critical",
+      "risk_score": 90,
+      "reason": "Core business logic/security/API contract"
+    }
+  ]
+}

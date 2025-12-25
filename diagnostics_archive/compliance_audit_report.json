@@ -1,0 +1,115 @@
+{
+  "audit_timestamp": "2025-12-17T05:12:44.730476",
+  "frameworks_checked": [
+    "GDPR",
+    "CCPA",
+    "SOX",
+    "PCI_DSS",
+    "HIPAA",
+    "NIST"
+  ],
+  "overall_compliance_score": 91.66666666666667,
+  "framework_results": {
+    "GDPR": {
+      "framework": "GDPR",
+      "status": "partial",
+      "compliance_percentage": 75,
+      "critical_issues": [
+        "Missing privacy policy document"
+      ],
+      "findings": [
+        "User consent mechanisms implemented",
+        "Data minimization practices in place",
+        "Right to erasure procedures documented"
+      ],
+      "evidence": [
+        "Incident response plan includes breach notification"
+      ]
+    },
+    "CCPA": {
+      "framework": "CCPA",
+      "status": "partial",
+      "compliance_percentage": 70,
+      "critical_issues": [
+        "Missing CCPA privacy notice"
+      ],
+      "findings": [
+        "Data sale opt-out mechanisms implemented",
+        "Privacy rights request handling documented"
+      ],
+      "evidence": []
+    },
+    "SOX": {
+      "framework": "SOX",
+      "status": "compliant",
+      "compliance_percentage": 90,
+      "critical_issues": [],
+      "findings": [
+        "Audit trails implemented for financial data",
+        "Access controls for financial systems",
+        "Change management procedures documented"
+      ],
+      "evidence": []
+    },
+    "PCI_DSS": {
+      "framework": "PCI_DSS",
+      "status": "compliant",
+      "compliance_percentage": 95,
+      "critical_issues": [],
+      "findings": [
+        "Card data encryption implemented",
+        "Network segmentation configured",
+        "Regular security testing performed"
+      ],
+      "evidence": []
+    },
+    "HIPAA": {
+      "framework": "HIPAA",
+      "status": "compliant",
+      "compliance_percentage": 92,
+      "critical_issues": [],
+      "findings": [
+        "PHI access controls implemented",
+        "Data encryption for protected health information",
+        "Audit logging for PHI access"
+      ],
+      "evidence": []
+    },
+    "NIST": {
+      "framework": "NIST",
+      "status": "compliant",
+      "compliance_percentage": 88,
+      "critical_issues": [],
+      "findings": [
+        "Identify function: Asset management implemented",
+        "Protect function: Access controls configured",
+        "Detect function: Monitoring systems active",
+        "Respond function: Incident response procedures",
+        "Recover function: Backup and recovery systems"
+      ],
+      "evidence": []
+    }
+  },
+  "critical_findings": [
+    {
+      "framework": "GDPR",
+      "issue": "Missing privacy policy document",
+      "severity": "critical"
+    },
+    {
+      "framework": "CCPA",
+      "issue": "Missing CCPA privacy notice",
+      "severity": "critical"
+    }
+  ],
+  "recommendations": [
+    "Address 2 critical compliance findings immediately",
+    "IMPROVE GDPR COMPLIANCE - Address remaining gaps",
+    "IMPROVE CCPA COMPLIANCE - Address remaining gaps",
+    "Schedule quarterly compliance audits",
+    "Implement automated compliance monitoring",
+    "Maintain compliance documentation and evidence",
+    "Conduct regular compliance training for staff",
+    "Establish compliance breach response procedures"
+  ]
+}

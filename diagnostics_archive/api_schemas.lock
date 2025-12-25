@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "created": "2024-12-17T00:00:00Z",
+  "approvedBy": "system",
+  "checksum": "2a163ad1d365eb3f50f45338936d261121d2eb60d468cb17875e2835f1e6caa8",
+  "file": "ssot_api_schemas.json",
+  "locked": true,
+  "approval_required": true,
+  "change_policy": "Security and API team approval required for modifications"
+}

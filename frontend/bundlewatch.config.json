@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "path": "./dist/assets/*.js",
+      "maxSize": "600kb"
+    },
+    {
+      "path": "./dist/assets/index-*.js",
+      "maxSize": "1100kb"
+    },
+    {
+      "path": "./dist/assets/map-vendor-*.js",
+      "maxSize": "1050kb"
+    },
+    {
+      "path": "./dist/assets/react-force-graph-3d-*.js",
+      "maxSize": "1250kb"
+    },
+    {
+      "path": "./dist/assets/pdf-*.js",
+      "maxSize": "450kb"
+    },
+    {
+      "path": "./dist/assets/ForensicCanvas-*.js",
+      "maxSize": "450kb"
+    },
+    {
+      "path": "./dist/assets/chart-vendor-*.js",
+      "maxSize": "250kb"
+    },
+    {
+      "path": "./dist/assets/*.css",
+      "maxSize": "50kb"
+    }
+  ],
+  "ci": {
+    "CI": "github-actions"
+  },
+  "defaultCompression": "gzip",
+  "reportOutput": [
+    {
+      "type": "github-comment",
+      "maxBundleSizeIncrease": "10%",
+      "maxFileSizeIncrease": "15%"
+    }
+  ]
+}

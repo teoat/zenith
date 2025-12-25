@@ -1,0 +1,64 @@
+# Node
+node_modules/
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+env/
+*.pyc
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Databases and test artifacts
+*.db
+test_*.db
+backend/data/*.db
+test_output.txt
+test_server.log
+backend/data/audit.db
+
+# Playwright / test recordings
+playwright-report/
+*.webm
+
+# Build / release artifacts
+release/
+dist/
+build/
+*.zip
+*.dmg
+*.app
+*.blockmap
+
+# Electron app bundles and helpers
+electron/
+
+# Diagnostic reports
+diagnostic_results_*.json
+COMPREHENSIVE_DIAGNOSTIC_REPORT_*.md
+
+# Misc
+.idea/
+.vscode/
+.DS_Store
+
+
+# Secrets
+.env
+.env.*
+!.env.example
+!.env.mcp.example
+!.env.template
+!.env.project
+secrets.toml
+
+# Logs and Temporary files
+*.log
+*.tar.gz
+type-check-output*.txt
+error_analysis.txt

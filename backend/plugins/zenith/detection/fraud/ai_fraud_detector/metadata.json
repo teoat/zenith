@@ -1,0 +1,26 @@
+{
+  "name": "ai_fraud_detector",
+  "version": "1.0.0",
+  "namespace": "378x492/detection/fraud/ai_fraud_detector",
+  "description": "AI-powered fraud detection utilizing Isolation Forest algorithms",
+  "author": "378x492 Team",
+  "entry_point": "plugin.py:AIFraudDetectorPlugin",
+  "dependencies": {},
+  "capabilities": [
+    "fraud_detection"
+  ],
+  "config_schema": {
+    "score_threshold": {
+      "type": "number",
+      "default": 60.0
+    },
+    "model_path": {
+      "type": "string",
+      "default": "models/isolation_forest.pkl"
+    },
+    "contamination": {
+      "type": "number",
+      "default": 0.1
+    }
+  }
+}

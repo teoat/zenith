@@ -1,0 +1,184 @@
+{
+  "test_run_timestamp": "2025-12-20T12:52:46.856098",
+  "total_tests": 20,
+  "total_passed": 12,
+  "total_failed": 7,
+  "test_suites": [
+    {
+      "name": "Backend API Tests",
+      "results": {
+        "test_name": "backend_api_tests",
+        "passed": 6,
+        "failed": 1,
+        "total": 7,
+        "details": [
+          {
+            "test": "health",
+            "status": "passed",
+            "response_time": 2.544466972351074
+          },
+          {
+            "test": "readiness",
+            "status": "passed",
+            "response_time": 0.010886907577514648
+          },
+          {
+            "test": "liveness",
+            "status": "passed",
+            "response_time": 0.011049985885620117
+          },
+          {
+            "test": "api_health_check",
+            "status": "failed",
+            "error": "Status 503",
+            "response_time": 2.544098138809204
+          },
+          {
+            "test": "api_fraud_rules",
+            "status": "passed",
+            "response_time": 0.014433860778808594
+          },
+          {
+            "test": "api_health_ready",
+            "status": "passed",
+            "response_time": 0.010935068130493164
+          },
+          {
+            "test": "api_health_live",
+            "status": "passed",
+            "response_time": 0.014322280883789062
+          }
+        ]
+      }
+    },
+    {
+      "name": "WebSocket Tests",
+      "results": {
+        "test_name": "websocket_collaboration_tests",
+        "passed": 0,
+        "failed": 0,
+        "total": 1,
+        "details": [
+          {
+            "test": "websocket_join_session",
+            "status": "skipped",
+            "reason": "WebSocket server implementation requires additional debugging"
+          }
+        ],
+        "skipped": 1
+      }
+    },
+    {
+      "name": "AI Service Tests",
+      "results": {
+        "test_name": "ai_service_tests",
+        "passed": 1,
+        "failed": 2,
+        "total": 3,
+        "details": [
+          {
+            "test": "ai_ai_analyze_endpoint",
+            "status": "failed",
+            "error": "HTTP 500",
+            "response_time": {
+              "type": "fraud_pattern",
+              "data": {
+                "text": "test fraud pattern"
+              }
+            }
+          },
+          {
+            "test": "ai_ai_health_endpoint",
+            "status": "passed",
+            "response_time": 0.06026816368103027,
+            "status_code": 200
+          },
+          {
+            "test": "ai_performance_ai_metrics",
+            "status": "failed",
+            "error": "HTTP 404",
+            "response_time": 0.013421058654785156
+          }
+        ]
+      }
+    },
+    {
+      "name": "Frontend Tests",
+      "results": {
+        "test_name": "frontend_component_tests",
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "details": [
+          {
+            "test": "frontend_build_exists",
+            "status": "passed"
+          },
+          {
+            "test": "frontend_static_serving",
+            "status": "passed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Security Tests",
+      "results": {
+        "test_name": "security_tests",
+        "passed": 1,
+        "failed": 2,
+        "total": 3,
+        "details": [
+          {
+            "test": "security_security_headers",
+            "status": "failed",
+            "error": "HTTP 503 - endpoint not accessible"
+          },
+          {
+            "test": "security_cors_policy",
+            "status": "passed",
+            "info": "Security headers implemented (middleware active)"
+          },
+          {
+            "test": "security_rate_limiting",
+            "status": "failed",
+            "error": "Unexpected response pattern: [500, 200, 200, 503, 503, 200, 503, 200, 503, 503]"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Performance Tests",
+      "results": {
+        "test_name": "performance_tests",
+        "passed": 2,
+        "failed": 2,
+        "total": 4,
+        "details": [
+          {
+            "test": "performance_health",
+            "status": "failed",
+            "error": "Response time 2.54s, status 503",
+            "response_time": 2.544267177581787
+          },
+          {
+            "test": "performance_api_stats",
+            "status": "passed",
+            "response_time": 0.013693809509277344
+          },
+          {
+            "test": "performance_metrics",
+            "status": "passed",
+            "response_time": 0.014539003372192383
+          },
+          {
+            "test": "performance_concurrent_requests",
+            "status": "failed",
+            "error": "Failed responses: [500, 500, 500, 500, 500]"
+          }
+        ]
+      }
+    }
+  ],
+  "success_rate": 60.0
+}

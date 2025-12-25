@@ -1,0 +1,28 @@
+{
+  "required": "{{field}} is required",
+  "email": "Please enter a valid email address",
+  "minLength": "{{field}} must be at least {{min}} characters",
+  "maxLength": "{{field}} must not exceed {{max}} characters",
+  "numeric": "{{field}} must be a number",
+  "positive": "{{field}} must be a positive number",
+  "integer": "{{field}} must be a whole number",
+  "url": "Please enter a valid URL",
+  "phone": "Please enter a valid phone number",
+  "date": "Please enter a valid date",
+  "password": {
+    "weak": "Password is too weak",
+    "strength": "Password must contain uppercase, lowercase, number, and special character",
+    "mismatch": "Passwords do not match"
+  },
+  "file": {
+    "size": "File size must be less than {{maxSize}}MB",
+    "type": "File type not supported. Allowed types: {{types}}",
+    "required": "Please select a file"
+  },
+  "range": "{{field}} must be between {{min}} and {{max}}",
+  "pattern": "{{field}} format is invalid",
+  "unique": "{{field}} must be unique",
+  "exists": "{{field}} already exists",
+  "customRange": "{{field}} must be between {{min}} and {{max}} (inclusive)",
+  "dateRange": "Date must be between {{startDate}} and {{endDate}}"
+}

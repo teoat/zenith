@@ -1,0 +1,37 @@
+{
+  "generic": {
+    "default": "An unexpected error occurred",
+    "network": "Network connection error",
+    "timeout": "Request timed out",
+    "unauthorized": "You are not authorized to perform this action",
+    "forbidden": "Access forbidden",
+    "notFound": "The requested resource was not found",
+    "serverError": "Server error occurred",
+    "validation": "Please check your input and try again"
+  },
+  "cases": {
+    "createFailed": "Failed to create case",
+    "updateFailed": "Failed to update case",
+    "deleteFailed": "Failed to delete case",
+    "loadFailed": "Failed to load case data",
+    "notFound": "Case not found"
+  },
+  "auth": {
+    "loginFailed": "Login failed. Please check your credentials",
+    "sessionExpired": "Your session has expired. Please log in again",
+    "invalidToken": "Invalid authentication token",
+    "permissionDenied": "You don't have permission to access this resource"
+  },
+  "files": {
+    "uploadFailed": "File upload failed",
+    "downloadFailed": "File download failed",
+    "invalidFormat": "Invalid file format",
+    "tooLarge": "File size exceeds the maximum limit",
+    "corrupted": "File appears to be corrupted"
+  },
+  "api": {
+    "rateLimitExceeded": "Too many requests. Please try again later",
+    "serviceUnavailable": "Service is temporarily unavailable",
+    "maintenance": "System is under maintenance"
+  }
+}

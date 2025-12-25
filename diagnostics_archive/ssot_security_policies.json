@@ -1,0 +1,302 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-12-17T00:00:00Z",
+  "approvedBy": "system",
+  "checksum": "8918863b2fd35ac28168a70af5329cc989335d3f01fad3c4007cd4ab9cc79e4a",
+  "authentication": {
+    "jwt": {
+      "algorithm": "HS256",
+      "access_token_expiry": "30 minutes",
+      "refresh_token_expiry": "7 days",
+      "secret_key_required": true,
+      "mfa_support": true,
+      "mfa_required_for_admin": true,
+      "mfa_required_for_restore": true
+    },
+    "session_management": {
+      "timeout_inactivity": "15 minutes",
+      "admin_timeout": "10 minutes",
+      "max_sessions_per_user": 3,
+      "auto_logout": true
+    },
+    "password_policy": {
+      "min_length": 8,
+      "complexity_required": false
+    },
+    "failed_auth_protection": {
+      "max_attempts": 5,
+      "lockout_duration": "15 minutes",
+      "permanent_lockout_after": 10
+    }
+  },
+  "authorization": {
+    "rbac_enabled": true,
+    "roles": {
+      "viewer": {
+        "permissions": [
+          "view_cases",
+          "view_transactions",
+          "view_evidence",
+          "view_reports"
+        ]
+      },
+      "analyst": {
+        "permissions": [
+          "view_cases",
+          "create_cases",
+          "edit_cases",
+          "view_transactions",
+          "upload_transactions",
+          "edit_transactions",
+          "view_evidence",
+          "upload_evidence",
+          "view_reports",
+          "view_audit"
+        ]
+      },
+      "investigator": {
+        "permissions": [
+          "view_cases",
+          "create_cases",
+          "edit_cases",
+          "close_cases",
+          "delete_cases",
+          "view_transactions",
+          "upload_transactions",
+          "edit_transactions",
+          "view_evidence",
+          "upload_evidence",
+          "delete_evidence",
+          "view_reports",
+          "view_audit"
+        ]
+      },
+      "manager": {
+        "permissions": [
+          "view_cases",
+          "create_cases",
+          "edit_cases",
+          "close_cases",
+          "delete_cases",
+          "view_transactions",
+          "upload_transactions",
+          "edit_transactions",
+          "view_evidence",
+          "upload_evidence",
+          "delete_evidence",
+          "manage_users",
+          "view_users",
+          "view_reports",
+          "view_audit"
+        ]
+      },
+      "admin": {
+        "permissions": [
+          "view_cases",
+          "create_cases",
+          "edit_cases",
+          "close_cases",
+          "delete_cases",
+          "view_transactions",
+          "upload_transactions",
+          "edit_transactions",
+          "view_evidence",
+          "upload_evidence",
+          "delete_evidence",
+          "manage_users",
+          "view_users",
+          "manage_system",
+          "view_reports",
+          "view_audit"
+        ]
+      }
+    }
+  },
+  "encryption": {
+    "algorithm": "Fernet (AES 128)",
+    "key_management": "Environment variable ENCRYPTION_KEY",
+    "encrypted_fields": [
+      "user_emails",
+      "user_names",
+      "case_descriptions",
+      "transaction_descriptions",
+      "evidence_content",
+      "audit_logs",
+      "entity_data",
+      "relationship_data",
+      "graph_snapshots",
+      "compliance_data",
+      "regulatory_reports"
+    ],
+    "fallback_dev_key": "cw_0x689RpI-jtRR7oFt8p98l8UIghx0spL_SXQky-0="
+  },
+  "network_security": {
+    "cors": {
+      "development_origins": [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000"
+      ],
+      "production_origins": [
+        "https://app.378x492.com",
+        "https://api.378x492.com"
+      ],
+      "credentials_allowed": true,
+      "methods_allowed": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "headers_allowed": [
+        "Authorization",
+        "Content-Type",
+        "X-Requested-With",
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language"
+      ],
+      "max_age": "86400 seconds"
+    },
+    "https_redirect": {
+      "enabled_in_production": true
+    },
+    "trusted_hosts": {
+      "production": ["api.378x492.com", "localhost", "testserver", "testclient"],
+      "allow_all_in_dev": true
+    },
+    "security_headers": {
+      "x_content_type_options": "nosniff",
+      "x_frame_options": "DENY",
+      "x_xss_protection": "1; mode=block",
+      "referrer_policy": "strict-origin-when-cross-origin",
+      "content_security_policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.378x492.com; frame-ancestors 'none';",
+      "server_header_removed": true,
+      "x_powered_by_removed": true
+    }
+  },
+  "rate_limiting": {
+    "enabled": true,
+    "authenticated_users": "60 requests/minute, 1000 requests/hour",
+    "admin_users": "30 requests/minute",
+    "anonymous_users": "100 requests/hour",
+    "headers": {
+      "x_ratelimit_limit": true,
+      "x_ratelimit_remaining": true,
+      "x_ratelimit_reset": true
+    }
+  },
+  "input_validation": {
+    "middleware_enabled": true,
+    "csrf_protection": {
+      "enabled": true,
+      "middleware": "CSRFProtectionMiddleware"
+    },
+    "validation_middleware": "InputValidationMiddleware"
+  },
+  "audit_logging": {
+    "enabled": true,
+    "retention_period": "365 days",
+    "log_level": "INFO",
+    "security_events_logged": [
+      "authentication_attempts",
+      "authorization_failures",
+      "data_access",
+      "admin_operations",
+      "suspicious_activities",
+      "system_changes"
+    ],
+    "audit_service_enabled": true
+  },
+  "monitoring": {
+    "prometheus_enabled": true,
+    "sentry_enabled": true,
+    "apm_enabled": true,
+    "health_checks": [
+      "database_connectivity",
+      "ai_service_status",
+      "system_resources",
+      "response_times",
+      "error_rates"
+    ],
+    "alerting": {
+      "email_enabled": true,
+      "slack_enabled": false,
+      "pagerduty_enabled": false,
+      "alert_email": "security@example.com"
+    }
+  },
+  "data_protection": {
+    "database_security": {
+      "connection_timeout": "30 seconds",
+      "pool_size": 20,
+      "max_overflow": 10,
+      "pool_recycle": "3600 seconds",
+      "pool_pre_ping": true,
+      "echo_disabled_in_prod": true
+    },
+    "file_upload_security": {
+      "max_size": "50MB",
+      "allowed_types": [".pdf", ".jpg", ".png", ".jpeg", ".csv", ".xlsx"],
+      "upload_directory": "/var/app/uploads"
+    },
+    "backup_security": {
+      "directory": "/var/app/backups",
+      "retention_days": 30,
+      "auto_backup_enabled": true,
+      "schedule": "0 2 * * * (2 AM daily)"
+    }
+  },
+  "production_validation": {
+    "checks": [
+      {
+        "check": "JWT_SECRET_KEY set",
+        "critical": true,
+        "message": "JWT_SECRET_KEY not set - using default (INSECURE)"
+      },
+      {
+        "check": "DEBUG mode disabled",
+        "critical": true,
+        "message": "DEBUG mode enabled in production (INSECURE)"
+      },
+      {
+        "check": "CORS origins configured",
+        "critical": false,
+        "message": "No CORS origins configured"
+      },
+      {
+        "check": "HSTS enabled",
+        "critical": false,
+        "message": "HSTS not enabled"
+      },
+      {
+        "check": "Audit logging enabled",
+        "critical": false,
+        "message": "Audit logging disabled"
+      },
+      {
+        "check": "SQL logging disabled",
+        "critical": false,
+        "message": "Database SQL logging enabled (performance impact)"
+      }
+    ]
+  },
+  "error_handling": {
+    "detailed_errors_in_dev": true,
+    "generic_errors_in_prod": true,
+    "exception_handlers": [
+      "HTTPException",
+      "StarletteHTTPException",
+      "general_exceptions"
+    ],
+    "logging_levels": {
+      "production": "WARNING",
+      "development": "DEBUG"
+    }
+  },
+  "compliance": {
+    "gdpr_compliant": true,
+    "data_encryption": true,
+    "audit_trails": true,
+    "access_controls": true,
+    "data_retention_policies": true,
+    "user_consent_tracking": false,
+    "data_portability": false
+  }
+}

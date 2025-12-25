@@ -1,0 +1,12 @@
+{
+  "name": "mcp-server",
+  "version": "1.0.0",
+  "description": "Agent Coordination MCP Server",
+  "main": "agent-coordination.js",
+  "scripts": {
+    "start": "node agent-coordination.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0"
+  }
+}

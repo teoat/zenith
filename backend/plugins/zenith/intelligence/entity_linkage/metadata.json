@@ -1,0 +1,19 @@
+{
+  "name": "entity_linkage",
+  "version": "1.0.0",
+  "namespace": "378x492/intelligence/entity_linkage",
+  "description": "Analyzes relationships and connections between entities in a case",
+  "author": "378x492 Team",
+  "entry_point": "plugin.py:EntityLinkagePlugin",
+  "dependencies": {},
+  "capabilities": [
+    "intelligence",
+    "case_analysis"
+  ],
+  "config_schema": {
+    "connection_threshold": {
+      "type": "integer",
+      "default": 3
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "investigation_started": "2025-12-17T04:30:40.265621",
+  "critical_areas_investigated": 5,
+  "phases_completed": 5,
+  "areas": {
+    "ai_ml_governance": {
+      "investigation_complete": true,
+      "phases_executed": 5,
+      "final_scores": "DiagnosticScore(overall_score=43.2, category_score=41.0, severity_score=38.9, risk_score=36.7, compliance_score=38.0, maturity_score=32.4, grade='F', risk_level='CRITICAL', priority='IMMEDIATE', findings_count=24, critical_issues=8, remediation_effort='EXTENSIVE (6-12 months)')",
+      "critical_findings": 24,
+      "recommendations_count": 29,
+      "risk_assessment": "CRITICAL",
+      "priority_level": "IMMEDIATE"
+    },
+    "network_security": {
+      "investigation_complete": true,
+      "phases_executed": 5,
+      "final_scores": "DiagnosticScore(overall_score=38.6, category_score=36.6, severity_score=34.7, risk_score=32.8, compliance_score=33.9, maturity_score=28.9, grade='F', risk_level='CRITICAL', priority='IMMEDIATE', findings_count=32, critical_issues=8, remediation_effort='EXTENSIVE (6-12 months)')",
+      "critical_findings": 32,
+      "recommendations_count": 32,
+      "risk_assessment": "CRITICAL",
+      "priority_level": "IMMEDIATE"
+    },
+    "incident_response": {
+      "investigation_complete": true,
+      "phases_executed": 5,
+      "final_scores": "DiagnosticScore(overall_score=59.4, category_score=56.4, severity_score=53.4, risk_score=50.4, compliance_score=52.2, maturity_score=44.5, grade='F', risk_level='CRITICAL', priority='IMMEDIATE', findings_count=12, critical_issues=6, remediation_effort='EXTENSIVE (6-12 months)')",
+      "critical_findings": 12,
+      "recommendations_count": 20,
+      "risk_assessment": "CRITICAL",
+      "priority_level": "IMMEDIATE"
+    },
+    "data_pipeline_health": {
+      "investigation_complete": true,
+      "phases_executed": 5,
+      "final_scores": "DiagnosticScore(overall_score=67.4, category_score=64.0, severity_score=60.6, risk_score=57.2, compliance_score=59.3, maturity_score=50.5, grade='D', risk_level='HIGH', priority='URGENT', findings_count=22, critical_issues=0, remediation_effort='EXTENSIVE (6-12 months)')",
+      "critical_findings": 22,
+      "recommendations_count": 26,
+      "risk_assessment": "HIGH",
+      "priority_level": "URGENT"
+    },
+    "third_party_risk": {
+      "investigation_complete": true,
+      "phases_executed": 5,
+      "final_scores": "DiagnosticScore(overall_score=66.2, category_score=62.9, severity_score=59.6, risk_score=56.3, compliance_score=58.3, maturity_score=49.7, grade='D', risk_level='HIGH', priority='URGENT', findings_count=24, critical_issues=0, remediation_effort='EXTENSIVE (6-12 months)')",
+      "critical_findings": 24,
+      "recommendations_count": 29,
+      "risk_assessment": "HIGH",
+      "priority_level": "URGENT"
+    }
+  },
+  "investigation_completed": "2025-12-17T04:30:42.973467",
+  "overall_assessment": {
+    "average_score": 45.8,
+    "grade": "F",
+    "risk_level": "CRITICAL",
+    "priority": "IMMEDIATE"
+  },
+  "findings_summary": {
+    "total_findings": 114,
+    "critical_findings": 22,
+    "high_findings": 54,
+    "confirmed_findings": 48
+  },
+  "area_performance": {
+    "ai_ml_governance": {
+      "score": 43.2,
+      "grade": "F",
+      "risk": "CRITICAL",
+      "priority": "IMMEDIATE",
+      "critical_findings": 24
+    },
+    "network_security": {
+      "score": 38.6,
+      "grade": "F",
+      "risk": "CRITICAL",
+      "priority": "IMMEDIATE",
+      "critical_findings": 32
+    },
+    "incident_response": {
+      "score": 59.4,
+      "grade": "F",
+      "risk": "CRITICAL",
+      "priority": "IMMEDIATE",
+      "critical_findings": 12
+    },
+    "data_pipeline_health": {
+      "score": 67.4,
+      "grade": "D",
+      "risk": "HIGH",
+      "priority": "URGENT",
+      "critical_findings": 22
+    },
+    "third_party_risk": {
+      "score": 66.2,
+      "grade": "D",
+      "risk": "HIGH",
+      "priority": "URGENT",
+      "critical_findings": 24
+    }
+  },
+  "recommendations": [
+    "Implement immediate remediation for all CRITICAL findings",
+    "Establish continuous monitoring across all investigated areas",
+    "Develop comprehensive governance framework",
+    "Create automated testing and validation pipelines",
+    "Set up regular independent assessments and audits",
+    "Establish cross-functional improvement teams",
+    "Implement automated alerting and incident response",
+    "Create detailed runbooks and procedures",
+    "Develop staff training and awareness programs",
+    "Set up performance monitoring and KPI tracking"
+  ],
+  "implementation_roadmap": {
+    "phase_1_immediate": "Address all CRITICAL findings within 30 days",
+    "phase_2_short_term": "Resolve HIGH priority issues within 90 days",
+    "phase_3_medium_term": "Complete MEDIUM priority improvements within 180 days",
+    "phase_4_long_term": "Implement LOW priority enhancements within 365 days",
+    "phase_5_continuous": "Establish ongoing monitoring and improvement processes"
+  },
+  "success_metrics": [
+    "Zero CRITICAL security vulnerabilities",
+    "100% compliance with regulatory requirements",
+    "99.9% system availability and reliability",
+    "Automated detection and response to all threats",
+    "Complete audit trails and monitoring coverage",
+    "Zero data breaches or security incidents",
+    "Full traceability and accountability",
+    "Continuous improvement and adaptation"
+  ]
+}
