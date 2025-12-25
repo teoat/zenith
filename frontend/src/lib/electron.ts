@@ -1,185 +1,37 @@
-// lib/electron.ts
+/**
+ * Electron lib - Web-only stub
+ * 
+ * Provides no-op implementations for Electron window controls.
+ */
+
 import { useState, useEffect } from 'react';
-import type { Case } from '../types/schema';
 
-// ============ TYPE DEFINITIONS ============
-
-interface CaseListOptions {
-  page?: number;
-  limit?: number;
-  status?: string;
-  priority?: string;
-}
-
-interface CaseListResponse {
-  success: boolean;
-  cases: Case[];
-  pagination: {
-    total: number;
-    page: number;
-    pageSize: number;
-  };
-}
-
-interface FileSelectOptions {
-  filters?: { name: string; extensions: string[] }[];
-  multiple?: boolean;
-}
-
-interface FileSelectResult {
-  canceled: boolean;
-  filePaths: string[];
-}
-
-interface ReconciliationConfig {
-  sourcePath: string;
-  targetPath: string;
-  matchFields: string[];
-}
-
-interface ReconciliationStatus {
-  jobId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
-  progress: number;
-  results?: {
-    matched: number;
-    unmatched: number;
-    discrepancies: number;
-  };
-}
-
-interface SystemInfo {
+export interface SystemInfo {
   platform: string;
   arch: string;
   version: string;
-  memory?: {
-    total: number;
-    free: number;
-  };
+  nodeVersion: string;
+  electronVersion: string;
 }
 
-interface UpdateInfo {
-  updateAvailable: boolean;
-  currentVersion: string;
-  latestVersion?: string;
+export interface ElectronWindow {
+  isElectron: boolean;
+  systemInfo: SystemInfo | null;
+  minimizeWindow: () => void;
+  maximizeWindow: () => void;
+  closeWindow: () => void;
 }
 
-interface SecureFileMetadata {
-  name?: string;
-  description?: string;
-  tags?: string[];
-}
-
-interface SecureFileInfo {
-  id: string;
-  name: string;
-  size: number;
-  encrypted: boolean;
-  createdAt: string;
-}
-
-interface KeyInfo {
-  id: string;
-  type: string;
-  createdAt: string;
-  expiresAt?: string;
-}
-
-interface DatabaseInfo {
-  encrypted: boolean;
-  size: number;
-  tables: number;
-}
-
-interface CacheStats {
-  hits: number;
-  misses: number;
-  size: number;
-}
-
-interface BatchRequest {
-  channel: string;
-  data: unknown;
-}
-
-interface MemoryStats {
-  heapUsed: number;
-  heapTotal: number;
-  external: number;
-}
-
-interface DatabaseMetrics {
-  queryCount: number;
-  avgQueryTime: number;
-  slowQueries: number;
-}
-
-interface SyncStatus {
-  connected: boolean;
-  lastSync: string;
-  pendingOperations: number;
-}
-
-interface MonitoringDashboard {
-  status: string;
-  uptime: number;
-  errorRate: number;
-  memoryUsage: number;
-}
-
-interface OfflineOperation {
-  type: string;
-  entity: string;
-  data: unknown;
-}
-
-// ============ ELECTRON API DECLARATION ============
-// NOTE: The global Window.electronAPI type is declared in types/electron.d.ts
-// These local types are for the hook and re-export
-
-// ============ HOOK ============
-
-export const useElectron = () => {
-  const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
-  
-  // isElectron can be computed directly without state
-  const isElectron = typeof window !== 'undefined' && window.electronAPI !== undefined;
-
-  useEffect(() => {
-    // Only fetch system info if in Electron
-    if (isElectron && window.electronAPI?.getSystemInfo) {
-      window.electronAPI.getSystemInfo().then(setSystemInfo);
-    }
-  }, [isElectron]);
+export function useElectron(): ElectronWindow {
+  const [systemInfo] = useState<SystemInfo | null>(null);
 
   return {
-    isElectron,
+    isElectron: false,
     systemInfo,
-    minimizeWindow: () => window.electronAPI?.minimizeWindow?.(),
-    maximizeWindow: () => window.electronAPI?.maximizeWindow?.(),
-    closeWindow: () => window.electronAPI?.closeWindow?.(),
+    minimizeWindow: () => console.warn('minimizeWindow not available in web mode'),
+    maximizeWindow: () => console.warn('maximizeWindow not available in web mode'),
+    closeWindow: () => console.warn('closeWindow not available in web mode'),
   };
-};
+}
 
-// Export types for use elsewhere
-export type {
-  CaseListOptions,
-  CaseListResponse,
-  FileSelectOptions,
-  FileSelectResult,
-  ReconciliationConfig,
-  ReconciliationStatus,
-  SystemInfo,
-  UpdateInfo,
-  SecureFileMetadata,
-  SecureFileInfo,
-  KeyInfo,
-  DatabaseInfo,
-  CacheStats,
-  BatchRequest,
-  MemoryStats,
-  DatabaseMetrics,
-  SyncStatus,
-  MonitoringDashboard,
-  OfflineOperation,
-};
+export default useElectron;

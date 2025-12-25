@@ -1,62 +1,39 @@
+/**
+ * Electron utilities - Web-only stub
+ * 
+ * This file provides stub implementations for Electron APIs.
+ * The app is now web-only; these stubs ensure graceful fallbacks.
+ */
+
 import type { ElectronAPI } from '../types/electron';
-
-export interface ExecuteResult {
-  changes: number;
-  lastInsertRowid: number;
-}
-
-
 
 /**
  * Check if running in Electron environment
+ * @returns Always false in web-only mode
  */
-export const isElectron = (): boolean => {
-  return typeof window !== 'undefined' && !!window.electronAPI;
-};
+export function isElectron(): boolean {
+  return false;
+}
 
 /**
- * Get ElectronAPI (throws if not in Electron)
+ * Get Electron API reference
+ * @returns undefined in web-only mode
  */
-export const getElectronAPI = (): ElectronAPI => {
-  if (!isElectron()) {
-    throw new Error('Not running in Electron environment');
-  }
-  return window.electronAPI as ElectronAPI;
-};
+export function getElectronAPI(): ElectronAPI | undefined {
+  return undefined;
+}
 
 /**
- * Safe database query with error handling
+ * Database query stub - not available in web mode
  */
-export const dbQuery = async <T = unknown>(sql: string, params?: unknown[]): Promise<T[]> => {
-  const api = getElectronAPI();
-  if (!api.db) throw new Error('Database API not available');
-  const result = await api.db.query(sql, params);
-  
-  if (!result.success) {
-    throw new Error(result.error || 'Database query failed');
-  }
-  
-  return result.data as T[];
-};
+export async function dbQuery<T>(_sql: string, _params?: unknown[]): Promise<T[]> {
+  console.warn('dbQuery is not available in web-only mode');
+  return [];
+}
 
 /**
- * Safe database execute with error handling
+ * Database execute stub - not available in web mode
  */
-export const dbExecute = async (sql: string, params?: unknown[]): Promise<ExecuteResult> => {
-  const api = getElectronAPI();
-  if (!api.db) throw new Error('Database API not available');
-  const result = await api.db.execute(sql, params);
-  
-  if (!result.success) {
-    throw new Error(result.error || 'Database execute failed');
-  }
-  
-  return result.data!; // data cannot be undefined if success is true, but safer to check.
-};
-
-export default {
-  isElectron,
-  getElectronAPI,
-  dbQuery,
-  dbExecute
-};
+export async function dbExecute(_sql: string, _params?: unknown[]): Promise<void> {
+  console.warn('dbExecute is not available in web-only mode');
+}
