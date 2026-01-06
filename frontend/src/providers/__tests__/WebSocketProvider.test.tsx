@@ -1,4 +1,4 @@
-import {  render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, jest, beforeEach } from '@jest/globals';
 import { WebSocketProvider, useWebSocket } from '../WebSocketProvider';
