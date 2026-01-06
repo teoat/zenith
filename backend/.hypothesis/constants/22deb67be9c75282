@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/v1/graph.py
+# hypothesis_version: 6.148.8
+
+[400, 403, 404, '/analyze', '/clear', '/export', '/graph', '/import', '/nodes', '/nodes/{node_id}', '/query', '/relationships', '/stats', 'Analysis parameters', 'Node labels', 'Node not found', 'Node properties', 'Query parameters', 'Result filters', 'Source node ID', 'Target node ID', 'Type of relationship', 'Updated labels', 'Updated properties', 'analysis_type', 'created', 'data', 'deleted', 'exported_at', 'format', 'generated_at', 'gexf', 'global', 'graph', 'graph_cleared', 'graph_imported', 'graph_node', 'graph_relationship', 'graphml', 'json', 'labels', 'node_created', 'node_deleted', 'node_id', 'node_type', 'node_updated', 'nodes_imported', 'nodes_removed', 'properties', 'query_type', 'relationship_created', 'relationship_deleted', 'relationship_id', 'relationship_type', 'result', 'source_id', 'statistics', 'status', 'target_id', 'updated']

@@ -36,8 +36,6 @@ def test_admin_database_performance_requires_admin_role(user_token):
     assert "Access forbidden" in detail or "Admin access required" in detail
 
 
-
-
 def test_admin_database_performance_allows_admin(admin_token):
     """Test that admin users can access database performance"""
     headers = {"Authorization": f"Bearer {admin_token}"}
@@ -61,8 +59,6 @@ def test_admin_database_optimize_requires_admin_role(user_token):
     assert "Access forbidden" in detail or "Admin access required" in detail
 
 
-
-
 def test_admin_cache_clear_requires_auth():
     """Test that cache clearing requires authentication"""
     response = client.delete("/api/v1/admin/cache/all")
@@ -77,8 +73,6 @@ def test_admin_cache_clear_requires_admin_role(user_token):
     json_data = response.json()
     detail = json_data.get("detail") or json_data.get("error", {}).get("detail", "")
     assert "Access forbidden" in detail or "Admin access required" in detail
-
-
 
 
 def test_admin_cache_namespace_clear_requires_auth():
@@ -118,11 +112,11 @@ def test_backup_create_requires_admin_role(user_token):
     assert "Access forbidden" in detail or "Admin access required" in detail
 
 
-
-
 def test_backup_restore_requires_auth():
     """Test that backup restoration requires authentication"""
-    response = client.post("/api/v1/backup/backup/restore", json={"backup_id": "test_123"})
+    response = client.post(
+        "/api/v1/backup/backup/restore", json={"backup_id": "test_123"}
+    )
     assert response.status_code == 401
 
 
@@ -136,8 +130,6 @@ def test_backup_restore_requires_admin_role(user_token):
     json_data = response.json()
     detail = json_data.get("detail") or json_data.get("error", {}).get("detail", "")
     assert "Access forbidden" in detail or "Admin access required" in detail
-
-
 
 
 def test_backup_list_requires_auth():
@@ -234,7 +226,9 @@ def test_backup_restore_creates_critical_audit_log(admin_token):
 
     # Attempt restore (will fail if backup doesn't exist, but audit log should be created)
     response = client.post(
-        "/api/v1/backup/backup/restore", json={"backup_id": "test_backup_123"}, headers=headers
+        "/api/v1/backup/backup/restore",
+        json={"backup_id": "test_backup_123"},
+        headers=headers,
     )
 
     # Response will be error, but audit log should exist
@@ -263,7 +257,6 @@ def admin_token():
 def db_session():
     """Database session for testing"""
     # Mock implementation - in real tests, provide actual DB session
-    pass
 
 
 # ===== SECURITY TEST SUMMARY =====

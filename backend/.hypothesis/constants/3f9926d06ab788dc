@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/internal/docs.py
+# hypothesis_version: 6.148.8
+
+[404, 500, 501, '/health', '/interactive', '/postman', '/spec', 'Content-Disposition', 'Endpoint not found', 'Filter by tag', 'Response format', 'endpoints_loaded', 'error', 'features', 'healthy', 'interactive_api_docs', 'json', 'last_updated', 'light', 'service', 'status', 'x-interactive-docs', 'yaml']

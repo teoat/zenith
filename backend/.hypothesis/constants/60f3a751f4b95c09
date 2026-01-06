@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/services.py
+# hypothesis_version: 6.148.8
+
+['alert_intelligence', 'business_metrics', 'case-events', 'collaboration', 'compensating-actions', 'event_consumer', 'event_sourcing', 'fraud-events', 'investigation-events', 'key_rotation', 'monitoring', 'performance_monitor', 'proactive_monitoring', 'redis']

@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/tracing.py
+# hypothesis_version: 6.148.8
+
+['ENABLE_TRACING', 'false', 'true', 'zenith-backend']

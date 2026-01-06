@@ -1,60 +1,60 @@
 """
 Standardized Error Response Models for API consistency
 """
-from typing import Any, Dict, List, Optional
-from pydantic import BaseModel
+
 from datetime import datetime
+from typing import Any, ClassVar
+
+from pydantic import BaseModel
 
 
 class ErrorDetail(BaseModel):
     """Detailed error information"""
-    field: Optional[str] = None
+
+    field: str | None = None
     message: str
-    code: Optional[str] = None
-    details: Optional[Dict[str, Any]] = None
+    code: str | None = None
+    details: dict[str, Any] | None = None
 
 
 class APIErrorResponse(BaseModel):
     """Standardized API error response"""
+
     success: bool = False
     error: ErrorDetail
     timestamp: datetime
-    request_id: Optional[str] = None
-    path: Optional[str] = None
+    request_id: str | None = None
+    path: str | None = None
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+        json_encoders: ClassVar = {datetime: lambda v: v.isoformat()}
 
 
 class ValidationErrorResponse(BaseModel):
     """Response for validation errors with multiple field errors"""
+
     success: bool = False
-    errors: List[ErrorDetail]
+    errors: list[ErrorDetail]
     timestamp: datetime
-    request_id: Optional[str] = None
-    path: Optional[str] = None
+    request_id: str | None = None
+    path: str | None = None
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+        json_encoders: ClassVar = {datetime: lambda v: v.isoformat()}
 
 
 class RateLimitErrorResponse(BaseModel):
     """Response for rate limiting errors"""
+
     success: bool = False
     error: ErrorDetail
     retry_after: int  # seconds
     timestamp: datetime
-    request_id: Optional[str] = None
-    path: Optional[str] = None
+    request_id: str | None = None
+    path: str | None = None
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+        json_encoders: ClassVar = {datetime: lambda v: v.isoformat()}
 
 
 # Common error codes
@@ -88,5 +88,4 @@ class ErrorCodes:
     # File Operations
     FILE_TOO_LARGE = "FILE_TOO_LARGE"
     INVALID_FILE_TYPE = "INVALID_FILE_TYPE"
-    UPLOAD_FAILED = "UPLOAD_FAILED"</content>
-<parameter name="filePath">backend/app/models/error_responses.py
+    UPLOAD_FAILED = "UPLOAD_FAILED"

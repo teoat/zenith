@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, jest, beforeEach } from '@jest/globals';
 import { complianceService } from '../compliance';
 
 global.fetch = jest.fn();

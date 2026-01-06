@@ -1,0 +1,40 @@
+{
+  "timestamp": "2025-12-23T01:26:47.907Z",
+  "importTimes": {
+    "core.database": 2100,
+    "core.logging": 274,
+    "app.routers.health": 2358,
+    "app.routers.auth": -1,
+    "app.routers.admin": 3836,
+    "app.routers.cases": -1,
+    "app.routers.fraud": -1,
+    "app.routers.analytics": -1,
+    "app.routers.reporting": 4013,
+    "app.routers.backup": 1260,
+    "app.routers.audit": 699,
+    "app.routers.compliance": 1380
+  },
+  "slowImports": [
+    {
+      "module": "core.database",
+      "time": 2100,
+      "severity": "HIGH"
+    },
+    {
+      "module": "app.routers.health",
+      "time": 2358,
+      "severity": "HIGH"
+    },
+    {
+      "module": "app.routers.admin",
+      "time": 3836,
+      "severity": "HIGH"
+    },
+    {
+      "module": "app.routers.reporting",
+      "time": 4013,
+      "severity": "HIGH"
+    }
+  ],
+  "recommendations": "generateOptimizationRecommendations() {\n    console.log('\\n💡 Import Optimization Recommendations:\\n');\n    \n    const recommendations = [];\n    \n    // Analyze slow imports\n    if (this.slowImports.length > 0) {\n      console.log('🚨 Slow Imports Detected:');\n      this.slowImports.forEach(imp => {\n        console.log(`   ${imp.severity === 'CRITICAL' ? '🔴' : '🟡'} ${imp.module}: ${imp.time}ms`);\n        \n        if (imp.module.includes('database')) {\n          recommendations.push({\n            module: imp.module,\n            issue: 'Database initialization overhead',\n            solution: 'Move heavy database operations to lazy loading'\n          });\n        } else if (imp.module.includes('routers')) {\n          recommendations.push({\n            module: imp.module,\n            issue: 'Router dependencies loading slowly',\n            solution: 'Implement lazy router loading or reduce dependencies'\n          });\n        } else {\n          recommendations.push({\n            module: imp.module,\n            issue: 'Heavy module initialization',\n            solution: 'Profile and optimize module loading'\n          });\n        }\n      });\n    }\n    \n    console.log('\\n🔧 Specific Recommendations:');\n    recommendations.forEach((rec, index) => {\n      console.log(`${index + 1}. ${rec.module}:`);\n      console.log(`   Issue: ${rec.issue}`);\n      console.log(`   Solution: ${rec.solution}\\n`);\n    });\n    \n    // General recommendations\n    console.log('📈 General Performance Tips:');\n    console.log('   • Use lazy imports for heavy dependencies');\n    console.log('   • Implement module-level caching');\n    console.log('   • Reduce circular dependencies');\n    console.log('   • Profile with Python cProfile for detailed analysis');\n  }"
+}

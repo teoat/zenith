@@ -6,7 +6,6 @@ Identifies and protects the final remaining files to achieve perfect coverage
 
 import hashlib
 import json
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -27,7 +26,7 @@ class PerfectCoverageInvestigator:
         # Load existing protections
         self.existing_protections = self._load_all_protections()
 
-    def _load_all_protections(self) -> Set[str]:
+    def _load_all_protections(self) -> set[str]:
         """Load all currently protected files from all lockfiles"""
         protected = set()
 
@@ -35,7 +34,7 @@ class PerfectCoverageInvestigator:
         for lockfile in self.diagnostics_dir.glob("*.lock"):
             if lockfile.exists():
                 try:
-                    with open(lockfile, "r") as f:
+                    with open(lockfile) as f:
                         data = json.load(f)
                         if "files" in data and isinstance(data["files"], dict):
                             protected.update(data["files"].keys())
@@ -44,7 +43,7 @@ class PerfectCoverageInvestigator:
 
         return protected
 
-    def find_remaining_unprotected_files(self) -> List[Dict[str, Any]]:
+    def find_remaining_unprotected_files(self) -> list[dict[str, Any]]:
         """Find the specific files that still need protection"""
         remaining_files = []
 
@@ -120,7 +119,7 @@ class PerfectCoverageInvestigator:
         remaining_files.sort(key=lambda x: x["risk_score"], reverse=True)
         return remaining_files
 
-    def _analyze_file_for_perfect_protection(self, file_path: Path) -> Dict[str, Any]:
+    def _analyze_file_for_perfect_protection(self, file_path: Path) -> dict[str, Any]:
         """Comprehensive analysis to determine if file needs perfect protection"""
         file_str = str(file_path).lower()
         filename = file_path.name.lower()
@@ -325,8 +324,8 @@ class PerfectCoverageInvestigator:
         }
 
     def apply_perfect_protection(
-        self, remaining_files: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        self, remaining_files: list[dict[str, Any]]
+    ) -> dict[str, Any]:
         """Apply perfect protection to remaining files"""
         if not remaining_files:
             return {
@@ -401,7 +400,7 @@ class PerfectCoverageInvestigator:
 
         except Exception as e:
             return {
-                "error": f"Failed to create perfect coverage lockfile: {str(e)}",
+                "error": f"Failed to create perfect coverage lockfile: {e!s}",
                 "perfect_coverage_achieved": False,
             }
 
@@ -417,8 +416,8 @@ class PerfectCoverageInvestigator:
             return "error_calculating"
 
     def generate_perfection_report(
-        self, remaining_files: List[Dict[str, Any]], protection_results: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, remaining_files: list[dict[str, Any]], protection_results: dict[str, Any]
+    ) -> dict[str, Any]:
         """Generate comprehensive perfection achievement report"""
         total_files_investigated = len(remaining_files)
         total_protection_value = sum(f["risk_score"] * 10 for f in remaining_files)

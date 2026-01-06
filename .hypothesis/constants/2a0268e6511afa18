@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/router_registry.py
+# hypothesis_version: 6.148.8
+
+['/api/v1', '/api/v1/docs', '/health', '/health/live', '/health/ready', 'AI Analytics', 'API Documentation', 'Compliance Suite', 'Health', 'Identity System', 'Integration Layer', 'Intelligence Center', 'Investigation Hub', 'Platform Admin', 'alive', 'healthy', 'ready', 'service', 'status', 'timestamp']

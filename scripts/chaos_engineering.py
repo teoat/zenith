@@ -5,22 +5,24 @@ Implements automated resilience testing and failure simulation
 """
 
 import asyncio
+import json
+import logging
 import random
 import time
-import logging
-from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
-import json
+from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class ChaosExperiment:
     """Represents a chaos engineering experiment"""
+
     name: str
     description: str
     target_service: str
@@ -28,30 +30,33 @@ class ChaosExperiment:
     duration_seconds: int
     intensity: float = 0.1  # 0.0 to 1.0
     recovery_time_seconds: int = 30
-    preconditions: List[str] = field(default_factory=list)
-    success_criteria: List[str] = field(default_factory=list)
-    rollback_actions: List[str] = field(default_factory=list)
+    preconditions: list[str] = field(default_factory=list)
+    success_criteria: list[str] = field(default_factory=list)
+    rollback_actions: list[str] = field(default_factory=list)
+
 
 @dataclass
 class ExperimentResult:
     """Results of a chaos experiment"""
+
     experiment_name: str
     start_time: datetime
     end_time: datetime
     status: str  # "success", "failure", "partial"
-    metrics_before: Dict[str, Any]
-    metrics_during: Dict[str, Any]
-    metrics_after: Dict[str, Any]
-    observations: List[str]
-    recovery_actions_taken: List[str]
-    lessons_learned: List[str]
+    metrics_before: dict[str, Any]
+    metrics_during: dict[str, Any]
+    metrics_after: dict[str, Any]
+    observations: list[str]
+    recovery_actions_taken: list[str]
+    lessons_learned: list[str]
+
 
 class ChaosEngineeringFramework:
     """Main chaos engineering framework"""
 
     def __init__(self):
-        self.experiments: Dict[str, ChaosExperiment] = {}
-        self.results: List[ExperimentResult] = []
+        self.experiments: dict[str, ChaosExperiment] = {}
+        self.results: list[ExperimentResult] = []
         self.is_experiment_running = False
 
     def register_experiment(self, experiment: ChaosExperiment):
@@ -75,11 +80,10 @@ class ChaosEngineeringFramework:
                 success_criteria=[
                     "System remains responsive",
                     "Error rate stays below 5%",
-                    "Recovery is automatic"
+                    "Recovery is automatic",
                 ],
-                rollback_actions=["Remove network latency rules"]
+                rollback_actions=["Remove network latency rules"],
             ),
-
             ChaosExperiment(
                 name="database_connection_loss",
                 description="Simulate database connection failures",
@@ -88,15 +92,17 @@ class ChaosEngineeringFramework:
                 duration_seconds=120,  # 2 minutes
                 intensity=0.5,
                 recovery_time_seconds=30,
-                preconditions=["Database backup is current", "Connection pooling is enabled"],
+                preconditions=[
+                    "Database backup is current",
+                    "Connection pooling is enabled",
+                ],
                 success_criteria=[
                     "Application handles connection failures gracefully",
                     "Requests are queued during outage",
-                    "Full recovery after connection restoration"
+                    "Full recovery after connection restoration",
                 ],
-                rollback_actions=["Restore database connections"]
+                rollback_actions=["Restore database connections"],
             ),
-
             ChaosExperiment(
                 name="memory_pressure_test",
                 description="Simulate memory pressure and OOM conditions",
@@ -105,15 +111,20 @@ class ChaosEngineeringFramework:
                 duration_seconds=180,  # 3 minutes
                 intensity=0.7,
                 recovery_time_seconds=45,
-                preconditions=["Memory monitoring is active", "Auto-scaling is enabled"],
+                preconditions=[
+                    "Memory monitoring is active",
+                    "Auto-scaling is enabled",
+                ],
                 success_criteria=[
                     "Memory usage is monitored and alerted",
                     "Application degrades gracefully under memory pressure",
-                    "No data loss occurs"
+                    "No data loss occurs",
                 ],
-                rollback_actions=["Reduce memory allocation", "Restart affected services"]
+                rollback_actions=[
+                    "Reduce memory allocation",
+                    "Restart affected services",
+                ],
             ),
-
             ChaosExperiment(
                 name="cpu_spike_simulation",
                 description="Simulate CPU spikes and high load conditions",
@@ -122,15 +133,17 @@ class ChaosEngineeringFramework:
                 duration_seconds=240,  # 4 minutes
                 intensity=0.8,
                 recovery_time_seconds=60,
-                preconditions=["CPU monitoring is active", "Load balancing is configured"],
+                preconditions=[
+                    "CPU monitoring is active",
+                    "Load balancing is configured",
+                ],
                 success_criteria=[
                     "System maintains responsiveness under load",
                     "Requests are properly queued",
-                    "Auto-scaling activates if configured"
+                    "Auto-scaling activates if configured",
                 ],
-                rollback_actions=["Reduce CPU load", "Scale up resources"]
+                rollback_actions=["Reduce CPU load", "Scale up resources"],
             ),
-
             ChaosExperiment(
                 name="disk_space_exhaustion",
                 description="Simulate disk space exhaustion",
@@ -139,15 +152,17 @@ class ChaosEngineeringFramework:
                 duration_seconds=90,  # 1.5 minutes
                 intensity=0.9,
                 recovery_time_seconds=30,
-                preconditions=["Disk monitoring is active", "Log rotation is configured"],
+                preconditions=[
+                    "Disk monitoring is active",
+                    "Log rotation is configured",
+                ],
                 success_criteria=[
                     "System alerts on low disk space",
                     "Logging continues without interruption",
-                    "Cleanup processes activate automatically"
+                    "Cleanup processes activate automatically",
                 ],
-                rollback_actions=["Free up disk space", "Archive old logs"]
+                rollback_actions=["Free up disk space", "Archive old logs"],
             ),
-
             ChaosExperiment(
                 name="service_dependency_failure",
                 description="Simulate failure of dependent services",
@@ -156,20 +171,23 @@ class ChaosEngineeringFramework:
                 duration_seconds=180,  # 3 minutes
                 intensity=0.4,
                 recovery_time_seconds=45,
-                preconditions=["Circuit breakers are implemented", "Fallback mechanisms exist"],
+                preconditions=[
+                    "Circuit breakers are implemented",
+                    "Fallback mechanisms exist",
+                ],
                 success_criteria=[
                     "Circuit breakers activate",
                     "Fallback responses are provided",
-                    "System remains partially functional"
+                    "System remains partially functional",
                 ],
-                rollback_actions=["Restore dependent services"]
-            )
+                rollback_actions=["Restore dependent services"],
+            ),
         ]
 
         for exp in experiments:
             self.register_experiment(exp)
 
-    async def run_experiment(self, experiment_name: str) -> Optional[ExperimentResult]:
+    async def run_experiment(self, experiment_name: str) -> ExperimentResult | None:
         """Run a specific chaos experiment"""
 
         if experiment_name not in self.experiments:
@@ -229,7 +247,7 @@ class ChaosEngineeringFramework:
                 metrics_after=metrics_after,
                 observations=observations,
                 recovery_actions_taken=experiment.rollback_actions,
-                lessons_learned=lessons_learned
+                lessons_learned=lessons_learned,
             )
 
             self.results.append(result)
@@ -247,9 +265,9 @@ class ChaosEngineeringFramework:
                 metrics_before=metrics_before,
                 metrics_during={},
                 metrics_after={},
-                observations=[f"Experiment failed: {str(e)}"],
+                observations=[f"Experiment failed: {e!s}"],
                 recovery_actions_taken=[],
-                lessons_learned=["Investigate experiment implementation"]
+                lessons_learned=["Investigate experiment implementation"],
             )
 
         finally:
@@ -261,7 +279,9 @@ class ChaosEngineeringFramework:
         failure_type = experiment.failure_type
         intensity = experiment.intensity
 
-        logger.info(f"Injecting failure: {failure_type} at intensity {intensity * 100}%")
+        logger.info(
+            f"Injecting failure: {failure_type} at intensity {intensity * 100}%"
+        )
 
         if failure_type == "network_latency":
             # Simulate network latency by adding delays
@@ -327,8 +347,9 @@ class ChaosEngineeringFramework:
         logger.info(f"Simulating dependency failure at {failure_rate}% rate")
         # Placeholder - would implement actual service failure simulation
 
-    async def _monitor_during_experiment(self, experiment: ChaosExperiment,
-                                       observations: List[str]) -> Dict[str, Any]:
+    async def _monitor_during_experiment(
+        self, experiment: ChaosExperiment, observations: list[str]
+    ) -> dict[str, Any]:
         """Monitor system during experiment"""
         metrics = {}
 
@@ -339,14 +360,20 @@ class ChaosEngineeringFramework:
             current_metrics = await self._capture_system_metrics()
 
             # Check for concerning patterns
-            if current_metrics.get('error_rate', 0) > 0.05:  # 5% error rate
-                observations.append(f"High error rate detected: {current_metrics['error_rate']}")
+            if current_metrics.get("error_rate", 0) > 0.05:  # 5% error rate
+                observations.append(
+                    f"High error rate detected: {current_metrics['error_rate']}"
+                )
 
-            if current_metrics.get('response_time', 0) > 5.0:  # 5 second response time
-                observations.append(f"Slow response time: {current_metrics['response_time']}s")
+            if current_metrics.get("response_time", 0) > 5.0:  # 5 second response time
+                observations.append(
+                    f"Slow response time: {current_metrics['response_time']}s"
+                )
 
-            if current_metrics.get('memory_usage', 0) > 85:  # 85% memory usage
-                observations.append(f"High memory usage: {current_metrics['memory_usage']}%")
+            if current_metrics.get("memory_usage", 0) > 85:  # 85% memory usage
+                observations.append(
+                    f"High memory usage: {current_metrics['memory_usage']}%"
+                )
 
             await asyncio.sleep(10)  # Monitor every 10 seconds
 
@@ -355,7 +382,7 @@ class ChaosEngineeringFramework:
 
         return metrics
 
-    async def _capture_system_metrics(self) -> Dict[str, Any]:
+    async def _capture_system_metrics(self) -> dict[str, Any]:
         """Capture current system metrics"""
         # In a real implementation, this would collect actual metrics
         # For now, return simulated metrics
@@ -366,17 +393,22 @@ class ChaosEngineeringFramework:
             "cpu_usage": random.uniform(20, 60),
             "disk_usage": random.uniform(30, 60),
             "active_connections": random.randint(10, 100),
-            "queue_length": random.randint(0, 50)
+            "queue_length": random.randint(0, 50),
         }
 
-    def _evaluate_experiment_success(self, experiment: ChaosExperiment,
-                                   metrics_before: Dict, metrics_during: Dict,
-                                   metrics_after: Dict, observations: List[str]) -> str:
+    def _evaluate_experiment_success(
+        self,
+        experiment: ChaosExperiment,
+        metrics_before: dict,
+        metrics_during: dict,
+        metrics_after: dict,
+        observations: list[str],
+    ) -> str:
         """Evaluate if experiment was successful"""
 
         # Check if system remained stable
-        error_rate_during = metrics_during.get('error_rate', 0)
-        response_time_during = metrics_during.get('response_time', 0)
+        error_rate_during = metrics_during.get("error_rate", 0)
+        response_time_during = metrics_during.get("response_time", 0)
 
         # Define success criteria
         max_acceptable_error_rate = 0.10  # 10%
@@ -389,36 +421,53 @@ class ChaosEngineeringFramework:
             return "failure"
 
         # Check if system recovered
-        error_rate_after = metrics_after.get('error_rate', 0)
-        response_time_after = metrics_after.get('response_time', 0)
+        error_rate_after = metrics_after.get("error_rate", 0)
+        response_time_after = metrics_after.get("response_time", 0)
 
-        if error_rate_after > metrics_before.get('error_rate', 0) * 1.5:  # 50% increase
+        if error_rate_after > metrics_before.get("error_rate", 0) * 1.5:  # 50% increase
             return "partial"
 
-        if response_time_after > metrics_before.get('response_time', 0) * 2.0:  # 2x increase
+        if (
+            response_time_after > metrics_before.get("response_time", 0) * 2.0
+        ):  # 2x increase
             return "partial"
 
         return "success"
 
-    def _analyze_experiment_results(self, experiment: ChaosExperiment,
-                                  metrics_before: Dict, metrics_during: Dict,
-                                  metrics_after: Dict, observations: List[str]) -> List[str]:
+    def _analyze_experiment_results(
+        self,
+        experiment: ChaosExperiment,
+        metrics_before: dict,
+        metrics_during: dict,
+        metrics_after: dict,
+        observations: list[str],
+    ) -> list[str]:
         """Analyze experiment results and generate lessons learned"""
 
         lessons = []
 
         # Analyze performance impact
-        response_time_increase = metrics_during.get('response_time', 0) - metrics_before.get('response_time', 0)
+        response_time_increase = metrics_during.get(
+            "response_time", 0
+        ) - metrics_before.get("response_time", 0)
         if response_time_increase > 1.0:
-            lessons.append(f"Response time increased by {response_time_increase:.2f}s under failure conditions")
+            lessons.append(
+                f"Response time increased by {response_time_increase:.2f}s under failure conditions"
+            )
 
         # Analyze error rate changes
-        error_rate_increase = metrics_during.get('error_rate', 0) - metrics_before.get('error_rate', 0)
+        error_rate_increase = metrics_during.get("error_rate", 0) - metrics_before.get(
+            "error_rate", 0
+        )
         if error_rate_increase > 0.01:
-            lessons.append(f"Error rate increased by {error_rate_increase:.3f} under failure conditions")
+            lessons.append(
+                f"Error rate increased by {error_rate_increase:.3f} under failure conditions"
+            )
 
         # Analyze recovery
-        recovery_time = (metrics_after.get('response_time', 0) - metrics_before.get('response_time', 0))
+        recovery_time = metrics_after.get("response_time", 0) - metrics_before.get(
+            "response_time", 0
+        )
         if abs(recovery_time) < 0.5:
             lessons.append("System recovered quickly after failure injection")
         else:
@@ -426,15 +475,21 @@ class ChaosEngineeringFramework:
 
         # Add experiment-specific lessons
         if experiment.failure_type == "network_latency":
-            lessons.append("Network latency simulation revealed potential timeout issues")
+            lessons.append(
+                "Network latency simulation revealed potential timeout issues"
+            )
         elif experiment.failure_type == "memory_pressure":
-            lessons.append("Memory pressure testing validated garbage collection effectiveness")
+            lessons.append(
+                "Memory pressure testing validated garbage collection effectiveness"
+            )
         elif experiment.failure_type == "cpu_overload":
-            lessons.append("CPU overload testing confirmed load balancing effectiveness")
+            lessons.append(
+                "CPU overload testing confirmed load balancing effectiveness"
+            )
 
         return lessons
 
-    def generate_report(self) -> Dict[str, Any]:
+    def generate_report(self) -> dict[str, Any]:
         """Generate comprehensive chaos engineering report"""
 
         report = {
@@ -443,11 +498,13 @@ class ChaosEngineeringFramework:
             "experiments_run": len(self.results),
             "success_rate": 0.0,
             "experiments": {},
-            "recommendations": []
+            "recommendations": [],
         }
 
         if self.results:
-            successful_experiments = len([r for r in self.results if r.status == "success"])
+            successful_experiments = len(
+                [r for r in self.results if r.status == "success"]
+            )
             report["success_rate"] = (successful_experiments / len(self.results)) * 100
 
         # Compile experiment details
@@ -458,27 +515,32 @@ class ChaosEngineeringFramework:
                 "observations": result.observations,
                 "lessons_learned": result.lessons_learned,
                 "metrics_summary": {
-                    "response_time_before": result.metrics_before.get('response_time'),
-                    "response_time_during": result.metrics_during.get('response_time'),
-                    "response_time_after": result.metrics_after.get('response_time'),
-                    "error_rate_before": result.metrics_before.get('error_rate'),
-                    "error_rate_during": result.metrics_during.get('error_rate'),
-                    "error_rate_after": result.metrics_after.get('error_rate')
-                }
+                    "response_time_before": result.metrics_before.get("response_time"),
+                    "response_time_during": result.metrics_during.get("response_time"),
+                    "response_time_after": result.metrics_after.get("response_time"),
+                    "error_rate_before": result.metrics_before.get("error_rate"),
+                    "error_rate_during": result.metrics_during.get("error_rate"),
+                    "error_rate_after": result.metrics_after.get("error_rate"),
+                },
             }
 
         # Generate recommendations
         if report["success_rate"] < 80:
-            report["recommendations"].append("Improve system resilience - multiple experiments failed")
+            report["recommendations"].append(
+                "Improve system resilience - multiple experiments failed"
+            )
         if report["success_rate"] > 95:
-            report["recommendations"].append("System shows excellent resilience under chaos conditions")
+            report["recommendations"].append(
+                "System shows excellent resilience under chaos conditions"
+            )
 
         # Save report
         report_path = Path("chaos_engineering_report.json")
-        with open(report_path, 'w') as f:
+        with open(report_path, "w") as f:
             json.dump(report, f, indent=2, default=str)
 
         return report
+
 
 async def run_chaos_experiments():
     """Run a series of chaos experiments"""
@@ -492,7 +554,7 @@ async def run_chaos_experiments():
     experiments_to_run = [
         "network_latency_injection",
         "memory_pressure_test",
-        "cpu_spike_simulation"
+        "cpu_spike_simulation",
     ]
 
     for exp_name in experiments_to_run:
@@ -501,7 +563,9 @@ async def run_chaos_experiments():
 
         if result:
             print(f"Status: {result.status.upper()}")
-            print(f"Duration: {(result.end_time - result.start_time).total_seconds():.1f}s")
+            print(
+                f"Duration: {(result.end_time - result.start_time).total_seconds():.1f}s"
+            )
             print(f"Observations: {len(result.observations)}")
             print(f"Lessons: {len(result.lessons_learned)}")
 
@@ -511,9 +575,10 @@ async def run_chaos_experiments():
     print("\n📊 CHAOS ENGINEERING REPORT")
     print(f"Experiments Run: {report['experiments_run']}")
     print(f"Success Rate: {report['success_rate']:.1f}%")
-    print(f"Report saved to: chaos_engineering_report.json")
+    print("Report saved to: chaos_engineering_report.json")
 
     return report
+
 
 if __name__ == "__main__":
     asyncio.run(run_chaos_experiments())

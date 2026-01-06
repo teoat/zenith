@@ -3,9 +3,6 @@ Comprehensive tests for AI and Fraud Detection Services
 Using actual service class names and method signatures
 """
 
-from datetime import datetime, timezone
-from unittest.mock import MagicMock, patch
-
 import pytest
 
 
@@ -64,7 +61,7 @@ class TestMultimodalFraudDetector:
                 or hasattr(detector, "analyze")
                 or hasattr(detector, "process")
             )
-            assert has_detect or True
+            assert True
         except ImportError:
             pytest.skip("MultimodalFraudDetector not available")
 
@@ -150,7 +147,7 @@ class TestLocalRAG:
                 or hasattr(engine, "query")
                 or hasattr(engine, "retrieve")
             )
-            assert has_search or True
+            assert True
         except ImportError:
             pytest.skip("LocalRAGEngine not available")
 

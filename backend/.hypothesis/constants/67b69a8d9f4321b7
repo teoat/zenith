@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/investigation_hub.py
+# hypothesis_version: 6.148.8
+
+[0.0, 0.3, 0.6, 0.8, 1.0, 100, 400, 404, 500, '/cases', '/cases/{case_id}', '/evidence/upload', '/evidence/{case_id}', '/fraud/analyze', '/fraud/analyze/batch', '/health', '/investigation', 'CRITICAL', 'Case not found', 'HIGH', 'LOW', 'MEDIUM', 'Not found', 'alerts', 'case_id', 'count', 'desc', 'description', 'evidence', 'fraud_score', 'healthy', 'investigation', 'investigation-hub', 'message', 'results', 'risk_level', 'rule', 'service', 'status', 'timestamp', 'transaction_id', 'transactions', 'unknown']

@@ -14,7 +14,6 @@ from datetime import datetime, timedelta
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.services.infrastructure.auth_service import auth_service
-
 from sqlalchemy.orm import Session
 
 from core.database import (
@@ -22,7 +21,6 @@ from core.database import (
     Case,
     CaseNote,
     Evidence,
-    Team,
     Transaction,
     User,
     create_engine_and_session,
@@ -83,8 +81,8 @@ def generate_sample_users(db: Session, count: int = 5):
     users = []
     for i in range(count):
         user = User(
-            email=f"investigator{i+1}@Zenith.com",
-            username=f"investigator_{i+1}",
+            email=f"investigator{i + 1}@Zenith.com",
+            username=f"investigator_{i + 1}",
             full_name=SAMPLE_INVESTIGATORS[i % len(SAMPLE_INVESTIGATORS)],
             password_hash=auth_service.hash_password("Test123!"),
             role="investigator" if i > 0 else "admin",
@@ -111,12 +109,12 @@ def generate_sample_cases(db: Session, users: list, count: int = 20):
         created_date = datetime.now() - timedelta(days=random.randint(1, 180))
 
         case_metadata = {
-            "case_number": f"FR-2024-{str(i+1).zfill(4)}",
+            "case_number": f"FR-2024-{str(i + 1).zfill(4)}",
             "company_name": SAMPLE_COMPANIES[i % len(SAMPLE_COMPANIES)],
             "risk_level": random.choice(risk_levels),
             "created_by": users[0].id,
             "amount_involved": random.uniform(5000, 500000),
-            "currency": "USD"
+            "currency": "USD",
         }
 
         case = Case(
@@ -135,7 +133,7 @@ def generate_sample_cases(db: Session, users: list, count: int = 20):
             ),
             created_at=created_date,
             updated_at=created_date + timedelta(days=random.randint(1, 30)),
-            case_metadata=case_metadata
+            case_metadata=case_metadata,
         )
 
         cases.append(case)
@@ -162,9 +160,9 @@ def generate_sample_transactions(db: Session, cases: list, count_per_case: int =
                 amount=random.uniform(100, 50000),
                 currency="USD",
                 type=random.choice(transaction_types),
-                description=f"Transaction {i+1} - {random.choice(['Invoice payment', 'Wire transfer', 'Check payment', 'ACH transfer'])}",
+                description=f"Transaction {i + 1} - {random.choice(['Invoice payment', 'Wire transfer', 'Check payment', 'ACH transfer'])}",
                 merchant_name=random.choice(SAMPLE_COMPANIES),
-                transaction_metadata=tx_metadata
+                transaction_metadata=tx_metadata,
             )
             db.add(transaction)
 
@@ -178,20 +176,25 @@ def generate_sample_evidence(db: Session, cases: list):
     for case in cases:
         for i in range(random.randint(1, 4)):
             import json
-            tags_json = json.dumps(random.sample(FRAUD_INDICATORS, k=random.randint(1, 3)))
-            metadata_json = json.dumps({
-                "description": f"Evidence item {i+1} - {random.choice(['Original invoice', 'Bank statement', 'Email correspondence', 'Photo evidence'])}"
-            })
-            
+
+            tags_json = json.dumps(
+                random.sample(FRAUD_INDICATORS, k=random.randint(1, 3))
+            )
+            metadata_json = json.dumps(
+                {
+                    "description": f"Evidence item {i + 1} - {random.choice(['Original invoice', 'Bank statement', 'Email correspondence', 'Photo evidence'])}"
+                }
+            )
+
             evidence = Evidence(
                 case_id=case.id,
-                filename=f"evidence_{i+1}_{random.choice(['invoice', 'receipt', 'email', 'statement', 'photo'])}.pdf",
+                filename=f"evidence_{i + 1}_{random.choice(['invoice', 'receipt', 'email', 'statement', 'photo'])}.pdf",
                 file_type=random.choice(evidence_types),
                 size_bytes=random.randint(100000, 5000000),
                 uploaded_at=case.created_at + timedelta(days=random.randint(1, 20)),
                 processing_status="processed",
                 evidence_tags=tags_json,
-                evidence_metadata=metadata_json
+                evidence_metadata=metadata_json,
             )
             db.add(evidence)
 
@@ -263,17 +266,17 @@ def seed_database(clear_existing: bool = False):
         # Generate transactions
         print("  Creating transactions...")
         generate_sample_transactions(db, cases, count_per_case=5)
-        print(f"  ✅ Created transactions")
+        print("  ✅ Created transactions")
 
         # Generate evidence
         print("  Creating evidence...")
         generate_sample_evidence(db, cases)
-        print(f"  ✅ Created evidence entries")
+        print("  ✅ Created evidence entries")
 
         # Generate notes
         print("  Creating case notes...")
         generate_sample_notes(db, cases, users)
-        print(f"  ✅ Created case notes")
+        print("  ✅ Created case notes")
 
         print("\n✅ Database seeding completed successfully!")
 
@@ -281,7 +284,7 @@ def seed_database(clear_existing: bool = False):
         print("\n📊 Summary:")
         print(f"  Users: {len(users)}")
         print(f"  Cases: {len(cases)}")
-        print(f"  Status breakdown:")
+        print("  Status breakdown:")
         for status in ["open", "in_progress", "under_review", "closed"]:
             count = len([c for c in cases if c.status == status])
             print(f"    - {status}: {count}")

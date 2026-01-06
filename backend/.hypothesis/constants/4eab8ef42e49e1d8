@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/intelligence/metadata_extraction_service.py
+# hypothesis_version: 6.148.8
+
+[0.0, 100, 1080, 1920, 4096, '...', '1.7', 'Author name changed', 'Document Author', 'Microsoft Word', 'Unknown', 'acrobat pro', 'application/pd', 'author', 'content_hash', 'copy', 'created', 'discrepancies', 'doc_a', 'doc_b', 'field', 'gimp', 'hash_match', 'high', 'image', 'image/jpeg', 'image/png', 'image/ti', 'medium', 'missing_author', 'pd', 'photoshop', 'print', 'rb', 'risk_score', 'sRGB', 'severity', 'software', 'tamper_indicators']

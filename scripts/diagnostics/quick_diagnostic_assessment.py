@@ -5,7 +5,6 @@ Performs rapid assessment of key diagnostic areas
 """
 
 import json
-import os
 import subprocess
 import sys
 from datetime import datetime
@@ -58,7 +57,7 @@ class QuickDiagnosticAssessor:
 
         # Check for debug mode in production
         try:
-            with open(self.backend_dir / "main.py", "r") as f:
+            with open(self.backend_dir / "main.py") as f:
                 content = f.read()
                 if "debug=True" in content.lower() or "DEBUG = True" in content:
                     issues.append("Debug mode potentially enabled in production code")
@@ -79,9 +78,9 @@ class QuickDiagnosticAssessor:
 
         # Check for inefficient patterns
         inefficient_patterns = [
-            "SELECT \* FROM",  # Select all queries
-            "\.all\(\)",  # Loading all records
-            "print\(",  # Debug prints in production
+            r"SELECT \* FROM",  # Select all queries
+            r"\.all\(\)",  # Loading all records
+            r"print\(",  # Debug prints in production
         ]
 
         for pattern in inefficient_patterns:
@@ -100,7 +99,7 @@ class QuickDiagnosticAssessor:
 
         # Check for missing indexes (basic check)
         try:
-            with open(self.backend_dir / "core" / "database.py", "r") as f:
+            with open(self.backend_dir / "core" / "database.py") as f:
                 content = f.read()
                 if "index=True" not in content:
                     issues.append("Potential missing database indexes")
@@ -135,7 +134,7 @@ class QuickDiagnosticAssessor:
 
         for py_file in py_files[:20]:  # Check first 20 files
             try:
-                with open(py_file, "r") as f:
+                with open(py_file) as f:
                     lines = f.readlines()
                     content = f.read()
 
@@ -237,7 +236,7 @@ class QuickDiagnosticAssessor:
         # Check for outdated practices
         for req_file in existing_reqs:
             try:
-                with open(req_file, "r") as f:
+                with open(req_file) as f:
                     content = f.read()
                     if "==" not in content and ">=" not in content:
                         issues.append(f"Loose version constraints in {req_file.name}")
@@ -248,7 +247,7 @@ class QuickDiagnosticAssessor:
         package_json = self.frontend_dir / "package.json"
         if package_json.exists():
             try:
-                with open(package_json, "r") as f:
+                with open(package_json) as f:
                     data = json.load(f)
                     deps = data.get("dependencies", {})
                     dev_deps = data.get("devDependencies", {})

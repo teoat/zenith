@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/infrastructure/webauthn_service.py
+# hypothesis_version: 6.148.8
+
+[60000, '=', '==', '_challenges', 'alg', 'allowCredentials', 'attestation', 'attestationObject', 'attestation_format', 'authenticatorData', 'authenticator_type', 'biometric', 'ble', 'challenge', 'clientDataJSON', 'created_at', 'credential_id', 'cross-platform', 'direct', 'displayName', 'fido-u2f', 'id', 'internal', 'last_used', 'method', 'name', 'nfc', 'origin', 'preferred', 'pubKeyCredParams', 'public-key', 'public_key', 'rawId', 'requireResidentKey', 'rp', 'sign_count', 'signature', 'success', 'timeout', 'transports', 'type', 'unknown', 'usb', 'user', 'userVerification', 'user_id', 'utf-8', 'webauthn.create', 'webauthn.get']

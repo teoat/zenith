@@ -6,7 +6,7 @@ for API responses.
 """
 
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastapi import HTTPException
 from pydantic import BaseModel
@@ -33,9 +33,9 @@ class AppError(BaseModel):
     category: ErrorCategory
     code: str
     message: str  # User-friendly message
-    technical_message: Optional[str] = None  # Technical details (dev only)
-    context: Optional[Dict[str, Any]] = None
-    suggestion: Optional[str] = None  # What user should do
+    technical_message: str | None = None  # Technical details (dev only)
+    context: dict[str, Any] | None = None
+    suggestion: str | None = None  # What user should do
 
 
 # User-friendly error message mappings
@@ -144,8 +144,8 @@ ERROR_MESSAGES = {
 
 def get_error_message(
     error_code: str,
-    context: Optional[Dict[str, Any]] = None,
-    technical_message: Optional[str] = None,
+    context: dict[str, Any] | None = None,
+    technical_message: str | None = None,
 ) -> AppError:
     """
     Get user-friendly error message for a given error code.
@@ -181,8 +181,8 @@ def get_error_message(
 def raise_app_error(
     error_code: str,
     status_code: int = 400,
-    context: Optional[Dict[str, Any]] = None,
-    technical_message: Optional[str] = None,
+    context: dict[str, Any] | None = None,
+    technical_message: str | None = None,
     log_level: str = "warning",
 ):
     """
@@ -230,9 +230,7 @@ def raise_app_error(
     )
 
 
-def handle_exception(
-    exc: Exception, request_id: Optional[str] = None
-) -> Dict[str, Any]:
+def handle_exception(exc: Exception, request_id: str | None = None) -> dict[str, Any]:
     """
     Convert any exception to a structured error response.
 

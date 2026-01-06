@@ -1,3 +1,2 @@
-from .engine import RuleEngine, FraudAlert, AlertSeverity, FraudRule
+from .engine import AlertSeverity, FraudAlert, FraudRule, RuleEngine
 # Legacy rule imports removed
-

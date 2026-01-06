@@ -1,0 +1,48 @@
+
+> frontend@0.0.0 type-check
+> tsc --noEmit
+
+src/components/ui/AdvancedSearch.tsx(52,28): error TS2554: Expected 1 arguments, but got 0.
+src/components/ui/FocusTrap.tsx(53,23): error TS2304: Cannot find name 'scope'.
+src/components/ui/LiveRegion.tsx(27,22): error TS2554: Expected 1 arguments, but got 0.
+src/components/ui/LiveRegion.tsx(44,47): error TS2339: Property 'children' does not exist on type 'unknown'.
+src/components/ui/LiveRegion.tsx(95,22): error TS2554: Expected 1 arguments, but got 0.
+src/components/ui/PerfectInteraction.tsx(171,74): error TS2339: Property 'className' does not exist on type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(174,21): error TS2339: Property 'onMouseDown' does not exist on type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(178,21): error TS2339: Property 'onMouseUp' does not exist on type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(182,21): error TS2339: Property 'onTouchStart' does not exist on type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(186,21): error TS2339: Property 'onTouchEnd' does not exist on type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(191,24): error TS2339: Property 'style' does not exist on type 'unknown'.
+src/components/ui/PerfectMobileExperience.tsx(38,29): error TS2554: Expected 1 arguments, but got 0.
+src/components/ui/PerfectMobileExperience.tsx(360,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/components/ui/PerfectWebVitals.tsx(43,34): error TS2554: Expected 1 arguments, but got 0.
+src/components/ui/RTLSwitcher.tsx(316,18): error TS2694: Namespace 'global.JSX' has no exported member 'IntrinsicElements'.
+src/components/ui/RTLSwitcher.tsx(343,6): error TS2604: JSX element type 'Component' does not have any construct or call signatures.
+src/components/ui/RTLSwitcher.tsx(343,6): error TS2786: 'Component' cannot be used as a JSX component.
+  Its type 'string | number | symbol' is not a valid JSX element type.
+    Type 'number' is not assignable to type 'ElementType'.
+src/pages/Settings_Fixed.tsx(81,7): error TS2353: Object literal may only specify known properties, and 'duration' does not exist in type 'Toast'.
+src/pages/Settings_Fixed.tsx(95,9): error TS2353: Object literal may only specify known properties, and 'duration' does not exist in type 'Toast'.
+src/pages/Settings_Fixed.tsx(105,9): error TS2353: Object literal may only specify known properties, and 'duration' does not exist in type 'Toast'.
+src/pages/Settings_Fixed.tsx(126,9): error TS2353: Object literal may only specify known properties, and 'duration' does not exist in type 'Toast'.
+src/pages/Settings_Fixed.tsx(132,9): error TS2353: Object literal may only specify known properties, and 'duration' does not exist in type 'Toast'.
+src/pages/Settings_Fixed.tsx(157,9): error TS2353: Object literal may only specify known properties, and 'duration' does not exist in type 'Toast'.
+src/pages/Settings_Fixed.tsx(163,9): error TS2353: Object literal may only specify known properties, and 'duration' does not exist in type 'Toast'.
+src/pages/UnifiedPluginMarketplace.tsx(54,44): error TS2694: Namespace 'global.JSX' has no exported member 'Element'.
+src/pages/UnifiedPluginMarketplace.tsx(65,38): error TS2694: Namespace 'global.JSX' has no exported member 'Element'.
+src/providers/OfflineQueueContext.tsx(87,11): error TS2578: Unused '@ts-expect-error' directive.
+src/providers/OfflineQueueContext.tsx(89,13): error TS2578: Unused '@ts-expect-error' directive.
+src/setup/jest-setup.ts(53,1): error TS2322: Type '((query: string) => MediaQueryList) | (() => { matches: false; addListener: () => void; removeListener: () => void; })' is not assignable to type '(query: string) => MediaQueryList'.
+  Type '() => { matches: false; addListener: () => void; removeListener: () => void; }' is not assignable to type '(query: string) => MediaQueryList'.
+    Type '{ matches: false; addListener: () => void; removeListener: () => void; }' is missing the following properties from type 'MediaQueryList': media, onchange, addEventListener, removeEventListener, dispatchEvent
+src/setup/jest-setup.ts(67,1): error TS2322: Type '{ new (callback: IntersectionObserverCallback, options?: IntersectionObserverInit): IntersectionObserver; prototype: IntersectionObserver; } | typeof IntersectionObserver' is not assignable to type '{ new (callback: IntersectionObserverCallback, options?: IntersectionObserverInit): IntersectionObserver; prototype: IntersectionObserver; }'.
+  Type 'typeof IntersectionObserver' is not assignable to type '{ new (callback: IntersectionObserverCallback, options?: IntersectionObserverInit): IntersectionObserver; prototype: IntersectionObserver; }'.
+    Types of property 'prototype' are incompatible.
+      Type 'IntersectionObserver' is missing the following properties from type 'IntersectionObserver': root, rootMargin, thresholds, takeRecords
+src/validation/zod-schemas.ts(301,28): error TS2339: Property 'error' does not exist on type '{ success: false; error: ZodError<any>; } | { success: true; data: T; }'.
+  Property 'error' does not exist on type '{ success: true; data: T; }'.
+src/validation/zod-schemas.ts(306,97): error TS2339: Property 'error' does not exist on type '{ success: false; error: ZodError<any>; } | { success: true; data: T; }'.
+  Property 'error' does not exist on type '{ success: true; data: T; }'.
+src/validation/zod-schemas.ts(319,49): error TS2339: Property 'error' does not exist on type '{ success: false; error: ZodError<any>; } | { success: true; data: T; }'.
+  Property 'error' does not exist on type '{ success: true; data: T; }'.

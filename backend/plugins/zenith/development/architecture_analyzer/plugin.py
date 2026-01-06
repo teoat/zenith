@@ -1,9 +1,10 @@
-from core.plugin_system import PluginInterface, PluginMetadata, PluginContext
-from typing import Dict, Any, List
-from app.services.perfection.perfect_architecture_service import PerfectArchitectureService
 import logging
+from typing import Any
+
+from core.plugin_system import PluginContext, PluginInterface, PluginMetadata
 
 logger = logging.getLogger(__name__)
+
 
 class ArchitectureAnalyzerPlugin(PluginInterface):
     """
@@ -19,10 +20,15 @@ class ArchitectureAnalyzerPlugin(PluginInterface):
             namespace="zenith/development/architecture_analyzer",
             author="Zenith Team",
             description="Code architecture quality analysis and technical debt assessment",
-            capabilities=["code_analysis", "architecture_review", "technical_debt", "ci_cd_integration"],
+            capabilities=[
+                "code_analysis",
+                "architecture_review",
+                "technical_debt",
+                "ci_cd_integration",
+            ],
             security_level="official",
             api_version="v1",
-            dependencies=[]
+            dependencies=[],
         )
 
     async def initialize(self, context: PluginContext) -> bool:
@@ -38,7 +44,7 @@ class ArchitectureAnalyzerPlugin(PluginInterface):
             logger.error(f"Failed to initialize Architecture Analyzer Plugin: {e}")
             return False
 
-    async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         """
         Execute architecture quality analysis
 
@@ -67,7 +73,7 @@ class ArchitectureAnalyzerPlugin(PluginInterface):
                     "coupling_factor": 0.23,
                     "cohesion_factor": 0.87,
                     "abstractness": 0.34,
-                    "instability": 0.12
+                    "instability": 0.12,
                 },
                 "violations": [
                     {
@@ -75,15 +81,15 @@ class ArchitectureAnalyzerPlugin(PluginInterface):
                         "severity": "medium",
                         "description": "Circular dependency detected between services",
                         "location": "app/services/",
-                        "recommendation": "Refactor to remove circular imports"
+                        "recommendation": "Refactor to remove circular imports",
                     },
                     {
                         "type": "god_class",
                         "severity": "high",
                         "description": "Large class with multiple responsibilities",
                         "location": "app/services/large_service.py",
-                        "recommendation": "Split into smaller, focused classes"
-                    }
+                        "recommendation": "Split into smaller, focused classes",
+                    },
                 ],
                 "technical_debt": [
                     {
@@ -91,27 +97,29 @@ class ArchitectureAnalyzerPlugin(PluginInterface):
                         "severity": "medium",
                         "description": "Several dependencies are outdated",
                         "effort_days": 3,
-                        "business_value": "Security and performance improvements"
+                        "business_value": "Security and performance improvements",
                     },
                     {
                         "type": "code_duplication",
                         "severity": "low",
                         "description": "Similar logic repeated in multiple places",
                         "effort_days": 5,
-                        "business_value": "Improved maintainability"
-                    }
+                        "business_value": "Improved maintainability",
+                    },
                 ],
                 "recommendations": [
                     "Implement dependency injection pattern",
                     "Add comprehensive unit test coverage",
                     "Refactor large classes using single responsibility principle",
                     "Implement proper error handling and logging",
-                    "Add API documentation and OpenAPI specs"
+                    "Add API documentation and OpenAPI specs",
                 ],
-                "status": "success"
+                "status": "success",
             }
 
-            logger.info(f"Architecture analysis completed for {codebase_path}: Quality score {result['quality_score']}")
+            logger.info(
+                f"Architecture analysis completed for {codebase_path}: Quality score {result['quality_score']}"
+            )
             return result
 
         except Exception as e:
@@ -122,18 +130,15 @@ class ArchitectureAnalyzerPlugin(PluginInterface):
                 "quality_score": 0,
                 "violations_found": 0,
                 "technical_debt_items": 0,
-                "recommendations": []
+                "recommendations": [],
             }
 
-    async def validate_configuration(self, config: Dict[str, Any]) -> bool:
+    async def validate_configuration(self, config: dict[str, Any]) -> bool:
         """Validate plugin configuration"""
         required_fields = ["codebase_path"]
-        for field in required_fields:
-            if field not in config:
-                return False
-        return True
+        return all(field in config for field in required_fields)
 
-    async def get_metrics(self) -> Dict[str, Any]:
+    async def get_metrics(self) -> dict[str, Any]:
         """Get plugin performance metrics"""
         return {
             "plugin_name": "architecture_analyzer",
@@ -142,5 +147,5 @@ class ArchitectureAnalyzerPlugin(PluginInterface):
             "last_execution": "2025-12-19T12:00:00Z",
             "execution_count": 1,
             "success_rate": 1.0,
-            "avg_analysis_time_seconds": 2.3
+            "avg_analysis_time_seconds": 2.3,
         }

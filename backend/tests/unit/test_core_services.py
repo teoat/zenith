@@ -4,8 +4,6 @@ Using actual service class names and method signatures
 """
 
 import os
-from datetime import datetime, timezone
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -325,7 +323,9 @@ class TestSemanticSearchService:
 
     def test_service_instantiation(self):
         """Test semantic search service initialization"""
-        from app.services.intelligence.semantic_search_service import SemanticSearchEngine
+        from app.services.intelligence.semantic_search_service import (
+            SemanticSearchEngine,
+        )
 
         service = SemanticSearchEngine()
 
@@ -333,7 +333,9 @@ class TestSemanticSearchService:
 
     def test_search_method_exists(self):
         """Test that search method exists"""
-        from app.services.intelligence.semantic_search_service import SemanticSearchEngine
+        from app.services.intelligence.semantic_search_service import (
+            SemanticSearchEngine,
+        )
 
         service = SemanticSearchEngine()
 
@@ -350,7 +352,9 @@ class TestMultimodalAnalysisService:
     def test_service_instantiation(self):
         """Test multimodal service initialization"""
         try:
-            from app.services.ai.multimodal.multimodal_analyzer import MultimodalAnalyzer as MultiModalAnalysis
+            from app.services.ai.multimodal.multimodal_analyzer import (
+                MultimodalAnalyzer as MultiModalAnalysis,
+            )
 
             # Check class exists
             assert MultiModalAnalysis is not None
@@ -360,7 +364,9 @@ class TestMultimodalAnalysisService:
     def test_analysis_methods_exist(self):
         """Test that analysis methods exist"""
         try:
-            from app.services.ai.multimodal.multimodal_analyzer import MultimodalAnalyzer as MultiModalAnalysis
+            from app.services.ai.multimodal.multimodal_analyzer import (
+                MultimodalAnalyzer as MultiModalAnalysis,
+            )
 
             # Check for common analysis methods on the class
             has_analysis = (
@@ -369,7 +375,7 @@ class TestMultimodalAnalysisService:
                 or hasattr(MultiModalAnalysis, "process_document")
                 or hasattr(MultiModalAnalysis, "process_file")
             )
-            assert has_analysis or True
+            assert True
         except ImportError:
             pytest.skip("MultiModalAnalysis not available")
 
@@ -434,7 +440,7 @@ class TestRBACService:
             or hasattr(service, "has_permission")
             or hasattr(service, "require_role")
         )
-        assert has_check or True
+        assert True
 
 
 class TestAIFraudDetector:
@@ -459,7 +465,7 @@ class TestAIFraudDetector:
             or hasattr(detector, "detect")
             or hasattr(detector, "analyze")
         )
-        assert has_predict or True
+        assert True
 
 
 class TestFraudRulesEngine:
@@ -488,7 +494,7 @@ class TestFraudRulesEngine:
                 or hasattr(engine, "check_rules")
                 or hasattr(engine, "apply_rules")
             )
-            assert has_evaluate or True
+            assert True
         except ImportError:
             pytest.skip("FraudRulesEngine module not available")
 
@@ -535,13 +541,17 @@ class TestServiceImports:
 
     def test_semantic_search_import(self):
         """Test semantic search import"""
-        from app.services.intelligence.semantic_search_service import SemanticSearchEngine
+        from app.services.intelligence.semantic_search_service import (
+            SemanticSearchEngine,
+        )
 
         assert SemanticSearchEngine is not None
 
     def test_multimodal_import(self):
         """Test multimodal analysis import"""
-        from app.services.ai.multimodal.multimodal_analyzer import MultimodalAnalyzer as MultiModalAnalysis
+        from app.services.ai.multimodal.multimodal_analyzer import (
+            MultimodalAnalyzer as MultiModalAnalysis,
+        )
 
         assert MultiModalAnalysis is not None
 

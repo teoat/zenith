@@ -2,11 +2,13 @@
 Standardized Error Handling for Backend Services
 Provides consistent error handling patterns across all services
 """
+
 import logging
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Union
+from typing import Any
+
 from fastapi import HTTPException
 
 logger = logging.getLogger(__name__)
@@ -33,16 +35,17 @@ class ErrorCategory(Enum):
 @dataclass
 class ServiceError:
     """Standardized error structure for all services"""
+
     message: str
     category: ErrorCategory
     severity: ErrorSeverity
-    error_code: Optional[str] = None
-    details: Optional[Dict[str, Any]] = None
-    original_error: Optional[Exception] = None
+    error_code: str | None = None
+    details: dict[str, Any] | None = None
+    original_error: Exception | None = None
     retryable: bool = False
-    user_friendly_message: Optional[str] = None
+    user_friendly_message: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert error to dictionary for logging/serialization"""
         return {
             "message": self.message,
@@ -63,11 +66,11 @@ class ServiceErrorHandler:
         message: str,
         category: ErrorCategory,
         severity: ErrorSeverity,
-        error_code: Optional[str] = None,
-        details: Optional[Dict[str, Any]] = None,
-        original_error: Optional[Exception] = None,
+        error_code: str | None = None,
+        details: dict[str, Any] | None = None,
+        original_error: Exception | None = None,
         retryable: bool = False,
-        user_friendly_message: Optional[str] = None,
+        user_friendly_message: str | None = None,
     ) -> ServiceError:
         """Create a standardized service error"""
         return ServiceError(
@@ -150,11 +153,13 @@ class ServiceErrorHandler:
                 error_code="API_GENERIC_ERROR",
                 original_error=error,
                 retryable=True,
-                user_friendly_message=f"External service error. Please try again later.",
+                user_friendly_message="External service error. Please try again later.",
             )
 
     @staticmethod
-    def handle_validation_error(error: Exception, field: Optional[str] = None) -> ServiceError:
+    def handle_validation_error(
+        error: Exception, field: str | None = None
+    ) -> ServiceError:
         """Handle validation errors"""
         return ServiceError(
             message=f"Validation error{' for ' + field if field else ''}",
@@ -180,7 +185,9 @@ class ServiceErrorHandler:
         )
 
     @staticmethod
-    def handle_authorization_error(error: Exception, resource: Optional[str] = None) -> ServiceError:
+    def handle_authorization_error(
+        error: Exception, resource: str | None = None
+    ) -> ServiceError:
         """Handle authorization errors"""
         return ServiceError(
             message=f"Authorization failed{' for ' + resource if resource else ''}",
@@ -224,7 +231,7 @@ class ServiceErrorHandler:
         status_code = ServiceErrorHandler._get_http_status_code(service_error)
         raise HTTPException(
             status_code=status_code,
-            detail=service_error.user_friendly_message or service_error.message
+            detail=service_error.user_friendly_message or service_error.message,
         )
 
     @staticmethod
@@ -242,12 +249,16 @@ class ServiceErrorHandler:
             ErrorCategory.INFRASTRUCTURE: status.HTTP_503_SERVICE_UNAVAILABLE,
         }
 
-        return category_status_map.get(service_error.category, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return category_status_map.get(
+            service_error.category, status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 # Context manager for service operations
 @asynccontextmanager
-async def service_operation_context(operation_name: str, category: ErrorCategory = ErrorCategory.UNKNOWN):
+async def service_operation_context(
+    operation_name: str, category: ErrorCategory = ErrorCategory.UNKNOWN
+):
     """Context manager for service operations with standardized error handling"""
     try:
         yield

@@ -1,9 +1,11 @@
 # Performance Monitoring Setup
+import builtins
+import contextlib
 import threading
 import time
 from collections import deque
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 import psutil
 
@@ -70,16 +72,14 @@ class PerformanceMonitor:
                 self._record_circuit_breaker_failure()
                 # Avoid logging if we are shutting down (interpreter cleanup)
                 if not self._stop_event.is_set():
-                    try:
+                    with contextlib.suppress(builtins.BaseException):
                         logger.error(f"Performance monitoring error: {e}")
-                    except:
-                        pass
                 if self._stop_event.wait(60):
                     break
 
-    def _collect_metrics_safe(self) -> Optional[Dict[str, Any]]:
+    def _collect_metrics_safe(self) -> dict[str, Any] | None:
         """Safely collect metrics with individual error handling"""
-        metrics = {"timestamp": datetime.now(timezone.utc).isoformat()}
+        metrics = {"timestamp": datetime.now(UTC).isoformat()}
 
         # Collect each metric individually with error handling
         metric_collectors = {
@@ -91,7 +91,9 @@ class PerformanceMonitor:
             "disk_usage": lambda: psutil.disk_usage("/").percent,
             "disk_free_gb": lambda: psutil.disk_usage("/").free / (1024**3),
             "network_connections": lambda: len(psutil.net_connections()),
-            "load_average": lambda: psutil.getloadavg() if hasattr(psutil, "getloadavg") else None,
+            "load_average": lambda: psutil.getloadavg()
+            if hasattr(psutil, "getloadavg")
+            else None,
             "process_count": lambda: len(psutil.pids()),
             "uptime_seconds": lambda: time.time() - psutil.boot_time(),
         }
@@ -111,10 +113,10 @@ class PerformanceMonitor:
         # Return metrics only if we got at least some data
         return metrics if success_count > 0 else None
 
-    def _collect_metrics(self) -> Dict[str, Any]:
+    def _collect_metrics(self) -> dict[str, Any]:
         """Legacy method for backward compatibility"""
         return self._collect_metrics_safe() or {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "cpu_percent": 0,
             "memory_percent": 0,
             "disk_usage": 0,
@@ -122,7 +124,7 @@ class PerformanceMonitor:
             "load_average": None,
         }
 
-    def _update_baselines(self, metrics: Dict[str, Any]):
+    def _update_baselines(self, metrics: dict[str, Any]):
         """Update performance baselines"""
         for key, value in metrics.items():
             if key != "timestamp" and value is not None:
@@ -149,7 +151,9 @@ class PerformanceMonitor:
 
         # Check if timeout has elapsed
         if self._circuit_breaker_last_failure:
-            elapsed = (datetime.now(timezone.utc) - self._circuit_breaker_last_failure).total_seconds()
+            elapsed = (
+                datetime.now(UTC) - self._circuit_breaker_last_failure
+            ).total_seconds()
             if elapsed > self._circuit_breaker_timeout:
                 self._circuit_breaker_open = False
                 self._circuit_breaker_failures = 0
@@ -160,11 +164,13 @@ class PerformanceMonitor:
     def _record_circuit_breaker_failure(self):
         """Record a circuit breaker failure"""
         self._circuit_breaker_failures += 1
-        self._circuit_breaker_last_failure = datetime.now(timezone.utc)
+        self._circuit_breaker_last_failure = datetime.now(UTC)
 
         if self._circuit_breaker_failures >= self._max_consecutive_failures:
             self._circuit_breaker_open = True
-            logger.warning(f"Performance monitoring circuit breaker opened after {self._circuit_breaker_failures} failures")
+            logger.warning(
+                f"Performance monitoring circuit breaker opened after {self._circuit_breaker_failures} failures"
+            )
 
     def _reset_circuit_breaker(self):
         """Reset circuit breaker on successful collection"""
@@ -172,20 +178,22 @@ class PerformanceMonitor:
             self._circuit_breaker_failures = 0
             logger.info("Performance monitoring circuit breaker reset on success")
 
-    def get_baselines(self) -> Dict[str, Any]:
+    def get_baselines(self) -> dict[str, Any]:
         """Get current performance baselines"""
         return {
             "baselines": self.baselines,
             "monitoring_active": self._thread is not None and self._thread.is_alive(),
             "metrics_collected": len(self.metrics_history),
-            "circuit_breaker_status": "open" if self._circuit_breaker_open else "closed",
+            "circuit_breaker_status": "open"
+            if self._circuit_breaker_open
+            else "closed",
             "circuit_breaker_failures": self._circuit_breaker_failures,
             "last_updated": (
                 self.metrics_history[-1]["timestamp"] if self.metrics_history else None
             ),
         }
 
-    def get_current_metrics(self) -> Dict[str, Any]:
+    def get_current_metrics(self) -> dict[str, Any]:
         """Get current system metrics"""
         return self._collect_metrics()
 
@@ -194,7 +202,7 @@ class PerformanceMonitor:
     ):
         """Record API call performance"""
         api_metric = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "endpoint": endpoint,
             "method": method,
             "response_time_ms": response_time_ms,
@@ -209,7 +217,7 @@ class PerformanceMonitor:
     ):
         """Record database query performance"""
         db_metric = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "query_type": query_type,
             "execution_time_ms": execution_time_ms,
             "success": success,
@@ -217,9 +225,10 @@ class PerformanceMonitor:
 
         self.database_queries.append(db_metric)
 
-    def _get_default_alert_rules(self) -> Dict[str, Dict[str, Any]]:
+    def _get_default_alert_rules(self) -> dict[str, dict[str, Any]]:
         """Get default alert rules with adaptive thresholds"""
         import os
+
         environment = os.getenv("ENVIRONMENT", "development").lower()
         is_production = environment == "production"
 
@@ -238,7 +247,8 @@ class PerformanceMonitor:
                 "baseline_key": "cpu_percent",
             },
             "high_memory_usage": {
-                "condition": lambda m: m.get("memory_percent", 0) > base_memory_threshold,
+                "condition": lambda m: m.get("memory_percent", 0)
+                > base_memory_threshold,
                 "severity": "critical",
                 "message": f"Memory usage above {base_memory_threshold}%",
                 "adaptive": True,
@@ -251,15 +261,17 @@ class PerformanceMonitor:
                 "adaptive": False,
             },
             "slow_api_responses": {
-                "condition": lambda: self._calculate_avg_response_time() > base_response_time_threshold,
+                "condition": lambda: self._calculate_avg_response_time()
+                > base_response_time_threshold,
                 "severity": "warning",
                 "message": f"Average API response time above {base_response_time_threshold}ms",
                 "adaptive": True,
             },
             "high_error_rate": {
-                "condition": lambda: self._calculate_error_rate() > base_error_rate_threshold,
+                "condition": lambda: self._calculate_error_rate()
+                > base_error_rate_threshold,
                 "severity": "critical",
-                "message": f"API error rate above {base_error_rate_threshold*100}%",
+                "message": f"API error rate above {base_error_rate_threshold * 100}%",
                 "adaptive": True,
             },
             "circuit_breaker_open": {
@@ -269,7 +281,8 @@ class PerformanceMonitor:
                 "adaptive": False,
             },
             "low_disk_space": {
-                "condition": lambda m: m.get("disk_free_gb", float('inf')) < 1.0,  # Less than 1GB free
+                "condition": lambda m: m.get("disk_free_gb", float("inf"))
+                < 1.0,  # Less than 1GB free
                 "severity": "critical",
                 "message": "Critical disk space - less than 1GB free",
                 "adaptive": False,
@@ -307,7 +320,7 @@ class PerformanceMonitor:
         error_count = sum(1 for call in recent_calls if call.get("is_error", False))
         return error_count / len(recent_calls)
 
-    def check_thresholds(self) -> List[str]:
+    def check_thresholds(self) -> list[str]:
         """Check if current metrics exceed thresholds with adaptive logic"""
         alerts = []
         current = self._collect_metrics()
@@ -355,33 +368,60 @@ class PerformanceMonitor:
                     # Calculate standard deviation from recent history
                     recent_values = [
                         m.get(baseline_key, 0)
-                        for m in list(self.metrics_history)[-50:]  # Last 50 measurements
+                        for m in list(self.metrics_history)[
+                            -50:
+                        ]  # Last 50 measurements
                         if m.get(baseline_key) is not None
                     ]
 
                     if len(recent_values) >= 10:
                         mean = sum(recent_values) / len(recent_values)
-                        variance = sum((x - mean) ** 2 for x in recent_values) / len(recent_values)
-                        std_dev = variance ** 0.5
+                        variance = sum((x - mean) ** 2 for x in recent_values) / len(
+                            recent_values
+                        )
+                        std_dev = variance**0.5
 
                         # Adaptive threshold: mean + 2*std_dev, but not less than 80% of original
                         original_threshold = self._get_original_threshold(rule_name)
-                        adaptive_threshold = max(mean + 2 * std_dev, original_threshold * 0.8)
+                        adaptive_threshold = max(
+                            mean + 2 * std_dev, original_threshold * 0.8
+                        )
 
                         # Update the rule's condition function
                         if "cpu" in baseline_key:
-                            rule["condition"] = lambda m, thresh=adaptive_threshold: m.get("cpu_percent", 0) > thresh
-                            rule["message"] = f"CPU usage above {adaptive_threshold:.1f}% (adaptive)"
+                            rule["condition"] = (
+                                lambda m, thresh=adaptive_threshold: m.get(
+                                    "cpu_percent", 0
+                                )
+                                > thresh
+                            )
+                            rule["message"] = (
+                                f"CPU usage above {adaptive_threshold:.1f}% (adaptive)"
+                            )
                         elif "memory" in baseline_key:
-                            rule["condition"] = lambda m, thresh=adaptive_threshold: m.get("memory_percent", 0) > thresh
-                            rule["message"] = f"Memory usage above {adaptive_threshold:.1f}% (adaptive)"
+                            rule["condition"] = (
+                                lambda m, thresh=adaptive_threshold: m.get(
+                                    "memory_percent", 0
+                                )
+                                > thresh
+                            )
+                            rule["message"] = (
+                                f"Memory usage above {adaptive_threshold:.1f}% (adaptive)"
+                            )
                         elif "response_time" in rule_name:
                             # For response time, use percentile-based threshold
                             sorted_times = sorted(recent_values)
                             p95_index = int(len(sorted_times) * 0.95)
-                            p95_threshold = sorted_times[min(p95_index, len(sorted_times) - 1)]
-                            rule["condition"] = lambda thresh=p95_threshold: self._calculate_avg_response_time() > thresh
-                            rule["message"] = f"Average API response time above {p95_threshold:.0f}ms (P95 adaptive)"
+                            p95_threshold = sorted_times[
+                                min(p95_index, len(sorted_times) - 1)
+                            ]
+                            rule["condition"] = (
+                                lambda thresh=p95_threshold: self._calculate_avg_response_time()
+                                > thresh
+                            )
+                            rule["message"] = (
+                                f"Average API response time above {p95_threshold:.0f}ms (P95 adaptive)"
+                            )
 
     def _get_original_threshold(self, rule_name: str) -> float:
         """Get original threshold for adaptive rules"""
@@ -399,13 +439,13 @@ class PerformanceMonitor:
             "type": alert_type,
             "message": message,
             "severity": severity,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         self.alerts.append(alert)
         logger.warning(f"Performance Alert [{severity.upper()}]: {message}")
 
-    def get_performance_summary(self) -> Dict[str, Any]:
+    def get_performance_summary(self) -> dict[str, Any]:
         """Get comprehensive performance summary"""
         current_metrics = self._collect_metrics() if self.metrics_history else {}
 
@@ -429,7 +469,7 @@ class PerformanceMonitor:
 
         return summary
 
-    def _calculate_trends(self) -> Dict[str, Any]:
+    def _calculate_trends(self) -> dict[str, Any]:
         """Calculate performance trends"""
         trends = {}
         if len(self.metrics_history) >= 10:
@@ -454,7 +494,7 @@ class PerformanceMonitor:
 
         return trends
 
-    def _generate_recommendations(self) -> List[str]:
+    def _generate_recommendations(self) -> list[str]:
         """Generate performance improvement recommendations"""
         recommendations = []
 
@@ -497,8 +537,8 @@ class PerformanceMonitor:
         self.anomaly_detection_enabled = True
 
     async def perform_root_cause_analysis(
-        self, incident_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, incident_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Perform AI-powered root cause analysis for incidents"""
         analysis = {
             "primary_cause": "unknown",
@@ -557,7 +597,7 @@ class PerformanceMonitor:
 
         return analysis
 
-    async def generate_predictive_alerts(self) -> List[Dict[str, Any]]:
+    async def generate_predictive_alerts(self) -> list[dict[str, Any]]:
         """Generate predictive alerts based on trend analysis"""
         alerts = []
 
@@ -630,8 +670,8 @@ class PerformanceMonitor:
         return alerts
 
     async def create_incident_response_workflow(
-        self, incident_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, incident_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Create automated incident response workflow"""
         workflow = {
             "incident_id": f"INC-{int(time.time())}",
@@ -641,7 +681,7 @@ class PerformanceMonitor:
             "automated_actions": [],
             "manual_steps": [],
             "timeline": {
-                "detected_at": datetime.now(timezone.utc).isoformat(),
+                "detected_at": datetime.now(UTC).isoformat(),
                 "analysis_complete": None,
                 "containment_complete": None,
                 "resolution_complete": None,
@@ -681,7 +721,7 @@ class PerformanceMonitor:
 
         return workflow
 
-    async def implement_comprehensive_logging(self) -> Dict[str, Any]:
+    async def implement_comprehensive_logging(self) -> dict[str, Any]:
         """Implement comprehensive logging with advanced analytics"""
         logging_config = {
             "log_levels": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
@@ -709,7 +749,7 @@ class PerformanceMonitor:
             "alert_effectiveness": 95,
         }
 
-    def _calculate_trend_slope(self, values: List[float]) -> float:
+    def _calculate_trend_slope(self, values: list[float]) -> float:
         """Calculate the slope of a trend line"""
         if len(values) < 2:
             return 0
@@ -726,7 +766,7 @@ class PerformanceMonitor:
 
         return numerator / denominator if denominator != 0 else 0
 
-    def _determine_responsible_team(self, incident_data: Dict[str, Any]) -> str:
+    def _determine_responsible_team(self, incident_data: dict[str, Any]) -> str:
         """Determine which team should handle the incident"""
         incident_type = incident_data.get("type", "")
 
@@ -741,10 +781,10 @@ class PerformanceMonitor:
         # Default to DevOps for unknown types
         return team_mapping.get(incident_type, "DevOps Team")
 
-    async def generate_performance_report(self) -> Dict[str, Any]:
+    async def generate_performance_report(self) -> dict[str, Any]:
         """Generate comprehensive performance report"""
         report = {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "period_analyzed": f"{len(self.metrics_history)} measurements",
             "summary": {
                 "overall_health": "good",
@@ -782,7 +822,7 @@ class PerformanceMonitor:
 
         return report
 
-    def get_alerts(self, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_alerts(self, limit: int = 10) -> list[dict[str, Any]]:
         """Get recent alerts"""
         return list(self.alerts)[-limit:]
 
@@ -859,7 +899,7 @@ class AdvancedMonitoringSuite:
             },
         ]
 
-    async def get_advanced_monitoring_status(self) -> Dict[str, Any]:
+    async def get_advanced_monitoring_status(self) -> dict[str, Any]:
         """Get comprehensive advanced monitoring status"""
         status = {
             "monitoring_active": True,
@@ -872,7 +912,7 @@ class AdvancedMonitoringSuite:
             "active_workflows": len(self.incident_workflows),
             "predictive_models": self.predictive_models,
             "system_health_score": 96,
-            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "last_updated": datetime.now(UTC).isoformat(),
         }
 
         return status

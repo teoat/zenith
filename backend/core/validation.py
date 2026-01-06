@@ -3,7 +3,7 @@
 import html
 import re
 from enum import Enum
-from typing import Annotated, Any, Dict, List, Optional, Union
+from typing import Annotated, Any
 
 from fastapi import HTTPException, Request
 from pydantic import (
@@ -228,17 +228,12 @@ def validate_filename(filename: str) -> bool:
         return False
 
     # Allowed characters only
-    if not re.match(r"^[a-zA-Z0-9._-]+$", filename):
-        return False
-
-    return True
+    return re.match(r"^[a-zA-Z0-9._-]+$", filename)
 
 
 # Pydantic Models for API Input Validation
 class ValidationError(Exception):
     """Custom exception for validation errors"""
-
-    pass
 
 
 class UserRole(str, Enum):
@@ -302,7 +297,7 @@ class UserCreateRequest(BaseModel):
     role: UserRole = Field(default=UserRole.ANALYST, description="User role")
 
     @field_validator("username")
-    def username_alphanumeric(cls, v):
+    def username_alphanumeric(self, v):
         if not re.match(r"^[a-zA-Z0-9_-]+$", v):
             raise ValueError(
                 "Username must be alphanumeric with underscores and hyphens only"
@@ -317,21 +312,21 @@ class UserLoginRequest(BaseModel):
 
 class CaseCreateRequest(BaseModel):
     title: constr(min_length=1, max_length=200) = Field(..., description="Case title")
-    description: Optional[constr(max_length=2000)] = Field(
+    description: constr(max_length=2000) | None = Field(
         None, description="Case description"
     )
-    assigned_to: Optional[UUIDStr] = Field(None, description="Assigned user ID")
+    assigned_to: UUIDStr | None = Field(None, description="Assigned user ID")
 
 
 class CaseUpdateRequest(BaseModel):
-    title: Optional[constr(min_length=1, max_length=200)] = Field(
+    title: constr(min_length=1, max_length=200) | None = Field(
         None, description="Case title"
     )
-    description: Optional[constr(max_length=2000)] = Field(
+    description: constr(max_length=2000) | None = Field(
         None, description="Case description"
     )
-    status: Optional[CaseStatus] = Field(None, description="Case status")
-    assigned_to: Optional[UUIDStr] = Field(None, description="Assigned user ID")
+    status: CaseStatus | None = Field(None, description="Case status")
+    assigned_to: UUIDStr | None = Field(None, description="Assigned user ID")
 
 
 class EvidenceUploadRequest(BaseModel):
@@ -345,7 +340,7 @@ class EvidenceUploadRequest(BaseModel):
     )  # Max 100MB
 
     @field_validator("file_type")
-    def validate_file_type(cls, v):
+    def validate_file_type(self, v):
         allowed_types = [
             "application/pdf",
             "image/jpeg",
@@ -365,17 +360,17 @@ class EvidenceUploadRequest(BaseModel):
 
 class SearchRequest(BaseModel):
     query: constr(min_length=1, max_length=500) = Field(..., description="Search query")
-    case_id: Optional[UUIDStr] = Field(None, description="Filter by case ID")
+    case_id: UUIDStr | None = Field(None, description="Filter by case ID")
     limit: int = Field(default=20, ge=1, le=100, description="Result limit")
     offset: int = Field(default=0, ge=0, description="Result offset")
 
 
 class TransactionFilterRequest(BaseModel):
-    case_id: Optional[UUIDStr] = Field(None, description="Case ID")
-    start_date: Optional[str] = Field(None, description="Start date (ISO format)")
-    end_date: Optional[str] = Field(None, description="End date (ISO format)")
-    min_amount: Optional[float] = Field(None, ge=0, description="Minimum amount")
-    max_amount: Optional[float] = Field(None, ge=0, description="Maximum amount")
+    case_id: UUIDStr | None = Field(None, description="Case ID")
+    start_date: str | None = Field(None, description="Start date (ISO format)")
+    end_date: str | None = Field(None, description="End date (ISO format)")
+    min_amount: float | None = Field(None, ge=0, description="Minimum amount")
+    max_amount: float | None = Field(None, ge=0, description="Maximum amount")
     flagged_only: bool = Field(default=False, description="Only flagged transactions")
 
     @field_validator("end_date")
@@ -386,7 +381,7 @@ class TransactionFilterRequest(BaseModel):
         return v
 
 
-def validate_input(data: Dict[str, Any], model_class) -> Dict[str, Any]:
+def validate_input(data: dict[str, Any], model_class) -> dict[str, Any]:
     """
     Validate input data against a Pydantic model.
     Raises ValidationError on validation failure.
@@ -395,7 +390,7 @@ def validate_input(data: Dict[str, Any], model_class) -> Dict[str, Any]:
         model = model_class(**data)
         return model.dict()
     except Exception as e:
-        raise ValidationError(f"Input validation failed: {str(e)}")
+        raise ValidationError(f"Input validation failed: {e!s}")
 
 
 # Note: function `sanitize_string` above is the canonical implementation used by tests.

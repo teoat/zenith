@@ -8,7 +8,7 @@ Extracts text, metadata, and basic image statistics.
 
 import io
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 import pytesseract
 from PIL import Image
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class MultimodalAnalyzer:
-    def analyze_image(self, image_data: bytes) -> Dict[str, Any]:
+    def analyze_image(self, image_data: bytes) -> dict[str, Any]:
         """Verify image, extract metadata, and perform OCR."""
         try:
             image = Image.open(io.BytesIO(image_data))
@@ -61,7 +61,7 @@ class MultimodalAnalyzer:
             logger.error(f"Image analysis failed: {e}")
             return {"success": False, "error": str(e)}
 
-    def analyze_text(self, text: str) -> Dict[str, Any]:
+    def analyze_text(self, text: str) -> dict[str, Any]:
         """Analyze text for fraud indicators (Keyword spotting)."""
         # Simple keyword spotting for now
         risk_keywords = ["wire", "urgent", "secret", "offshore", "shell", "layering"]

@@ -5,14 +5,14 @@ Includes experimentation platform, innovation pipeline, and rapid prototyping ca
 """
 
 import asyncio
-import json
 import logging
 import statistics
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -56,9 +56,9 @@ class InnovationIdea:
     created_at: datetime
     estimated_effort: str  # "small", "medium", "large"
     estimated_impact: str  # "low", "medium", "high", "transformative"
-    tags: List[str]
-    dependencies: List[str]
-    success_metrics: List[str]
+    tags: list[str]
+    dependencies: list[str]
+    success_metrics: list[str]
 
 
 @dataclass
@@ -69,15 +69,15 @@ class Experiment:
     title: str
     hypothesis: str
     methodology: str
-    success_criteria: List[str]
+    success_criteria: list[str]
     status: ExperimentStatus
     owner: str
     created_at: datetime
-    started_at: Optional[datetime]
-    completed_at: Optional[datetime]
-    results: Optional[Dict[str, Any]]
-    lessons_learned: List[str]
-    innovation_idea_id: Optional[str]
+    started_at: datetime | None
+    completed_at: datetime | None
+    results: dict[str, Any] | None
+    lessons_learned: list[str]
+    innovation_idea_id: str | None
 
 
 @dataclass
@@ -99,14 +99,14 @@ class RapidPrototypingEngine:
     """Engine for rapid prototyping of innovation ideas"""
 
     def __init__(self):
-        self.templates: Dict[str, Dict] = {}
-        self.prototype_history: List[Dict] = []
+        self.templates: dict[str, dict] = {}
+        self.prototype_history: list[dict] = []
 
     def create_prototype_template(
         self,
         template_id: str,
         category: str,
-        components: List[str],
+        components: list[str],
         estimated_time: int,
     ) -> None:
         """Create a reusable prototype template"""
@@ -120,8 +120,8 @@ class RapidPrototypingEngine:
         }
 
     def generate_prototype_from_template(
-        self, template_id: str, customizations: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, template_id: str, customizations: dict[str, Any]
+    ) -> dict[str, Any]:
         """Generate a prototype from a template with customizations"""
         if template_id not in self.templates:
             raise ValueError(f"Template {template_id} not found")
@@ -142,8 +142,8 @@ class RapidPrototypingEngine:
         return prototype
 
     async def validate_prototype_feasibility(
-        self, prototype: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, prototype: dict[str, Any]
+    ) -> dict[str, Any]:
         """Validate if a prototype is technically feasible"""
         # Simulate feasibility analysis
         components = prototype.get("components", [])
@@ -163,6 +163,7 @@ class RapidPrototypingEngine:
 
         # Simulating technical validation
         import logging
+
         logger = logging.getLogger(__name__)
         logger.info("Simulating detailed technical validation for prototype")
         # For now, perform basic logic above - real implementation would validate actual technical constraints
@@ -188,11 +189,11 @@ class ExperimentationPlatform:
     """Platform for running controlled experiments"""
 
     def __init__(self):
-        self.experiments: Dict[str, Experiment] = {}
-        self.experiment_results: Dict[str, Dict] = {}
+        self.experiments: dict[str, Experiment] = {}
+        self.experiment_results: dict[str, dict] = {}
         self.a_b_test_framework = ABTestingFramework()
 
-    async def create_experiment(self, experiment_data: Dict[str, Any]) -> Experiment:
+    async def create_experiment(self, experiment_data: dict[str, Any]) -> Experiment:
         """Create a new experiment"""
         experiment_id = (
             f"exp_{int(time.time())}_{experiment_data['title'].replace(' ', '_')[:20]}"
@@ -234,13 +235,13 @@ class ExperimentationPlatform:
         return True
 
     async def run_ab_test(
-        self, experiment_id: str, test_config: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, experiment_id: str, test_config: dict[str, Any]
+    ) -> dict[str, Any]:
         """Run an A/B test for the experiment"""
         return await self.a_b_test_framework.run_test(experiment_id, test_config)
 
     async def complete_experiment(
-        self, experiment_id: str, results: Dict[str, Any]
+        self, experiment_id: str, results: dict[str, Any]
     ) -> bool:
         """Complete an experiment with results"""
         if experiment_id not in self.experiments:
@@ -298,12 +299,12 @@ class ABTestingFramework:
     """A/B testing framework for experiments"""
 
     def __init__(self):
-        self.active_tests: Dict[str, Dict] = {}
-        self.test_results: Dict[str, Dict] = {}
+        self.active_tests: dict[str, dict] = {}
+        self.test_results: dict[str, dict] = {}
 
     async def run_test(
-        self, experiment_id: str, config: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, experiment_id: str, config: dict[str, Any]
+    ) -> dict[str, Any]:
         """Run an A/B test"""
         test_id = f"ab_{experiment_id}_{int(time.time())}"
 
@@ -344,8 +345,8 @@ class InnovationPipelineManager:
     """Manages the innovation pipeline from idea to production"""
 
     def __init__(self):
-        self.ideas: Dict[str, InnovationIdea] = {}
-        self.pipeline_stages: Dict[str, List[str]] = {
+        self.ideas: dict[str, InnovationIdea] = {}
+        self.pipeline_stages: dict[str, list[str]] = {
             InnovationStage.IDEA_GENERATION.value: [],
             InnovationStage.RAPID_PROTOTYPING.value: [],
             InnovationStage.EXPERIMENTATION.value: [],
@@ -353,9 +354,9 @@ class InnovationPipelineManager:
             InnovationStage.SCALING.value: [],
             InnovationStage.PRODUCTION.value: [],
         }
-        self.transition_rules: Dict[Tuple[str, str], Callable] = {}
+        self.transition_rules: dict[tuple[str, str], Callable] = {}
 
-    def submit_idea(self, idea_data: Dict[str, Any]) -> InnovationIdea:
+    def submit_idea(self, idea_data: dict[str, Any]) -> InnovationIdea:
         """Submit a new innovation idea"""
         idea_id = f"idea_{int(time.time())}_{idea_data['title'].replace(' ', '_')[:20]}"
 
@@ -387,7 +388,7 @@ class InnovationPipelineManager:
         self,
         idea_id: str,
         new_stage: InnovationStage,
-        validation_results: Optional[Dict] = None,
+        validation_results: dict | None = None,
     ) -> bool:
         """Advance an idea to the next pipeline stage"""
         if idea_id not in self.ideas:
@@ -415,7 +416,7 @@ class InnovationPipelineManager:
         )
         return True
 
-    def get_pipeline_status(self) -> Dict[str, Any]:
+    def get_pipeline_status(self) -> dict[str, Any]:
         """Get current pipeline status"""
         return {
             "total_ideas": len(self.ideas),
@@ -427,7 +428,7 @@ class InnovationPipelineManager:
             "success_metrics": self._calculate_success_metrics(),
         }
 
-    def _calculate_transition_rates(self) -> Dict[str, float]:
+    def _calculate_transition_rates(self) -> dict[str, float]:
         """Calculate transition rates between stages"""
         rates = {}
         stages = list(InnovationStage)
@@ -446,7 +447,7 @@ class InnovationPipelineManager:
 
         return rates
 
-    def _identify_bottlenecks(self) -> List[str]:
+    def _identify_bottlenecks(self) -> list[str]:
         """Identify bottlenecks in the innovation pipeline"""
         bottlenecks = []
 
@@ -463,7 +464,7 @@ class InnovationPipelineManager:
 
         return bottlenecks
 
-    def _calculate_success_metrics(self) -> Dict[str, Any]:
+    def _calculate_success_metrics(self) -> dict[str, Any]:
         """Calculate innovation success metrics"""
         total_ideas = len(self.ideas)
         production_ideas = len(self.pipeline_stages[InnovationStage.PRODUCTION.value])
@@ -543,7 +544,7 @@ class InnovationFrameworkService:
                 template["estimated_time"],
             )
 
-    async def submit_innovation_idea(self, idea_data: Dict[str, Any]) -> InnovationIdea:
+    async def submit_innovation_idea(self, idea_data: dict[str, Any]) -> InnovationIdea:
         """Submit a new innovation idea to the framework"""
         idea = self.pipeline_manager.submit_idea(idea_data)
 
@@ -553,7 +554,7 @@ class InnovationFrameworkService:
 
         return idea
 
-    async def create_rapid_prototype(self, idea_id: str) -> Optional[Dict[str, Any]]:
+    async def create_rapid_prototype(self, idea_id: str) -> dict[str, Any] | None:
         """Create a rapid prototype for an innovation idea"""
         if idea_id not in self.pipeline_manager.ideas:
             return None
@@ -590,7 +591,7 @@ class InnovationFrameworkService:
 
         return prototype
 
-    async def run_experiment(self, experiment_data: Dict[str, Any]) -> Experiment:
+    async def run_experiment(self, experiment_data: dict[str, Any]) -> Experiment:
         """Run an experiment for an innovation idea"""
         experiment = await self.experimentation.create_experiment(experiment_data)
 
@@ -601,7 +602,7 @@ class InnovationFrameworkService:
 
         return experiment
 
-    def get_innovation_dashboard(self) -> Dict[str, Any]:
+    def get_innovation_dashboard(self) -> dict[str, Any]:
         """Get comprehensive innovation dashboard"""
         pipeline_status = self.pipeline_manager.get_pipeline_status()
         metrics = self.metrics_calculator.calculate_metrics(
@@ -624,7 +625,7 @@ class InnovationFrameworkService:
             "recommendations": self._generate_innovation_recommendations(metrics),
         }
 
-    def _calculate_velocity_improvements(self) -> Dict[str, Any]:
+    def _calculate_velocity_improvements(self) -> dict[str, Any]:
         """Calculate improvements in innovation velocity"""
         # Calculate baseline vs current metrics
         current_metrics = self.metrics_calculator.calculate_metrics(
@@ -661,7 +662,7 @@ class InnovationFrameworkService:
 
     def _generate_innovation_recommendations(
         self, metrics: InnovationMetrics
-    ) -> List[str]:
+    ) -> list[str]:
         """Generate recommendations for improving innovation"""
         recommendations = []
 
@@ -702,7 +703,7 @@ class InnovationMetricsCalculator:
     """Calculates innovation performance metrics"""
 
     def calculate_metrics(
-        self, ideas: List[InnovationIdea], experiments: List[Experiment]
+        self, ideas: list[InnovationIdea], experiments: list[Experiment]
     ) -> InnovationMetrics:
         """Calculate comprehensive innovation metrics"""
 

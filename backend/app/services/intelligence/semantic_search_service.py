@@ -3,8 +3,8 @@ import json
 import logging
 import os
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from datetime import UTC, datetime
+from typing import Any
 
 import numpy as np
 
@@ -18,8 +18,8 @@ class SearchResult:
     document_id: str
     content: str
     similarity_score: float
-    metadata: Dict[str, Any]
-    highlights: List[str]
+    metadata: dict[str, Any]
+    highlights: list[str]
     relevance_explanation: str
 
 
@@ -29,7 +29,7 @@ class IndexingResult:
 
     document_id: str
     success: bool
-    error: Optional[str] = None
+    error: str | None = None
     indexing_time: float = 0.0
     embedding_dimension: int = 0
 
@@ -37,7 +37,7 @@ class IndexingResult:
 class SemanticSearchEngine:
     """Advanced semantic search with multiple vector store backends"""
 
-    def __init__(self, backend: str = "sqlite", config: Dict[str, Any] = None):
+    def __init__(self, backend: str = "sqlite", config: dict[str, Any] | None = None):
         self.backend = backend
         self.config = config or {}
 
@@ -111,7 +111,7 @@ class SemanticSearchEngine:
             # Load or create FAISS index
             if os.path.exists(self.faiss_index_path):
                 self.faiss_index = faiss.read_index(self.faiss_index_path)
-                with open(self.faiss_metadata_path, "r") as f:
+                with open(self.faiss_metadata_path) as f:
                     self.faiss_metadata = json.load(f)
             else:
                 # Initialize with dimension 384 (for MiniLM model)
@@ -131,7 +131,7 @@ class SemanticSearchEngine:
             raise
 
     def index_document(
-        self, document_id: str, content: str, metadata: Dict[str, Any] = None
+        self, document_id: str, content: str, metadata: dict[str, Any] | None = None
     ) -> IndexingResult:
         """
         Index a document for semantic search
@@ -144,7 +144,7 @@ class SemanticSearchEngine:
         Returns:
             Indexing result
         """
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
 
         try:
             if self.backend_type == "sqlite":
@@ -153,7 +153,7 @@ class SemanticSearchEngine:
                     document_id=document_id,
                     success=success,
                     indexing_time=(
-                        datetime.now(timezone.utc) - start_time
+                        datetime.now(UTC) - start_time
                     ).total_seconds(),
                     embedding_dimension=384,
                 )
@@ -169,19 +169,19 @@ class SemanticSearchEngine:
                 )
 
         except Exception as e:
-            logger.error(f"Failed to index document {document_id}: {str(e)}")
+            logger.error(f"Failed to index document {document_id}: {e!s}")
             return IndexingResult(
                 document_id=document_id,
                 success=False,
                 error=str(e),
-                indexing_time=(datetime.now(timezone.utc) - start_time).total_seconds(),
+                indexing_time=(datetime.now(UTC) - start_time).total_seconds(),
             )
 
     def _index_document_chroma(
         self,
         document_id: str,
         content: str,
-        metadata: Dict[str, Any],
+        metadata: dict[str, Any],
         start_time: datetime,
     ) -> IndexingResult:
         """Index document using ChromaDB"""
@@ -192,7 +192,7 @@ class SemanticSearchEngine:
             # Prepare document for ChromaDB
             chroma_metadata = metadata or {}
             chroma_metadata["document_id"] = document_id
-            chroma_metadata["indexed_at"] = datetime.now(timezone.utc).isoformat()
+            chroma_metadata["indexed_at"] = datetime.now(UTC).isoformat()
 
             # Add to collection
             self.collection.add(
@@ -205,7 +205,7 @@ class SemanticSearchEngine:
             return IndexingResult(
                 document_id=document_id,
                 success=True,
-                indexing_time=(datetime.now(timezone.utc) - start_time).total_seconds(),
+                indexing_time=(datetime.now(UTC) - start_time).total_seconds(),
                 embedding_dimension=len(embedding),
             )
 
@@ -214,14 +214,14 @@ class SemanticSearchEngine:
                 document_id=document_id,
                 success=False,
                 error=str(e),
-                indexing_time=(datetime.now(timezone.utc) - start_time).total_seconds(),
+                indexing_time=(datetime.now(UTC) - start_time).total_seconds(),
             )
 
     def _index_document_faiss(
         self,
         document_id: str,
         content: str,
-        metadata: Dict[str, Any],
+        metadata: dict[str, Any],
         start_time: datetime,
     ) -> IndexingResult:
         """Index document using FAISS"""
@@ -242,7 +242,7 @@ class SemanticSearchEngine:
                 "document_id": document_id,
                 "content": content,
                 "metadata": metadata or {},
-                "indexed_at": datetime.now(timezone.utc).isoformat(),
+                "indexed_at": datetime.now(UTC).isoformat(),
             }
             self.faiss_metadata["documents"].append(doc_metadata)
             self.faiss_metadata["next_id"] += 1
@@ -255,7 +255,7 @@ class SemanticSearchEngine:
             return IndexingResult(
                 document_id=document_id,
                 success=True,
-                indexing_time=(datetime.now(timezone.utc) - start_time).total_seconds(),
+                indexing_time=(datetime.now(UTC) - start_time).total_seconds(),
                 embedding_dimension=len(embedding),
             )
 
@@ -264,7 +264,7 @@ class SemanticSearchEngine:
                 document_id=document_id,
                 success=False,
                 error=str(e),
-                indexing_time=(datetime.now(timezone.utc) - start_time).total_seconds(),
+                indexing_time=(datetime.now(UTC) - start_time).total_seconds(),
             )
 
     def search(
@@ -272,8 +272,8 @@ class SemanticSearchEngine:
         query: str,
         limit: int = 10,
         threshold: float = 0.0,
-        filters: Dict[str, Any] = None,
-    ) -> List[SearchResult]:
+        filters: dict[str, Any] | None = None,
+    ) -> list[SearchResult]:
         """
         Perform semantic search
 
@@ -297,12 +297,12 @@ class SemanticSearchEngine:
                 return self._search_faiss(query, limit, threshold)
 
         except Exception as e:
-            logger.error(f"Semantic search failed: {str(e)}")
+            logger.error(f"Semantic search failed: {e!s}")
             return []
 
     def _search_sqlite(
         self, query: str, limit: int, threshold: float
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """Search using SQLite backend"""
         try:
             results = self.vector_store.search_similar_documents(
@@ -326,12 +326,16 @@ class SemanticSearchEngine:
             return search_results
 
         except Exception as e:
-            logger.error(f"SQLite search failed: {str(e)}")
+            logger.error(f"SQLite search failed: {e!s}")
             return []
 
     def _search_chroma(
-        self, query: str, limit: int, threshold: float, filters: Dict[str, Any] = None
-    ) -> List[SearchResult]:
+        self,
+        query: str,
+        limit: int,
+        threshold: float,
+        filters: dict[str, Any] | None = None,
+    ) -> list[SearchResult]:
         """Search using ChromaDB backend"""
         try:
             # Generate query embedding
@@ -371,12 +375,12 @@ class SemanticSearchEngine:
             return search_results
 
         except Exception as e:
-            logger.error(f"ChromaDB search failed: {str(e)}")
+            logger.error(f"ChromaDB search failed: {e!s}")
             return []
 
     def _search_faiss(
         self, query: str, limit: int, threshold: float
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """Search using FAISS backend"""
         try:
             # Generate query embedding
@@ -414,10 +418,10 @@ class SemanticSearchEngine:
             return search_results
 
         except Exception as e:
-            logger.error(f"FAISS search failed: {str(e)}")
+            logger.error(f"FAISS search failed: {e!s}")
             return []
 
-    def _generate_embedding(self, text: str) -> List[float]:
+    def _generate_embedding(self, text: str) -> list[float]:
         """Generate embedding for text"""
         try:
             if self.backend_type == "sqlite":
@@ -432,11 +436,11 @@ class SemanticSearchEngine:
                 return embedding.tolist()
 
         except Exception as e:
-            logger.error(f"Embedding generation failed: {str(e)}")
+            logger.error(f"Embedding generation failed: {e!s}")
             # Return zero embedding as fallback
             return [0.0] * 384
 
-    def _generate_highlights(self, content: str, query: str) -> List[str]:
+    def _generate_highlights(self, content: str, query: str) -> list[str]:
         """Generate search highlights in content"""
         try:
             # Simple keyword highlighting
@@ -457,7 +461,7 @@ class SemanticSearchEngine:
             return highlights[:3]  # Limit to 3 highlights
 
         except Exception as e:
-            logger.error(f"Highlight generation failed: {str(e)}")
+            logger.error(f"Highlight generation failed: {e!s}")
             return []
 
     def _generate_relevance_explanation(self, similarity_score: float) -> str:
@@ -491,10 +495,10 @@ class SemanticSearchEngine:
                 return False
 
         except Exception as e:
-            logger.error(f"Failed to delete document {document_id}: {str(e)}")
+            logger.error(f"Failed to delete document {document_id}: {e!s}")
             return False
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get statistics about the semantic search engine"""
         try:
             if self.backend_type == "sqlite":
@@ -518,7 +522,7 @@ class SemanticSearchEngine:
                 }
 
         except Exception as e:
-            logger.error(f"Failed to get stats: {str(e)}")
+            logger.error(f"Failed to get stats: {e!s}")
             return {"backend": self.backend_type, "error": str(e)}
 
     def rebuild_index(self) -> bool:
@@ -552,5 +556,5 @@ class SemanticSearchEngine:
                 return True
 
         except Exception as e:
-            logger.error(f"Index rebuild failed: {str(e)}")
+            logger.error(f"Index rebuild failed: {e!s}")
             return False

@@ -8,14 +8,14 @@ Restore operations should require MFA in production.
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Literal
 
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.security.audit_service import audit_service
+from app.services.infrastructure.storage.backup_service import get_backup_manager
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from app.services.infrastructure.security.audit_service import audit_service
-from app.services.infrastructure.auth_service import auth_service
-from app.services.infrastructure.storage.backup_service import get_backup_manager
 from core.database import User
 
 logger = logging.getLogger(__name__)
@@ -68,33 +68,33 @@ class BackupRequest(BaseModel):
 
 class BackupResponse(BaseModel):
     success: bool = True
-    backup_id: Optional[str] = None
-    type: Optional[str] = None
-    timestamp: Optional[str] = None
-    size_bytes: Optional[int] = None
-    duration_seconds: Optional[float] = None
-    message: Optional[str] = None
+    backup_id: str | None = None
+    type: str | None = None
+    timestamp: str | None = None
+    size_bytes: int | None = None
+    duration_seconds: float | None = None
+    message: str | None = None
 
 
 class RestoreRequest(BaseModel):
     backup_id: str = Field(..., description="ID of backup to restore")
-    target_dir: Optional[str] = Field(None, description="Target directory for restore")
+    target_dir: str | None = Field(None, description="Target directory for restore")
 
 
 class RestoreResponse(BaseModel):
     success: bool = True
-    backup_id: Optional[str] = None
-    restore_path: Optional[str] = None
-    components: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
+    backup_id: str | None = None
+    restore_path: str | None = None
+    components: dict[str, Any] | None = None
+    error: str | None = None
 
 
 class BackupStatus(BaseModel):
     is_backup_running: bool
-    last_backup_time: Optional[str]
-    backup_stats: Dict[str, Any]
-    recent_backups: List[Dict[str, Any]]
-    configuration: Dict[str, Any]
+    last_backup_time: str | None
+    backup_stats: dict[str, Any]
+    recent_backups: list[dict[str, Any]]
+    configuration: dict[str, Any]
 
 
 class BackupInfo(BaseModel):
@@ -104,17 +104,17 @@ class BackupInfo(BaseModel):
     reason: str
     size_bytes: int
     duration_seconds: float
-    components: Dict[str, Any]
+    components: dict[str, Any]
     integrity_hash: str
     compression_ratio: float
 
 
 class IntegrityCheckResponse(BaseModel):
     valid: bool
-    backup_id: Optional[str] = None
-    size: Optional[int] = None
-    integrity_hash: Optional[str] = None
-    error: Optional[str] = None
+    backup_id: str | None = None
+    size: int | None = None
+    integrity_hash: str | None = None
+    error: str | None = None
 
 
 # API Endpoints
@@ -172,7 +172,7 @@ async def create_backup(
 
     except Exception as e:
         logger.error(f"Backup creation failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Backup creation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Backup creation failed: {e!s}")
 
 
 @router.post("/restore", response_model=RestoreResponse)
@@ -224,7 +224,7 @@ async def restore_backup(request: RestoreRequest, admin: User = Depends(require_
 
     except Exception as e:
         logger.error(f"Backup restoration failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Restoration failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Restoration failed: {e!s}")
 
 
 @router.get("/status", response_model=BackupStatus)
@@ -244,12 +244,10 @@ async def get_backup_status(admin: User = Depends(require_admin)):
 
     except Exception as e:
         logger.error(f"Failed to get backup status: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Status retrieval failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Status retrieval failed: {e!s}")
 
 
-@router.get("/list", response_model=List[BackupInfo])
+@router.get("/list", response_model=list[BackupInfo])
 async def list_backups(admin: User = Depends(require_admin)):
     """
     List all available backups.
@@ -280,7 +278,7 @@ async def list_backups(admin: User = Depends(require_admin)):
 
     except Exception as e:
         logger.error(f"Failed to list backups: {e}")
-        raise HTTPException(status_code=500, detail=f"Backup listing failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Backup listing failed: {e!s}")
 
 
 @router.get("/verify/{backup_id}", response_model=IntegrityCheckResponse)
@@ -303,7 +301,7 @@ async def verify_backup_integrity(backup_id: str, admin: User = Depends(require_
 
     except Exception as e:
         logger.error(f"Backup integrity check failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Integrity check failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Integrity check failed: {e!s}")
 
 
 @router.delete("/{backup_id}")
@@ -361,7 +359,7 @@ async def delete_backup(backup_id: str, admin: User = Depends(require_admin)):
         raise
     except Exception as e:
         logger.error(f"Backup deletion failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Deletion failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Deletion failed: {e!s}")
 
 
 @router.post("/cleanup")
@@ -398,7 +396,7 @@ async def cleanup_old_backups(admin: User = Depends(require_admin)):
 
     except Exception as e:
         logger.error(f"Backup cleanup failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Cleanup failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Cleanup failed: {e!s}")
 
 
 @router.get("/config")
@@ -418,14 +416,12 @@ async def get_backup_config(admin: User = Depends(require_admin)):
 
     except Exception as e:
         logger.error(f"Failed to get backup config: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Config retrieval failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Config retrieval failed: {e!s}")
 
 
 @router.put("/config")
 async def update_backup_config(
-    config: Dict[str, Any], admin: User = Depends(require_admin)
+    config: dict[str, Any], admin: User = Depends(require_admin)
 ):
     """
     Update backup system configuration.
@@ -487,7 +483,7 @@ async def update_backup_config(
         raise
     except Exception as e:
         logger.error(f"Backup config update failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Config update failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Config update failed: {e!s}")
 
 
 # Background task functions
@@ -532,7 +528,7 @@ async def perform_auto_backup(reason: str):
             logger.info(f"Automatic full backup completed: {result['id']}")
         else:
             # Check if full backup is due
-            from datetime import datetime, timedelta
+            from datetime import datetime
 
             last_full_datetime = datetime.fromisoformat(
                 last_full.replace("Z", "+00:00")

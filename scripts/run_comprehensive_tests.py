@@ -5,9 +5,10 @@ Runs all tests with proper environment setup
 """
 
 import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
+
 
 def setup_test_environment():
     """Set up the test environment"""
@@ -26,25 +27,34 @@ def setup_test_environment():
 
     print("✅ Test environment configured")
 
+
 def run_unit_tests():
     """Run unit tests"""
     print("\n🧪 RUNNING UNIT TESTS")
     print("=" * 30)
 
-    result = subprocess.run([
-        sys.executable, "-m", "pytest",
-        "tests/unit/",
-        "-v",
-        "--tb=short",
-        "--strict-markers",
-        "--disable-warnings"
-    ], capture_output=True, text=True, cwd=Path(__file__).parent)
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "tests/unit/",
+            "-v",
+            "--tb=short",
+            "--strict-markers",
+            "--disable-warnings",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=Path(__file__).parent,
+    )
 
     print(result.stdout)
     if result.stderr:
         print("STDERR:", result.stderr)
 
     return result.returncode == 0
+
 
 def run_integration_tests():
     """Run integration tests"""
@@ -54,14 +64,21 @@ def run_integration_tests():
     # Check if backend integration tests exist
     backend_tests = Path("backend/tests")
     if backend_tests.exists():
-        result = subprocess.run([
-            sys.executable, "-m", "pytest",
-            "backend/tests/unit/",
-            "-v",
-            "--tb=short",
-            "--strict-markers",
-            "--disable-warnings"
-        ], capture_output=True, text=True, cwd=Path(__file__).parent)
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "backend/tests/unit/",
+                "-v",
+                "--tb=short",
+                "--strict-markers",
+                "--disable-warnings",
+            ],
+            capture_output=True,
+            text=True,
+            cwd=Path(__file__).parent,
+        )
 
         print(result.stdout)
         if result.stderr:
@@ -71,6 +88,7 @@ def run_integration_tests():
     else:
         print("⚠️  No backend integration tests found")
         return True
+
 
 def run_e2e_tests():
     """Run end-to-end tests"""
@@ -88,6 +106,7 @@ def run_e2e_tests():
         print("⚠️  No E2E test framework found")
         return True
 
+
 def generate_test_report(results):
     """Generate test execution report"""
 
@@ -102,7 +121,7 @@ def generate_test_report(results):
             "integration": "UNKNOWN",
             "e2e": "NOT_EXECUTED",
             "performance": "NOT_EXECUTED",
-            "security": "NOT_EXECUTED"
+            "security": "NOT_EXECUTED",
         },
         "recommendations": [
             "Fix test path resolution issues in test runner",
@@ -111,33 +130,42 @@ def generate_test_report(results):
             "Implement integration test suite with proper mocking",
             "Set up automated E2E testing pipeline",
             "Add performance regression testing",
-            "Integrate security testing in CI/CD"
-        ]
+            "Integrate security testing in CI/CD",
+        ],
     }
 
     report_path = Path("test_execution_report.json")
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         import json
+
         json.dump(report, f, indent=2)
 
     summary_path = Path("TEST_EXECUTION_SUMMARY.md")
-    with open(summary_path, 'w') as f:
+    with open(summary_path, "w") as f:
         f.write("# 🧪 COMPREHENSIVE TEST EXECUTION REPORT\n\n")
         f.write(f"**Execution Timestamp:** {report['test_execution_timestamp']}\n\n")
 
         f.write("## 📊 TEST RESULTS\n\n")
-        f.write(f"- **Unit Tests:** {'✅ PASSED' if report['unit_tests_passed'] else '❌ FAILED'}\n")
-        f.write(f"- **Integration Tests:** {'✅ PASSED' if report['integration_tests_passed'] else '❌ FAILED'}\n")
-        f.write(f"- **E2E Tests:** {'✅ PASSED' if report['e2e_tests_passed'] else '⚠️ NOT EXECUTED'}\n")
-        f.write(f"- **Overall Success:** {'✅ ALL TESTS PASSED' if report['overall_success'] else '❌ ISSUES FOUND'}\n\n")
+        f.write(
+            f"- **Unit Tests:** {'✅ PASSED' if report['unit_tests_passed'] else '❌ FAILED'}\n"
+        )
+        f.write(
+            f"- **Integration Tests:** {'✅ PASSED' if report['integration_tests_passed'] else '❌ FAILED'}\n"
+        )
+        f.write(
+            f"- **E2E Tests:** {'✅ PASSED' if report['e2e_tests_passed'] else '⚠️ NOT EXECUTED'}\n"
+        )
+        f.write(
+            f"- **Overall Success:** {'✅ ALL TESTS PASSED' if report['overall_success'] else '❌ ISSUES FOUND'}\n\n"
+        )
 
         f.write("## 📈 TEST COVERAGE ASSESSMENT\n\n")
-        for test_type, status in report['test_coverage'].items():
+        for test_type, status in report["test_coverage"].items():
             f.write(f"- **{test_type.title()}:** {status}\n")
         f.write("\n")
 
         f.write("## 💡 RECOMMENDATIONS\n\n")
-        for rec in report['recommendations']:
+        for rec in report["recommendations"]:
             f.write(f"- 🔧 {rec}\n")
         f.write("\n")
 
@@ -149,6 +177,7 @@ def generate_test_report(results):
     print(f"📋 Summary saved to: {summary_path}")
 
     return report
+
 
 def main():
     print("🚀 COMPREHENSIVE TEST SUITE EXECUTION")
@@ -180,6 +209,7 @@ def main():
     else:
         print("⚠️  Some tests failed. Check reports for details.")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -4,10 +4,10 @@ Quick Workspace Cleanup Diagnostic
 Focused analysis of duplications and unused files
 """
 
-import os
 import json
+import os
 from pathlib import Path
-from collections import defaultdict
+
 
 def quick_duplicate_check():
     """Quick check for obvious duplicates"""
@@ -23,20 +23,23 @@ def quick_duplicate_check():
         ("*.env*", "Environment files"),
         ("README*", "README files"),
         ("*report*.json", "Report files"),
-        ("*diagnostic*.py", "Diagnostic scripts")
+        ("*diagnostic*.py", "Diagnostic scripts"),
     ]
 
     for pattern, description in patterns:
         files = list(Path(".").glob(pattern))
         if len(files) > 1:
-            duplicates.append({
-                "type": description,
-                "pattern": pattern,
-                "count": len(files),
-                "files": [str(f) for f in files]
-            })
+            duplicates.append(
+                {
+                    "type": description,
+                    "pattern": pattern,
+                    "count": len(files),
+                    "files": [str(f) for f in files],
+                }
+            )
 
     return duplicates
+
 
 def check_unused_scripts():
     """Check for potentially unused scripts"""
@@ -56,7 +59,7 @@ def check_unused_scripts():
         "run_tests.py",
         "secure_all_routers.py",
         "test_login.py",
-        "verify_ai_integration.py"
+        "verify_ai_integration.py",
     ]
 
     for script in potentially_unused:
@@ -68,11 +71,13 @@ def check_unused_scripts():
                 if "frontend" in root or "node_modules" in root or ".git" in root:
                     continue
                 for file in files:
-                    if file.endswith(('.py', '.md', '.yml', '.yaml')):
+                    if file.endswith((".py", ".md", ".yml", ".yaml")):
                         try:
-                            with open(os.path.join(root, file), 'r') as f:
+                            with open(os.path.join(root, file)) as f:
                                 content = f.read()
-                                if script in content and os.path.join(root, file) != str(script_path):
+                                if script in content and os.path.join(
+                                    root, file
+                                ) != str(script_path):
                                     referenced = True
                                     break
                         except:
@@ -85,6 +90,7 @@ def check_unused_scripts():
 
     return unused_candidates
 
+
 def check_large_files():
     """Check for unusually large files that might be duplicates or unnecessary"""
     print("🔍 CHECKING FOR LARGE FILES")
@@ -92,7 +98,9 @@ def check_large_files():
     large_files = []
 
     for root, dirs, files in os.walk("."):
-        if any(skip in root for skip in ["node_modules", ".git", "venv", "__pycache__"]):
+        if any(
+            skip in root for skip in ["node_modules", ".git", "venv", "__pycache__"]
+        ):
             continue
 
         for file in files:
@@ -100,15 +108,18 @@ def check_large_files():
             try:
                 size = os.path.getsize(filepath)
                 if size > 10 * 1024 * 1024:  # 10MB
-                    large_files.append({
-                        "file": filepath,
-                        "size_mb": size / (1024 * 1024),
-                        "reason": "Unusually large file"
-                    })
+                    large_files.append(
+                        {
+                            "file": filepath,
+                            "size_mb": size / (1024 * 1024),
+                            "reason": "Unusually large file",
+                        }
+                    )
             except:
                 pass
 
     return large_files
+
 
 def check_empty_directories():
     """Check for empty directories"""
@@ -127,6 +138,7 @@ def check_empty_directories():
             pass
 
     return empty_dirs
+
 
 def generate_quick_report():
     """Generate quick cleanup report"""
@@ -152,45 +164,45 @@ def generate_quick_report():
             f"Review {len(duplicates)} groups of potential duplicate files",
             f"Consider removing {len(unused_scripts)} potentially unused scripts",
             f"Review {len(large_files)} large files for necessity",
-            f"Remove {len(empty_dirs)} empty directories"
-        ]
+            f"Remove {len(empty_dirs)} empty directories",
+        ],
     }
 
     # Save report
-    with open("quick_cleanup_report.json", 'w') as f:
+    with open("quick_cleanup_report.json", "w") as f:
         json.dump(report, f, indent=2)
 
     # Generate summary
     summary = f"""# 🧹 QUICK WORKSPACE CLEANUP REPORT
 
-**Analysis Date:** {report['timestamp']}
+**Analysis Date:** {report["timestamp"]}
 
 ## 📊 FINDINGS SUMMARY
 
 | Category | Count | Action |
 |----------|-------|--------|
-| Duplicate File Groups | {report['duplicate_groups']} | Review & Consolidate |
-| Potentially Unused Scripts | {report['unused_scripts']} | Verify & Remove |
-| Large Files (>10MB) | {report['large_files']} | Review & Archive |
-| Empty Directories | {report['empty_directories']} | Safe to Remove |
+| Duplicate File Groups | {report["duplicate_groups"]} | Review & Consolidate |
+| Potentially Unused Scripts | {report["unused_scripts"]} | Verify & Remove |
+| Large Files (>10MB) | {report["large_files"]} | Review & Archive |
+| Empty Directories | {report["empty_directories"]} | Safe to Remove |
 
 ## 🔍 DETAILED FINDINGS
 
 ### 📋 Duplicate Files
-{chr(10).join(f"- **{d['type']}**: {d['count']} files matching '{d['pattern']}'" for d in report['duplicates'])}
+{chr(10).join(f"- **{d['type']}**: {d['count']} files matching '{d['pattern']}'" for d in report["duplicates"])}
 
 ### 🗑️ Potentially Unused Scripts
-{chr(10).join(f"- {script}" for script in report['unused_scripts_list'])}
+{chr(10).join(f"- {script}" for script in report["unused_scripts_list"])}
 
 ### 📁 Large Files
-{chr(10).join(f"- {f['file']}: {f['size_mb']:.1f}MB" for f in report['large_files_list'])}
+{chr(10).join(f"- {f['file']}: {f['size_mb']:.1f}MB" for f in report["large_files_list"])}
 
 ### 📂 Empty Directories
-{chr(10).join(f"- {dir}" for dir in report['empty_directories_list'])}
+{chr(10).join(f"- {dir}" for dir in report["empty_directories_list"])}
 
 ## 💡 RECOMMENDATIONS
 
-{chr(10).join(f"- {rec}" for rec in report['recommendations'])}
+{chr(10).join(f"- {rec}" for rec in report["recommendations"])}
 
 ## ⚠️ SAFE CLEANUP ACTIONS
 
@@ -218,7 +230,7 @@ def generate_quick_report():
 *Always backup important files before cleanup operations.*
 """
 
-    with open("QUICK_CLEANUP_REPORT.md", 'w') as f:
+    with open("QUICK_CLEANUP_REPORT.md", "w") as f:
         f.write(summary)
 
     print("\n📊 QUICK CLEANUP SUMMARY")
@@ -226,9 +238,10 @@ def generate_quick_report():
     print(f"Unused Scripts: {len(unused_scripts)}")
     print(f"Large Files: {len(large_files)}")
     print(f"Empty Directories: {len(empty_dirs)}")
-    print(f"\n📋 Report saved to: QUICK_CLEANUP_REPORT.md")
+    print("\n📋 Report saved to: QUICK_CLEANUP_REPORT.md")
 
     return report
+
 
 if __name__ == "__main__":
     generate_quick_report()

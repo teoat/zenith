@@ -7,15 +7,17 @@ Extends the base AuditService with blockchain-style chain verification:
 - Chain integrity verification for court-admissible evidence
 """
 
+import builtins
+import contextlib
 import hashlib
 import hmac
 import json
 import logging
 import os
 import sqlite3
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +35,7 @@ class ImmutableAuditChainService:
     def __init__(
         self,
         db_path: str = "data/immutable_audit.db",
-        hmac_secret: Optional[str] = None,
+        hmac_secret: str | None = None,
     ):
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(exist_ok=True)
@@ -88,11 +90,11 @@ class ImmutableAuditChainService:
         self,
         event_type: str,
         action: str,
-        entity_type: Optional[str] = None,
-        entity_id: Optional[str] = None,
-        user_id: Optional[str] = None,
-        data: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        entity_type: str | None = None,
+        entity_id: str | None = None,
+        user_id: str | None = None,
+        data: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Append a new entry to the immutable audit chain.
 
@@ -107,7 +109,7 @@ class ImmutableAuditChainService:
         Returns:
             The created chain entry
         """
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = datetime.now(UTC).isoformat()
         data_json = json.dumps(data or {}, sort_keys=True, default=str)
 
         with sqlite3.connect(self.db_path) as conn:
@@ -175,7 +177,7 @@ class ImmutableAuditChainService:
             )
             return entry
 
-    def verify_chain_integrity(self) -> Dict[str, Any]:
+    def verify_chain_integrity(self) -> dict[str, Any]:
         """
         Verify the integrity of the entire audit chain.
 
@@ -254,16 +256,16 @@ class ImmutableAuditChainService:
                 "integrity_percentage": (
                     (valid_entries / total_entries * 100) if total_entries > 0 else 100
                 ),
-                "verified_at": datetime.now(timezone.utc).isoformat(),
+                "verified_at": datetime.now(UTC).isoformat(),
             }
 
     def get_chain_proof(
         self,
-        start_sequence: Optional[int] = None,
-        end_sequence: Optional[int] = None,
-        entity_type: Optional[str] = None,
-        entity_id: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        start_sequence: int | None = None,
+        end_sequence: int | None = None,
+        entity_type: str | None = None,
+        entity_id: str | None = None,
+    ) -> dict[str, Any]:
         """
         Export chain proof for court-admissible evidence.
 
@@ -306,10 +308,8 @@ class ImmutableAuditChainService:
                 entry = dict(zip(columns, row))
                 # Parse JSON data
                 if entry.get("data"):
-                    try:
+                    with contextlib.suppress(builtins.BaseException):
                         entry["data"] = json.loads(entry["data"])
-                    except:
-                        pass
                 entries.append(entry)
 
             # Calculate proof signature over entire export
@@ -321,7 +321,7 @@ class ImmutableAuditChainService:
             return {
                 "proof_document": {
                     "title": "Immutable Audit Chain Proof",
-                    "generated_at": datetime.now(timezone.utc).isoformat(),
+                    "generated_at": datetime.now(UTC).isoformat(),
                     "entry_count": len(entries),
                     "filters": {
                         "start_sequence": start_sequence,
@@ -339,7 +339,7 @@ class ImmutableAuditChainService:
                 ),
             }
 
-    def get_entry(self, sequence_number: int) -> Optional[Dict[str, Any]]:
+    def get_entry(self, sequence_number: int) -> dict[str, Any] | None:
         """Get a specific chain entry by sequence number"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
@@ -352,14 +352,12 @@ class ImmutableAuditChainService:
             if row:
                 entry = dict(zip(columns, row))
                 if entry.get("data"):
-                    try:
+                    with contextlib.suppress(builtins.BaseException):
                         entry["data"] = json.loads(entry["data"])
-                    except:
-                        pass
                 return entry
             return None
 
-    def get_recent_entries(self, limit: int = 50) -> List[Dict[str, Any]]:
+    def get_recent_entries(self, limit: int = 50) -> list[dict[str, Any]]:
         """Get recent chain entries"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
@@ -372,15 +370,13 @@ class ImmutableAuditChainService:
             for row in cursor:
                 entry = dict(zip(columns, row))
                 if entry.get("data"):
-                    try:
+                    with contextlib.suppress(builtins.BaseException):
                         entry["data"] = json.loads(entry["data"])
-                    except:
-                        pass
                 entries.append(entry)
 
             return entries
 
-    def get_chain_stats(self) -> Dict[str, Any]:
+    def get_chain_stats(self) -> dict[str, Any]:
         """Get chain statistics"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(

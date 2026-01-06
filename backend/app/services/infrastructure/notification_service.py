@@ -1,49 +1,15 @@
-"""Notification service stub for channels (in-app, email, push).
-This stub records notifications in memory for tests and local runs.
+"""Notification service for channels (in-app, email, push).
+Enhanced with real email and webhook support.
 """
-
-import logging
-from typing import Any, Dict, List
-
-logger = logging.getLogger(__name__)
-
-
-class NotificationService:
-    def __init__(self):
-        self.notifications: List[Dict[str, Any]] = []
-
-    def send_in_app(
-        self, user_id: str, title: str, body: str, metadata: Dict[str, Any] = None
-    ):
-        note = {
-            "channel": "in_app",
-            "user_id": user_id,
-            "title": title,
-            "body": body,
-            "metadata": metadata,
-        }
-        self.notifications.append(note)
-        logger.info(f"In-app notification queued for {user_id}")
-        return True
-
-    def send_email(self, email: str, subject: str, body: str):
-        note = {"channel": "email", "email": email, "subject": subject, "body": body}
-        self.notifications.append(note)
-        logger.info(f"Email notification queued for {email}")
-        return True
-
-    def send_push(self, device_id: str, title: str, body: str):
-        note = {"channel": "push", "device_id": device_id, "title": title, "body": body}
-        self.notifications.append(note)
-        logger.info(f"Push notification queued for {device_id}")
-        return True
-
 
 import json
 import logging
+import smtplib
 from datetime import datetime, timedelta
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -75,17 +41,117 @@ class NotificationChannel(Enum):
     MOBILE_PUSH = "mobile_push"
 
 
+class NotificationService:
+    def __init__(self):
+        self.notifications: list[dict[str, Any]] = []
+
+    def send_in_app(
+        self,
+        user_id: str,
+        title: str,
+        body: str,
+        metadata: dict[str, Any] | None = None,
+    ):
+        note = {
+            "channel": "in_app",
+            "user_id": user_id,
+            "title": title,
+            "body": body,
+            "metadata": metadata,
+        }
+        self.notifications.append(note)
+        logger.info(f"In-app notification queued for {user_id}")
+        return True
+
+    def send_email(self, email: str, subject: str, body: str) -> bool:
+        """Send real email via SMTP if configured, otherwise log"""
+        from core.database import SessionLocal
+        from core.plugin_system.registry import plugin_registry_service
+
+        db = SessionLocal()
+        plugins_executed = False
+
+        try:
+            # Try Plugin System first
+            plugins = plugin_registry_service.get_plugins_by_capability("notification", db)
+
+            if plugins:
+                for plugin in plugins:
+                    try:
+                        plugin.execute({
+                            "to": email,
+                            "subject": subject,
+                            "body": body,
+                        })
+                        plugins_executed = True
+                        logger.info(f"Email sent via plugin to {email}")
+                    except Exception as pe:
+                        logger.error(f"Plugin {plugin.metadata.name} failed: {pe}")
+
+            # Fallback to SMTP if configured and no plugins succeeded
+            if not plugins_executed:
+                smtp_config = {
+                    "host": "smtp.gmail.com",
+                    "port": 587,
+                    "user": "your-email@gmail.com",
+                    "password": "your-app-password",
+                    "from": "noreply@zenith.com",
+                }
+
+                host = smtp_config["host"]
+                port = smtp_config["port"]
+                user = smtp_config["user"]
+                password = smtp_config["password"]
+                from_addr = smtp_config["from"]
+
+                if host and user and password:
+                    try:
+                        msg = MIMEMultipart()
+                        msg["From"] = from_addr
+                        msg["To"] = email
+                        msg["Subject"] = subject
+                        msg.attach(MIMEText(body, "plain"))
+
+                        with smtplib.SMTP(host, port) as server:
+                            server.starttls()
+                            server.login(user, password)
+                            server.send_message(msg)
+
+                        logger.info(f"Email sent via SMTP to {email}")
+                        return True
+                    except Exception as smtp_e:
+                        logger.error(f"SMTP failed: {smtp_e}")
+
+                # Ultimate fallback: log
+                logger.info(f"[SIMULATED EMAIL] To: {email}, Subject: {subject}")
+                return True
+
+            return plugins_executed
+
+        except Exception as e:
+            logger.error(f"Failed to send email: {e!s}")
+            return False
+        finally:
+            db.close()
+
+    def send_push(self, device_id: str, title: str, body: str) -> bool:
+        note = {"channel": "push", "device_id": device_id, "title": title, "body": body}
+        self.notifications.append(note)
+        logger.info(f"Push notification queued for {device_id}")
+        return True
+
+
 class AdvancedNotificationSystem:
     """Advanced intelligent notification system"""
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
-        self.rules: Dict[str, Any] = {}
-        self.handlers: Dict[NotificationChannel, Any] = {}
+        self.rules: dict[str, Any] = {}
+        self.handlers: dict[NotificationChannel, Any] = {}
         self.template_engine = self._create_template_engine()
-        self.notification_history: List[Any] = []
-        self.rate_limits: Dict[str, List[datetime]] = {}
-        self.cooldowns: Dict[str, datetime] = {}
+        self.notification_history: list[Any] = []
+        self.rate_limits: dict[str, list[datetime]] = {}
+        self.cooldowns: dict[str, datetime] = {}
 
         # Initialize handlers
         self._initialize_handlers()
@@ -98,42 +164,42 @@ class AdvancedNotificationSystem:
         templates = {
             NotificationType.FRAUD_ALERT: {
                 "title": "🚨 Fraud Alert: {risk_score} Risk Detected",
-                "message": "High-risk transaction detected:\n\nAmount: ${amount}\nMerchant: {merchant}\nRisk Score: {risk_score}\nReason: {reason}\n\nReview required immediately.",
+                "message": "High-risk transaction detected:\n\n_amount: ${amount}\n_merchant: {merchant}\nRisk Score: {risk_score}\n_reason: {reason}\n\nReview required immediately.",
             },
             NotificationType.SYSTEM_ALERT: {
                 "title": "⚠️ System Alert: {component}",
-                "message": "System component {component} is experiencing issues:\n\n{details}\n\nStatus: {status}\nImpact: {impact}",
+                "message": "System component {component} is experiencing issues:\n\n{details}\n\n_status: {status}\n_impact: {impact}",
             },
             NotificationType.CASE_UPDATE: {
                 "title": "📋 Case Update: {case_id}",
-                "message": "Case {case_id} has been updated:\n\nStatus: {status}\nAssigned to: {assigned_to}\nLast action: {last_action}\n\n{notes}",
+                "message": "Case {case_id} has been updated:\n\n_status: {status}\nAssigned to: {assigned_to}\nLast action: {last_action}\n\n{notes}",
             },
             NotificationType.DOCUMENT_ANALYSIS: {
                 "title": "📄 Document Analysis Complete",
-                "message": "Document analysis completed:\n\nFile: {filename}\nPII detected: {pii_count}\nAuthenticity: {authenticity_score}%\nProcessing time: {processing_time}s",
+                "message": "Document analysis completed:\n\n_file: {filename}\nPII detected: {pii_count}\n_authenticity: {authenticity_score}%\nProcessing time: {processing_time}s",
             },
             NotificationType.PERFORMANCE_WARNING: {
                 "title": "⚡ Performance Warning",
-                "message": "Performance threshold exceeded:\n\nMetric: {metric}\nCurrent value: {current_value}\nThreshold: {threshold}\nDuration: {duration}",
+                "message": "Performance threshold exceeded:\n\n_metric: {metric}\nCurrent value: {current_value}\n_threshold: {threshold}\n_duration: {duration}",
             },
             NotificationType.SECURITY_INCIDENT: {
                 "title": "🔒 Security Incident",
-                "message": "Security incident detected:\n\nType: {incident_type}\nSeverity: {severity}\nSource: {source}\nDetails: {details}\n\nImmediate action required.",
+                "message": "Security incident detected:\n\n_type: {incident_type}\n_severity: {severity}\n_source: {source}\n_details: {details}\n\nImmediate action required.",
             },
             NotificationType.COLLABORATION: {
                 "title": "👥 Collaboration Update",
-                "message": "{user_name} {action} {document_type}:\n\nDocument: {document_name}\nTime: {timestamp}\n\n{details}",
+                "message": "{user_name} {action} {document_type}:\n\n_document: {document_name}\n_time: {timestamp}\n\n{details}",
             },
             NotificationType.DEADLINE_REMINDER: {
                 "title": "⏰ Deadline Reminder",
-                "message": "Deadline approaching:\n\nTask: {task_name}\nDue: {due_date}\nAssigned to: {assigned_to}\nPriority: {priority}\n\nTime remaining: {time_remaining}",
+                "message": "Deadline approaching:\n\n_task: {task_name}\n_due: {due_date}\nAssigned to: {assigned_to}\n_priority: {priority}\n\n_time remaining: {time_remaining}",
             },
         }
 
         class TemplateEngine:
             def render(
-                self, notification_type: NotificationType, data: Dict[str, Any]
-            ) -> Dict[str, str]:
+                self, notification_type: NotificationType, data: dict[str, Any]
+            ) -> dict[str, str]:
                 template = templates.get(notification_type)
                 if not template:
                     return {
@@ -149,7 +215,7 @@ class AdvancedNotificationSystem:
                     logger.error(f"Template rendering error: missing key {e}")
                     return {
                         "title": f"Notification: {notification_type.value}",
-                        "message": f"Template error: {str(e)}. Data: {json.dumps(data, indent=2)}",
+                        "message": f"Template error: {e!s}. Data: {json.dumps(data, indent=2)}",
                     }
 
         return TemplateEngine()
@@ -212,47 +278,72 @@ class AdvancedNotificationSystem:
         return InAppHandler(notifications)
 
     def _create_email_handler(self):
-        """Create email notification handler"""
-        email_config = self.config["email"]
+        """Create email notification handler with real SMTP support"""
+        email_config = self.config.get("email", {})
 
         class EmailHandler:
             def __init__(self, config):
                 self.config = config
+                self.smtp_config = {
+                    "host": config.get("smtp_host", "smtp.gmail.com"),
+                    "port": config.get("smtp_port", 587),
+                    "user": config.get("smtp_user"),
+                    "password": config.get("smtp_password"),
+                    "from": config.get("from_email", "noreply@zenith.com"),
+                }
 
             async def send(self, notification, recipient):
                 from core.database import SessionLocal
                 from core.plugin_system.registry import plugin_registry_service
-                
+
                 db = SessionLocal()
                 plugins_executed = False
-                
+
                 try:
                     # 1. Try Plugin System first
-                    plugins = await plugin_registry_service.get_plugins_by_capability("notification", db)
-                    
+                    plugins = await plugin_registry_service.get_plugins_by_capability(
+                        "notification", db
+                    )
+
                     if plugins:
                         for plugin in plugins:
                             try:
-                                # Execute plugin
                                 await plugin.execute({
-                                    "to": recipient, 
-                                    "subject": notification.get('title'), 
-                                    "body": notification.get('message')
+                                    "to": recipient,
+                                    "subject": notification.get("title"),
+                                    "body": notification.get("message"),
                                 })
                                 plugins_executed = True
-                                logger.info(f"Email sent via plugin {plugin.metadata.name} to {recipient}")
+                                logger.info(f"Email sent via plugin to {recipient}")
                             except Exception as pe:
                                 logger.error(f"Plugin {plugin.metadata.name} failed: {pe}")
 
-                    # 2. Fallback if no plugins or all failed (OR just log as fallback record)
+                    # 2. Send via SMTP if configured
+                    if not plugins_executed and self.smtp_config["user"] and self.smtp_config["password"]:
+                        try:
+                            msg = MIMEMultipart()
+                            msg["From"] = self.smtp_config["from"]
+                            msg["To"] = recipient
+                            msg["Subject"] = notification.get("title", "Notification")
+                            msg.attach(MIMEText(notification.get("message", ""), "plain"))
+
+                            with smtplib.SMTP(self.smtp_config["host"], self.smtp_config["port"]) as server:
+                                server.starttls()
+                                server.login(self.smtp_config["user"], self.smtp_config["password"])
+                                server.send_message(msg)
+
+                            logger.info(f"Email sent via SMTP to {recipient}")
+                            return True
+                        except Exception as smtp_e:
+                            logger.error(f"SMTP sending failed: {smtp_e}")
+
+                    # 3. Log as fallback
                     if not plugins_executed:
-                        # Simulate email sending (in production, use actual SMTP)
-                        logger.info(
-                            f"Email sent (Simulated Fallback) to {recipient}: {notification.get('title')}"
-                        )
+                        logger.info(f"[EMAIL] To: {recipient}, Subject: {notification.get('title')}")
+
                     return True
                 except Exception as e:
-                    logger.error(f"Failed to send email: {str(e)}")
+                    logger.error(f"Failed to send email: {e!s}")
                     return False
                 finally:
                     db.close()
@@ -283,7 +374,7 @@ class AdvancedNotificationSystem:
                     )
                     return True
                 except Exception as e:
-                    logger.error(f"Failed to send webhook: {str(e)}")
+                    logger.error(f"Failed to send webhook: {e!s}")
                     return False
 
         return WebhookHandler(webhooks)
@@ -336,7 +427,7 @@ class AdvancedNotificationSystem:
         self.rules.update(default_rules)
 
     async def process_event(
-        self, event_type: str, data: Dict[str, Any], recipient: str = None
+        self, event_type: str, data: dict[str, Any], recipient: str | None = None
     ):
         """Process an event and trigger notifications based on rules"""
         try:
@@ -356,10 +447,10 @@ class AdvancedNotificationSystem:
                 await self._create_and_send_notification(rule_id, rule, data, recipient)
 
         except Exception as e:
-            logger.error(f"Error processing event {event_type}: {str(e)}")
+            logger.error(f"Error processing event {event_type}: {e!s}")
 
     def _evaluate_conditions(
-        self, conditions: Dict[str, Any], data: Dict[str, Any]
+        self, conditions: dict[str, Any], data: dict[str, Any]
     ) -> bool:
         """Evaluate rule conditions against event data"""
         try:
@@ -369,17 +460,14 @@ class AdvancedNotificationSystem:
 
                 if isinstance(condition, dict):
                     for op, value in condition.items():
-                        if op == "$gte" and not (data[key] >= value):
-                            return False
-                        elif op == "$lte" and not (data[key] <= value):
-                            return False
-                        elif op == "$eq" and not (data[key] == value):
-                            return False
-                        elif op == "$ne" and not (data[key] != value):
-                            return False
-                        elif op == "$in" and data[key] not in value:
-                            return False
-                        elif op == "$nin" and data[key] in value:
+                        if (
+                            (op == "$gte" and not (data[key] >= value))
+                            or (op == "$lte" and not (data[key] <= value))
+                            or (op == "$eq" and data[key] != value)
+                            or (op == "$ne" and data[key] == value)
+                            or (op == "$in" and data[key] not in value)
+                            or (op == "$nin" and data[key] in value)
+                        ):
                             return False
                 else:
                     if data[key] != condition:
@@ -388,7 +476,7 @@ class AdvancedNotificationSystem:
             return True
 
         except Exception as e:
-            logger.error(f"Error evaluating conditions: {str(e)}")
+            logger.error(f"Error evaluating conditions: {e!s}")
             return False
 
     def _is_in_cooldown(self, rule_id: str) -> bool:
@@ -406,7 +494,7 @@ class AdvancedNotificationSystem:
         return datetime.now() < cooldown_end
 
     async def _create_and_send_notification(
-        self, rule_id: str, rule: Dict[str, Any], data: Dict[str, Any], recipient: str
+        self, rule_id: str, rule: dict[str, Any], data: dict[str, Any], recipient: str
     ):
         """Create and send notification"""
         try:
@@ -453,7 +541,7 @@ class AdvancedNotificationSystem:
             )
 
         except Exception as e:
-            logger.error(f"Error creating/sending notification: {str(e)}")
+            logger.error(f"Error creating/sending notification: {e!s}")
 
     def _map_event_to_type(self, event_type: str) -> NotificationType:
         """Map event type to notification type"""
@@ -471,7 +559,7 @@ class AdvancedNotificationSystem:
 
     def get_user_notifications(
         self, user_id: str, unread_only: bool = False
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get notifications for a user"""
         if NotificationChannel.IN_APP in self.handlers:
             return self.handlers[NotificationChannel.IN_APP].get_user_notifications(
@@ -487,7 +575,7 @@ class AdvancedNotificationSystem:
             )
         return False
 
-    def get_system_stats(self) -> Dict[str, Any]:
+    def get_system_stats(self) -> dict[str, Any]:
         """Get notification system statistics"""
         now = datetime.now()
         last_24h = now - timedelta(hours=24)

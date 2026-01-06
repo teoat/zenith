@@ -1,7 +1,5 @@
 import logging
-from typing import Any, Dict
-
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Any
 
 from app.services.core.auth_service import auth_service
 from app.services.core.implementation_pipeline_service import pipeline_service
@@ -12,6 +10,7 @@ from app.services.core.orchestration_notification_service import (
 from app.services.core.sync_protocol_service import sync_protocol_service
 from app.services.diagnostics.diagnostic_service import DiagnosticService
 from app.services.scoring.automated_scoring_system import scoring_system
+from fastapi import APIRouter, Depends, HTTPException
 
 logger = logging.getLogger(__name__)
 
@@ -311,7 +310,7 @@ async def get_investigation_history(
 @router.post("/pipeline/create")
 async def create_implementation_pipeline(
     implementation_type: str,
-    parameters: Dict[str, Any] = None,
+    parameters: dict[str, Any] | None = None,
     current_user=Depends(get_current_user),
 ):
     """

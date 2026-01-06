@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/models/evidence_transactions.py
+# hypothesis_version: 6.148.8
+
+[100, 255, 500, 1000, 'Case', 'USD', 'cases.id', 'confirmed', 'crypto_transactions', 'evidence', 'executed', 'extend_existing', 'pending', 'trade_transactions', 'transactions', 'users.id']

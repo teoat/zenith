@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/security/key_rotation.py
+# hypothesis_version: 6.148.8
+
+['.distributed_keys', ':', 'r', 'v1', 'w']

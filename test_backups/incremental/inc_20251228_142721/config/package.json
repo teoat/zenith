@@ -1,0 +1,221 @@
+{
+  "name": "zenith",
+  "version": "1.0.0",
+  "description": "Zenith Fraud Detection Desktop Application",
+  "main": "electron/main.cjs",
+  "author": "Zenith",
+  "type": "module",
+  "engines": {
+    "node": ">=19.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:electron\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:electron": "wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .",
+    "build": "npm run build:frontend && npm run build:electron",
+    "build:frontend": "cd frontend && npm run build",
+    "build:electron": "electron-builder",
+    "build:backend": "cd backend && python -m venv venv && python -m pip install -r requirements.txt && python -m pip install pyinstaller && python -m PyInstaller pyinstaller.spec",
+    "package": "npm run build:backend && npm run build",
+    "start": "npm run dev",
+    "lint": "cd frontend && npm run lint",
+    "lint:fix": "cd frontend && npx eslint . --fix",
+    "type-check": "cd frontend && npm run type-check",
+    "test": "cd frontend && npm run test",
+    "test:ci": "cd frontend && npm run test:ci",
+    "test:security": "node tests/test-security-integration.js",
+    "test:security:quick": "node tests/test-security-integration.js --quick",
+    "test:e2e": "python tests/run_e2e_tests.py --base-url http://127.0.0.1:8001 --ws-url ws://127.0.0.1:8080 --verbose",
+    "test:e2e:ci": "python tests/run_e2e_tests.py --base-url http://127.0.0.1:8001 --ws-url ws://127.0.0.1:8080 --ci --output e2e_results_ci.json",
+    "test:e2e:full": "python tests/run_e2e_tests.py --base-url http://127.0.0.1:8001 --ws-url ws://127.0.0.1:8080 --verbose --output e2e_full_results.json",
+    "test:e2e:playwright": "playwright test",
+    "test:e2e:playwright:ui": "playwright test --ui",
+    "test:e2e:playwright:debug": "playwright test --debug",
+    "test:e2e:playwright:headed": "playwright test --headed",
+    "test:e2e:playwright:chromium": "playwright test --project=chromium",
+    "test:e2e:playwright:firefox": "playwright test --project=firefox",
+    "test:e2e:playwright:webkit": "playwright test --project=webkit",
+    "docs:api": "cd backend && python -m pydoc -w services/",
+    "docs:build": "cd frontend && npm run docs:build",
+    "diagnostics": "node diagnostic-orchestrator.js",
+    "diagnostics:security": "node diagnostic-orchestrator.js --security",
+    "diagnostics:system": "node diagnostic-orchestrator.js --system",
+    "diagnostics:deps": "node diagnostic-orchestrator.js --deps",
+    "setup:production": "node scripts/setup-production.cjs",
+    "validate:security": "node scripts/validate-security.js",
+    "security:check": "node scripts/validate-security.js --quick",
+    "security:full": "node scripts/validate-security.js",
+    "verify:build": "node scripts/verify-build.cjs",
+    "clean": "rm -rf release dist node_modules frontend/dist frontend/node_modules backend/dist backend/__pycache__",
+    "ci:security": "npm audit --audit-level moderate && cd backend && python -m pip install safety && python -m safety check",
+    "ci:lint": "npm run lint && npm run type-check",
+    "ci:test": "npm run test:ci && cd backend && python -m pytest tests/ -v --tb=short",
+    "ci:build": "npm run build:frontend && npm run build:backend && npm run build:electron",
+    "analyze-bundle": "cd frontend && npm run build && npx webpack-bundle-analyzer dist/static/js/*.js --port 8888",
+    "ci:quality": "npx prettier --check \"frontend/src/**/*.{ts,tsx,js,jsx,json,css,md}\" && cd backend && python -m pip install black isort flake8 && python -m black --check . && python -m isort --check-only . && python -m flake8 . --count --select=E9,F63,F7,F82",
+    "ci:full": "npm run ci:security && npm run ci:lint && npm run ci:test && npm run ci:build && npm run verify:build",
+    "diagnostics:complete": "node scripts/complete-diagnostic-runner.js",
+    "performance:benchmark": "node scripts/performance-benchmarker.js",
+    "security:audit": "node scripts/security-auditor.js",
+    "accessibility:compliance": "cd frontend && npm run a11y:test && npm run a11y:audit",
+    "ci:accessibility": "npm run accessibility:compliance",
+    "next-steps": "npm run diagnostics:complete && npm run performance:benchmark && npm run security:audit && npm run accessibility:compliance",
+    "health-check": "npm run lint && npm run type-check && npm run test:ci && npm run security:check",
+    "release:check": "npm run health-check && npm run diagnostics:complete && npm run performance:benchmark"
+  },
+  "devDependencies": {
+    "@electron/notarize": "^2.1.0",
+    "@lhci/cli": "^0.15.1",
+    "@percy/cli": "^1.31.6",
+    "@percy/playwright": "^1.0.10",
+    "@playwright/test": "^1.57.0",
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/git": "^10.0.0",
+    "@semantic-release/github": "^9.0.0",
+    "@stryker-mutator/core": "^9.4.0",
+    "@stryker-mutator/typescript-checker": "^9.4.0",
+
+    "concurrently": "^8.2.2",
+    "cross-env": "^10.1.0",
+    "electron": "^39.2.7",
+    "electron-builder": "^24.13.3",
+    "electron-window-state": "^5.0.3",
+    "playwright": "^1.57.0",
+    "semantic-release": "^21.0.0",
+    "wait-on": "^7.2.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.5.0",
+    "chalk": "^5.6.2",
+    "electron-log": "^5.4.3",
+    "electron-updater": "^6.6.2",
+    "figlet": "^1.9.4",
+    "keytar": "^7.9.0",
+    "minimist": "^1.2.8",
+    "ora": "^9.0.0"
+  },
+  "build": {
+    "appId": "com.zenith.fraud-detection",
+    "productName": "Zenith Fraud Detection",
+    "copyright": "Copyright © 2025 Zenith",
+    "asar": true,
+    "directories": {
+      "buildResources": "build",
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "frontend/dist/**/*",
+      "!node_modules/**/*",
+      "!**/*.ts",
+      "!**/*.map"
+    ],
+    "extraResources": [
+      {
+        "from": "backend/dist",
+        "to": "backend",
+        "filter": [
+          "backend",
+          "backend.exe"
+        ]
+      }
+    ],
+    "afterSign": "scripts/notarize.mjs",
+    "afterAllArtifactBuild": "scripts/after-build.mjs",
+    "mac": {
+      "category": "public.app-category.finance",
+      "icon": "build/icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": {
+        "teamId": "${APPLE_TEAM_ID}"
+      }
+    },
+    "afterPack": "./scripts/optimize-bundle.mjs",
+    "dmg": {
+      "title": "${productName} ${version}",
+      "icon": "build/icon.icns",
+      "backgroundColor": "#1a1a1a",
+      "window": {
+        "width": 540,
+        "height": 380
+      },
+      "contents": [
+        {
+          "x": 140,
+          "y": 180
+        },
+        {
+          "x": 400,
+          "y": 180,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "publisherName": "Zenith",
+      "verifyUpdateCodeSignature": true
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Zenith Fraud Detection"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm"
+      ],
+      "icon": "build/icons",
+      "category": "Office",
+      "maintainer": "Zenith <support@zenith.com>",
+      "vendor": "Zenith",
+      "description": "Desktop fraud detection and investigation platform"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "zenith",
+      "repo": "fraud-detection"
+    }
+  }
+}

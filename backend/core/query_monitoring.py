@@ -7,7 +7,8 @@ for database operations.
 
 import functools
 import time
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from prometheus_client import Counter, Histogram
 
@@ -66,7 +67,7 @@ def monitor_query(operation: str, table: str = "unknown"):
                 ).inc()
 
                 logger.error(
-                    f"Database query error",
+                    "Database query error",
                     extra={
                         "operation": operation,
                         "table": table,
@@ -88,7 +89,7 @@ def monitor_query(operation: str, table: str = "unknown"):
                     slow_query_counter.labels(operation=operation, table=table).inc()
 
                     logger.warning(
-                        f"Slow query detected",
+                        "Slow query detected",
                         extra={
                             "operation": operation,
                             "table": table,
@@ -100,7 +101,7 @@ def monitor_query(operation: str, table: str = "unknown"):
 
                 # Log all queries in debug mode
                 logger.debug(
-                    f"Query executed",
+                    "Query executed",
                     extra={
                         "operation": operation,
                         "table": table,
@@ -168,7 +169,7 @@ class QueryPerformanceContext:
             slow_query_counter.labels(operation=self.operation, table=self.table).inc()
 
             logger.warning(
-                f"Slow query in context",
+                "Slow query in context",
                 extra={
                     "operation": self.operation,
                     "table": self.table,
@@ -183,7 +184,7 @@ class QueryPerformanceContext:
             ).inc()
 
             logger.error(
-                f"Query error in context",
+                "Query error in context",
                 extra={
                     "operation": self.operation,
                     "table": self.table,

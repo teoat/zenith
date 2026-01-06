@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/ai/intelligence_methods/plugin_intelligence.py
+# hypothesis_version: 6.148.8
+
+['critical', 'error', 'finding', 'findings', 'high', 'key_findings', 'low', 'medium', 'metadata', 'plugin_insights', 'plugins_executed', 'risk_score', 'severity', 'source', 'status', 'success', 'successful_plugins']

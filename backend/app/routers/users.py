@@ -1,11 +1,16 @@
-from typing import Any, List, Optional
+from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Body
-from pydantic import BaseModel
-
-from app.services.infrastructure.storage.database_service import db_service
 from app.services.infrastructure.auth_service import auth_service
-from core.api_models import PaginationParams, PaginationResponse, FilterParams, BulkOperationRequest, BulkOperationResponse
+from app.services.infrastructure.storage.database_service import db_service
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
+
+from core.api_models import (
+    BulkOperationRequest,
+    BulkOperationResponse,
+    FilterParams,
+    PaginationParams,
+    PaginationResponse,
+)
 
 router = APIRouter()
 
@@ -39,7 +44,7 @@ async def update_user_preferences(
     # For now, we might assume a single user or mock it if strict auth isn't fully enforced in this router yet.
     # But let's assume we can get user_id from a dependency or just update 'admin' for MVP if auth is loose.
     # Adding db dependency.
-    db: Optional[Any] = Depends(
+    db: Any | None = Depends(
         db_service.get_db
     ),  # Using db_service helper or standard get_db
 ):
@@ -65,62 +70,69 @@ async def update_user_preferences(
         # Proper way:
         # user.preferences = preferences
         # db.commit()
-        pass
 
         return {"status": "success", "preferences": preferences}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/users", responses={
-    200: {
-        "description": "Successfully retrieved users with pagination",
-        "content": {
-            "application/json": {
-                "example": {
-                    "users": [
-                        {
-                            "id": "usr_123456",
-                            "username": "analyst1",
-                            "email": "analyst1@company.com",
-                            "full_name": "John Analyst",
-                            "role": "ANALYST",
-                            "department": "Fraud Detection",
-                            "is_active": True,
-                            "created_at": "2024-01-15T10:30:00Z"
-                        }
-                    ],
-                    "pagination": {
-                        "page": 1,
-                        "page_size": 20,
-                        "total_items": 1,
-                        "total_pages": 1,
-                        "has_next": False,
-                        "has_prev": False
+@router.get(
+    "/users",
+    responses={
+        200: {
+            "description": "Successfully retrieved users with pagination",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "users": [
+                            {
+                                "id": "usr_123456",
+                                "username": "analyst1",
+                                "email": "analyst1@company.com",
+                                "full_name": "John Analyst",
+                                "role": "ANALYST",
+                                "department": "Fraud Detection",
+                                "is_active": True,
+                                "created_at": "2024-01-15T10:30:00Z",
+                            }
+                        ],
+                        "pagination": {
+                            "page": 1,
+                            "page_size": 20,
+                            "total_items": 1,
+                            "total_pages": 1,
+                            "has_next": False,
+                            "has_prev": False,
+                        },
                     }
                 }
-            }
+            },
         }
-    }
-})
+    },
+)
 async def get_users(
     page: int = Query(1, ge=1, description="Page number", example=1),
     page_size: int = Query(20, ge=1, le=100, description="Items per page", example=20),
-    q: Optional[str] = Query(None, description="Search query for username, email, or full name", example="john"),
-    role: Optional[str] = Query(None, description="Filter by role", example="ANALYST"),
-    department: Optional[str] = Query(None, description="Filter by department", example="Fraud Detection"),
-    sort_by: Optional[str] = Query(None, description="Sort field", example="username"),
+    q: str | None = Query(
+        None,
+        description="Search query for username, email, or full name",
+        example="john",
+    ),
+    role: str | None = Query(None, description="Filter by role", example="ANALYST"),
+    department: str | None = Query(
+        None, description="Filter by department", example="Fraud Detection"
+    ),
+    sort_by: str | None = Query(None, description="Sort field", example="username"),
     sort_order: str = Query("asc", description="Sort order (asc/desc)", example="asc"),
-    status: Optional[str] = Query(None, description="Filter by active status", example="active")
+    status: str | None = Query(
+        None, description="Filter by active status", example="active"
+    ),
 ):
     """Get users with standardized pagination and filtering"""
     try:
         # Build filters
         filters = FilterParams(
-            q=q,
-            sort_by=sort_by,
-            sort_order=sort_order,
-            status=status
+            q=q, sort_by=sort_by, sort_order=sort_order, status=status
         )
         if role:
             filters.role = role
@@ -147,50 +159,43 @@ async def get_users(
         ]
 
         pagination_response = PaginationResponse.create(
-            page=page,
-            page_size=page_size,
-            total_items=result["total"]
+            page=page, page_size=page_size, total_items=result["total"]
         )
 
-        return {
-            "users": users_data,
-            "pagination": pagination_response.dict()
-        }
+        return {"users": users_data, "pagination": pagination_response.dict()}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/users/bulk", responses={
-    200: {
-        "description": "Bulk operation completed",
-        "content": {
-            "application/json": {
-                "example": {
-                    "operation": "deactivate",
-                    "total_requested": 3,
-                    "successful": 2,
-                    "failed": 1,
-                    "errors": [
-                        {
-                            "user_id": "usr_789",
-                            "error": "User not found"
-                        }
-                    ]
+@router.post(
+    "/users/bulk",
+    responses={
+        200: {
+            "description": "Bulk operation completed",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "operation": "deactivate",
+                        "total_requested": 3,
+                        "successful": 2,
+                        "failed": 1,
+                        "errors": [{"user_id": "usr_789", "error": "User not found"}],
+                    }
                 }
-            }
+            },
         }
-    }
-})
+    },
+)
 async def bulk_user_operations(
     request: BulkOperationRequest = Body(
         ...,
         example={
             "ids": ["usr_123", "usr_456", "usr_789"],
             "operation": "deactivate",
-            "data": None
-        }
+            "data": None,
+        },
     ),
-    current_user: dict = Depends(auth_service.get_current_user)
+    current_user: dict = Depends(auth_service.get_current_user),
 ):
     """Perform bulk operations on users"""
     try:
@@ -204,7 +209,12 @@ async def bulk_user_operations(
                     if success:
                         successful += 1
                     else:
-                        errors.append({"user_id": user_id, "error": "User not found or delete failed"})
+                        errors.append(
+                            {
+                                "user_id": user_id,
+                                "error": "User not found or delete failed",
+                            }
+                        )
                 except Exception as e:
                     errors.append({"user_id": user_id, "error": str(e)})
 
@@ -215,7 +225,12 @@ async def bulk_user_operations(
                     if success:
                         successful += 1
                     else:
-                        errors.append({"user_id": user_id, "error": "User not found or update failed"})
+                        errors.append(
+                            {
+                                "user_id": user_id,
+                                "error": "User not found or update failed",
+                            }
+                        )
                 except Exception as e:
                     errors.append({"user_id": user_id, "error": str(e)})
 
@@ -226,7 +241,12 @@ async def bulk_user_operations(
                     if success:
                         successful += 1
                     else:
-                        errors.append({"user_id": user_id, "error": "User not found or activation failed"})
+                        errors.append(
+                            {
+                                "user_id": user_id,
+                                "error": "User not found or activation failed",
+                            }
+                        )
                 except Exception as e:
                     errors.append({"user_id": user_id, "error": str(e)})
 
@@ -237,19 +257,26 @@ async def bulk_user_operations(
                     if success:
                         successful += 1
                     else:
-                        errors.append({"user_id": user_id, "error": "User not found or deactivation failed"})
+                        errors.append(
+                            {
+                                "user_id": user_id,
+                                "error": "User not found or deactivation failed",
+                            }
+                        )
                 except Exception as e:
                     errors.append({"user_id": user_id, "error": str(e)})
 
         else:
-            raise HTTPException(status_code=400, detail=f"Unsupported operation: {request.operation}")
+            raise HTTPException(
+                status_code=400, detail=f"Unsupported operation: {request.operation}"
+            )
 
         return BulkOperationResponse(
             operation=request.operation,
             total_requested=len(request.ids),
             successful=successful,
             failed=len(errors),
-            errors=errors if errors else None
+            errors=errors if errors else None,
         )
 
     except HTTPException:
@@ -259,9 +286,7 @@ async def bulk_user_operations(
 
 
 @router.get("/me")
-async def get_current_user(
-    current_user: dict = Depends(auth_service.get_current_user)
-):
+async def get_current_user(current_user: dict = Depends(auth_service.get_current_user)):
     """Get current authenticated user profile"""
     try:
         user = db_service.get_user(current_user["id"])
@@ -278,8 +303,8 @@ async def get_current_user(
             "is_active": user.is_active,
             "created_at": user.created_at.isoformat() if user.created_at else None,
             "last_login": user.last_login.isoformat() if user.last_login else None,
-            "mfa_enabled": getattr(user, 'mfa_enabled', False),
-            "mfa_verified": getattr(user, 'mfa_verified', False),
+            "mfa_enabled": getattr(user, "mfa_enabled", False),
+            "mfa_verified": getattr(user, "mfa_verified", False),
         }
     except HTTPException:
         raise

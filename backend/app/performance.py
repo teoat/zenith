@@ -16,9 +16,10 @@ import io
 import pstats
 import statistics
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Callable, Dict, List
+from typing import Any
 
 
 @dataclass
@@ -116,7 +117,7 @@ class PerformanceProfiler:
         )
 
     @staticmethod
-    def profile_function(func: Callable, *args, **kwargs) -> Dict[str, Any]:
+    def profile_function(func: Callable, *args, **kwargs) -> dict[str, Any]:
         """
         Profile a function and return statistics
 
@@ -148,7 +149,7 @@ class PerformanceProfiler:
         }
 
     @staticmethod
-    def analyze_query_performance(queries: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def analyze_query_performance(queries: list[dict[str, Any]]) -> dict[str, Any]:
         """
         Analyze database query performance
 
@@ -288,7 +289,7 @@ class PerformanceBenchmark:
         }
 
 
-def generate_performance_report(results: List[PerformanceResult]) -> str:
+def generate_performance_report(results: list[PerformanceResult]) -> str:
     """Generate human-readable performance report"""
 
     report = ["=" * 80]
@@ -303,7 +304,7 @@ def generate_performance_report(results: List[PerformanceResult]) -> str:
         report.append(f"Total Requests:     {result.total_requests}")
         report.append(f"Duration:           {result.duration_seconds}s")
         report.append(f"Throughput:         {result.requests_per_second} req/s")
-        report.append(f"\nResponse Times (ms):")
+        report.append("\nResponse Times (ms):")
         report.append(f"  Average:          {result.avg_response_time_ms}")
         report.append(f"  Min:              {result.min_response_time_ms}")
         report.append(f"  Max:              {result.max_response_time_ms}")
@@ -311,7 +312,7 @@ def generate_performance_report(results: List[PerformanceResult]) -> str:
         report.append(f"  P95:              {result.p95_response_time_ms}")
         report.append(f"  P99:              {result.p99_response_time_ms}")
         report.append(
-            f"\nErrors:             {result.error_count} ({result.error_rate}%)"
+            f"\n_errors:             {result.error_count} ({result.error_rate}%)"
         )
 
         # Performance assessment
@@ -324,7 +325,7 @@ def generate_performance_report(results: List[PerformanceResult]) -> str:
         else:
             status = "❌ Needs Optimization"
 
-        report.append(f"\nStatus:             {status}")
+        report.append(f"\n_status:             {status}")
 
     report.append("\n" + "=" * 80)
 
@@ -339,7 +340,7 @@ if __name__ == "__main__":
     print("✓ Function profiling")
     print("✓ Query analysis")
     print("✓ Benchmarking suite")
-    print("\nUsage:")
+    print("\n_usage:")
     print("  from app.performance import PerformanceProfiler")
     print("  result = await profiler.load_test(my_async_func, 1000, 50)")
     print("  print(generate_performance_report([result]))")

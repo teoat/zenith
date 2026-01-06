@@ -1,17 +1,16 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
-
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from typing import Any
 
 from app.services.infrastructure.auth_service import auth_service
 from app.services.infrastructure.notification_service import (
     NotificationChannel,
-    NotificationPriority,
     NotificationType,
     notification_system,
 )
-from core.database import User, get_db
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+
+from core.database import User
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/notifications", tags=["notifications"])
@@ -59,9 +58,9 @@ async def get_notifications(user_id: str, unread_only: bool = False, limit: int 
         }
 
     except Exception as e:
-        logger.error(f"Error getting notifications for user {user_id}: {str(e)}")
+        logger.error(f"Error getting notifications for user {user_id}: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to get notifications: {str(e)}"
+            status_code=500, detail=f"Failed to get notifications: {e!s}"
         )
 
 
@@ -83,9 +82,9 @@ async def mark_notification_read(notification_id: str, user_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error marking notification as read: {str(e)}")
+        logger.error(f"Error marking notification as read: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to mark notification as read: {str(e)}"
+            status_code=500, detail=f"Failed to mark notification as read: {e!s}"
         )
 
 
@@ -110,16 +109,16 @@ async def mark_all_notifications_read(user_id: str):
         }
 
     except Exception as e:
-        logger.error(f"Error marking all notifications as read: {str(e)}")
+        logger.error(f"Error marking all notifications as read: {e!s}")
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to mark all notifications as read: {str(e)}",
+            detail=f"Failed to mark all notifications as read: {e!s}",
         )
 
 
 @router.post("/trigger")
 async def trigger_notification(
-    event_data: Dict[str, Any], background_tasks: BackgroundTasks
+    event_data: dict[str, Any], background_tasks: BackgroundTasks
 ):
     """Manually trigger a notification event"""
     try:
@@ -145,9 +144,9 @@ async def trigger_notification(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error triggering notification: {str(e)}")
+        logger.error(f"Error triggering notification: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to trigger notification: {str(e)}"
+            status_code=500, detail=f"Failed to trigger notification: {e!s}"
         )
 
 
@@ -162,8 +161,8 @@ async def get_notification_stats(
         return {"stats": stats, "timestamp": datetime.now().isoformat()}
 
     except Exception as e:
-        logger.error(f"Error getting notification stats: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
+        logger.error(f"Error getting notification stats: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get stats: {e!s}")
 
 
 @router.post("/test")
@@ -265,9 +264,9 @@ async def test_notification(
         }
 
     except Exception as e:
-        logger.error(f"Error sending test notification: {str(e)}")
+        logger.error(f"Error sending test notification: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to send test notification: {str(e)}"
+            status_code=500, detail=f"Failed to send test notification: {e!s}"
         )
 
 
@@ -284,9 +283,9 @@ async def clear_notifications(user_id: str):
         }
 
     except Exception as e:
-        logger.error(f"Error clearing notifications: {str(e)}")
+        logger.error(f"Error clearing notifications: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to clear notifications: {str(e)}"
+            status_code=500, detail=f"Failed to clear notifications: {e!s}"
         )
 
 
@@ -308,9 +307,9 @@ async def get_notification_types(
         return {"types": types, "total_count": len(types)}
 
     except Exception as e:
-        logger.error(f"Error getting notification types: {str(e)}")
+        logger.error(f"Error getting notification types: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to get notification types: {str(e)}"
+            status_code=500, detail=f"Failed to get notification types: {e!s}"
         )
 
 
@@ -332,7 +331,7 @@ async def get_notification_channels(
         return {"channels": channels, "total_count": len(channels)}
 
     except Exception as e:
-        logger.error(f"Error getting notification channels: {str(e)}")
+        logger.error(f"Error getting notification channels: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to get notification channels: {str(e)}"
+            status_code=500, detail=f"Failed to get notification channels: {e!s}"
         )

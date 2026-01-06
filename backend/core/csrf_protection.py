@@ -4,7 +4,6 @@ import hmac
 import os
 import secrets
 from datetime import datetime, timedelta
-from typing import Dict, Optional, Protocol
 
 import redis
 from fastapi import HTTPException, Request, status
@@ -38,7 +37,7 @@ class CSRFStore(abc.ABC):
 
 class InMemoryCSRFStore(CSRFStore):
     def __init__(self):
-        self._store: Dict[str, datetime] = {}
+        self._store: dict[str, datetime] = {}
 
     def set(self, token: str, expiry_seconds: int) -> None:
         self._store[token] = datetime.now() + timedelta(seconds=expiry_seconds)
@@ -245,7 +244,7 @@ class CSRFProtectionMiddleware(BaseHTTPMiddleware):
         return response
 
 
-def set_csrf_cookie(response: Response, token: Optional[str] = None) -> Response:
+def set_csrf_cookie(response: Response, token: str | None = None) -> Response:
     """
     Set CSRF token cookie on response.
 

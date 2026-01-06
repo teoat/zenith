@@ -1,16 +1,18 @@
 import logging
 import uuid
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any
 
+from app.services.graph_service import relationship_graph
+from app.services.infrastructure.auth_service import auth_service
+from app.services.intelligence.metadata_correlation_service import (
+    MetadataCorrelationEngine,
+)
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.services.infrastructure.auth_service import auth_service
-from app.services.graph_service import relationship_graph
-from app.services.intelligence.metadata_correlation_service import MetadataCorrelationEngine
 from core.database import GraphSnapshot, Relationship, User, get_db
 
 logger = logging.getLogger(__name__)
@@ -19,10 +21,10 @@ router = APIRouter(prefix="/graph", tags=["relationship-graph"])
 
 # Pydantic models for snapshot endpoints
 class GraphSnapshotCreate(BaseModel):
-    nodes: List[Dict[str, Any]] = []
-    links: List[Dict[str, Any]] = []
-    name: Optional[str] = "Untitled Snapshot"
-    description: Optional[str] = None
+    nodes: list[dict[str, Any]] = []
+    links: list[dict[str, Any]] = []
+    name: str | None = "Untitled Snapshot"
+    description: str | None = None
 
 
 class GraphSnapshotResponse(BaseModel):
@@ -69,10 +71,8 @@ async def save_graph_snapshot(
         }
 
     except Exception as e:
-        logger.error(f"Error saving graph snapshot: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to save snapshot: {str(e)}"
-        )
+        logger.error(f"Error saving graph snapshot: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to save snapshot: {e!s}")
 
 
 @router.get("/snapshots/{case_id}")
@@ -102,10 +102,8 @@ async def get_graph_snapshots(case_id: str, db: Session = Depends(get_db)):
         }
 
     except Exception as e:
-        logger.error(f"Error getting graph snapshots: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get snapshots: {str(e)}"
-        )
+        logger.error(f"Error getting graph snapshots: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get snapshots: {e!s}")
 
 
 @router.get("/snapshot/{snapshot_id}")
@@ -136,16 +134,14 @@ async def get_graph_snapshot(snapshot_id: str, db: Session = Depends(get_db)):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error getting graph snapshot: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to get snapshot: {str(e)}")
+        logger.error(f"Error getting graph snapshot: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get snapshot: {e!s}")
 
 
 @router.post("/build")
 async def build_relationship_graph(
     days_back: int = Query(30, description="Number of days to analyze"),
-    entity_types: Optional[List[str]] = Query(
-        None, description="Entity types to include"
-    ),
+    entity_types: list[str] | None = Query(None, description="Entity types to include"),
 ):
     """Build relationship graph from transaction data"""
     try:
@@ -208,8 +204,8 @@ async def build_relationship_graph(
         }
 
     except Exception as e:
-        logger.error(f"Error building relationship graph: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to build graph: {str(e)}")
+        logger.error(f"Error building relationship graph: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to build graph: {e!s}")
 
 
 @router.get("/data")
@@ -222,10 +218,8 @@ async def get_graph_data(current_user: User = Depends(auth_service.get_current_u
         return {"graph_data": graph_data, "stats": stats}
 
     except Exception as e:
-        logger.error(f"Error getting graph data: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get graph data: {str(e)}"
-        )
+        logger.error(f"Error getting graph data: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get graph data: {e!s}")
 
 
 @router.get("/communities")
@@ -270,15 +264,15 @@ async def detect_communities(
         }
 
     except Exception as e:
-        logger.error(f"Error detecting communities: {str(e)}")
+        logger.error(f"Error detecting communities: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to detect communities: {str(e)}"
+            status_code=500, detail=f"Failed to detect communities: {e!s}"
         )
 
 
 @router.get("/central-entities")
 async def get_central_entities(
-    top_n: int = Query(10, description="Number of top entities to return")
+    top_n: int = Query(10, description="Number of top entities to return"),
 ):
     """Get most central entities in the graph"""
     try:
@@ -290,9 +284,9 @@ async def get_central_entities(
         }
 
     except Exception as e:
-        logger.error(f"Error getting central entities: {str(e)}")
+        logger.error(f"Error getting central entities: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to get central entities: {str(e)}"
+            status_code=500, detail=f"Failed to get central entities: {e!s}"
         )
 
 
@@ -311,9 +305,9 @@ async def get_suspicious_patterns(
         }
 
     except Exception as e:
-        logger.error(f"Error finding suspicious patterns: {str(e)}")
+        logger.error(f"Error finding suspicious patterns: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to find suspicious patterns: {str(e)}"
+            status_code=500, detail=f"Failed to find suspicious patterns: {e!s}"
         )
 
 
@@ -363,9 +357,9 @@ async def get_entity_details(entity_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error getting entity details: {str(e)}")
+        logger.error(f"Error getting entity details: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to get entity details: {str(e)}"
+            status_code=500, detail=f"Failed to get entity details: {e!s}"
         )
 
 
@@ -419,8 +413,8 @@ async def find_shortest_path(source: str, target: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error finding shortest path: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to find path: {str(e)}")
+        logger.error(f"Error finding shortest path: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to find path: {e!s}")
 
 
 @router.get("/export/{format}")
@@ -443,8 +437,8 @@ async def export_graph(format: str = "json"):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error exporting graph: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to export graph: {str(e)}")
+        logger.error(f"Error exporting graph: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to export graph: {e!s}")
 
 
 @router.delete("/clear")
@@ -459,14 +453,14 @@ async def clear_graph(current_user: User = Depends(auth_service.get_current_user
         }
 
     except Exception as e:
-        logger.error(f"Error clearing graph: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to clear graph: {str(e)}")
+        logger.error(f"Error clearing graph: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to clear graph: {e!s}")
 
 
 @router.get("/search")
 async def search_graph(
     query: str = Query(..., description="Search query"),
-    node_type: Optional[str] = Query(None, description="Filter by node type"),
+    node_type: str | None = Query(None, description="Filter by node type"),
     limit: int = Query(20, description="Max results"),
 ):
     """Search for nodes in the graph"""
@@ -516,8 +510,8 @@ async def search_graph(
         }
 
     except Exception as e:
-        logger.error(f"Error searching graph: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to search graph: {str(e)}")
+        logger.error(f"Error searching graph: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to search graph: {e!s}")
 
 
 @router.get("/{case_id}/correlations")
@@ -561,7 +555,7 @@ async def get_metadata_correlations(case_id: str, session: Session = Depends(get
         }
 
     except Exception as e:
-        logger.error(f"Error getting metadata correlations: {str(e)}")
+        logger.error(f"Error getting metadata correlations: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to get correlations: {str(e)}"
+            status_code=500, detail=f"Failed to get correlations: {e!s}"
         )

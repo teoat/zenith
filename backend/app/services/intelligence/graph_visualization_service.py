@@ -2,7 +2,7 @@
 Provides snapshot export and basic node/edge extraction.
 """
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class GraphVisualizationService:
@@ -10,8 +10,8 @@ class GraphVisualizationService:
         pass
 
     def extract_nodes_edges(
-        self, case_data: Dict[str, Any]
-    ) -> Dict[str, List[Dict[str, Any]]]:
+        self, case_data: dict[str, Any]
+    ) -> dict[str, list[dict[str, Any]]]:
         # Minimal extraction: treat entities as nodes and relationships as edges if present
         nodes = []
         edges = []
@@ -32,6 +32,6 @@ class GraphVisualizationService:
 
         return {"nodes": nodes, "edges": edges}
 
-    def export_snapshot(self, graph: Dict[str, Any]) -> Dict[str, Any]:
+    def export_snapshot(self, graph: dict[str, Any]) -> dict[str, Any]:
         # Simple JSON-serializable snapshot
         return {"snapshot": graph, "exported_at": None}

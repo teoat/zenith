@@ -3,18 +3,20 @@ Standardized Exception Hierarchy for Zenith API
 Provides consistent error handling across all endpoints
 """
 
+import inspect
 import logging
-from typing import Any, Dict, Optional
 from enum import Enum
 from functools import wraps
-import inspect
+from typing import Any
 
 from fastapi import HTTPException, status
 
 logger = logging.getLogger(__name__)
 
+
 class ErrorCategory(Enum):
     """Categorizes different types of errors for consistent handling"""
+
     VALIDATION = "validation"
     AUTHENTICATION = "authentication"
     AUTHORIZATION = "authorization"
@@ -26,7 +28,10 @@ class ErrorCategory(Enum):
     CONFIGURATION = "configuration"
     SECURITY = "security"
 
-def handle_exceptions(func_name: str, category: ErrorCategory = ErrorCategory.BUSINESS_LOGIC):
+
+def handle_exceptions(
+    func_name: str, category: ErrorCategory = ErrorCategory.BUSINESS_LOGIC
+):
     """
     Decorator for standardized exception handling
 
@@ -36,6 +41,7 @@ def handle_exceptions(func_name: str, category: ErrorCategory = ErrorCategory.BU
         # Function logic here
         pass
     """
+
     def decorator(func):
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -52,7 +58,9 @@ def handle_exceptions(func_name: str, category: ErrorCategory = ErrorCategory.BU
             except ConnectionError as e:
                 raise ServiceUnavailableError("external") from e
             except FileNotFoundError as e:
-                raise APIException(status.HTTP_404_NOT_FOUND, f"File not found: {str(e)}") from e
+                raise APIException(
+                    status.HTTP_404_NOT_FOUND, f"File not found: {e!s}"
+                ) from e
             except Exception as e:
                 # Log unexpected errors and convert to generic API exception
                 logger.error(f"Unexpected error in {func_name}: {e}", exc_info=True)
@@ -60,7 +68,7 @@ def handle_exceptions(func_name: str, category: ErrorCategory = ErrorCategory.BU
                     status.HTTP_500_INTERNAL_SERVER_ERROR,
                     f"An unexpected error occurred in {func_name}",
                     "INTERNAL_ERROR",
-                    {"operation": func_name, "error_type": type(e).__name__}
+                    {"operation": func_name, "error_type": type(e).__name__},
                 ) from e
 
         def sync_wrapper(*args, **kwargs):
@@ -75,14 +83,16 @@ def handle_exceptions(func_name: str, category: ErrorCategory = ErrorCategory.BU
             except ConnectionError as e:
                 raise ServiceUnavailableError("external") from e
             except FileNotFoundError as e:
-                raise APIException(status.HTTP_404_NOT_FOUND, f"File not found: {str(e)}") from e
+                raise APIException(
+                    status.HTTP_404_NOT_FOUND, f"File not found: {e!s}"
+                ) from e
             except Exception as e:
                 logger.error(f"Unexpected error in {func_name}: {e}", exc_info=True)
                 raise APIException(
                     status.HTTP_500_INTERNAL_SERVER_ERROR,
                     f"An unexpected error occurred in {func_name}",
                     "INTERNAL_ERROR",
-                    {"operation": func_name, "error_type": type(e).__name__}
+                    {"operation": func_name, "error_type": type(e).__name__},
                 ) from e
 
         # Return appropriate wrapper based on function type
@@ -101,8 +111,8 @@ class APIException(HTTPException):
         self,
         status_code: int,
         detail: str,
-        error_code: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        error_code: str | None = None,
+        metadata: dict[str, Any] | None = None,
     ):
         super().__init__(status_code=status_code, detail=detail)
         self.error_code = error_code or self.__class__.__name__
@@ -122,7 +132,7 @@ class AuthenticationError(APIException):
     """Invalid or missing authentication"""
 
     def __init__(
-        self, detail: str = "Authentication required", metadata: Optional[Dict] = None
+        self, detail: str = "Authentication required", metadata: dict | None = None
     ):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -145,7 +155,7 @@ class PermissionError(APIException):
     def __init__(
         self,
         detail: str = "Insufficient permissions",
-        required_role: Optional[str] = None,
+        required_role: str | None = None,
     ):
         metadata = {"required_role": required_role} if required_role else {}
         super().__init__(
@@ -189,7 +199,7 @@ class ResourceAlreadyExistsError(APIException):
 class ValidationError(APIException):
     """Input validation failed"""
 
-    def __init__(self, detail: str, field: Optional[str] = None):
+    def __init__(self, detail: str, field: str | None = None):
         metadata = {"field": field} if field else {}
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -202,7 +212,7 @@ class ValidationError(APIException):
 class BusinessRuleViolation(APIException):
     """Business rule validation failed"""
 
-    def __init__(self, detail: str, rule: Optional[str] = None):
+    def __init__(self, detail: str, rule: str | None = None):
         metadata = {"rule": rule} if rule else {}
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -218,7 +228,7 @@ class BusinessRuleViolation(APIException):
 class ServiceUnavailableError(APIException):
     """External service unavailable"""
 
-    def __init__(self, service_name: str, detail: Optional[str] = None):
+    def __init__(self, service_name: str, detail: str | None = None):
         super().__init__(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=detail or f"{service_name} service unavailable",
@@ -230,7 +240,7 @@ class ServiceUnavailableError(APIException):
 class DatabaseError(APIException):
     """Database operation failed"""
 
-    def __init__(self, operation: str, detail: Optional[str] = None):
+    def __init__(self, operation: str, detail: str | None = None):
         super().__init__(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=detail or f"Database {operation} failed",
@@ -245,7 +255,7 @@ class DatabaseError(APIException):
 class RateLimitExceededError(APIException):
     """Rate limit exceeded"""
 
-    def __init__(self, retry_after: Optional[int] = None):
+    def __init__(self, retry_after: int | None = None):
         super().__init__(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail="Rate limit exceeded. Please try again later.",

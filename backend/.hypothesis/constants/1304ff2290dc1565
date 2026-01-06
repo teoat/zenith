@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/v1/monitoring.py
+# hypothesis_version: 6.148.8
+
+[2.5, 200, 300, 503, '/alerts', '/alerts/history', '/alerts/summary', '/health', '/metrics/summary', '/monitoring', '/rules', '/status', '/test', '/test-alert', 'TEST', 'active_alerts', 'api_error_rate', 'api_requests_total', 'api_response_time', 'auth_failure_rate', 'by_severity', 'cache', 'components', 'condition', 'critical', 'database', 'db_slow_query_rate', 'degraded', 'description', 'enabled', 'error', 'healthy', 'id', 'info', 'labels', 'memory_usage', 'message', 'method', 'metric_name', 'metric_value', 'monitoring', 'name', 'path', 'poor', 'recently_resolved', 'resolved_at', 'rule_id', 'severity', 'status', 'system_health', 'threshold', 'total_active', 'triggered_at', 'uptime_seconds', 'warning']

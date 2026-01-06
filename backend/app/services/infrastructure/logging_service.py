@@ -3,15 +3,14 @@ import gzip
 import hashlib
 import json
 import logging
-import os
 import re
 import threading
 import uuid
-from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class LogLevel(Enum):
@@ -41,15 +40,15 @@ class LogEntry:
     level: LogLevel
     category: LogCategory
     message: str
-    user_id: Optional[str] = None
-    session_id: Optional[str] = None
-    request_id: Optional[str] = None
-    ip_address: Optional[str] = None
-    user_agent: Optional[str] = None
-    metadata: Dict[str, Any] = None
-    stack_trace: Optional[str] = None
-    duration_ms: Optional[float] = None
-    error_code: Optional[str] = None
+    user_id: str | None = None
+    session_id: str | None = None
+    request_id: str | None = None
+    ip_address: str | None = None
+    user_agent: str | None = None
+    metadata: dict[str, Any] = None
+    stack_trace: str | None = None
+    duration_ms: float | None = None
+    error_code: str | None = None
 
     def __post_init__(self):
         if self.metadata is None:
@@ -103,7 +102,7 @@ class PIIScrubber:
         return scrubbed_text
 
     @staticmethod
-    def detect_pii_types(text: str) -> List[str]:
+    def detect_pii_types(text: str) -> list[str]:
         """Detect types of PII present in text"""
         detected_types = []
 
@@ -147,7 +146,6 @@ class StructuredLogger:
         max_file_size_mb: int = 100,
         compression: bool = True,
     ):
-
         self.name = name
         self.log_dir = Path(log_dir)
         self.enable_file_logging = enable_file_logging
@@ -170,7 +168,7 @@ class StructuredLogger:
 
         # Telemetry data
         self.telemetry_data = {
-            "start_time": datetime.now(timezone.utc).isoformat(),
+            "start_time": datetime.now(UTC).isoformat(),
             "log_counts": {level.value: 0 for level in LogLevel},
             "error_counts": {},
             "performance_metrics": [],
@@ -215,8 +213,8 @@ class StructuredLogger:
         else:
             handler = RotatingFileHandler(
                 filename=log_file,
-                maxBytes=self.max_file_size_bytes,
-                backupCount=5,
+                max_bytes=self.max_file_size_bytes,
+                backup_count=5,
                 encoding="utf-8",
             )
 
@@ -227,10 +225,10 @@ class StructuredLogger:
         from logging.handlers import BaseRotatingHandler
 
         class CompressedRotatingHandler(BaseRotatingHandler):
-            def __init__(self, filename, maxBytes, backupCount):
+            def __init__(self, filename, max_bytes, backup_count):
                 super().__init__(filename, "a", encoding="utf-8")
-                self.maxBytes = maxBytes
-                self.backupCount = backupCount
+                self.max_bytes = max_bytes
+                self.backup_count = backup_count
 
             def doRollover(self):
                 """Compress old log file on rollover"""
@@ -254,14 +252,14 @@ class StructuredLogger:
                 """Check if rollover is needed"""
                 if self.stream is None:
                     return False
-                if self.maxBytes > 0:
+                if self.max_bytes > 0:
                     pos = self.stream.tell()
-                    if pos >= self.maxBytes:
+                    if pos >= self.max_bytes:
                         return True
                 return False
 
         return CompressedRotatingHandler(
-            filename=log_file, maxBytes=self.max_file_size_bytes, backupCount=5
+            filename=log_file, max_bytes=self.max_file_size_bytes, backup_count=5
         )
 
     def _create_console_formatter(self) -> logging.Formatter:
@@ -279,7 +277,7 @@ class StructuredLogger:
                 # Extract structured data from record
                 log_data = {
                     "timestamp": datetime.fromtimestamp(
-                        record.created, timezone.utc
+                        record.created, UTC
                     ).isoformat(),
                     "level": record.levelname,
                     "logger": record.name,
@@ -360,7 +358,7 @@ class StructuredLogger:
         """Main logging method with structured data"""
         # Create log entry
         log_entry = LogEntry(
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
             level=level,
             category=category,
             message=message,
@@ -427,7 +425,7 @@ class StructuredLogger:
             user_id=user_id,
             metadata={
                 "action": action,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 **kwargs.get("metadata", {}),
             },
         )
@@ -438,7 +436,7 @@ class StructuredLogger:
         endpoint: str,
         status_code: int,
         duration_ms: float,
-        user_id: str = None,
+        user_id: str | None = None,
         **kwargs,
     ):
         """Log API request for performance monitoring"""
@@ -457,7 +455,7 @@ class StructuredLogger:
         )
 
     def log_security_event(
-        self, event_type: str, severity: str, user_id: str = None, **kwargs
+        self, event_type: str, severity: str, user_id: str | None = None, **kwargs
     ):
         """Log security event"""
         self.warning(
@@ -467,13 +465,13 @@ class StructuredLogger:
             metadata={
                 "event_type": event_type,
                 "severity": severity,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 **kwargs.get("metadata", {}),
             },
         )
 
     def log_performance_metric(
-        self, metric_name: str, value: float, unit: str = None, **kwargs
+        self, metric_name: str, value: float, unit: str | None = None, **kwargs
     ):
         """Log performance metric"""
         self.info(
@@ -483,7 +481,7 @@ class StructuredLogger:
                 "metric_name": metric_name,
                 "value": value,
                 "unit": unit,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 **kwargs.get("metadata", {}),
             },
         )
@@ -536,14 +534,14 @@ class StructuredLogger:
                     }
                 )
 
-    def get_telemetry_data(self) -> Dict[str, Any]:
+    def get_telemetry_data(self) -> dict[str, Any]:
         """Get current telemetry data"""
         with self._lock:
             return {
                 **self.telemetry_data,
-                "current_time": datetime.now(timezone.utc).isoformat(),
+                "current_time": datetime.now(UTC).isoformat(),
                 "uptime_hours": (
-                    datetime.now(timezone.utc)
+                    datetime.now(UTC)
                     - datetime.fromisoformat(self.telemetry_data["start_time"])
                 ).total_seconds()
                 / 3600,
@@ -553,7 +551,7 @@ class StructuredLogger:
         """Reset telemetry data"""
         with self._lock:
             self.telemetry_data = {
-                "start_time": datetime.now(timezone.utc).isoformat(),
+                "start_time": datetime.now(UTC).isoformat(),
                 "log_counts": {level.value: 0 for level in LogLevel},
                 "error_counts": {},
                 "performance_metrics": [],
@@ -618,7 +616,7 @@ def log_api_request(
     endpoint: str,
     status_code: int,
     duration_ms: float,
-    user_id: str = None,
+    user_id: str | None = None,
     **kwargs,
 ):
     """Log API request"""
@@ -627,11 +625,15 @@ def log_api_request(
     )
 
 
-def log_security_event(event_type: str, severity: str, user_id: str = None, **kwargs):
+def log_security_event(
+    event_type: str, severity: str, user_id: str | None = None, **kwargs
+):
     """Log security event"""
     structured_logger.log_security_event(event_type, severity, user_id, **kwargs)
 
 
-def log_performance_metric(metric_name: str, value: float, unit: str = None, **kwargs):
+def log_performance_metric(
+    metric_name: str, value: float, unit: str | None = None, **kwargs
+):
     """Log performance metric"""
     structured_logger.log_performance_metric(metric_name, value, unit, **kwargs)

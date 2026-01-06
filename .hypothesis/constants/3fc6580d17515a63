@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/business/investigation_service.py
+# hypothesis_version: 6.148.8
+
+[384, 448, ',', '.', 'CLOSED', 'INVESTIGATING', 'action', 'assign', 'assigned_id', 'assigned_to', 'assignment_strategy', 'auto', 'case_id', 'cases', 'closed', 'context', 'critical', 'description', 'error', 'evaluate', 'evidence_id', 'evidence_processing', 'failed', 'file_path', 'file_size', 'file_type', 'filename', 'general', 'high', 'id', 'investigating', 'job_id', 'limit', 'medium', 'plugin', 'priority', 'processing_status', 'queued', 'reason', 'recommended_priority', 'resolution', 'risk_score', 'should_create', 'should_trigger', 'skip', 'status', 'tags', 'total', 'triggers', 'unassigned', 'uploaded_at', 'uploaded_by', 'uploads', 'value', 'wb']

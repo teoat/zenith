@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/models/asset.py
+# hypothesis_version: 6.148.8
+
+[0.0, 'Case', 'Entity', 'IDR', 'asset_name', 'asset_type', 'assets', 'business', 'case_assets', 'case_id', 'cases.id', 'certificate_number', 'created_at', 'created_by', 'currency', 'description', 'disputed', 'entities.id', 'estimated_value', 'extend_existing', 'financial', 'forfeited', 'id', 'jewelry', 'location', 'metadata', 'other', 'owned_assets', 'owner_entity_id', 'pending', 'real_estate', 'released', 'seized', 'seized_at', 'seized_by', 'seizure_order_number', 'status', 'updated_at', 'users.id', 'valuation_date', 'vehicle', 'verified', 'verified_at', 'verified_by']

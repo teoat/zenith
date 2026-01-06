@@ -2,24 +2,25 @@
 Internationalization utilities for the backend API.
 Provides translation support using Babel.
 """
-import os
+
 import gettext
-from typing import Optional
+import os
 
 # Default locale
-DEFAULT_LOCALE = 'en'
+DEFAULT_LOCALE = "en"
 
 # Available locales
-AVAILABLE_LOCALES = ['en', 'id']
+AVAILABLE_LOCALES = ["en", "id"]
 
 # Translation domain
-DOMAIN = 'messages'
+DOMAIN = "messages"
 
 # Path to locale files
-LOCALES_DIR = os.path.join(os.path.dirname(__file__), 'locales')
+LOCALES_DIR = os.path.join(os.path.dirname(__file__), "locales")
 
 # Cache for translation objects
 _translations = {}
+
 
 def get_translator(locale: str = DEFAULT_LOCALE) -> gettext.GNUTranslations:
     """
@@ -37,10 +38,7 @@ def get_translator(locale: str = DEFAULT_LOCALE) -> gettext.GNUTranslations:
     if locale not in _translations:
         try:
             trans = gettext.translation(
-                DOMAIN,
-                LOCALES_DIR,
-                languages=[locale],
-                fallback=True
+                DOMAIN, LOCALES_DIR, languages=[locale], fallback=True
             )
             _translations[locale] = trans
         except FileNotFoundError:
@@ -52,6 +50,7 @@ def get_translator(locale: str = DEFAULT_LOCALE) -> gettext.GNUTranslations:
                 _translations[locale] = gettext.NullTranslations()
 
     return _translations[locale]
+
 
 def gettext_func(locale: str = DEFAULT_LOCALE):
     """
@@ -66,6 +65,7 @@ def gettext_func(locale: str = DEFAULT_LOCALE):
     translator = get_translator(locale)
     return translator.gettext
 
+
 def ngettext_func(locale: str = DEFAULT_LOCALE):
     """
     Get an ngettext function for the specified locale.
@@ -79,7 +79,8 @@ def ngettext_func(locale: str = DEFAULT_LOCALE):
     translator = get_translator(locale)
     return translator.ngettext
 
-def _(message: str, locale: Optional[str] = None) -> str:
+
+def _(message: str, locale: str | None = None) -> str:
     """
     Translate a message to the current locale.
 
@@ -96,6 +97,7 @@ def _(message: str, locale: Optional[str] = None) -> str:
     translator = get_translator(locale)
     return translator.gettext(message)
 
+
 def lazy_gettext(message: str):
     """
     Lazy gettext for use in class attributes and module-level strings.
@@ -103,13 +105,14 @@ def lazy_gettext(message: str):
     """
     return message
 
+
 # Common translations for error messages
 class ErrorMessages:
     """Common error messages that can be translated"""
 
     @staticmethod
     def unexpected_error(locale: str = DEFAULT_LOCALE) -> str:
-        return _( "An unexpected error occurred", locale)
+        return _("An unexpected error occurred", locale)
 
     @staticmethod
     def network_error(locale: str = DEFAULT_LOCALE) -> str:

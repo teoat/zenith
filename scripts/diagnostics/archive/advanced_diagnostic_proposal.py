@@ -18,16 +18,16 @@ class DiagnosticArea:
     priority: str
     estimated_effort: str
     business_impact: str
-    issues: List[Dict[str, Any]]
-    diagnostic_methods: List[str]
-    success_metrics: List[str]
+    issues: list[dict[str, Any]]
+    diagnostic_methods: list[str]
+    success_metrics: list[str]
 
 
 class AdvancedDiagnosticsProposer:
     """Proposes advanced diagnostic areas beyond the initial investigation"""
 
     def __init__(self):
-        self.diagnostic_areas: Dict[str, DiagnosticArea] = {}
+        self.diagnostic_areas: dict[str, DiagnosticArea] = {}
         self._initialize_advanced_areas()
 
     def _initialize_advanced_areas(self):
@@ -513,23 +513,23 @@ class AdvancedDiagnosticsProposer:
             ],
         )
 
-    def get_all_diagnostic_areas(self) -> Dict[str, DiagnosticArea]:
+    def get_all_diagnostic_areas(self) -> dict[str, DiagnosticArea]:
         """Get all proposed diagnostic areas"""
         return self.diagnostic_areas
 
-    def get_areas_by_priority(self, priority: str) -> List[DiagnosticArea]:
+    def get_areas_by_priority(self, priority: str) -> list[DiagnosticArea]:
         """Get diagnostic areas filtered by priority"""
         return [
             area for area in self.diagnostic_areas.values() if area.priority == priority
         ]
 
-    def get_areas_by_category(self, category: str) -> List[DiagnosticArea]:
+    def get_areas_by_category(self, category: str) -> list[DiagnosticArea]:
         """Get diagnostic areas for a specific category"""
         return [
             area for area in self.diagnostic_areas.values() if area.category == category
         ]
 
-    def generate_comprehensive_plan(self) -> Dict[str, Any]:
+    def generate_comprehensive_plan(self) -> dict[str, Any]:
         """Generate a comprehensive diagnostic plan"""
         total_issues = sum(len(area.issues) for area in self.diagnostic_areas.values())
         total_effort_weeks = sum(

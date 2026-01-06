@@ -4,25 +4,22 @@ Achieving 10/10 reliability with enterprise-grade monitoring and resilience
 """
 
 import asyncio
-import json
-import logging
-import psutil
 import time
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
-from fastapi import Request, Response
-from fastapi.responses import JSONResponse
-
+import psutil
 from app.services.infrastructure.cache_service import cache_manager
 from app.services.infrastructure.storage.database_service import DatabaseService
+
 from core.logging import logger
 
 
 class HealthStatus(Enum):
     """Health check status enumeration"""
+
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     UNHEALTHY = "unhealthy"
@@ -31,27 +28,29 @@ class HealthStatus(Enum):
 
 class HealthCheckType(Enum):
     """Types of health checks"""
-    LIVENESS = "liveness"      # Is service running?
-    READINESS = "readiness"    # Is service ready to serve?
-    DEEP = "deep"             # Comprehensive health assessment
+
+    LIVENESS = "liveness"  # Is service running?
+    READINESS = "readiness"  # Is service ready to serve?
+    DEEP = "deep"  # Comprehensive health assessment
     DEPENDENCY = "dependency"  # Check external dependencies
 
 
 @dataclass
 class HealthCheckResult:
     """Result of a health check"""
+
     check_name: str
     status: HealthStatus
     response_time: float
     message: str
-    details: Optional[Dict[str, Any]] = None
-    timestamp: Optional[datetime] = None
+    details: dict[str, Any] | None = None
+    timestamp: datetime | None = None
 
     def __post_init__(self):
         if self.timestamp is None:
             self.timestamp = datetime.now()
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization"""
         return {
             "check_name": self.check_name,
@@ -59,7 +58,7 @@ class HealthCheckResult:
             "response_time": self.response_time,
             "message": self.message,
             "details": self.details,
-            "timestamp": self.timestamp.isoformat()
+            "timestamp": self.timestamp.isoformat(),
         }
 
 
@@ -68,14 +67,14 @@ class HealthCheckService:
 
     def __init__(self):
         self.database_service = DatabaseService()
-        self.health_history: List[HealthCheckResult] = []
+        self.health_history: list[HealthCheckResult] = []
         self.max_history_size = 1000
 
         # Health thresholds
         self.database_timeout = 5.0  # seconds
-        self.cache_timeout = 2.0     # seconds
+        self.cache_timeout = 2.0  # seconds
         self.memory_threshold = 85.0  # percentage
-        self.cpu_threshold = 90.0     # percentage
+        self.cpu_threshold = 90.0  # percentage
 
         # Dependency status tracking
         self.last_dependency_check = 0
@@ -92,14 +91,14 @@ class HealthCheckService:
                 status=HealthStatus.HEALTHY,
                 response_time=time.time() - start_time,
                 message="Service is alive and responding",
-                details={"uptime": self._get_uptime()}
+                details={"uptime": self._get_uptime()},
             )
         except Exception as e:
             result = HealthCheckResult(
                 check_name="liveness",
                 status=HealthStatus.UNHEALTHY,
                 response_time=time.time() - start_time,
-                message=f"Service liveness check failed: {str(e)}"
+                message=f"Service liveness check failed: {e!s}",
             )
 
         self._add_to_history(result)
@@ -115,15 +114,26 @@ class HealthCheckService:
                 self._check_database_readiness(),
                 self._check_cache_readiness(),
                 self._check_memory_usage(),
-                return_exceptions=True
+                return_exceptions=True,
             )
 
             # Analyze results
-            failed_checks = [c for c in checks if isinstance(c, Exception) or
-                           (isinstance(c, HealthCheckResult) and c.status != HealthStatus.HEALTHY)]
+            failed_checks = [
+                c
+                for c in checks
+                if isinstance(c, Exception)
+                or (
+                    isinstance(c, HealthCheckResult)
+                    and c.status != HealthStatus.HEALTHY
+                )
+            ]
 
             if failed_checks:
-                status = HealthStatus.DEGRADED if len(failed_checks) < len(checks) else HealthStatus.UNHEALTHY
+                status = (
+                    HealthStatus.DEGRADED
+                    if len(failed_checks) < len(checks)
+                    else HealthStatus.UNHEALTHY
+                )
                 message = f"Service ready with {len(failed_checks)} failed dependencies"
             else:
                 status = HealthStatus.HEALTHY
@@ -137,8 +147,8 @@ class HealthCheckService:
                 details={
                     "total_checks": len(checks),
                     "failed_checks": len(failed_checks),
-                    "passed_checks": len(checks) - len(failed_checks)
-                }
+                    "passed_checks": len(checks) - len(failed_checks),
+                },
             )
 
         except Exception as e:
@@ -146,7 +156,7 @@ class HealthCheckService:
                 check_name="readiness",
                 status=HealthStatus.UNHEALTHY,
                 response_time=time.time() - start_time,
-                message=f"Readiness check failed: {str(e)}"
+                message=f"Readiness check failed: {e!s}",
             )
 
         self._add_to_history(result)
@@ -164,7 +174,7 @@ class HealthCheckService:
                 self._check_system_resources(),
                 self._check_dependency_health(),
                 self._check_performance_metrics(),
-                return_exceptions=True
+                return_exceptions=True,
             )
 
             # Analyze all results
@@ -207,8 +217,8 @@ class HealthCheckService:
                     "degraded_checks": degraded_checks,
                     "unhealthy_checks": unhealthy_checks,
                     "total_checks": len(checks),
-                    "check_details": details
-                }
+                    "check_details": details,
+                },
             )
 
         except Exception as e:
@@ -216,7 +226,7 @@ class HealthCheckService:
                 check_name="deep_health",
                 status=HealthStatus.UNHEALTHY,
                 response_time=time.time() - start_time,
-                message=f"Deep health check failed: {str(e)}"
+                message=f"Deep health check failed: {e!s}",
             )
 
         self._add_to_history(result)
@@ -235,14 +245,14 @@ class HealthCheckService:
                 check_name="database_readiness",
                 status=HealthStatus.HEALTHY,
                 response_time=time.time() - start_time,
-                message="Database connection ready"
+                message="Database connection ready",
             )
         except Exception as e:
             return HealthCheckResult(
                 check_name="database_readiness",
                 status=HealthStatus.UNHEALTHY,
                 response_time=time.time() - start_time,
-                message=f"Database readiness check failed: {str(e)}"
+                message=f"Database readiness check failed: {e!s}",
             )
 
     async def _check_cache_readiness(self) -> HealthCheckResult:
@@ -261,14 +271,14 @@ class HealthCheckService:
                 check_name="cache_readiness",
                 status=HealthStatus.HEALTHY,
                 response_time=time.time() - start_time,
-                message="Cache system ready"
+                message="Cache system ready",
             )
         except Exception as e:
             return HealthCheckResult(
                 check_name="cache_readiness",
                 status=HealthStatus.UNHEALTHY,
                 response_time=time.time() - start_time,
-                message=f"Cache readiness check failed: {str(e)}"
+                message=f"Cache readiness check failed: {e!s}",
             )
 
     async def _check_memory_usage(self) -> HealthCheckResult:
@@ -294,15 +304,15 @@ class HealthCheckService:
                     "memory_percent": memory_percent,
                     "memory_used_gb": memory.used / (1024**3),
                     "memory_total_gb": memory.total / (1024**3),
-                    "threshold": self.memory_threshold
-                }
+                    "threshold": self.memory_threshold,
+                },
             )
         except Exception as e:
             return HealthCheckResult(
                 check_name="memory_usage",
                 status=HealthStatus.UNKNOWN,
                 response_time=time.time() - start_time,
-                message=f"Memory check failed: {str(e)}"
+                message=f"Memory check failed: {e!s}",
             )
 
     async def _check_database_health(self) -> HealthCheckResult:
@@ -335,15 +345,15 @@ class HealthCheckService:
                     "pool_status": pool_status,
                     "recent_transactions": recent_tx_count,
                     "active_cases": active_cases,
-                    "response_time": time.time() - start_time
-                }
+                    "response_time": time.time() - start_time,
+                },
             )
         except Exception as e:
             return HealthCheckResult(
                 check_name="database_health",
                 status=HealthStatus.UNHEALTHY,
                 response_time=time.time() - start_time,
-                message=f"Database health check failed: {str(e)}"
+                message=f"Database health check failed: {e!s}",
             )
 
     async def _check_cache_health(self) -> HealthCheckResult:
@@ -366,14 +376,14 @@ class HealthCheckService:
                 status=status,
                 response_time=time.time() - start_time,
                 message=message,
-                details=stats
+                details=stats,
             )
         except Exception as e:
             return HealthCheckResult(
                 check_name="cache_health",
                 status=HealthStatus.UNHEALTHY,
                 response_time=time.time() - start_time,
-                message=f"Cache health check failed: {str(e)}"
+                message=f"Cache health check failed: {e!s}",
             )
 
     async def _check_system_resources(self) -> HealthCheckResult:
@@ -382,7 +392,7 @@ class HealthCheckService:
         try:
             cpu_percent = psutil.cpu_percent(interval=1)
             memory = psutil.virtual_memory()
-            disk = psutil.disk_usage('/')
+            disk = psutil.disk_usage("/")
 
             issues = []
 
@@ -410,15 +420,15 @@ class HealthCheckService:
                     "memory_percent": memory.percent,
                     "disk_percent": disk.percent,
                     "cpu_threshold": self.cpu_threshold,
-                    "memory_threshold": self.memory_threshold
-                }
+                    "memory_threshold": self.memory_threshold,
+                },
             )
         except Exception as e:
             return HealthCheckResult(
                 check_name="system_resources",
                 status=HealthStatus.UNKNOWN,
                 response_time=time.time() - start_time,
-                message=f"System resource check failed: {str(e)}"
+                message=f"System resource check failed: {e!s}",
             )
 
     async def _check_dependency_health(self) -> HealthCheckResult:
@@ -432,7 +442,7 @@ class HealthCheckService:
                 check_name="dependency_health",
                 status=HealthStatus.HEALTHY,
                 response_time=time.time() - start_time,
-                message="Dependency check skipped (recently checked)"
+                message="Dependency check skipped (recently checked)",
             )
 
         self.last_dependency_check = now
@@ -442,7 +452,7 @@ class HealthCheckService:
             dependencies = [
                 ("database", self._check_database_dependency),
                 ("cache", self._check_cache_dependency),
-                ("external_apis", self._check_external_api_dependency)
+                ("external_apis", self._check_external_api_dependency),
             ]
 
             results = []
@@ -451,11 +461,9 @@ class HealthCheckService:
                     result = await check_func()
                     results.append(result)
                 except Exception as e:
-                    results.append({
-                        "name": dep_name,
-                        "status": "failed",
-                        "error": str(e)
-                    })
+                    results.append(
+                        {"name": dep_name, "status": "failed", "error": str(e)}
+                    )
 
             failed_deps = [r for r in results if r.get("status") == "failed"]
 
@@ -471,14 +479,14 @@ class HealthCheckService:
                 status=status,
                 response_time=time.time() - start_time,
                 message=message,
-                details={"dependencies": results}
+                details={"dependencies": results},
             )
         except Exception as e:
             return HealthCheckResult(
                 check_name="dependency_health",
                 status=HealthStatus.UNHEALTHY,
                 response_time=time.time() - start_time,
-                message=f"Dependency health check failed: {str(e)}"
+                message=f"Dependency health check failed: {e!s}",
             )
 
     async def _check_performance_metrics(self) -> HealthCheckResult:
@@ -487,24 +495,31 @@ class HealthCheckService:
         try:
             # Get recent performance data
             recent_health_checks = [
-                check for check in self.health_history[-10:]  # Last 10 checks
+                check
+                for check in self.health_history[-10:]  # Last 10 checks
                 if check.check_name == "readiness"
             ]
 
             if recent_health_checks:
-                avg_response_time = sum(c.response_time for c in recent_health_checks) / len(recent_health_checks)
+                avg_response_time = sum(
+                    c.response_time for c in recent_health_checks
+                ) / len(recent_health_checks)
                 max_response_time = max(c.response_time for c in recent_health_checks)
 
                 # Performance thresholds
                 if max_response_time > 2.0:  # Over 2 seconds
                     status = HealthStatus.DEGRADED
-                    message = f"Performance degraded: max response {max_response_time:.2f}s"
+                    message = (
+                        f"Performance degraded: max response {max_response_time:.2f}s"
+                    )
                 elif avg_response_time > 0.5:  # Over 500ms average
                     status = HealthStatus.DEGRADED
                     message = f"Slow performance: avg response {avg_response_time:.2f}s"
                 else:
                     status = HealthStatus.HEALTHY
-                    message = f"Performance healthy: avg response {avg_response_time:.2f}s"
+                    message = (
+                        f"Performance healthy: avg response {avg_response_time:.2f}s"
+                    )
             else:
                 status = HealthStatus.UNKNOWN
                 message = "Insufficient performance data"
@@ -519,18 +534,18 @@ class HealthCheckService:
                 details={
                     "avg_response_time": avg_response_time,
                     "max_response_time": max_response_time,
-                    "checks_analyzed": len(recent_health_checks)
-                }
+                    "checks_analyzed": len(recent_health_checks),
+                },
             )
         except Exception as e:
             return HealthCheckResult(
                 check_name="performance_metrics",
                 status=HealthStatus.UNKNOWN,
                 response_time=time.time() - start_time,
-                message=f"Performance metrics check failed: {str(e)}"
+                message=f"Performance metrics check failed: {e!s}",
             )
 
-    async def _check_database_dependency(self) -> Dict[str, Any]:
+    async def _check_database_dependency(self) -> dict[str, Any]:
         """Check database dependency"""
         try:
             session = self.database_service.get_db()
@@ -540,7 +555,7 @@ class HealthCheckService:
         except Exception as e:
             return {"name": "database", "status": "failed", "error": str(e)}
 
-    async def _check_cache_dependency(self) -> Dict[str, Any]:
+    async def _check_cache_dependency(self) -> dict[str, Any]:
         """Check cache dependency"""
         try:
             await cache_manager.set("health", "test", "value", ttl_seconds=10)
@@ -548,11 +563,15 @@ class HealthCheckService:
         except Exception as e:
             return {"name": "cache", "status": "failed", "error": str(e)}
 
-    async def _check_external_api_dependency(self) -> Dict[str, Any]:
+    async def _check_external_api_dependency(self) -> dict[str, Any]:
         """Check external API dependencies"""
         # This would check external services like payment processors, etc.
         # For now, return healthy as we don't have external APIs defined
-        return {"name": "external_apis", "status": "healthy", "note": "No external APIs configured"}
+        return {
+            "name": "external_apis",
+            "status": "healthy",
+            "note": "No external APIs configured",
+        }
 
     def _get_uptime(self) -> str:
         """Get service uptime"""
@@ -563,22 +582,28 @@ class HealthCheckService:
         """Add result to health history"""
         self.health_history.append(result)
         if len(self.health_history) > self.max_history_size:
-            self.health_history = self.health_history[-self.max_history_size:]
+            self.health_history = self.health_history[-self.max_history_size :]
 
-    def get_health_history(self, limit: int = 50) -> List[HealthCheckResult]:
+    def get_health_history(self, limit: int = 50) -> list[HealthCheckResult]:
         """Get recent health check history"""
         return self.health_history[-limit:]
 
-    def get_overall_health_status(self) -> Dict[str, Any]:
+    def get_overall_health_status(self) -> dict[str, Any]:
         """Get overall health status summary"""
         if not self.health_history:
             return {"status": "unknown", "message": "No health checks performed"}
 
         recent_checks = self.health_history[-10:]  # Last 10 checks
 
-        healthy_count = sum(1 for c in recent_checks if c.status == HealthStatus.HEALTHY)
-        degraded_count = sum(1 for c in recent_checks if c.status == HealthStatus.DEGRADED)
-        unhealthy_count = sum(1 for c in recent_checks if c.status == HealthStatus.UNHEALTHY)
+        healthy_count = sum(
+            1 for c in recent_checks if c.status == HealthStatus.HEALTHY
+        )
+        degraded_count = sum(
+            1 for c in recent_checks if c.status == HealthStatus.DEGRADED
+        )
+        unhealthy_count = sum(
+            1 for c in recent_checks if c.status == HealthStatus.UNHEALTHY
+        )
 
         if unhealthy_count > 0:
             overall_status = "unhealthy"
@@ -597,7 +622,9 @@ class HealthCheckService:
             "healthy": healthy_count,
             "degraded": degraded_count,
             "unhealthy": unhealthy_count,
-            "last_check": recent_checks[-1].timestamp.isoformat() if recent_checks else None
+            "last_check": recent_checks[-1].timestamp.isoformat()
+            if recent_checks
+            else None,
         }
 
 
@@ -606,14 +633,18 @@ class DistributedTracer:
     """Distributed tracing implementation for request correlation"""
 
     def __init__(self):
-        self.active_traces: Dict[str, Dict[str, Any]] = {}
-        self.completed_traces: List[Dict[str, Any]] = []
+        self.active_traces: dict[str, dict[str, Any]] = {}
+        self.completed_traces: list[dict[str, Any]] = []
         self.max_completed_traces = 10000
 
-    def start_trace(self, trace_id: Optional[str] = None, parent_span_id: Optional[str] = None) -> str:
+    def start_trace(
+        self, trace_id: str | None = None, parent_span_id: str | None = None
+    ) -> str:
         """Start a new trace or continue existing one"""
         if not trace_id:
-            trace_id = f"trace_{int(time.time() * 1000000)}_{hash(str(time.time())) % 10000}"
+            trace_id = (
+                f"trace_{int(time.time() * 1000000)}_{hash(str(time.time())) % 10000}"
+            )
 
         span_id = f"span_{int(time.time() * 1000000)}_{hash(trace_id) % 10000}"
 
@@ -624,17 +655,14 @@ class DistributedTracer:
             "start_time": time.time(),
             "spans": [],
             "tags": {},
-            "status": "active"
+            "status": "active",
         }
 
         self.active_traces[trace_id] = trace_data
         return trace_id
 
     def start_span(
-        self,
-        trace_id: str,
-        span_name: str,
-        parent_span_id: Optional[str] = None
+        self, trace_id: str, span_name: str, parent_span_id: str | None = None
     ) -> str:
         """Start a new span within a trace"""
         if trace_id not in self.active_traces:
@@ -648,13 +676,13 @@ class DistributedTracer:
             "parent_span_id": parent_span_id,
             "start_time": time.time(),
             "tags": {},
-            "events": []
+            "events": [],
         }
 
         self.active_traces[trace_id]["spans"].append(span_data)
         return span_id
 
-    def end_span(self, trace_id: str, span_id: str, tags: Optional[Dict[str, Any]] = None):
+    def end_span(self, trace_id: str, span_id: str, tags: dict[str, Any] | None = None):
         """End a span"""
         if trace_id not in self.active_traces:
             return
@@ -668,7 +696,12 @@ class DistributedTracer:
                     span["tags"].update(tags)
                 break
 
-    def end_trace(self, trace_id: str, status: str = "completed", tags: Optional[Dict[str, Any]] = None):
+    def end_trace(
+        self,
+        trace_id: str,
+        status: str = "completed",
+        tags: dict[str, Any] | None = None,
+    ):
         """End a trace"""
         if trace_id not in self.active_traces:
             return
@@ -687,9 +720,15 @@ class DistributedTracer:
 
         # Maintain size limit
         if len(self.completed_traces) > self.max_completed_traces:
-            self.completed_traces = self.completed_traces[-self.max_completed_traces:]
+            self.completed_traces = self.completed_traces[-self.max_completed_traces :]
 
-    def add_span_event(self, trace_id: str, span_id: str, event_name: str, attributes: Optional[Dict[str, Any]] = None):
+    def add_span_event(
+        self,
+        trace_id: str,
+        span_id: str,
+        event_name: str,
+        attributes: dict[str, Any] | None = None,
+    ):
         """Add an event to a span"""
         if trace_id not in self.active_traces:
             return
@@ -697,25 +736,27 @@ class DistributedTracer:
         trace = self.active_traces[trace_id]
         for span in trace["spans"]:
             if span["span_id"] == span_id:
-                span["events"].append({
-                    "name": event_name,
-                    "timestamp": time.time(),
-                    "attributes": attributes or {}
-                })
+                span["events"].append(
+                    {
+                        "name": event_name,
+                        "timestamp": time.time(),
+                        "attributes": attributes or {},
+                    }
+                )
                 break
 
-    def get_trace(self, trace_id: str) -> Optional[Dict[str, Any]]:
+    def get_trace(self, trace_id: str) -> dict[str, Any] | None:
         """Get a completed trace"""
         for trace in self.completed_traces:
             if trace["trace_id"] == trace_id:
                 return trace
         return self.active_traces.get(trace_id)
 
-    def get_recent_traces(self, limit: int = 100) -> List[Dict[str, Any]]:
+    def get_recent_traces(self, limit: int = 100) -> list[dict[str, Any]]:
         """Get recent completed traces"""
         return self.completed_traces[-limit:]
 
-    def get_trace_summary(self, trace_id: str) -> Optional[Dict[str, Any]]:
+    def get_trace_summary(self, trace_id: str) -> dict[str, Any] | None:
         """Get a summary of a trace"""
         trace = self.get_trace(trace_id)
         if not trace:
@@ -727,7 +768,9 @@ class DistributedTracer:
 
         if spans:
             span_durations = [s.get("duration", 0) for s in spans if "duration" in s]
-            avg_span_duration = sum(span_durations) / len(span_durations) if span_durations else 0
+            avg_span_duration = (
+                sum(span_durations) / len(span_durations) if span_durations else 0
+            )
             max_span_duration = max(span_durations) if span_durations else 0
         else:
             avg_span_duration = 0
@@ -742,7 +785,7 @@ class DistributedTracer:
             "max_span_duration": max_span_duration,
             "start_time": trace.get("start_time"),
             "end_time": trace.get("end_time"),
-            "tags": trace.get("tags", {})
+            "tags": trace.get("tags", {}),
         }
 
 
@@ -752,19 +795,35 @@ class GracefulDegradationService:
 
     def __init__(self):
         self.degradation_levels = {
-            "full": {"description": "All features available", "enabled_features": ["all"]},
-            "degraded": {"description": "Core features only", "enabled_features": ["cases", "evidence", "auth"]},
-            "minimal": {"description": "Critical features only", "enabled_features": ["auth", "health"]},
-            "emergency": {"description": "Emergency mode", "enabled_features": ["health"]}
+            "full": {
+                "description": "All features available",
+                "enabled_features": ["all"],
+            },
+            "degraded": {
+                "description": "Core features only",
+                "enabled_features": ["cases", "evidence", "auth"],
+            },
+            "minimal": {
+                "description": "Critical features only",
+                "enabled_features": ["auth", "health"],
+            },
+            "emergency": {
+                "description": "Emergency mode",
+                "enabled_features": ["health"],
+            },
         }
         self.current_level = "full"
-        self.failure_counts: Dict[str, int] = {}
+        self.failure_counts: dict[str, int] = {}
 
-    def assess_system_health(self, health_checks: List[HealthCheckResult]) -> str:
+    def assess_system_health(self, health_checks: list[HealthCheckResult]) -> str:
         """Assess system health and determine appropriate degradation level"""
 
-        unhealthy_checks = sum(1 for check in health_checks if check.status == HealthStatus.UNHEALTHY)
-        degraded_checks = sum(1 for check in health_checks if check.status == HealthStatus.DEGRADED)
+        unhealthy_checks = sum(
+            1 for check in health_checks if check.status == HealthStatus.UNHEALTHY
+        )
+        degraded_checks = sum(
+            1 for check in health_checks if check.status == HealthStatus.DEGRADED
+        )
         total_checks = len(health_checks)
 
         unhealthy_ratio = unhealthy_checks / total_checks if total_checks > 0 else 0
@@ -796,7 +855,7 @@ class GracefulDegradationService:
 
         return "all" in enabled_features or feature in enabled_features
 
-    def get_degradation_status(self) -> Dict[str, Any]:
+    def get_degradation_status(self) -> dict[str, Any]:
         """Get current degradation status"""
         current_config = self.degradation_levels.get(self.current_level, {})
 
@@ -804,7 +863,7 @@ class GracefulDegradationService:
             "current_level": self.current_level,
             "description": current_config.get("description", "Unknown"),
             "enabled_features": current_config.get("enabled_features", []),
-            "available_levels": list(self.degradation_levels.keys())
+            "available_levels": list(self.degradation_levels.keys()),
         }
 
 
@@ -815,13 +874,13 @@ graceful_degradation_service = GracefulDegradationService()
 
 # Export for use in main.py
 __all__ = [
-    'HealthStatus',
-    'HealthCheckType',
-    'HealthCheckResult',
-    'HealthCheckService',
-    'DistributedTracer',
-    'GracefulDegradationService',
-    'health_check_service',
-    'distributed_tracer',
-    'graceful_degradation_service'
+    "DistributedTracer",
+    "GracefulDegradationService",
+    "HealthCheckResult",
+    "HealthCheckService",
+    "HealthCheckType",
+    "HealthStatus",
+    "distributed_tracer",
+    "graceful_degradation_service",
+    "health_check_service",
 ]

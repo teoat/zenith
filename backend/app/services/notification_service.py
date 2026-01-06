@@ -1,23 +1,26 @@
-from typing import Dict, Any, List
 import logging
-from core.messaging import mq_service, MessageQueueInterface
 from datetime import datetime
+from typing import Any
+
+from core.messaging import MessageQueueInterface, mq_service
 
 logger = logging.getLogger(__name__)
+
 
 class NotificationService:
     """
     Decoupled Notification Service using Message Queue.
     Handles email, SMS, and push notifications via async messaging.
     """
+
     def __init__(self, mq: MessageQueueInterface = mq_service):
         self.mq = mq
-        self._templates: Dict[str, str] = {
+        self._templates: dict[str, str] = {
             "welcome": "Welcome {name} to Zenith Platform!",
             "alert": "SECURITY ALERT: {details}",
-            "case_update": "Case {case_id} has been updated."
+            "case_update": "Case {case_id} has been updated.",
         }
-    
+
     async def initialize(self):
         """Subscribe to notification topics"""
         await self.mq.connect()
@@ -25,36 +28,40 @@ class NotificationService:
         await self.mq.subscribe("notifications.sms", self._handle_sms)
         logger.info("[NotificationService] Initialized and subscribed to topics")
 
-    async def send_notification(self, type: str, recipient: str, template: str, context: Dict[str, Any]):
+    async def send_notification(
+        self, type: str, recipient: str, template: str, context: dict[str, Any]
+    ):
         """Publish notification request to MQ"""
         payload = {
             "type": type,
             "recipient": recipient,
             "template": template,
             "context": context,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
         await self.mq.publish(f"notifications.{type}", payload)
 
-    async def _handle_email(self, data: Dict[str, Any]):
+    async def _handle_email(self, data: dict[str, Any]):
         """Process email notification from MQ using Plugins"""
         recipient = data.get("recipient")
         template_key = data.get("template")
         context = data.get("context", {})
-        
+
         template = self._templates.get(template_key, "Notification: {details}")
         message = template.format(**context)
-        
+
         logger.info(f"[EMAIL] Processing for {recipient}")
 
         # Integration with Plugin System
         from core.database import SessionLocal
         from core.plugin_system.registry import plugin_registry_service
-        
+
         db = SessionLocal()
         try:
-            plugins = await plugin_registry_service.get_plugins_by_capability("notification", db)
-            
+            plugins = await plugin_registry_service.get_plugins_by_capability(
+                "notification", db
+            )
+
             if plugins:
                 for plugin in plugins:
                     try:
@@ -64,28 +71,35 @@ class NotificationService:
                         plugin_input = {
                             "to": recipient,
                             "subject": f"Notification: {template_key}",
-                            "body": message
+                            "body": message,
                         }
-                        
+
                         result = await plugin.execute(plugin_input)
-                        logger.info(f"Notification plugin {plugin.metadata.name} executed: {result}")
+                        logger.info(
+                            f"Notification plugin {plugin.metadata.name} executed: {result}"
+                        )
                     except Exception as pe:
-                        logger.error(f"Plugin {plugin.metadata.name} failed to send email: {pe}")
+                        logger.error(
+                            f"Plugin {plugin.metadata.name} failed to send email: {pe}"
+                        )
             else:
-                logger.warning("No notification plugins active. Fallback to basic logging.")
+                logger.warning(
+                    "No notification plugins active. Fallback to basic logging."
+                )
                 logger.info(f"[EMAIL FALLBACK] Sending to {recipient}: {message}")
-                
+
         except Exception as e:
             logger.error(f"Failed to process email plugins: {e}")
         finally:
             db.close()
 
-    async def _handle_sms(self, data: Dict[str, Any]):
+    async def _handle_sms(self, data: dict[str, Any]):
         """Process SMS notification from MQ"""
         recipient = data.get("recipient")
         context = data.get("context", {})
         logger.info(f"[SMS] Sending to {recipient}: {context}")
         # Integration with Twilio/SNS would go here
+
 
 # Singleton
 notification_service = NotificationService()

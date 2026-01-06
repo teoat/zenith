@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/ai_training.py
+# hypothesis_version: 6.148.8
+
+[0.0, 100.0, 400, 403, 404, 500, 1000, 1024, '/ai/training', '/cancel/{job_id}', '/start', '/status/{job_id}', 'AI Training', 'Training job started', 'admin', 'ai_training_started', 'analyst', 'batch_size', 'cancel_training', 'endpoint', 'epochs', 'error', 'get_model_metrics', 'get_training_status', 'job_id', 'message', 'model_name', 'start_training', 'training', 'user_id']

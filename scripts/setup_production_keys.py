@@ -4,7 +4,6 @@ Production Key Generation Script
 Generates cryptographically secure random keys for production environment
 """
 
-import os
 import secrets
 import string
 from pathlib import Path
@@ -43,7 +42,7 @@ def create_production_env_file():
         print("❌ Template file .env.production.template not found")
         return False
 
-    with open(template_path, "r") as f:
+    with open(template_path) as f:
         template_content = f.read()
 
     # Replace placeholders
@@ -117,7 +116,7 @@ def validate_production_config():
         return issues
 
     # Read and validate
-    with open(prod_env_path, "r") as f:
+    with open(prod_env_path) as f:
         content = f.read()
 
     # Check for required keys
@@ -144,9 +143,8 @@ def validate_production_config():
             key = key.strip()
             value = value.strip()
 
-            if key in required_keys:
-                if len(value) < 32:
-                    issues.append(f"Key too short: {key} (length: {len(value)})")
+            if key in required_keys and len(value) < 32:
+                issues.append(f"Key too short: {key} (length: {len(value)})")
 
     if not issues:
         print("✅ Production configuration validation passed")

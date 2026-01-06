@@ -7,12 +7,10 @@ across multiple API instances.
 
 import time
 from collections import defaultdict
-from typing import Dict, Optional
 
 from fastapi import HTTPException, Request, status
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from core.config import settings
 from core.logging import logger
 
 # Rate limit configurations
@@ -21,25 +19,24 @@ RATE_LIMITS = {
     "/api/v1/auth/login": {"requests": 5, "window": 300},  # 5 requests per 5 minutes
     "/api/v1/auth/register": {"requests": 3, "window": 3600},  # 3 requests per hour
     "/api/v1/auth/token": {"requests": 10, "window": 300},  # 10 requests per 5 minutes
-
     # API endpoints - moderate limits
     "/api/v1": {"requests": 100, "window": 60},  # 100 requests per minute
     "/api/v1/cases": {"requests": 50, "window": 60},  # 50 requests per minute
     "/api/v1/transactions": {"requests": 30, "window": 60},  # 30 requests per minute
-
     # File uploads - restrictive limits
     "/api/v1/evidence/upload": {"requests": 10, "window": 3600},  # 10 uploads per hour
-    "/api/v1/transactions/upload": {"requests": 5, "window": 3600},  # 5 uploads per hour
-
+    "/api/v1/transactions/upload": {
+        "requests": 5,
+        "window": 3600,
+    },  # 5 uploads per hour
     # Search endpoints - moderate limits
     "/api/v1/search": {"requests": 20, "window": 60},  # 20 searches per minute
-
     # Default for unmatched routes
     "default": {"requests": 100, "window": 60},  # 100 requests per minute
 }
 
 # In-memory store for rate limiting (use Redis in production)
-rate_limit_store: Dict[str, list] = defaultdict(list)
+rate_limit_store: dict[str, list] = defaultdict(list)
 
 
 class RateLimitExceeded(HTTPException):
@@ -73,13 +70,14 @@ def get_client_identifier(request: Request) -> str:
         # We could decode the token here, but for rate limiting
         # we'll use a hash of the token + IP for now
         import hashlib
+
         token_hash = hashlib.sha256(auth_header.encode()).hexdigest()[:16]
         return f"{client_ip}:{token_hash}"
 
     return client_ip
 
 
-def get_rate_limit_for_path(path: str) -> Dict[str, int]:
+def get_rate_limit_for_path(path: str) -> dict[str, int]:
     """
     Get rate limit configuration for a given path.
     Uses longest prefix matching for nested routes.
@@ -115,7 +113,9 @@ def is_rate_limited(client_id: str, path: str) -> tuple[bool, int]:
     client_requests = rate_limit_store[client_id]
 
     # Remove requests outside the current window
-    client_requests[:] = [req_time for req_time in client_requests if req_time > window_start]
+    client_requests[:] = [
+        req_time for req_time in client_requests if req_time > window_start
+    ]
 
     # Check if limit exceeded
     if len(client_requests) >= max_requests:
@@ -145,7 +145,9 @@ def _cleanup_old_entries():
         client_requests = rate_limit_store[client_id]
         # Remove requests older than the largest window
         cutoff_time = current_time - max_window
-        client_requests[:] = [req_time for req_time in client_requests if req_time > cutoff_time]
+        client_requests[:] = [
+            req_time for req_time in client_requests if req_time > cutoff_time
+        ]
 
         # Remove empty client entries
         if not client_requests:
@@ -215,7 +217,7 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
 
 
 # Helper functions for testing and monitoring
-def get_rate_limit_status(client_id: str, path: str) -> Dict:
+def get_rate_limit_status(client_id: str, path: str) -> dict:
     """
     Get current rate limit status for monitoring/debugging.
     """
@@ -225,7 +227,9 @@ def get_rate_limit_status(client_id: str, path: str) -> Dict:
     window_start = current_time - limits["window"]
 
     # Count requests in current window
-    active_requests = [req_time for req_time in client_requests if req_time > window_start]
+    active_requests = [
+        req_time for req_time in client_requests if req_time > window_start
+    ]
 
     return {
         "client_id": client_id,
@@ -233,11 +237,13 @@ def get_rate_limit_status(client_id: str, path: str) -> Dict:
         "limits": limits,
         "current_requests": len(active_requests),
         "remaining_requests": max(0, limits["requests"] - len(active_requests)),
-        "window_remaining_seconds": int(limits["window"] - (current_time - window_start)),
+        "window_remaining_seconds": int(
+            limits["window"] - (current_time - window_start)
+        ),
     }
 
 
-def reset_rate_limits(client_id: Optional[str] = None):
+def reset_rate_limits(client_id: str | None = None):
     """
     Reset rate limits for a specific client or all clients (admin function).
     """

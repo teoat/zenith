@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Run audit log verification and print a short report."""
+
 from backend.services.audit_verifier import verify_all
 
 

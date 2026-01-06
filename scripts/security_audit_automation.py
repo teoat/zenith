@@ -4,12 +4,12 @@ Automated Security Audit and Update Script
 Performs regular security assessments and dependency updates
 """
 
+import json
 import subprocess
 import sys
-import json
 from datetime import datetime, timedelta
 from pathlib import Path
-import os
+
 
 def run_command(cmd, description, capture_output=True):
     """Run a command and return results"""
@@ -18,7 +18,9 @@ def run_command(cmd, description, capture_output=True):
 
     try:
         if capture_output:
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=".")
+            result = subprocess.run(
+                cmd, shell=True, capture_output=True, text=True, cwd="."
+            )
         else:
             result = subprocess.run(cmd, shell=True, cwd=".")
 
@@ -35,6 +37,7 @@ def run_command(cmd, description, capture_output=True):
         print(f"❌ ERROR: {e}")
         return False, str(e)
 
+
 def security_dependency_check():
     """Check for security vulnerabilities in dependencies"""
     print("\n🔒 SECURITY DEPENDENCY AUDIT")
@@ -42,26 +45,34 @@ def security_dependency_check():
 
     try:
         # Install safety if not available
-        subprocess.run([sys.executable, "-m", "pip", "install", "safety"],
-                      capture_output=True)
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "safety"], capture_output=True
+        )
 
         # Run safety check
         success, output = run_command(
             "safety check --full-report --output json",
-            "Running dependency security scan"
+            "Running dependency security scan",
         )
 
         if success:
             # Parse and analyze results
             try:
                 results = json.loads(output)
-                vulnerabilities = [v for v in results.get('vulnerabilities', [])
-                                 if v.get('severity') in ['high', 'critical']]
+                vulnerabilities = [
+                    v
+                    for v in results.get("vulnerabilities", [])
+                    if v.get("severity") in ["high", "critical"]
+                ]
 
                 if vulnerabilities:
-                    print(f"🚨 Found {len(vulnerabilities)} high/critical vulnerabilities:")
+                    print(
+                        f"🚨 Found {len(vulnerabilities)} high/critical vulnerabilities:"
+                    )
                     for vuln in vulnerabilities[:5]:  # Show first 5
-                        print(f"  - {vuln['package']} {vuln['vulnerable_spec']}: {vuln['advisory']}")
+                        print(
+                            f"  - {vuln['package']} {vuln['vulnerable_spec']}: {vuln['advisory']}"
+                        )
                     return False
                 else:
                     print("✅ No high/critical vulnerabilities found")
@@ -77,6 +88,7 @@ def security_dependency_check():
         print(f"❌ Security audit error: {e}")
         return False
 
+
 def update_dependencies():
     """Update dependencies safely"""
     print("\n📦 DEPENDENCY UPDATE CHECK")
@@ -85,8 +97,7 @@ def update_dependencies():
     try:
         # Check for outdated packages
         success, output = run_command(
-            "pip list --outdated --format json",
-            "Checking for outdated packages"
+            "pip list --outdated --format json", "Checking for outdated packages"
         )
 
         if success and output.strip():
@@ -96,14 +107,20 @@ def update_dependencies():
                 regular_updates = []
 
                 for pkg in outdated:
-                    name = pkg['name']
-                    current = pkg['version']
-                    latest = pkg['latest_version']
+                    name = pkg["name"]
+                    current = pkg["version"]
+                    latest = pkg["latest_version"]
 
                     # Check if this is a security-related package
                     security_packages = [
-                        'cryptography', 'pyjwt', 'requests', 'urllib3',
-                        'sqlalchemy', 'fastapi', 'uvicorn', 'aiohttp'
+                        "cryptography",
+                        "pyjwt",
+                        "requests",
+                        "urllib3",
+                        "sqlalchemy",
+                        "fastapi",
+                        "uvicorn",
+                        "aiohttp",
                     ]
 
                     if name.lower() in security_packages:
@@ -124,7 +141,7 @@ def update_dependencies():
                     "timestamp": datetime.now().isoformat(),
                     "security_updates": security_updates,
                     "regular_updates": len(regular_updates),
-                    "recommendations": []
+                    "recommendations": [],
                 }
 
                 if security_updates:
@@ -138,7 +155,7 @@ def update_dependencies():
 
                 # Save update plan
                 plan_path = Path("security_update_plan.json")
-                with open(plan_path, 'w') as f:
+                with open(plan_path, "w") as f:
                     json.dump(update_plan, f, indent=2)
 
                 print(f"💾 Update plan saved to: {plan_path}")
@@ -155,6 +172,7 @@ def update_dependencies():
         print(f"❌ Dependency update check error: {e}")
         return False
 
+
 def code_security_scan():
     """Run code security scanning"""
     print("\n🔍 CODE SECURITY SCAN")
@@ -162,21 +180,23 @@ def code_security_scan():
 
     try:
         # Run bandit on codebase
-        success, output = run_command(
+        success, _output = run_command(
             "python -m bandit -r scripts/ backend/ -f json -o /tmp/bandit_results.json",
-            "Running bandit code security scan"
+            "Running bandit code security scan",
         )
 
         if success:
             try:
-                with open("/tmp/bandit_results.json", 'r') as f:
+                with open("/tmp/bandit_results.json") as f:
                     results = json.load(f)
 
-                issues = results.get('results', [])
-                high_severity = [i for i in issues if i.get('issue_severity') == 'HIGH']
-                medium_severity = [i for i in issues if i.get('issue_severity') == 'MEDIUM']
+                issues = results.get("results", [])
+                high_severity = [i for i in issues if i.get("issue_severity") == "HIGH"]
+                medium_severity = [
+                    i for i in issues if i.get("issue_severity") == "MEDIUM"
+                ]
 
-                print(f"📊 Scan Results:")
+                print("📊 Scan Results:")
                 print(f"  - Total issues: {len(issues)}")
                 print(f"  - High severity: {len(high_severity)}")
                 print(f"  - Medium severity: {len(medium_severity)}")
@@ -184,11 +204,13 @@ def code_security_scan():
                 if high_severity:
                     print("🚨 HIGH SEVERITY ISSUES:")
                     for issue in high_severity[:3]:  # Show first 3
-                        print(f"  - {issue['filename']}:{issue['line_number']}: {issue['issue_text']}")
+                        print(
+                            f"  - {issue['filename']}:{issue['line_number']}: {issue['issue_text']}"
+                        )
 
                 # Save detailed results
                 results_path = Path("code_security_scan_results.json")
-                with open(results_path, 'w') as f:
+                with open(results_path, "w") as f:
                     json.dump(results, f, indent=2)
 
                 print(f"💾 Detailed results saved to: {results_path}")
@@ -206,6 +228,7 @@ def code_security_scan():
         print(f"❌ Code security scan error: {e}")
         return False
 
+
 def generate_security_report(dep_check, update_check, code_scan):
     """Generate comprehensive security audit report"""
 
@@ -215,49 +238,57 @@ def generate_security_report(dep_check, update_check, code_scan):
         "results": {
             "dependency_security_check": "PASSED" if dep_check else "FAILED",
             "dependency_update_check": "COMPLETED" if update_check else "FAILED",
-            "code_security_scan": "PASSED" if code_scan else "FAILED"
+            "code_security_scan": "PASSED" if code_scan else "FAILED",
         },
-        "overall_status": "PASSED" if all([dep_check, update_check, code_scan]) else "ISSUES_FOUND",
+        "overall_status": "PASSED"
+        if all([dep_check, update_check, code_scan])
+        else "ISSUES_FOUND",
         "recommendations": [],
-        "next_audit_due": (datetime.now() + timedelta(days=7)).isoformat()
+        "next_audit_due": (datetime.now() + timedelta(days=7)).isoformat(),
     }
 
     # Generate recommendations based on results
     if not dep_check:
-        report["recommendations"].append("Address dependency security vulnerabilities immediately")
+        report["recommendations"].append(
+            "Address dependency security vulnerabilities immediately"
+        )
     if not code_scan:
         report["recommendations"].append("Fix high-severity code security issues")
     if update_check:
         report["recommendations"].append("Review and apply security updates")
 
-    report["recommendations"].append("Schedule next security audit for: " + report["next_audit_due"])
+    report["recommendations"].append(
+        "Schedule next security audit for: " + report["next_audit_due"]
+    )
 
     # Save report
     report_path = Path("security_audit_report.json")
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         json.dump(report, f, indent=2)
 
     # Generate summary
     summary_path = Path("SECURITY_AUDIT_SUMMARY.md")
-    with open(summary_path, 'w') as f:
+    with open(summary_path, "w") as f:
         f.write("# 🔒 AUTOMATED SECURITY AUDIT REPORT\n\n")
         f.write(f"**Audit Date:** {report['audit_timestamp']}\n")
         f.write(f"**Overall Status:** {report['overall_status']}\n\n")
 
         f.write("## 📊 AUDIT RESULTS\n\n")
-        for check, status in report['results'].items():
+        for check, status in report["results"].items():
             emoji = "✅" if status == "PASSED" else "❌" if status == "FAILED" else "⚠️"
             f.write(f"- **{check.replace('_', ' ').title()}:** {emoji} {status}\n")
         f.write("\n")
 
         f.write("## 💡 RECOMMENDATIONS\n\n")
-        for rec in report['recommendations']:
+        for rec in report["recommendations"]:
             f.write(f"- 🔧 {rec}\n")
         f.write("\n")
 
-        if report['overall_status'] == "PASSED":
+        if report["overall_status"] == "PASSED":
             f.write("## ✅ CONCLUSION: SECURITY AUDIT PASSED\n\n")
-            f.write("No critical security issues found. Continue with regular monitoring.\n")
+            f.write(
+                "No critical security issues found. Continue with regular monitoring.\n"
+            )
         else:
             f.write("## 🚨 CONCLUSION: SECURITY ISSUES FOUND\n\n")
             f.write("Address identified security issues before deployment.\n")
@@ -269,6 +300,7 @@ def generate_security_report(dep_check, update_check, code_scan):
     print(f"📋 Summary saved to: {summary_path}")
 
     return report
+
 
 def main():
     print("🔒 AUTOMATED SECURITY AUDIT & UPDATE SYSTEM")
@@ -295,6 +327,7 @@ def main():
         print("⚠️ Security issues found - review reports for details")
 
     return 0 if overall_success else 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

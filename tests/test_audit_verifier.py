@@ -1,9 +1,12 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath('.'))
+
+sys.path.insert(0, os.path.abspath("."))
 
 from test_config import setup_test_environment
-from backend.core.database import create_tables, create_engine_and_session, utc_now, AuditLog
+
+from backend.core.database import create_tables
+
 # from app.services.audit_service import _verify_hmac # Commented out
 
 # Test database setup

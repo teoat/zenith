@@ -3,10 +3,9 @@ Rule-Based Fraud Detection Engine
 Core engine for configurable fraud detection rules
 """
 
-import re
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class RuleType(Enum):
@@ -51,8 +50,8 @@ class FraudRule:
         self.triggered_count = 0
 
     def evaluate(
-        self, transaction: Dict[str, Any], context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, transaction: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Evaluate if transaction triggers this rule
 
@@ -88,8 +87,8 @@ class VelocityRule(FraudRule):
         self.time_window_minutes = time_window_minutes
 
     def evaluate(
-        self, transaction: Dict[str, Any], context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, transaction: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
         """Check if velocity threshold exceeded"""
         account_id = transaction.get("account_id")
         timestamp = datetime.fromisoformat(
@@ -151,8 +150,8 @@ class AmountThresholdRule(FraudRule):
         self.currency = currency
 
     def evaluate(
-        self, transaction: Dict[str, Any], context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, transaction: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
         """Check if amount exceeds threshold"""
         amount = float(transaction.get("amount", 0))
         currency = transaction.get("currency", "USD")
@@ -202,8 +201,8 @@ class GeographicAnomalyRule(FraudRule):
         self.min_time_hours = min_time_hours
 
     def evaluate(
-        self, transaction: Dict[str, Any], context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, transaction: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
         """Check for impossible travel"""
         location = transaction.get("location", {})
         timestamp = datetime.fromisoformat(
@@ -254,7 +253,7 @@ class GeographicAnomalyRule(FraudRule):
             },
         }
 
-    def _calculate_distance(self, loc1: Dict, loc2: Dict) -> float:
+    def _calculate_distance(self, loc1: dict, loc2: dict) -> float:
         """Simplified distance calculation - use haversine in production"""
         if not loc1 or not loc2:
             return 0
@@ -270,7 +269,7 @@ class RuleEngine:
     """Main fraud detection rule engine"""
 
     def __init__(self):
-        self.rules: List[FraudRule] = []
+        self.rules: list[FraudRule] = []
         self.evaluation_count = 0
 
     def add_rule(self, rule: FraudRule):
@@ -281,13 +280,13 @@ class RuleEngine:
         """Remove a rule by ID"""
         self.rules = [r for r in self.rules if r.rule_id != rule_id]
 
-    def get_rule(self, rule_id: str) -> Optional[FraudRule]:
+    def get_rule(self, rule_id: str) -> FraudRule | None:
         """Get a specific rule"""
         return next((r for r in self.rules if r.rule_id == rule_id), None)
 
     def evaluate_transaction(
-        self, transaction: Dict[str, Any], context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, transaction: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Evaluate a transaction against all enabled rules
 
@@ -344,8 +343,8 @@ class RuleEngine:
         }
 
     def _generate_recommendations(
-        self, triggered_rules: List[Dict], risk_score: int
-    ) -> List[str]:
+        self, triggered_rules: list[dict], risk_score: int
+    ) -> list[str]:
         """Generate action recommendations based on results"""
         recommendations = []
 
@@ -377,7 +376,7 @@ class RuleEngine:
 
         return recommendations
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get engine statistics"""
         return {
             "total_rules": len(self.rules),

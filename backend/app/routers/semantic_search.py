@@ -1,17 +1,19 @@
 # api/semantic_search.py
 import logging
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
+from app.services.semantic_search_service import SemanticSearchEngine
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app.services.semantic_search_service import SemanticSearchEngine
 from core.database import get_db
 
 logger = logging.getLogger(__name__)
 
-logger.warning("The 'semantic-search' router is DEPRECATED and uses a MOCK engine. Use 'ai' router instead.")
+logger.warning(
+    "The 'semantic-search' router is DEPRECATED and uses a MOCK engine. Use 'ai' router instead."
+)
 
 router = APIRouter(tags=["semantic-search"], deprecated=True)
 
@@ -34,8 +36,8 @@ def get_semantic_engine():
 async def index_document(
     document_id: str = Body(...),
     content: str = Body(...),
-    metadata: Optional[Dict[str, Any]] = Body(None),
-    backend: Optional[str] = Query("sqlite", description="Vector store backend"),
+    metadata: dict[str, Any] | None = Body(None),
+    backend: str | None = Query("sqlite", description="Vector store backend"),
     db: Session = Depends(get_db),
 ):
     """
@@ -80,22 +82,22 @@ async def index_document(
             "migration": {
                 "from": "/api/v1/semantic_search/index",
                 "to": "/api/v1/ai/embeddings",
-                "docs": "/docs/api/SEMANTIC_SEARCH_MIGRATION_GUIDE.md"
-            }
-        }
+                "docs": "/docs/api/SEMANTIC_SEARCH_MIGRATION_GUIDE.md",
+            },
+        },
     )
 
 
 @router.post("/index/batch")
 async def index_batch_documents(
-    documents: List[Dict[str, Any]] = Body(...),
-    backend: Optional[str] = Query("sqlite", description="Vector store backend"),
+    documents: list[dict[str, Any]] = Body(...),
+    backend: str | None = Query("sqlite", description="Vector store backend"),
     db: Session = Depends(get_db),
 ):
     """DEPRECATED: Use /ai/embeddings for batch document indexing."""
     raise HTTPException(
         status_code=410,
-        detail={"error": "Endpoint deprecated", "use_instead": "/ai/embeddings"}
+        detail={"error": "Endpoint deprecated", "use_instead": "/ai/embeddings"},
     )
 
 
@@ -104,8 +106,8 @@ async def search_documents(
     query: str = Query(..., description="Search query"),
     limit: int = Query(10, description="Maximum number of results"),
     threshold: float = Query(0.0, description="Minimum similarity threshold"),
-    backend: Optional[str] = Query("sqlite", description="Vector store backend"),
-    filters: Optional[str] = Query(None, description="JSON metadata filters"),
+    backend: str | None = Query("sqlite", description="Vector store backend"),
+    filters: str | None = Query(None, description="JSON metadata filters"),
     db: Session = Depends(get_db),
 ):
     """
@@ -143,16 +145,16 @@ async def search_documents(
                 "to": "/api/v1/ai/semantic-search",
                 "method_change": "GET → POST",
                 "parameter_change": "limit → top_k",
-                "docs": "/docs/api/SEMANTIC_SEARCH_MIGRATION_GUIDE.md"
-            }
-        }
+                "docs": "/docs/api/SEMANTIC_SEARCH_MIGRATION_GUIDE.md",
+            },
+        },
     )
 
 
 @router.delete("/index/{document_id}")
 async def delete_document(
     document_id: str,
-    backend: Optional[str] = Query("sqlite", description="Vector store backend"),
+    backend: str | None = Query("sqlite", description="Vector store backend"),
     db: Session = Depends(get_db),
 ):
     """DEPRECATED: Endpoint removed."""
@@ -161,7 +163,7 @@ async def delete_document(
 
 @router.get("/stats")
 async def get_search_stats(
-    backend: Optional[str] = Query("sqlite", description="Vector store backend"),
+    backend: str | None = Query("sqlite", description="Vector store backend"),
     db: Session = Depends(get_db),
 ):
     """DEPRECATED: Endpoint removed."""
@@ -170,7 +172,7 @@ async def get_search_stats(
 
 @router.post("/rebuild")
 async def rebuild_index(
-    backend: Optional[str] = Query("sqlite", description="Vector store backend"),
+    backend: str | None = Query("sqlite", description="Vector store backend"),
     db: Session = Depends(get_db),
 ):
     """DEPRECATED: Endpoint removed."""
@@ -225,7 +227,7 @@ async def get_available_backends():
 
         # Check availability
         availability = {}
-        for backend_name, backend_info in backends.items():
+        for backend_name in backends:
             try:
                 if backend_name == "sqlite":
                     from app.services.ai.ai_service import AIService
@@ -249,18 +251,18 @@ async def get_available_backends():
             "success": True,
             "backends": backends,
             "availability": availability,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to get backends: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to get backends: {str(e)}")
+        logger.error(f"Failed to get backends: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get backends: {e!s}")
 
 
 @router.post("/switch-backend")
 async def switch_backend(
     backend: str = Body(..., description="New backend to switch to"),
-    config: Optional[Dict[str, Any]] = Body(None, description="Backend configuration"),
+    config: dict[str, Any] | None = Body(None, description="Backend configuration"),
     db: Session = Depends(get_db),
 ):
     """DEPRECATED: Endpoint removed."""

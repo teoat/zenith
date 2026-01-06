@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/logging.py
+# hypothesis_version: 6.148.8
+
+[1000, 1024, '%Y-%m-%d %H:%M:%S', '10', '5', 'DEBUG', 'ENVIRONMENT', 'HTTP request', 'INFO', 'LOG_BACKUP_COUNT', 'LOG_CONSOLE', 'LOG_FILE', 'LOG_FILE_ENABLED', 'LOG_FORMAT', 'LOG_LEVEL', 'LOG_MAX_SIZE_MB', 'Performance metric', 'Security event', 'WARNING', 'Z', 'Zenith', 'core.logging', 'details', 'development', 'duration_ms', 'error_type', 'event_type', 'exception', 'extra_fields', 'function', 'ip_address', 'json', 'level', 'line', 'logger', 'logs/production.log', 'logs/staging.log', 'logs/test.log', 'message', 'method', 'metric_name', 'metric_value', 'module', 'path', 'performance_metric', 'request_id', 'security_event', 'staging', 'status_code', 'tags', 'testing', 'text', 'timestamp', 'true', 'user_id', 'utf-8', 'zenith']

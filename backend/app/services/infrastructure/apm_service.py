@@ -1,11 +1,12 @@
-import asyncio
+import builtins
+import contextlib
 import json
 import logging
 import threading
 import time
 from collections import defaultdict, deque
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import psutil
 
@@ -59,7 +60,7 @@ class APMService:
         endpoint: str,
         duration: float,
         status_code: int,
-        user_id: Optional[str] = None,
+        user_id: str | None = None,
     ) -> None:
         """Record an API request for performance monitoring"""
         metric = {
@@ -83,9 +84,9 @@ class APMService:
         self,
         error_type: str,
         message: str,
-        endpoint: Optional[str] = None,
-        user_id: Optional[str] = None,
-        stack_trace: Optional[str] = None,
+        endpoint: str | None = None,
+        user_id: str | None = None,
+        stack_trace: str | None = None,
     ) -> None:
         """Record an application error"""
         error_metric = {
@@ -114,14 +115,12 @@ class APMService:
             except Exception as e:
                 # Avoid logging if shutting down
                 if not self._stop_event.is_set():
-                    try:
+                    with contextlib.suppress(builtins.BaseException):
                         logger.error(f"System monitoring error: {e}")
-                    except:
-                        pass
                 if self._stop_event.wait(60):
                     break
 
-    def _collect_system_metrics(self) -> Dict[str, Any]:
+    def _collect_system_metrics(self) -> dict[str, Any]:
         """Collect current system metrics"""
         try:
             # CPU metrics
@@ -195,7 +194,7 @@ class APMService:
         else:
             return "very_slow"
 
-    def get_performance_summary(self, hours: int = 1) -> Dict[str, Any]:
+    def get_performance_summary(self, hours: int = 1) -> dict[str, Any]:
         """Get performance summary for the last N hours"""
         cutoff_time = datetime.now() - timedelta(hours=hours)
 
@@ -240,8 +239,8 @@ class APMService:
         }
 
     def _calculate_request_metrics(
-        self, requests: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        self, requests: list[dict[str, Any]]
+    ) -> dict[str, Any]:
         """Calculate request performance metrics"""
         if not requests:
             return {"total_requests": 0}
@@ -284,8 +283,8 @@ class APMService:
         }
 
     def _calculate_system_metrics(
-        self, system_metrics: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        self, system_metrics: list[dict[str, Any]]
+    ) -> dict[str, Any]:
         """Calculate system performance metrics"""
         if not system_metrics:
             return {"samples": 0}
@@ -315,7 +314,7 @@ class APMService:
             ),
         }
 
-    def _calculate_error_metrics(self, errors: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _calculate_error_metrics(self, errors: list[dict[str, Any]]) -> dict[str, Any]:
         """Calculate error metrics"""
         if not errors:
             return {"total_errors": 0}
@@ -334,8 +333,8 @@ class APMService:
         }
 
     def _generate_performance_alerts(
-        self, request_metrics: Dict, system_metrics: Dict, error_metrics: Dict
-    ) -> List[Dict[str, Any]]:
+        self, request_metrics: dict, system_metrics: dict, error_metrics: dict
+    ) -> list[dict[str, Any]]:
         """Generate performance alerts based on metrics"""
         alerts = []
 
@@ -396,7 +395,7 @@ class APMService:
 
         return alerts
 
-    def get_traces(self, limit: int = 100) -> List[Dict[str, Any]]:
+    def get_traces(self, limit: int = 100) -> list[dict[str, Any]]:
         """Get recent request traces for distributed tracing"""
         # Convert recent requests to trace format
         traces = list(self.request_metrics)[-limit:]
@@ -418,24 +417,22 @@ class APMService:
 
 
 # Additional utility functions for API compatibility
-def get_apm_summary() -> Dict[str, Any]:
+def get_apm_summary() -> dict[str, Any]:
     """Get APM summary for dashboard"""
     return apm_service.get_performance_summary(hours=1)
 
 
-def record_metric(
-    name: str, value: float, tags: Optional[Dict[str, str]] = None
-) -> None:
+def record_metric(name: str, value: float, tags: dict[str, str] | None = None) -> None:
     """Record a custom metric"""
     apm_service.record_metric(name, value, tags)
 
 
-def start_span(name: str, tags: Optional[Dict[str, str]] = None) -> str:
+def start_span(name: str, tags: dict[str, str] | None = None) -> str:
     """Start a performance span for tracing"""
     return apm_service.start_span(name, tags)
 
 
-def finish_span(span_id: str, error: Optional[str] = None) -> None:
+def finish_span(span_id: str, error: str | None = None) -> None:
     """Finish a performance span"""
     apm_service.finish_span(span_id, error)
 
@@ -444,8 +441,8 @@ def create_alert(
     alert_type: str,
     message: str,
     severity: str = "medium",
-    metadata: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
+    metadata: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Create a performance alert"""
     return apm_service.create_alert(alert_type, message, severity, metadata)
 
@@ -524,7 +521,7 @@ class APMMiddleware:
 
         try:
             await self.app(scope, receive, send_wrapper)
-        except Exception as e:
+        except Exception:
             response_status = 500
             raise
         finally:

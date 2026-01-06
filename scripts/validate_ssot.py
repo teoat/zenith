@@ -8,7 +8,6 @@ import hashlib
 import json
 import os
 import sys
-from pathlib import Path
 
 
 def calculate_checksum(data):
@@ -21,11 +20,11 @@ def validate_ssot_file(ssot_file, lock_file):
     """Validate SSOT file against its lock file"""
     try:
         # Read SSOT file
-        with open(ssot_file, "r") as f:
+        with open(ssot_file) as f:
             ssot_data = json.load(f)
 
         # Read lock file
-        with open(lock_file, "r") as f:
+        with open(lock_file) as f:
             lock_data = json.load(f)
 
         # Check if locked

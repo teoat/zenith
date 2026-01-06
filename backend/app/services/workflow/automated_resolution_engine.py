@@ -4,14 +4,11 @@ AI-powered automated case resolution for clear-cut fraud scenarios with
 rule-based automation and ML-assisted decision making.
 """
 
-import asyncio
-import json
 import logging
-import re
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +42,7 @@ class ResolutionRule:
     rule_id: str
     name: str
     description: str
-    conditions: List[Dict[str, Any]]  # List of condition dictionaries
+    conditions: list[dict[str, Any]]  # List of condition dictionaries
     action: ResolutionAction
     confidence_threshold: float = 0.8
     complexity_limit: CaseComplexity = CaseComplexity.SIMPLE
@@ -65,13 +62,13 @@ class ResolutionAttempt:
     rule_id: str
     action_taken: ResolutionAction
     confidence_score: float
-    reasoning: List[str]
+    reasoning: list[str]
     automated: bool = True
     approved: bool = False
     executed_at: datetime = field(default_factory=datetime.now)
-    execution_duration_ms: Optional[int] = None
+    execution_duration_ms: int | None = None
     success: bool = False
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
 
 @dataclass
@@ -79,23 +76,23 @@ class CaseResolutionContext:
     """Context information for case resolution"""
 
     case_id: str
-    case_data: Dict[str, Any]
-    transactions: List[Dict[str, Any]]
-    entities: List[Dict[str, Any]]
-    evidence: List[Dict[str, Any]]
+    case_data: dict[str, Any]
+    transactions: list[dict[str, Any]]
+    entities: list[dict[str, Any]]
+    evidence: list[dict[str, Any]]
     risk_score: float
     case_type: str
     amount_involved: float
     time_since_creation: timedelta
-    investigation_history: List[Dict[str, Any]]
+    investigation_history: list[dict[str, Any]]
 
 
 class AutomatedCaseResolutionEngine:
     """AI-powered automated case resolution system"""
 
     def __init__(self):
-        self.resolution_rules: Dict[str, ResolutionRule] = {}
-        self.resolution_history: List[ResolutionAttempt] = []
+        self.resolution_rules: dict[str, ResolutionRule] = {}
+        self.resolution_history: list[ResolutionAttempt] = []
         self.ml_model = None  # Would load pre-trained ML model for complex decisions
 
         # Initialize default resolution rules
@@ -197,7 +194,7 @@ class AutomatedCaseResolutionEngine:
 
     async def evaluate_case_for_resolution(
         self, case_context: CaseResolutionContext
-    ) -> Optional[ResolutionAttempt]:
+    ) -> ResolutionAttempt | None:
         """
         Evaluate a case for automated resolution
 
@@ -364,7 +361,7 @@ class AutomatedCaseResolutionEngine:
 
     async def _find_applicable_rules(
         self, case_context: CaseResolutionContext
-    ) -> List[ResolutionRule]:
+    ) -> list[ResolutionRule]:
         """Find rules that could apply to this case"""
         applicable_rules = []
 
@@ -399,9 +396,9 @@ class AutomatedCaseResolutionEngine:
 
     def _select_best_rule(
         self,
-        applicable_rules: List[ResolutionRule],
+        applicable_rules: list[ResolutionRule],
         case_context: CaseResolutionContext,
-    ) -> Optional[ResolutionRule]:
+    ) -> ResolutionRule | None:
         """Select the best rule from applicable rules"""
         if not applicable_rules:
             return None
@@ -415,7 +412,7 @@ class AutomatedCaseResolutionEngine:
 
     async def _evaluate_rule_conditions(
         self, rule: ResolutionRule, case_context: CaseResolutionContext
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Evaluate all conditions for a rule"""
         results = {
             "all_met": True,
@@ -442,8 +439,8 @@ class AutomatedCaseResolutionEngine:
         return results
 
     async def _evaluate_condition(
-        self, condition: Dict[str, Any], case_context: CaseResolutionContext
-    ) -> Tuple[bool, str]:
+        self, condition: dict[str, Any], case_context: CaseResolutionContext
+    ) -> tuple[bool, str]:
         """Evaluate a single condition"""
         field = condition.get("field")
         operator = condition.get("operator")
@@ -513,7 +510,7 @@ class AutomatedCaseResolutionEngine:
 
     def _extract_fraud_indicators(
         self, case_context: CaseResolutionContext
-    ) -> List[str]:
+    ) -> list[str]:
         """Extract fraud indicators from case data"""
         indicators = []
 
@@ -543,7 +540,7 @@ class AutomatedCaseResolutionEngine:
 
     def _detect_suspicious_patterns(
         self, case_context: CaseResolutionContext
-    ) -> List[str]:
+    ) -> list[str]:
         """Detect suspicious patterns in case data"""
         patterns = []
 
@@ -563,7 +560,7 @@ class AutomatedCaseResolutionEngine:
 
         return patterns
 
-    def _has_round_trip_pattern(self, transactions: List[Dict[str, Any]]) -> bool:
+    def _has_round_trip_pattern(self, transactions: list[dict[str, Any]]) -> bool:
         """Check for round-trip transaction patterns"""
         # Simplified check for A->B->A patterns
         entities = set()
@@ -599,7 +596,7 @@ class AutomatedCaseResolutionEngine:
     def _calculate_resolution_confidence(
         self,
         rule: ResolutionRule,
-        condition_results: Dict[str, Any],
+        condition_results: dict[str, Any],
         case_context: CaseResolutionContext,
     ) -> float:
         """Calculate confidence score for the resolution"""
@@ -625,9 +622,9 @@ class AutomatedCaseResolutionEngine:
     def _generate_resolution_reasoning(
         self,
         rule: ResolutionRule,
-        condition_results: Dict[str, Any],
+        condition_results: dict[str, Any],
         case_context: CaseResolutionContext,
-    ) -> List[str]:
+    ) -> list[str]:
         """Generate human-readable reasoning for the resolution"""
         reasoning = [
             f"Applied rule: {rule.name}",
@@ -674,12 +671,14 @@ class AutomatedCaseResolutionEngine:
             logger.info(f"Setting up monitoring for case {resolution_attempt.case_id}")
 
         # Simulating resolution processing
-        logger.info(f"Processing resolution action {action} for attempt {resolution_attempt.attempt_id}")
+        logger.info(
+            f"Processing resolution action {action} for attempt {resolution_attempt.attempt_id}"
+        )
         # For now, perform immediate resolution - real implementation would process the resolution
 
         return True
 
-    def get_resolution_statistics(self) -> Dict[str, Any]:
+    def get_resolution_statistics(self) -> dict[str, Any]:
         """Get statistics about automated resolutions"""
         total_attempts = len(self.resolution_history)
         successful_attempts = len([a for a in self.resolution_history if a.success])
@@ -707,7 +706,7 @@ class AutomatedCaseResolutionEngine:
             "rules_performance": self._get_rule_performance_stats(),
         }
 
-    def _get_rule_performance_stats(self) -> Dict[str, Any]:
+    def _get_rule_performance_stats(self) -> dict[str, Any]:
         """Get performance statistics for each rule"""
         stats = {}
 
@@ -731,7 +730,7 @@ class AutomatedCaseResolutionEngine:
         logger.info(f"Added custom resolution rule: {rule.name}")
         return True
 
-    def update_rule(self, rule_id: str, updates: Dict[str, Any]) -> bool:
+    def update_rule(self, rule_id: str, updates: dict[str, Any]) -> bool:
         """Update an existing resolution rule"""
         if rule_id not in self.resolution_rules:
             return False

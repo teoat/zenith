@@ -5,22 +5,25 @@ fallbacks for environments where `psutil` or Prometheus are unavailable.
 
 from __future__ import annotations
 
+import atexit
+import json
 import logging
+import os
 import threading
 import time
 from collections import defaultdict, deque
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
-import json
-import atexit
-import os
 from pathlib import Path
+from typing import Any
 
 try:
     import psutil
 except Exception:
     psutil = None
+
+import builtins
+import contextlib
 
 from core.logging import logger
 
@@ -38,7 +41,7 @@ class Metric:
     name: str
     value: float
     timestamp: datetime
-    tags: Dict[str, str]
+    tags: dict[str, str]
     metric_type: str = "gauge"
 
 
@@ -62,9 +65,9 @@ class ErrorEvent:
     error_type: str
     message: str
     stack_trace: str
-    user_id: Optional[str]
-    session_id: Optional[str]
-    metadata: Dict[str, Any]
+    user_id: str | None
+    session_id: str | None
+    metadata: dict[str, Any]
 
 
 class MonitoringService:
@@ -75,14 +78,14 @@ class MonitoringService:
         self.metrics_interval = metrics_interval
 
         # Storage
-        self.metrics: List[Metric] = []
+        self.metrics: list[Metric] = []
         self.performance_history: deque[PerformanceSnapshot] = deque(maxlen=10000)
-        self.error_events: List[ErrorEvent] = []
+        self.error_events: list[ErrorEvent] = []
 
         # Counters
         self.request_count = 0
         self.error_count = 0
-        self.error_counts: Dict[str, int] = defaultdict(int)
+        self.error_counts: dict[str, int] = defaultdict(int)
         self.response_times: deque[float] = deque(maxlen=1000)
 
         # Locks
@@ -100,7 +103,7 @@ class MonitoringService:
             "error_rate": 5.0,
             "response_time_avg": 2000.0,
         }
-        
+
         # Persistence
         self.state_file = Path("monitoring_state.json")
         self._load_state()
@@ -111,65 +114,71 @@ class MonitoringService:
         try:
             data = {
                 "performance_history": [asdict(s) for s in self.performance_history],
-                "error_events": [asdict(e) for e in self.error_events][-100:], # keep last 100 errors
+                "error_events": [asdict(e) for e in self.error_events][
+                    -100:
+                ],  # keep last 100 errors
                 "request_count": self.request_count,
                 "error_count": self.error_count,
                 "error_counts": self.error_counts,
-                "saved_at": datetime.now().isoformat()
+                "saved_at": datetime.now().isoformat(),
             }
             # Simple atomic write
-            temp_file = self.state_file.with_suffix('.tmp')
-            with open(temp_file, 'w') as f:
+            temp_file = self.state_file.with_suffix(".tmp")
+            with open(temp_file, "w") as f:
                 json.dump(data, f, default=str)
             os.replace(temp_file, self.state_file)
             # Only log if logging system is still alive
             if logging.getLogger().handlers:
                 logger.info("Saved monitoring state to disk")
         except ReferenceError:
-             pass # Logging system likely shut down
+            pass  # Logging system likely shut down
         except ValueError:
-             pass # I/O operation on closed file
+            pass  # I/O operation on closed file
         except Exception as e:
             # Try to log but fail silently if logger is dead
-            try: logger.error(f"Failed to save monitoring state: {e}")
-            except: pass
+            with contextlib.suppress(builtins.BaseException):
+                logger.error(f"Failed to save monitoring state: {e}")
 
     def _load_state(self):
         """Load monitoring state from disk"""
         if not self.state_file.exists():
             return
-        
+
         try:
-            with open(self.state_file, 'r') as f:
+            with open(self.state_file) as f:
                 data = json.load(f)
-            
+
             # Restore counters
             self.request_count = data.get("request_count", 0)
             self.error_count = data.get("error_count", 0)
             self.error_counts = defaultdict(int, data.get("error_counts", {}))
-            
+
             # Restore history (convert strings back to datetime/objects where needed)
-            # For simplicity in this demo-ware upgrade, we might just load raw dicts 
+            # For simplicity in this demo-ware upgrade, we might just load raw dicts
             # or reconstruct objects. Reconstructing is safer.
             if "performance_history" in data:
                 for item in data["performance_history"]:
                     # Basic reconstruction
                     try:
-                         if isinstance(item.get("timestamp"), str):
-                             item["timestamp"] = datetime.fromisoformat(item["timestamp"])
-                         self.performance_history.append(PerformanceSnapshot(**item))
+                        if isinstance(item.get("timestamp"), str):
+                            item["timestamp"] = datetime.fromisoformat(
+                                item["timestamp"]
+                            )
+                        self.performance_history.append(PerformanceSnapshot(**item))
                     except:
                         pass
-                        
+
             if "error_events" in data:
                 for item in data["error_events"]:
                     try:
                         if isinstance(item.get("timestamp"), str):
-                             item["timestamp"] = datetime.fromisoformat(item["timestamp"])
+                            item["timestamp"] = datetime.fromisoformat(
+                                item["timestamp"]
+                            )
                         self.error_events.append(ErrorEvent(**item))
                     except:
                         pass
-                        
+
             logger.info("Restored monitoring state from disk")
         except Exception as e:
             logger.error(f"Failed to load monitoring state: {e}")
@@ -183,7 +192,7 @@ class MonitoringService:
         except Exception:
             return default
 
-    def _collect_system_metrics(self) -> Dict[str, Any]:
+    def _collect_system_metrics(self) -> dict[str, Any]:
         """Collect system metrics and return a lightweight dict. Always returns a dict.
         Tests patch `psutil.cpu_percent` and `psutil.virtual_memory` so this method
         must be resilient when some functions are mocked and others are not.
@@ -289,7 +298,7 @@ class MonitoringService:
         self,
         name: str,
         value: float,
-        tags: Dict[str, str] = None,
+        tags: dict[str, str] | None = None,
         metric_type: str = "gauge",
     ):
         if tags is None:
@@ -316,7 +325,7 @@ class MonitoringService:
             self.response_times.append(response_time)
 
     def record_error(
-        self, error_type: str, message: str, metadata: Dict[str, Any] = None
+        self, error_type: str, message: str, metadata: dict[str, Any] | None = None
     ):
         if metadata is None:
             metadata = {}
@@ -335,7 +344,7 @@ class MonitoringService:
             self.error_counts[error_type] = self.error_counts.get(error_type, 0) + 1
         logger.error(f"Recorded error: {error_type} - {message}")
 
-    def get_health_metrics(self) -> Dict[str, Any]:
+    def get_health_metrics(self) -> dict[str, Any]:
         latest = None
         with self.performance_lock:
             if self.performance_history:
@@ -363,7 +372,7 @@ class MonitoringService:
         }
 
     # Backwards-compatible API expected by older tests
-    def get_system_status(self) -> Dict[str, Any]:
+    def get_system_status(self) -> dict[str, Any]:
         """Legacy alias used by tests/routers for system status."""
         return {
             "status": (
@@ -376,7 +385,7 @@ class MonitoringService:
 
     def start_monitoring(self):
         """Start background performance monitoring"""
-        if hasattr(self, '_thread') and self._thread and self._thread.is_alive():
+        if hasattr(self, "_thread") and self._thread and self._thread.is_alive():
             return
 
         self._stop_event = threading.Event()
@@ -386,9 +395,9 @@ class MonitoringService:
 
     def stop_monitoring(self):
         """Stop performance monitoring"""
-        if hasattr(self, '_stop_event'):
+        if hasattr(self, "_stop_event"):
             self._stop_event.set()
-        if hasattr(self, '_thread') and self._thread and self._thread.is_alive():
+        if hasattr(self, "_thread") and self._thread and self._thread.is_alive():
             self._thread.join(timeout=1.0)
 
     def _monitor_loop(self):
@@ -401,14 +410,14 @@ class MonitoringService:
                     break
             except Exception as e:
                 if not self._stop_event.is_set():
-                    try: logger.error(f"Monitoring loop error: {e}")
-                    except: pass
+                    with contextlib.suppress(builtins.BaseException):
+                        logger.error(f"Monitoring loop error: {e}")
                 if self._stop_event.wait(self.metrics_interval):
                     break
 
     def get_metrics(
-        self, metric_name: str = None, hours: int = 1
-    ) -> List[Dict[str, Any]]:
+        self, metric_name: str | None = None, hours: int = 1
+    ) -> list[dict[str, Any]]:
         cutoff = datetime.now() - timedelta(hours=hours)
         with self.metrics_lock:
             return [
@@ -418,12 +427,12 @@ class MonitoringService:
                 and (metric_name is None or m.name == metric_name)
             ]
 
-    def get_performance_history(self, hours: int = 1) -> List[Dict[str, Any]]:
+    def get_performance_history(self, hours: int = 1) -> list[dict[str, Any]]:
         cutoff = datetime.now() - timedelta(hours=hours)
         with self.performance_lock:
             return [asdict(s) for s in self.performance_history if s.timestamp > cutoff]
 
-    def get_error_summary(self, hours: int = 24) -> Dict[str, Any]:
+    def get_error_summary(self, hours: int = 24) -> dict[str, Any]:
         cutoff = datetime.now() - timedelta(hours=hours)
         with self.errors_lock:
             recent = [e for e in self.error_events if e.timestamp > cutoff]
@@ -436,7 +445,7 @@ class MonitoringService:
             "recent_errors": [asdict(e) for e in recent[-10:]],
         }
 
-    def get_dashboard_data(self) -> Dict[str, Any]:
+    def get_dashboard_data(self) -> dict[str, Any]:
         return {
             "system_status": self.get_health_metrics(),
             "performance_history": self.get_performance_history(hours=24),

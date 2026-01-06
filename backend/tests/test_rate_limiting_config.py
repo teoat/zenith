@@ -1,6 +1,5 @@
+from backend.core.rate_limiting import get_rate_limit_for_path
 
-import pytest
-from backend.core.rate_limiting import RATE_LIMITS, get_rate_limit_for_path
 
 def test_auth_rate_limits_configuration():
     """
@@ -18,16 +17,29 @@ def test_auth_rate_limits_configuration():
     token_limits = get_rate_limit_for_path(token_path)
 
     # Verify Login Limits (5 requests per 300s)
-    assert login_limits["requests"] == 5, f"Expected 5 requests for login, got {login_limits['requests']}"
-    assert login_limits["window"] == 300, f"Expected 300s window for login, got {login_limits['window']}"
+    assert login_limits["requests"] == 5, (
+        f"Expected 5 requests for login, got {login_limits['requests']}"
+    )
+    assert login_limits["window"] == 300, (
+        f"Expected 300s window for login, got {login_limits['window']}"
+    )
 
     # Verify Register Limits (3 requests per 3600s)
-    assert register_limits["requests"] == 3, f"Expected 3 requests for register, got {register_limits['requests']}"
-    assert register_limits["window"] == 3600, f"Expected 3600s window for register, got {register_limits['window']}"
+    assert register_limits["requests"] == 3, (
+        f"Expected 3 requests for register, got {register_limits['requests']}"
+    )
+    assert register_limits["window"] == 3600, (
+        f"Expected 3600s window for register, got {register_limits['window']}"
+    )
 
     # Verify Token Limits (10 requests per 300s)
-    assert token_limits["requests"] == 10, f"Expected 10 requests for token, got {token_limits['requests']}"
-    assert token_limits["window"] == 300, f"Expected 300s window for token, got {token_limits['window']}"
+    assert token_limits["requests"] == 10, (
+        f"Expected 10 requests for token, got {token_limits['requests']}"
+    )
+    assert token_limits["window"] == 300, (
+        f"Expected 300s window for token, got {token_limits['window']}"
+    )
+
 
 def test_default_rate_limits():
     """

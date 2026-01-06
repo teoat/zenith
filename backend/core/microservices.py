@@ -3,25 +3,23 @@ Domain-Driven Microservices Architecture for Zenith
 Implements clean architecture with bounded contexts
 """
 
-import os
 import asyncio
 import logging
-from typing import Dict, List, Any, Optional
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
-from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text
+from fastapi import FastAPI, HTTPException
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class BoundedContext(Enum):
     """Domain bounded contexts"""
+
     CASE_MANAGEMENT = "case_management"
     FRAUD_DETECTION = "fraud_detection"
     EVIDENCE_PROCESSING = "evidence_processing"
@@ -29,22 +27,25 @@ class BoundedContext(Enum):
     REPORTING_ANALYTICS = "reporting_analytics"
     INTEGRATION_HUB = "integration_hub"
 
+
 @dataclass
 class DomainEvent:
     """Base domain event"""
+
     event_id: str
     event_type: str
     aggregate_id: str
-    event_data: Dict[str, Any]
+    event_data: dict[str, Any]
     timestamp: float
     version: int = 1
+
 
 class DomainEventBus:
     """In-memory domain event bus for inter-service communication"""
 
     def __init__(self):
-        self._handlers: Dict[str, List[callable]] = {}
-        self._published_events: List[DomainEvent] = []
+        self._handlers: dict[str, list[callable]] = {}
+        self._published_events: list[DomainEvent] = []
 
     def subscribe(self, event_type: str, handler: callable):
         """Subscribe to domain events"""
@@ -63,14 +64,16 @@ class DomainEventBus:
                 tasks.append(handler(event))
             await asyncio.gather(*tasks, return_exceptions=True)
 
-    def get_published_events(self, event_type: Optional[str] = None) -> List[DomainEvent]:
+    def get_published_events(self, event_type: str | None = None) -> list[DomainEvent]:
         """Get published events, optionally filtered by type"""
         if event_type:
             return [e for e in self._published_events if e.event_type == event_type]
         return self._published_events.copy()
 
+
 # Global event bus instance
 event_bus = DomainEventBus()
+
 
 class Microservice(ABC):
     """Base microservice class"""
@@ -86,12 +89,10 @@ class Microservice(ABC):
     @abstractmethod
     def _setup_routes(self):
         """Setup FastAPI routes"""
-        pass
 
     @abstractmethod
     def _setup_event_handlers(self):
         """Setup domain event handlers"""
-        pass
 
     def add_dependency(self, name: str, dependency: Any):
         """Add dependency injection"""
@@ -100,6 +101,7 @@ class Microservice(ABC):
     def get_dependency(self, name: str) -> Any:
         """Get dependency"""
         return self.dependencies.get(name)
+
 
 class CaseManagementService(Microservice):
     """Case Management Bounded Context"""
@@ -110,7 +112,7 @@ class CaseManagementService(Microservice):
 
     def _setup_routes(self):
         @self.app.post("/cases")
-        async def create_case(case_data: Dict[str, Any]):
+        async def create_case(case_data: dict[str, Any]):
             case_id = f"case_{len(self.cases) + 1}"
             self.cases[case_id] = case_data
 
@@ -120,7 +122,7 @@ class CaseManagementService(Microservice):
                 event_type="case.created",
                 aggregate_id=case_id,
                 event_data=case_data,
-                timestamp=asyncio.get_event_loop().time()
+                timestamp=asyncio.get_event_loop().time(),
             )
             await event_bus.publish(event)
 
@@ -146,7 +148,7 @@ class CaseManagementService(Microservice):
                 event_type="case.status_changed",
                 aggregate_id=case_id,
                 event_data={"old_status": old_status, "new_status": status},
-                timestamp=asyncio.get_event_loop().time()
+                timestamp=asyncio.get_event_loop().time(),
             )
             await event_bus.publish(event)
 
@@ -160,6 +162,7 @@ class CaseManagementService(Microservice):
 
         event_bus.subscribe("fraud.detected", handle_fraud_detected)
 
+
 class FraudDetectionService(Microservice):
     """Fraud Detection Bounded Context"""
 
@@ -170,7 +173,7 @@ class FraudDetectionService(Microservice):
 
     def _setup_routes(self):
         @self.app.post("/scan/transaction")
-        async def scan_transaction(transaction: Dict[str, Any]):
+        async def scan_transaction(transaction: dict[str, Any]):
             transaction_id = transaction.get("id", "unknown")
 
             # Simulate fraud detection logic
@@ -180,7 +183,7 @@ class FraudDetectionService(Microservice):
                 "transaction_id": transaction_id,
                 "is_fraudulent": is_fraudulent,
                 "risk_score": 0.8 if is_fraudulent else 0.2,
-                "flags": ["high_amount", "unusual_location"] if is_fraudulent else []
+                "flags": ["high_amount", "unusual_location"] if is_fraudulent else [],
             }
 
             if is_fraudulent:
@@ -190,14 +193,14 @@ class FraudDetectionService(Microservice):
                     event_type="fraud.detected",
                     aggregate_id=transaction.get("case_id", "unknown"),
                     event_data=result,
-                    timestamp=asyncio.get_event_loop().time()
+                    timestamp=asyncio.get_event_loop().time(),
                 )
                 await event_bus.publish(event)
 
             return result
 
         @self.app.post("/rules")
-        async def create_fraud_rule(rule: Dict[str, Any]):
+        async def create_fraud_rule(rule: dict[str, Any]):
             rule_id = f"rule_{len(self.fraud_rules) + 1}"
             self.fraud_rules[rule_id] = rule
             return {"rule_id": rule_id, "status": "created"}
@@ -206,7 +209,7 @@ class FraudDetectionService(Microservice):
         async def get_fraud_rules():
             return list(self.fraud_rules.values())
 
-    def _detect_fraud(self, transaction: Dict[str, Any]) -> bool:
+    def _detect_fraud(self, transaction: dict[str, Any]) -> bool:
         """Simple fraud detection logic"""
         amount = transaction.get("amount", 0)
         location = transaction.get("location", "")
@@ -214,10 +217,7 @@ class FraudDetectionService(Microservice):
         # Simple rules
         if amount > 10000:
             return True
-        if location in ["high_risk_country_1", "high_risk_country_2"]:
-            return True
-
-        return False
+        return location in ["high_risk_country_1", "high_risk_country_2"]
 
     def _setup_event_handlers(self):
         # Handle case status changes
@@ -231,6 +231,7 @@ class FraudDetectionService(Microservice):
 
         event_bus.subscribe("case.status_changed", handle_case_status_changed)
 
+
 class EvidenceProcessingService(Microservice):
     """Evidence Processing Bounded Context"""
 
@@ -241,14 +242,17 @@ class EvidenceProcessingService(Microservice):
 
     def _setup_routes(self):
         @self.app.post("/evidence/process")
-        async def process_evidence(evidence_data: Dict[str, Any]):
-            evidence_id = evidence_data.get("id", f"evidence_{len(self.processed_evidence) + 1}")
+        async def process_evidence(evidence_data: dict[str, Any]):
+            evidence_id = evidence_data.get(
+                "id", f"evidence_{len(self.processed_evidence) + 1}"
+            )
 
             # Add to processing queue
             await self.processing_queue.put(evidence_data)
 
             # Start background processing
-            asyncio.create_task(self._process_evidence(evidence_id, evidence_data))
+            task = asyncio.create_task(self._process_evidence(evidence_id, evidence_data))
+            self._background_tasks.append(task)
 
             return {"evidence_id": evidence_id, "status": "processing"}
 
@@ -258,7 +262,7 @@ class EvidenceProcessingService(Microservice):
                 raise HTTPException(status_code=404, detail="Evidence not found")
             return self.processed_evidence[evidence_id]
 
-    async def _process_evidence(self, evidence_id: str, evidence_data: Dict[str, Any]):
+    async def _process_evidence(self, evidence_id: str, evidence_data: dict[str, Any]):
         """Background evidence processing"""
         try:
             logger.info(f"Processing evidence {evidence_id}")
@@ -273,7 +277,7 @@ class EvidenceProcessingService(Microservice):
                 "sentiment_score": 0.7,
                 "entities_extracted": ["John Doe", "ABC Bank", "$50,000"],
                 "processing_status": "completed",
-                "processed_at": asyncio.get_event_loop().time()
+                "processed_at": asyncio.get_event_loop().time(),
             }
 
             self.processed_evidence[evidence_id] = processed_data
@@ -284,7 +288,7 @@ class EvidenceProcessingService(Microservice):
                 event_type="evidence.processed",
                 aggregate_id=evidence_id,
                 event_data=processed_data,
-                timestamp=asyncio.get_event_loop().time()
+                timestamp=asyncio.get_event_loop().time(),
             )
             await event_bus.publish(event)
 
@@ -301,6 +305,7 @@ class EvidenceProcessingService(Microservice):
 
         event_bus.subscribe("case.created", handle_case_created)
 
+
 class UserManagementService(Microservice):
     """User Management Bounded Context"""
 
@@ -311,14 +316,16 @@ class UserManagementService(Microservice):
             "admin": ["read", "write", "delete", "manage_users"],
             "investigator": ["read", "write", "investigate"],
             "analyst": ["read", "analyze"],
-            "viewer": ["read"]
+            "viewer": ["read"],
         }
 
     def _setup_routes(self):
         @self.app.post("/users")
-        async def create_user(user_data: Dict[str, Any]):
+        async def create_user(user_data: dict[str, Any]):
             user_id = user_data.get("email", f"user_{len(self.users) + 1}")
-            user_data["permissions"] = self.roles.get(user_data.get("role", "viewer"), [])
+            user_data["permissions"] = self.roles.get(
+                user_data.get("role", "viewer"), []
+            )
             self.users[user_id] = user_data
 
             # Publish user created event
@@ -327,7 +334,7 @@ class UserManagementService(Microservice):
                 event_type="user.created",
                 aggregate_id=user_id,
                 event_data=user_data,
-                timestamp=asyncio.get_event_loop().time()
+                timestamp=asyncio.get_event_loop().time(),
             )
             await event_bus.publish(event)
 
@@ -356,6 +363,7 @@ class UserManagementService(Microservice):
 
         event_bus.subscribe("case.assigned", handle_case_assigned)
 
+
 class ReportingAnalyticsService(Microservice):
     """Reporting & Analytics Bounded Context"""
 
@@ -366,7 +374,7 @@ class ReportingAnalyticsService(Microservice):
 
     def _setup_routes(self):
         @self.app.post("/reports/generate")
-        async def generate_report(report_config: Dict[str, Any]):
+        async def generate_report(report_config: dict[str, Any]):
             report_id = f"report_{len(self.reports) + 1}"
             report_type = report_config.get("type", "case_summary")
 
@@ -378,7 +386,7 @@ class ReportingAnalyticsService(Microservice):
                 "type": report_type,
                 "data": report_data,
                 "generated_at": asyncio.get_event_loop().time(),
-                "config": report_config
+                "config": report_config,
             }
 
             return {"report_id": report_id, "status": "generated", "data": report_data}
@@ -391,12 +399,14 @@ class ReportingAnalyticsService(Microservice):
                 "fraud_detected": await self._get_fraud_count(),
                 "evidence_processed": await self._get_evidence_count(),
                 "active_users": await self._get_active_users(),
-                "system_health": "healthy"
+                "system_health": "healthy",
             }
 
             return analytics
 
-    async def _generate_report_data(self, report_type: str, config: Dict[str, Any]) -> Dict[str, Any]:
+    async def _generate_report_data(
+        self, report_type: str, config: dict[str, Any]
+    ) -> dict[str, Any]:
         """Generate report data based on type"""
         if report_type == "case_summary":
             return {
@@ -404,13 +414,13 @@ class ReportingAnalyticsService(Microservice):
                 "open_cases": 45,
                 "closed_cases": 105,
                 "high_priority": 12,
-                "fraud_cases": 28
+                "fraud_cases": 28,
             }
         elif report_type == "fraud_trends":
             return {
                 "monthly_fraud_count": [5, 8, 12, 15, 9, 11],
                 "fraud_amounts": [50000, 75000, 120000, 150000, 90000, 110000],
-                "detection_accuracy": 0.94
+                "detection_accuracy": 0.94,
             }
         else:
             return {"message": f"Report type {report_type} generated"}
@@ -441,8 +451,14 @@ class ReportingAnalyticsService(Microservice):
             self.analytics_cache[event_type] += 1
 
         # Subscribe to multiple event types
-        for event_type in ["case.created", "fraud.detected", "evidence.processed", "user.created"]:
+        for event_type in [
+            "case.created",
+            "fraud.detected",
+            "evidence.processed",
+            "user.created",
+        ]:
             event_bus.subscribe(event_type, handle_any_event)
+
 
 class IntegrationHubService(Microservice):
     """Integration Hub Bounded Context"""
@@ -454,14 +470,14 @@ class IntegrationHubService(Microservice):
 
     def _setup_routes(self):
         @self.app.post("/integrations")
-        async def create_integration(integration_config: Dict[str, Any]):
+        async def create_integration(integration_config: dict[str, Any]):
             integration_id = f"integration_{len(self.integrations) + 1}"
             self.integrations[integration_id] = integration_config
 
             return {"integration_id": integration_id, "status": "created"}
 
         @self.app.post("/webhooks/{webhook_id}")
-        async def handle_webhook(webhook_id: str, payload: Dict[str, Any]):
+        async def handle_webhook(webhook_id: str, payload: dict[str, Any]):
             if webhook_id not in self.webhooks:
                 raise HTTPException(status_code=404, detail="Webhook not found")
 
@@ -474,7 +490,7 @@ class IntegrationHubService(Microservice):
                 event_type=event_type,
                 aggregate_id=webhook_id,
                 event_data=payload,
-                timestamp=asyncio.get_event_loop().time()
+                timestamp=asyncio.get_event_loop().time(),
             )
 
             await event_bus.publish(event)
@@ -488,9 +504,9 @@ class IntegrationHubService(Microservice):
                 integration_id: {
                     "status": "active",
                     "last_sync": asyncio.get_event_loop().time(),
-                    "health": "good"
+                    "health": "good",
                 }
-                for integration_id in self.integrations.keys()
+                for integration_id in self.integrations
             }
 
     def _setup_event_handlers(self):
@@ -500,11 +516,12 @@ class IntegrationHubService(Microservice):
 
         event_bus.subscribe("external.event", handle_external_event)
 
+
 class MicroservicesOrchestrator:
     """Orchestrates all microservices"""
 
     def __init__(self):
-        self.services: Dict[BoundedContext, Microservice] = {}
+        self.services: dict[BoundedContext, Microservice] = {}
         self.service_ports = {
             BoundedContext.CASE_MANAGEMENT: 8001,
             BoundedContext.FRAUD_DETECTION: 8002,
@@ -519,7 +536,7 @@ class MicroservicesOrchestrator:
         self.services[service.bounded_context] = service
         logger.info(f"Registered service: {service.name}")
 
-    def get_service(self, bounded_context: BoundedContext) -> Optional[Microservice]:
+    def get_service(self, bounded_context: BoundedContext) -> Microservice | None:
         """Get a registered service"""
         return self.services.get(bounded_context)
 
@@ -532,6 +549,7 @@ class MicroservicesOrchestrator:
             port = self.service_ports[bounded_context]
             task = asyncio.create_task(self._start_service(service, port))
             tasks.append(task)
+            self._service_tasks.append(task)
 
         await asyncio.gather(*tasks)
         logger.info("All microservices started")
@@ -540,17 +558,20 @@ class MicroservicesOrchestrator:
         """Start a single service on specified port"""
         try:
             import uvicorn
-            config = uvicorn.Config(service.app, host="0.0.0.0", port=port, log_level="info")
+
+            config = uvicorn.Config(
+                service.app, host="0.0.0.0", port=port, log_level="info"
+            )
             server = uvicorn.Server(config)
             await server.serve()
         except Exception as e:
             logger.error(f"Failed to start {service.name} on port {port}: {e}")
 
-    async def health_check_all(self) -> Dict[str, bool]:
+    async def health_check_all(self) -> dict[str, bool]:
         """Perform health check on all services"""
         health_status = {}
 
-        for bounded_context, service in self.services.items():
+        for service in self.services.values():
             try:
                 # Simple health check - would be more sophisticated in production
                 health_status[service.name] = True
@@ -560,7 +581,7 @@ class MicroservicesOrchestrator:
 
         return health_status
 
-    def get_service_discovery_info(self) -> Dict[str, Dict[str, Any]]:
+    def get_service_discovery_info(self) -> dict[str, dict[str, Any]]:
         """Get service discovery information"""
         discovery_info = {}
 
@@ -570,10 +591,11 @@ class MicroservicesOrchestrator:
                 "bounded_context": bounded_context.value,
                 "port": port,
                 "endpoint": f"http://localhost:{port}",
-                "status": "active"
+                "status": "active",
             }
 
         return discovery_info
+
 
 # Create and configure microservices
 def create_microservices_orchestrator() -> MicroservicesOrchestrator:
@@ -591,19 +613,20 @@ def create_microservices_orchestrator() -> MicroservicesOrchestrator:
 
     return orchestrator
 
+
 # Export for use
 __all__ = [
     "BoundedContext",
+    "CaseManagementService",
     "DomainEvent",
     "DomainEventBus",
-    "Microservice",
-    "CaseManagementService",
-    "FraudDetectionService",
     "EvidenceProcessingService",
-    "UserManagementService",
-    "ReportingAnalyticsService",
+    "FraudDetectionService",
     "IntegrationHubService",
+    "Microservice",
     "MicroservicesOrchestrator",
+    "ReportingAnalyticsService",
+    "UserManagementService",
     "create_microservices_orchestrator",
-    "event_bus"
+    "event_bus",
 ]

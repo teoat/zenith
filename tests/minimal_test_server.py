@@ -17,10 +17,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/health")
 def health_check():
     """Basic health check"""
-    return {"status": "healthy", "service": "fraud-detection-backend", "version": "1.0.0"}
+    return {
+        "status": "healthy",
+        "service": "fraud-detection-backend",
+        "version": "1.0.0",
+    }
+
 
 @app.get("/api/v1/collaboration/stats")
 def collaboration_stats():
@@ -29,8 +35,9 @@ def collaboration_stats():
         "active_sessions": 0,
         "total_connections": 0,
         "total_participants": 0,
-        "server_running": False
+        "server_running": False,
     }
+
 
 @app.get("/api/v1/monitoring/metrics")
 def monitoring_metrics():
@@ -44,14 +51,28 @@ def monitoring_metrics():
         "active_connections": 5,
         "response_time": 120.5,
         "error_rate": 0.1,
-        "throughput": 150.2
+        "throughput": 150.2,
     }
+
 
 @app.get("/metrics")
 def prometheus_metrics():
     """Mock Prometheus metrics"""
     return "# Mock metrics\nhttp_requests_total 100\n"
 
+
+@app.get("/api/v1/ai/health")
+def ai_health():
+    """Mock AI Health"""
+    return {
+        "service": "ai",
+        "status": "healthy",
+        "timestamp": "2025-01-01T00:00:00Z",
+        "components": {"vector_store": {"status": "healthy", "documents": 5}},
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="127.0.0.1", port=8000)

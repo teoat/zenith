@@ -3,22 +3,22 @@ Implements presence and a simple in-memory event queue for local testing.
 """
 
 import uuid
-from typing import Any, Dict, List
+from typing import Any
 
 
 class SyncService:
     def __init__(self):
-        self.presence: Dict[str, Dict[str, Any]] = {}
-        self.events: List[Dict[str, Any]] = []
+        self.presence: dict[str, dict[str, Any]] = {}
+        self.events: list[dict[str, Any]] = []
 
-    def announce(self, user_id: str, metadata: Dict[str, Any]):
+    def announce(self, user_id: str, metadata: dict[str, Any]):
         self.presence[user_id] = metadata
 
     def leave(self, user_id: str):
         if user_id in self.presence:
             del self.presence[user_id]
 
-    def push_event(self, payload: Dict[str, Any]) -> str:
+    def push_event(self, payload: dict[str, Any]) -> str:
         event_id = str(uuid.uuid4())
         ev = {"id": event_id, "payload": payload}
         self.events.append(ev)
@@ -31,16 +31,14 @@ class SyncService:
 
 
 import asyncio
-import json
 import logging
-import uuid
 from collections import defaultdict
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
-from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import WebSocket
 
 logger = logging.getLogger(__name__)
 
@@ -58,11 +56,11 @@ class CRDTOperation:
     id: str
     type: OperationType
     position: int
-    content: Optional[str] = None
-    length: Optional[int] = None
+    content: str | None = None
+    length: int | None = None
     timestamp: float = None
     client_id: str = None
-    vector_clock: Dict[str, int] = None
+    vector_clock: dict[str, int] = None
 
     def __post_init__(self):
         if self.timestamp is None:
@@ -77,9 +75,9 @@ class CRDTDocument:
     def __init__(self, document_id: str):
         self.document_id = document_id
         self.content = ""
-        self.operations: List[CRDTOperation] = []
-        self.vector_clock: Dict[str, int] = {}
-        self.client_states: Dict[str, Dict[str, int]] = {}
+        self.operations: list[CRDTOperation] = []
+        self.vector_clock: dict[str, int] = {}
+        self.client_states: dict[str, dict[str, int]] = {}
 
     def apply_operation(self, operation: CRDTOperation) -> bool:
         """Apply an operation to the document"""
@@ -109,7 +107,7 @@ class CRDTDocument:
             return True
 
         except Exception as e:
-            logger.error(f"Error applying operation: {str(e)}")
+            logger.error(f"Error applying operation: {e!s}")
             return False
 
     def _apply_insert(self, operation: CRDTOperation):
@@ -130,10 +128,7 @@ class CRDTDocument:
 
     def _is_operation_applied(self, operation: CRDTOperation) -> bool:
         """Check if operation has already been applied"""
-        for existing_op in self.operations:
-            if existing_op.id == operation.id:
-                return True
-        return False
+        return any(existing_op.id == operation.id for existing_op in self.operations)
 
     def _update_vector_clock(self, operation: CRDTOperation):
         """Update vector clock with operation"""
@@ -185,7 +180,7 @@ class CRDTDocument:
             vector_clock=self.vector_clock.copy(),
         )
 
-    def get_state(self) -> Dict[str, Any]:
+    def get_state(self) -> dict[str, Any]:
         """Get current document state"""
         return {
             "document_id": self.document_id,
@@ -196,8 +191,8 @@ class CRDTDocument:
         }
 
     def get_missing_operations(
-        self, client_vector_clock: Dict[str, int]
-    ) -> List[CRDTOperation]:
+        self, client_vector_clock: dict[str, int]
+    ) -> list[CRDTOperation]:
         """Get operations that client hasn't seen yet"""
         missing_ops = []
 
@@ -215,13 +210,13 @@ class RealTimeSyncManager:
     """Enhanced real-time synchronization manager with CRDT support"""
 
     def __init__(self):
-        self.active_connections: Dict[str, WebSocket] = {}
-        self.user_sessions: Dict[str, str] = {}  # websocket_id -> user_id
-        self.document_locks: Dict[str, str] = {}  # document_id -> user_id
-        self.documents: Dict[str, CRDTDocument] = {}  # document_id -> CRDTDocument
-        self.client_subscriptions: Dict[str, Set[str]] = (
-            {}
-        )  # client_id -> set of document_ids
+        self.active_connections: dict[str, WebSocket] = {}
+        self.user_sessions: dict[str, str] = {}  # websocket_id -> user_id
+        self.document_locks: dict[str, str] = {}  # document_id -> user_id
+        self.documents: dict[str, CRDTDocument] = {}  # document_id -> CRDTDocument
+        self.client_subscriptions: dict[
+            str, set[str]
+        ] = {}  # client_id -> set of document_ids
         self.lock = asyncio.Lock()
 
     async def connect(self, websocket: WebSocket, user_id: str) -> str:
@@ -274,7 +269,7 @@ class RealTimeSyncManager:
 
             logger.info(f"WebSocket disconnected: {connection_id} for user {user_id}")
 
-    async def send_to_connection(self, connection_id: str, message: Dict[str, Any]):
+    async def send_to_connection(self, connection_id: str, message: dict[str, Any]):
         """Send message to specific connection"""
         if connection_id in self.active_connections:
             try:
@@ -286,8 +281,8 @@ class RealTimeSyncManager:
     async def broadcast_to_user(
         self,
         user_id: str,
-        message: Dict[str, Any],
-        exclude_connection: Optional[str] = None,
+        message: dict[str, Any],
+        exclude_connection: str | None = None,
     ):
         """Broadcast message to all connections of a user"""
         for conn_id, uid in self.user_sessions.items():
@@ -297,13 +292,13 @@ class RealTimeSyncManager:
     async def broadcast_to_document(
         self,
         document_id: str,
-        message: Dict[str, Any],
-        exclude_user: Optional[str] = None,
+        message: dict[str, Any],
+        exclude_user: str | None = None,
     ):
         """Broadcast message to all users viewing a document"""
         # Find all users currently viewing this document
         viewers = set()
-        for conn_id, websocket in self.active_connections.items():
+        for conn_id in self.active_connections:
             # In a real implementation, you'd track which documents each connection is viewing
             # For now, broadcast to all connections
             user_id = self.user_sessions.get(conn_id)
@@ -316,7 +311,7 @@ class RealTimeSyncManager:
             )
 
     async def handle_crdt_operation(
-        self, connection_id: str, operation: Dict[str, Any]
+        self, connection_id: str, operation: dict[str, Any]
     ):
         """Handle CRDT-based operations for conflict-free replication"""
         document_id = operation.get("document_id")
@@ -364,7 +359,7 @@ class RealTimeSyncManager:
         )
 
     async def handle_document_lock(
-        self, connection_id: str, lock_request: Dict[str, Any]
+        self, connection_id: str, lock_request: dict[str, Any]
     ):
         """Handle document locking for collaborative editing"""
         document_id = lock_request.get("document_id")
@@ -412,7 +407,7 @@ class RealTimeSyncManager:
                     },
                 )
 
-    async def handle_message(self, connection_id: str, message: Dict[str, Any]):
+    async def handle_message(self, connection_id: str, message: dict[str, Any]):
         """Handle incoming WebSocket messages"""
         message_type = message.get("type")
 
@@ -437,7 +432,7 @@ class RealTimeSyncManager:
         else:
             logger.warning(f"Unknown message type: {message_type}")
 
-    def get_active_users(self) -> Dict[str, Any]:
+    def get_active_users(self) -> dict[str, Any]:
         """Get information about active users and connections"""
         users_online = set(self.user_sessions.values())
         user_connections = defaultdict(list)
@@ -452,7 +447,7 @@ class RealTimeSyncManager:
             "locked_documents": self.document_locks,
         }
 
-    def resolve_conflicts(self, document_id: str) -> List[Dict[str, Any]]:
+    def resolve_conflicts(self, document_id: str) -> list[dict[str, Any]]:
         """Resolve conflicts in CRDT operations using vector clocks"""
         if document_id not in self.crdt_states:
             return []

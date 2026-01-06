@@ -7,7 +7,6 @@ Comprehensive list of potential issues for fraud detection platform diagnosis
 import asyncio
 import json
 from dataclasses import dataclass
-from datetime import datetime
 from typing import Any, Dict, List
 
 
@@ -20,7 +19,7 @@ class DiagnosticIssue:
     title: str
     description: str
     impact: str
-    investigation_methods: List[str]
+    investigation_methods: list[str]
     estimated_effort: str
     priority: str
 
@@ -29,7 +28,7 @@ class AdditionalDiagnosticsProposer:
     """Proposes additional diagnostic issues to investigate"""
 
     def __init__(self):
-        self.proposed_issues: Dict[str, List[DiagnosticIssue]] = {}
+        self.proposed_issues: dict[str, list[DiagnosticIssue]] = {}
         self._generate_proposals()
 
     def _generate_proposals(self):
@@ -386,11 +385,11 @@ class AdditionalDiagnosticsProposer:
             ),
         ]
 
-    def get_all_proposed_issues(self) -> Dict[str, List[DiagnosticIssue]]:
+    def get_all_proposed_issues(self) -> dict[str, list[DiagnosticIssue]]:
         """Get all proposed diagnostic issues"""
         return self.proposed_issues
 
-    def get_issues_by_priority(self, priority: str) -> List[DiagnosticIssue]:
+    def get_issues_by_priority(self, priority: str) -> list[DiagnosticIssue]:
         """Get issues filtered by priority"""
         issues = []
         for category_issues in self.proposed_issues.values():
@@ -399,7 +398,7 @@ class AdditionalDiagnosticsProposer:
             )
         return issues
 
-    def get_issues_by_severity(self, severity: str) -> List[DiagnosticIssue]:
+    def get_issues_by_severity(self, severity: str) -> list[DiagnosticIssue]:
         """Get issues filtered by severity"""
         issues = []
         for category_issues in self.proposed_issues.values():
@@ -408,11 +407,11 @@ class AdditionalDiagnosticsProposer:
             )
         return issues
 
-    def get_issues_by_category(self, category: str) -> List[DiagnosticIssue]:
+    def get_issues_by_category(self, category: str) -> list[DiagnosticIssue]:
         """Get issues for a specific category"""
         return self.proposed_issues.get(category, [])
 
-    def generate_investigation_plan(self) -> Dict[str, Any]:
+    def generate_investigation_plan(self) -> dict[str, Any]:
         """Generate a comprehensive investigation plan"""
         plan = {
             "total_issues_proposed": sum(

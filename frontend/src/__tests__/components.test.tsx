@@ -274,7 +274,7 @@ describe('Tabs Component', () => {
 
 describe('Modal/Dialog Component', () => {
   it('renders when open', async () => {
-    const { Dialog, DialogContent, DialogHeader, DialogTitle } = await import('../components/ui/dialog');
+    const { Dialog, DialogContent, DialogHeader, DialogTitle } = await import('../components/ui/Dialog');
     
     render(
       <Dialog open={true}>

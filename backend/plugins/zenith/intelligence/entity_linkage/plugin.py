@@ -1,19 +1,22 @@
-from core.plugin_system import PluginInterface, PluginMetadata, PluginContext
-from typing import Dict, Any, List, Set
 import logging
 from dataclasses import dataclass
+from typing import Any
+
+from core.plugin_system import PluginContext, PluginInterface, PluginMetadata
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class EntityLinkageConfig:
     connection_threshold: int
 
+
 class EntityLinkagePlugin(PluginInterface):
     """
     Analyzes connections between entities to find clusters and hubs.
     """
-    
+
     @property
     def metadata(self) -> PluginMetadata:
         return PluginMetadata(
@@ -25,30 +28,28 @@ class EntityLinkagePlugin(PluginInterface):
             dependencies={},
             capabilities=["intelligence", "case_analysis"],
             security_level="official",
-            api_version="v1"
+            api_version="v1",
         )
-    
+
     async def initialize(self, context: PluginContext) -> bool:
         self.context = context
-        config_dict = context.config if context.config else {
-            "connection_threshold": 3
-        }
+        config_dict = context.config if context.config else {"connection_threshold": 3}
         self.config = EntityLinkageConfig(**config_dict)
         return True
-    
-    async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+
+    async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         """
         Expects {"case_data": {...}}
         """
         case_data = inputs.get("case_data")
         if not case_data:
             return {"error": "No case data provided"}
-            
+
         return await self._analyze_entity_linkage(case_data)
 
     async def _analyze_entity_linkage(
-        self, case_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Analyze entity relationships and linkages"""
         insights = []
         recommendations = []
@@ -88,9 +89,10 @@ class EntityLinkagePlugin(PluginInterface):
             # Find isolated clusters
             # Start timer for expensive DFS
             import time
+
             start_time = time.time()
             TIMEOUT_SECONDS = 2.0
-            
+
             visited = set()
             clusters = []
 
@@ -98,12 +100,19 @@ class EntityLinkagePlugin(PluginInterface):
                 if time.time() - start_time > TIMEOUT_SECONDS:
                     insights.append("Entity analysis timed out - partial results shown")
                     break
-                    
+
                 if entity not in visited:
                     cluster = set()
-                    # Pass context to avoid using global start_time if strict, 
+                    # Pass context to avoid using global start_time if strict,
                     # but simple closure works here
-                    self._dfs(entity, entity_connections, visited, cluster, start_time, TIMEOUT_SECONDS)
+                    self._dfs(
+                        entity,
+                        entity_connections,
+                        visited,
+                        cluster,
+                        start_time,
+                        TIMEOUT_SECONDS,
+                    )
                     clusters.append(cluster)
 
             if len(clusters) > 1:
@@ -121,19 +130,20 @@ class EntityLinkagePlugin(PluginInterface):
         }
 
     def _dfs(
-        self, 
-        entity: str, 
-        connections: Dict[str, set], 
-        visited: set, 
+        self,
+        entity: str,
+        connections: dict[str, set],
+        visited: set,
         cluster: set,
         start_time: float = 0,
-        timeout: float = 0
+        timeout: float = 0,
     ):
         """Depth-first search for connected components with timeout"""
         import time
+
         if timeout > 0 and (time.time() - start_time > timeout):
             return
-            
+
         visited.add(entity)
         cluster.add(entity)
 
@@ -144,5 +154,5 @@ class EntityLinkagePlugin(PluginInterface):
     async def cleanup(self) -> None:
         pass
 
-    def validate_config(self, config: Dict[str, Any]) -> List[str]:
+    def validate_config(self, config: dict[str, Any]) -> list[str]:
         return []

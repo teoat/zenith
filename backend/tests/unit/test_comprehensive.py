@@ -2,17 +2,15 @@
 
 import os
 import uuid
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
-from fastapi import HTTPException
-from main import app
-from starlette.testclient import TestClient
-
-from app.services.infrastructure.auth_service import auth_service
-from app.services.infrastructure.storage.database_service import db_service
 from app.services.fraud.fraud_service import FraudDetectionService
+from app.services.infrastructure.auth_service import auth_service
 from app.services.infrastructure.monitoring_service import monitoring_service
+from app.services.infrastructure.storage.database_service import db_service
+from fastapi import HTTPException
+
 from core.config import Settings
 from core.database import Case, CaseStatus, Evidence, Transaction, User
 from core.logging import log_error, log_request, log_security_event, setup_logging
@@ -330,7 +328,6 @@ class TestMiddleware:
     @pytest.mark.asyncio
     async def test_validation_middleware_large_request(self):
         """Test validation middleware with large request"""
-        import io
 
         from starlette.requests import Request
         from starlette.responses import JSONResponse

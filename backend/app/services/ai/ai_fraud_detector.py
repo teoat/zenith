@@ -1,13 +1,11 @@
 import logging
 import os
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import joblib
 import numpy as np
-import pandas as pd
 from sklearn.ensemble import IsolationForest
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 logger = logging.getLogger(__name__)
@@ -54,7 +52,9 @@ class AIFraudDetector:
             self.is_trained = False
 
     def _extract_features(
-        self, transaction: Dict[str, Any], historical_data: List[Dict[str, Any]] = None
+        self,
+        transaction: dict[str, Any],
+        historical_data: list[dict[str, Any]] | None = None,
     ) -> np.ndarray:
         """Extract features for AI analysis"""
         amount = float(transaction.get("amount", 0))
@@ -167,8 +167,8 @@ class AIFraudDetector:
         return datetime.now()
 
     def train_model(
-        self, training_data: List[Dict[str, Any]], contamination: float = 0.1
-    ) -> Dict[str, Any]:
+        self, training_data: list[dict[str, Any]], contamination: float = 0.1
+    ) -> dict[str, Any]:
         """Train the Isolation Forest model"""
         logger.info(f"Training AI model with {len(training_data)} transactions")
 
@@ -217,8 +217,10 @@ class AIFraudDetector:
         }
 
     def predict_fraud_score(
-        self, transaction: Dict[str, Any], historical_data: List[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self,
+        transaction: dict[str, Any],
+        historical_data: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
         """Predict fraud score for a transaction"""
         if not self.is_trained:
             return {
@@ -265,7 +267,7 @@ class AIFraudDetector:
                 "score": 50.0,
                 "confidence": 0.0,
                 "is_fraud": False,
-                "explanation": f"Prediction error: {str(e)}",
+                "explanation": f"Prediction error: {e!s}",
             }
 
     def _generate_explanation(self, features: np.ndarray, score: float) -> str:
@@ -306,7 +308,7 @@ class AIFraudDetector:
 
         return "; ".join(explanations)
 
-    def get_model_info(self) -> Dict[str, Any]:
+    def get_model_info(self) -> dict[str, Any]:
         """Get information about the trained model"""
         if not self.is_trained:
             return {"status": "not_trained"}
@@ -319,7 +321,7 @@ class AIFraudDetector:
             "is_trained": self.is_trained,
         }
 
-    def retrain_model(self, new_data: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def retrain_model(self, new_data: list[dict[str, Any]]) -> dict[str, Any]:
         """Retrain the model with new data"""
         # In a real implementation, you'd combine with existing training data
         # For simplicity, we'll retrain with the new data

@@ -4,7 +4,6 @@ Environment-specific settings for production deployment
 """
 
 import os
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -13,7 +12,9 @@ class SecurityConfig(BaseModel):
     """Security configuration for production"""
 
     # JWT Settings
-    jwt_secret_key: str = os.getenv("JWT_SECRET_KEY", "development-jwt-key-replace-in-production")
+    jwt_secret_key: str = os.getenv(
+        "JWT_SECRET_KEY", "development-jwt-key-replace-in-production"
+    )
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30  # Short-lived tokens
     refresh_token_expire_days: int = 7
@@ -62,12 +63,12 @@ class SecurityConfig(BaseModel):
     # Monitoring
     enable_prometheus: bool = True
     enable_sentry: bool = True
-    sentry_dsn: Optional[str] = os.getenv("SENTRY_DSN")
+    sentry_dsn: str | None = os.getenv("SENTRY_DSN")
 
     # Alerting
     alert_email: str = os.getenv("SECURITY_ALERT_EMAIL", "security@example.com")
-    slack_webhook: Optional[str] = os.getenv("SLACK_WEBHOOK_URL")
-    pagerduty_key: Optional[str] = os.getenv("PAGERDUTY_KEY")
+    slack_webhook: str | None = os.getenv("SLACK_WEBHOOK_URL")
+    pagerduty_key: str | None = os.getenv("PAGERDUTY_KEY")
 
 
 class ProductionConfig(BaseModel):

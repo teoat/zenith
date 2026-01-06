@@ -5,18 +5,13 @@ Automated technical debt reduction and code smell remediation
 """
 
 import ast
-import asyncio
-import json
 import logging
 import os
-import re
-import statistics
-import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -63,15 +58,15 @@ class RefactoringTask:
     """Represents a refactoring task"""
 
     task_id: str
-    issue_ids: List[str]
+    issue_ids: list[str]
     title: str
     description: str
     priority: DebtPriority
     estimated_effort_days: float
     status: str  # "pending", "in_progress", "completed", "blocked"
-    assigned_to: Optional[str] = None
+    assigned_to: str | None = None
     created_at: datetime = field(default_factory=datetime.now)
-    completed_at: Optional[datetime] = None
+    completed_at: datetime | None = None
     automated: bool = False
 
 
@@ -93,10 +88,10 @@ class CodeQualityImprovementService:
     """Automated code quality improvement and technical debt reduction"""
 
     def __init__(self):
-        self.code_issues: Dict[str, CodeIssue] = {}
-        self.refactoring_tasks: Dict[str, RefactoringTask] = {}
-        self.code_metrics: Dict[str, CodeQualityMetrics] = {}
-        self.automated_fixes: Dict[CodeSmell, Callable] = {}
+        self.code_issues: dict[str, CodeIssue] = {}
+        self.refactoring_tasks: dict[str, RefactoringTask] = {}
+        self.code_metrics: dict[str, CodeQualityMetrics] = {}
+        self.automated_fixes: dict[CodeSmell, Callable] = {}
 
         self._initialize_automated_fixes()
         self._setup_code_analysis()
@@ -122,7 +117,7 @@ class CodeQualityImprovementService:
 
     async def analyze_codebase(
         self, root_path: str = "/Users/Arief/Desktop/Zenith"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Comprehensive codebase analysis"""
         logger.info(f"Starting codebase analysis for: {root_path}")
 
@@ -181,10 +176,9 @@ class CodeQualityImprovementService:
                         "refactor": 2,
                         "major_rework": 5,
                     }
-                    analysis_results[
-                        "technical_debt_estimate"
-                    ] += issue.impact_score * effort_multiplier.get(
-                        issue.estimated_effort, 1
+                    analysis_results["technical_debt_estimate"] += (
+                        issue.impact_score
+                        * effort_multiplier.get(issue.estimated_effort, 1)
                     )
 
             except Exception as e:
@@ -204,12 +198,12 @@ class CodeQualityImprovementService:
 
         return analysis_results
 
-    async def _analyze_file(self, file_path: str) -> List[CodeIssue]:
+    async def _analyze_file(self, file_path: str) -> list[CodeIssue]:
         """Analyze a single Python file for code smells"""
         issues = []
 
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 content = f.read()
 
             lines = content.split("\n")
@@ -232,8 +226,8 @@ class CodeQualityImprovementService:
         return issues
 
     def _detect_long_methods(
-        self, tree: ast.AST, file_path: str, lines: List[str]
-    ) -> List[CodeIssue]:
+        self, tree: ast.AST, file_path: str, lines: list[str]
+    ) -> list[CodeIssue]:
         """Detect methods that are too long"""
         issues = []
 
@@ -266,8 +260,8 @@ class CodeQualityImprovementService:
         return issues
 
     def _detect_large_classes(
-        self, tree: ast.AST, file_path: str, lines: List[str]
-    ) -> List[CodeIssue]:
+        self, tree: ast.AST, file_path: str, lines: list[str]
+    ) -> list[CodeIssue]:
         """Detect classes that are too large"""
         issues = []
 
@@ -296,8 +290,8 @@ class CodeQualityImprovementService:
         return issues
 
     def _detect_long_parameter_lists(
-        self, tree: ast.AST, file_path: str, lines: List[str]
-    ) -> List[CodeIssue]:
+        self, tree: ast.AST, file_path: str, lines: list[str]
+    ) -> list[CodeIssue]:
         """Detect functions with too many parameters"""
         issues = []
 
@@ -326,8 +320,8 @@ class CodeQualityImprovementService:
         return issues
 
     def _detect_complex_conditionals(
-        self, tree: ast.AST, file_path: str, lines: List[str]
-    ) -> List[CodeIssue]:
+        self, tree: ast.AST, file_path: str, lines: list[str]
+    ) -> list[CodeIssue]:
         """Detect complex conditional statements"""
         issues = []
 
@@ -375,8 +369,8 @@ class CodeQualityImprovementService:
         return complexity
 
     def _detect_duplicate_code(
-        self, content: str, file_path: str, lines: List[str]
-    ) -> List[CodeIssue]:
+        self, content: str, file_path: str, lines: list[str]
+    ) -> list[CodeIssue]:
         """Detect duplicate code blocks"""
         issues = []
 
@@ -416,7 +410,7 @@ class CodeQualityImprovementService:
 
         return issues
 
-    async def apply_automated_fixes(self) -> Dict[str, Any]:
+    async def apply_automated_fixes(self) -> dict[str, Any]:
         """Apply all available automated fixes"""
         results = {
             "fixes_attempted": 0,
@@ -459,7 +453,7 @@ class CodeQualityImprovementService:
             task_id=f"refactor_{issue.issue_id}",
             issue_ids=[issue.issue_id],
             title=f"Refactor long method: {issue.description}",
-            description=f"Break down long method into smaller, focused functions",
+            description="Break down long method into smaller, focused functions",
             priority=issue.severity,
             estimated_effort_days=2.0,
             status="pending",
@@ -476,7 +470,7 @@ class CodeQualityImprovementService:
             task_id=f"refactor_{issue.issue_id}",
             issue_ids=[issue.issue_id],
             title=f"Extract duplicate code: {issue.description}",
-            description=f"Create utility function for duplicated code block",
+            description="Create utility function for duplicated code block",
             priority=issue.severity,
             estimated_effort_days=1.0,
             status="pending",
@@ -493,7 +487,7 @@ class CodeQualityImprovementService:
             task_id=f"refactor_{issue.issue_id}",
             issue_ids=[issue.issue_id],
             title=f"Refactor parameter list: {issue.description}",
-            description=f"Introduce parameter object to reduce parameter count",
+            description="Introduce parameter object to reduce parameter count",
             priority=issue.severity,
             estimated_effort_days=1.5,
             status="pending",
@@ -510,7 +504,7 @@ class CodeQualityImprovementService:
             task_id=f"refactor_{issue.issue_id}",
             issue_ids=[issue.issue_id],
             title=f"Simplify complex conditional: {issue.description}",
-            description=f"Extract conditional logic into separate method or use strategy pattern",
+            description="Extract conditional logic into separate method or use strategy pattern",
             priority=issue.severity,
             estimated_effort_days=1.5,
             status="pending",
@@ -526,7 +520,7 @@ class CodeQualityImprovementService:
         # For now, assume issues are not resolved
         return False
 
-    async def generate_refactoring_plan(self) -> Dict[str, Any]:
+    async def generate_refactoring_plan(self) -> dict[str, Any]:
         """Generate comprehensive refactoring plan"""
         plan = {
             "total_issues": len(self.code_issues),
@@ -566,7 +560,7 @@ class CodeQualityImprovementService:
 
         return plan
 
-    def get_quality_dashboard(self) -> Dict[str, Any]:
+    def get_quality_dashboard(self) -> dict[str, Any]:
         """Get code quality dashboard"""
         total_issues = len(self.code_issues)
         resolved_issues = len(
@@ -587,7 +581,7 @@ class CodeQualityImprovementService:
             ),  # Rough estimate
         }
 
-    def _get_issues_by_severity(self) -> Dict[str, int]:
+    def _get_issues_by_severity(self) -> dict[str, int]:
         """Get issues count by severity"""
         severities = {}
         for issue in self.code_issues.values():
@@ -595,7 +589,7 @@ class CodeQualityImprovementService:
             severities[severity] = severities.get(severity, 0) + 1
         return severities
 
-    def _get_issues_by_type(self) -> Dict[str, int]:
+    def _get_issues_by_type(self) -> dict[str, int]:
         """Get issues count by type"""
         types = {}
         for issue in self.code_issues.values():

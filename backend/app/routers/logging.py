@@ -1,14 +1,13 @@
 # api/logging.py
 import logging
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
+from app.services.logging_service import LogCategory, LogLevel, get_logger
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app.services.infrastructure.auth_service import auth_service
-from app.services.logging_service import LogCategory, LogLevel, get_logger
-from core.database import User, get_db
+from core.database import get_db
 
 logger = logging.getLogger(__name__)
 
@@ -40,12 +39,12 @@ async def get_logging_status():
                 "max_file_size_mb": structured_logger.max_file_size_bytes
                 / (1024 * 1024),
             },
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to get logging status: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to get status: {str(e)}")
+        logger.error(f"Failed to get logging status: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get status: {e!s}")
 
 
 @router.get("/telemetry")
@@ -63,14 +62,12 @@ async def get_telemetry_data():
         return {
             "success": True,
             "telemetry": telemetry_data,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to get telemetry data: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get telemetry: {str(e)}"
-        )
+        logger.error(f"Failed to get telemetry data: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get telemetry: {e!s}")
 
 
 @router.post("/telemetry/reset")
@@ -88,19 +85,17 @@ async def reset_telemetry():
         return {
             "success": True,
             "message": "Telemetry data reset successfully",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to reset telemetry: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to reset telemetry: {str(e)}"
-        )
+        logger.error(f"Failed to reset telemetry: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to reset telemetry: {e!s}")
 
 
 @router.post("/telemetry/export")
 async def export_telemetry(
-    file_path: Optional[str] = Body(None, description="Export file path")
+    file_path: str | None = Body(None, description="Export file path"),
 ):
     """
     Export telemetry data to file
@@ -116,7 +111,7 @@ async def export_telemetry(
 
         # Generate default file path if not provided
         if not file_path:
-            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
             file_path = f"logs/telemetry_export_{timestamp}.json"
 
         structured_logger.export_telemetry(file_path)
@@ -125,13 +120,13 @@ async def export_telemetry(
             "success": True,
             "file_path": file_path,
             "message": f"Telemetry data exported to {file_path}",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to export telemetry: {str(e)}")
+        logger.error(f"Failed to export telemetry: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to export telemetry: {str(e)}"
+            status_code=500, detail=f"Failed to export telemetry: {e!s}"
         )
 
 
@@ -140,14 +135,14 @@ async def create_log_entry(
     level: str = Body(..., description="Log level"),
     category: str = Body(..., description="Log category"),
     message: str = Body(..., description="Log message"),
-    user_id: Optional[str] = Body(None, description="User ID"),
-    session_id: Optional[str] = Body(None, description="Session ID"),
-    request_id: Optional[str] = Body(None, description="Request ID"),
-    ip_address: Optional[str] = Body(None, description="IP address"),
-    user_agent: Optional[str] = Body(None, description="User agent"),
-    metadata: Optional[Dict[str, Any]] = Body(None, description="Additional metadata"),
-    duration_ms: Optional[float] = Body(None, description="Duration in milliseconds"),
-    error_code: Optional[str] = Body(None, description="Error code"),
+    user_id: str | None = Body(None, description="User ID"),
+    session_id: str | None = Body(None, description="Session ID"),
+    request_id: str | None = Body(None, description="Request ID"),
+    ip_address: str | None = Body(None, description="IP address"),
+    user_agent: str | None = Body(None, description="User agent"),
+    metadata: dict[str, Any] | None = Body(None, description="Additional metadata"),
+    duration_ms: float | None = Body(None, description="Duration in milliseconds"),
+    error_code: str | None = Body(None, description="Error code"),
     db: Session = Depends(get_db),
 ):
     """
@@ -205,15 +200,15 @@ async def create_log_entry(
         return {
             "success": True,
             "message": "Log entry created successfully",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to create log entry: {str(e)}")
+        logger.error(f"Failed to create log entry: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to create log entry: {str(e)}"
+            status_code=500, detail=f"Failed to create log entry: {e!s}"
         )
 
 
@@ -221,7 +216,7 @@ async def create_log_entry(
 async def log_user_action(
     action: str = Body(..., description="User action"),
     user_id: str = Body(..., description="User ID"),
-    metadata: Optional[Dict[str, Any]] = Body(None, description="Additional metadata"),
+    metadata: dict[str, Any] | None = Body(None, description="Additional metadata"),
     db: Session = Depends(get_db),
 ):
     """
@@ -242,14 +237,12 @@ async def log_user_action(
         return {
             "success": True,
             "message": "User action logged successfully",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to log user action: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to log user action: {str(e)}"
-        )
+        logger.error(f"Failed to log user action: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to log user action: {e!s}")
 
 
 @router.post("/log/api-request")
@@ -258,8 +251,8 @@ async def log_api_request(
     endpoint: str = Body(..., description="API endpoint"),
     status_code: int = Body(..., description="HTTP status code"),
     duration_ms: float = Body(..., description="Request duration in milliseconds"),
-    user_id: Optional[str] = Body(None, description="User ID"),
-    metadata: Optional[Dict[str, Any]] = Body(None, description="Additional metadata"),
+    user_id: str | None = Body(None, description="User ID"),
+    metadata: dict[str, Any] | None = Body(None, description="Additional metadata"),
     db: Session = Depends(get_db),
 ):
     """
@@ -290,22 +283,20 @@ async def log_api_request(
         return {
             "success": True,
             "message": "API request logged successfully",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to log API request: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to log API request: {str(e)}"
-        )
+        logger.error(f"Failed to log API request: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to log API request: {e!s}")
 
 
 @router.post("/log/security-event")
 async def log_security_event(
     event_type: str = Body(..., description="Security event type"),
     severity: str = Body(..., description="Event severity"),
-    user_id: Optional[str] = Body(None, description="User ID"),
-    metadata: Optional[Dict[str, Any]] = Body(None, description="Additional metadata"),
+    user_id: str | None = Body(None, description="User ID"),
+    metadata: dict[str, Any] | None = Body(None, description="Additional metadata"),
     db: Session = Depends(get_db),
 ):
     """
@@ -332,13 +323,13 @@ async def log_security_event(
         return {
             "success": True,
             "message": "Security event logged successfully",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to log security event: {str(e)}")
+        logger.error(f"Failed to log security event: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to log security event: {str(e)}"
+            status_code=500, detail=f"Failed to log security event: {e!s}"
         )
 
 
@@ -346,8 +337,8 @@ async def log_security_event(
 async def log_performance_metric(
     metric_name: str = Body(..., description="Metric name"),
     value: float = Body(..., description="Metric value"),
-    unit: Optional[str] = Body(None, description="Metric unit"),
-    metadata: Optional[Dict[str, Any]] = Body(None, description="Additional metadata"),
+    unit: str | None = Body(None, description="Metric unit"),
+    metadata: dict[str, Any] | None = Body(None, description="Additional metadata"),
     db: Session = Depends(get_db),
 ):
     """
@@ -371,24 +362,24 @@ async def log_performance_metric(
         return {
             "success": True,
             "message": "Performance metric logged successfully",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to log performance metric: {str(e)}")
+        logger.error(f"Failed to log performance metric: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to log performance metric: {str(e)}"
+            status_code=500, detail=f"Failed to log performance metric: {e!s}"
         )
 
 
 @router.get("/logs/search")
 async def search_logs(
-    level: Optional[str] = Query(None, description="Filter by log level"),
-    category: Optional[str] = Query(None, description="Filter by log category"),
-    user_id: Optional[str] = Query(None, description="Filter by user ID"),
-    session_id: Optional[str] = Query(None, description="Filter by session ID"),
-    start_time: Optional[str] = Query(None, description="Start time (ISO format)"),
-    end_time: Optional[str] = Query(None, description="End time (ISO format)"),
+    level: str | None = Query(None, description="Filter by log level"),
+    category: str | None = Query(None, description="Filter by log category"),
+    user_id: str | None = Query(None, description="Filter by user ID"),
+    session_id: str | None = Query(None, description="Filter by session ID"),
+    start_time: str | None = Query(None, description="Start time (ISO format)"),
+    end_time: str | None = Query(None, description="End time (ISO format)"),
     limit: int = Query(100, description="Maximum number of results"),
     db: Session = Depends(get_db),
 ):
@@ -443,17 +434,17 @@ async def search_logs(
                 "start_time": start_time,
                 "end_time": end_time,
             },
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to search logs: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to search logs: {str(e)}")
+        logger.error(f"Failed to search logs: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to search logs: {e!s}")
 
 
 @router.get("/pii-scrubbing/test")
 async def test_pii_scrubbing(
-    text: str = Query(..., description="Text to test PII scrubbing on")
+    text: str = Query(..., description="Text to test PII scrubbing on"),
 ):
     """
     Test PII scrubbing on sample text
@@ -478,13 +469,13 @@ async def test_pii_scrubbing(
             "original_text": text,
             "detected_pii_types": detected_types,
             "scrubbed_text": scrubbed_text,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to test PII scrubbing: {str(e)}")
+        logger.error(f"Failed to test PII scrubbing: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to test PII scrubbing: {str(e)}"
+            status_code=500, detail=f"Failed to test PII scrubbing: {e!s}"
         )
 
 
@@ -514,17 +505,17 @@ async def get_logging_config():
         return {
             "success": True,
             "config": config,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to get logging config: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to get config: {str(e)}")
+        logger.error(f"Failed to get logging config: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get config: {e!s}")
 
 
 @router.put("/config")
 async def update_logging_config(
-    config: Dict[str, Any] = Body(..., description="Logging configuration")
+    config: dict[str, Any] = Body(..., description="Logging configuration"),
 ):
     """
     Update logging configuration (simplified implementation)
@@ -543,11 +534,9 @@ async def update_logging_config(
             "success": True,
             "message": "Logging configuration updated (restart required for changes to take effect)",
             "config": config,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
-        logger.error(f"Failed to update logging config: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to update config: {str(e)}"
-        )
+        logger.error(f"Failed to update logging config: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to update config: {e!s}")

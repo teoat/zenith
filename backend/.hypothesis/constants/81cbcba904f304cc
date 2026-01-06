@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/temporal_burst_detector.py
+# hypothesis_version: 6.148.8
+
+[0.0, 0.05, 0.15, 1.0, 1.15, 1.3, 1.5, 2.5, 100, 3600, 10000, '%Y-%m-%d', '%Y-%m-%d %H:%M:%S', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%dT%H:%M:%SZ', '.', 'BURST_PATTERN', 'HIGH', 'LOW', 'MEDIUM', 'STRUCTURING_PATTERN', 'VELOCITY_ANOMALY', 'Z', 'alerts', 'amount', 'analysis_timestamp', 'anomalous_days', 'anomaly_threshold', 'average_amount', 'average_daily_txns', 'burst_detected', 'burst_patterns', 'burst_score', 'case_id', 'count', 'created_at', 'customer_id', 'date', 'description', 'file', 'high_velocity', 'id', 'normal', 'original', 'overall_risk_score', 'pattern_type', 'severity', 'single_transaction', 'std_deviation', 'structuring_patterns', 'summary', 'suspicious_count', 'threshold', 'timestamp', 'total_amount', 'transaction_count', 'transaction_ids', 'type', 'unknown', 'velocity_anomalies', 'velocity_score', 'window_end', 'window_start']

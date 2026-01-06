@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/intelligence/semantic_search_service.py
+# hypothesis_version: 6.148.8
+
+[0.0, 0.3, 0.5, 0.7, 0.9, 384, './data/chroma', './data/faiss_index', 'all-MiniLM-L6-v2', 'backend', 'chroma', 'collection_name', 'content', 'data/vector_store.db', 'db_path', 'description', 'distances', 'document_id', 'documents', 'embedding_dimension', 'error', 'faiss', 'file', 'fraud_evidence', 'id', 'ids', 'index_path', 'index_type', 'indexed_at', 'metadata', 'metadata_path', 'metadatas', 'next_id', 'persist_directory', 'r', 'similarity', 'sqlite', 'total_documents', 'w']

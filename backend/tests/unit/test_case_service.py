@@ -1,11 +1,12 @@
 """
 Unit tests for CaseService
 """
-import pytest
+
 from unittest.mock import Mock, patch
-from sqlalchemy.orm import Session
 
 from app.services.business.case_service import CaseService
+from sqlalchemy.orm import Session
+
 from core.database import Case
 
 
@@ -16,10 +17,10 @@ class TestCaseService:
         """Test that CaseService can be instantiated"""
         service = CaseService()
         assert service is not None
-        assert hasattr(service, 'get_case')
-        assert hasattr(service, 'get_case_summary')
+        assert hasattr(service, "get_case")
+        assert hasattr(service, "get_case_summary")
 
-    @patch('app.services.business.case_service.Session')
+    @patch("app.services.business.case_service.Session")
     def test_get_case_with_joins(self, mock_session):
         """Test get_case method with proper joins"""
         mock_db = Mock(spec=Session)
@@ -42,7 +43,7 @@ class TestCaseService:
         mock_query.filter.assert_called_once()
         mock_query.first.assert_called_once()
 
-    @patch('app.services.business.case_service.Session')
+    @patch("app.services.business.case_service.Session")
     def test_get_case_not_found(self, mock_session):
         """Test get_case when case doesn't exist"""
         mock_db = Mock(spec=Session)
@@ -60,7 +61,7 @@ class TestCaseService:
 
         assert result is None
 
-    @patch('app.services.business.case_service.Session')
+    @patch("app.services.business.case_service.Session")
     def test_get_case_summary(self, mock_session):
         """Test get_case_summary method"""
         mock_db = Mock(spec=Session)
@@ -85,11 +86,11 @@ class TestCaseService:
         result = service.get_case_summary(mock_db, "test-case-123")
 
         assert result is not None
-        assert result['id'] == "test-case-123"
-        assert result['title'] == "Test Case"
-        assert result['status'] == "OPEN"
+        assert result["id"] == "test-case-123"
+        assert result["title"] == "Test Case"
+        assert result["status"] == "OPEN"
 
-    @patch('app.services.business.case_service.Session')
+    @patch("app.services.business.case_service.Session")
     def test_create_case(self, mock_session):
         """Test create_case method"""
         mock_db = Mock(spec=Session)
@@ -97,18 +98,17 @@ class TestCaseService:
         mock_case.id = "new-case-123"
 
         service = CaseService()
-        with patch.object(service, '_create_case_object', return_value=mock_case) as mock_create:
+        with patch.object(
+            service, "_create_case_object", return_value=mock_case
+        ) as mock_create:
             result = service.create_case(
-                mock_db,
-                title="New Case",
-                description="Test description",
-                status="OPEN"
+                mock_db, title="New Case", description="Test description", status="OPEN"
             )
 
             mock_create.assert_called_once()
             assert result == mock_case
 
-    @patch('app.services.business.case_service.Session')
+    @patch("app.services.business.case_service.Session")
     def test_update_case(self, mock_session):
         """Test update_case method"""
         mock_db = Mock(spec=Session)
@@ -128,7 +128,7 @@ class TestCaseService:
         assert result == mock_case
         mock_db.commit.assert_called_once()
 
-    @patch('app.services.business.case_service.Session')
+    @patch("app.services.business.case_service.Session")
     def test_delete_case(self, mock_session):
         """Test delete_case method"""
         mock_db = Mock(spec=Session)
@@ -152,15 +152,15 @@ class TestCaseService:
         """Test that all expected methods exist"""
         service = CaseService()
         expected_methods = [
-            'get_case',
-            'get_case_summary',
-            'get_cases',
-            'get_cases_with_counts',
-            'create_case',
-            'update_case',
-            'delete_case',
-            'get_case_stats',
-            'get_cases_paginated'
+            "get_case",
+            "get_case_summary",
+            "get_cases",
+            "get_cases_with_counts",
+            "create_case",
+            "update_case",
+            "delete_case",
+            "get_case_stats",
+            "get_cases_paginated",
         ]
 
         for method in expected_methods:

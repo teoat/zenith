@@ -1,15 +1,21 @@
+import builtins
+import contextlib
 import json
 import logging
 import os
 import uuid
-import hashlib
-import aiofiles
-from dataclasses import asdict
 from datetime import datetime
-from typing import Dict, List, Optional, Any
+from typing import Any
 
+import aiofiles
+from app.dependencies import get_current_project_id
+from app.services.business.evidence_service import evidence_service
+from app.services.infrastructure.auth_service import auth_service
+from app.services.intelligence.evidence_service import evidence_processor
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
+    Body,
     Depends,
     File,
     Form,
@@ -17,19 +23,14 @@ from fastapi import (
     Query,
     Request,
     UploadFile,
-    Body,
-    BackgroundTasks,
 )
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, Field
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.services.infrastructure.auth_service import auth_service
-from app.services.intelligence.evidence_service import evidence_processor
-from app.services.business.evidence_service import evidence_service
 from core.database import Case, User, get_db
-from app.dependencies import get_current_project_id
-from pydantic import BaseModel, Field
+
 
 # Streaming upload models
 class UploadChunkRequest(BaseModel):
@@ -41,17 +42,20 @@ class UploadChunkRequest(BaseModel):
     file_size: int = Field(..., gt=0, description="Total file size in bytes")
     mime_type: str = Field(..., description="File MIME type")
 
+
 class UploadChunkResponse(BaseModel):
     file_id: str
     chunk_index: int
     uploaded: bool
     message: str
 
+
 class UploadCompleteRequest(BaseModel):
     file_id: str
     case_id: str
-    description: Optional[str] = None
-    tags: Optional[List[str]] = Field(default_factory=list)
+    description: str | None = None
+    tags: list[str] | None = Field(default_factory=list)
+
 
 class UploadCompleteResponse(BaseModel):
     evidence_id: str
@@ -60,6 +64,7 @@ class UploadCompleteResponse(BaseModel):
     uploaded_at: datetime
     processing_status: str
     message: str
+
 
 logger = logging.getLogger(__name__)
 
@@ -70,9 +75,9 @@ router = APIRouter()
 
 @router.get("")
 async def get_evidence(
-    case_id: Optional[str] = Query(None, description="Filter by case ID"),
-    file_type: Optional[str] = Query(None, description="Filter by file type"),
-    q: Optional[str] = Query(None, description="Search term for filename or uploader"),
+    case_id: str | None = Query(None, description="Filter by case ID"),
+    file_type: str | None = Query(None, description="Filter by file type"),
+    q: str | None = Query(None, description="Search term for filename or uploader"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db),
@@ -90,11 +95,11 @@ async def get_evidence(
             project_id=project_id,
             case_id=case_id,
             file_type=file_type,
-            search_query=q
+            search_query=q,
         )
     except Exception as e:
-        logger.error(f"Failed to get evidence: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to get evidence: {str(e)}")
+        logger.error(f"Failed to get evidence: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get evidence: {e!s}")
 
 
 @router.get("/{evidence_id}/download/stream")
@@ -126,7 +131,7 @@ async def download_evidence_stream(
 
         # Stream the file
         async def file_generator():
-            async with aiofiles.open(file_path, 'rb') as f:
+            async with aiofiles.open(file_path, "rb") as f:
                 chunk_size = 8192  # 8KB chunks
                 while True:
                     chunk = await f.read(chunk_size)
@@ -136,11 +141,11 @@ async def download_evidence_stream(
 
         return StreamingResponse(
             file_generator(),
-            media_type='application/octet-stream',
+            media_type="application/octet-stream",
             headers={
-                'Content-Disposition': f'attachment; filename="{evidence.filename}"',
-                'Content-Length': str(file_size),
-            }
+                "Content-Disposition": f'attachment; filename="{evidence.filename}"',
+                "Content-Length": str(file_size),
+            },
         )
 
     except HTTPException:
@@ -176,6 +181,7 @@ async def cleanup_evidence_processor(
 
 # ===== STREAMING UPLOAD ENDPOINTS =====
 
+
 @router.post("/upload/chunk", response_model=UploadChunkResponse)
 async def upload_file_chunk(
     request: UploadChunkRequest,
@@ -197,11 +203,12 @@ async def upload_file_chunk(
 
         # Decode chunk data
         import base64
+
         chunk_data = base64.b64decode(request.chunk_data)
 
         # Save chunk
         chunk_path = os.path.join(file_dir, f"chunk_{request.chunk_index:06d}")
-        async with aiofiles.open(chunk_path, 'wb') as f:
+        async with aiofiles.open(chunk_path, "wb") as f:
             await f.write(chunk_data)
 
         # Store chunk metadata in database for resumability
@@ -218,19 +225,21 @@ async def upload_file_chunk(
 
         # Store in a simple JSON file for now (could be database table)
         metadata_file = os.path.join(file_dir, "metadata.json")
-        async with aiofiles.open(metadata_file, 'w') as f:
+        async with aiofiles.open(metadata_file, "w") as f:
             await f.write(json.dumps(chunk_record, default=str))
 
         return UploadChunkResponse(
             file_id=request.file_id,
             chunk_index=request.chunk_index,
             uploaded=True,
-            message=f"Chunk {request.chunk_index + 1}/{request.total_chunks} uploaded successfully"
+            message=f"Chunk {request.chunk_index + 1}/{request.total_chunks} uploaded successfully",
         )
 
     except Exception as e:
-        logger.error(f"Failed to upload chunk {request.chunk_index} for file {request.file_id}: {e}")
-        raise HTTPException(status_code=500, detail=f"Chunk upload failed: {str(e)}")
+        logger.error(
+            f"Failed to upload chunk {request.chunk_index} for file {request.file_id}: {e}"
+        )
+        raise HTTPException(status_code=500, detail=f"Chunk upload failed: {e!s}")
 
 
 @router.post("/upload/complete", response_model=UploadCompleteResponse)
@@ -253,23 +262,26 @@ async def complete_file_upload(
 
         # Load metadata
         metadata_file = os.path.join(file_dir, "metadata.json")
-        async with aiofiles.open(metadata_file, 'r') as f:
+        async with aiofiles.open(metadata_file) as f:
             metadata = json.loads(await f.read())
 
         # Assemble file from chunks
-        final_file_path = os.path.join("uploads", f"{request.file_id}_{metadata['file_name']}")
+        final_file_path = os.path.join(
+            "uploads", f"{request.file_id}_{metadata['file_name']}"
+        )
 
-        async with aiofiles.open(final_file_path, 'wb') as final_file:
-            for i in range(metadata['total_chunks']):
+        async with aiofiles.open(final_file_path, "wb") as final_file:
+            for i in range(metadata["total_chunks"]):
                 chunk_path = os.path.join(file_dir, f"chunk_{i:06d}")
                 if not os.path.exists(chunk_path):
                     raise HTTPException(status_code=400, detail=f"Missing chunk {i}")
 
-                async with aiofiles.open(chunk_path, 'rb') as chunk_file:
+                async with aiofiles.open(chunk_path, "rb") as chunk_file:
                     await final_file.write(await chunk_file.read())
 
         # Clean up chunk directory
         import shutil
+
         shutil.rmtree(file_dir)
 
         # Process file in background
@@ -277,36 +289,36 @@ async def complete_file_upload(
             process_evidence_file_background,
             final_file_path,
             request.case_id,
-            metadata['file_name'],
+            metadata["file_name"],
             request.description,
             request.tags,
-            metadata['mime_type'],
+            metadata["mime_type"],
             current_user.id if current_user else None,
             project_id,
         )
 
         return UploadCompleteResponse(
             evidence_id=request.file_id,
-            file_name=metadata['file_name'],
-            file_size=metadata['file_size'],
+            file_name=metadata["file_name"],
+            file_size=metadata["file_size"],
             uploaded_at=datetime.now(),
             processing_status="processing",
-            message="File uploaded successfully, processing in background"
+            message="File uploaded successfully, processing in background",
         )
 
     except Exception as e:
         logger.error(f"Failed to complete upload for file {request.file_id}: {e}")
-        raise HTTPException(status_code=500, detail=f"Upload completion failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Upload completion failed: {e!s}")
 
 
 async def process_evidence_file_background(
     file_path: str,
     case_id: str,
     file_name: str,
-    description: Optional[str],
-    tags: List[str],
+    description: str | None,
+    tags: list[str],
     mime_type: str,
-    user_id: Optional[str],
+    user_id: str | None,
     project_id: str,
 ):
     """Background task to process uploaded evidence file"""
@@ -328,7 +340,9 @@ async def process_evidence_file_background(
             project_id=project_id,
         )
 
-        logger.info(f"Successfully processed evidence file: {file_name}, evidence_id: {result.get('evidence_id')}")
+        logger.info(
+            f"Successfully processed evidence file: {file_name}, evidence_id: {result.get('evidence_id')}"
+        )
 
     except Exception as e:
         logger.error(f"Background processing failed for file {file_name}: {e}")
@@ -336,13 +350,14 @@ async def process_evidence_file_background(
 
 # ===== LEGACY ENDPOINTS =====
 
+
 @router.post("/upload")
 async def upload_evidence(
     request: Request,
     case_id: str = Form(...),
     file: UploadFile = File(...),
-    description: Optional[str] = Form(None),
-    tags: Optional[str] = Form(None),  # JSON string of tags
+    description: str | None = Form(None),
+    tags: str | None = Form(None),  # JSON string of tags
     db: Session = Depends(get_db),
     project_id: str = Depends(get_current_project_id),
     current_user: User = Depends(auth_service.get_current_user),
@@ -368,7 +383,7 @@ async def upload_evidence(
                 description="Auto-generated case for evidence upload",
                 status="OPEN",
                 priority="MEDIUM",
-                project_id=project_id
+                project_id=project_id,
             )
             db.add(case)
             db.commit()
@@ -399,15 +414,18 @@ async def upload_evidence(
         # Virus scanning
         try:
             import clamav
+
             cd = clamav.ClamAV()
             scan_result = cd.scan(saved_file_path)
             if scan_result:
                 # File is infected
                 os.remove(saved_file_path)  # Delete infected file
-                logger.warning(f"Virus detected in uploaded file {file.filename}: {scan_result}")
+                logger.warning(
+                    f"Virus detected in uploaded file {file.filename}: {scan_result}"
+                )
                 raise HTTPException(
                     status_code=400,
-                    detail="File contains malicious content and has been rejected"
+                    detail="File contains malicious content and has been rejected",
                 )
         except ImportError:
             logger.warning("ClamAV not available, skipping virus scan")
@@ -417,7 +435,7 @@ async def upload_evidence(
             os.remove(saved_file_path)
             raise HTTPException(
                 status_code=500,
-                detail="File scanning failed, upload rejected for security"
+                detail="File scanning failed, upload rejected for security",
             )
 
         temp_file_path = saved_file_path  # usage in rest of function
@@ -431,7 +449,7 @@ async def upload_evidence(
                     "filename": file.filename,
                     "enable_ocr": True,
                     "enable_forensics": True,
-                }
+                },
             )
 
             if not results:
@@ -440,21 +458,33 @@ async def upload_evidence(
             processing_result = results[0]
 
             if processing_result.error:
-                 raise Exception(f"Processing error: {processing_result.error}")
+                raise Exception(f"Processing error: {processing_result.error}")
 
             # Create evidence record
             evidence_id = str(uuid.uuid4())
 
             # Extract forensic result if available from metadata
             forensic_result = {
-                "manipulation_score": processing_result.metadata.get("manipulation_score"),
-                "authenticity_score": processing_result.metadata.get("authenticity_score"),
-                "forensic_indicators": processing_result.metadata.get("forensic_indicators", []),
+                "manipulation_score": processing_result.metadata.get(
+                    "manipulation_score"
+                ),
+                "authenticity_score": processing_result.metadata.get(
+                    "authenticity_score"
+                ),
+                "forensic_indicators": processing_result.metadata.get(
+                    "forensic_indicators", []
+                ),
                 # Include raw forensic data
                 "raw_analysis": {
-                     k: v for k, v in processing_result.metadata.items()
-                     if k not in ["manipulation_score", "authenticity_score", "forensic_indicators"]
-                }
+                    k: v
+                    for k, v in processing_result.metadata.items()
+                    if k
+                    not in [
+                        "manipulation_score",
+                        "authenticity_score",
+                        "forensic_indicators",
+                    ]
+                },
             }
 
             evidence_record = {
@@ -530,25 +560,24 @@ async def upload_evidence(
                 "evidence_id": evidence_id,
                 # Return standard EvidenceItem fields
                 "id": evidence_id,
-                "evidence_id": evidence_id,
-                "caseId": case_id,
-                "fileName": file.filename,
+                "case_id": case_id,
+                "file_name": file.filename,
                 "filename": file.filename,
-                "fileType": processing_result.file_type,
-                "sizeBytes": len(content),
-                "uploadedAt": evidence_record["uploaded_at"].isoformat(),
-                "filePath": temp_file_path,
-                "ocrText": processing_result.extracted_text or "",
-                "fraudAmount": processing_result.fraud_amount,
-                "customerName": processing_result.customer_name,
+                "file_type": processing_result.file_type,
+                "size_bytes": len(content),
+                "uploaded_at": evidence_record["uploaded_at"].isoformat(),
+                "file_path": temp_file_path,
+                "ocr_text": processing_result.extracted_text or "",
+                "fraud_amount": processing_result.fraud_amount,
+                "customer_name": processing_result.customer_name,
                 "analysis_result": {
-                    "extractedTextLength": len(processing_result.extracted_text or ""),
-                    "keyEntitiesCount": len(processing_result.key_entities or []),
-                    "sentimentScore": processing_result.sentiment_score,
-                    "qualityScore": processing_result.quality_score,
-                    "fraudAmount": processing_result.fraud_amount,
-                    "customerName": processing_result.customer_name,
-                    "fileType": processing_result.file_type,
+                    "extracted_text_length": len(processing_result.extracted_text or ""),
+                    "key_entities_count": len(processing_result.key_entities or []),
+                    "sentiment_score": processing_result.sentiment_score,
+                    "quality_score": processing_result.quality_score,
+                    "fraud_amount": processing_result.fraud_amount,
+                    "customer_name": processing_result.customer_name,
+                    "file_type": processing_result.file_type,
                 },
             }
 
@@ -584,21 +613,19 @@ async def upload_evidence(
             db.commit()
 
             # Clean up
-            try:
+            with contextlib.suppress(builtins.BaseException):
                 os.unlink(temp_file_path)
-            except:
-                pass
 
             raise HTTPException(
                 status_code=500,
-                detail=f"Evidence uploaded but processing failed: {str(analysis_error)}",
+                detail=f"Evidence uploaded but processing failed: {analysis_error!s}",
             )
 
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Evidence upload failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Evidence upload failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Evidence upload failed: {e!s}")
 
 
 @router.get("/{evidence_id}/highlights")
@@ -611,12 +638,12 @@ async def get_evidence_highlights(
     """Get saved highlights for an evidence file"""
     try:
         metadata = evidence_service.get_evidence_metadata(db, evidence_id)
-        
+
         if metadata and isinstance(metadata, str):
             metadata = json.loads(metadata)
         elif not metadata:
-             # If None, maybe evidence not found or no metadata
-             # To be strict we should check if evidence exists
+            # If None, maybe evidence not found or no metadata
+            # To be strict we should check if evidence exists
             raise HTTPException(status_code=404, detail="Evidence not found")
 
         return metadata.get("user_highlights", [])
@@ -630,8 +657,8 @@ async def get_evidence_highlights(
 @router.post("/{evidence_id}/highlights")
 async def save_evidence_highlight(
     evidence_id: str,
-    highlight:  Dict = None, # JSON body
-    request: Request = None, # Alternative way to get body
+    highlight: dict | None = None,  # JSON body
+    request: Request = None,  # Alternative way to get body
     db: Session = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user),
 ):
@@ -639,45 +666,42 @@ async def save_evidence_highlight(
     try:
         # Get body if not bound (FastAPI sometimes tricky with generic Dict)
         if hasattr(request, "json"):
-             body = await request.json()
-             if body:
-                  highlight = body
+            body = await request.json()
+            if body:
+                highlight = body
 
         if not highlight:
-             raise HTTPException(status_code=400, detail="Highlight data required")
+            raise HTTPException(status_code=400, detail="Highlight data required")
 
         # Get existing metadata
         metadata = evidence_service.get_evidence_metadata(db, evidence_id)
-        
+
         if metadata is None:
-             raise HTTPException(status_code=404, detail="Evidence not found")
+            raise HTTPException(status_code=404, detail="Evidence not found")
 
         if isinstance(metadata, str):
             metadata = json.loads(metadata)
-        if metadata is None: 
-             metadata = {}
+        if metadata is None:
+            metadata = {}
 
         # Append highlight
         if "user_highlights" not in metadata:
             metadata["user_highlights"] = []
-        
+
         # Add metadata to highlight
         highlight["created_at"] = datetime.now().isoformat()
         highlight["created_by"] = current_user.id if current_user else "unknown"
-        
+
         metadata["user_highlights"].append(highlight)
-        
+
         update_query = """
-            UPDATE evidence 
-            SET evidence_metadata = :metadata 
+            UPDATE evidence
+            SET evidence_metadata = :metadata
             WHERE id = :id
         """
         db.execute(
-            text(update_query), 
-            {
-                "metadata": json.dumps(metadata, default=str),
-                "id": evidence_id
-            }
+            text(update_query),
+            {"metadata": json.dumps(metadata, default=str), "id": evidence_id},
         )
         db.commit()
 
@@ -690,45 +714,41 @@ async def save_evidence_highlight(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
-@router.post("/bulk-delete", responses={
-    200: {
-        "description": "Bulk delete operation completed successfully",
-        "content": {
-            "application/json": {
-                "example": {
-                    "deleted_count": 3,
-                    "status": "success"
+@router.post(
+    "/bulk-delete",
+    responses={
+        200: {
+            "description": "Bulk delete operation completed successfully",
+            "content": {
+                "application/json": {
+                    "example": {"deleted_count": 3, "status": "success"}
                 }
-            }
-        }
-    },
-    400: {
-        "description": "Invalid request data",
-        "content": {
-            "application/json": {
-                "example": {
-                    "error": {
-                        "type": "validation_error",
-                        "status_code": 400,
-                        "detail": "Invalid evidence IDs provided",
-                        "request_id": "req_12345",
-                        "timestamp": "2024-12-19T06:20:00Z",
-                        "path": "/api/v1/evidence/bulk-delete",
-                        "method": "POST",
-                        "details": []
+            },
+        },
+        400: {
+            "description": "Invalid request data",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "error": {
+                            "type": "validation_error",
+                            "status_code": 400,
+                            "detail": "Invalid evidence IDs provided",
+                            "request_id": "req_12345",
+                            "timestamp": "2024-12-19T06:20:00Z",
+                            "path": "/api/v1/evidence/bulk-delete",
+                            "method": "POST",
+                            "details": [],
+                        }
                     }
                 }
-            }
-        }
-    }
-})
+            },
+        },
+    },
+)
 async def bulk_delete_evidence(
-    payload: Dict[str, Any] = Body(
-        ...,
-        example={
-            "ids": ["ev_123456", "ev_789012", "ev_345678"]
-        }
+    payload: dict[str, Any] = Body(
+        ..., example={"ids": ["ev_123456", "ev_789012", "ev_345678"]}
     ),
     db: Session = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user),
@@ -761,9 +781,11 @@ def _determine_file_category(filename: str, mime_type: str) -> str:
         return "video"
     elif mime_type.startswith("audio/") or ext in ["mp3", "wav", "flac", "aac"]:
         return "audio"
-    elif mime_type == "application/pdf" or ext == "pdf":
-        return "document"
-    elif ext in ["doc", "docx", "txt", "rtf", "odt"]:
+    elif (
+        mime_type == "application/pdf"
+        or ext == "pdf"
+        or ext in ["doc", "docx", "txt", "rtf", "odt"]
+    ):
         return "document"
     elif ext in ["xls", "xlsx", "csv", "ods"]:
         return "spreadsheet"

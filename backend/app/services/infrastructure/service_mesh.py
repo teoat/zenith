@@ -2,15 +2,15 @@
 Service Mesh Implementation
 Provides service discovery, load balancing, and inter-service communication
 """
+
 import asyncio
-import json
+import contextlib
 import logging
-import hashlib
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Callable, Union
 from datetime import datetime, timedelta
 from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -25,14 +25,15 @@ class ServiceHealth(Enum):
 @dataclass
 class ServiceInstance:
     """Represents a service instance in the mesh"""
+
     service_name: str
     instance_id: str
     host: str
     port: int
     protocol: str = "http"
     health: ServiceHealth = ServiceHealth.UNKNOWN
-    last_health_check: Optional[datetime] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    last_health_check: datetime | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
     registered_at: datetime = field(default_factory=datetime.now)
 
     @property
@@ -54,12 +55,13 @@ class ServiceInstance:
 @dataclass
 class ServiceRoute:
     """Route configuration for service communication"""
+
     path: str
-    methods: List[str] = field(default_factory=lambda: ["GET"])
+    methods: list[str] = field(default_factory=lambda: ["GET"])
     timeout: float = 30.0
     retries: int = 3
     circuit_breaker_enabled: bool = True
-    rate_limit_per_minute: Optional[int] = None
+    rate_limit_per_minute: int | None = None
     authentication_required: bool = True
 
 
@@ -67,16 +69,17 @@ class ServiceMesh:
     """Service mesh for inter-service communication"""
 
     def __init__(self):
-        self.services: Dict[str, List[ServiceInstance]] = {}
-        self.routes: Dict[str, Dict[str, ServiceRoute]] = {}
-        self.load_balancers: Dict[str, 'LoadBalancer'] = {}
+        self._background_tasks: list[asyncio.Task] = []
+        self.services: dict[str, list[ServiceInstance]] = {}
+        self.routes: dict[str, dict[str, ServiceRoute]] = {}
+        self.load_balancers: dict[str, LoadBalancer] = {}
 
         # Health monitoring
         self.health_check_interval = 30  # seconds
-        self._health_monitor_task: Optional[asyncio.Task] = None
+        self._health_monitor_task: asyncio.Task | None = None
 
         # Circuit breakers for service-to-service calls
-        self.circuit_breakers: Dict[str, 'CircuitBreaker'] = {}
+        self.circuit_breakers: dict[str, CircuitBreaker] = {}
 
         logger.info("Service mesh initialized")
 
@@ -84,16 +87,15 @@ class ServiceMesh:
         """Start the service mesh"""
         logger.info("Starting service mesh...")
         self._health_monitor_task = asyncio.create_task(self._health_monitor_loop())
+        self._background_tasks.append(self._health_monitor_task)
         logger.info("Service mesh started")
 
     async def stop(self):
         """Stop the service mesh"""
         if self._health_monitor_task:
             self._health_monitor_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._health_monitor_task
-            except asyncio.CancelledError:
-                pass
         logger.info("Service mesh stopped")
 
     def register_service(self, service_name: str, instance: ServiceInstance):
@@ -103,13 +105,16 @@ class ServiceMesh:
             self.load_balancers[service_name] = RoundRobinLoadBalancer()
 
         self.services[service_name].append(instance)
-        logger.info(f"Registered service instance: {service_name}/{instance.instance_id} at {instance.url}")
+        logger.info(
+            f"Registered service instance: {service_name}/{instance.instance_id} at {instance.url}"
+        )
 
     def deregister_service(self, service_name: str, instance_id: str):
         """Deregister a service instance"""
         if service_name in self.services:
             self.services[service_name] = [
-                instance for instance in self.services[service_name]
+                instance
+                for instance in self.services[service_name]
                 if instance.instance_id != instance_id
             ]
 
@@ -133,12 +138,12 @@ class ServiceMesh:
         service_name: str,
         route_name: str,
         method: str = "GET",
-        path_params: Optional[Dict[str, Any]] = None,
-        query_params: Optional[Dict[str, Any]] = None,
-        body: Optional[Any] = None,
-        headers: Optional[Dict[str, str]] = None,
-        timeout: Optional[float] = None,
-    ) -> Dict[str, Any]:
+        path_params: dict[str, Any] | None = None,
+        query_params: dict[str, Any] | None = None,
+        body: Any | None = None,
+        headers: dict[str, str] | None = None,
+        timeout: float | None = None,
+    ) -> dict[str, Any]:
         """
         Call a service through the mesh with load balancing and circuit breaking
         """
@@ -146,16 +151,22 @@ class ServiceMesh:
             # Get route configuration
             route = self._get_route_config(service_name, route_name)
             if not route:
-                raise ServiceMeshError(f"Route {route_name} not found for service {service_name}")
+                raise ServiceMeshError(
+                    f"Route {route_name} not found for service {service_name}"
+                )
 
             # Check if method is allowed
             if method.upper() not in [m.upper() for m in route.methods]:
-                raise ServiceMeshError(f"Method {method} not allowed for route {route_name}")
+                raise ServiceMeshError(
+                    f"Method {method} not allowed for route {route_name}"
+                )
 
             # Select service instance
             instance = self._select_instance(service_name)
             if not instance:
-                raise ServiceUnavailableError(f"No healthy instances available for service {service_name}")
+                raise ServiceUnavailableError(
+                    f"No healthy instances available for service {service_name}"
+                )
 
             # Build URL
             url = self._build_url(instance, route, path_params, query_params)
@@ -173,7 +184,9 @@ class ServiceMesh:
             circuit_key = f"{service_name}:{route_name}"
             if route.circuit_breaker_enabled:
                 if circuit_key not in self.circuit_breakers:
-                    self.circuit_breakers[circuit_key] = CircuitBreaker(failure_threshold=5, recovery_timeout=60)
+                    self.circuit_breakers[circuit_key] = CircuitBreaker(
+                        failure_threshold=5, recovery_timeout=60
+                    )
 
                 circuit_breaker = self.circuit_breakers[circuit_key]
 
@@ -187,18 +200,21 @@ class ServiceMesh:
             logger.error(f"Service call failed: {service_name}/{route_name} - {e}")
             raise
 
-    def _get_route_config(self, service_name: str, route_name: str) -> Optional[ServiceRoute]:
+    def _get_route_config(
+        self, service_name: str, route_name: str
+    ) -> ServiceRoute | None:
         """Get route configuration"""
         service_routes = self.routes.get(service_name, {})
         return service_routes.get(route_name)
 
-    def _select_instance(self, service_name: str) -> Optional[ServiceInstance]:
+    def _select_instance(self, service_name: str) -> ServiceInstance | None:
         """Select a service instance using load balancer"""
         if service_name not in self.services:
             return None
 
         healthy_instances = [
-            instance for instance in self.services[service_name]
+            instance
+            for instance in self.services[service_name]
             if instance.is_healthy()
         ]
 
@@ -216,8 +232,8 @@ class ServiceMesh:
         self,
         instance: ServiceInstance,
         route: ServiceRoute,
-        path_params: Optional[Dict[str, Any]],
-        query_params: Optional[Dict[str, Any]]
+        path_params: dict[str, Any] | None,
+        query_params: dict[str, Any] | None,
     ) -> str:
         """Build the complete URL for the request"""
         url = f"{instance.url}{route.path}"
@@ -230,12 +246,13 @@ class ServiceMesh:
         # Add query parameters
         if query_params:
             from urllib.parse import urlencode
+
             query_string = urlencode(query_params)
             url += f"?{query_string}"
 
         return url
 
-    async def _execute_request(self, config: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_request(self, config: dict[str, Any]) -> dict[str, Any]:
         """Execute the actual HTTP request"""
         import aiohttp
 
@@ -272,7 +289,7 @@ class ServiceMesh:
 
     async def _perform_health_checks(self):
         """Perform health checks on all service instances"""
-        for service_name, instances in self.services.items():
+        for instances in self.services.values():
             for instance in instances:
                 if instance.needs_health_check():
                     await self._check_instance_health(instance)
@@ -310,7 +327,7 @@ class ServiceMesh:
 
         instance.last_health_check = datetime.now()
 
-    def get_service_status(self, service_name: Optional[str] = None) -> Dict[str, Any]:
+    def get_service_status(self, service_name: str | None = None) -> dict[str, Any]:
         """Get status of services in the mesh"""
         if service_name:
             instances = self.services.get(service_name, [])
@@ -321,12 +338,16 @@ class ServiceMesh:
                         "instance_id": inst.instance_id,
                         "url": inst.url,
                         "health": inst.health.value,
-                        "last_check": inst.last_health_check.isoformat() if inst.last_health_check else None,
+                        "last_check": inst.last_health_check.isoformat()
+                        if inst.last_health_check
+                        else None,
                     }
                     for inst in instances
                 ],
                 "total_instances": len(instances),
-                "healthy_instances": len([inst for inst in instances if inst.is_healthy()]),
+                "healthy_instances": len(
+                    [inst for inst in instances if inst.is_healthy()]
+                ),
             }
 
         # Return status for all services
@@ -346,7 +367,8 @@ class ServiceMesh:
 
 class LoadBalancer:
     """Base class for load balancing strategies"""
-    def select(self, instances: List[ServiceInstance]) -> ServiceInstance:
+
+    def select(self, instances: list[ServiceInstance]) -> ServiceInstance:
         raise NotImplementedError
 
 
@@ -356,7 +378,7 @@ class RoundRobinLoadBalancer(LoadBalancer):
     def __init__(self):
         self.current_index = 0
 
-    def select(self, instances: List[ServiceInstance]) -> ServiceInstance:
+    def select(self, instances: list[ServiceInstance]) -> ServiceInstance:
         if not instances:
             raise ValueError("No instances available")
 
@@ -368,7 +390,7 @@ class RoundRobinLoadBalancer(LoadBalancer):
 class LeastConnectionsLoadBalancer(LoadBalancer):
     """Least connections load balancer"""
 
-    def select(self, instances: List[ServiceInstance]) -> ServiceInstance:
+    def select(self, instances: list[ServiceInstance]) -> ServiceInstance:
         if not instances:
             raise ValueError("No instances available")
 
@@ -384,7 +406,7 @@ class CircuitBreaker:
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
         self.failure_count = 0
-        self.last_failure_time: Optional[float] = None
+        self.last_failure_time: float | None = None
         self.state = "closed"
 
     async def __aenter__(self):

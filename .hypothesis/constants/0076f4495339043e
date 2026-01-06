@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/ai_chat.py
+# hypothesis_version: 6.148.8
+
+[404, 500, 2000, '/ai/chat', '/config', 'AI Chat', 'Chat history cleared', 'Chat interaction', 'No history found', 'Response timestamp', 'User message', 'circuit_breaker', 'context_encryption', 'deleted', 'fallback_categories', 'fallback_responses', 'fallback_used', 'features', 'history', 'max_requests', 'message', 'message_count', 'message_length', 'model', 'rate_limit', 'rate_limiting', 'response', 'response_length', 'session_id', 'test_user', 'user_id', 'window_seconds']

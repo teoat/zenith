@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/performance_monitoring.py
+# hypothesis_version: 6.148.8
+
+[500, '/external-api/health', '/summary', '/system/health', 'database_performance', 'external_api_health', 'file', 'slow_queries', 'stats', 'success', 'summary', 'system_health', 'test-user-id', 'test@test.com', 'testuser', 'timestamp', 'user']

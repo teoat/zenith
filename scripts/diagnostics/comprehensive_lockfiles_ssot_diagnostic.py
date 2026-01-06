@@ -8,7 +8,7 @@ import hashlib
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 
 class LockfilesSSOTDiagnostic:
@@ -27,15 +27,15 @@ class LockfilesSSOTDiagnostic:
 
     def verify_checksum(
         self, file_path: Path, checksum_path: Path
-    ) -> Tuple[bool, str, str]:
+    ) -> tuple[bool, str, str]:
         """Verify file checksum integrity"""
         try:
             # Read file content
-            with open(file_path, "r") as f:
+            with open(file_path) as f:
                 content = f.read()
 
             # Read expected checksum
-            with open(checksum_path, "r") as f:
+            with open(checksum_path) as f:
                 expected_checksum = f.read().strip()
 
             # Generate actual checksum
@@ -49,7 +49,7 @@ class LockfilesSSOTDiagnostic:
         except Exception as e:
             return False, "", str(e)
 
-    def scan_lockfiles(self) -> Dict[str, Any]:
+    def scan_lockfiles(self) -> dict[str, Any]:
         """Scan all lockfiles in the project"""
         lockfiles_scan = {
             "total_lockfiles": 0,
@@ -93,7 +93,7 @@ class LockfilesSSOTDiagnostic:
 
         return lockfiles_scan
 
-    def analyze_ssot_integrity(self) -> Dict[str, Any]:
+    def analyze_ssot_integrity(self) -> dict[str, Any]:
         """Analyze SSOT system integrity and coverage"""
         ssot_analysis = {
             "ssot_master_exists": False,
@@ -125,7 +125,7 @@ class LockfilesSSOTDiagnostic:
                 }
 
             # Analyze SSOT content
-            with open(ssot_master_path, "r") as f:
+            with open(ssot_master_path) as f:
                 ssot_data = json.load(f)
 
             ssot_analysis["total_ssot_entries"] = len(ssot_data)
@@ -169,7 +169,7 @@ class LockfilesSSOTDiagnostic:
 
         return ssot_analysis
 
-    def analyze_coverage_completeness(self) -> Dict[str, Any]:
+    def analyze_coverage_completeness(self) -> dict[str, Any]:
         """Analyze completeness of coverage across all systems"""
         coverage_analysis = {
             "lockfiles_coverage": {},
@@ -215,7 +215,7 @@ class LockfilesSSOTDiagnostic:
         ssot_covered_areas = []
 
         if ssot_master_path.exists():
-            with open(ssot_master_path, "r") as f:
+            with open(ssot_master_path) as f:
                 ssot_data = json.load(f)
 
             for area in critical_areas_expected:
@@ -280,7 +280,7 @@ class LockfilesSSOTDiagnostic:
 
         return coverage_analysis
 
-    def run_comprehensive_diagnostic(self) -> Dict[str, Any]:
+    def run_comprehensive_diagnostic(self) -> dict[str, Any]:
         """Run complete diagnostic analysis"""
         print("🔬 COMPREHENSIVE LOCKFILES & SSOT DIAGNOSTIC")
         print("=" * 60)
@@ -338,7 +338,7 @@ class LockfilesSSOTDiagnostic:
 
         return comprehensive_results
 
-    def generate_diagnostic_report(self, results: Dict[str, Any]) -> None:
+    def generate_diagnostic_report(self, results: dict[str, Any]) -> None:
         """Generate comprehensive diagnostic report"""
 
         report_path = Path("comprehensive_lockfiles_ssot_diagnostic_report.json")

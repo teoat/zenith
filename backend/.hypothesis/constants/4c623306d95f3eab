@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/v1/integration.py
+# hypothesis_version: 6.148.8
+
+[400, 403, 404, 500, '/external', '/health', '/integration', '/plugins', '/webhooks', '/webhooks/events', '/ws', '/ws/broadcast', '/ws/notifications', 'Event type', 'Filter by event type', 'Filter by provider', 'Filter by status', 'Integration name', 'Message to broadcast', 'Not found', 'Plugin not found', 'Webhook URL', 'Webhook not found', 'Webhook signature', 'Webhook test failed', 'active', 'admin', 'broadcasted', 'category', 'count', 'description', 'event_type', 'events', 'healthy', 'integration', 'integration-layer', 'integrations', 'message', 'plugins', 'processed', 'provider', 'secret', 'service', 'status', 'super_admin', 'test', 'timestamp', 'type', 'url', 'user_id', 'webhooks', 'welcome']

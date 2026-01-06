@@ -1,3 +1,4 @@
+from datetime import UTC
 
 try:
     from backend.core.database import Transaction  # type: ignore
@@ -28,12 +29,15 @@ def detect_burst(session, ip, window_minutes=60):
             if Tx is None:
                 raise RuntimeError("No Transaction model available")
 
-            from datetime import datetime, timedelta, timezone
-            now = datetime.now(timezone.utc)
+            from datetime import datetime, timedelta
+
+            now = datetime.now(UTC)
             window_delta = timedelta(minutes=window_minutes)
             window_start = now - window_delta
 
-            q_now = session.query(Tx).filter(Tx.ip_address == ip, Tx.date >= window_start)
+            q_now = session.query(Tx).filter(
+                Tx.ip_address == ip, Tx.date >= window_start
+            )
             count_now = q_now.count()
 
             # Build historical windows (previous 12 windows)
@@ -41,10 +45,15 @@ def detect_burst(session, ip, window_minutes=60):
             for i in range(1, 13):
                 start = window_start - i * window_delta
                 end = start + window_delta
-                c = session.query(Tx).filter(Tx.ip_address == ip, Tx.date >= start, Tx.date < end).count()
+                c = (
+                    session.query(Tx)
+                    .filter(Tx.ip_address == ip, Tx.date >= start, Tx.date < end)
+                    .count()
+                )
                 hist_counts.append(c)
 
             import statistics
+
             mean_hist = float(statistics.mean(hist_counts)) if hist_counts else 0.0
             std_hist = float(statistics.pstdev(hist_counts)) if hist_counts else 0.0
 
@@ -53,8 +62,6 @@ def detect_burst(session, ip, window_minutes=60):
                 z = (count_now - mean_hist) / std_hist
 
             burst = count_now >= 10 or (z > 2.0)
-
-            pass
 
             return (burst, z, count_now, mean_hist, std_hist)
     except Exception:
@@ -65,4 +72,4 @@ def detect_burst(session, ip, window_minutes=60):
     return (False, 0.0, 0, 0.0, 0.0)
 
 
-__all__ = ['detect_burst']
+__all__ = ["detect_burst"]

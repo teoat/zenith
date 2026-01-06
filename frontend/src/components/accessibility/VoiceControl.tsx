@@ -5,7 +5,7 @@ import { secureLogger } from '../../utils/secureLogger';
 const VoiceControl: React.FC = () => {
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [supported, setSupported] = useState(() => 
+  const [supported] = useState(() => 
     typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)
   );
   const navigate = useNavigate();

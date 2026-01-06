@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/middleware/csp_headers.py
+# hypothesis_version: 6.148.8
+
+['1; mode=block', 'DENY', 'ENVIRONMENT', 'Referrer-Policy', 'X-Frame-Options', 'X-XSS-Protection', 'development', 'nosniff', 'production']

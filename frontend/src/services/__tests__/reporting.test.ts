@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, jest, beforeEach } from '@jest/globals';
 import { reportingService } from '../reporting';
 
 global.fetch = jest.fn();
@@ -24,7 +24,7 @@ describe('ReportingService', () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => mockReport
-      });
+      } as any);
 
       const result = await reportingService.generateReport('case-123', 'case_summary');
 
@@ -39,7 +39,7 @@ describe('ReportingService', () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 500
-      });
+      } as any);
 
       await expect(
         reportingService.generateReport('case-123', 'case_summary')
@@ -54,7 +54,7 @@ describe('ReportingService', () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         blob: async () => mockBlob
-      });
+      } as any);
 
       const result = await reportingService.exportReport('report-1', 'pdf');
 
@@ -71,7 +71,7 @@ describe('ReportingService', () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         blob: async () => mockBlob
-      });
+      } as any);
 
       await reportingService.exportReport('report-1', 'csv');
 
@@ -94,7 +94,7 @@ describe('ReportingService', () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => mockSchedule
-      });
+      } as any);
 
       const result = await reportingService.scheduleReport({
         reportType: 'daily_summary',
@@ -116,7 +116,7 @@ describe('ReportingService', () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => mockHistory
-      });
+      } as any);
 
       const result = await reportingService.getReportHistory();
 

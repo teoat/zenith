@@ -5,12 +5,10 @@ Manages automated fixes and change management pipelines.
 """
 
 import asyncio
-import json
 import logging
-import subprocess
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -35,11 +33,11 @@ class ImplementationPipelineService:
     """Service for managing automated implementation pipelines."""
 
     def __init__(self):
-        self.active_pipelines: Dict[str, Dict[str, Any]] = {}
-        self.pipeline_history: List[Dict[str, Any]] = []
+        self.active_pipelines: dict[str, dict[str, Any]] = {}
+        self.pipeline_history: list[dict[str, Any]] = []
         self.pipeline_templates = self._initialize_pipeline_templates()
 
-    def _initialize_pipeline_templates(self) -> Dict[str, Dict[str, Any]]:
+    def _initialize_pipeline_templates(self) -> dict[str, dict[str, Any]]:
         """Initialize pipeline templates for common fixes."""
         return {
             "database_optimization": {
@@ -127,7 +125,7 @@ class ImplementationPipelineService:
         }
 
     async def create_pipeline(
-        self, implementation_type: str, parameters: Dict[str, Any] = None
+        self, implementation_type: str, parameters: dict[str, Any] | None = None
     ) -> str:
         """Create a new implementation pipeline."""
         if implementation_type not in self.pipeline_templates:
@@ -168,13 +166,13 @@ class ImplementationPipelineService:
 
         return pipeline_id
 
-    def _calculate_estimated_completion(self, steps: List[Dict[str, Any]]) -> str:
+    def _calculate_estimated_completion(self, steps: list[dict[str, Any]]) -> str:
         """Calculate estimated completion time."""
         total_seconds = sum(step.get("estimated_duration", 0) for step in steps)
         completion_time = datetime.now() + timedelta(seconds=total_seconds)
         return completion_time.isoformat()
 
-    async def execute_pipeline(self, pipeline_id: str) -> Dict[str, Any]:
+    async def execute_pipeline(self, pipeline_id: str) -> dict[str, Any]:
         """Execute a pipeline."""
         if pipeline_id not in self.active_pipelines:
             raise ValueError(f"Pipeline {pipeline_id} not found")
@@ -221,7 +219,7 @@ class ImplementationPipelineService:
         return pipeline
 
     async def _execute_step(
-        self, pipeline: Dict[str, Any], step: Dict[str, Any], step_index: int
+        self, pipeline: dict[str, Any], step: dict[str, Any], step_index: int
     ):
         """Execute a single pipeline step."""
         step["status"] = PipelineStatus.RUNNING.value
@@ -254,8 +252,8 @@ class ImplementationPipelineService:
             step["completed_at"] = datetime.now().isoformat()
 
     async def _execute_step_action(
-        self, pipeline_type: str, step_name: str, parameters: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, pipeline_type: str, step_name: str, parameters: dict[str, Any]
+    ) -> dict[str, Any]:
         """Execute the actual action for a step."""
         if pipeline_type == "database_optimization":
             return await self._execute_database_step(step_name, parameters)
@@ -267,8 +265,8 @@ class ImplementationPipelineService:
             return {"message": f"Step {step_name} executed (simulated)"}
 
     async def _execute_database_step(
-        self, step_name: str, parameters: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, step_name: str, parameters: dict[str, Any]
+    ) -> dict[str, Any]:
         """Execute database optimization steps."""
         if step_name == "analyze_slow_queries":
             # Simulate query analysis
@@ -295,8 +293,8 @@ class ImplementationPipelineService:
             return {"message": "Database step executed"}
 
     async def _execute_audit_step(
-        self, step_name: str, parameters: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, step_name: str, parameters: dict[str, Any]
+    ) -> dict[str, Any]:
         """Execute audit logging steps."""
         if step_name == "assess_coverage":
             return {
@@ -324,8 +322,8 @@ class ImplementationPipelineService:
             return {"message": "Audit step executed"}
 
     async def _execute_test_step(
-        self, step_name: str, parameters: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, step_name: str, parameters: dict[str, Any]
+    ) -> dict[str, Any]:
         """Execute test coverage steps."""
         if step_name == "analyze_coverage_gaps":
             return {
@@ -344,7 +342,7 @@ class ImplementationPipelineService:
         else:
             return {"message": "Test step executed"}
 
-    async def get_pipeline_status(self, pipeline_id: str) -> Optional[Dict[str, Any]]:
+    async def get_pipeline_status(self, pipeline_id: str) -> dict[str, Any] | None:
         """Get status of a specific pipeline."""
         if pipeline_id in self.active_pipelines:
             return self.active_pipelines[pipeline_id]
@@ -356,11 +354,11 @@ class ImplementationPipelineService:
 
         return None
 
-    def get_active_pipelines(self) -> List[Dict[str, Any]]:
+    def get_active_pipelines(self) -> list[dict[str, Any]]:
         """Get all active pipelines."""
         return list(self.active_pipelines.values())
 
-    def get_pipeline_history(self, limit: int = 50) -> List[Dict[str, Any]]:
+    def get_pipeline_history(self, limit: int = 50) -> list[dict[str, Any]]:
         """Get pipeline execution history."""
         return self.pipeline_history[-limit:]
 
@@ -397,7 +395,8 @@ class ImplementationPipelineService:
         step["result"] = {"approved": True, "approved_at": datetime.now().isoformat()}
 
         # Continue pipeline execution
-        asyncio.create_task(self.execute_pipeline(pipeline_id))
+        execution_task = asyncio.create_task(self.execute_pipeline(pipeline_id))
+        self._background_tasks.append(execution_task)
 
         return True
 

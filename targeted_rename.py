@@ -5,10 +5,11 @@ Targeted rename script for remaining critical files
 
 import os
 
+
 def replace_in_file(filepath, replacements):
     """Replace multiple strings in a file"""
     try:
-        with open(filepath, 'r', encoding='utf-8', errors='ignore') as file:
+        with open(filepath, encoding="utf-8", errors="ignore") as file:
             content = file.read()
 
         original_content = content
@@ -16,12 +17,13 @@ def replace_in_file(filepath, replacements):
             content = content.replace(old_text, new_text)
 
         if content != original_content:
-            with open(filepath, 'w', encoding='utf-8') as file:
+            with open(filepath, "w", encoding="utf-8") as file:
                 file.write(content)
             return True
     except Exception as e:
         print(f"Error processing {filepath}: {e}")
     return False
+
 
 def main():
     # Critical remaining files to update
@@ -50,13 +52,13 @@ def main():
 
     # Key replacements
     replacements = {
-        'Zenith': 'zenith',
-        'Zenith': 'Zenith',  # Title case
-        'api.Zenith.com': 'api.zenith.com',
-        'app.Zenith.com': 'app.zenith.com',
-        'docs.Zenith.com': 'docs.zenith.com',
-        'support@Zenith.com': 'support@zenith.com',
-        'https://github.com/Zenith': 'https://github.com/zenith'
+        "Zenith": "zenith",
+        "Zenith": "Zenith",  # Title case
+        "api.Zenith.com": "api.zenith.com",
+        "app.Zenith.com": "app.zenith.com",
+        "docs.Zenith.com": "docs.zenith.com",
+        "support@Zenith.com": "support@zenith.com",
+        "https://github.com/Zenith": "https://github.com/zenith",
     }
 
     print("Starting targeted rename for critical remaining files...")
@@ -74,7 +76,10 @@ def main():
 
     # Quick grep to check remaining references
     print("\nChecking for remaining Zenith references in key files...")
-    os.system("cd /Users/Arief/Desktop/Zenith && find . -name '*.md' -o -name '*.py' -o -name '*.js' -o -name '*.json' | head -20 | xargs grep -l 'Zenith' 2>/dev/null || echo 'No remaining references found in initial check'")
+    os.system(
+        "cd /Users/Arief/Desktop/Zenith && find . -name '*.md' -o -name '*.py' -o -name '*.js' -o -name '*.json' | head -20 | xargs grep -l 'Zenith' 2>/dev/null || echo 'No remaining references found in initial check'"
+    )
+
 
 if __name__ == "__main__":
     main()

@@ -8,7 +8,6 @@ Create Date: 2025-12-08
 
 import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects import sqlite
 
 # revision identifiers, used by Alembic.
 revision = "001_metadata_rename"

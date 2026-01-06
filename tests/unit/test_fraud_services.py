@@ -2,22 +2,32 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('.'))
+
+sys.path.insert(0, os.path.abspath("."))
+
+from datetime import UTC, datetime, timedelta, timezone
+from unittest.mock import Mock, patch
 
 import pytest
-from unittest.mock import Mock, patch, MagicMock
-from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import Session
+
+from backend.app.services.ai.temporal_burst_detector import (
+    BurstAlert,
+    TemporalBurstDetector,
+)
+from backend.app.services.fraud.engine import RuleEngine as PluginRuleEngine
 
 # Import fraud detection modules
 from backend.app.services.fraud.fraud_service import FraudDetectionService
 from backend.app.services.fraud.rule_engine import (
-    RuleEngine, VelocityRule, AmountThresholdRule, GeographicAnomalyRule,
-    RiskLevel, RuleType
+    AmountThresholdRule,
+    GeographicAnomalyRule,
+    RiskLevel,
+    RuleEngine,
+    RuleType,
+    VelocityRule,
 )
-from backend.app.services.fraud.engine import RuleEngine as PluginRuleEngine, FraudRule, AlertSeverity
-from backend.app.services.ai.temporal_burst_detector import TemporalBurstDetector, BurstAlert
-from backend.core.database import Case, Transaction, FraudAlert
+from backend.core.database import Transaction
 
 
 class TestFraudDetectionService:
@@ -38,7 +48,9 @@ class TestFraudDetectionService:
     @pytest.fixture
     def fraud_service(self, mock_db, mock_rule_engine):
         """Create FraudDetectionService with mocked dependencies"""
-        with patch('backend.app.services.fraud.fraud_service.rule_engine', mock_rule_engine):
+        with patch(
+            "backend.app.services.fraud.fraud_service.rule_engine", mock_rule_engine
+        ):
             service = FraudDetectionService(mock_db)
             service.rule_engine = mock_rule_engine
             return service
@@ -52,8 +64,13 @@ class TestFraudDetectionService:
 
         # Mock transactions
         mock_txns = [
-            Mock(id="txn1", amount=5000.0, timestamp=datetime.now(timezone.utc),
-                 description="Test transaction", merchant="Test Merchant")
+            Mock(
+                id="txn1",
+                amount=5000.0,
+                timestamp=datetime.now(UTC),
+                description="Test transaction",
+                merchant="Test Merchant",
+            )
         ]
         mock_db.query.return_value.filter.return_value.all.return_value = mock_txns
 
@@ -90,7 +107,9 @@ class TestFraudDetectionService:
         assert result["error"] == "Case not found"
         assert result["alerts"] == []
 
-    def test_analyze_case_with_transaction_ids(self, fraud_service, mock_db, mock_rule_engine):
+    def test_analyze_case_with_transaction_ids(
+        self, fraud_service, mock_db, mock_rule_engine
+    ):
         """Test case analysis with specific transaction IDs"""
         # Mock case
         mock_case = Mock()
@@ -123,9 +142,18 @@ class TestFraudDetectionService:
     def test_get_case_alerts_success(self, fraud_service, mock_db):
         """Test successful retrieval of case alerts"""
         mock_alerts = [
-            Mock(id="alert1", rule_name="Rule1", severity="high", confidence=0.8,
-                 risk_score=70.0, status="open", reviewed_by=None, reviewed_at=None,
-                 created_at=datetime.now(timezone.utc), details={})
+            Mock(
+                id="alert1",
+                rule_name="Rule1",
+                severity="high",
+                confidence=0.8,
+                risk_score=70.0,
+                status="open",
+                reviewed_by=None,
+                reviewed_at=None,
+                created_at=datetime.now(UTC),
+                details={},
+            )
         ]
         mock_db.query.return_value.filter.return_value.order_by.return_value.all.return_value = mock_alerts
 
@@ -166,7 +194,12 @@ class TestFraudDetectionService:
 
     def test_get_fraud_stats_success(self, fraud_service, mock_db):
         """Test successful fraud statistics retrieval"""
-        mock_db.query.return_value.count.side_effect = [100, 25, 10, 5]  # cases, alerts, high_risk, resolved
+        mock_db.query.return_value.count.side_effect = [
+            100,
+            25,
+            10,
+            5,
+        ]  # cases, alerts, high_risk, resolved
 
         result = fraud_service.get_fraud_stats()
 
@@ -203,7 +236,7 @@ class TestRuleEngine:
         """Test velocity rule when threshold not exceeded"""
         transaction = {
             "account_id": "acc1",
-            "timestamp": datetime.now(timezone.utc).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
         context = {"recent_transactions": []}
 
@@ -215,17 +248,29 @@ class TestRuleEngine:
 
     def test_velocity_rule_triggered(self, velocity_rule):
         """Test velocity rule when threshold exceeded"""
-        now = datetime.now(timezone.utc)
-        transaction = {
-            "account_id": "acc1",
-            "timestamp": now.isoformat()
-        }
+        now = datetime.now(UTC)
+        transaction = {"account_id": "acc1", "timestamp": now.isoformat()}
         recent_txns = [
-            {"account_id": "acc1", "timestamp": (now - timedelta(minutes=5)).isoformat()},
-            {"account_id": "acc1", "timestamp": (now - timedelta(minutes=4)).isoformat()},
-            {"account_id": "acc1", "timestamp": (now - timedelta(minutes=3)).isoformat()},
-            {"account_id": "acc1", "timestamp": (now - timedelta(minutes=2)).isoformat()},
-            {"account_id": "acc1", "timestamp": (now - timedelta(minutes=1)).isoformat()},
+            {
+                "account_id": "acc1",
+                "timestamp": (now - timedelta(minutes=5)).isoformat(),
+            },
+            {
+                "account_id": "acc1",
+                "timestamp": (now - timedelta(minutes=4)).isoformat(),
+            },
+            {
+                "account_id": "acc1",
+                "timestamp": (now - timedelta(minutes=3)).isoformat(),
+            },
+            {
+                "account_id": "acc1",
+                "timestamp": (now - timedelta(minutes=2)).isoformat(),
+            },
+            {
+                "account_id": "acc1",
+                "timestamp": (now - timedelta(minutes=1)).isoformat(),
+            },
         ]
         context = {"recent_transactions": recent_txns}
 
@@ -271,12 +316,14 @@ class TestRuleEngine:
         """Test geographic rule with impossible travel"""
         transaction = {
             "location": {"lat": 40.0, "lon": -74.0},  # NYC
-            "timestamp": datetime.now(timezone.utc).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
         context = {
             "last_transaction": {
                 "location": {"lat": 34.0, "lon": -118.0},  # LA
-                "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=30)).isoformat()
+                "timestamp": (
+                    datetime.now(UTC) - timedelta(minutes=30)
+                ).isoformat(),
             }
         }
 
@@ -296,7 +343,7 @@ class TestRuleEngine:
             "triggered": True,
             "risk_score": 80,
             "reason": "Test fraud",
-            "details": {}
+            "details": {},
         }
         test_rule.name = "TestRule"
         test_rule.rule_type = RuleType.VELOCITY
@@ -316,9 +363,7 @@ class TestRuleEngine:
 
     def test_rule_engine_generate_recommendations(self, rule_engine):
         """Test recommendation generation"""
-        triggered_rules = [
-            {"rule_type": "velocity", "risk_level": "critical"}
-        ]
+        triggered_rules = [{"rule_type": "velocity", "risk_level": "critical"}]
 
         recommendations = rule_engine._generate_recommendations(triggered_rules, 85)
 
@@ -345,18 +390,22 @@ class TestPluginRuleEngine:
         """Create plugin rule engine instance"""
         return PluginRuleEngine()
 
-    @patch('backend.app.services.fraud.engine.plugin_registry_service')
+    @patch("backend.app.services.fraud.engine.plugin_registry_service")
     async def test_execute_rules_with_plugins(self, mock_registry, plugin_rule_engine):
         """Test rule execution with plugin rules"""
         # Mock plugin
         mock_plugin = Mock()
-        mock_plugin.execute = Mock(return_value={
-            "alerts": [{
-                "risk_score": 80.0,
-                "confidence": 0.9,
-                "reason": "Plugin detected fraud"
-            }]
-        })
+        mock_plugin.execute = Mock(
+            return_value={
+                "alerts": [
+                    {
+                        "risk_score": 80.0,
+                        "confidence": 0.9,
+                        "reason": "Plugin detected fraud",
+                    }
+                ]
+            }
+        )
         mock_plugin.metadata = Mock()
         mock_plugin.metadata.name = "TestPlugin"
 
@@ -364,11 +413,14 @@ class TestPluginRuleEngine:
         mock_registry.get_plugin = Mock(return_value=mock_plugin)
 
         # Mock database session for plugin loading
-        with patch('backend.app.services.fraud.engine.SessionLocal') as mock_session:
+        with patch("backend.app.services.fraud.engine.SessionLocal") as mock_session:
             mock_db = Mock()
             mock_session.return_value = mock_db
             mock_db.query.return_value.filter.return_value.all.return_value = [
-                Mock(plugin_id="plugin1", metadata_json='{"capabilities": ["fraud_detection"]}')
+                Mock(
+                    plugin_id="plugin1",
+                    metadata_json='{"capabilities": ["fraud_detection"]}',
+                )
             ]
 
             await plugin_rule_engine.initialize()
@@ -407,15 +459,17 @@ class TestTemporalBurstDetector:
     def test_analyze_transactions_burst_pattern(self, burst_detector):
         """Test detection of burst patterns"""
         # Create 15 transactions within 24 hours
-        base_time = datetime.now(timezone.utc)
+        base_time = datetime.now(UTC)
         transactions = []
         for i in range(15):
-            transactions.append({
-                "customer_id": "cust1",
-                "customer_name": "Test Customer",
-                "amount": 1000.0,
-                "date": (base_time + timedelta(hours=i)).isoformat()
-            })
+            transactions.append(
+                {
+                    "customer_id": "cust1",
+                    "customer_name": "Test Customer",
+                    "amount": 1000.0,
+                    "date": (base_time + timedelta(hours=i)).isoformat(),
+                }
+            )
 
         result = burst_detector.analyze_transactions(transactions)
 
@@ -426,14 +480,16 @@ class TestTemporalBurstDetector:
 
     def test_analyze_transactions_structuring(self, burst_detector):
         """Test detection of structuring patterns"""
-        base_time = datetime.now(timezone.utc)
+        base_time = datetime.now(UTC)
         transactions = []
         for i in range(5):
-            transactions.append({
-                "customer_id": "cust1",
-                "amount": 9500.0,  # Just below $10k threshold
-                "date": (base_time + timedelta(days=i)).isoformat()
-            })
+            transactions.append(
+                {
+                    "customer_id": "cust1",
+                    "amount": 9500.0,  # Just below $10k threshold
+                    "date": (base_time + timedelta(days=i)).isoformat(),
+                }
+            )
 
         result = burst_detector.analyze_transactions(transactions)
 
@@ -442,24 +498,28 @@ class TestTemporalBurstDetector:
 
     def test_analyze_transactions_velocity_anomaly(self, burst_detector):
         """Test detection of velocity anomalies"""
-        base_time = datetime.now(timezone.utc)
+        base_time = datetime.now(UTC)
         transactions = []
 
         # Slow transactions first (baseline)
         for i in range(8):
-            transactions.append({
-                "customer_id": "cust1",
-                "amount": 500.0,
-                "date": (base_time + timedelta(days=i*2)).isoformat()
-            })
+            transactions.append(
+                {
+                    "customer_id": "cust1",
+                    "amount": 500.0,
+                    "date": (base_time + timedelta(days=i * 2)).isoformat(),
+                }
+            )
 
         # Then rapid transactions
         for i in range(5):
-            transactions.append({
-                "customer_id": "cust1",
-                "amount": 500.0,
-                "date": (base_time + timedelta(days=16, hours=i)).isoformat()
-            })
+            transactions.append(
+                {
+                    "customer_id": "cust1",
+                    "amount": 500.0,
+                    "date": (base_time + timedelta(days=16, hours=i)).isoformat(),
+                }
+            )
 
         result = burst_detector.analyze_transactions(transactions)
 
@@ -469,7 +529,7 @@ class TestTemporalBurstDetector:
     def test_detect_burst_patterns_threshold_not_met(self, burst_detector):
         """Test burst detection when threshold not met"""
         transactions = [
-            {"customer_id": "cust1", "date": datetime.now(timezone.utc).isoformat()}
+            {"customer_id": "cust1", "date": datetime.now(UTC).isoformat()}
             for _ in range(5)  # Below threshold of 10
         ]
 
@@ -480,7 +540,7 @@ class TestTemporalBurstDetector:
     def test_detect_structuring_patterns_insufficient(self, burst_detector):
         """Test structuring detection with insufficient transactions"""
         transactions = [
-            {"amount": 9500.0, "date": datetime.now(timezone.utc).isoformat()}
+            {"amount": 9500.0, "date": datetime.now(UTC).isoformat()}
             for _ in range(2)  # Below threshold of 3
         ]
 
@@ -491,10 +551,32 @@ class TestTemporalBurstDetector:
     def test_calculate_risk_score(self, burst_detector):
         """Test risk score calculation"""
         alerts = [
-            BurstAlert("cust1", "Customer", "burst", 15, 15000.0, 24.0, 0.8, "high",
-                      [], "Test burst", datetime.now(timezone.utc).isoformat()),
-            BurstAlert("cust1", "Customer", "structuring", 5, 47500.0, 48.0, 0.6, "medium",
-                      [], "Test structuring", datetime.now(timezone.utc).isoformat())
+            BurstAlert(
+                "cust1",
+                "Customer",
+                "burst",
+                15,
+                15000.0,
+                24.0,
+                0.8,
+                "high",
+                [],
+                "Test burst",
+                datetime.now(UTC).isoformat(),
+            ),
+            BurstAlert(
+                "cust1",
+                "Customer",
+                "structuring",
+                5,
+                47500.0,
+                48.0,
+                0.6,
+                "medium",
+                [],
+                "Test structuring",
+                datetime.now(UTC).isoformat(),
+            ),
         ]
 
         score = burst_detector._calculate_risk_score(alerts)
@@ -512,6 +594,7 @@ class TestTemporalBurstDetector:
 
 # Edge Cases and Error Conditions
 
+
 class TestFraudServicesEdgeCases:
     """Tests for edge cases and error conditions"""
 
@@ -519,7 +602,7 @@ class TestFraudServicesEdgeCases:
     def fraud_service(self):
         """Create fraud service with mock DB"""
         mock_db = Mock(spec=Session)
-        with patch('backend.app.services.fraud.fraud_service.rule_engine'):
+        with patch("backend.app.services.fraud.fraud_service.rule_engine"):
             return FraudDetectionService(mock_db)
 
     def test_velocity_rule_edge_cases(self):
@@ -527,7 +610,7 @@ class TestFraudServicesEdgeCases:
         rule = VelocityRule("VEL001", max_transactions=3, time_window_minutes=5)
 
         # No account_id
-        transaction = {"timestamp": datetime.now(timezone.utc).isoformat()}
+        transaction = {"timestamp": datetime.now(UTC).isoformat()}
         context = {"recent_transactions": []}
         result = rule.evaluate(transaction, context)
         assert not result["triggered"]
@@ -561,7 +644,7 @@ class TestFraudServicesEdgeCases:
         rule = GeographicAnomalyRule("GEO001")
 
         # No location
-        transaction = {"timestamp": datetime.now(timezone.utc).isoformat()}
+        transaction = {"timestamp": datetime.now(UTC).isoformat()}
         context = {"last_transaction": {"location": {"lat": 0, "lon": 0}}}
         result = rule.evaluate(transaction, context)
         assert not result["triggered"]
@@ -569,12 +652,14 @@ class TestFraudServicesEdgeCases:
         # Same location
         transaction = {
             "location": {"lat": 40.0, "lon": -74.0},
-            "timestamp": datetime.now(timezone.utc).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
         context = {
             "last_transaction": {
                 "location": {"lat": 40.0, "lon": -74.0},
-                "timestamp": (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+                "timestamp": (
+                    datetime.now(UTC) - timedelta(hours=2)
+                ).isoformat(),
             }
         }
         result = rule.evaluate(transaction, context)
@@ -582,8 +667,10 @@ class TestFraudServicesEdgeCases:
 
     def test_burst_detector_parse_date_edge_cases(self, burst_detector):
         """Test date parsing edge cases"""
-        assert burst_detector._parse_date("") == datetime.min.replace(tzinfo=timezone.utc)
-        assert burst_detector._parse_date("2023-01-01").tzinfo == timezone.utc
+        assert burst_detector._parse_date("") == datetime.min.replace(
+            tzinfo=UTC
+        )
+        assert burst_detector._parse_date("2023-01-01").tzinfo == UTC
 
     def test_fraud_service_db_rollback_on_error(self, fraud_service):
         """Test database rollback on errors"""

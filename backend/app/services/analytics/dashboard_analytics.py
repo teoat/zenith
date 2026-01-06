@@ -4,7 +4,7 @@ Analytics & Insights Dashboard - Real-time investigation performance metrics
 
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -46,7 +46,7 @@ class InvestigationInsight(BaseModel):
     description: str
     confidence_score: float
     impact_level: str  # "low", "medium", "high"
-    recommendations: List[str]
+    recommendations: list[str]
     created_at: datetime
 
 
@@ -55,8 +55,8 @@ class DashboardConfiguration(BaseModel):
 
     time_range: int  # days
     auto_refresh: bool
-    displayed_metrics: List[str]
-    alert_thresholds: Dict[str, float]
+    displayed_metrics: list[str]
+    alert_thresholds: dict[str, float]
 
 
 class AnalyticsDashboard:
@@ -154,7 +154,7 @@ class AnalyticsDashboard:
 
     async def get_performance_trends(
         self, time_range_days: int = 30
-    ) -> List[PerformanceTrend]:
+    ) -> list[PerformanceTrend]:
         """Get performance trends over specified time range"""
         try:
             cutoff_date = datetime.now() - timedelta(days=time_range_days)
@@ -170,8 +170,10 @@ class AnalyticsDashboard:
             return []
 
     async def generate_investigation_insights(
-        self, metrics: InvestigationMetrics, alert_conditions: Dict[str, Any] = None
-    ) -> List[InvestigationInsight]:
+        self,
+        metrics: InvestigationMetrics,
+        alert_conditions: dict[str, Any] | None = None,
+    ) -> list[InvestigationInsight]:
         """Generate AI-powered investigation insights"""
         insights = []
 
@@ -380,7 +382,7 @@ class AnalyticsDashboard:
                             id=f"insight_workload_alert_{datetime.now().strftime('%Y%m%d%H%M%S')}",
                             insight_type="efficiency",
                             title="Investigator Workload High",
-                            description=f"Investigator workload is 20% above normal levels",
+                            description="Investigator workload is 20% above normal levels",
                             confidence_score=0.88,
                             impact_level="medium",
                             recommendations=[
@@ -446,7 +448,7 @@ class AnalyticsDashboard:
 
         return max(0.0, min(100.0, base_compliance))
 
-    async def get_dashboard_data(self, time_range_days: int = 30) -> Dict[str, Any]:
+    async def get_dashboard_data(self, time_range_days: int = 30) -> dict[str, Any]:
         """Get comprehensive dashboard data"""
         try:
             current_metrics = await self.get_current_metrics()
@@ -472,7 +474,7 @@ class AnalyticsDashboard:
                 "configuration": self.configuration.dict(),
             }
 
-    async def update_configuration(self, updates: Dict[str, Any]) -> bool:
+    async def update_configuration(self, updates: dict[str, Any]) -> bool:
         """Update dashboard configuration"""
         try:
             for key, value in updates.items():
@@ -515,7 +517,7 @@ class AnalyticsDashboard:
 
     async def generate_performance_report(
         self, format_type: str = "summary"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate comprehensive performance report"""
         try:
             current_metrics = await self.get_current_metrics()
@@ -566,7 +568,7 @@ class AnalyticsDashboard:
 
     def _generate_performance_recommendations(
         self, metrics: InvestigationMetrics
-    ) -> List[str]:
+    ) -> list[str]:
         """Generate performance improvement recommendations"""
         recommendations = []
 

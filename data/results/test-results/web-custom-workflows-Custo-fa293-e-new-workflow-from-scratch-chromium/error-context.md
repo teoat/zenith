@@ -1,0 +1,109 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e3] [cursor=pointer]:
+      - /url: "#navigation"
+    - link "Skip to search" [ref=e4] [cursor=pointer]:
+      - /url: "#search"
+  - generic [ref=e6]:
+    - link "Skip to main content" [ref=e7] [cursor=pointer]:
+      - /url: "#main-content"
+    - button "Start Voice Control" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+    - main "Sign in to your account" [ref=e13]:
+      - link "Skip to main content" [ref=e14] [cursor=pointer]:
+        - /url: "#login-heading"
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - img [ref=e19]
+          - heading "Sign in to your account" [level=2] [ref=e21]
+          - paragraph [ref=e22]: Access the advanced fraud detection platform
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - tablist [ref=e25]:
+              - tab "Password" [selected] [ref=e26] [cursor=pointer]
+              - tab "Magic Link" [ref=e27] [cursor=pointer]
+            - tabpanel "Password" [ref=e28]:
+              - region "Login Form" [ref=e29]:
+                - generic [ref=e30]:
+                  - generic [ref=e31]:
+                    - text: Email address
+                    - generic [ref=e32]:
+                      - img [ref=e33]
+                      - textbox "Input field" [ref=e36]:
+                        - /placeholder: your@email.com
+                  - generic [ref=e37]:
+                    - generic [ref=e38]:
+                      - generic [ref=e39]: Password
+                      - button "Forgot password?" [ref=e40] [cursor=pointer]
+                    - generic [ref=e42]:
+                      - textbox "Input field" [ref=e43]:
+                        - /placeholder: Enter password
+                      - button "Show password" [ref=e44] [cursor=pointer]:
+                        - img [ref=e45]
+                  - generic [ref=e48]:
+                    - checkbox "Remember my email for next time" [ref=e49] [cursor=pointer]
+                    - checkbox
+                    - generic [ref=e50] [cursor=pointer]: Remember my email for next time
+                  - button "Sign in to Dashboard" [ref=e51] [cursor=pointer]
+              - generic [ref=e52]:
+                - generic [ref=e57]: Or continue with
+                - generic [ref=e58]:
+                  - button "Google Continue with Google" [ref=e59] [cursor=pointer]:
+                    - img "Google" [ref=e60]: 🔍
+                    - text: Continue with Google
+                  - button "Microsoft Continue with Microsoft" [ref=e61] [cursor=pointer]:
+                    - img "Microsoft" [ref=e62]: 🪟
+                    - text: Continue with Microsoft
+                  - button "GitHub Continue with GitHub" [ref=e63] [cursor=pointer]:
+                    - img "GitHub" [ref=e64]: 🐙
+                    - text: Continue with GitHub
+                - paragraph [ref=e65]: Signing in with a third-party service means you agree to their terms and privacy policy.
+          - paragraph [ref=e67]:
+            - text: Don't have an account?
+            - link "Sign up for free" [ref=e68] [cursor=pointer]:
+              - /url: /register
+          - paragraph [ref=e70]:
+            - text: By signing in, you agree to our
+            - link "Terms of Service" [ref=e71] [cursor=pointer]:
+              - /url: /terms
+            - text: and
+            - link "Privacy Policy" [ref=e72] [cursor=pointer]:
+              - /url: /privacy
+            - text: .
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - img
+        - generic [ref=e78]:
+          - generic [ref=e80]: "SYSTEM_STATUS: ONLINE"
+          - generic [ref=e81]:
+            - heading "Advanced Fraud Detection & Network Intelligence" [level=1] [ref=e83]
+            - paragraph [ref=e84]: Uncover hidden connections, detect complex patterns, and protect your platform with our next-generation investigation suite.
+          - generic [ref=e85]:
+            - generic [ref=e86]: v2.4.0-RC1
+            - generic [ref=e87]: •
+            - generic [ref=e88]: SECURE_CONNECTION
+        - combobox "settings" [ref=e90]:
+          - option "🇺🇸 English" [selected]
+          - option "🇮🇩 Bahasa Indonesia"
+    - generic [ref=e91]:
+      - heading "Accessibility Score" [level=3] [ref=e93]
+      - generic [ref=e94]:
+        - generic [ref=e95]: 85%
+        - generic [ref=e96]: WCAG AAA
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - generic [ref=e99]: "✓ Passes:"
+          - generic [ref=e100]: "23"
+        - generic [ref=e101]:
+          - generic [ref=e102]: "✗ Violations:"
+          - generic [ref=e103]: "4"
+        - generic [ref=e104]:
+          - generic [ref=e105]: "⚠ Incomplete:"
+          - generic [ref=e106]: "0"
+      - button "Re-check Accessibility" [ref=e107] [cursor=pointer]: Re-check
+```

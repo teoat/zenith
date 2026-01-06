@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/analytics/advanced_analytics_service.py
+# hypothesis_version: 6.148.8
+
+[0.8, 0.85, 0.9, 0.92, 87.3, 97.8, 98.1, 99.5, 99.7, 100, 200, 365, 3600, '30d', '@', 'ARCHIVED', 'CLOSED', 'accuracy', 'avgResolutionTime', 'avgResponseTime', 'avg_resolution_time', 'case', 'caseId', 'caseTrends', 'cases', 'confidence', 'count', 'd', 'date', 'description', 'high', 'id', 'increasing', 'insights', 'lastUpdated', 'm', 'medium', 'performanceMetrics', 'predictedCases', 'recommendations', 'relevance', 'resolutionRate', 'resolved', 'resolvedCases', 'riskScore', 'severity', 'stable', 'systemUptime', 'text', 'timestamp', 'title', 'totalCases', 'trend', 'type', 'user', 'w', 'y']

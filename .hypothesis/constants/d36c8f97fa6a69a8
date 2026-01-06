@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/meta_agent.py
+# hypothesis_version: 6.148.8
+
+[0.85, 1000, '*', 'Investigator', 'MERCHANT', 'RECON_AUTO_SYNC', 'RECON_ESCALATION', 'Redacted', 'SHADOW_IDENTITY', 'Unknown', 'ai_commentary', 'amount', 'confidence', 'device', 'diff', 'discrepancy', 'entity_link', 'heuristic', 'high', 'insight', 'ip', 'masked', 'meta_agent_resolver', 'persona', 'resolution_type', 'shadow_entity_id', 'source', 'status', 'timestamp', 'transaction_id']

@@ -4,12 +4,10 @@ Investigation Workflow Service for System Orchestration Framework
 Manages automated investigation triggers and phased analysis workflows.
 """
 
-import asyncio
-import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -33,11 +31,11 @@ class InvestigationWorkflowService:
     """Service for managing automated investigation workflows."""
 
     def __init__(self):
-        self.active_investigations: Dict[str, Dict[str, Any]] = {}
-        self.investigation_history: List[Dict[str, Any]] = []
+        self.active_investigations: dict[str, dict[str, Any]] = {}
+        self.investigation_history: list[dict[str, Any]] = []
         self.triggers = self._initialize_triggers()
 
-    def _initialize_triggers(self) -> Dict[str, Dict[str, Any]]:
+    def _initialize_triggers(self) -> dict[str, dict[str, Any]]:
         """Initialize investigation triggers."""
         return {
             "score_drop": {
@@ -58,8 +56,8 @@ class InvestigationWorkflowService:
         }
 
     async def check_triggers(
-        self, diagnostics_data: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, diagnostics_data: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Check all triggers against current diagnostics data."""
         triggered_investigations = []
 
@@ -80,8 +78,8 @@ class InvestigationWorkflowService:
         return triggered_investigations
 
     def _check_score_drop_trigger(
-        self, diagnostics_data: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+        self, diagnostics_data: dict[str, Any]
+    ) -> dict[str, Any] | None:
         """Check if score drop trigger should activate."""
         trigger_config = self.triggers["score_drop"]
         if not trigger_config["enabled"]:
@@ -104,8 +102,8 @@ class InvestigationWorkflowService:
         return None
 
     def _check_critical_issue_trigger(
-        self, diagnostics_data: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, diagnostics_data: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Check for critical issues that should trigger investigation."""
         trigger_config = self.triggers["critical_issue"]
         if not trigger_config["enabled"]:
@@ -135,7 +133,7 @@ class InvestigationWorkflowService:
 
         return investigations
 
-    def _check_scheduled_review_trigger(self) -> Optional[Dict[str, Any]]:
+    def _check_scheduled_review_trigger(self) -> dict[str, Any] | None:
         """Check if scheduled review should run."""
         trigger_config = self.triggers["scheduled_review"]
         if not trigger_config["enabled"]:
@@ -167,8 +165,8 @@ class InvestigationWorkflowService:
         return None
 
     def _identify_affected_dimensions(
-        self, diagnostics_data: Dict[str, Any]
-    ) -> List[str]:
+        self, diagnostics_data: dict[str, Any]
+    ) -> list[str]:
         """Identify dimensions affected by issues."""
         affected = []
         for dimension_name, dimension_data in diagnostics_data.items():
@@ -179,7 +177,7 @@ class InvestigationWorkflowService:
                     affected.append(dimension_name)
         return affected
 
-    async def start_investigation(self, trigger_data: Dict[str, Any]) -> str:
+    async def start_investigation(self, trigger_data: dict[str, Any]) -> str:
         """Start a new investigation workflow."""
         investigation_id = f"inv_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
@@ -205,7 +203,7 @@ class InvestigationWorkflowService:
 
         return investigation_id
 
-    async def _execute_surface_analysis(self, investigation: Dict[str, Any]):
+    async def _execute_surface_analysis(self, investigation: dict[str, Any]):
         """Execute surface analysis phase."""
         investigation_id = investigation["id"]
         logger.info(f"Executing surface analysis for investigation {investigation_id}")
@@ -232,7 +230,7 @@ class InvestigationWorkflowService:
         # Move to deep investigation
         await self._execute_deep_investigation(investigation)
 
-    async def _execute_deep_investigation(self, investigation: Dict[str, Any]):
+    async def _execute_deep_investigation(self, investigation: dict[str, Any]):
         """Execute deep investigation phase."""
         investigation_id = investigation["id"]
         logger.info(
@@ -266,7 +264,7 @@ class InvestigationWorkflowService:
         # Move to recommendation generation
         await self._execute_recommendation_generation(investigation)
 
-    async def _execute_recommendation_generation(self, investigation: Dict[str, Any]):
+    async def _execute_recommendation_generation(self, investigation: dict[str, Any]):
         """Execute recommendation generation phase."""
         investigation_id = investigation["id"]
         logger.info(f"Generating recommendations for investigation {investigation_id}")
@@ -305,7 +303,7 @@ class InvestigationWorkflowService:
         # Move to sync planning
         await self._execute_sync_planning(investigation)
 
-    async def _execute_sync_planning(self, investigation: Dict[str, Any]):
+    async def _execute_sync_planning(self, investigation: dict[str, Any]):
         """Execute synchronization planning phase."""
         investigation_id = investigation["id"]
         logger.info(f"Planning synchronization for investigation {investigation_id}")
@@ -354,7 +352,7 @@ class InvestigationWorkflowService:
 
     async def get_investigation_status(
         self, investigation_id: str
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """Get status of a specific investigation."""
         if investigation_id in self.active_investigations:
             return self.active_investigations[investigation_id]
@@ -366,11 +364,11 @@ class InvestigationWorkflowService:
 
         return None
 
-    def get_active_investigations(self) -> List[Dict[str, Any]]:
+    def get_active_investigations(self) -> list[dict[str, Any]]:
         """Get all active investigations."""
         return list(self.active_investigations.values())
 
-    def get_investigation_history(self, limit: int = 50) -> List[Dict[str, Any]]:
+    def get_investigation_history(self, limit: int = 50) -> list[dict[str, Any]]:
         """Get investigation history."""
         return self.investigation_history[-limit:]
 

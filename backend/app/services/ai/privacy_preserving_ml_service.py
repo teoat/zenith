@@ -4,19 +4,16 @@ Implements federated learning, differential privacy, and homomorphic encryption
 to close the 28% competitive gap in privacy-preserving ML capabilities.
 """
 
-import asyncio
 import hashlib
 import logging
 import secrets
 import time
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +48,7 @@ class FederatedUpdate:
     """Federated learning model update"""
 
     client_id: str
-    model_weights: Dict[str, np.ndarray]
+    model_weights: dict[str, np.ndarray]
     sample_count: int
     privacy_budget_used: float
     timestamp: float
@@ -114,7 +111,7 @@ class SecureAggregation:
         self.shared_keys = {}
         self.masks = {}
 
-    def setup_secure_channels(self, client_ids: List[str]) -> Dict[str, bytes]:
+    def setup_secure_channels(self, client_ids: list[str]) -> dict[str, bytes]:
         """Setup secure communication channels with clients"""
         keys = {}
         for client_id in client_ids:
@@ -129,8 +126,8 @@ class SecureAggregation:
         return keys
 
     def mask_model_update(
-        self, client_id: str, model_weights: Dict[str, np.ndarray]
-    ) -> Dict[str, np.ndarray]:
+        self, client_id: str, model_weights: dict[str, np.ndarray]
+    ) -> dict[str, np.ndarray]:
         """Apply random mask to model weights before transmission"""
         if client_id not in self.masks:
             raise ValueError(f"No mask available for client {client_id}")
@@ -157,8 +154,8 @@ class SecureAggregation:
         return masked_weights
 
     def unmask_aggregated_update(
-        self, masked_aggregated_weights: Dict[str, np.ndarray]
-    ) -> Dict[str, np.ndarray]:
+        self, masked_aggregated_weights: dict[str, np.ndarray]
+    ) -> dict[str, np.ndarray]:
         """Remove masks from aggregated weights"""
         # Sum all masks to get the total mask effect
         total_mask = sum(self.masks.values())
@@ -188,7 +185,7 @@ class FederatedLearningCoordinator:
         self.model_type = model_type
         self.privacy_params = privacy_params
         self.global_model = None
-        self.client_updates: List[FederatedUpdate] = []
+        self.client_updates: list[FederatedUpdate] = []
         self.round_number = 0
         self.secure_aggregation = SecureAggregation(10)  # Max 10 clients
         self.differential_privacy = DifferentialPrivacy(
@@ -196,7 +193,7 @@ class FederatedLearningCoordinator:
         )
 
     async def initialize_global_model(
-        self, initial_weights: Optional[Dict[str, np.ndarray]] = None
+        self, initial_weights: dict[str, np.ndarray] | None = None
     ):
         """Initialize the global model"""
         if initial_weights:
@@ -211,7 +208,7 @@ class FederatedLearningCoordinator:
 
         logger.info(f"Initialized global {self.model_type} model")
 
-    async def start_federated_round(self, participating_clients: List[str]) -> bool:
+    async def start_federated_round(self, participating_clients: list[str]) -> bool:
         """Start a new federated learning round with privacy guarantees"""
         self.round_number += 1
         self.client_updates = []
@@ -225,7 +222,7 @@ class FederatedLearningCoordinator:
         return True
 
     async def submit_private_update(
-        self, client_id: str, local_weights: Dict[str, np.ndarray], sample_count: int
+        self, client_id: str, local_weights: dict[str, np.ndarray], sample_count: int
     ) -> bool:
         """Submit a privacy-preserving model update"""
         try:
@@ -275,7 +272,7 @@ class FederatedLearningCoordinator:
             logger.error(f"Failed to process private update from {client_id}: {e}")
             return False
 
-    async def aggregate_private_updates(self) -> Dict[str, np.ndarray]:
+    async def aggregate_private_updates(self) -> dict[str, np.ndarray]:
         """Aggregate private model updates using secure aggregation"""
         if not self.client_updates:
             raise ValueError("No updates to aggregate")
@@ -289,7 +286,7 @@ class FederatedLearningCoordinator:
         # Start with first update's masked weights
         if self.client_updates:
             base_weights = self.client_updates[0].model_weights.copy()
-            for key in base_weights.keys():
+            for key in base_weights:
                 aggregated_weights[key] = np.zeros_like(base_weights[key])
 
             # Aggregate masked weights
@@ -391,8 +388,8 @@ class PrivacyPreservingMLService:
     async def train_federated_model(
         self,
         model_id: str,
-        client_updates: List[Tuple[str, Dict[str, np.ndarray], int]],
-    ) -> Dict[str, Any]:
+        client_updates: list[tuple[str, dict[str, np.ndarray], int]],
+    ) -> dict[str, Any]:
         """Train model using federated learning with privacy preservation"""
         if model_id not in self.federated_coordinators:
             raise ValueError(f"Model {model_id} not found")
@@ -428,7 +425,7 @@ class PrivacyPreservingMLService:
         }
 
     def apply_differential_privacy_to_dataset(
-        self, dataset: pd.DataFrame, sensitive_columns: List[str]
+        self, dataset: pd.DataFrame, sensitive_columns: list[str]
     ) -> pd.DataFrame:
         """Apply differential privacy to sensitive dataset columns"""
         private_dataset = dataset.copy()
@@ -469,7 +466,7 @@ class PrivacyPreservingMLService:
         return private_dataset
 
     def perform_homomorphic_computation(
-        self, encrypted_values: List[bytes], operation: str = "sum"
+        self, encrypted_values: list[bytes], operation: str = "sum"
     ) -> bytes:
         """Perform computation on encrypted data"""
         if not encrypted_values:
@@ -483,7 +480,7 @@ class PrivacyPreservingMLService:
 
         return result
 
-    def get_privacy_dashboard(self) -> Dict[str, Any]:
+    def get_privacy_dashboard(self) -> dict[str, Any]:
         """Get comprehensive privacy dashboard"""
         if not self.privacy_metrics_history:
             return {"message": "No privacy operations recorded yet"}
@@ -504,7 +501,7 @@ class PrivacyPreservingMLService:
             "recommendations": self._generate_privacy_recommendations(latest_metrics),
         }
 
-    def _generate_privacy_recommendations(self, metrics: PrivacyMetrics) -> List[str]:
+    def _generate_privacy_recommendations(self, metrics: PrivacyMetrics) -> list[str]:
         """Generate privacy optimization recommendations"""
         recommendations = []
 
@@ -537,7 +534,7 @@ class PrivacyPreservingMLService:
 
     async def validate_privacy_compliance(
         self, model_id: str, test_dataset: pd.DataFrame
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate privacy compliance of a model"""
         if model_id not in self.federated_coordinators:
             raise ValueError(f"Model {model_id} not found")
@@ -570,7 +567,7 @@ class PrivacyPreservingMLService:
 
     def _test_differential_privacy(
         self, coordinator: FederatedLearningCoordinator
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Test differential privacy implementation"""
         remaining_budget = coordinator.differential_privacy.get_remaining_budget()
         total_budget = coordinator.privacy_params.epsilon
@@ -579,10 +576,10 @@ class PrivacyPreservingMLService:
             "passed": remaining_budget > 0,
             "privacy_budget_used": total_budget - remaining_budget,
             "remaining_budget": remaining_budget,
-            "details": f"Privacy budget usage: {(total_budget - remaining_budget)/total_budget:.1%}",
+            "details": f"Privacy budget usage: {(total_budget - remaining_budget) / total_budget:.1%}",
         }
 
-    def _test_secure_aggregation(self) -> Dict[str, Any]:
+    def _test_secure_aggregation(self) -> dict[str, Any]:
         """Test secure aggregation implementation"""
         # Simplified test - in production, use formal verification
         return {
@@ -594,7 +591,7 @@ class PrivacyPreservingMLService:
 
     def _test_membership_inference_resistance(
         self, test_dataset: pd.DataFrame
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Test resistance to membership inference attacks"""
         # Simplified test - measure if individual records can be identified
         dataset_size = len(test_dataset)
@@ -608,7 +605,7 @@ class PrivacyPreservingMLService:
             "details": f"Dataset uniqueness: {uniqueness_ratio:.1%}",
         }
 
-    def _test_model_inversion_resistance(self) -> Dict[str, Any]:
+    def _test_model_inversion_resistance(self) -> dict[str, Any]:
         """Test resistance to model inversion attacks"""
         # Simplified test - check if model outputs can be inverted
         return {
@@ -618,8 +615,8 @@ class PrivacyPreservingMLService:
         }
 
     def _generate_compliance_recommendations(
-        self, test_results: Dict[str, Dict]
-    ) -> List[str]:
+        self, test_results: dict[str, dict]
+    ) -> list[str]:
         """Generate compliance improvement recommendations"""
         recommendations = []
 

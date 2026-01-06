@@ -1,16 +1,13 @@
 # backend/services/database_optimizer.py
 import logging
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-from sqlalchemy import and_, desc, func, or_, text
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy import desc, func, or_, text
+from sqlalchemy.orm import selectinload
 
 from core.database import (
     Case,
-    CaseActivity,
-    CaseNote,
-    Evidence,
     SessionLocal,
     Transaction,
 )
@@ -67,8 +64,8 @@ class DatabaseOptimizer:
             raise
 
     def get_paginated_cases(
-        self, page: int = 1, per_page: int = 20, filters: Dict[str, Any] = None
-    ) -> Dict[str, Any]:
+        self, page: int = 1, per_page: int = 20, filters: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """Get paginated cases with optimized queries"""
         start_time = time.time()
 
@@ -119,7 +116,7 @@ class DatabaseOptimizer:
 
     def get_case_with_optimized_relationships(
         self, case_id: str
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """Get case with optimized relationship loading"""
         start_time = time.time()
 
@@ -145,8 +142,8 @@ class DatabaseOptimizer:
             return {"case": case, "execution_time": execution_time}
 
     def get_optimized_transaction_aggregates(
-        self, case_id: str = None, date_from=None, date_to=None
-    ) -> Dict[str, Any]:
+        self, case_id: str | None = None, date_from=None, date_to=None
+    ) -> dict[str, Any]:
         """Get transaction aggregates with optimized queries"""
         start_time = time.time()
 
@@ -186,7 +183,7 @@ class DatabaseOptimizer:
                 "execution_time": execution_time,
             }
 
-    def get_performance_metrics(self) -> Dict[str, Any]:
+    def get_performance_metrics(self) -> dict[str, Any]:
         """Get database performance metrics"""
         return {
             "query_metrics": self.performance_metrics[-20:],  # Last 20 queries
@@ -202,7 +199,7 @@ class DatabaseOptimizer:
             "total_queries": len(self.performance_metrics),
         }
 
-    def optimize_query_with_explain(self, query, params=None) -> Dict[str, Any]:
+    def optimize_query_with_explain(self, query, params=None) -> dict[str, Any]:
         """Analyze query performance with EXPLAIN"""
         try:
             explain_query = f"EXPLAIN QUERY PLAN {query}"
@@ -218,7 +215,7 @@ class DatabaseOptimizer:
             logger.error(f"Query analysis failed: {e}")
             return {"error": str(e)}
 
-    def _analyze_query_plan(self, plan) -> List[str]:
+    def _analyze_query_plan(self, plan) -> list[str]:
         """Analyze query execution plan and provide optimization suggestions"""
         suggestions = []
 
@@ -262,14 +259,20 @@ class DatabaseOptimizer:
             except Exception as e:
                 logger.warning(f"Failed to create index: {e}")
 
-    def get_database_stats(self) -> Dict[str, Any]:
+    def get_database_stats(self) -> dict[str, Any]:
         """Get comprehensive database statistics"""
         stats = {}
 
         # Whitelist of allowed tables to prevent SQL injection
         allowed_tables = {
-            'cases', 'evidence', 'transactions', 'case_activities',
-            'case_notes', 'fraud_alerts', 'users', 'audit_logs'
+            "cases",
+            "evidence",
+            "transactions",
+            "case_activities",
+            "case_notes",
+            "fraud_alerts",
+            "users",
+            "audit_logs",
         }
 
         try:
@@ -289,8 +292,7 @@ class DatabaseOptimizer:
                     continue
 
                 count_result = self.execute_optimized_query(
-                    "SELECT COUNT(*) as count FROM ?;",
-                    (table_name,)
+                    "SELECT COUNT(*) as count FROM ?;", (table_name,)
                 )
                 count = count_result.fetchone()[0]
 

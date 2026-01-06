@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/middleware/versioning.py
+# hypothesis_version: 6.148.8
+
+[b'accept', b'x-api-version', 400, '/api/(v\\d+)/', 'api_version', 'headers', 'http', 'ignore', 'path', 'type', 'utf-8', 'v1', 'v2']

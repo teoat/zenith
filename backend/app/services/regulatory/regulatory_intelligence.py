@@ -2,11 +2,10 @@
 Regulatory Intelligence Hub - Centralized compliance and regulatory management
 """
 
-import json
 import logging
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -41,8 +40,8 @@ class RegulatoryFramework(BaseModel):
     version: str
     effective_date: datetime
     last_updated: datetime
-    requirements: List[Dict[str, Any]]
-    api_endpoints: List[str]
+    requirements: list[dict[str, Any]]
+    api_endpoints: list[str]
     documentation_url: str
 
 
@@ -56,7 +55,7 @@ class ComplianceRule(BaseModel):
     description: str
     requirement_text: str
     risk_level: str  # low, medium, high, critical
-    violation_penalty: Optional[str] = None
+    violation_penalty: str | None = None
     implementation_status: str
     created_at: datetime
 
@@ -70,10 +69,10 @@ class ComplianceCheck(BaseModel):
     rule_id: str
     is_compliant: bool
     risk_score: float
-    violations: List[Dict[str, Any]]
-    recommendations: List[str]
+    violations: list[dict[str, Any]]
+    recommendations: list[str]
     checked_at: datetime
-    ai_insights: Optional[Dict[str, Any]] = None
+    ai_insights: dict[str, Any] | None = None
 
 
 class RegulatoryUpdate(BaseModel):
@@ -102,7 +101,7 @@ class RegulatoryIntelligenceHub:
 
     def _initialize_frameworks(
         self,
-    ) -> Dict[JurisdictionType, List[RegulatoryFramework]]:
+    ) -> dict[JurisdictionType, list[RegulatoryFramework]]:
         """Initialize regulatory frameworks for major jurisdictions"""
         return {
             JurisdictionType.US: [
@@ -253,7 +252,7 @@ class RegulatoryIntelligenceHub:
         case_id: str,
         jurisdiction: JurisdictionType,
         regulation_type: RegulationType,
-        case_data: Dict[str, Any],
+        case_data: dict[str, Any],
     ) -> ComplianceCheck:
         """Check case compliance against specific regulatory framework"""
         try:
@@ -340,8 +339,8 @@ class RegulatoryIntelligenceHub:
             )
 
     async def _check_rule_compliance(
-        self, rule: Dict[str, Any], case_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, rule: dict[str, Any], case_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Check compliance against individual rule"""
         rule_id = rule.get("id", "unknown")
         threshold = rule.get("threshold", 0)
@@ -372,8 +371,8 @@ class RegulatoryIntelligenceHub:
             }
 
     def _check_sar_compliance(
-        self, case_data: Dict[str, Any], threshold: float
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any], threshold: float
+    ) -> dict[str, Any]:
         """Check SAR filing compliance"""
         transactions = case_data.get("transactions", [])
         alert_date = case_data.get("alert_date", datetime.now())
@@ -399,7 +398,7 @@ class RegulatoryIntelligenceHub:
             "risk_score": 0.1,
         }
 
-    def _check_cip_compliance(self, case_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _check_cip_compliance(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Check Customer Identification Program compliance"""
         customer = case_data.get("customer", {})
 
@@ -442,8 +441,8 @@ class RegulatoryIntelligenceHub:
         }
 
     def _check_transaction_monitoring(
-        self, case_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Check transaction monitoring compliance"""
         monitoring_active = case_data.get("monitoring_active", False)
 
@@ -471,8 +470,8 @@ class RegulatoryIntelligenceHub:
         }
 
     def _check_risk_assessment(
-        self, case_data: Dict[str, Any], threshold: float
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any], threshold: float
+    ) -> dict[str, Any]:
         """Check risk assessment compliance"""
         risk_score = case_data.get("risk_score", 0)
 
@@ -499,7 +498,7 @@ class RegulatoryIntelligenceHub:
             "risk_score": 0.1,
         }
 
-    def _check_data_minimisation(self, case_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _check_data_minimisation(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Check GDPR data minimisation compliance"""
         personal_data = case_data.get("personal_data", {})
 
@@ -532,7 +531,7 @@ class RegulatoryIntelligenceHub:
             "risk_score": 0.2 if violations else 0.0,
         }
 
-    def _check_privacy_notice(self, case_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _check_privacy_notice(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Check privacy notice compliance"""
         privacy_notice_provided = case_data.get("privacy_notice_provided", False)
 
@@ -559,7 +558,7 @@ class RegulatoryIntelligenceHub:
             "risk_score": 0.0,
         }
 
-    def _check_sanctions_screening(self, case_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _check_sanctions_screening(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Check sanctions screening compliance"""
         screening_completed = case_data.get("sanctions_screening", {})
 
@@ -604,7 +603,7 @@ class RegulatoryIntelligenceHub:
             "risk_score": 0.0,
         }
 
-    def _identify_high_risk_areas(self, violations: List[Dict[str, Any]]) -> List[str]:
+    def _identify_high_risk_areas(self, violations: list[dict[str, Any]]) -> list[str]:
         """Identify high-risk compliance areas"""
         high_risk_areas = []
 
@@ -619,7 +618,7 @@ class RegulatoryIntelligenceHub:
 
         return list(set(high_risk_areas))
 
-    async def monitor_regulatory_changes(self) -> List[RegulatoryUpdate]:
+    async def monitor_regulatory_changes(self) -> list[RegulatoryUpdate]:
         """Monitor for regulatory changes and updates"""
         if not self.monitoring_active:
             return []
@@ -664,9 +663,9 @@ class RegulatoryIntelligenceHub:
     async def generate_compliance_report(
         self,
         jurisdiction: JurisdictionType,
-        report_period: Dict[str, datetime],
-        checks: List[ComplianceCheck],
-    ) -> Dict[str, Any]:
+        report_period: dict[str, datetime],
+        checks: list[ComplianceCheck],
+    ) -> dict[str, Any]:
         """Generate comprehensive compliance report"""
         try:
             framework = self.frameworks.get(jurisdiction)
@@ -738,7 +737,7 @@ class RegulatoryIntelligenceHub:
         self,
         jurisdiction: JurisdictionType,
         framework_id: str,
-        update_data: Dict[str, Any],
+        update_data: dict[str, Any],
     ) -> bool:
         """Update regulatory framework"""
         try:

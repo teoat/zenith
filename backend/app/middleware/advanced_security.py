@@ -5,21 +5,19 @@ Achieving 10/10 security score with comprehensive protection layers.
 
 import asyncio
 import hashlib
-import hmac
 import json
-import logging
 import re
 import time
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
-from fastapi import HTTPException, Request, Response
-from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi import Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.services.infrastructure.cache_service import cache_manager
 from core.logging import logger
+
 
 # Security Models
 class SecurityEvent(BaseModel):
@@ -27,48 +25,53 @@ class SecurityEvent(BaseModel):
     event_type: str
     severity: str  # critical, high, medium, low, info
     source_ip: str
-    user_id: Optional[str]
+    user_id: str | None
     resource: str
     action: str
-    details: Dict[str, Any]
+    details: dict[str, Any]
     timestamp: datetime
     risk_score: int
+
 
 class ZeroTrustPolicy(BaseModel):
     policy_id: str
     resource_pattern: str
-    required_permissions: List[str]
+    required_permissions: list[str]
     mfa_required: bool
-    ip_whitelist: Optional[List[str]]
-    time_restrictions: Optional[Dict[str, Any]]
+    ip_whitelist: list[str] | None
+    time_restrictions: dict[str, Any] | None
     risk_threshold: int
+
 
 class InputValidationRule(BaseModel):
     field_name: str
     validation_type: str  # regex, length, type, custom
-    pattern: Optional[str]
-    min_length: Optional[int]
-    max_length: Optional[int]
-    allowed_values: Optional[List[Any]]
-    custom_validator: Optional[str]
+    pattern: str | None
+    min_length: int | None
+    max_length: int | None
+    allowed_values: list[Any] | None
+    custom_validator: str | None
+
 
 # Runtime Security Monitor
 class RuntimeSecurityMonitor:
     """Real-time security monitoring and threat detection"""
 
     def __init__(self):
-        self.security_events: List[SecurityEvent] = []
-        self.active_threats: Dict[str, int] = {}
-        self.suspicious_ips: Set[str] = set()
-        self.brute_force_attempts: Dict[str, List[datetime]] = {}
+        self.security_events: list[SecurityEvent] = []
+        self.active_threats: dict[str, int] = {}
+        self.suspicious_ips: set[str] = set()
+        self.brute_force_attempts: dict[str, list[datetime]] = {}
 
         # Security thresholds
         self.max_failed_attempts = 5
         self.suspicious_activity_window = 300  # 5 minutes
         self.block_duration = 900  # 15 minutes
+        self._background_tasks: list[asyncio.Task] = []
 
         # Initialize monitoring
-        asyncio.create_task(self._background_security_monitor())
+        security_task = asyncio.create_task(self._background_security_monitor())
+        self._background_tasks.append(security_task)
 
     async def _background_security_monitor(self):
         """Background security monitoring task"""
@@ -85,7 +88,8 @@ class RuntimeSecurityMonitor:
         # Check for brute force attempts
         for ip, attempts in self.brute_force_attempts.items():
             recent_attempts = [
-                attempt for attempt in attempts
+                attempt
+                for attempt in attempts
                 if (datetime.now() - attempt).seconds < self.suspicious_activity_window
             ]
 
@@ -95,24 +99,23 @@ class RuntimeSecurityMonitor:
                     event_type="brute_force_detected",
                     severity="high",
                     source_ip=ip,
-                    details={"attempts": len(recent_attempts)}
+                    details={"attempts": len(recent_attempts)},
                 )
 
     async def _cleanup_expired_blocks(self):
         """Clean up expired IP blocks"""
         # This would be enhanced with Redis for distributed blocking
-        pass
 
     async def _log_security_event(
         self,
         event_type: str,
         severity: str,
         source_ip: str,
-        user_id: Optional[str] = None,
+        user_id: str | None = None,
         resource: str = "",
         action: str = "",
-        details: Optional[Dict[str, Any]] = None,
-        risk_score: int = 0
+        details: dict[str, Any] | None = None,
+        risk_score: int = 0,
     ):
         """Log a security event"""
         event = SecurityEvent(
@@ -125,7 +128,7 @@ class RuntimeSecurityMonitor:
             action=action,
             details=details or {},
             timestamp=datetime.now(),
-            risk_score=risk_score
+            risk_score=risk_score,
         )
 
         self.security_events.append(event)
@@ -151,9 +154,9 @@ class RuntimeSecurityMonitor:
         # Cleanup old attempts
         cutoff = datetime.now() - timedelta(seconds=self.suspicious_activity_window)
         self.brute_force_attempts[ip] = [
-            attempt for attempt in self.brute_force_attempts[ip]
-            if attempt > cutoff
+            attempt for attempt in self.brute_force_attempts[ip] if attempt > cutoff
         ]
+
 
 # Zero-Trust Security Middleware
 class ZeroTrustMiddleware(BaseHTTPMiddleware):
@@ -162,7 +165,7 @@ class ZeroTrustMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, security_monitor: RuntimeSecurityMonitor):
         super().__init__(app)
         self.security_monitor = security_monitor
-        self.policies: Dict[str, ZeroTrustPolicy] = {}
+        self.policies: dict[str, ZeroTrustPolicy] = {}
 
         # Load zero-trust policies
         self._load_policies()
@@ -176,22 +179,22 @@ class ZeroTrustMiddleware(BaseHTTPMiddleware):
                 resource_pattern=r"/api/v1/cases.*",
                 required_permissions=["cases.read"],
                 mfa_required=False,
-                risk_threshold=3
+                risk_threshold=3,
             ),
             "/api/v1/admin": ZeroTrustPolicy(
                 policy_id="admin_access",
                 resource_pattern=r"/api/v1/admin.*",
                 required_permissions=["admin.access"],
                 mfa_required=True,
-                risk_threshold=1
-            )
+                risk_threshold=1,
+            ),
         }
 
     async def dispatch(self, request: Request, call_next):
         # Extract security context
         client_ip = self._get_client_ip(request)
-        user_id = getattr(request.state, 'user_id', None)
-        user_permissions = getattr(request.state, 'permissions', [])
+        user_id = getattr(request.state, "user_id", None)
+        user_permissions = getattr(request.state, "permissions", [])
 
         # Check if IP is blocked
         if self.security_monitor.is_ip_blocked(client_ip):
@@ -201,36 +204,49 @@ class ZeroTrustMiddleware(BaseHTTPMiddleware):
                 source_ip=client_ip,
                 user_id=user_id,
                 resource=str(request.url),
-                action=request.method
+                action=request.method,
             )
             return JSONResponse(
                 status_code=403,
-                content={"error": "Access denied", "reason": "IP blocked due to security policy"}
+                content={
+                    "error": "Access denied",
+                    "reason": "IP blocked due to security policy",
+                },
             )
 
         # Apply zero-trust policies
-        for pattern, policy in self.policies.items():
+        for policy in self.policies.values():
             if re.match(policy.resource_pattern, str(request.url)):
                 # Check permissions
-                if not self._has_required_permissions(user_permissions, policy.required_permissions):
+                if not self._has_required_permissions(
+                    user_permissions, policy.required_permissions
+                ):
                     await self.security_monitor._log_security_event(
                         event_type="insufficient_permissions",
                         severity="high",
                         source_ip=client_ip,
                         user_id=user_id,
                         resource=str(request.url),
-                        action=request.method
+                        action=request.method,
                     )
                     return JSONResponse(
                         status_code=403,
-                        content={"error": "Access denied", "reason": "Insufficient permissions"}
+                        content={
+                            "error": "Access denied",
+                            "reason": "Insufficient permissions",
+                        },
                     )
 
                 # Check MFA requirement
-                if policy.mfa_required and not getattr(request.state, 'mfa_verified', False):
+                if policy.mfa_required and not getattr(
+                    request.state, "mfa_verified", False
+                ):
                     return JSONResponse(
                         status_code=403,
-                        content={"error": "MFA required", "reason": "Multi-factor authentication required"}
+                        content={
+                            "error": "MFA required",
+                            "reason": "Multi-factor authentication required",
+                        },
                     )
 
                 # Additional zero-trust checks could be added here
@@ -247,7 +263,7 @@ class ZeroTrustMiddleware(BaseHTTPMiddleware):
                 source_ip=client_ip,
                 user_id=user_id,
                 resource=str(request.url),
-                action=request.method
+                action=request.method,
             )
 
         return response
@@ -263,9 +279,12 @@ class ZeroTrustMiddleware(BaseHTTPMiddleware):
         # Fall back to direct connection
         return request.client.host if request.client else "unknown"
 
-    def _has_required_permissions(self, user_permissions: List[str], required_permissions: List[str]) -> bool:
+    def _has_required_permissions(
+        self, user_permissions: list[str], required_permissions: list[str]
+    ) -> bool:
         """Check if user has all required permissions"""
         return all(perm in user_permissions for perm in required_permissions)
+
 
 # Comprehensive Input Validation Middleware
 class InputValidationMiddleware(BaseHTTPMiddleware):
@@ -273,7 +292,7 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app):
         super().__init__(app)
-        self.validation_rules: Dict[str, List[InputValidationRule]] = {}
+        self.validation_rules: dict[str, list[InputValidationRule]] = {}
 
         # Load validation rules
         self._load_validation_rules()
@@ -285,44 +304,44 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                 InputValidationRule(
                     field_name="user_id",
                     validation_type="regex",
-                    pattern=r"^[a-zA-Z0-9_-]{1,50}$"
+                    pattern=r"^[a-zA-Z0-9_-]{1,50}$",
                 ),
                 InputValidationRule(
                     field_name="user_id",
                     validation_type="length",
                     min_length=1,
-                    max_length=50
-                )
+                    max_length=50,
+                ),
             ],
             "email": [
                 InputValidationRule(
                     field_name="email",
                     validation_type="regex",
-                    pattern=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                    pattern=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
                 ),
-                InputValidationRule(
-                    field_name="length",
-                    max_length=254
-                )
+                InputValidationRule(field_name="length", max_length=254),
             ],
             "case_title": [
                 InputValidationRule(
                     field_name="case_title",
                     validation_type="length",
                     min_length=1,
-                    max_length=200
+                    max_length=200,
                 ),
                 InputValidationRule(
                     field_name="case_title",
                     validation_type="regex",
-                    pattern=r"^[a-zA-Z0-9\s\-_.,!?()]+$"
-                )
-            ]
+                    pattern=r"^[a-zA-Z0-9\s\-_.,!?()]+$",
+                ),
+            ],
         }
 
     async def dispatch(self, request: Request, call_next):
         # Only validate JSON requests
-        if request.method in ["POST", "PUT", "PATCH"] and request.headers.get("content-type") == "application/json":
+        if (
+            request.method in ["POST", "PUT", "PATCH"]
+            and request.headers.get("content-type") == "application/json"
+        ):
             try:
                 # Read and validate request body
                 body = await request.json()
@@ -335,8 +354,8 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                         status_code=400,
                         content={
                             "error": "Input validation failed",
-                            "validation_errors": validation_errors
-                        }
+                            "validation_errors": validation_errors,
+                        },
                     )
 
                 # Store validated body for downstream use
@@ -344,20 +363,18 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
 
             except json.JSONDecodeError:
                 return JSONResponse(
-                    status_code=400,
-                    content={"error": "Invalid JSON format"}
+                    status_code=400, content={"error": "Invalid JSON format"}
                 )
             except Exception as e:
                 logger.error(f"Input validation error: {e}")
                 return JSONResponse(
-                    status_code=400,
-                    content={"error": "Input validation failed"}
+                    status_code=400, content={"error": "Input validation failed"}
                 )
 
         response = await call_next(request)
         return response
 
-    def _validate_input(self, data: Dict[str, Any]) -> List[str]:
+    def _validate_input(self, data: dict[str, Any]) -> list[str]:
         """Validate input data against security rules"""
         errors = []
 
@@ -368,7 +385,7 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
 
         return errors
 
-    def _validate_field(self, field_name: str, value: Any) -> List[str]:
+    def _validate_field(self, field_name: str, value: Any) -> list[str]:
         """Validate a single field against its rules"""
         errors = []
         rules = self.validation_rules[field_name]
@@ -382,9 +399,13 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                 elif rule.validation_type == "length":
                     str_value = str(value)
                     if rule.min_length and len(str_value) < rule.min_length:
-                        errors.append(f"{field_name}: Too short (minimum {rule.min_length})")
+                        errors.append(
+                            f"{field_name}: Too short (minimum {rule.min_length})"
+                        )
                     if rule.max_length and len(str_value) > rule.max_length:
-                        errors.append(f"{field_name}: Too long (maximum {rule.max_length})")
+                        errors.append(
+                            f"{field_name}: Too long (maximum {rule.max_length})"
+                        )
 
                 elif rule.validation_type == "type":
                     # Add type validation logic
@@ -393,7 +414,10 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                 # Additional security checks
                 if isinstance(value, str):
                     # Check for SQL injection patterns
-                    if re.search(r"(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER)\b)", value.upper()):
+                    if re.search(
+                        r"(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER)\b)",
+                        value.upper(),
+                    ):
                         errors.append(f"{field_name}: Potential SQL injection detected")
 
                     # Check for XSS patterns
@@ -401,9 +425,10 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                         errors.append(f"{field_name}: Potential XSS attack detected")
 
             except Exception as e:
-                errors.append(f"{field_name}: Validation error - {str(e)}")
+                errors.append(f"{field_name}: Validation error - {e!s}")
 
         return errors
+
 
 # Enhanced Security Headers
 class AdvancedSecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -411,7 +436,7 @@ class AdvancedSecurityHeadersMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app):
         super().__init__(app)
-        self.nonce_cache: Dict[str, str] = {}
+        self.nonce_cache: dict[str, str] = {}
 
     async def dispatch(self, request: Request, call_next):
         response = await call_next(request)
@@ -423,20 +448,17 @@ class AdvancedSecurityHeadersMiddleware(BaseHTTPMiddleware):
         headers = {
             # Content Security Policy with nonce
             "Content-Security-Policy": f"default-src 'self'; script-src 'self' 'nonce-{nonce}'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' wss: https:; frame-ancestors 'none';",
-
             # Security headers
             "X-Content-Type-Options": "nosniff",
             "X-Frame-Options": "DENY",
             "X-XSS-Protection": "1; mode=block",
             "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
             "Referrer-Policy": "strict-origin-when-cross-origin",
-
             # Additional security headers
             "X-Permitted-Cross-Domain-Policies": "none",
             "Cross-Origin-Embedder-Policy": "require-corp",
             "Cross-Origin-Opener-Policy": "same-origin",
             "Cross-Origin-Resource-Policy": "same-origin",
-
             # Feature policy restrictions
             "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=(), ambient-light-sensor=(), autoplay=(), encrypted-media=(), fullscreen=(self), picture-in-picture=()",
         }
@@ -453,16 +475,18 @@ class AdvancedSecurityHeadersMiddleware(BaseHTTPMiddleware):
     def _generate_nonce(self) -> str:
         """Generate a cryptographically secure nonce"""
         import secrets
+
         return secrets.token_urlsafe(16)
+
 
 # Initialize security components
 security_monitor = RuntimeSecurityMonitor()
 
 # Export for use in main.py
 __all__ = [
-    'RuntimeSecurityMonitor',
-    'ZeroTrustMiddleware',
-    'InputValidationMiddleware',
-    'AdvancedSecurityHeadersMiddleware',
-    'security_monitor'
+    "AdvancedSecurityHeadersMiddleware",
+    "InputValidationMiddleware",
+    "RuntimeSecurityMonitor",
+    "ZeroTrustMiddleware",
+    "security_monitor",
 ]

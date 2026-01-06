@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/models/intelligence.py
+# hypothesis_version: 6.148.8
+
+[0.0, 1.0, 100, 255, 500, 'CaseAsset', 'Entity', 'IdentityNode', 'IdentityRelationship', 'Relationship', 'active', 'cases.id', 'entities', 'entities.id', 'evidence_chains', 'extend_existing', 'from_entity', 'from_node', 'graph_snapshots', 'identity_nodes', 'identity_nodes.id', 'low', 'owner_entity', 'relationships', 'relationships_from', 'relationships_to', 'to_entity', 'to_node', 'users.id']

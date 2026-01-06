@@ -6,7 +6,6 @@ Uses template-based generation for SQL Injection, XSS, and Social Engineering at
 """
 
 import random
-from typing import Dict, List
 
 
 class RedTeamPersona:
@@ -35,7 +34,7 @@ class RedTeamPersona:
             ],
         }
 
-    def generate_prompts(self, feature: str, n: int = 5) -> List[str]:
+    def generate_prompts(self, feature: str, n: int = 5) -> list[str]:
         """Generate n adversarial prompts targeting a specific feature."""
         prompts = []
 
@@ -54,7 +53,7 @@ class RedTeamPersona:
 
         return prompts
 
-    def get_attack_types(self) -> List[str]:
+    def get_attack_types(self) -> list[str]:
         return list(self.attack_vectors.keys())
 
 

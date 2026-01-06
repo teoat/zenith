@@ -1,0 +1,1787 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+/Users/Arief/Desktop/378x492/frontend/src/__mocks__/forceGraphMock.js
+  3:24  error  'React' is not defined  no-undef
+  4:10  error  'React' is not defined  no-undef
+
+/Users/Arief/Desktop/378x492/frontend/src/__mocks__/react-mock.js
+  4:1   error  'React' is not defined  no-undef
+  5:1   error  'React' is not defined  no-undef
+  7:16  error  'React' is not defined  no-undef
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/Accessibility.test.tsx
+  24:51  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/CaseTable.test.tsx
+  50:19  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/Performance.test.tsx
+  11:23  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/button.test.tsx
+  4:1  error  '@/components/ui/button' import is duplicated  no-duplicate-imports
+  5:1  error  '@/components/ui/button' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/card.test.tsx
+  2:10  error  'Card' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:1   error  '@/components/ui/card' import is duplicated                             no-duplicate-imports
+  4:1   error  '@/components/ui/card' import is duplicated                             no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/components.test.tsx
+  157:17  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/dialog.test.tsx
+  4:1  error  '@/components/ui/dialog' import is duplicated  no-duplicate-imports
+  5:1  error  '@/components/ui/dialog' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/hooks.test.tsx
+  2:15  error  'ReactNode' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  4:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  5:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  6:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  7:1   error  'react' import is duplicated                                                 no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/integration/case-workflow.test.tsx
+  1:10  error  'render' is defined but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
+  1:18  error  'screen' is defined but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
+  1:26  error  'fireEvent' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  1:37  error  'waitFor' is defined but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/setup-mocks.tsx
+  15:19  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/setup.ts
+  2:1  error  '@testing-library/jest-dom' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/table.test.tsx
+  4:1  error  '@/components/ui/table' import is duplicated  no-duplicate-imports
+  5:1  error  '@/components/ui/table' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/__tests__/test-utils.tsx
+  21:16  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ApprovalQueue.tsx
+   8:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+  17:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  34:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Arief/Desktop/378x492/frontend/src/components/CaseProgressBar.tsx
+  18:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/CollaborativeEditor.tsx
+  6:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/DigitalDossierGenerator.tsx
+  25:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ErrorBoundary.tsx
+  13:20  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ErrorMessage.tsx
+  21:26  error  Parsing error: ';' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/FriendlyWelcome.tsx
+  12:40  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/InvestigationNotebook.tsx
+  17:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/LoadingState.tsx
+  96:108  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/MemoryMonitor.tsx
+  15:38  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/NotificationContainer.tsx
+  2:1   error  'react' import is duplicated                                          no-duplicate-imports
+  2:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/OfflineIndicator.tsx
+  29:62  error  Parsing error: Expected corresponding closing tag for JSX fragment
+
+/Users/Arief/Desktop/378x492/frontend/src/components/OnboardingWizard.tsx
+  33:188  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/PluginDependencyGraph.tsx
+  15:46  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/PluginSlot.tsx
+  13:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/RelationshipGraph.tsx
+  5:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/RoleBadge.tsx
+  18:48  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/RoleSelection.tsx
+  20:45  error  Parsing error: Expression expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/RoleSelector.tsx
+  11:24  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/TemporalPlayback.tsx
+  17:41  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/VirtualizedEvidenceList.tsx
+  20:57  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/WebSocketSync.tsx
+   5:1   error  'react' import is duplicated                                          no-duplicate-imports
+   5:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/accessibility/AccessibilitySettings.tsx
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/accessibility/AccessibilityUtils.tsx
+  3:10  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/accessibility/VoiceControl.tsx
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+  9:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/adjudication/AdjudicationLayout.tsx
+  8:18  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/adjudication/AlertDetail.tsx
+  9:19  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/adjudication/ContextTabs.tsx
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+  11:1   error  'react' import is duplicated                                          no-duplicate-imports
+  12:1   error  'react' import is duplicated                                          no-duplicate-imports
+  13:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/adjudication/DecisionPanel.tsx
+  8:24  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/adjudication/tabs/AIReasoningTab.tsx
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+  9:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/adjudication/tabs/ContextTab.tsx
+   5:1   error  'react' import is duplicated                                            no-duplicate-imports
+   5:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+   6:1   error  'react' import is duplicated                                            no-duplicate-imports
+   7:10  error  'Card' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   8:1   error  'react' import is duplicated                                            no-duplicate-imports
+   9:1   error  '@/components/ui/card' import is duplicated                             no-duplicate-imports
+  10:1   error  'react' import is duplicated                                            no-duplicate-imports
+  11:1   error  'react' import is duplicated                                            no-duplicate-imports
+  12:1   error  'react' import is duplicated                                            no-duplicate-imports
+  13:1   error  '@/components/ui/card' import is duplicated                             no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/adjudication/tabs/GraphTab.tsx
+  37:20  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/adjudication/tabs/HistoryTab.tsx
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+  9:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/advanced/ai/AiPerformanceMonitor.tsx
+  13:15  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/advanced/ai/MultimodalAnalyzer.tsx
+  39:19  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/advanced/ai/RagSearchInterface.tsx
+  16:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/advanced/ai/RedTeamDashboard.tsx
+  14:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ai/AIAssistant.tsx
+  39:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ai/AIIntelligenceDashboard.tsx
+  4:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ai/AdvancedComplianceDashboard.tsx
+  30:32  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ai/CodeReviewDashboard.tsx
+  7:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ai/PredictiveMaintenanceDashboard.tsx
+  6:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ai/TrainingMonitor.tsx
+  16:23  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/EnhancedPasswordInput.stories.tsx
+  8:57  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/EnhancedPasswordInput.test.tsx
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+  6:1  error  'react' import is duplicated  no-duplicate-imports
+  7:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/EnhancedPasswordInput.tsx
+  18:27  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/ForgotPasswordModal.test.tsx
+  8:16  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/ForgotPasswordModal.tsx
+  26:18  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/LoginForm.tsx
+  121:26  error  Parsing error: Unexpected keyword or identifier
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/MagicLinkAuth.test.tsx
+  11:16  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/MagicLinkAuth.tsx
+   8:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   8:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
+   9:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   9:15  error  'FormEvent' is defined but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+  10:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  10:15  error  'ChangeEvent' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  11:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  14:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  15:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  16:1   error  '@/components/ui/input' import is duplicated                                   no-duplicate-imports
+  17:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  18:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  19:1   error  '@/components/ui/button' import is duplicated                                  no-duplicate-imports
+  20:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  21:1   error  '@/components/ui/input' import is duplicated                                   no-duplicate-imports
+  22:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  23:1   error  '@/components/ui/button' import is duplicated                                  no-duplicate-imports
+  24:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  25:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  54:14  error  'error' is defined but never used                                              @typescript-eslint/no-unused-vars
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/RegisterForm.tsx
+  82:26  error  Parsing error: Unexpected keyword or identifier
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/SocialLogin.test.tsx
+  6:16  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/auth/SocialLogin.tsx
+   5:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   5:15  error    'FC' is defined but never used. Allowed unused vars must match /^_/u                                                            @typescript-eslint/no-unused-vars
+   6:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   8:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   9:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+  10:1   error    '@/components/ui/button' import is duplicated                                                                                   no-duplicate-imports
+  11:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+  12:1   error    '@/components/ui/button' import is duplicated                                                                                   no-duplicate-imports
+  13:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+  15:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/CaseActions.tsx
+  15:29  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/CaseForm.tsx
+  16:19  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/CaseHeader.tsx
+  5:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/CaseKanban.tsx
+  23:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/CaseList.tsx
+  20:16  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/CasePreviewDrawer.tsx
+  20:24  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/CaseTable.tsx
+  13:16  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/FacetedFilter.tsx
+  17:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/InvestigationWizard.tsx
+  25:18  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/NewInvestigationWizard.tsx
+   3:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   3:15  error    'FC' is defined but never used. Allowed unused vars must match /^_/u                                                            @typescript-eslint/no-unused-vars
+   4:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   5:10  error    'Select' is defined but never used. Allowed unused vars must match /^_/u                                                        @typescript-eslint/no-unused-vars
+   6:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   7:1   error    '@/components/ui/select' import is duplicated                                                                                   no-duplicate-imports
+   8:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   9:1   error    '@/components/ui/select' import is duplicated                                                                                   no-duplicate-imports
+  10:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+  11:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+  13:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Arief/Desktop/378x492/frontend/src/components/cases/RichCaseCard.tsx
+  15:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/collaboration/CollaborativeEditor.tsx
+  130:94  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/collaboration/EvidenceBoard.tsx
+  10:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/collaboration/HypothesisBoard.tsx
+  9:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/collaboration/MensReaAnalyzer.tsx
+  7:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/EmptyState.tsx
+   3:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   3:15  error  'ReactNode' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   4:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u         @typescript-eslint/no-unused-vars
+   5:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   6:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   7:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   8:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   9:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  10:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  11:1   error  'react' import is duplicated                                                 no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/ErrorBoundary.tsx
+  12:20  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/EvidenceSpotlight.tsx
+  14:18  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/JourneyProgress.tsx
+  3:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/JustInTimeTooltip.tsx
+  19:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/KeyboardShortcutOverlay.tsx
+   3:1   error  'react' import is duplicated                                          no-duplicate-imports
+   3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   4:1   error  'react' import is duplicated                                          no-duplicate-imports
+   5:1   error  'react' import is duplicated                                          no-duplicate-imports
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+  56:36  error  Unexpected any. Specify a different type                              @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/OptimisticUI.tsx
+  10:10  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/PluginSlot.tsx
+   3:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   3:15  error  'ReactNode' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   4:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u         @typescript-eslint/no-unused-vars
+   5:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   6:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   7:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   8:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   9:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  10:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  11:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  16:28  error  Unexpected any. Specify a different type                                     @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/ProjectSwitcher.tsx
+  5:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/RookieChecklist.tsx
+  20:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/Skeleton/Skeleton.tsx
+  2:1   error  'react' import is duplicated                                          no-duplicate-imports
+  2:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/Spinner.tsx
+  2:1   error  'react' import is duplicated                                          no-duplicate-imports
+  2:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/Toast/ToastContext.tsx
+  16:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/TourSpotlight.tsx
+  83:10  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/VirtualList/VirtualList.tsx
+  10:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/WelcomeMessage.tsx
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/common/__tests__/WelcomeMessage.test.tsx
+  4:1  error  'react' import is duplicated  no-duplicate-imports
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+  6:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/compliance/ComplianceAlerts.tsx
+  20:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/compliance/ComplianceDashboard.tsx
+  9:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/compliance/ComplianceFrameworks.tsx
+  58:25  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/compliance/ComplianceTrends.tsx
+  17:17  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/compliance/SARCreationWizard.tsx
+  14:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/compliance/SARStepComponents.tsx
+  9:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/compliance/__tests__/ComplianceDashboard.test.tsx
+  8:22  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/AIWatchtower.tsx
+  13:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/CostOptimizationWidget.tsx
+  21:24  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/FeatureDiscovery.tsx
+  4:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/LiveQueue.tsx
+  30:94  error  Parsing error: Statement expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/MetricCard.tsx
+  16:16  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/MetricSparkline.tsx
+  47:20  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/MovableDashboard.tsx
+  104:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:63  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/PredictiveDashboard.tsx
+  81:32  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/ProofVisualizationCard.tsx
+  8:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/RiskDistributionChart.tsx
+  11:15  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/ThreatMap.tsx
+  20:0  error  Parsing error: Expression expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/dashboard/VolumeChart.tsx
+  11:15  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/errors/FeatureErrorBoundary.tsx
+  11:22  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/BulkActionsToolbar.tsx
+  15:24  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/ChainOfCustodyTimeline.tsx
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   6:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  '@/components/ui/card' import is duplicated                           no-duplicate-imports
+  11:1   error  'react' import is duplicated                                          no-duplicate-imports
+  12:1   error  'react' import is duplicated                                          no-duplicate-imports
+  13:1   error  'react' import is duplicated                                          no-duplicate-imports
+  14:1   error  '@/components/ui/card' import is duplicated                           no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/DocumentViewer.tsx
+   6:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   6:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
+   7:10  error  'Select' is defined but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+   8:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   8:15  error  'ChangeEvent' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   9:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  10:10  error  'Input' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+  11:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  12:1   error  '@/components/ui/select' import is duplicated                                  no-duplicate-imports
+  13:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  14:1   error  '@/components/ui/input' import is duplicated                                   no-duplicate-imports
+  15:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  16:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  17:1   error  '@/components/ui/input' import is duplicated                                   no-duplicate-imports
+  18:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  19:1   error  '@/components/ui/select' import is duplicated                                  no-duplicate-imports
+  20:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  28:29  error  Unexpected any. Specify a different type                                       @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/EvidenceCard.tsx
+  75:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/EvidenceCorrelationsList.tsx
+   7:1   error  'react' import is duplicated                                              no-duplicate-imports
+   7:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u      @typescript-eslint/no-unused-vars
+   8:1   error  'react' import is duplicated                                              no-duplicate-imports
+  10:10  error  'Select' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  11:1   error  'react' import is duplicated                                              no-duplicate-imports
+  12:1   error  '@/components/ui/card' import is duplicated                               no-duplicate-imports
+  13:1   error  '@/components/ui/select' import is duplicated                             no-duplicate-imports
+  14:1   error  'react' import is duplicated                                              no-duplicate-imports
+  15:1   error  '@/components/ui/select' import is duplicated                             no-duplicate-imports
+  16:1   error  'react' import is duplicated                                              no-duplicate-imports
+  17:1   error  'react' import is duplicated                                              no-duplicate-imports
+  18:1   error  '@/components/ui/card' import is duplicated                               no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/EvidenceDetailsSidebar.tsx
+   8:1   error  'react' import is duplicated                                              no-duplicate-imports
+   8:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u      @typescript-eslint/no-unused-vars
+   9:10  error  'Select' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  10:1   error  'react' import is duplicated                                              no-duplicate-imports
+  13:1   error  'react' import is duplicated                                              no-duplicate-imports
+  14:1   error  '@/components/ui/card' import is duplicated                               no-duplicate-imports
+  15:1   error  '@/components/ui/select' import is duplicated                             no-duplicate-imports
+  16:1   error  'react' import is duplicated                                              no-duplicate-imports
+  17:1   error  '@/components/ui/button' import is duplicated                             no-duplicate-imports
+  18:1   error  'react' import is duplicated                                              no-duplicate-imports
+  19:1   error  '@/components/ui/card' import is duplicated                               no-duplicate-imports
+  20:1   error  '@/components/ui/select' import is duplicated                             no-duplicate-imports
+  21:1   error  '@/components/ui/button' import is duplicated                             no-duplicate-imports
+  22:1   error  'react' import is duplicated                                              no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/EvidenceSearchFilters.tsx
+  22:22  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/EvidenceStats.tsx
+   4:1   error  'react' import is duplicated                                          no-duplicate-imports
+   4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   5:1   error  'react' import is duplicated                                          no-duplicate-imports
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  '@/components/ui/card' import is duplicated                           no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+  11:1   error  'react' import is duplicated                                          no-duplicate-imports
+  12:1   error  '@/components/ui/card' import is duplicated                           no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/EvidenceUploader.tsx
+   4:10  error  'Select' is defined but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+   5:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   5:15  error  'ChangeEvent' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   6:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   7:10  error  'Input' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+   8:10  error  'Button' is defined but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+   9:1   error  '@/components/ui/select' import is duplicated                                  no-duplicate-imports
+  10:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  11:1   error  '@/components/ui/input' import is duplicated                                   no-duplicate-imports
+  12:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  13:1   error  '@/components/ui/button' import is duplicated                                  no-duplicate-imports
+  14:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  15:1   error  '@/components/ui/input' import is duplicated                                   no-duplicate-imports
+  16:1   error  '@/components/ui/select' import is duplicated                                  no-duplicate-imports
+  17:1   error  '@/components/ui/button' import is duplicated                                  no-duplicate-imports
+  18:1   error  'react' import is duplicated                                                   no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/EvidenceViewer.tsx
+  17:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/FolderTree.tsx
+  11:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/ForensicCanvas.tsx
+  19:25  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/HypothesisBoard.tsx
+  17:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/MensReaAnalyzer.tsx
+  19:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/MultimodalAnalysisResults.tsx
+  37:38  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/SearchResultHighlighter.tsx
+  10:15  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/TamperDetector.tsx
+   4:1   error  'react' import is duplicated                                              no-duplicate-imports
+   4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u      @typescript-eslint/no-unused-vars
+   5:1   error  'react' import is duplicated                                              no-duplicate-imports
+   6:10  error  'Select' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   7:1   error  'react' import is duplicated                                              no-duplicate-imports
+   8:1   error  '@/components/ui/select' import is duplicated                             no-duplicate-imports
+   9:1   error  'react' import is duplicated                                              no-duplicate-imports
+  10:1   error  '@/components/ui/select' import is duplicated                             no-duplicate-imports
+  11:1   error  'react' import is duplicated                                              no-duplicate-imports
+  12:1   error  'react' import is duplicated                                              no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/UploadWizard.tsx
+  18:15  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/evidence/__tests__/EvidenceCard.test.tsx
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+  6:1  error  'react' import is duplicated  no-duplicate-imports
+  7:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/examples/OptimisticCaseList.tsx
+  11:26  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/feedback/AIFeedbackDashboard.tsx
+  7:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/forensics/EvidenceList.tsx
+  11:27  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/forensics/EvidenceViewer.tsx
+  20:40  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/forensics/ForensicsErrorState.tsx
+  12:15  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/forensics/ForensicsLayout.tsx
+  80:25  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/forensics/ForensicsSkeleton.tsx
+  2:1   error  'react' import is duplicated                                          no-duplicate-imports
+  2:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/forensics/ForensicsToolbar.tsx
+  11:22  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/forensics/HexViewer.tsx
+  2:1   error  'react' import is duplicated                                          no-duplicate-imports
+  2:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/forensics/PdfViewer.tsx
+  2:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/fraud/FraudRuleBuilder.tsx
+  12:18  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/graph/EntityGraph3DWebGL.tsx
+  21:17  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/i18n/LanguageSelector.tsx
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+  9:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/i18n/LanguageSwitcher.tsx
+   4:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   4:15  error    'FC' is defined but never used. Allowed unused vars must match /^_/u                                                            @typescript-eslint/no-unused-vars
+   5:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   6:10  error    'Select' is defined but never used. Allowed unused vars must match /^_/u                                                        @typescript-eslint/no-unused-vars
+   7:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   8:1   error    '@/components/ui/select' import is duplicated                                                                                   no-duplicate-imports
+   9:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+  10:1   error    '@/components/ui/select' import is duplicated                                                                                   no-duplicate-imports
+  11:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+  12:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+  14:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Arief/Desktop/378x492/frontend/src/components/i18n/__tests__/LanguageSwitcher.test.tsx
+  6:26  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ingestion/DataMapping.tsx
+  20:26  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ingestion/IngestionStepper.tsx
+  88:38  error  Parsing error: Unexpected keyword or identifier
+
+/Users/Arief/Desktop/378x492/frontend/src/components/integration/AnalyticsTab.tsx
+   5:1   error  'react' import is duplicated                                          no-duplicate-imports
+   5:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/integration/EventBusTab.tsx
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+  9:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/integration/GraphQLTab.tsx
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+  9:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/integration/IntegrationsTab.tsx
+   5:1   error  'react' import is duplicated                                          no-duplicate-imports
+   5:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/integration/MarketplaceTab.tsx
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+  9:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/integration/OverviewTab.tsx
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+  9:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/intelligence/AutoReportGenerator.tsx
+  13:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/intelligence/CourtDocumentGenerator.tsx
+  12:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/intelligence/PredictiveDashboard.tsx
+  8:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/CanvasArea.tsx
+  13:28  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/EntityForm.tsx
+  49:15  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/EntityNode.tsx
+  5:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/EntityRegistry.tsx
+  10:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/EvidenceItem.tsx
+  3:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/GraphCanvas.tsx
+  21:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/InvestigationCanvas.tsx
+  3:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/NodeInspector.tsx
+  11:9  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/PathfindingVisualizer.tsx
+  14:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/RelationshipForm.tsx
+  31:29  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/investigation/ThreeDGraph.tsx
+  11:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/layout/AppLayout.tsx
+   7:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   7:15  error  'ReactNode' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   8:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   9:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  10:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  11:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  12:1   error  'react' import is duplicated                                                 no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/layout/Header.tsx
+  14:1  error  'react' import is duplicated                   no-duplicate-imports
+  15:1  error  'react' import is duplicated                   no-duplicate-imports
+  17:1  error  '@/components/ui/input' import is duplicated   no-duplicate-imports
+  18:1  error  '@/components/ui/button' import is duplicated  no-duplicate-imports
+  19:1  error  'react' import is duplicated                   no-duplicate-imports
+  20:1  error  'react' import is duplicated                   no-duplicate-imports
+  21:1  error  '@/components/ui/input' import is duplicated   no-duplicate-imports
+  22:1  error  'react' import is duplicated                   no-duplicate-imports
+  23:1  error  '@/components/ui/button' import is duplicated  no-duplicate-imports
+  24:1  error  'react' import is duplicated                   no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/layout/SecondaryNav.tsx
+  4:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/layout/Sidebar.tsx
+  18:12  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/layout/SystemOrchestrator.tsx
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   6:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+  11:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/monitoring/MonitoringDashboard.tsx
+  2:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/monitoring/RealTimeMonitoringDashboard.tsx
+  7:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/monitoring/SystemOrchestrationDashboard.tsx
+  4:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/onboarding/TourGuide.tsx
+  16:16  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/recon/ExceptionQueue.tsx
+  14:30  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/recon/MatchCanvas.tsx
+  12:34  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/recon/TransactionCard.tsx
+  13:27  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/reporting/AIWriter.tsx
+  15:15  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/reporting/AutoReportGenerator.tsx
+   5:1   error  'react' import is duplicated                                          no-duplicate-imports
+   5:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+  28:14  error  'e' is defined but never used                                         @typescript-eslint/no-unused-vars
+
+/Users/Arief/Desktop/378x492/frontend/src/components/reporting/ConclusionWizard.tsx
+   4:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   4:15  error    'FC' is defined but never used. Allowed unused vars must match /^_/u                                                            @typescript-eslint/no-unused-vars
+   5:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   6:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   7:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   8:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+   9:1   error    'react' import is duplicated                                                                                                    no-duplicate-imports
+  11:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/Arief/Desktop/378x492/frontend/src/components/reporting/DossierExport.tsx
+   3:1   error  'react' import is duplicated                                          no-duplicate-imports
+   3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   4:1   error  'react' import is duplicated                                          no-duplicate-imports
+   5:1   error  'react' import is duplicated                                          no-duplicate-imports
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+  76:63  error  Unexpected any. Specify a different type                              @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/components/reporting/FinancialHealth.tsx
+  231:28  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/reporting/KeyFindings.tsx
+  11:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/reporting/ProjectTracker.tsx
+  11:14  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/reporting/ReportBuilder.tsx
+  10:37  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/reporting/SuccessBanner.tsx
+  11:43  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/reporting/SummaryPreview.tsx
+  26:20  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/search/GlobalSearch.tsx
+  3:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/AccessibilitySettings.tsx
+  2:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/AuditLogViewer.tsx
+  22:38  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/GeneralSettings.tsx
+   6:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   6:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u         @typescript-eslint/no-unused-vars
+   7:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   8:1   error  'react' import is duplicated                                                 no-duplicate-imports
+   8:15  error  'FormEvent' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   9:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  10:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  11:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  12:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  13:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  14:1   error  'react' import is duplicated                                                 no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/HealthGauges.tsx
+  16:16  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/NotificationSettings.tsx
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/PermissionMatrix.tsx
+  6:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/RuleBuilder.tsx
+  12:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/SecuritySettings.tsx
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/SettingsErrorState.tsx
+  12:15  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/SettingsHeader.tsx
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/SettingsLayout.tsx
+  89:25  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/SettingsNavigation.tsx
+  11:20  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/SettingsSkeleton.tsx
+  2:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/SystemSettings.tsx
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/__tests__/GeneralSettings.test.tsx
+  6:26  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/__tests__/SettingsLayout.integration.test.tsx
+  18:41  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/settings/i18n/LanguageSwitcher.tsx
+  2:1   error  'react' import is duplicated                                          no-duplicate-imports
+  2:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/AIInsights.tsx
+  16:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/AccessibleButton.stories.tsx
+  8:52  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/AccessibleButton.tsx
+  3:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  3:15  error  'ReactNode' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  5:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  6:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  7:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  8:1   error  'react' import is duplicated                                                 no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/AccessibleModal.tsx
+  17:18  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Accordion.stories.tsx
+  5:45  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Accordion.tsx
+  4:1  error  'react' import is duplicated  no-duplicate-imports
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+  6:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/AgentStatusStream.tsx
+  15:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Alert.tsx
+  12:15  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Avatar.stories.tsx
+  5:42  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Avatar.tsx
+  3:1  error  'react' import is duplicated  no-duplicate-imports
+  4:1  error  'react' import is duplicated  no-duplicate-imports
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Badge.stories.tsx
+  5:41  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Badge.tsx
+  10:15  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Breadcrumbs.tsx
+  16:16  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Button.stories.tsx
+  8:25  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Button.tsx
+  15:15  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Card.stories.tsx
+  12:25  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Card.tsx
+  20:15  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Checkbox.stories.tsx
+  5:44  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Checkbox.tsx
+  14:25  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/DataGrid.tsx
+    6:10  error  'Card' is defined but never used. Allowed unused vars must match /^_/u   @typescript-eslint/no-unused-vars
+    7:10  error  'Table' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  135:65  error  Unexpected any. Specify a different type                                 @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/DataTable.tsx
+  17:26  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Dialog.stories.tsx
+  12:42  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Dialog.tsx
+  23:26  error  Parsing error: ')' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/DraftPreview.tsx
+  13:20  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/FileDropZone.tsx
+   3:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   3:15  error  'ChangeEvent' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   4:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   4:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
+   5:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   6:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   6:15  error  'MouseEvent' is defined but never used. Allowed unused vars must match /^_/u   @typescript-eslint/no-unused-vars
+   7:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   8:1   error  'react' import is duplicated                                                   no-duplicate-imports
+   9:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  10:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  11:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  12:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  13:1   error  'react' import is duplicated                                                   no-duplicate-imports
+  14:1   error  'react' import is duplicated                                                   no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Input.stories.tsx
+  8:25  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/KeyboardShortcutsModal.tsx
+  15:14  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Label.tsx
+  19:22  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/MediaViewer.tsx
+  15:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Pagination.stories.tsx
+  5:46  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Pagination.tsx
+  15:56  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Progress.stories.tsx
+  5:44  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Progress.tsx
+  3:1  error  'react' import is duplicated  no-duplicate-imports
+  4:1  error  'react' import is duplicated  no-duplicate-imports
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/ProgressBar.tsx
+   2:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u              @typescript-eslint/no-unused-vars
+   3:1   error  'react' import is duplicated                                                      no-duplicate-imports
+   4:1   error  'react' import is duplicated                                                      no-duplicate-imports
+   5:1   error  'react' import is duplicated                                                      no-duplicate-imports
+   6:1   error  'react' import is duplicated                                                      no-duplicate-imports
+   7:1   error  'react' import is duplicated                                                      no-duplicate-imports
+  23:3   error  'color' is assigned a value but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/ProgressiveDisclosure.tsx
+  15:28  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/QuickActionsMenu.tsx
+  4:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/RadioGroup.tsx
+  3:1  error  'react' import is duplicated  no-duplicate-imports
+  4:1  error  'react' import is duplicated  no-duplicate-imports
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/ResizablePanel.tsx
+  20:28  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/ScrollArea.tsx
+  3:1  error  'react' import is duplicated  no-duplicate-imports
+  4:1  error  'react' import is duplicated  no-duplicate-imports
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Select.stories.tsx
+  8:42  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/SemanticSearch.tsx
+  21:22  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Separator.tsx
+  3:1  error  'react' import is duplicated  no-duplicate-imports
+  4:1  error  'react' import is duplicated  no-duplicate-imports
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Skeleton.tsx
+  35:46  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Slider.tsx
+  12:23  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/SplitView.tsx
+  128:58  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/StandardizedErrorDisplay.tsx
+  12:49  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/StateDisplay.tsx
+  24:18  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/StatusIndicator.tsx
+  11:53  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Switch.stories.tsx
+  5:42  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Switch.tsx
+  13:24  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/SyncStatus.tsx
+  8:20  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Table.stories.tsx
+  2:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Table.tsx
+  3:1  error  'react' import is duplicated                  no-duplicate-imports
+  5:1  error  'react' import is duplicated                  no-duplicate-imports
+  6:1  error  '@/components/ui/table' import is duplicated  no-duplicate-imports
+  7:1  error  '@/components/ui/table' import is duplicated  no-duplicate-imports
+  8:1  error  'react' import is duplicated                  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Tabs.stories.tsx
+  8:40  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Tabs.tsx
+  11:58  error  Parsing error: '>' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Textarea.tsx
+  3:1  error  'react' import is duplicated  no-duplicate-imports
+  4:1  error  'react' import is duplicated  no-duplicate-imports
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Tooltip.stories.tsx
+  5:43  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/Tooltip.tsx
+  3:15  error  'ReactNode' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  5:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  6:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  7:1   error  'react' import is duplicated                                                 no-duplicate-imports
+  8:1   error  'react' import is duplicated                                                 no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/VirtualList.tsx
+  10:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/VirtualizedList.tsx
+  18:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/__tests__/VirtualizedList.test.tsx
+  28:22  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/input.tsx
+  8:27  error  Parsing error: '{' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/ui/select.tsx
+  16:26  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/components/visualizations/NetworkGraph.tsx
+  17:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/config.ts
+  22:21  error  The Function constructor is eval  no-new-func
+  27:12  error  'e' is defined but never used     @typescript-eslint/no-unused-vars
+  36:12  error  'e' is defined but never used     @typescript-eslint/no-unused-vars
+
+/Users/Arief/Desktop/378x492/frontend/src/config/reactQuery.ts
+  87:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/context/AIContext.tsx
+  7:22  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/context/AccessibilityContext.tsx
+  10:31  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/context/AuthContext.tsx
+  16:20  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/context/OfflineQueueContext.ts
+  7:9  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/context/TourContext.tsx
+  13:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/context/UndoRedoContext.tsx
+  6:18  error  Parsing error: '{' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/context/__tests__/AuthContext.test.tsx
+  15:28  error  Parsing error: Expression expected
+
+/Users/Arief/Desktop/378x492/frontend/src/contexts/CaseManagementContext.tsx
+  14:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/contexts/DashboardContext.tsx
+  15:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/contexts/ForensicsContext.tsx
+  14:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/contexts/InvestigationContext.tsx
+  14:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/documentation/openapi-generator.ts
+    5:1   error  ES2015 module syntax is preferred over namespaces  @typescript-eslint/no-namespace
+    9:20  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+   14:18  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+   15:19  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+   16:17  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+   17:20  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+   21:11  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+   22:12  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+   23:17  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+   24:20  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  378:20  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  383:15  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  468:32  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/__tests__/useAuth.test.tsx
+  14:16  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/__tests__/useCases.test.tsx
+  17:21  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/__tests__/useWebSocket.test.tsx
+  2:22  error  'act' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useCases.ts
+  27:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useCollaboration.ts
+  250:39  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useCollaboration.ts:250:39
+  248 |     return participants.filter(p => {
+  249 |       const lastActivity = new Date(p.last_activity);
+> 250 |       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      |                                       ^^^^^^^^^^ Cannot call impure function
+  251 |       return lastActivity > fiveMinutesAgo;
+  252 |     });
+  253 |   }, [participants]);  react-hooks/purity
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useContextAwareAI.ts
+  4:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useFormValidation.ts
+   20:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   21:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   34:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   76:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  130:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useGraphData.ts
+  30:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useHttpClient.tsx
+  87:30  error  Parsing error: Unexpected keyword or identifier
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useMemoryCleanup.ts
+  50:18  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  58:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useMemoryCleanup.ts:58:5
+  56 |   useEffect(() => {
+  57 |     // Initial check
+> 58 |     monitorMemory();
+     |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  59 |
+  60 |     // Set up interval monitoring
+  61 |     intervalRef.current = setInterval(monitorMemory, updateInterval);  react-hooks/set-state-in-effect
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/usePerformanceMonitor.ts
+  225:16  error  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  246:16  error  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  271:16  error  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useSanitizedHTML.tsx
+  78:14  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useWebSocket.ts
+   16:23  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+   51:34  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+   84:9   warning  Unexpected console statement. Only these console methods are allowed: warn, error                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   no-console
+  121:9   warning  Unexpected console statement. Only these console methods are allowed: warn, error                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   no-console
+  136:52  error    Error: Cannot access variable before it is declared
+
+`connect` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useWebSocket.ts:136:52
+  134 |           );
+  135 |           
+> 136 |           reconnectTimeoutRef.current = setTimeout(connect, delay);
+      |                                                    ^^^^^^^ `connect` accessed before it is declared
+  137 |         }
+  138 |       };
+  139 |     } catch (error) {
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useWebSocket.ts:78:3
+   76 |   }, [heartbeatInterval, clearTimers]);
+   77 |
+>  78 |   const connect = useCallback(() => {
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  79 |     try {
+      | ^^^^^^^^^
+>  80 |       const ws = new WebSocket(url, protocols);
+      …
+      | ^^^^^^^^^
+> 142 |     }
+      | ^^^^^^^^^
+> 143 |   }, [url, protocols, reconnectInterval, maxReconnectAttempts, onOpen, onMessage, onError, onClose, startHeartbeat, clearTimers]);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `connect` is declared here
+  144 |
+  145 |   const sendMessage = useCallback((data: any) => {
+  146 |     if (wsRef.current?.readyState === WebSocket.OPEN) {  react-hooks/immutability
+  145:42  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/hooks/useWebSocketClient.tsx
+  16:23  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/jest-dom.d.ts
+   6:34  error  'T' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   6:38  error  Unexpected any. Specify a different type                             @typescript-eslint/no-explicit-any
+  25:55  error  Unexpected any. Specify a different type                             @typescript-eslint/no-explicit-any
+  26:48  error  Unexpected any. Specify a different type                             @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/lib/AIFraudDetection.ts
+  519:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/lib/accessibility.ts
+  5:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/lib/advancedAI.ts
+   70:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   71:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   79:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   79:81  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   85:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  100:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/lib/advancedMonitoring.ts
+   11:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   20:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   50:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  253:71  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  267:88  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  299:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  302:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/lib/advancedTesting.ts
+   90:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  106:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  115:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  124:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  199:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  204:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  208:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  208:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  211:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  292:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/lib/chaosEngineering.ts
+  152:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/lib/contrast-hooks.ts
+  69:3  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+/Users/Arief/Desktop/378x492/frontend/src/lib/pwa.ts
+   6:9  warning  Unexpected confirm                                                                 no-alert
+  11:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  20:9  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  23:9  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+/Users/Arief/Desktop/378x492/frontend/src/main.tsx
+  7:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/AILab.tsx
+  51:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/AdjudicationQueue.tsx
+   12:10  error  'Select' is defined but never used. Allowed unused vars must match /^_/u                                                     @typescript-eslint/no-unused-vars
+   45:14  error  'error' is defined but never used                                                                                            @typescript-eslint/no-unused-vars
+  174:39  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/AgentApprovals.tsx
+  55:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/AgentDrafts.tsx
+  2:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Cases.tsx
+  21:10  error  'Select' is defined but never used. Allowed unused vars must match /^_/u      @typescript-eslint/no-unused-vars
+  22:1   error  'react' import is duplicated                                                  no-duplicate-imports
+  22:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u          @typescript-eslint/no-unused-vars
+  23:1   error  'react' import is duplicated                                                  no-duplicate-imports
+  24:1   error  'react' import is duplicated                                                  no-duplicate-imports
+  24:15  error  'MouseEvent' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/ComplianceMonitoring.tsx
+  7:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Dashboard.tsx
+  12:1   error  'react' import is duplicated                                          no-duplicate-imports
+  12:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  13:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/DesignSystemShowcase.tsx
+   8:1  error  '@/components/ui/input' import is duplicated   no-duplicate-imports
+   9:1  error  '@/components/ui/card' import is duplicated    no-duplicate-imports
+  10:1  error  '@/components/ui/button' import is duplicated  no-duplicate-imports
+  11:1  error  'react' import is duplicated                   no-duplicate-imports
+  12:1  error  '@/components/ui/input' import is duplicated   no-duplicate-imports
+  13:1  error  'react' import is duplicated                   no-duplicate-imports
+  14:1  error  '@/components/ui/button' import is duplicated  no-duplicate-imports
+  15:1  error  '@/components/ui/card' import is duplicated    no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/DiagnosticsVerification.test.tsx
+  25:25  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/EnhancedEvidenceLocker.tsx
+  7:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Forensics.tsx
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/GraphExplorer.tsx
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Ingestion.tsx
+  32:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Investigation.tsx
+  197:26  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Login.tsx
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+  12:1   error  'react' import is duplicated                                          no-duplicate-imports
+  13:1   error  'react' import is duplicated                                          no-duplicate-imports
+  14:1   error  '@/components/ui/tabs' import is duplicated                           no-duplicate-imports
+  15:1   error  'react' import is duplicated                                          no-duplicate-imports
+  16:1   error  '@/components/ui/tabs' import is duplicated                           no-duplicate-imports
+  17:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/NetworkAnalysis.tsx
+  52:50  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/NotFound.tsx
+   5:1   error  'react' import is duplicated                                          no-duplicate-imports
+   5:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/PerformanceDashboard.tsx
+  7:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/PlaybackView.tsx
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/PluginManagement.tsx
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   6:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+  11:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/ProjectSelection.tsx
+  148:21  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/ProofVisualizationRoute.tsx
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Reconciliation.tsx
+  107:30  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Register.tsx
+   5:1   error  'react' import is duplicated                                          no-duplicate-imports
+   5:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   6:1   error  'react' import is duplicated                                          no-duplicate-imports
+   7:1   error  'react' import is duplicated                                          no-duplicate-imports
+   8:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/RegulatoryIntelligence.tsx
+  2:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Reporting.tsx
+   3:1   error  'react' import is duplicated              no-duplicate-imports
+   4:1   error  'react' import is duplicated              no-duplicate-imports
+   5:1   error  'react' import is duplicated              no-duplicate-imports
+  50:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/SARCreation.tsx
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Settings.tsx
+  3:1   error  'react' import is duplicated                                          no-duplicate-imports
+  3:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  4:1   error  'react' import is duplicated                                          no-duplicate-imports
+  5:1   error  'react' import is duplicated                                          no-duplicate-imports
+  6:1   error  'react' import is duplicated                                          no-duplicate-imports
+  7:1   error  'react' import is duplicated                                          no-duplicate-imports
+  8:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/Setup.tsx
+  112:26  error  Parsing error: Unexpected keyword or identifier
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/SystemDiagnosticsCenter.tsx
+  3:9  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/__tests__/Cases.test.tsx
+  410:0  error  Parsing error: Declaration or statement expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/__tests__/Dashboard.i18n.test.tsx
+  12:26  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/__tests__/Dashboard.test.tsx
+  21:19  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/__tests__/Login.test.tsx
+  13:31  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/pages/settings/components/GeneralTab.tsx
+   5:1   error  '../../../types/locale' import is duplicated                          no-duplicate-imports
+   9:1   error  'react' import is duplicated                                          no-duplicate-imports
+   9:15  error  'FC' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  10:1   error  'react' import is duplicated                                          no-duplicate-imports
+  12:1   error  'react' import is duplicated                                          no-duplicate-imports
+  13:1   error  'react' import is duplicated                                          no-duplicate-imports
+  14:1   error  '@/components/ui/button' import is duplicated                         no-duplicate-imports
+  15:1   error  'react' import is duplicated                                          no-duplicate-imports
+  16:1   error  '@/components/ui/button' import is duplicated                         no-duplicate-imports
+  17:1   error  'react' import is duplicated                                          no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/plugins/fraud-alert-widget/index.tsx
+  13:8  error  Parsing error: Invalid character
+
+/Users/Arief/Desktop/378x492/frontend/src/providers/AppProviders.tsx
+  20:19  error  Parsing error: Property assignment expected
+
+/Users/Arief/Desktop/378x492/frontend/src/providers/LocaleProvider.tsx
+  11:27  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/providers/NetworkStatusProvider.tsx
+  30:58  error  Parsing error: Expected corresponding JSX closing tag for 'NetworkStatusContext.Provider'
+
+/Users/Arief/Desktop/378x492/frontend/src/providers/OfflineQueueContext.tsx
+  15:53  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/providers/ToastProvider.tsx
+  12:13  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/providers/WebSocketProvider.tsx
+  15:23  error  Parsing error: Property or signature expected
+
+/Users/Arief/Desktop/378x492/frontend/src/providers/__tests__/WebSocketProvider.test.tsx
+  30:83  error  Parsing error: ',' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/services/CaseSyncEngine.ts
+  418:6  warning  React Hook useEffect has a missing dependency: 'options'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/Arief/Desktop/378x492/frontend/src/services/WebSocketManager.ts
+  19:7  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+/Users/Arief/Desktop/378x492/frontend/src/services/plugin/PluginSlotRegistry.ts
+   7:34  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  13:20  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  40:5   warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+/Users/Arief/Desktop/378x492/frontend/src/store/reconciliationStore.ts
+  4:1  error  '../lib/api' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/stories/Button.tsx
+  35:33  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/stories/Header.tsx
+  5:1  error  'react' import is duplicated  no-duplicate-imports
+
+/Users/Arief/Desktop/378x492/frontend/src/stories/Page.tsx
+  17:13  error  Parsing error: Identifier expected
+
+/Users/Arief/Desktop/378x492/frontend/src/utils/cookieAuth.ts
+   82:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  108:9  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+/Users/Arief/Desktop/378x492/frontend/src/utils/fileUtils.tsx
+  18:35  error  Parsing error: ';' expected
+
+/Users/Arief/Desktop/378x492/frontend/src/utils/performanceSnapshot.ts
+   39:11  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  170:11  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/src/vite-env.d.ts
+  9:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/Arief/Desktop/378x492/frontend/test-server.js
+    8:17  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+    8:17  error  'require' is not defined                 no-undef
+    9:14  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+    9:14  error  'require' is not defined                 no-undef
+   90:3   error  'console' is not defined                 no-undef
+   91:3   error  'console' is not defined                 no-undef
+   92:3   error  'console' is not defined                 no-undef
+   93:3   error  'console' is not defined                 no-undef
+   94:3   error  'console' is not defined                 no-undef
+   95:3   error  'console' is not defined                 no-undef
+   96:3   error  'console' is not defined                 no-undef
+   97:3   error  'console' is not defined                 no-undef
+  100:1   error  'module' is not defined                  no-undef
+
+✖ 977 problems (959 errors, 18 warnings)
+

@@ -3,9 +3,9 @@
  */
 
 
-import React from 'react';
+
 import { render, screen } from '@testing-library/react';
-import { Dialog, DialogContent } from '../components/ui/dialog';
+import { Dialog, DialogContent } from '../components/ui/Dialog';
 
 describe('Dialog Component', () => {
   it('renders correctly when open', () => {

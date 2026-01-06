@@ -5,14 +5,12 @@ Implements infrastructure, operational, and licensing optimizations.
 """
 
 import asyncio
-import json
 import logging
 import statistics
-import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -56,8 +54,8 @@ class CostOptimization:
     owner: str
     status: str  # "planned", "in_progress", "completed", "cancelled"
     created_at: datetime
-    implemented_at: Optional[datetime]
-    actual_savings: Optional[float]
+    implemented_at: datetime | None
+    actual_savings: float | None
     roi_percentage: float
 
 
@@ -74,7 +72,6 @@ class CostAnalysis:
     net_benefit: float
     payback_period_months: float
     roi_percentage: float
-
 
 
 class OptimizationCategory(Enum):
@@ -110,8 +107,8 @@ class CostOptimizationOpportunity:
     owner: str
     status: str
     created_at: datetime
-    actual_savings: Optional[float] = None
-    implemented_at: Optional[datetime] = None
+    actual_savings: float | None = None
+    implemented_at: datetime | None = None
 
 
 class InfrastructureOptimizer:
@@ -186,7 +183,7 @@ class InfrastructureOptimizer:
             roi_percentage=((monthly_savings * 12) / implementation_cost) * 100,
         )
 
-    async def implement_infrastructure_optimizations(self) -> List[CostOptimization]:
+    async def implement_infrastructure_optimizations(self) -> list[CostOptimization]:
         """Implement identified infrastructure optimizations"""
         optimizations = []
 
@@ -286,7 +283,7 @@ class OperationalOptimizer:
             roi_percentage=((estimated_savings * 12) / 45000) * 100,
         )
 
-    async def implement_operational_optimizations(self) -> List[CostOptimization]:
+    async def implement_operational_optimizations(self) -> list[CostOptimization]:
         """Implement operational optimizations"""
         optimizations = []
 
@@ -392,7 +389,7 @@ class LicensingOptimizer:
             roi_percentage=(estimated_savings / 5000) * 100,
         )
 
-    async def implement_licensing_optimizations(self) -> List[CostOptimization]:
+    async def implement_licensing_optimizations(self) -> list[CostOptimization]:
         """Implement licensing optimizations"""
         optimizations = []
 
@@ -469,7 +466,7 @@ class CostOptimizationService:
         self.infrastructure_optimizer = InfrastructureOptimizer()
         self.operational_optimizer = OperationalOptimizer()
         self.licensing_optimizer = LicensingOptimizer()
-        self.optimizations: Dict[str, CostOptimization] = {}
+        self.optimizations: dict[str, CostOptimization] = {}
         self.cost_baseline = {
             "infrastructure": 125000,  # Monthly
             "operational": 85000,
@@ -477,7 +474,7 @@ class CostOptimizationService:
             "total_monthly": 225000,
         }
 
-    async def run_comprehensive_cost_analysis(self) -> Dict[str, Any]:
+    async def run_comprehensive_cost_analysis(self) -> dict[str, Any]:
         """Run comprehensive cost analysis across all categories"""
         analyses = await asyncio.gather(
             self.infrastructure_optimizer.analyze_infrastructure_costs(),
@@ -531,8 +528,8 @@ class CostOptimizationService:
         }
 
     def _create_optimization_roadmap(
-        self, analyses: List[CostAnalysis]
-    ) -> Dict[str, Any]:
+        self, analyses: list[CostAnalysis]
+    ) -> dict[str, Any]:
         """Create phased optimization roadmap"""
         return {
             "quick_wins": {
@@ -573,7 +570,7 @@ class CostOptimizationService:
             },
         }
 
-    def _define_success_metrics(self) -> Dict[str, Any]:
+    def _define_success_metrics(self) -> dict[str, Any]:
         """Define success metrics for cost optimization program"""
         return {
             "cost_reduction_targets": {
@@ -593,7 +590,7 @@ class CostOptimizationService:
             },
         }
 
-    async def execute_optimization_roadmap(self) -> Dict[str, Any]:
+    async def execute_optimization_roadmap(self) -> dict[str, Any]:
         """Execute the cost optimization roadmap"""
         # Get all optimization initiatives
         infrastructure_opts = (
@@ -637,8 +634,8 @@ class CostOptimizationService:
         }
 
     def _calculate_implementation_timeline(
-        self, optimizations: List[CostOptimization]
-    ) -> Dict[str, Any]:
+        self, optimizations: list[CostOptimization]
+    ) -> dict[str, Any]:
         """Calculate overall implementation timeline"""
         # Group by complexity and timeline
         complexity_groups = {}
@@ -665,8 +662,8 @@ class CostOptimizationService:
         }
 
     def _calculate_progress_metrics(
-        self, optimizations: List[CostOptimization]
-    ) -> Dict[str, Any]:
+        self, optimizations: list[CostOptimization]
+    ) -> dict[str, Any]:
         """Calculate progress metrics for optimization program"""
         total_optimizations = len(optimizations)
         completed = len([opt for opt in optimizations if opt.status == "completed"])
@@ -705,8 +702,8 @@ class CostOptimizationService:
         }
 
     def _calculate_roi_achievement(
-        self, optimizations: List[CostOptimization]
-    ) -> Dict[str, Any]:
+        self, optimizations: list[CostOptimization]
+    ) -> dict[str, Any]:
         """Calculate ROI achievement across optimizations"""
         completed_opts = [opt for opt in optimizations if opt.status == "completed"]
 
@@ -732,8 +729,8 @@ class CostOptimizationService:
         }
 
     def _identify_next_milestones(
-        self, optimizations: List[CostOptimization]
-    ) -> List[Dict[str, Any]]:
+        self, optimizations: list[CostOptimization]
+    ) -> list[dict[str, Any]]:
         """Identify next key milestones in optimization program"""
         # Sort by timeline and priority
         sorted_opts = sorted(
@@ -758,7 +755,7 @@ class CostOptimizationService:
 
         return milestones
 
-    def get_cost_optimization_dashboard(self) -> Dict[str, Any]:
+    def get_cost_optimization_dashboard(self) -> dict[str, Any]:
         """Get comprehensive cost optimization dashboard"""
         # Get current optimization status
         total_optimizations = len(self.optimizations)
@@ -809,7 +806,7 @@ class CostOptimizationService:
             "recommendations": self._generate_cost_recommendations(),
         }
 
-    def _get_category_breakdown(self) -> Dict[str, Any]:
+    def _get_category_breakdown(self) -> dict[str, Any]:
         """Get savings breakdown by category"""
         category_savings = {}
         for opt in self.optimizations.values():
@@ -822,7 +819,7 @@ class CostOptimizationService:
 
         return category_savings
 
-    def _get_timeline_progress(self) -> Dict[str, Any]:
+    def _get_timeline_progress(self) -> dict[str, Any]:
         """Get progress against timeline milestones"""
         # Calculate progress against roadmap phases
         quick_wins_target = 45000  # Monthly savings
@@ -848,7 +845,7 @@ class CostOptimizationService:
             "overall_progress": current_savings / 255000,  # Total target
         }
 
-    def _get_roi_analysis(self) -> Dict[str, Any]:
+    def _get_roi_analysis(self) -> dict[str, Any]:
         """Get ROI analysis for completed optimizations"""
         completed_opts = [
             opt for opt in self.optimizations.values() if opt.status == "completed"
@@ -875,8 +872,8 @@ class CostOptimizationService:
         }
 
     def _calculate_roi_distribution(
-        self, optimizations: List[CostOptimization]
-    ) -> Dict[str, int]:
+        self, optimizations: list[CostOptimization]
+    ) -> dict[str, int]:
         """Calculate distribution of ROI achievements"""
         roi_ranges = {"excellent": 0, "good": 0, "fair": 0, "poor": 0}
 
@@ -893,7 +890,7 @@ class CostOptimizationService:
 
         return roi_ranges
 
-    def _generate_cost_recommendations(self) -> List[str]:
+    def _generate_cost_recommendations(self) -> list[str]:
         """Generate recommendations for cost optimization program"""
         recommendations = []
 
@@ -948,11 +945,11 @@ class CostOptimizationService:
         return recommendations
 
     # Legacy methods for backward compatibility
-    async def conduct_cost_audit(self) -> Dict[str, Any]:
+    async def conduct_cost_audit(self) -> dict[str, Any]:
         """Legacy method - redirects to comprehensive analysis"""
         return await self.run_comprehensive_cost_analysis()
 
-    async def get_cost_dashboard(self) -> Dict[str, Any]:
+    async def get_cost_dashboard(self) -> dict[str, Any]:
         """Legacy method - redirects to optimization dashboard"""
         return self.get_cost_optimization_dashboard()
         """
@@ -1011,8 +1008,8 @@ class CostOptimizationService:
         }
 
     async def _analyze_category_costs(
-        self, category: str, subcategories: List[str]
-    ) -> Dict[str, Any]:
+        self, category: str, subcategories: list[str]
+    ) -> dict[str, Any]:
         """
         Analyze costs within a specific category.
         """
@@ -1029,7 +1026,7 @@ class CostOptimizationService:
 
         return {"current_cost": 0, "potential_savings": 0, "implementation_cost": 0}
 
-    async def _analyze_infrastructure_costs(self) -> Dict[str, Any]:
+    async def _analyze_infrastructure_costs(self) -> dict[str, Any]:
         """
         Analyze infrastructure cost optimization opportunities.
         """
@@ -1120,7 +1117,7 @@ class CostOptimizationService:
             ],
         }
 
-    async def _analyze_operations_costs(self) -> Dict[str, Any]:
+    async def _analyze_operations_costs(self) -> dict[str, Any]:
         """
         Analyze operations cost optimization opportunities.
         """
@@ -1182,7 +1179,7 @@ class CostOptimizationService:
             "opportunities": [self._opportunity_to_dict(opp) for opp in opportunities],
         }
 
-    async def _analyze_development_costs(self) -> Dict[str, Any]:
+    async def _analyze_development_costs(self) -> dict[str, Any]:
         """
         Analyze development cost optimization opportunities.
         """
@@ -1226,7 +1223,7 @@ class CostOptimizationService:
             "opportunities": [self._opportunity_to_dict(opp) for opp in opportunities],
         }
 
-    async def _analyze_licensing_costs(self) -> Dict[str, Any]:
+    async def _analyze_licensing_costs(self) -> dict[str, Any]:
         """
         Analyze licensing cost optimization opportunities.
         """
@@ -1270,7 +1267,7 @@ class CostOptimizationService:
             "opportunities": [self._opportunity_to_dict(opp) for opp in opportunities],
         }
 
-    async def _analyze_process_costs(self) -> Dict[str, Any]:
+    async def _analyze_process_costs(self) -> dict[str, Any]:
         """
         Analyze process optimization cost opportunities.
         """
@@ -1314,7 +1311,7 @@ class CostOptimizationService:
             "opportunities": [self._opportunity_to_dict(opp) for opp in opportunities],
         }
 
-    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> Dict[str, Any]:
+    def _opportunity_to_dict(self, opp: CostOptimizationOpportunity) -> dict[str, Any]:
         """Convert opportunity to dictionary."""
         return {
             "opportunity_id": opp.opportunity_id,
@@ -1334,8 +1331,8 @@ class CostOptimizationService:
         }
 
     def _create_optimization_roadmap(
-        self, category_analysis: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, category_analysis: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Create comprehensive cost optimization roadmap.
         """
@@ -1405,8 +1402,8 @@ class CostOptimizationService:
         return roadmap
 
     def _prioritize_implementations(
-        self, category_analysis: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, category_analysis: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """
         Create prioritized implementation plan.
         """
@@ -1430,7 +1427,7 @@ class CostOptimizationService:
 
     async def implement_optimization(
         self, opportunity_id: str, owner: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Mark an optimization opportunity as implemented.
         """
@@ -1451,7 +1448,7 @@ class CostOptimizationService:
             "implementation_date": opportunity.implemented_at,
         }
 
-    async def get_cost_dashboard(self) -> Dict[str, Any]:
+    async def get_cost_dashboard(self) -> dict[str, Any]:
         """
         Get comprehensive cost optimization dashboard.
         """

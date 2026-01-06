@@ -8,11 +8,10 @@ import asyncio
 import json
 import logging
 import random
-import time
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 
@@ -58,17 +57,17 @@ class InvestigationResult:
     phase: InvestigationPhase
     timestamp: datetime
     scores: DiagnosticScore
-    findings: List[Dict[str, Any]]
-    recommendations: List[str]
-    evidence: Dict[str, Any]
-    next_steps: List[str]
+    findings: list[dict[str, Any]]
+    recommendations: list[str]
+    evidence: dict[str, Any]
+    next_steps: list[str]
 
 
 class CriticalAreasInvestigator:
     """Comprehensive investigator for critical diagnostic areas"""
 
     def __init__(self):
-        self.results: Dict[str, List[InvestigationResult]] = {}
+        self.results: dict[str, list[InvestigationResult]] = {}
         self.critical_areas = [
             "ai_ml_governance",
             "network_security",
@@ -77,7 +76,7 @@ class CriticalAreasInvestigator:
             "third_party_risk",
         ]
 
-    async def conduct_complete_investigation(self) -> Dict[str, Any]:
+    async def conduct_complete_investigation(self) -> dict[str, Any]:
         """Conduct complete investigation across all critical areas"""
 
         print("🔬 CRITICAL AREAS COMPREHENSIVE DIAGNOSIS")
@@ -123,7 +122,7 @@ class CriticalAreasInvestigator:
 
         return master_report
 
-    async def investigate_area(self, area_name: str) -> List[InvestigationResult]:
+    async def investigate_area(self, area_name: str) -> list[InvestigationResult]:
         """Investigate a specific critical area through all phases"""
 
         results = []
@@ -406,7 +405,7 @@ class CriticalAreasInvestigator:
         )
 
     async def final_scoring(
-        self, area_name: str, all_results: List[InvestigationResult]
+        self, area_name: str, all_results: list[InvestigationResult]
     ) -> InvestigationResult:
         """Phase 5: Final comprehensive scoring"""
 
@@ -460,7 +459,7 @@ class CriticalAreasInvestigator:
         )
 
     def calculate_phase_score(
-        self, findings: List[Dict], phase: InvestigationPhase
+        self, findings: list[dict], phase: InvestigationPhase
     ) -> DiagnosticScore:
         """Calculate diagnostic score for a specific phase"""
 
@@ -566,7 +565,7 @@ class CriticalAreasInvestigator:
         )
 
     def calculate_final_scores(
-        self, results: List[InvestigationResult]
+        self, results: list[InvestigationResult]
     ) -> DiagnosticScore:
         """Calculate final comprehensive scores across all phases"""
 
@@ -632,7 +631,7 @@ class CriticalAreasInvestigator:
         else:
             return "F"
 
-    def calculate_risk_level(self, score: float, findings: List[Dict]) -> str:
+    def calculate_risk_level(self, score: float, findings: list[dict]) -> str:
         """Calculate risk level"""
         critical_count = len([f for f in findings if f.get("severity") == "CRITICAL"])
         high_count = len([f for f in findings if f.get("severity") == "HIGH"])
@@ -646,7 +645,7 @@ class CriticalAreasInvestigator:
         else:
             return "LOW"
 
-    def calculate_priority(self, score: float, findings: List[Dict]) -> str:
+    def calculate_priority(self, score: float, findings: list[dict]) -> str:
         """Calculate priority level"""
         risk_level = self.calculate_risk_level(score, findings)
 
@@ -674,7 +673,7 @@ class CriticalAreasInvestigator:
         else:
             return "MINIMAL (2-4 weeks)"
 
-    def calculate_remediation_effort_from_findings(self, findings: List[Dict]) -> str:
+    def calculate_remediation_effort_from_findings(self, findings: list[dict]) -> str:
         """Calculate remediation effort from all findings"""
         critical = len([f for f in findings if f.get("severity") == "CRITICAL"])
         high = len([f for f in findings if f.get("severity") == "HIGH"])
@@ -682,7 +681,7 @@ class CriticalAreasInvestigator:
 
         return self.calculate_remediation_effort(critical, high, medium)
 
-    def get_base_assessment(self, area_name: str) -> Dict[str, Any]:
+    def get_base_assessment(self, area_name: str) -> dict[str, Any]:
         """Get base assessment data for an area"""
         assessments = {
             "ai_ml_governance": {
@@ -810,8 +809,8 @@ class CriticalAreasInvestigator:
         return assessments.get(area_name, {"issues": []})
 
     async def perform_deep_analysis(
-        self, finding: Dict, area_name: str
-    ) -> Dict[str, Any]:
+        self, finding: dict, area_name: str
+    ) -> dict[str, Any]:
         """Perform deep analysis of a finding"""
         await asyncio.sleep(0.1)  # Simulate analysis time
 
@@ -827,7 +826,7 @@ class CriticalAreasInvestigator:
             ],
         }
 
-    async def validate_finding(self, finding: Dict, area_name: str) -> Dict[str, Any]:
+    async def validate_finding(self, finding: dict, area_name: str) -> dict[str, Any]:
         """Validate a finding through testing"""
         await asyncio.sleep(0.05)  # Simulate testing time
 
@@ -840,8 +839,8 @@ class CriticalAreasInvestigator:
         }
 
     async def create_remediation_plan(
-        self, finding: Dict, area_name: str
-    ) -> Dict[str, Any]:
+        self, finding: dict, area_name: str
+    ) -> dict[str, Any]:
         """Create remediation plan for a finding"""
         await asyncio.sleep(0.03)  # Simulate planning time
 
@@ -881,8 +880,8 @@ class CriticalAreasInvestigator:
         }
 
     async def generate_master_report(
-        self, areas_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, areas_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Generate comprehensive master report"""
 
         # Aggregate all results
@@ -922,12 +921,16 @@ class CriticalAreasInvestigator:
                 "risk_level": (
                     "CRITICAL"
                     if critical_areas > 0
-                    else "HIGH" if high_risk_areas > 1 else "MEDIUM"
+                    else "HIGH"
+                    if high_risk_areas > 1
+                    else "MEDIUM"
                 ),
                 "priority": (
                     "IMMEDIATE"
                     if critical_areas > 0
-                    else "URGENT" if high_risk_areas > 1 else "HIGH"
+                    else "URGENT"
+                    if high_risk_areas > 1
+                    else "HIGH"
                 ),
             },
             "findings_summary": {

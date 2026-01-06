@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/ai/privacy_preserving_ml_service.py
+# hypothesis_version: 6.148.8
+
+[0.0, 1e-05, 0.05, 0.1, 0.7, 0.8, 0.85, 1.0, 1.25, 1.3, 1.5, 2.0, 256, 1000, 2048, 'COMPLIANT', 'IND-CPA', 'REQUIRES_ATTENTION', 'accuracy_impact', 'active_models', 'bias', 'clients_participated', 'compliance_status', 'computation_overhead', 'details', 'differential_privacy', 'feature_importance', 'fedavg', 'federated_learning', 'fedprox', 'file', 'final_weights', 'float64', 'int64', 'message', 'method', 'model_id', 'object', 'passed', 'privacy_budget_used', 'privacy_metrics', 'privacy_tests', 'recommendations', 'remaining_budget', 'round_number', 'scaffold', 'security_level', 'sum', 'total_samples', 'uniqueness_ratio', 'unknown', 'utility_preservation', 'weights']

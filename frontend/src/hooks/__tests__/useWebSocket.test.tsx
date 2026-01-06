@@ -1,5 +1,6 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, jest, beforeEach } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { useWebSocket } from '../useWebSocket';
 
 // Mock WebSocket

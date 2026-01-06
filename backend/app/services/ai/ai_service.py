@@ -3,7 +3,7 @@ for tests and to satisfy `master_plan` implementation items.
 """
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -13,26 +13,26 @@ AI Integration Layer for Zenith Fraud Detection
 Provides semantic search, AI analysis, and intelligent insights
 """
 
-import asyncio
-import base64
-import hashlib
 import json
 import logging
 import os
-import pickle
 import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
+
 HAS_SEMANTIC = False
 SentenceTransformer = None
 faiss = None
 TfidfVectorizer = None
 cosine_similarity = None
 
-from app.services.infrastructure.error_handler import error_handler, ErrorCategory, ServiceError, ErrorSeverity
+from app.services.infrastructure.error_handler import (
+    ErrorCategory,
+    ErrorSeverity,
+    error_handler,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +86,12 @@ class AIService:
 
     async def initialize(self):
         """Initialize the AI service and load existing data"""
-        global HAS_SEMANTIC, SentenceTransformer, faiss, TfidfVectorizer, cosine_similarity
+        global \
+            HAS_SEMANTIC, \
+            SentenceTransformer, \
+            faiss, \
+            TfidfVectorizer, \
+            cosine_similarity
 
         try:
             try:
@@ -99,10 +104,12 @@ class AIService:
                 HAS_SEMANTIC = True
 
                 logger.info("Initializing Semantic AI with SentenceTransformers...")
-                self.model = SentenceTransformer('all-MiniLM-L6-v2')
+                self.model = SentenceTransformer("all-MiniLM-L6-v2")
                 logger.info("SentenceTransformer model loaded successfully")
             except ImportError as ie:
-                logger.warning(f"Semantic AI dependencies missing: {ie}. Attempting Fallback.")
+                logger.warning(
+                    f"Semantic AI dependencies missing: {ie}. Attempting Fallback."
+                )
                 HAS_SEMANTIC = False
 
                 # Lazy load fallback dependencies
@@ -113,7 +120,9 @@ class AIService:
                 cosine_similarity = cs_mod
                 logger.info("Initialized TF-IDF Fallback.")
 
-            logger.info(f"HAS_SEMANTIC={HAS_SEMANTIC}, model loaded={self.model is not None}")
+            logger.info(
+                f"HAS_SEMANTIC={HAS_SEMANTIC}, model loaded={self.model is not None}"
+            )
             await self._load_vector_store()
             await self._rebuild_index()
             self.initialized = True
@@ -121,6 +130,7 @@ class AIService:
         except Exception as e:
             logger.error(f"Failed to initialize AI service: {e}")
             import traceback
+
             logger.error(f"Initialize traceback: {traceback.format_exc()}")
             # Still mark as initialized to prevent repeated failures
             self.initialized = True
@@ -134,7 +144,7 @@ class AIService:
         """Compatibility hook: synchronous loader for tests that patch this method."""
         return None
 
-    def _train_model(self, training_data: List[Dict[str, Any]]):
+    def _train_model(self, training_data: list[dict[str, Any]]):
         """Compatibility hook: synchronous trainer for tests that patch this method."""
         # delegate to async-style training if desired; by default, record a stub
         self.tfidf_vectorizer = self.tfidf_vectorizer or None
@@ -144,7 +154,7 @@ class AIService:
         """Compatibility save hook for tests that patch `_save_model`."""
         return True
 
-    def analyze_transaction(self, transaction: Dict[str, Any]) -> Dict[str, Any]:
+    def analyze_transaction(self, transaction: dict[str, Any]) -> dict[str, Any]:
         """Synchronous analyze transaction API expected by tests.
         If a model with `predict` exists, use it; otherwise, fallback to simple heuristic.
         """
@@ -166,7 +176,7 @@ class AIService:
             logger.error(f"analyze_transaction failed: {e}")
             return {"fraud_probability": 0.0, "risk_score": 0.0}
 
-    def train_model(self, training_data: List[Dict[str, Any]]) -> bool:
+    def train_model(self, training_data: list[dict[str, Any]]) -> bool:
         """Synchronous train_model wrapper that calls internal trainer and saver."""
         try:
             self._train_model(training_data)
@@ -237,12 +247,14 @@ class AIService:
                     for i, doc_id in enumerate(doc_ids):
                         self.vector_store[doc_id]["vector"] = vectors[i]
 
-                vectors_np = np.array(vectors).astype('float32')
+                vectors_np = np.array(vectors).astype("float32")
                 dim = vectors_np.shape[1]
                 self.faiss_index = faiss.IndexFlatL2(dim)
                 self.faiss_index.add(vectors_np)
                 self.doc_ids = doc_ids
-                logger.info(f"Rebuilt FAISS index with {len(documents)} documents (dim={dim})")
+                logger.info(
+                    f"Rebuilt FAISS index with {len(documents)} documents (dim={dim})"
+                )
             else:
                 # Fallback to TF-IDF
                 self.tfidf_vectorizer = TfidfVectorizer(
@@ -256,7 +268,7 @@ class AIService:
         except Exception as e:
             logger.error(f"Failed to rebuild index: {e}")
 
-    def embed_text(self, text: str) -> List[float]:
+    def embed_text(self, text: str) -> list[float]:
         """Generate embedding for text using SentenceTransformer or TF-IDF"""
         try:
             if HAS_SEMANTIC and self.model:
@@ -266,6 +278,7 @@ class AIService:
             else:
                 # Fallback hash-based vector
                 import random
+
                 random.seed(hash(text))
                 return [random.random() for _ in range(384)]
         except Exception as e:
@@ -273,12 +286,14 @@ class AIService:
             return [0.0] * 384
 
     async def add_document(
-        self, doc_id: str, content: str, metadata: Dict[str, Any] = None
+        self, doc_id: str, content: str, metadata: dict[str, Any] | None = None
     ):
         """Add a document to the vector store"""
         try:
             # Create vector using appropriate method
-            logger.info(f"Adding document {doc_id}, HAS_SEMANTIC={HAS_SEMANTIC}, model={self.model is not None}")
+            logger.info(
+                f"Adding document {doc_id}, HAS_SEMANTIC={HAS_SEMANTIC}, model={self.model is not None}"
+            )
             if HAS_SEMANTIC and self.model:
                 # Use SentenceTransformer for semantic embeddings
                 logger.info("Using SentenceTransformer for embeddings")
@@ -286,7 +301,10 @@ class AIService:
             else:
                 logger.info("Using TF-IDF fallback")
                 # Fallback: Initialize TF-IDF vectorizer if needed
-                if not hasattr(self, 'tfidf_vectorizer') or self.tfidf_vectorizer is None:
+                if (
+                    not hasattr(self, "tfidf_vectorizer")
+                    or self.tfidf_vectorizer is None
+                ):
                     self.tfidf_vectorizer = TfidfVectorizer(
                         max_features=5000, stop_words="english", ngram_range=(1, 2)
                     )
@@ -296,22 +314,31 @@ class AIService:
                         self.tfidf_vectorizer.fit(docs)
 
                 # Create TF-IDF vector
-                if hasattr(self, 'tfidf_vectorizer') and self.tfidf_vectorizer is not None:
+                if (
+                    hasattr(self, "tfidf_vectorizer")
+                    and self.tfidf_vectorizer is not None
+                ):
                     try:
                         vector = self.tfidf_vectorizer.transform([content]).toarray()[0]
                     except Exception as e:
-                        logger.warning(f"TF-IDF transform failed, using hash fallback: {e}")
+                        logger.warning(
+                            f"TF-IDF transform failed, using hash fallback: {e}"
+                        )
                         # Hash-based fallback
-                        vector = np.array([
-                            hash(content + str(k) + str(v)) % 1000 / 1000.0
-                            for k, v in (metadata or {}).items()
-                        ])
+                        vector = np.array(
+                            [
+                                hash(content + str(k) + str(v)) % 1000 / 1000.0
+                                for k, v in (metadata or {}).items()
+                            ]
+                        )
                 else:
                     # Hash-based fallback
-                    vector = np.array([
-                        hash(content + str(k) + str(v)) % 1000 / 1000.0
-                        for k, v in (metadata or {}).items()
-                    ])
+                    vector = np.array(
+                        [
+                            hash(content + str(k) + str(v)) % 1000 / 1000.0
+                            for k, v in (metadata or {}).items()
+                        ]
+                    )
 
             # Store in memory
             self.vector_store[doc_id] = {
@@ -334,10 +361,11 @@ class AIService:
             logger.error(f"Failed to add document {doc_id}: {e}")
             logger.error(f"Exception type: {type(e)}, args: {e.args}")
             import traceback
+
             logger.error(f"Traceback: {traceback.format_exc()}")
             return False
 
-    async def _persist_document(self, doc_id: str, doc_data: Dict[str, Any]):
+    async def _persist_document(self, doc_id: str, doc_data: dict[str, Any]):
         """Persist document to SQLite database"""
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -378,8 +406,8 @@ class AIService:
             logger.error(f"Failed to persist document {doc_id}: {e}")
 
     async def semantic_search(
-        self, query: str, limit: int = 10, filters: Dict[str, Any] = None
-    ) -> List[Dict[str, Any]]:
+        self, query: str, limit: int = 10, filters: dict[str, Any] | None = None
+    ) -> list[dict[str, Any]]:
         """Perform semantic search across documents using FAISS or TF-IDF"""
         try:
             if not self.initialized or not self.vector_store:
@@ -387,41 +415,48 @@ class AIService:
 
             if HAS_SEMANTIC and self.faiss_index and self.model:
                 # 1. Semantic Search with FAISS
-                query_vector = self.model.encode([query]).astype('float32')
-                
+                query_vector = self.model.encode([query]).astype("float32")
+
                 # Search FAISS index (return more than limit to allow for filtering)
                 search_limit = limit * 2 if filters else limit
-                distances, indices = self.faiss_index.search(query_vector, min(search_limit, len(self.doc_ids)))
-                
+                distances, indices = self.faiss_index.search(
+                    query_vector, min(search_limit, len(self.doc_ids))
+                )
+
                 results = []
                 for i, idx in enumerate(indices[0]):
-                    if idx == -1: continue # No more results
-                    
+                    if idx == -1:
+                        continue  # No more results
+
                     doc_id = self.doc_ids[idx]
                     doc_data = self.vector_store[doc_id]
-                    
+
                     # Apply filters
-                    if filters and not self._matches_filters(doc_data["metadata"], filters):
+                    if filters and not self._matches_filters(
+                        doc_data["metadata"], filters
+                    ):
                         continue
-                        
+
                     # L2 distance to similarity (approximate)
                     # For IndexFlatL2, lower distance is better.
                     similarity = 1.0 / (1.0 + float(distances[0][i]))
-                    
-                    results.append({
-                        "id": doc_id,
-                        "similarity": similarity,
-                        "content": doc_data["content"][:800],
-                        "metadata": doc_data["metadata"],
-                        "created_at": doc_data["created_at"],
-                    })
+
+                    results.append(
+                        {
+                            "id": doc_id,
+                            "similarity": similarity,
+                            "content": doc_data["content"][:800],
+                            "metadata": doc_data["metadata"],
+                            "created_at": doc_data["created_at"],
+                        }
+                    )
                 return results[:limit]
-            
+
             else:
                 # 2. Fallback to TF-IDF
                 if self.tfidf_vectorizer:
                     query_vector = self.tfidf_vectorizer.transform([query]).toarray()[0]
-                    
+
                     results = []
                     for doc_id, doc_data in self.vector_store.items():
                         if doc_data["vector"] is not None:
@@ -429,16 +464,20 @@ class AIService:
                                 [query_vector], [doc_data["vector"]]
                             )[0][0]
 
-                            if filters and not self._matches_filters(doc_data["metadata"], filters):
+                            if filters and not self._matches_filters(
+                                doc_data["metadata"], filters
+                            ):
                                 continue
 
-                            results.append({
-                                "id": doc_id,
-                                "similarity": float(similarity),
-                                "content": doc_data["content"][:800],
-                                "metadata": doc_data["metadata"],
-                                "created_at": doc_data["created_at"],
-                            })
+                            results.append(
+                                {
+                                    "id": doc_id,
+                                    "similarity": float(similarity),
+                                    "content": doc_data["content"][:800],
+                                    "metadata": doc_data["metadata"],
+                                    "created_at": doc_data["created_at"],
+                                }
+                            )
                     results.sort(key=lambda x: x["similarity"], reverse=True)
                     return results[:limit]
                 else:
@@ -452,15 +491,15 @@ class AIService:
                 error_code="AI_SEARCH_FAILED",
                 original_error=e,
                 retryable=True,
-                user_friendly_message="Search temporarily unavailable. Please try again."
+                user_friendly_message="Search temporarily unavailable. Please try again.",
             )
             logger.error("AI Service error", extra=service_error.to_dict())
             # Return empty results instead of raising - let router decide how to handle
             return []
 
     async def _keyword_search(
-        self, query: str, limit: int, filters: Dict[str, Any] = None
-    ) -> List[Dict[str, Any]]:
+        self, query: str, limit: int, filters: dict[str, Any] | None = None
+    ) -> list[dict[str, Any]]:
         """Fallback keyword-based search"""
         query_lower = query.lower()
         results = []
@@ -491,7 +530,7 @@ class AIService:
         return results[:limit]
 
     def _matches_filters(
-        self, metadata: Dict[str, Any], filters: Dict[str, Any]
+        self, metadata: dict[str, Any], filters: dict[str, Any]
     ) -> bool:
         """Check if document metadata matches filters"""
         for key, value in filters.items():
@@ -511,8 +550,8 @@ class AIService:
         return True
 
     async def analyze_case(
-        self, case_data: Dict[str, Any], analysis_type: str
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any], analysis_type: str
+    ) -> dict[str, Any]:
         """Perform AI analysis on case data"""
         try:
             analysis_result = {
@@ -548,8 +587,8 @@ class AIService:
             }
 
     async def _analyze_typology_context(
-        self, case_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         RAG: Extract context from case and search Typology Knowledge Base.
         """
@@ -640,8 +679,8 @@ class AIService:
         }
 
     async def _analyze_fraud_patterns(
-        self, case_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Analyze fraud patterns in case data"""
         insights = []
         recommendations = []
@@ -698,8 +737,8 @@ class AIService:
         }
 
     async def _analyze_entity_linkage(
-        self, case_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Analyze entity relationships and linkages"""
         insights = []
         recommendations = []
@@ -761,7 +800,7 @@ class AIService:
         }
 
     def _dfs(
-        self, entity: str, connections: Dict[str, set], visited: set, cluster: set
+        self, entity: str, connections: dict[str, set], visited: set, cluster: set
     ):
         """Depth-first search for connected components"""
         visited.add(entity)
@@ -772,8 +811,8 @@ class AIService:
                 self._dfs(neighbor, connections, visited, cluster)
 
     async def _analyze_risk_assessment(
-        self, case_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Perform comprehensive risk assessment"""
         risk_factors = []
         risk_score = 0
@@ -853,7 +892,7 @@ class AIService:
         except:
             return 12
 
-    async def _analyze_evidence(self, case_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def _analyze_evidence(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Analyze evidence for fraud indicators"""
         insights = []
         recommendations = []
@@ -906,7 +945,7 @@ class AIService:
             "risk_score": 60 if confidence > 0.5 else 30,
         }
 
-    async def get_insights(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def get_insights(self, context: dict[str, Any]) -> dict[str, Any]:
         """Generate contextual insights based on current application state"""
         try:
             insights = {
@@ -918,8 +957,8 @@ class AIService:
             }
 
             # Analyze current page context
-            page = context.get("currentPage", "")
-            data = context.get("activeData", {})
+            page = context.get("current_page", "")
+            data = context.get("active_data", {})
 
             if page == "dashboard":
                 insights["suggestions"].append(
@@ -941,7 +980,7 @@ class AIService:
                     )
 
             elif page == "investigation":
-                if "selectedNode" in data:
+                if "selected_node" in data:
                     insights["suggestions"].append(
                         "Analyze connections for this entity"
                     )
@@ -969,8 +1008,8 @@ class AIService:
             return {"timestamp": datetime.now().isoformat(), "error": str(e)}
 
     async def analyze_multi_persona(
-        self, case_id: str, personas: List[str]
-    ) -> Dict[str, str]:
+        self, case_id: str, personas: list[str]
+    ) -> dict[str, str]:
         """Perform analysis from multiple persona perspectives"""
         results = {}
         for persona in personas:
@@ -996,7 +1035,7 @@ class AIService:
                 )
         return results
 
-    async def investigate_subject(self, subject_id: str) -> Dict[str, Any]:
+    async def investigate_subject(self, subject_id: str) -> dict[str, Any]:
         """Perform deep dive investigation on a subject"""
         # Mock investigation data - in production this would aggregate data across systems
         return {
@@ -1012,7 +1051,7 @@ class AIService:
 
     async def get_proactive_suggestions(
         self, alert_id: str, context: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate proactive suggestions based on alert context"""
         return {
             "suggestions": [

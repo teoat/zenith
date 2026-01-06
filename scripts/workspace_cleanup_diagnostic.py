@@ -4,37 +4,38 @@ Workspace Duplication and Unused Files Diagnostic System
 Comprehensive analysis of duplications, unused files, and cleanup opportunities
 """
 
-import os
+import ast
 import hashlib
 import json
-from pathlib import Path
-from collections import defaultdict, Counter
 import re
-from typing import Dict, List, Set, Tuple, Any
-import ast
-import sys
+from collections import defaultdict
+from pathlib import Path
+from typing import Any, Dict, List, Set, Tuple
+
 
 class WorkspaceDiagnostic:
     """Comprehensive workspace diagnostic system"""
 
     def __init__(self):
-        self.file_hashes: Dict[str, List[str]] = defaultdict(list)
-        self.duplicate_files: List[Tuple[str, List[str]]] = []
-        self.unused_imports: Dict[str, List[str]] = {}
-        self.orphaned_files: List[str] = []
-        self.redundant_configs: List[Dict[str, Any]] = []
-        self.similar_files: List[Tuple[str, str, float]] = []
-        self.file_references: Dict[str, Set[str]] = defaultdict(set)
+        self.file_hashes: dict[str, list[str]] = defaultdict(list)
+        self.duplicate_files: list[tuple[str, list[str]]] = []
+        self.unused_imports: dict[str, list[str]] = {}
+        self.orphaned_files: list[str] = []
+        self.redundant_configs: list[dict[str, Any]] = []
+        self.similar_files: list[tuple[str, str, float]] = []
+        self.file_references: dict[str, set[str]] = defaultdict(set)
 
     def calculate_file_hash(self, filepath: Path) -> str:
         """Calculate SHA256 hash of file content"""
         try:
-            with open(filepath, 'rb') as f:
+            with open(filepath, "rb") as f:
                 return hashlib.sha256(f.read()).hexdigest()
         except Exception:
             return ""
 
-    def find_exact_duplicates(self, directories: List[str]) -> List[Tuple[str, List[str]]]:
+    def find_exact_duplicates(
+        self, directories: list[str]
+    ) -> list[tuple[str, list[str]]]:
         """Find files with identical content"""
         print("🔍 Scanning for exact duplicate files...")
 
@@ -45,7 +46,7 @@ class WorkspaceDiagnostic:
             if not dir_path.exists():
                 continue
 
-            for filepath in dir_path.rglob('*'):
+            for filepath in dir_path.rglob("*"):
                 if filepath.is_file() and not self._is_excluded_file(filepath):
                     file_hash = self.calculate_file_hash(filepath)
                     if file_hash:
@@ -60,7 +61,9 @@ class WorkspaceDiagnostic:
         print(f"📊 Found {len(duplicates)} sets of exact duplicate files")
         return duplicates
 
-    def find_similar_files(self, directories: List[str], threshold: float = 0.8) -> List[Tuple[str, str, float]]:
+    def find_similar_files(
+        self, directories: list[str], threshold: float = 0.8
+    ) -> list[tuple[str, str, float]]:
         """Find files with similar names (potential duplicates)"""
         print("🔍 Scanning for files with similar names...")
 
@@ -74,7 +77,7 @@ class WorkspaceDiagnostic:
             if not dir_path.exists():
                 continue
 
-            for filepath in dir_path.rglob('*'):
+            for filepath in dir_path.rglob("*"):
                 if filepath.is_file() and not self._is_excluded_file(filepath):
                     # Normalize filename for comparison
                     name = self._normalize_filename(filepath.name)
@@ -85,8 +88,10 @@ class WorkspaceDiagnostic:
             if len(files) > 1:
                 # Calculate similarity between files in group
                 for i, file1 in enumerate(files):
-                    for file2 in files[i+1:]:
-                        similarity = self._calculate_name_similarity(Path(file1).name, Path(file2).name)
+                    for file2 in files[i + 1 :]:
+                        similarity = self._calculate_name_similarity(
+                            Path(file1).name, Path(file2).name
+                        )
                         if similarity >= threshold:
                             similar_pairs.append((file1, file2, similarity))
 
@@ -97,10 +102,12 @@ class WorkspaceDiagnostic:
         """Normalize filename for comparison"""
         # Remove extensions, numbers, and common suffixes
         name = filename.lower()
-        name = re.sub(r'\d+', '', name)  # Remove numbers
-        name = re.sub(r'\.(py|json|md|txt|yml|yaml)$', '', name)  # Remove extensions
-        name = re.sub(r'(copy|backup|old|new|v\d+)$', '', name)  # Remove common suffixes
-        name = re.sub(r'[-_\s]+', '', name)  # Remove separators
+        name = re.sub(r"\d+", "", name)  # Remove numbers
+        name = re.sub(r"\.(py|json|md|txt|yml|yaml)$", "", name)  # Remove extensions
+        name = re.sub(
+            r"(copy|backup|old|new|v\d+)$", "", name
+        )  # Remove common suffixes
+        name = re.sub(r"[-_\s]+", "", name)  # Remove separators
         return name.strip()
 
     def _calculate_name_similarity(self, name1: str, name2: str) -> float:
@@ -117,7 +124,7 @@ class WorkspaceDiagnostic:
 
         return intersection / union if union > 0 else 0.0
 
-    def analyze_unused_imports(self, directories: List[str]) -> Dict[str, List[str]]:
+    def analyze_unused_imports(self, directories: list[str]) -> dict[str, list[str]]:
         """Analyze Python files for unused imports"""
         print("🔍 Analyzing unused imports in Python files...")
 
@@ -128,7 +135,7 @@ class WorkspaceDiagnostic:
             if not dir_path.exists():
                 continue
 
-            for filepath in dir_path.rglob('*.py'):
+            for filepath in dir_path.rglob("*.py"):
                 if self._is_excluded_file(filepath):
                     continue
 
@@ -142,10 +149,10 @@ class WorkspaceDiagnostic:
         print(f"📊 Found unused imports in {len(unused_imports)} files")
         return unused_imports
 
-    def _find_unused_imports(self, filepath: Path) -> List[str]:
+    def _find_unused_imports(self, filepath: Path) -> list[str]:
         """Find unused imports in a Python file"""
         try:
-            with open(filepath, 'r', encoding='utf-8') as f:
+            with open(filepath, encoding="utf-8") as f:
                 content = f.read()
 
             # Parse AST
@@ -156,10 +163,9 @@ class WorkspaceDiagnostic:
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
                     for alias in node.names:
-                        imports.add(alias.name.split('.')[0])
-                elif isinstance(node, ast.ImportFrom):
-                    if node.module:
-                        imports.add(node.module.split('.')[0])
+                        imports.add(alias.name.split(".")[0])
+                elif isinstance(node, ast.ImportFrom) and node.module:
+                    imports.add(node.module.split(".")[0])
 
             # Collect all used names
             used_names = set()
@@ -173,7 +179,12 @@ class WorkspaceDiagnostic:
             # Find unused imports
             unused = []
             for imp in imports:
-                if imp not in used_names and imp not in ['os', 'sys', 'json', 're']:  # Common standard library
+                if imp not in used_names and imp not in [
+                    "os",
+                    "sys",
+                    "json",
+                    "re",
+                ]:  # Common standard library
                     unused.append(imp)
 
             return unused
@@ -181,7 +192,7 @@ class WorkspaceDiagnostic:
         except Exception:
             return []
 
-    def find_orphaned_files(self, directories: List[str]) -> List[str]:
+    def find_orphaned_files(self, directories: list[str]) -> list[str]:
         """Find files that are not referenced anywhere"""
         print("🔍 Searching for orphaned files...")
 
@@ -195,7 +206,7 @@ class WorkspaceDiagnostic:
             if not dir_path.exists():
                 continue
 
-            for filepath in dir_path.rglob('*'):
+            for filepath in dir_path.rglob("*"):
                 if filepath.is_file() and not self._is_excluded_file(filepath):
                     file_str = str(filepath)
 
@@ -205,7 +216,7 @@ class WorkspaceDiagnostic:
                         filename = filepath.name
                         found_reference = False
 
-                        for ref_file, references in self.file_references.items():
+                        for references in self.file_references.values():
                             if filename in references:
                                 found_reference = True
                                 break
@@ -216,22 +227,24 @@ class WorkspaceDiagnostic:
         print(f"📊 Found {len(orphaned)} potentially orphaned files")
         return orphaned
 
-    def _build_reference_map(self, directories: List[str]):
+    def _build_reference_map(self, directories: list[str]):
         """Build map of file references"""
         for directory in directories:
             dir_path = Path(directory)
             if not dir_path.exists():
                 continue
 
-            for filepath in dir_path.rglob('*'):
+            for filepath in dir_path.rglob("*"):
                 if filepath.is_file() and self._is_code_file(filepath):
                     try:
-                        with open(filepath, 'r', encoding='utf-8') as f:
+                        with open(filepath, encoding="utf-8") as f:
                             content = f.read()
 
                         # Find import statements and file references
-                        imports = re.findall(r'(?:import|from)\s+([\w.]+)', content)
-                        file_refs = re.findall(r'[\w\-_]+\.(?:py|json|md|yml|yaml)', content)
+                        imports = re.findall(r"(?:import|from)\s+([\w.]+)", content)
+                        file_refs = re.findall(
+                            r"[\w\-_]+\.(?:py|json|md|yml|yaml)", content
+                        )
 
                         self.file_references[str(filepath)].update(imports)
                         self.file_references[str(filepath)].update(file_refs)
@@ -239,7 +252,9 @@ class WorkspaceDiagnostic:
                     except Exception:
                         pass
 
-    def analyze_redundant_configurations(self, directories: List[str]) -> List[Dict[str, Any]]:
+    def analyze_redundant_configurations(
+        self, directories: list[str]
+    ) -> list[dict[str, Any]]:
         """Analyze redundant configuration files"""
         print("🔍 Analyzing redundant configurations...")
 
@@ -247,12 +262,12 @@ class WorkspaceDiagnostic:
 
         # Look for multiple similar config files
         config_patterns = [
-            ('requirements*.txt', 'Python requirements files'),
-            ('Dockerfile*', 'Docker configuration files'),
-            ('docker-compose*.yml', 'Docker Compose files'),
-            ('*.env*', 'Environment configuration files'),
-            ('*config*.json', 'JSON configuration files'),
-            ('*config*.yml', 'YAML configuration files')
+            ("requirements*.txt", "Python requirements files"),
+            ("Dockerfile*", "Docker configuration files"),
+            ("docker-compose*.yml", "Docker Compose files"),
+            ("*.env*", "Environment configuration files"),
+            ("*config*.json", "JSON configuration files"),
+            ("*config*.yml", "YAML configuration files"),
         ]
 
         for pattern, description in config_patterns:
@@ -263,18 +278,20 @@ class WorkspaceDiagnostic:
                     config_files.extend(list(dir_path.rglob(pattern)))
 
             if len(config_files) > 1:
-                redundant_configs.append({
-                    'type': description,
-                    'pattern': pattern,
-                    'files': [str(f) for f in config_files],
-                    'count': len(config_files),
-                    'recommendation': f'Consider consolidating {len(config_files)} {description.lower()}'
-                })
+                redundant_configs.append(
+                    {
+                        "type": description,
+                        "pattern": pattern,
+                        "files": [str(f) for f in config_files],
+                        "count": len(config_files),
+                        "recommendation": f"Consider consolidating {len(config_files)} {description.lower()}",
+                    }
+                )
 
         print(f"📊 Found {len(redundant_configs)} types of redundant configurations")
         return redundant_configs
 
-    def analyze_duplicate_documentation(self) -> List[Dict[str, Any]]:
+    def analyze_duplicate_documentation(self) -> list[dict[str, Any]]:
         """Analyze duplicate or redundant documentation"""
         print("🔍 Analyzing duplicate documentation...")
 
@@ -287,12 +304,14 @@ class WorkspaceDiagnostic:
         # Check for README files
         readme_files = list(docs_dir.rglob("README*"))
         if len(readme_files) > 1:
-            duplicate_docs.append({
-                'type': 'README files',
-                'files': [str(f) for f in readme_files],
-                'issue': 'Multiple README files found',
-                'recommendation': 'Consolidate into single comprehensive README'
-            })
+            duplicate_docs.append(
+                {
+                    "type": "README files",
+                    "files": [str(f) for f in readme_files],
+                    "issue": "Multiple README files found",
+                    "recommendation": "Consolidate into single comprehensive README",
+                }
+            )
 
         # Check for similar documentation files
         doc_files = list(docs_dir.rglob("*.md"))
@@ -301,7 +320,7 @@ class WorkspaceDiagnostic:
         for doc_file in doc_files:
             # Simple content-based similarity check
             try:
-                with open(doc_file, 'r') as f:
+                with open(doc_file) as f:
                     content = f.read()[:1000]  # First 1000 chars
                     content_hash = hashlib.md5(content.encode()).hexdigest()[:8]
                     similar_groups[content_hash].append(str(doc_file))
@@ -310,12 +329,14 @@ class WorkspaceDiagnostic:
 
         for content_hash, files in similar_groups.items():
             if len(files) > 1:
-                duplicate_docs.append({
-                    'type': 'Similar content documentation',
-                    'files': files,
-                    'issue': f'{len(files)} files with similar content',
-                    'recommendation': 'Review and consolidate duplicate documentation'
-                })
+                duplicate_docs.append(
+                    {
+                        "type": "Similar content documentation",
+                        "files": files,
+                        "issue": f"{len(files)} files with similar content",
+                        "recommendation": "Review and consolidate duplicate documentation",
+                    }
+                )
 
         print(f"📊 Found {len(duplicate_docs)} documentation duplication issues")
         return duplicate_docs
@@ -323,18 +344,18 @@ class WorkspaceDiagnostic:
     def _is_excluded_file(self, filepath: Path) -> bool:
         """Check if file should be excluded from analysis"""
         excluded_patterns = [
-            '__pycache__',
-            '.git',
-            'node_modules',
-            'venv',
-            '.pytest_cache',
-            '*.pyc',
-            '*.pyo',
-            '*.tmp',
-            'logs/',
-            'data/',
-            'uploads/',
-            '*.log'
+            "__pycache__",
+            ".git",
+            "node_modules",
+            "venv",
+            ".pytest_cache",
+            "*.pyc",
+            "*.pyo",
+            "*.tmp",
+            "logs/",
+            "data/",
+            "uploads/",
+            "*.log",
         ]
 
         path_str = str(filepath)
@@ -342,9 +363,9 @@ class WorkspaceDiagnostic:
 
     def _is_code_file(self, filepath: Path) -> bool:
         """Check if file is a code file that can contain references"""
-        return filepath.suffix in ['.py', '.js', '.ts', '.json', '.yml', '.yaml', '.md']
+        return filepath.suffix in [".py", ".js", ".ts", ".json", ".yml", ".yaml", ".md"]
 
-    def generate_cleanup_report(self) -> Dict[str, Any]:
+    def generate_cleanup_report(self) -> dict[str, Any]:
         """Generate comprehensive cleanup report"""
 
         print("📋 GENERATING COMPREHENSIVE CLEANUP REPORT")
@@ -357,61 +378,63 @@ class WorkspaceDiagnostic:
                 "similar_files": len(self.similar_files),
                 "files_with_unused_imports": len(self.unused_imports),
                 "orphaned_files": len(self.orphaned_files),
-                "redundant_configurations": len(self.redundant_configs)
+                "redundant_configurations": len(self.redundant_configs),
             },
             "duplicate_files": self.duplicate_files[:10],  # Show first 10
             "similar_files": self.similar_files[:10],  # Show first 10
-            "unused_imports_sample": dict(list(self.unused_imports.items())[:5]),  # Show first 5
+            "unused_imports_sample": dict(
+                list(self.unused_imports.items())[:5]
+            ),  # Show first 5
             "orphaned_files_sample": self.orphaned_files[:10],  # Show first 10
             "redundant_configurations": self.redundant_configs,
             "cleanup_priorities": {
                 "critical": [
                     "Remove exact duplicate files immediately",
-                    "Fix critical unused imports that may cause runtime errors"
+                    "Fix critical unused imports that may cause runtime errors",
                 ],
                 "high": [
                     "Review and consolidate redundant configuration files",
-                    "Remove obviously orphaned files (logs, temp files, etc.)"
+                    "Remove obviously orphaned files (logs, temp files, etc.)",
                 ],
                 "medium": [
                     "Clean up unused imports in non-critical files",
-                    "Review similar files for consolidation opportunities"
+                    "Review similar files for consolidation opportunities",
                 ],
                 "low": [
                     "Archive old documentation versions",
-                    "Remove development artifacts no longer needed"
-                ]
+                    "Remove development artifacts no longer needed",
+                ],
             },
             "estimated_cleanup_effort": {
                 "exact_duplicates": f"{len(self.duplicate_files) * 5} minutes (review and remove)",
                 "unused_imports": f"{len(self.unused_imports) * 2} minutes (automated cleanup)",
                 "orphaned_files": f"{len(self.orphaned_files) * 1} minutes (review and remove)",
                 "redundant_configs": f"{len(self.redundant_configs) * 15} minutes (consolidation effort)",
-                "total_estimated": f"{(len(self.duplicate_files) * 5 + len(self.unused_imports) * 2 + len(self.orphaned_files) * 1 + len(self.redundant_configs) * 15)} minutes"
+                "total_estimated": f"{(len(self.duplicate_files) * 5 + len(self.unused_imports) * 2 + len(self.orphaned_files) * 1 + len(self.redundant_configs) * 15)} minutes",
             },
             "safe_removal_candidates": [
                 "Log files in logs/ directory",
                 "Temporary files with .tmp extension",
                 "Cache files in __pycache__ directories",
                 "Old backup files with 'backup' in name",
-                "Duplicate documentation files"
+                "Duplicate documentation files",
             ],
             "risk_assessment": {
                 "low_risk": [
                     "Removing log files and temporary files",
                     "Cleaning up __pycache__ directories",
-                    "Removing duplicate documentation"
+                    "Removing duplicate documentation",
                 ],
                 "medium_risk": [
                     "Removing orphaned Python files",
                     "Consolidating configuration files",
-                    "Removing unused imports"
+                    "Removing unused imports",
                 ],
                 "high_risk": [
                     "Removing files that might be referenced dynamically",
-                    "Consolidating configuration files used by external systems"
-                ]
-            }
+                    "Consolidating configuration files used by external systems",
+                ],
+            },
         }
 
         # Save detailed reports
@@ -423,28 +446,36 @@ class WorkspaceDiagnostic:
         """Save detailed analysis reports"""
 
         # Save duplicate files report
-        with open("duplicate_files_report.json", 'w') as f:
-            json.dump({
-                "exact_duplicates": self.duplicate_files,
-                "similar_files": self.similar_files
-            }, f, indent=2)
+        with open("duplicate_files_report.json", "w") as f:
+            json.dump(
+                {
+                    "exact_duplicates": self.duplicate_files,
+                    "similar_files": self.similar_files,
+                },
+                f,
+                indent=2,
+            )
 
         # Save unused imports report
-        with open("unused_imports_report.json", 'w') as f:
+        with open("unused_imports_report.json", "w") as f:
             json.dump(self.unused_imports, f, indent=2)
 
         # Save orphaned files report
-        with open("orphaned_files_report.json", 'w') as f:
-            json.dump({
-                "orphaned_files": self.orphaned_files,
-                "total_count": len(self.orphaned_files)
-            }, f, indent=2)
+        with open("orphaned_files_report.json", "w") as f:
+            json.dump(
+                {
+                    "orphaned_files": self.orphaned_files,
+                    "total_count": len(self.orphaned_files),
+                },
+                f,
+                indent=2,
+            )
 
         # Save redundant configurations report
-        with open("redundant_configurations_report.json", 'w') as f:
+        with open("redundant_configurations_report.json", "w") as f:
             json.dump(self.redundant_configs, f, indent=2)
 
-    def run_full_diagnostic(self) -> Dict[str, Any]:
+    def run_full_diagnostic(self) -> dict[str, Any]:
         """Run complete workspace diagnostic"""
 
         directories_to_scan = ["scripts", "backend", "docs"]
@@ -457,7 +488,9 @@ class WorkspaceDiagnostic:
         self.similar_files = self.find_similar_files(directories_to_scan)
         self.unused_imports = self.analyze_unused_imports(directories_to_scan)
         self.orphaned_files = self.find_orphaned_files(directories_to_scan)
-        self.redundant_configs = self.analyze_redundant_configurations(directories_to_scan)
+        self.redundant_configs = self.analyze_redundant_configurations(
+            directories_to_scan
+        )
 
         # Generate comprehensive report
         report = self.generate_cleanup_report()
@@ -468,9 +501,12 @@ class WorkspaceDiagnostic:
         print(f"Files with Unused Imports: {len(self.unused_imports)}")
         print(f"Orphaned Files: {len(self.orphaned_files)}")
         print(f"Redundant Configurations: {len(self.redundant_configs)}")
-        print(f"\nEstimated Cleanup Time: {report['estimated_cleanup_effort']['total_estimated']}")
+        print(
+            f"\nEstimated Cleanup Time: {report['estimated_cleanup_effort']['total_estimated']}"
+        )
 
         return report
+
 
 def main():
     """Main diagnostic function"""
@@ -481,55 +517,55 @@ def main():
     # Generate human-readable summary
     summary = f"""# 🧹 WORKSPACE CLEANUP DIAGNOSTIC REPORT
 
-**Diagnostic Date:** {report['diagnostic_timestamp']}
-**Analysis Scope:** {', '.join(report['analysis_scope'])}
+**Diagnostic Date:** {report["diagnostic_timestamp"]}
+**Analysis Scope:** {", ".join(report["analysis_scope"])}
 
 ## 📊 FINDINGS SUMMARY
 
 | Category | Count | Status |
 |----------|-------|--------|
-| Exact Duplicate Files | {report['findings']['exact_duplicates']} | {'❌ Action Required' if report['findings']['exact_duplicates'] > 0 else '✅ Clean'} |
-| Similar Files | {report['findings']['similar_files']} | {'⚠️ Review Needed' if report['findings']['similar_files'] > 0 else '✅ Clean'} |
-| Files with Unused Imports | {report['findings']['files_with_unused_imports']} | {'🔧 Cleanup Needed' if report['findings']['files_with_unused_imports'] > 0 else '✅ Clean'} |
-| Orphaned Files | {report['findings']['orphaned_files']} | {'🗑️ Removal Candidates' if report['findings']['orphaned_files'] > 0 else '✅ Clean'} |
-| Redundant Configurations | {report['findings']['redundant_configurations']} | {'📋 Consolidation Needed' if report['findings']['redundant_configurations'] > 0 else '✅ Clean'} |
+| Exact Duplicate Files | {report["findings"]["exact_duplicates"]} | {"❌ Action Required" if report["findings"]["exact_duplicates"] > 0 else "✅ Clean"} |
+| Similar Files | {report["findings"]["similar_files"]} | {"⚠️ Review Needed" if report["findings"]["similar_files"] > 0 else "✅ Clean"} |
+| Files with Unused Imports | {report["findings"]["files_with_unused_imports"]} | {"🔧 Cleanup Needed" if report["findings"]["files_with_unused_imports"] > 0 else "✅ Clean"} |
+| Orphaned Files | {report["findings"]["orphaned_files"]} | {"🗑️ Removal Candidates" if report["findings"]["orphaned_files"] > 0 else "✅ Clean"} |
+| Redundant Configurations | {report["findings"]["redundant_configurations"]} | {"📋 Consolidation Needed" if report["findings"]["redundant_configurations"] > 0 else "✅ Clean"} |
 
 ## ⏱️ ESTIMATED CLEANUP EFFORT
 
-- **Exact Duplicates:** {report['estimated_cleanup_effort']['exact_duplicates']}
-- **Unused Imports:** {report['estimated_cleanup_effort']['unused_imports']}
-- **Orphaned Files:** {report['estimated_cleanup_effort']['orphaned_files']}
-- **Redundant Configs:** {report['estimated_cleanup_effort']['redundant_configurations']}
-- **Total Estimated:** {report['estimated_cleanup_effort']['total_estimated']}
+- **Exact Duplicates:** {report["estimated_cleanup_effort"]["exact_duplicates"]}
+- **Unused Imports:** {report["estimated_cleanup_effort"]["unused_imports"]}
+- **Orphaned Files:** {report["estimated_cleanup_effort"]["orphaned_files"]}
+- **Redundant Configs:** {report["estimated_cleanup_effort"]["redundant_configurations"]}
+- **Total Estimated:** {report["estimated_cleanup_effort"]["total_estimated"]}
 
 ## 🎯 CLEANUP PRIORITIES
 
 ### 🚨 CRITICAL
-{chr(10).join(f'- {item}' for item in report['cleanup_priorities']['critical'])}
+{chr(10).join(f"- {item}" for item in report["cleanup_priorities"]["critical"])}
 
 ### ⚠️ HIGH
-{chr(10).join(f'- {item}' for item in report['cleanup_priorities']['high'])}
+{chr(10).join(f"- {item}" for item in report["cleanup_priorities"]["high"])}
 
 ### 📋 MEDIUM
-{chr(10).join(f'- {item}' for item in report['cleanup_priorities']['medium'])}
+{chr(10).join(f"- {item}" for item in report["cleanup_priorities"]["medium"])}
 
 ### 📁 LOW
-{chr(10).join(f'- {item}' for item in report['cleanup_priorities']['low'])}
+{chr(10).join(f"- {item}" for item in report["cleanup_priorities"]["low"])}
 
 ## 🛡️ SAFE REMOVAL CANDIDATES
 
-{chr(10).join(f'- ✅ {item}' for item in report['safe_removal_candidates'])}
+{chr(10).join(f"- ✅ {item}" for item in report["safe_removal_candidates"])}
 
 ## ⚠️ RISK ASSESSMENT
 
 ### 🟢 LOW RISK
-{chr(10).join(f'- {item}' for item in report['risk_assessment']['low_risk'])}
+{chr(10).join(f"- {item}" for item in report["risk_assessment"]["low_risk"])}
 
 ### 🟡 MEDIUM RISK
-{chr(10).join(f'- {item}' for item in report['risk_assessment']['medium_risk'])}
+{chr(10).join(f"- {item}" for item in report["risk_assessment"]["medium_risk"])}
 
 ### 🔴 HIGH RISK
-{chr(10).join(f'- {item}' for item in report['risk_assessment']['high_risk'])}
+{chr(10).join(f"- {item}" for item in report["risk_assessment"]["high_risk"])}
 
 ## 📁 GENERATED REPORTS
 
@@ -542,11 +578,12 @@ def main():
 *Run cleanup operations carefully and backup important files before removal.*
 """
 
-    with open("WORKSPACE_CLEANUP_DIAGNOSTIC.md", 'w') as f:
+    with open("WORKSPACE_CLEANUP_DIAGNOSTIC.md", "w") as f:
         f.write(summary)
 
-    print(f"\n📋 Summary report saved to: WORKSPACE_CLEANUP_DIAGNOSTIC.md")
+    print("\n📋 Summary report saved to: WORKSPACE_CLEANUP_DIAGNOSTIC.md")
     print("🎯 Diagnostic complete - review reports for cleanup actions")
+
 
 if __name__ == "__main__":
     main()

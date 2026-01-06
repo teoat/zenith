@@ -20,7 +20,7 @@ jest.mock('react-force-graph-2d', () => ({
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
   Suspense: ({ children, fallback }: any) => fallback || children,
-  lazy: (importFn: () => Promise<any>) => {
+  lazy: (_importFn: () => Promise<any>) => {
     const LazyComponent = (props: any) =>
       React.createElement('div', { 'data-testid': 'lazy-component', ...props }, 'Lazy Component');
     LazyComponent.displayName = 'LazyComponent';

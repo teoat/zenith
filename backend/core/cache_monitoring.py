@@ -7,7 +7,8 @@ for monitoring cache effectiveness.
 
 import functools
 import time
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from prometheus_client import Counter, Gauge, Histogram
 
@@ -74,7 +75,7 @@ class CacheMonitor:
         self._hit_count += 1
 
         logger.debug(
-            f"Cache hit",
+            "Cache hit",
             extra={
                 "cache_name": self.cache_name,
                 "operation": operation,
@@ -88,7 +89,7 @@ class CacheMonitor:
         self._miss_count += 1
 
         logger.debug(
-            f"Cache miss",
+            "Cache miss",
             extra={
                 "cache_name": self.cache_name,
                 "operation": operation,
@@ -104,7 +105,7 @@ class CacheMonitor:
             cache_get_errors.labels(cache_name=self.cache_name).inc()
 
         logger.error(
-            f"Cache error",
+            "Cache error",
             extra={
                 "cache_name": self.cache_name,
                 "operation": operation,
@@ -217,7 +218,7 @@ def monitor_cache(cache_name: str, operation: str = "get"):
 _cache_stats = {}
 
 
-def get_cache_stats(cache_name: Optional[str] = None) -> dict:
+def get_cache_stats(cache_name: str | None = None) -> dict:
     """
     Get cache performance statistics.
 
@@ -236,5 +237,5 @@ def log_cache_performance():
     """Log cache performance statistics"""
     for cache_name, stats in _cache_stats.items():
         logger.info(
-            f"Cache performance report", extra={"cache_name": cache_name, **stats}
+            "Cache performance report", extra={"cache_name": cache_name, **stats}
         )

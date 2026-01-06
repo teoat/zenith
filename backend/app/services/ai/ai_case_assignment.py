@@ -3,12 +3,11 @@ AI-Powered Case Assignment System
 Recommends optimal analyst assignments based on expertise, workload, and case characteristics.
 """
 
-import asyncio
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -26,11 +25,11 @@ class AnalystProfile:
 
     analyst_id: str
     name: str
-    expertise_areas: Dict[str, ExpertiseLevel]
+    expertise_areas: dict[str, ExpertiseLevel]
     current_workload: int
     max_capacity: int
     performance_score: float
-    specializations: List[str]
+    specializations: list[str]
     availability_score: float  # 0.0 to 1.0
 
 
@@ -42,10 +41,10 @@ class CaseCharacteristics:
     priority: str
     case_type: str
     complexity_score: float
-    required_expertise: List[str]
+    required_expertise: list[str]
     estimated_hours: int
-    deadline: Optional[datetime]
-    tags: List[str]
+    deadline: datetime | None
+    tags: list[str]
 
 
 @dataclass
@@ -54,22 +53,22 @@ class AssignmentRecommendation:
 
     analyst_id: str
     confidence_score: float
-    reasoning: List[str]
+    reasoning: list[str]
     workload_balance_score: float
     expertise_match_score: float
     estimated_completion_time: datetime
-    alternative_analysts: List[Tuple[str, float]]
+    alternative_analysts: list[tuple[str, float]]
 
 
 class AICaseAssignmentEngine:
     """AI-powered case assignment recommendation system"""
 
     def __init__(self):
-        self.analyst_profiles: Dict[str, AnalystProfile] = {}
-        self.assignment_history: List[Dict[str, Any]] = []
+        self.analyst_profiles: dict[str, AnalystProfile] = {}
+        self.assignment_history: list[dict[str, Any]] = []
         self.learning_model = self._initialize_learning_model()
 
-    def _initialize_learning_model(self) -> Dict[str, Any]:
+    def _initialize_learning_model(self) -> dict[str, Any]:
         """Initialize simple ML model for assignment optimization"""
         return {
             "expertise_weights": {
@@ -160,7 +159,8 @@ class AICaseAssignmentEngine:
             analyst_scores.items(), key=lambda x: x[1], reverse=True
         )
         alternatives = [
-            (aid, score) for aid, score in sorted_analysts[1:4]  # Top 3 alternatives
+            (aid, score)
+            for aid, score in sorted_analysts[1:4]  # Top 3 alternatives
         ]
 
         # Generate reasoning
@@ -275,8 +275,8 @@ class AICaseAssignmentEngine:
         self,
         profile: AnalystProfile,
         case: CaseCharacteristics,
-        scores: Dict[str, float],
-    ) -> List[str]:
+        scores: dict[str, float],
+    ) -> list[str]:
         """Generate human-readable reasoning for assignment"""
         reasoning = []
 

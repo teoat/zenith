@@ -128,10 +128,10 @@ try:
 
             logger.info("Database migration completed successfully")
 
+        try:
+            main()
         except Exception as e:
             logger.error(f"Migration failed: {e}")
-            sqlite_session.rollback()
-            raise
         finally:
             sqlite_session.close()
             if pg_engine:

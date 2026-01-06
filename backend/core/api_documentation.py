@@ -2,8 +2,10 @@
 API Documentation Configuration using FastAPI/OpenAPI
 Provides comprehensive API documentation with examples and schemas
 """
+
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
+
 
 def custom_openapi_schema(app: FastAPI):
     """Generate custom OpenAPI schema with comprehensive documentation"""
@@ -17,7 +19,7 @@ def custom_openapi_schema(app: FastAPI):
 ## Zenith Fraud Detection Platform
 
 ### Overview
-Comprehensive fraud detection and investigation platform with AI-powered analysis, 
+Comprehensive fraud detection and investigation platform with AI-powered analysis,
 multi-modal evidence processing, and advanced network visualization capabilities.
 
 ### Key Features
@@ -55,71 +57,62 @@ All errors follow this format:
         """,
         routes=app.routes,
         servers=[
-            {
-                "url": "https://api.zenith.com",
-                "description": "Production server"
-            },
-            {
-                "url": "https://staging.zenith.com",
-                "description": "Staging server"
-            },
-            {
-                "url": "http://localhost:8000",
-                "description": "Development server"
-            }
+            {"url": "https://api.zenith.com", "description": "Production server"},
+            {"url": "https://staging.zenith.com", "description": "Staging server"},
+            {"url": "http://localhost:8000", "description": "Development server"},
         ],
         tags=[
             {
                 "name": "Authentication",
                 "description": "User authentication and authorization endpoints. "
-                              "Includes login, registration, MFA setup, and token management."
+                "Includes login, registration, MFA setup, and token management.",
             },
             {
                 "name": "Fraud Detection",
                 "description": "Fraud detection and analysis endpoints. "
-                              "Real-time transaction analysis, risk scoring, and alert generation."
+                "Real-time transaction analysis, risk scoring, and alert generation.",
             },
             {
                 "name": "Case Management",
                 "description": "Investigation case management. "
-                              "Create, update, assign, and close fraud investigation cases."
+                "Create, update, assign, and close fraud investigation cases.",
             },
             {
                 "name": "Evidence",
                 "description": "Evidence upload and management. "
-                              "Multi-modal file analysis including OCR, image analysis, and metadata extraction."
+                "Multi-modal file analysis including OCR, image analysis, and metadata extraction.",
             },
             {
                 "name": "Network Analysis",
                 "description": "Entity and relationship network analysis. "
-                              "Graph-based fraud detection and pattern recognition."
+                "Graph-based fraud detection and pattern recognition.",
             },
             {
                 "name": "Analytics",
                 "description": "Analytics and reporting endpoints. "
-                              "Statistics, metrics, and custom report generation."
+                "Statistics, metrics, and custom report generation.",
             },
             {
                 "name": "Admin",
                 "description": "Administrative functions. "
-                              "User management, system configuration, and audit logs. "
-                              "**Requires ADMIN role**."
+                "User management, system configuration, and audit logs. "
+                "**Requires ADMIN role**.",
             },
             {
                 "name": "Health",
                 "description": "System health and monitoring. "
-                              "Health checks, metrics, and system status."
-            }
-        ]
+                "Health checks, metrics, and system status.",
+            },
+        ],
     )
 
     # Add security schemes
-    openapi_schema["components"]["securitySchemes"] = {
+    openapi_schema["components"]["security_schemes"] = {
         "BearerAuth": {
             "type": "http",
             "scheme": "bearer",
-            "bearerFormat": "JWT",
-            "description": "JWT token obtained from /auth/login endpoint"
+            "bearer_format": "JWT",
+            "description": "JWT token obtained from /auth/login endpoint",
         }
     }
 
@@ -131,8 +124,8 @@ All errors follow this format:
                 "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
                 "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
                 "token_type": "bearer",
-                "expires_in": 1800
-            }
+                "expires_in": 1800,
+            },
         },
         "FraudAnalysis": {
             "summary": "Fraud analysis result",
@@ -143,10 +136,10 @@ All errors follow this format:
                 "risk_factors": [
                     "large_amount",
                     "unusual_location",
-                    "rapid_transactions"
+                    "rapid_transactions",
                 ],
-                "recommendation": "REVIEW_REQUIRED"
-            }
+                "recommendation": "REVIEW_REQUIRED",
+            },
         },
         "CaseCreated": {
             "summary": "Newly created case",
@@ -156,24 +149,18 @@ All errors follow this format:
                 "status": "OPEN",
                 "priority": "HIGH",
                 "created_at": "2025-12-17T05:00:00Z",
-                "assigned_to": "investigator@example.com"
-            }
-        }
+                "assigned_to": "investigator@example.com",
+            },
+        },
     }
 
     # Add common schemas
     openapi_schema["components"]["schemas"]["Error"] = {
         "type": "object",
         "properties": {
-            "detail": {
-                "type": "string",
-                "description": "Error message"
-            },
-            "status_code": {
-                "type": "integer",
-                "description": "HTTP status code"
-            }
-        }
+            "detail": {"type": "string", "description": "Error message"},
+            "status_code": {"type": "integer", "description": "HTTP status code"},
+        },
     }
 
     app.openapi_schema = openapi_schema
@@ -182,20 +169,20 @@ All errors follow this format:
 
 def setup_api_documentation(app: FastAPI):
     """Setup comprehensive API documentation"""
-    
+
     # Override default OpenAPI schema
     app.openapi = lambda: custom_openapi_schema(app)
-    
+
     # Configure Swagger UI
     app.swagger_ui_parameters = {
-        "deepLinking": True,
-        "displayRequestDuration": True,
+        "deep_linking": True,
+        "display_request_duration": True,
         "filter": True,
-        "showExtensions": True,
-        "showCommonExtensions": True,
+        "show_extensions": True,
+        "show_common_extensions": True,
         "syntaxHighlight.theme": "monokai",
     }
-    
+
     return app
 
 
@@ -207,7 +194,7 @@ def setup_api_documentation(app: FastAPI):
     summary="Analyze transaction for fraud",
     description=\"\"\"
     Analyzes a transaction using machine learning models to detect potential fraud.
-    
+
     Returns a fraud score (0-1) and risk level classification.
     Scores above 0.75 are considered high risk and should be reviewed.
     \"\"\",

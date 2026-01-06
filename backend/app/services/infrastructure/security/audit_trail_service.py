@@ -9,7 +9,7 @@ import logging
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -39,18 +39,18 @@ class AuditEvent:
     event_type: AuditEventType
     severity: AuditSeverity
     timestamp: datetime
-    user_id: Optional[str]
-    session_id: Optional[str]
-    ip_address: Optional[str]
-    user_agent: Optional[str]
+    user_id: str | None
+    session_id: str | None
+    ip_address: str | None
+    user_agent: str | None
     resource: str  # What was accessed/modified
     action: str  # What action was performed
-    details: Dict[str, Any]
+    details: dict[str, Any]
     success: bool
-    error_message: Optional[str] = None
-    checksum: Optional[str] = None
+    error_message: str | None = None
+    checksum: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage."""
         data = asdict(self)
         data["event_type"] = self.event_type.value
@@ -83,7 +83,7 @@ class AuditTrailService:
     """
 
     def __init__(self):
-        self.audit_events: List[AuditEvent] = []
+        self.audit_events: list[AuditEvent] = []
         self.coverage_rules = self._initialize_coverage_rules()
         self.integrity_checks_enabled = True
         # Load audit events from persistent storage
@@ -177,7 +177,7 @@ class AuditTrailService:
         except Exception as e:
             logger.error(f"Failed to load audit events from persistent storage: {e}")
 
-    def _initialize_coverage_rules(self) -> Dict[str, Dict[str, Any]]:
+    def _initialize_coverage_rules(self) -> dict[str, dict[str, Any]]:
         """
         Define rules for what operations should be audited.
         """
@@ -217,15 +217,15 @@ class AuditTrailService:
     async def log_event(
         self,
         event_type: AuditEventType,
-        user_id: Optional[str],
+        user_id: str | None,
         resource: str,
         action: str,
-        details: Dict[str, Any],
+        details: dict[str, Any],
         success: bool = True,
-        error_message: Optional[str] = None,
-        session_id: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        user_agent: Optional[str] = None,
+        error_message: str | None = None,
+        session_id: str | None = None,
+        ip_address: str | None = None,
+        user_agent: str | None = None,
     ) -> str:
         """
         Log an audit event with full context.
@@ -333,17 +333,16 @@ class AuditTrailService:
         # 1. Save to dedicated audit database
         # 2. Write to tamper-proof log files
         # 3. Send to centralized logging system
-        pass
 
     async def get_audit_trail(
         self,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-        user_id: Optional[str] = None,
-        event_type: Optional[AuditEventType] = None,
-        resource: Optional[str] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        user_id: str | None = None,
+        event_type: AuditEventType | None = None,
+        resource: str | None = None,
         limit: int = 100,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Retrieve audit trail entries with filtering.
         """
@@ -369,7 +368,7 @@ class AuditTrailService:
 
         return [event.to_dict() for event in events_limited]
 
-    async def verify_audit_integrity(self) -> Dict[str, Any]:
+    async def verify_audit_integrity(self) -> dict[str, Any]:
         """
         Verify the integrity of audit logs.
         """
@@ -398,7 +397,7 @@ class AuditTrailService:
             "corrupted_event_ids": corrupted_events[:10],  # First 10 for reporting
         }
 
-    async def get_audit_coverage_report(self) -> Dict[str, Any]:
+    async def get_audit_coverage_report(self) -> dict[str, Any]:
         """
         Generate report on audit coverage completeness.
         """
@@ -421,7 +420,7 @@ class AuditTrailService:
         total_rules = len(self.coverage_rules)
         missing_coverage = []
 
-        for rule_name, rule_config in self.coverage_rules.items():
+        for rule_name in self.coverage_rules:
             if event_type_counts.get(rule_name, 0) > 0:
                 covered_rules += 1
             else:
@@ -441,8 +440,8 @@ class AuditTrailService:
         }
 
     def _generate_coverage_recommendations(
-        self, missing_coverage: List[str]
-    ) -> List[str]:
+        self, missing_coverage: list[str]
+    ) -> list[str]:
         """Generate recommendations for missing audit coverage."""
         recommendations = []
 
@@ -464,7 +463,7 @@ class AuditTrailService:
 
         return recommendations
 
-    async def get_compliance_report(self) -> Dict[str, Any]:
+    async def get_compliance_report(self) -> dict[str, Any]:
         """
         Generate compliance-focused audit report.
         """
@@ -550,8 +549,8 @@ class AuditTrailService:
         }
 
     def _generate_compliance_recommendations(
-        self, compliance_score: float, metrics: Dict[str, Any]
-    ) -> List[str]:
+        self, compliance_score: float, metrics: dict[str, Any]
+    ) -> list[str]:
         """Generate compliance-focused recommendations."""
         recommendations = []
 

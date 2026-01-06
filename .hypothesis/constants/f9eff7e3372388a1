@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/plugins/fraud_detection/smurfing_detector.py
+# hypothesis_version: 6.148.8
+
+[0.2, 0.5, 1.0, 9000, 9500, 10000, 'amount', 'date', 'flagged_transactions', 'id', 'near_threshold', 'pattern_detected', 'placement', 'reason', 'smurfing', 'structuring', 'threshold_used', 'total_analyzed', 'transactions', 'tx_id']

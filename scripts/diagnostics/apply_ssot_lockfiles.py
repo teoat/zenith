@@ -192,7 +192,7 @@ async def main():
     return full_integrity["overall_integrity"]
 
 
-async def apply_ssot_to_perfect_systems(ssot_values: Dict[str, Any]) -> bool:
+async def apply_ssot_to_perfect_systems(ssot_values: dict[str, Any]) -> bool:
     """Apply SSOT values to all perfect systems"""
     try:
         # Import perfect systems
@@ -254,32 +254,28 @@ async def perpetual_integrity_monitoring():
 
 
 def generate_ssot_report(
-    ssot_values: Dict[str, Any], integrity_results: Dict[str, Any]
-) -> Dict[str, Any]:
+    ssot_values: dict[str, Any], integrity_results: dict[str, Any]
+) -> dict[str, Any]:
     """Generate comprehensive SSOT implementation report"""
     return {
         "implementation_timestamp": str(asyncio.get_event_loop().time()),
         "ssot_entries_count": len(ssot_values),
         "integrity_status": integrity_results,
         "configuration_categories": {
-            "system": len([k for k in ssot_values.keys() if k.startswith("system.")]),
-            "business": len(
-                [k for k in ssot_values.keys() if k.startswith("business.")]
-            ),
-            "innovation": len(
-                [k for k in ssot_values.keys() if k.startswith("innovation.")]
-            ),
+            "system": len([k for k in ssot_values if k.startswith("system.")]),
+            "business": len([k for k in ssot_values if k.startswith("business.")]),
+            "innovation": len([k for k in ssot_values if k.startswith("innovation.")]),
             "competitive": len(
-                [k for k in ssot_values.keys() if k.startswith("competitive.")]
+                [k for k in ssot_values if k.startswith("competitive.")]
             ),
-            "risk": len([k for k in ssot_values.keys() if k.startswith("risk.")]),
+            "risk": len([k for k in ssot_values if k.startswith("risk.")]),
             "dependencies": len(
-                [k for k in ssot_values.keys() if k.startswith("dependencies.")]
+                [k for k in ssot_values if k.startswith("dependencies.")]
             ),
             "environment": len(
-                [k for k in ssot_values.keys() if k.startswith("environment.")]
+                [k for k in ssot_values if k.startswith("environment.")]
             ),
-            "build": len([k for k in ssot_values.keys() if k.startswith("build.")]),
+            "build": len([k for k in ssot_values if k.startswith("build.")]),
         },
         "perfect_values_verified": all(
             value in [1.0, "infinite", 0.0, True]

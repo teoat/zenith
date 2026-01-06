@@ -3,7 +3,6 @@
 Comprehensive router file cleanup - remove orphaned imports
 """
 
-import re
 from pathlib import Path
 
 ROUTER_DIR = Path("backend/app/routers")
@@ -12,7 +11,7 @@ ROUTER_DIR = Path("backend/app/routers")
 def fix_orphaned_imports(filepath: Path) -> bool:
     """Remove orphaned auth_service imports at end of try/except blocks"""
     try:
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             content = f.read()
 
         original = content

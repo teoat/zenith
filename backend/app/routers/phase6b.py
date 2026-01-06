@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Request
-from typing import Dict, Any
 
 # Expose `router` for tests to import as `phase6b_router`
 router = APIRouter()
 
 
-@router.post('/phase6b/metadata-correlation')
+@router.post("/phase6b/metadata-correlation")
 async def metadata_correlation(request: Request):
     payload = {}
     try:
@@ -16,17 +15,13 @@ async def metadata_correlation(request: Request):
         except Exception:
             payload = {}
 
-    case_id = payload.get('case_id')
-    fields = payload.get('fields', [])
+    case_id = payload.get("case_id")
+    fields = payload.get("fields", [])
     # Return the exact shape expected by tests
-    return {
-        'case_id': case_id,
-        'correlated_entities': [],
-        'fields': fields
-    }
+    return {"case_id": case_id, "correlated_entities": [], "fields": fields}
 
 
-@router.post('/phase6b/temporal-burst')
+@router.post("/phase6b/temporal-burst")
 async def temporal_burst(request: Request):
     payload = {}
     try:
@@ -37,20 +32,18 @@ async def temporal_burst(request: Request):
         except Exception:
             payload = {}
 
-<<<<<<< HEAD
-    from app.services.fraud_detection import detect_burst
-=======
     from services.temporal_detector import detect_burst
->>>>>>> 070c7cf08 (chore(batch): clean backend core files only)
 
-    ip = payload.get('entity_id') or payload.get('ip')
+    ip = payload.get("entity_id") or payload.get("ip")
     # detect_burst gracefully handles missing session; tests call without app DB
-    burst, z, count_now, mean_hist, std_hist = detect_burst(None, ip, window_minutes=payload.get('window_minutes', 60))
+    burst, z, count_now, mean_hist, std_hist = detect_burst(
+        None, ip, window_minutes=payload.get("window_minutes", 60)
+    )
 
     return {
-        'burst_detected': bool(burst),
-        'z_score': z,
-        'count_now': count_now,
-        'mean_hist': mean_hist,
-        'std_hist': std_hist
+        "burst_detected": bool(burst),
+        "z_score": z,
+        "count_now": count_now,
+        "mean_hist": mean_hist,
+        "std_hist": std_hist,
     }

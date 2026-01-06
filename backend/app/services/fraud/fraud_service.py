@@ -1,14 +1,13 @@
 # backend/app/services/fraud_service.py
 import logging
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
-
-from sqlalchemy.orm import Session
+from datetime import UTC, datetime
+from typing import Any
 
 from app.services.fraud.engine import rule_engine
-from core.database import Case
+from sqlalchemy.orm import Session
+
+from core.database import Case, Transaction
 from core.database import FraudAlert as FraudAlertModel
-from core.database import Transaction
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +20,8 @@ class FraudDetectionService:
         self.rule_engine = rule_engine  # Use shared instance
 
     async def analyze_case(
-        self, case_id: str, transaction_ids: Optional[List[str]] = None
-    ) -> Dict[str, Any]:
+        self, case_id: str, transaction_ids: list[str] | None = None
+    ) -> dict[str, Any]:
         """Analyze a case for fraud patterns"""
         try:
             # Get case and related transactions
@@ -36,7 +35,7 @@ class FraudDetectionService:
                 query = query.filter(Transaction.id.in_(transaction_ids))
 
             transactions = query.all()
-            
+
             # Convert SQLAlchemy models to dicts for the engine
             transaction_dicts = []
             for t in transactions:
@@ -51,9 +50,11 @@ class FraudDetectionService:
                 transaction_dicts.append(t_dict)
 
             # Execute fraud rules
-            logger.info(f"Running fraud rules on {len(transactions)} transactions for case {case_id}")
+            logger.info(
+                f"Running fraud rules on {len(transactions)} transactions for case {case_id}"
+            )
             rule_alerts = await self.rule_engine.execute_rules(transaction_dicts)
-            
+
             saved_alerts = []
 
             for result in rule_alerts:
@@ -65,7 +66,7 @@ class FraudDetectionService:
                     "risk_score": result.risk_score,
                     "recommendations": result.recommendations,
                     "rule_name": result.rule_name,
-                    "status": "open"
+                    "status": "open",
                 }
 
                 alert = FraudAlertModel(
@@ -75,13 +76,13 @@ class FraudDetectionService:
                     severity=result.severity.value,
                     description=result.description,
                     alert_metadata=alert_metadata,
-                    created_at=datetime.now(timezone.utc)
+                    created_at=datetime.now(UTC),
                 )
                 self.db.add(alert)
                 saved_alerts.append(alert)
-            
+
             self.db.commit()
-            
+
             # Refresh to get IDs
             for a in saved_alerts:
                 self.db.refresh(a)
@@ -94,10 +95,15 @@ class FraudDetectionService:
                     {
                         "id": a.id,
                         # Fallback to metadata if column doesn't exist
-                        "rule_name": a.alert_metadata.get("rule_name") if hasattr(a, "alert_metadata") and a.alert_metadata else None,
+                        "rule_name": a.alert_metadata.get("rule_name")
+                        if hasattr(a, "alert_metadata") and a.alert_metadata
+                        else None,
                         "severity": a.severity,
-                        "risk_score": a.alert_metadata.get("risk_score") if hasattr(a, "alert_metadata") and a.alert_metadata else 0.0
-                    } for a in saved_alerts
+                        "risk_score": a.alert_metadata.get("risk_score")
+                        if hasattr(a, "alert_metadata") and a.alert_metadata
+                        else 0.0,
+                    }
+                    for a in saved_alerts
                 ],
             }
 
@@ -106,7 +112,7 @@ class FraudDetectionService:
             self.db.rollback()
             return {"error": str(e), "alerts": []}
 
-    def get_case_alerts(self, case_id: str) -> List[Dict[str, Any]]:
+    def get_case_alerts(self, case_id: str) -> list[dict[str, Any]]:
         """Get all alerts for a case"""
         try:
             alerts = (
@@ -137,7 +143,7 @@ class FraudDetectionService:
             return []
 
     def update_alert_status(
-        self, alert_id: str, status: str, reviewed_by: Optional[str] = None
+        self, alert_id: str, status: str, reviewed_by: str | None = None
     ) -> bool:
         """Update the status of a fraud alert"""
         try:
@@ -152,7 +158,7 @@ class FraudDetectionService:
             alert.status = status
             if reviewed_by:
                 alert.reviewed_by = reviewed_by
-                alert.reviewed_at = datetime.now(timezone.utc)
+                alert.reviewed_at = datetime.now(UTC)
 
             self.db.commit()
             return True
@@ -162,7 +168,7 @@ class FraudDetectionService:
             self.db.rollback()
             return False
 
-    def get_fraud_stats(self) -> Dict[str, Any]:
+    def get_fraud_stats(self) -> dict[str, Any]:
         """Get aggregate fraud statistics"""
         try:
             total_cases = self.db.query(Case).count()

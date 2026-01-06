@@ -3,10 +3,9 @@ CRDT (Conflict-free Replicated Data Type) Service
 Enables real-time collaborative editing without conflicts
 """
 
-import json
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class Operation:
@@ -17,7 +16,7 @@ class Operation:
         self.user_id = user_id
         self.timestamp = timestamp
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "op_id": self.op_id,
             "user_id": self.user_id,
@@ -35,7 +34,7 @@ class InsertOperation(Operation):
         self.position = position
         self.content = content
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             **super().to_dict(),
             "type": "insert",
@@ -54,7 +53,7 @@ class DeleteOperation(Operation):
         self.position = position
         self.length = length
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             **super().to_dict(),
             "type": "delete",
@@ -72,12 +71,12 @@ class CRDTDocument:
 
     def __init__(self, document_id: str):
         self.document_id = document_id
-        self.content: List[Dict[str, Any]] = []
-        self.operations: List[Operation] = []
+        self.content: list[dict[str, Any]] = []
+        self.operations: list[Operation] = []
         self.version = 0
-        self.participants: Dict[str, Dict[str, Any]] = {}
+        self.participants: dict[str, dict[str, Any]] = {}
 
-    def apply_operation(self, operation: Dict[str, Any]) -> bool:
+    def apply_operation(self, operation: dict[str, Any]) -> bool:
         """
         Apply an operation to the document
 
@@ -96,7 +95,7 @@ class CRDTDocument:
             print(f"Error applying operation: {e}")
             return False
 
-    def _apply_insert(self, operation: Dict[str, Any]) -> bool:
+    def _apply_insert(self, operation: dict[str, Any]) -> bool:
         """Apply insert operation"""
         position = operation.get("position", 0)
         content = operation.get("content", "")
@@ -118,7 +117,7 @@ class CRDTDocument:
 
         return False
 
-    def _apply_delete(self, operation: Dict[str, Any]) -> bool:
+    def _apply_delete(self, operation: dict[str, Any]) -> bool:
         """Apply delete operation"""
         position = operation.get("position", 0)
         length = operation.get("length", 1)
@@ -135,7 +134,7 @@ class CRDTDocument:
         """Get current document text"""
         return "".join(elem.get("content", "") for elem in self.content)
 
-    def add_participant(self, user_id: str, user_data: Dict[str, Any]):
+    def add_participant(self, user_id: str, user_data: dict[str, Any]):
         """Add a participant to the document"""
         self.participants[user_id] = {
             **user_data,
@@ -153,7 +152,7 @@ class CRDTDocument:
         if user_id in self.participants:
             self.participants[user_id]["cursor_position"] = position
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Get document state"""
         return {
             "document_id": self.document_id,
@@ -168,7 +167,7 @@ class CRDTManager:
     """Manages multiple CRDT documents"""
 
     def __init__(self):
-        self.documents: Dict[str, CRDTDocument] = {}
+        self.documents: dict[str, CRDTDocument] = {}
 
     def create_document(self, document_id: str) -> CRDTDocument:
         """Create a new CRDT document"""
@@ -176,7 +175,7 @@ class CRDTManager:
             self.documents[document_id] = CRDTDocument(document_id)
         return self.documents[document_id]
 
-    def get_document(self, document_id: str) -> Optional[CRDTDocument]:
+    def get_document(self, document_id: str) -> CRDTDocument | None:
         """Get existing document"""
         return self.documents.get(document_id)
 
@@ -185,7 +184,7 @@ class CRDTManager:
         if document_id in self.documents:
             del self.documents[document_id]
 
-    def apply_operation(self, document_id: str, operation: Dict[str, Any]) -> bool:
+    def apply_operation(self, document_id: str, operation: dict[str, Any]) -> bool:
         """Apply operation to document"""
         doc = self.get_document(document_id)
         if not doc:
@@ -193,7 +192,7 @@ class CRDTManager:
 
         return doc.apply_operation(operation)
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get manager statistics"""
         return {
             "total_documents": len(self.documents),

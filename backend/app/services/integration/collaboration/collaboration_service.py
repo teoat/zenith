@@ -8,10 +8,10 @@ import json
 import logging
 import os
 import queue
-import threading
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set
+from datetime import datetime
+from typing import Any
 
 import websockets
 from websockets.server import ServerConnection
@@ -27,18 +27,19 @@ class CollaborationManager:
     Manages real-time collaboration sessions and WebSocket connections
     """
 
-    def __init__(self, host: str = "localhost", port: int = 8080):
+    def __init__(self, host: str = "0.0.0.0", port: int = 8080):
         self.host = host
         self.port = port
-        self.active_connections: Dict[str, Set[WebSocketConnection]] = {}
-        self.session_participants: Dict[str, Dict[str, Any]] = {}
+        self.active_connections: dict[str, set[WebSocketConnection]] = {}
+        self.session_participants: dict[str, dict[str, Any]] = {}
         self.message_queue = queue.Queue()
         self.executor = ThreadPoolExecutor(max_workers=4)
         self.running = False
         self.server = None
+        self._background_tasks: list[asyncio.Task] = []
 
         # Message handlers
-        self.message_handlers: Dict[str, Callable] = {
+        self.message_handlers: dict[str, Callable] = {
             "join_session": self.handle_join_session,
             "leave_session": self.handle_leave_session,
             "cursor_update": self.handle_cursor_update,
@@ -53,10 +54,9 @@ class CollaborationManager:
     async def start_server(self):
         """Start the WebSocket server"""
         print(f"DEBUG: Starting WebSocket server on {self.host}:{self.port}")
-        import traceback
         try:
             self.running = True
-            print(f"DEBUG: Set running to True")
+            print("DEBUG: Set running to True")
             self.server = await websockets.serve(
                 self.handle_connection,
                 self.host,
@@ -68,12 +68,15 @@ class CollaborationManager:
             logger.info(f"WebSocket server started on ws://{self.host}:{self.port}")
 
             # Start message processing loop
-            asyncio.create_task(self.process_messages())
+            messages_task = asyncio.create_task(self.process_messages())
+            self._background_tasks.append(messages_task)
 
             # For testing/development, don't wait for server closure
             # This allows the server to start without blocking the lifespan
             if os.getenv("TESTING", "false").lower() == "true":
-                logger.info("WebSocket server started in testing mode - not waiting for closure")
+                logger.info(
+                    "WebSocket server started in testing mode - not waiting for closure"
+                )
                 return
 
             # Keep server running (production mode)
@@ -184,7 +187,7 @@ class CollaborationManager:
         except Exception as e:
             logger.error(f"Connection handler error: {e}", exc_info=True)
             try:
-                await websocket.close(1011, f"Internal error: {str(e)}")
+                await websocket.close(1011, f"Internal error: {e!s}")
             except:
                 pass  # Connection might already be closed
         finally:
@@ -218,7 +221,7 @@ class CollaborationManager:
         self,
         session_id: str,
         participant_id: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         websocket: WebSocketConnection,
     ):
         """Handle incoming messages"""
@@ -256,11 +259,13 @@ class CollaborationManager:
         self,
         session_id: str,
         participant_id: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         websocket: WebSocketConnection,
     ):
         """Handle session join"""
-        print(f"DEBUG: Handling join_session for session {session_id}, participant {participant_id}")
+        print(
+            f"DEBUG: Handling join_session for session {session_id}, participant {participant_id}"
+        )
         try:
             # Simple response for testing
             await websocket.send(
@@ -291,7 +296,7 @@ class CollaborationManager:
         self,
         session_id: str,
         participant_id: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         websocket: WebSocketConnection,
     ):
         """Handle session leave"""
@@ -302,7 +307,7 @@ class CollaborationManager:
         self,
         session_id: str,
         participant_id: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         websocket: WebSocketConnection,
     ):
         """Handle cursor position updates"""
@@ -333,7 +338,7 @@ class CollaborationManager:
         self,
         session_id: str,
         participant_id: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         websocket: WebSocketConnection,
     ):
         """Handle entity selection"""
@@ -361,7 +366,7 @@ class CollaborationManager:
         self,
         session_id: str,
         participant_id: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         websocket: WebSocketConnection,
     ):
         """Handle entity updates"""
@@ -381,7 +386,7 @@ class CollaborationManager:
         self,
         session_id: str,
         participant_id: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         websocket: WebSocketConnection,
     ):
         """Handle chat messages"""
@@ -410,7 +415,7 @@ class CollaborationManager:
         self,
         session_id: str,
         participant_id: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         websocket: WebSocketConnection,
     ):
         """Handle ping messages"""
@@ -421,7 +426,7 @@ class CollaborationManager:
     async def broadcast_to_session(
         self,
         session_id: str,
-        message: Dict[str, Any],
+        message: dict[str, Any],
         exclude: WebSocketConnection = None,
     ):
         """Broadcast message to all participants in a session"""
@@ -439,7 +444,7 @@ class CollaborationManager:
             await asyncio.gather(*tasks, return_exceptions=True)
 
     async def send_to_participant(
-        self, session_id: str, participant_id: str, message: Dict[str, Any]
+        self, session_id: str, participant_id: str, message: dict[str, Any]
     ):
         """Send message to specific participant"""
         if session_id not in self.active_connections:
@@ -460,7 +465,6 @@ class CollaborationManager:
                 while not self.message_queue.empty():
                     message = self.message_queue.get_nowait()
                     # Process message
-                    pass
 
                 await asyncio.sleep(0.1)  # Small delay to prevent busy waiting
 
@@ -468,7 +472,7 @@ class CollaborationManager:
                 logger.error(f"Message processing error: {e}")
                 await asyncio.sleep(1)
 
-    def get_session_info(self, session_id: str) -> Dict[str, Any]:
+    def get_session_info(self, session_id: str) -> dict[str, Any]:
         """Get information about a session"""
         return {
             "session_id": session_id,
@@ -479,14 +483,13 @@ class CollaborationManager:
             "created_at": datetime.now().isoformat(),
         }
 
-    def get_all_sessions(self) -> List[Dict[str, Any]]:
+    def get_all_sessions(self) -> list[dict[str, Any]]:
         """Get information about all active sessions"""
         return [
-            self.get_session_info(session_id)
-            for session_id in self.active_connections.keys()
+            self.get_session_info(session_id) for session_id in self.active_connections
         ]
 
-    def get_system_stats(self) -> Dict[str, Any]:
+    def get_system_stats(self) -> dict[str, Any]:
         """Get system-wide collaboration statistics"""
         try:
             total_connections = sum(
@@ -537,7 +540,7 @@ class CollaborationClient:
         self.websocket = None
         self.connected = False
         self.participant_id = None
-        self.message_handlers: Dict[str, Callable] = {}
+        self.message_handlers: dict[str, Callable] = {}
         self.reconnect_attempts = 0
         self.max_reconnect_attempts = 5
 
@@ -545,7 +548,7 @@ class CollaborationClient:
         """Add a message handler"""
         self.message_handlers[message_type] = handler
 
-    async def connect(self, participant_info: Dict[str, Any] = None):
+    async def connect(self, participant_info: dict[str, Any] | None = None):
         """Connect to the collaboration server"""
         try:
             self.websocket = await websockets.connect(
@@ -568,7 +571,8 @@ class CollaborationClient:
             await self.websocket.send(json.dumps(join_message))
 
             # Start message handling loop
-            asyncio.create_task(self.handle_messages())
+            task = asyncio.create_task(self.handle_messages())
+            self._background_tasks.append(task)
 
             logger.info(f"Connected to collaboration session {self.session_id}")
 
@@ -632,7 +636,7 @@ class CollaborationClient:
         except Exception as e:
             logger.error(f"Reconnection failed: {e}")
 
-    async def send_message(self, message: Dict[str, Any]):
+    async def send_message(self, message: dict[str, Any]):
         """Send a message to the server"""
         if not self.connected or not self.websocket:
             raise Exception("Not connected to collaboration server")
@@ -657,7 +661,7 @@ class CollaborationClient:
             }
         )
 
-    async def update_entity(self, entity_id: str, changes: Dict[str, Any]):
+    async def update_entity(self, entity_id: str, changes: dict[str, Any]):
         """Update an entity"""
         await self.send_message(
             {"type": "entity_update", "entity_id": entity_id, "changes": changes}

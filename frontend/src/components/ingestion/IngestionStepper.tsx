@@ -9,7 +9,6 @@ import { useToast } from '../../providers/ToastProvider';
 import { AccessibleButton } from '../ui/AccessibleButton';
 import ProgressBar from '../ui/ProgressBar';
 import { secureLogger } from '../../utils/secureLogger';
-import { secureRandom } from '../../utils/secureRandom'; // Module not found
 
 const STEPS = [
     { id: 'upload', label: 'Upload Files' },

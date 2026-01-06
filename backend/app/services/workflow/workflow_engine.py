@@ -5,7 +5,7 @@ Workflow Automation Engine - Comprehensive investigation automation
 import logging
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -37,11 +37,11 @@ class AutomatedAction(BaseModel):
     title: str
     description: str
     priority: str  # low, medium, high, critical
-    evidence_required: List[str]
+    evidence_required: list[str]
     estimated_duration: int  # in minutes
     ai_persona: str
     confidence_score: float
-    execution_script: Optional[str] = None
+    execution_script: str | None = None
 
 
 class InvestigationTemplate(BaseModel):
@@ -51,9 +51,9 @@ class InvestigationTemplate(BaseModel):
     case_type: CaseType
     title: str
     description: str
-    required_evidence: List[str]
-    standard_actions: List[str]
-    regulatory_requirements: List[str]
+    required_evidence: list[str]
+    standard_actions: list[str]
+    regulatory_requirements: list[str]
     estimated_duration: int  # in hours
 
 
@@ -64,7 +64,7 @@ class WorkflowEngine:
         self.case_templates = self._initialize_templates()
         self.workflow_rules = self._initialize_workflow_rules()
 
-    def _initialize_templates(self) -> Dict[CaseType, InvestigationTemplate]:
+    def _initialize_templates(self) -> dict[CaseType, InvestigationTemplate]:
         """Initialize investigation templates for different case types"""
         return {
             CaseType.AML_INVESTIGATION: InvestigationTemplate(
@@ -171,7 +171,7 @@ class WorkflowEngine:
             ),
         }
 
-    def _initialize_workflow_rules(self) -> Dict[str, Any]:
+    def _initialize_workflow_rules(self) -> dict[str, Any]:
         """Initialize workflow automation rules"""
         return {
             "auto_escalation": {
@@ -198,10 +198,10 @@ class WorkflowEngine:
 
     async def generate_investigation_case(
         self,
-        alert_data: Dict[str, Any],
+        alert_data: dict[str, Any],
         case_type: CaseType,
-        ai_insights: List[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        ai_insights: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
         """Generate complete investigation case with automation"""
         try:
             template = self.case_templates[case_type]
@@ -243,10 +243,10 @@ class WorkflowEngine:
 
     async def _generate_automated_actions(
         self,
-        alert_data: Dict[str, Any],
+        alert_data: dict[str, Any],
         template: InvestigationTemplate,
-        ai_insights: List[Dict[str, Any]],
-    ) -> List[AutomatedAction]:
+        ai_insights: list[dict[str, Any]],
+    ) -> list[AutomatedAction]:
         """Generate AI-enhanced automated actions for investigation"""
         actions = []
 
@@ -263,7 +263,7 @@ class WorkflowEngine:
             )
 
             action = AutomatedAction(
-                id=f"action_{i+1}",
+                id=f"action_{i + 1}",
                 action_type=standard_action,
                 title=standard_action.replace("_", " ").title(),
                 description=f"AI-generated {standard_action} for {template.title}",
@@ -285,9 +285,7 @@ class WorkflowEngine:
         """Calculate priority based on action sequence and risk level"""
         if risk_score >= 0.8:
             return "critical"
-        elif risk_score >= 0.6:
-            return "high"
-        elif sequence <= 2:
+        elif risk_score >= 0.6 or sequence <= 2:
             return "high"
         elif sequence <= 5:
             return "medium"
@@ -295,7 +293,7 @@ class WorkflowEngine:
             return "low"
 
     def _calculate_action_confidence(
-        self, action: str, ai_insights: List[Dict[str, Any]]
+        self, action: str, ai_insights: list[dict[str, Any]]
     ) -> float:
         """Calculate confidence score for action based on AI insights"""
         if not ai_insights:
@@ -316,7 +314,7 @@ class WorkflowEngine:
 
         return 0.7
 
-    def _estimate_action_duration(self, action: str, alert_data: Dict[str, Any]) -> int:
+    def _estimate_action_duration(self, action: str, alert_data: dict[str, Any]) -> int:
         """Estimate action duration in minutes based on action type and alert complexity"""
         base_durations = {
             "Initial risk assessment": 15,
@@ -344,7 +342,7 @@ class WorkflowEngine:
 
     def _get_required_evidence(
         self, action: str, template: InvestigationTemplate
-    ) -> List[str]:
+    ) -> list[str]:
         """Get required evidence for a specific action"""
         action_evidence_mapping = {
             "Initial risk assessment": ["Transaction records", "Customer profile"],
@@ -376,8 +374,8 @@ class WorkflowEngine:
         return persona_mapping.get(action, "aml_analyst")
 
     async def _generate_evidence_plan(
-        self, alert_data: Dict[str, Any], template: InvestigationTemplate
-    ) -> Dict[str, Any]:
+        self, alert_data: dict[str, Any], template: InvestigationTemplate
+    ) -> dict[str, Any]:
         """Generate automated evidence collection plan"""
         return {
             "required_evidence": template.required_evidence,
@@ -389,7 +387,7 @@ class WorkflowEngine:
             * 30,  # 30 minutes per evidence item
         }
 
-    def _get_collection_methods(self, alert_data: Dict[str, Any]) -> List[str]:
+    def _get_collection_methods(self, alert_data: dict[str, Any]) -> list[str]:
         """Get evidence collection methods based on alert data"""
         methods = []
 
@@ -408,8 +406,8 @@ class WorkflowEngine:
         return methods if methods else ["Manual evidence collection"]
 
     async def _generate_investigation_timeline(
-        self, alert_data: Dict[str, Any], actions: List[AutomatedAction]
-    ) -> Dict[str, Any]:
+        self, alert_data: dict[str, Any], actions: list[AutomatedAction]
+    ) -> dict[str, Any]:
         """Generate investigation timeline with automated actions"""
         timeline_events = []
 
@@ -466,10 +464,10 @@ class WorkflowEngine:
 
     async def _calculate_investigation_parameters(
         self,
-        alert_data: Dict[str, Any],
+        alert_data: dict[str, Any],
         template: InvestigationTemplate,
-        actions: List[AutomatedAction],
-    ) -> Dict[str, Any]:
+        actions: list[AutomatedAction],
+    ) -> dict[str, Any]:
         """Calculate investigation parameters"""
         return {
             "complexity_score": self._calculate_complexity_score(alert_data),
@@ -482,7 +480,7 @@ class WorkflowEngine:
             "automation_potential": len(actions) / len(template.standard_actions) * 100,
         }
 
-    def _calculate_complexity_score(self, alert_data: Dict[str, Any]) -> float:
+    def _calculate_complexity_score(self, alert_data: dict[str, Any]) -> float:
         """Calculate investigation complexity score"""
         score = 0.0
 
@@ -511,7 +509,7 @@ class WorkflowEngine:
 
         return min(score, 1.0)
 
-    def _estimate_resources(self, actions: List[AutomatedAction]) -> Dict[str, Any]:
+    def _estimate_resources(self, actions: list[AutomatedAction]) -> dict[str, Any]:
         """Estimate resource requirements for investigation"""
         total_duration = sum(action.estimated_duration for action in actions)
         investigator_hours = total_duration / 60  # Convert to hours
@@ -519,7 +517,7 @@ class WorkflowEngine:
         return {
             "total_estimated_hours": investigator_hours,
             "required_skills": list(
-                set(self._get_required_skills(action.action_type) for action in actions)
+                {self._get_required_skills(action.action_type) for action in actions}
             ),
             "system_requirements": [
                 "Investigation Platform",
@@ -535,7 +533,7 @@ class WorkflowEngine:
             / 60,
         }
 
-    def _get_required_skills(self, action_type: str) -> List[str]:
+    def _get_required_skills(self, action_type: str) -> list[str]:
         """Get required skills for action type"""
         skill_mapping = {
             "Initial risk assessment": ["Risk Analysis", "Quantitative Methods"],
@@ -563,7 +561,7 @@ class WorkflowEngine:
         }
         return skill_mapping.get(action_type, ["Investigation"])
 
-    def _identify_critical_path(self, actions: List[AutomatedAction]) -> List[str]:
+    def _identify_critical_path(self, actions: list[AutomatedAction]) -> list[str]:
         """Identify critical path actions"""
         critical_actions = []
 
@@ -577,7 +575,7 @@ class WorkflowEngine:
         return critical_actions
 
     def _calculate_success_probability(
-        self, alert_data: Dict[str, Any], actions: List[AutomatedAction]
+        self, alert_data: dict[str, Any], actions: list[AutomatedAction]
     ) -> float:
         """Calculate probability of investigation success"""
         base_probability = 0.75
@@ -598,7 +596,7 @@ class WorkflowEngine:
 
         return min(base_probability, 0.95)
 
-    def _assess_regulatory_risk(self, alert_data: Dict[str, Any]) -> str:
+    def _assess_regulatory_risk(self, alert_data: dict[str, Any]) -> str:
         """Assess regulatory risk level"""
         risk_indicators = []
 

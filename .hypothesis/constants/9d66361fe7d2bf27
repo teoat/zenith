@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/entities.py
+# hypothesis_version: 6.148.8
+
+[1.0, 201, 400, 404, 500, '/entities', '/relationships', 'Entity not found', 'RELATED', 'attributes', 'case_id', 'confidence', 'created', 'email', 'entities', 'entities.py', 'entity_id', 'entity_type', 'file', 'foreign key', 'from_entity_id', 'id', 'is_active', 'name', 'relationship', 'relationship_id', 'relationship_type', 'role', 'status', 'test-user-id', 'test@test.com', 'testuser', 'to_entity_id', 'user', 'username']

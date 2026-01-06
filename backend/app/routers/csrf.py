@@ -1,15 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
 import secrets
+from datetime import datetime, timedelta
 
-from app.services.infrastructure.auth_service import auth_service
-from core.database import get_db
+from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
 
 # In-memory token store (use Redis in production)
 _csrf_tokens = {}
+
 
 @router.get("/csrf-token")
 async def get_csrf_token():
@@ -24,18 +22,19 @@ async def get_csrf_token():
         # Store token with anonymous context (CSRF tokens don't require authentication)
         token_key = f"anon_{secrets.token_hex(8)}"
         _csrf_tokens[token_key] = {
-            'token': token,
-            'expires': datetime.now() + timedelta(hours=1),  # 1 hour expiration
-            'user_id': None  # Anonymous token
+            "token": token,
+            "expires": datetime.now() + timedelta(hours=1),  # 1 hour expiration
+            "user_id": None,  # Anonymous token
         }
 
         return {
-            'csrf_token': token,
-            'expires_in': 3600  # 1 hour in seconds
+            "csrf_token": token,
+            "expires_in": 3600,  # 1 hour in seconds
         }
 
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Failed to generate CSRF token")
+
 
 @router.post("/validate-csrf")
 async def validate_csrf_token(token: str):
@@ -45,18 +44,19 @@ async def validate_csrf_token(token: str):
     try:
         # Check all possible token keys for anonymous users
         for key, stored_token in _csrf_tokens.items():
-            if stored_token['token'] == token:
-                if stored_token['expires'] > datetime.now():
-                    return {'valid': True}
+            if stored_token["token"] == token:
+                if stored_token["expires"] > datetime.now():
+                    return {"valid": True}
                 else:
                     # Clean up expired token
                     del _csrf_tokens[key]
-                    return {'valid': False, 'error': 'Token expired'}
+                    return {"valid": False, "error": "Token expired"}
 
-        return {'valid': False, 'error': 'Invalid token'}
+        return {"valid": False, "error": "Invalid token"}
 
-    except Exception as e:
-        return {'valid': False, 'error': 'Validation failed'}
+    except Exception:
+        return {"valid": False, "error": "Validation failed"}
+
 
 # Clean up expired tokens periodically (basic implementation)
 @router.post("/cleanup-tokens")
@@ -68,13 +68,10 @@ async def cleanup_expired_tokens():
     expired_keys = []
 
     for key, token_data in _csrf_tokens.items():
-        if token_data['expires'] <= current_time:
+        if token_data["expires"] <= current_time:
             expired_keys.append(key)
 
     for key in expired_keys:
         del _csrf_tokens[key]
 
-    return {
-        'cleaned': len(expired_keys),
-        'remaining': len(_csrf_tokens)
-    }
+    return {"cleaned": len(expired_keys), "remaining": len(_csrf_tokens)}

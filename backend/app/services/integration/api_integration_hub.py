@@ -4,20 +4,21 @@ Centralized management of third-party API integrations with webhook support,
 rate limiting, and partner ecosystem management.
 """
 
-import asyncio
-import base64
 import hashlib
 import hmac
 import json
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any
 
 import aiohttp
-
-from app.services.infrastructure.circuit_breaker import circuit_breaker, CircuitBreakerConfig
+from app.services.infrastructure.circuit_breaker import (
+    CircuitBreakerConfig,
+    circuit_breaker,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -57,15 +58,15 @@ class IntegrationConfig:
     status: IntegrationStatus
     endpoint_url: str
     authentication: AuthenticationType
-    auth_config: Dict[str, Any] = field(default_factory=dict)
+    auth_config: dict[str, Any] = field(default_factory=dict)
     rate_limit: int = 100  # requests per minute
     timeout_seconds: int = 30
     retry_attempts: int = 3
-    headers: Dict[str, str] = field(default_factory=dict)
-    query_params: Dict[str, str] = field(default_factory=dict)
-    webhook_secret: Optional[str] = None
+    headers: dict[str, str] = field(default_factory=dict)
+    query_params: dict[str, str] = field(default_factory=dict)
+    webhook_secret: str | None = None
     created_at: datetime = field(default_factory=datetime.now)
-    last_used: Optional[datetime] = None
+    last_used: datetime | None = None
     error_count: int = 0
     success_count: int = 0
 
@@ -78,11 +79,11 @@ class IntegrationCall:
     integration_id: str
     method: str
     endpoint: str
-    request_data: Optional[Dict[str, Any]] = None
-    response_data: Optional[Dict[str, Any]] = None
-    status_code: Optional[int] = None
-    duration_ms: Optional[int] = None
-    error_message: Optional[str] = None
+    request_data: dict[str, Any] | None = None
+    response_data: dict[str, Any] | None = None
+    status_code: int | None = None
+    duration_ms: int | None = None
+    error_message: str | None = None
     timestamp: datetime = field(default_factory=datetime.now)
 
 
@@ -93,11 +94,11 @@ class WebhookEvent:
     event_id: str
     integration_id: str
     event_type: str
-    payload: Dict[str, Any]
-    headers: Dict[str, str]
-    signature: Optional[str] = None
+    payload: dict[str, Any]
+    headers: dict[str, str]
+    signature: str | None = None
     verified: bool = False
-    processed_at: Optional[datetime] = None
+    processed_at: datetime | None = None
     timestamp: datetime = field(default_factory=datetime.now)
 
 
@@ -105,11 +106,11 @@ class APIIntegrationHub:
     """Centralized API integration management system"""
 
     def __init__(self):
-        self.integrations: Dict[str, IntegrationConfig] = {}
-        self.call_history: List[IntegrationCall] = []
-        self.webhook_handlers: Dict[str, Callable] = {}
-        self.rate_limiters: Dict[str, Dict[str, List[datetime]]] = {}
-        self.session_pool: Dict[str, aiohttp.ClientSession] = {}
+        self.integrations: dict[str, IntegrationConfig] = {}
+        self.call_history: list[IntegrationCall] = []
+        self.webhook_handlers: dict[str, Callable] = {}
+        self.rate_limiters: dict[str, dict[str, list[datetime]]] = {}
+        self.session_pool: dict[str, aiohttp.ClientSession] = {}
         self.db = None
 
     async def initialize(self, db_session):
@@ -117,6 +118,7 @@ class APIIntegrationHub:
         self.db = db_session
         try:
             from core.database import IntegrationConfigModel
+
             db_integrations = self.db.query(IntegrationConfigModel).all()
             for db_int in db_integrations:
                 config = IntegrationConfig(
@@ -129,14 +131,14 @@ class APIIntegrationHub:
                     auth_config=db_int.auth_config or {},
                     rate_limit=db_int.rate_limit,
                     created_at=db_int.created_at,
-                    last_used=db_int.last_used
+                    last_used=db_int.last_used,
                 )
                 self.integrations[config.integration_id] = config
-                
+
                 # Setup session and rate limiter
                 if config.type in [IntegrationType.REST_API, IntegrationType.GRAPHQL]:
                     await self._create_session(config)
-                
+
                 self.rate_limiters[config.integration_id] = {
                     "calls": [],
                     "last_reset": datetime.now(),
@@ -156,7 +158,12 @@ class APIIntegrationHub:
             # Store in DB if session available
             if self.db:
                 from core.database import IntegrationConfigModel
-                db_int = self.db.query(IntegrationConfigModel).filter(IntegrationConfigModel.id == config.integration_id).first()
+
+                db_int = (
+                    self.db.query(IntegrationConfigModel)
+                    .filter(IntegrationConfigModel.id == config.integration_id)
+                    .first()
+                )
                 if not db_int:
                     db_int = IntegrationConfigModel(
                         id=config.integration_id,
@@ -167,7 +174,7 @@ class APIIntegrationHub:
                         auth_type=config.authentication.value,
                         auth_config=config.auth_config,
                         rate_limit=config.rate_limit,
-                        created_at=config.created_at
+                        created_at=config.created_at,
                     )
                     self.db.add(db_int)
                 else:
@@ -178,7 +185,7 @@ class APIIntegrationHub:
                     db_int.auth_type = config.authentication.value
                     db_int.auth_config = config.auth_config
                     db_int.rate_limit = config.rate_limit
-                
+
                 self.db.commit()
 
             # Store in memory
@@ -208,9 +215,9 @@ class APIIntegrationHub:
         integration_id: str,
         method: str = "GET",
         endpoint: str = "",
-        data: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
-    ) -> Dict[str, Any]:
+        data: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
         """
         Make an API call to a registered integration
 
@@ -291,7 +298,12 @@ class APIIntegrationHub:
             if self.db:
                 try:
                     from core.database import IntegrationConfigModel
-                    db_int = self.db.query(IntegrationConfigModel).filter(IntegrationConfigModel.id == integration_id).first()
+
+                    db_int = (
+                        self.db.query(IntegrationConfigModel)
+                        .filter(IntegrationConfigModel.id == integration_id)
+                        .first()
+                    )
                     if db_int:
                         db_int.last_used = config.last_used
                         self.db.commit()
@@ -344,10 +356,10 @@ class APIIntegrationHub:
         self,
         integration_id: str,
         event_type: str,
-        payload: Dict[str, Any],
-        headers: Dict[str, str],
+        payload: dict[str, Any],
+        headers: dict[str, str],
         raw_body: bytes,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Process an incoming webhook event
 
@@ -421,7 +433,7 @@ class APIIntegrationHub:
 
     async def get_integration_status(
         self, integration_id: str
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """Get detailed status of an integration"""
         if integration_id not in self.integrations:
             return None
@@ -452,7 +464,7 @@ class APIIntegrationHub:
             "uptime_percentage": self._calculate_uptime_percentage(config),
         }
 
-    def get_integration_metrics(self) -> Dict[str, Any]:
+    def get_integration_metrics(self) -> dict[str, Any]:
         """Get overall integration hub metrics"""
         total_integrations = len(self.integrations)
         active_integrations = len(
@@ -498,13 +510,16 @@ class APIIntegrationHub:
         if not config.integration_id or not config.name:
             raise ValueError("Integration ID and name are required")
 
-        if config.type in [
-            IntegrationType.REST_API,
-            IntegrationType.GRAPHQL,
-            IntegrationType.SOAP,
-        ]:
-            if not config.endpoint_url:
-                raise ValueError("Endpoint URL is required for API integrations")
+        if (
+            config.type
+            in [
+                IntegrationType.REST_API,
+                IntegrationType.GRAPHQL,
+                IntegrationType.SOAP,
+            ]
+            and not config.endpoint_url
+        ):
+            raise ValueError("Endpoint URL is required for API integrations")
 
         # Test authentication configuration
         if config.authentication != AuthenticationType.NONE:
@@ -515,7 +530,7 @@ class APIIntegrationHub:
             if missing_fields:
                 raise ValueError(f"Missing authentication fields: {missing_fields}")
 
-    def _get_auth_required_fields(self, auth_type: AuthenticationType) -> List[str]:
+    def _get_auth_required_fields(self, auth_type: AuthenticationType) -> list[str]:
         """Get required fields for authentication type"""
         auth_fields = {
             AuthenticationType.API_KEY: ["api_key"],
@@ -540,10 +555,10 @@ class APIIntegrationHub:
     async def _add_authentication(
         self,
         config: IntegrationConfig,
-        headers: Dict[str, str],
+        headers: dict[str, str],
         method: str,
         url: str,
-        data: Optional[Dict[str, Any]],
+        data: dict[str, Any] | None,
     ) -> None:
         """Add authentication to request headers"""
         if config.authentication == AuthenticationType.API_KEY:
@@ -565,7 +580,7 @@ class APIIntegrationHub:
             if token:
                 headers["Authorization"] = f"Bearer {token}"
 
-    async def _get_oauth_token(self, config: IntegrationConfig) -> Optional[str]:
+    async def _get_oauth_token(self, config: IntegrationConfig) -> str | None:
         """Get OAuth2 access token"""
         # Simplified OAuth2 implementation
         # In production, this would handle token refresh, caching, etc.
@@ -614,17 +629,22 @@ class APIIntegrationHub:
         calls.append(now)
         return True
 
-    @circuit_breaker("external_api_integration", CircuitBreakerConfig(
-        failure_threshold=3, recovery_timeout=45.0, expected_exception=(aiohttp.ClientError, Exception)
-    ))
+    @circuit_breaker(
+        "external_api_integration",
+        CircuitBreakerConfig(
+            failure_threshold=3,
+            recovery_timeout=45.0,
+            expected_exception=(aiohttp.ClientError, Exception),
+        ),
+    )
     async def _make_rest_call(
         self,
         config: IntegrationConfig,
         method: str,
         url: str,
-        data: Optional[Dict[str, Any]],
-        headers: Dict[str, str],
-    ) -> Dict[str, Any]:
+        data: dict[str, Any] | None,
+        headers: dict[str, str],
+    ) -> dict[str, Any]:
         """Make REST API call with circuit breaker protection"""
         session = self.session_pool.get(config.integration_id)
         if not session:
@@ -658,9 +678,9 @@ class APIIntegrationHub:
         self,
         config: IntegrationConfig,
         url: str,
-        data: Optional[Dict[str, Any]],
-        headers: Dict[str, str],
-    ) -> Dict[str, Any]:
+        data: dict[str, Any] | None,
+        headers: dict[str, str],
+    ) -> dict[str, Any]:
         """Make GraphQL API call"""
         if not data or "query" not in data:
             raise ValueError("GraphQL request must include 'query' field")
@@ -668,7 +688,7 @@ class APIIntegrationHub:
         graphql_payload = {
             "query": data["query"],
             "variables": data.get("variables", {}),
-            "operationName": data.get("operationName"),
+            "operation_name": data.get("operation_name"),
         }
 
         return await self._make_rest_call(config, "POST", url, graphql_payload, headers)
@@ -704,7 +724,7 @@ class APIIntegrationHub:
 
         return (config.success_count / total_calls) * 100
 
-    def _count_integrations_by_type(self) -> Dict[str, int]:
+    def _count_integrations_by_type(self) -> dict[str, int]:
         """Count integrations by type"""
         type_counts = {}
         for config in self.integrations.values():
@@ -712,7 +732,7 @@ class APIIntegrationHub:
             type_counts[type_name] = type_counts.get(type_name, 0) + 1
         return type_counts
 
-    def _count_integrations_by_status(self) -> Dict[str, int]:
+    def _count_integrations_by_status(self) -> dict[str, int]:
         """Count integrations by status"""
         status_counts = {}
         for config in self.integrations.values():

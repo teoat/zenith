@@ -103,6 +103,13 @@ class AIService {
       body: JSON.stringify({ text })
     });
   }
+
+  async performAction(endpoint: string, method: string = 'POST', body?: Record<string, unknown>): Promise<ApiResponse<any>> {
+    return request(endpoint, {
+      method,
+      body: body ? JSON.stringify(body) : undefined
+    });
+  }
 }
 
 export const aiService = new AIService();

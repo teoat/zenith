@@ -5,14 +5,12 @@ Addressing the 3 most critical diagnostic issues
 """
 
 import asyncio
-import hashlib
 import json
 import logging
 import random
-import time
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +22,10 @@ class InvestigationResult:
     issue_id: str
     issue_title: str
     severity: str
-    findings: List[str]
+    findings: list[str]
     vulnerabilities_found: int
     remediation_required: bool
-    remediation_plan: List[str]
+    remediation_plan: list[str]
     estimated_fix_time: str
     risk_level: str
     status: str  # 'investigated', 'remediated', 'monitoring'
@@ -37,12 +35,12 @@ class Phase1Investigator:
     """Investigator for Phase 1 critical issues"""
 
     def __init__(self):
-        self.investigation_results: Dict[str, InvestigationResult] = {}
+        self.investigation_results: dict[str, InvestigationResult] = {}
         self.security_scanner = SecurityScanner()
         self.business_logic_analyzer = BusinessLogicAnalyzer()
         self.privacy_compliance_checker = PrivacyComplianceChecker()
 
-    async def investigate_all_critical_issues(self) -> Dict[str, Any]:
+    async def investigate_all_critical_issues(self) -> dict[str, Any]:
         """Investigate all Phase 1 critical issues"""
 
         print("🔬 PHASE 1 INVESTIGATION: Critical Security & Business Logic Issues")
@@ -112,7 +110,9 @@ class Phase1Investigator:
             risk_level=(
                 "Critical"
                 if vulnerabilities > 2
-                else "High" if vulnerabilities > 0 else "Low"
+                else "High"
+                if vulnerabilities > 0
+                else "Low"
             ),
             status="investigated",
         )
@@ -267,12 +267,14 @@ class Phase1Investigator:
             risk_level=(
                 "Critical"
                 if accuracy_issues > 2
-                else "High" if accuracy_issues > 0 else "Low"
+                else "High"
+                if accuracy_issues > 0
+                else "Low"
             ),
             status="investigated",
         )
 
-    async def _generate_phase1_report(self) -> Dict[str, Any]:
+    async def _generate_phase1_report(self) -> dict[str, Any]:
         """Generate comprehensive Phase 1 investigation report"""
         total_vulnerabilities = sum(
             result.vulnerabilities_found
@@ -303,7 +305,9 @@ class Phase1Investigator:
             "overall_risk_assessment": (
                 "CRITICAL"
                 if critical_issues > 0
-                else "HIGH" if high_risk_issues > 0 else "LOW"
+                else "HIGH"
+                if high_risk_issues > 0
+                else "LOW"
             ),
             "immediate_action_required": critical_issues > 0
             or total_vulnerabilities > 0,
@@ -358,14 +362,14 @@ class Phase1Investigator:
 
         return f"{total_min:.1f}-{total_max:.1f} weeks"
 
-    def _consolidate_findings(self) -> List[str]:
+    def _consolidate_findings(self) -> list[str]:
         """Consolidate all findings across issues"""
         all_findings = []
         for result in self.investigation_results.values():
             all_findings.extend(result.findings)
         return all_findings
 
-    def _generate_recommended_actions(self) -> List[str]:
+    def _generate_recommended_actions(self) -> list[str]:
         """Generate consolidated recommended actions"""
         actions = []
 
@@ -417,7 +421,7 @@ class Phase1Investigator:
 class SecurityScanner:
     """Advanced security scanning capabilities"""
 
-    async def test_rate_limiting_vulnerability(self, test_type: str) -> Dict[str, Any]:
+    async def test_rate_limiting_vulnerability(self, test_type: str) -> dict[str, Any]:
         """Test specific rate limiting vulnerability"""
         # Simulate vulnerability testing
         await asyncio.sleep(0.1)  # Simulate test execution
@@ -478,7 +482,7 @@ class SecurityScanner:
 class PrivacyComplianceChecker:
     """Privacy regulation compliance checker"""
 
-    async def check_privacy_requirement(self, requirement: str) -> Dict[str, Any]:
+    async def check_privacy_requirement(self, requirement: str) -> dict[str, Any]:
         """Check specific privacy requirement compliance"""
         await asyncio.sleep(0.05)  # Simulate compliance check
 
@@ -559,7 +563,7 @@ class PrivacyComplianceChecker:
             },
         )
 
-    async def audit_data_inventory(self) -> Dict[str, Any]:
+    async def audit_data_inventory(self) -> dict[str, Any]:
         """Audit data inventory for sensitive data exposure"""
         await asyncio.sleep(0.1)  # Simulate data inventory audit
 
@@ -573,7 +577,7 @@ class PrivacyComplianceChecker:
             "access_logging_enabled": True,
         }
 
-    async def verify_consent_management(self) -> Dict[str, Any]:
+    async def verify_consent_management(self) -> dict[str, Any]:
         """Verify consent management implementation"""
         await asyncio.sleep(0.05)  # Simulate consent verification
 
@@ -589,7 +593,7 @@ class PrivacyComplianceChecker:
 class BusinessLogicAnalyzer:
     """Business logic accuracy analyzer"""
 
-    async def analyze_fraud_rules(self) -> Dict[str, Any]:
+    async def analyze_fraud_rules(self) -> dict[str, Any]:
         """Analyze fraud detection rule accuracy"""
         await asyncio.sleep(0.2)  # Simulate comprehensive rule analysis
 
@@ -604,7 +608,7 @@ class BusinessLogicAnalyzer:
             "rule_complexity_score": random.uniform(0.6, 0.9),
         }
 
-    async def analyze_accuracy_trends(self) -> Dict[str, Any]:
+    async def analyze_accuracy_trends(self) -> dict[str, Any]:
         """Analyze fraud detection accuracy trends over time"""
         await asyncio.sleep(0.1)  # Simulate trend analysis
 
@@ -631,7 +635,7 @@ async def main():
     report = await investigator.investigate_all_critical_issues()
 
     # Display results
-    print(f"\n🎯 PHASE 1 INVESTIGATION COMPLETE")
+    print("\n🎯 PHASE 1 INVESTIGATION COMPLETE")
     print(f"Total Issues Investigated: {report['total_issues_investigated']}")
     print(f"Total Vulnerabilities Found: {report['total_vulnerabilities_found']}")
     print(f"Critical Risk Issues: {report['critical_risk_issues']}")
@@ -644,8 +648,8 @@ async def main():
 
     print("\n💾 Detailed report saved to: phase1_investigation_report.json")
     # Summary of findings
-    print(f"\n📊 KEY FINDINGS SUMMARY:")
-    for issue_id, result in investigator.investigation_results.items():
+    print("\n📊 KEY FINDINGS SUMMARY:")
+    for result in investigator.investigation_results.values():
         status = (
             "❌ NEEDS REMEDIATION" if result.remediation_required else "✅ NO ISSUES"
         )

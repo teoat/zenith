@@ -6,7 +6,7 @@ Consolidates 25+ services into logical, maintainable groupings.
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -25,10 +25,10 @@ class ServiceDefinition:
     name: str
     tier: ServiceTier
     description: str
-    responsibilities: List[str]
-    dependencies: List[str]
-    api_endpoints: List[str]
-    data_models: List[str]
+    responsibilities: list[str]
+    dependencies: list[str]
+    api_endpoints: list[str]
+    data_models: list[str]
     estimated_complexity: str  # "Low", "Medium", "High"
 
 
@@ -37,9 +37,9 @@ class ConsolidationPlan:
     """Plan for consolidating multiple services into one"""
 
     target_service: str
-    source_services: List[str]
-    consolidation_benefits: List[str]
-    migration_steps: List[str]
+    source_services: list[str]
+    consolidation_benefits: list[str]
+    migration_steps: list[str]
     risk_assessment: str
     estimated_effort_days: int
 
@@ -52,7 +52,7 @@ class MicroservicesArchitecturePlanner:
         self.consolidation_plans = self._generate_consolidation_plans()
         self.target_architecture = self._define_target_architecture()
 
-    def _load_current_service_inventory(self) -> Dict[str, Dict[str, Any]]:
+    def _load_current_service_inventory(self) -> dict[str, dict[str, Any]]:
         """Load inventory of current services and their characteristics"""
         return {
             # Core Fraud Detection Services
@@ -190,7 +190,7 @@ class MicroservicesArchitecturePlanner:
             },
         }
 
-    def _define_target_architecture(self) -> Dict[str, ServiceDefinition]:
+    def _define_target_architecture(self) -> dict[str, ServiceDefinition]:
         """Define the target consolidated service architecture"""
         return {
             "fraud-detection-suite": ServiceDefinition(
@@ -315,7 +315,7 @@ class MicroservicesArchitecturePlanner:
             ),
         }
 
-    def _generate_consolidation_plans(self) -> List[ConsolidationPlan]:
+    def _generate_consolidation_plans(self) -> list[ConsolidationPlan]:
         """Generate detailed consolidation plans"""
         return [
             ConsolidationPlan(
@@ -459,7 +459,7 @@ class MicroservicesArchitecturePlanner:
             ),
         ]
 
-    def get_consolidation_summary(self) -> Dict[str, Any]:
+    def get_consolidation_summary(self) -> dict[str, Any]:
         """Get summary of consolidation plans and benefits"""
         total_services_before = len(self.current_services)
         total_services_after = len(self.target_architecture)
@@ -470,7 +470,7 @@ class MicroservicesArchitecturePlanner:
         return {
             "services_before": total_services_before,
             "services_after": total_services_after,
-            "consolidation_ratio": f"{total_services_before} → {total_services_after} ({total_services_before/total_services_after:.1f}x reduction)",
+            "consolidation_ratio": f"{total_services_before} → {total_services_after} ({total_services_before / total_services_after:.1f}x reduction)",
             "total_effort_days": total_effort_days,
             "total_effort_months": total_effort_days
             / 21,  # Assuming 21 working days per month
@@ -478,7 +478,7 @@ class MicroservicesArchitecturePlanner:
             "benefit_categories": self._analyze_benefits(),
         }
 
-    def _analyze_risk_breakdown(self) -> Dict[str, int]:
+    def _analyze_risk_breakdown(self) -> dict[str, int]:
         """Analyze risk distribution across consolidation plans"""
         risk_counts = {"Low": 0, "Medium": 0, "High": 0}
 
@@ -492,7 +492,7 @@ class MicroservicesArchitecturePlanner:
 
         return risk_counts
 
-    def _analyze_benefits(self) -> Dict[str, List[str]]:
+    def _analyze_benefits(self) -> dict[str, list[str]]:
         """Categorize consolidation benefits"""
         benefits = {"Operational": [], "Technical": [], "Business": []}
 
@@ -513,7 +513,7 @@ class MicroservicesArchitecturePlanner:
 
         return benefits
 
-    def get_migration_roadmap(self) -> List[Dict[str, Any]]:
+    def get_migration_roadmap(self) -> list[dict[str, Any]]:
         """Generate detailed migration roadmap"""
         roadmap = []
 

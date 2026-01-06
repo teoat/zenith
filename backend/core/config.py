@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 from dotenv import load_dotenv
 
@@ -26,19 +25,21 @@ class Settings(BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     FIELD_ENCRYPTION_KEY: str = os.environ.get(
         "FIELD_ENCRYPTION_KEY",
-        os.environ.get("ENCRYPTION_KEY", os.environ["SECRET_KEY"])  # Fallback to SECRET_KEY if not specified
+        os.environ.get(
+            "ENCRYPTION_KEY", os.environ["SECRET_KEY"]
+        ),  # Fallback to SECRET_KEY if not specified
     )
 
     # CORS Configuration
     ALLOWED_ORIGINS: list[str] = os.environ.get(
         "CORS_ALLOWED_ORIGINS",
-        "http://localhost:5173,http://localhost:5174,http://localhost:3000"
+        "http://localhost:5173,http://localhost:5174,http://localhost:3000",
     ).split(",")
 
     # Optional external service configurations
-    github_token: Optional[str] = None
-    postgres_url: Optional[str] = None
-    prometheus_url: Optional[str] = None
+    github_token: str | None = None
+    postgres_url: str | None = None
+    prometheus_url: str | None = None
     mcp_profile: str = "development"
 
     # AI Configuration

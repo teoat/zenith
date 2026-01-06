@@ -1,0 +1,61 @@
+[lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "N",
+    "UP",
+    "C4",
+    "PIE",
+    "SIM",
+    "ARG",
+    "PERF",
+    "RUF",
+]
+ignore = [
+    "E402",
+    "F821",
+    "F841",
+    "PLR0913",
+    "PLR0912",
+    "PLR0915",
+    "PLR2004",
+    "PLW0603",
+    "E501",
+    "E711",
+    "E712",
+    "E722",
+    "N802",
+    "N803",
+    "N806",
+    "N999",
+    "C901",
+    "E401",
+]
+
+[lint.per-file-ignores]
+"tests/**/*" = ["F401", "F841", "ARG001", "PLR2004"]
+"scripts/**/*" = ["F401", "F841", "E999", "F821"]
+"backend/alembic/versions/*" = ["E402", "F401"]
+"scripts/documentation/*" = ["E999", "F821", "E501"]
+
+[lint.isort]
+known-first-party = ["backend", "core", "services", "scripts"]
+known-third-party = [
+    "alembic",
+    "fastapi",
+    "numpy",
+    "pandas",
+    "pytest",
+    "redis",
+    "scipy",
+    "sqlalchemy",
+    "uvicorn",
+]
+force-single-line = false
+force-wrap-aliases = true
+# no-lines-before removed as it's causing configuration issues
+
+[lint.pyupgrade]
+keep-runtime-typing = true

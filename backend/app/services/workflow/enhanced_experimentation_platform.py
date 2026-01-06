@@ -5,15 +5,14 @@ Comprehensive platform for running controlled experiments and accelerating innov
 """
 
 import asyncio
-import json
 import logging
 import random
-import statistics
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -42,9 +41,9 @@ class ExperimentVariant:
 
     variant_id: str
     name: str
-    configuration: Dict[str, Any]
+    configuration: dict[str, Any]
     traffic_percentage: float
-    metrics: Dict[str, float] = field(default_factory=dict)
+    metrics: dict[str, float] = field(default_factory=dict)
 
 
 @dataclass
@@ -55,26 +54,27 @@ class Experiment:
     title: str
     hypothesis: str
     type: ExperimentType
-    variants: List[ExperimentVariant]
-    success_criteria: List[str]
+    variants: list[ExperimentVariant]
+    success_criteria: list[str]
     status: ExperimentStatus
     owner: str
     created_at: datetime
-    started_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
-    results: Optional[Dict[str, Any]] = None
-    lessons_learned: List[str] = field(default_factory=list)
-    statistical_significance: Optional[float] = None
-    confidence_interval: Optional[Tuple[float, float]] = None
+    started_at: datetime | None = None
+    completed_at: datetime | None = None
+    results: dict[str, Any] | None = None
+    lessons_learned: list[str] = field(default_factory=list)
+    statistical_significance: float | None = None
+    confidence_interval: tuple[float, float] | None = None
 
 
 class EnhancedExperimentationPlatform:
     """Comprehensive experimentation platform with advanced features"""
 
     def __init__(self):
-        self.experiments: Dict[str, Experiment] = {}
-        self.experiment_templates: Dict[str, Dict] = {}
-        self.metrics_collectors: Dict[str, Callable] = {}
+        self.experiments: dict[str, Experiment] = {}
+        self._background_tasks: list[asyncio.Task] = []
+        self.experiment_templates: dict[str, dict] = {}
+        self.metrics_collectors: dict[str, Callable] = {}
         self.auto_scaling_enabled = True
         self.confidence_threshold = 0.95
         self.min_sample_size = 1000
@@ -180,7 +180,8 @@ class EnhancedExperimentationPlatform:
         experiment.started_at = datetime.now()
 
         # Setup automated monitoring
-        asyncio.create_task(self._monitor_experiment(experiment_id))
+        monitor_task = asyncio.create_task(self._monitor_experiment(experiment_id))
+        self._background_tasks.append(monitor_task)
 
         logger.info(f"Started experiment: {experiment_id}")
         return True
@@ -194,7 +195,7 @@ class EnhancedExperimentationPlatform:
 
             # Collect metrics for all variants
             for variant in experiment.variants:
-                for metric_name in self.metrics_collectors.keys():
+                for metric_name in self.metrics_collectors:
                     if metric_name in experiment.results.get("target_metrics", []):
                         try:
                             value = await self.metrics_collectors[metric_name](
@@ -289,7 +290,7 @@ class EnhancedExperimentationPlatform:
 
         logger.warning(f"Rolled back experiment {experiment_id}: {reason}")
 
-    def _analyze_experiment_results(self, experiment: Experiment) -> Dict[str, Any]:
+    def _analyze_experiment_results(self, experiment: Experiment) -> dict[str, Any]:
         """Analyze experiment results and generate insights"""
         analysis = {
             "winner": None,
@@ -357,7 +358,7 @@ class EnhancedExperimentationPlatform:
         """Collect system stability metrics"""
         return random.uniform(0.85, 0.99)
 
-    async def get_experiment_status(self, experiment_id: str) -> Dict[str, Any]:
+    async def get_experiment_status(self, experiment_id: str) -> dict[str, Any]:
         """Get comprehensive experiment status"""
         if experiment_id not in self.experiments:
             return {"error": "Experiment not found"}

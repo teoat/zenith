@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/infrastructure/redis_cluster.py
+# hypothesis_version: 6.148.8
+
+[0.0, 0.1, 5.0, 100, 1000, 3600, 6379, 26379, '/', ':', '://', 'REDIS_CLUSTER_MODE', 'REDIS_SENTINEL_MODE', 'REDIS_URL', '_in_use_connections', 'available', 'avg_response_time_ms', 'cluster_info', 'cluster_mode', 'cluster_state', 'config', 'connected', 'error', 'error_count', 'error_rate_percent', 'false', 'file', 'has_pool', 'host', 'hosts', 'in_use', 'info', 'latin1', 'localhost:6379', 'max', 'mymaster', 'nodes', 'performance', 'ping', 'ping_error', 'ping_success', 'pool', 'port', 'redis_cluster.py', 'sentinel_mode', 'total', 'total_operations', 'true', 'unknown', 'utf-8']

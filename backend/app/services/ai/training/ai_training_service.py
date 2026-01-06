@@ -7,16 +7,13 @@ Handles data collection, preprocessing, model training, and deployment
 import asyncio
 import json
 import logging
-import os
-import threading
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from app.services.ai.ai_fraud_detector import AIFraudDetector
 from app.services.infrastructure.storage.database_service import DatabaseService
-from core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +52,7 @@ class AITrainingPipeline:
         stats_file = Path("models/training_stats.json")
         if stats_file.exists():
             try:
-                with open(stats_file, "r") as f:
+                with open(stats_file) as f:
                     self.training_stats = json.load(f)
                 logger.info("Loaded training statistics")
             except Exception as e:
@@ -73,7 +70,7 @@ class AITrainingPipeline:
         except Exception as e:
             logger.error(f"Failed to save training stats: {e}")
 
-    async def collect_training_data(self, days_back: int = 90) -> List[Dict[str, Any]]:
+    async def collect_training_data(self, days_back: int = 90) -> list[dict[str, Any]]:
         """Collect historical transaction data for training"""
         logger.info(f"Collecting training data from last {days_back} days")
 
@@ -111,7 +108,7 @@ class AITrainingPipeline:
             logger.error(f"Failed to collect training data: {e}")
             return []
 
-    def validate_training_data(self, data: List[Dict[str, Any]]) -> Tuple[bool, str]:
+    def validate_training_data(self, data: list[dict[str, Any]]) -> tuple[bool, str]:
         """Validate training data quality"""
         if len(data) < self.config["min_training_samples"]:
             return (
@@ -134,8 +131,8 @@ class AITrainingPipeline:
         return True, "Data validation passed"
 
     def preprocess_training_data(
-        self, raw_data: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+        self, raw_data: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
         """Preprocess and clean training data"""
         logger.info("Preprocessing training data")
 
@@ -166,7 +163,7 @@ class AITrainingPipeline:
         logger.info(f"Preprocessed {len(processed_data)} transactions")
         return processed_data
 
-    async def train_model(self) -> Dict[str, Any]:
+    async def train_model(self) -> dict[str, Any]:
         """Execute complete model training pipeline"""
         start_time = time.time()
         self.training_stats["total_trainings"] += 1
@@ -246,8 +243,8 @@ class AITrainingPipeline:
             }
 
     async def _validate_model_performance(
-        self, test_data: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        self, test_data: list[dict[str, Any]]
+    ) -> dict[str, Any]:
         """Validate trained model performance"""
         logger.info("Validating model performance")
 
@@ -357,7 +354,7 @@ class AITrainingPipeline:
         logger.info("Stopping automated AI training pipeline")
         self.is_running = False
 
-    def get_training_status(self) -> Dict[str, Any]:
+    def get_training_status(self) -> dict[str, Any]:
         """Get current training pipeline status"""
         return {
             "is_running": self.is_running,
@@ -369,7 +366,7 @@ class AITrainingPipeline:
             "stats": self.training_stats,
         }
 
-    async def manual_train(self, days_back: int = 90) -> Dict[str, Any]:
+    async def manual_train(self, days_back: int = 90) -> dict[str, Any]:
         """Manually trigger model training"""
         logger.info(f"Manual model training requested (last {days_back} days)")
         return await self.train_model()

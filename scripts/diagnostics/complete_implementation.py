@@ -7,11 +7,9 @@ Weeks 1-26: Comprehensive remediation of all identified issues
 import asyncio
 import json
 import logging
-import os
 import random
-import time
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -29,11 +27,11 @@ class ImplementationTask:
     priority: str
     category: str
     estimated_effort_days: float
-    dependencies: List[str]
-    success_criteria: List[str]
+    dependencies: list[str]
+    success_criteria: list[str]
     status: str = "pending"
     assigned_team: str = ""
-    completion_date: Optional[datetime] = None
+    completion_date: datetime | None = None
 
 
 @dataclass
@@ -42,18 +40,18 @@ class WeeklyMilestone:
 
     week: int
     theme: str
-    objectives: List[str]
-    deliverables: List[str]
-    success_metrics: List[str]
-    risks: List[str]
+    objectives: list[str]
+    deliverables: list[str]
+    success_metrics: list[str]
+    risks: list[str]
 
 
 class CompleteImplementationOrchestrator:
     """Orchestrates complete implementation of all recommendations"""
 
     def __init__(self):
-        self.tasks: Dict[str, ImplementationTask] = {}
-        self.milestones: Dict[int, WeeklyMilestone] = {}
+        self.tasks: dict[str, ImplementationTask] = {}
+        self.milestones: dict[int, WeeklyMilestone] = {}
         self.progress_tracking = {
             "total_tasks": 0,
             "completed_tasks": 0,
@@ -802,7 +800,7 @@ class CompleteImplementationOrchestrator:
             ),
         }
 
-    async def execute_complete_implementation(self) -> Dict[str, Any]:
+    async def execute_complete_implementation(self) -> dict[str, Any]:
         """Execute the complete 26-week implementation plan"""
 
         print("🚀 COMPLETE IMPLEMENTATION EXECUTION: 26-Week Remediation Plan")
@@ -969,7 +967,7 @@ class CompleteImplementationOrchestrator:
         )
         print("   ✅ Week completed successfully")
 
-    async def _generate_final_report(self) -> Dict[str, Any]:
+    async def _generate_final_report(self) -> dict[str, Any]:
         """Generate comprehensive final implementation report"""
 
         completed_tasks = [t for t in self.tasks.values() if t.status == "completed"]
@@ -1051,8 +1049,8 @@ class CompleteImplementationOrchestrator:
         return report
 
     def _get_category_breakdown(
-        self, completed_tasks: List[ImplementationTask]
-    ) -> Dict[str, int]:
+        self, completed_tasks: list[ImplementationTask]
+    ) -> dict[str, int]:
         """Get breakdown of completed tasks by category"""
         categories = {}
         for task in completed_tasks:

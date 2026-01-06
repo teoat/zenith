@@ -13,8 +13,9 @@ Provides:
 import logging
 import time
 import traceback
+from collections.abc import Callable
 from datetime import datetime
-from typing import Any, Callable, Dict, Optional
+from typing import Any
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -30,7 +31,7 @@ class MonitoringMetrics:
         self.request_count = 0
         self.error_count = 0
         self.total_response_time = 0.0
-        self.endpoint_metrics: Dict[str, Dict[str, Any]] = {}
+        self.endpoint_metrics: dict[str, dict[str, Any]] = {}
         self.errors: list = []
         self.max_errors_stored = 100
 
@@ -68,7 +69,7 @@ class MonitoringMetrics:
             metrics["errors"] += 1
             self.error_count += 1
 
-    def record_error(self, error: Exception, endpoint: str, context: Dict[str, Any]):
+    def record_error(self, error: Exception, endpoint: str, context: dict[str, Any]):
         """Record error details"""
         error_record = {
             "timestamp": datetime.now().isoformat(),
@@ -85,7 +86,7 @@ class MonitoringMetrics:
         if len(self.errors) > self.max_errors_stored:
             self.errors = self.errors[-self.max_errors_stored :]
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get aggregated statistics"""
         avg_response_time = (
             self.total_response_time / self.request_count
@@ -185,13 +186,13 @@ class HealthCheck:
     """System health monitoring"""
 
     def __init__(self):
-        self.checks: Dict[str, Callable] = {}
+        self.checks: dict[str, Callable] = {}
 
     def register(self, name: str, check_func: Callable):
         """Register a health check"""
         self.checks[name] = check_func
 
-    async def run_checks(self) -> Dict[str, Any]:
+    async def run_checks(self) -> dict[str, Any]:
         """Run all health checks"""
         results = {}
         all_healthy = True
@@ -338,6 +339,6 @@ if __name__ == "__main__":
     print("  ✓ Error aggregation")
     print("  ✓ Health checks")
     print("  ✓ Alert management")
-    print("\nIntegration:")
+    print("\n_integration:")
     print("  from app.monitoring import setup_monitoring")
     print("  app = setup_monitoring(app)")

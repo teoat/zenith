@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/ai_chat_service.py
+# hypothesis_version: 6.148.8
+
+[0.7, 429, 500, 3600, 100000, '10', '60', '6379', 'AI_CHAT_RATE_LIMIT', 'AI_CHAT_RATE_WINDOW', 'AI_MODEL', 'OPENAI_API_KEY', 'REDIS_HOST', 'REDIS_PASSWORD', 'REDIS_PORT', 'Rate limit exceeded', 'assist', 'assistant', 'available', 'content', 'default', 'error', 'fallback', 'fallback_used', 'fixed-salt-change-me', 'gpt-4-turbo', 'greeting', 'hello', 'help', 'hey', 'hi', 'history', 'limit', 'localhost', 'model', 'response', 'retry_after', 'role', 'session_id', 'status', 'support', 'system', 'timestamp', 'user', 'window', 'working']

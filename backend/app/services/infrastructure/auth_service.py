@@ -2,18 +2,19 @@
 import os
 import secrets
 import sys
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
-from fastapi import Depends, HTTPException, status, Request
+from app.services.infrastructure.storage.database_service import db_service
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from app.services.infrastructure.storage.database_service import db_service
+from core.config import settings
 from core.database import User, UserRole
 from core.logging import log_security_event, logger
-from core.config import settings
+
 # Security monitoring imports will be added later as synchronous wrapper
 
 # SSOT Integration
@@ -35,7 +36,7 @@ pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 SECRET_KEY = settings.JWT_SECRET_KEY
 ALGORITHM = settings.JWT_ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES
-REFRESH_TOKEN_EXPIRE_DAYS = 7 # Default fallback
+REFRESH_TOKEN_EXPIRE_DAYS = 7  # Default fallback
 PASSWORD_MIN_LENGTH = 8
 MAX_LOGIN_ATTEMPTS = 5
 ACCOUNT_LOCKOUT_MINUTES = 15
@@ -63,21 +64,21 @@ class AuthService:
         return self.pwd_context.verify(plain_password, hashed_password)
 
     def create_access_token(
-        self, data: Dict[str, Any], expires_delta: Optional[timedelta] = None
+        self, data: dict[str, Any], expires_delta: timedelta | None = None
     ) -> str:
         """Create JWT access token"""
         to_encode = data.copy()
         if expires_delta:
-            expire = datetime.now(timezone.utc) + expires_delta
+            expire = datetime.now(UTC) + expires_delta
         else:
-            expire = datetime.now(timezone.utc) + timedelta(
+            expire = datetime.now(UTC) + timedelta(
                 minutes=ACCESS_TOKEN_EXPIRE_MINUTES
             )
 
         to_encode.update(
             {
                 "exp": expire,
-                "iat": datetime.now(timezone.utc),
+                "iat": datetime.now(UTC),
                 "iss": "zenith",
                 "type": "access",
                 "jti": secrets.token_urlsafe(16),  # Unique token ID
@@ -89,11 +90,11 @@ class AuthService:
 
     def create_refresh_token(self, user_id: str) -> str:
         """Create JWT refresh token"""
-        expire = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+        expire = datetime.now(UTC) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
         to_encode = {
             "sub": user_id,
             "exp": expire,
-            "iat": datetime.now(timezone.utc),
+            "iat": datetime.now(UTC),
             "iss": "zenith",
             "aud": "zenith-api",
             "type": "refresh",
@@ -103,7 +104,7 @@ class AuthService:
         encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
         return encoded_jwt
 
-    def decode_token(self, token: str) -> Dict[str, Any]:
+    def decode_token(self, token: str) -> dict[str, Any]:
         """Decode and validate JWT token"""
         try:
             # Avoid strict audience validation in tests by turning off audience check.
@@ -125,28 +126,28 @@ class AuthService:
                 detail="Invalid authentication token",
             )
 
-    def get_user_by_username(self, username: str) -> Optional[User]:
+    def get_user_by_username(self, username: str) -> User | None:
         """Get user by username"""
         return db_service.get_user_by_username(username)
 
-    def get_user_by_email(self, email: str) -> Optional[User]:
+    def get_user_by_email(self, email: str) -> User | None:
         """Get user by email"""
         # from app.services.infrastructure.storage.database_service import db_service
         # Use simple global db_service instance
         with db_service.get_db() as db:
-             # Try direct match first (optimistic, works if encryption is deterministic or legacy plain text)
-             found = db.query(User).filter(User.email == email).first()
-             if found:
-                 return found
-                 
-             # Fallback: Scan all users for EncryptedString
-             # This is required because EncryptedString uses randomized encryption (Fernet)
-             # so SQL equality checks fail.
-             all_users = db.query(User).all()
-             for user in all_users:
-                 if user.email == email:
-                     return user
-             return None
+            # Try direct match first (optimistic, works if encryption is deterministic or legacy plain text)
+            found = db.query(User).filter(User.email == email).first()
+            if found:
+                return found
+
+            # Fallback: Scan all users for EncryptedString
+            # This is required because EncryptedString uses randomized encryption (Fernet)
+            # so SQL equality checks fail.
+            all_users = db.query(User).all()
+            for user in all_users:
+                if user.email == email:
+                    return user
+            return None
 
     def create_user(self, user_data) -> User:
         """Create a new user"""
@@ -161,7 +162,9 @@ class AuthService:
                 # If no password provided (e.g. admin creating user), generate a secure temp one
                 # But really, we should require it.
                 # For now, let's just log a warning and generate a random one if missing
-                logger.warning(f"User created without password: {user_data.username}. Generating random.")
+                logger.warning(
+                    f"User created without password: {user_data.username}. Generating random."
+                )
                 password = secrets.token_urlsafe(16)
 
             new_user = User(
@@ -178,7 +181,7 @@ class AuthService:
             db.refresh(new_user)
             return new_user
 
-    def authenticate_user(self, username: str, password: str) -> Optional[User]:
+    def authenticate_user(self, username: str, password: str) -> User | None:
         """Authenticate user with username/password"""
         # Prefer the top-level app.services.auth_service.db_service if tests have
         # patched it (many tests patch that symbol). Fall back to module-level
@@ -220,8 +223,8 @@ class AuthService:
                     "type": "user_not_found",
                     "severity": "low",
                     "username": username,
-                    "action": "login_attempt"
-                }
+                    "action": "login_attempt",
+                },
             )
             return None
 
@@ -256,14 +259,14 @@ class AuthService:
                 details={
                     "type": "invalid_password",
                     "severity": "medium",
-                    "action": "login_attempt"
-                }
+                    "action": "login_attempt",
+                },
             )
             return None
 
         # Successful login - reset failed attempts and update last login
         self._reset_failed_attempts(user, chosen_db)
-        user.last_login = datetime.now(timezone.utc)
+        user.last_login = datetime.now(UTC)
         try:
             # Use the same chosen DB service for updates so tests that patch the
             # top-level db_service (MagicMock) receive the update call.
@@ -273,20 +276,18 @@ class AuthService:
             # to module-level db_service if available.
             if globals().get("db_service"):
                 try:
-                    globals().get("db_service").update_user(user.id, {"last_login": user.last_login})
+                    globals().get("db_service").update_user(
+                        user.id, {"last_login": user.last_login}
+                    )
                 except Exception:
                     # If that also fails, try the legacy method
                     globals().get("db_service").update_user_legacy(user)
 
         log_security_event("login_success", user.id, details={"method": "password"})
         log_security_event(
-            "security_monitoring", 
-            user.id, 
-            details={
-                "type": "login_success",
-                "severity": "info",
-                "method": "password"
-            }
+            "security_monitoring",
+            user.id,
+            details={"type": "login_success", "severity": "info", "method": "password"},
         )
         return user
 
@@ -294,14 +295,14 @@ class AuthService:
         """Check if user account is currently locked due to failed attempts"""
         try:
             # Handle cases where attributes might not exist (for backward compatibility)
-            failed_attempts = getattr(user, 'failed_login_attempts', 0) or 0
-            lockout_until = getattr(user, 'lockout_until', None)
+            failed_attempts = getattr(user, "failed_login_attempts", 0) or 0
+            lockout_until = getattr(user, "lockout_until", None)
 
             if lockout_until is None:
                 return False
 
             # Check if account is still locked
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             return lockout_until > now and failed_attempts >= MAX_LOGIN_ATTEMPTS
         except (AttributeError, TypeError):
             # If there's any issue with the attributes, assume account is not locked
@@ -310,13 +311,18 @@ class AuthService:
     def _record_failed_attempt(self, user: User, db_service):
         """Record a failed login attempt and potentially lock account"""
         # Skip account lockout for mock objects (used in tests)
-        if hasattr(user, '_mock_name') or str(type(user)).startswith("<class 'unittest.mock"):
+        if hasattr(user, "_mock_name") or str(type(user)).startswith(
+            "<class 'unittest.mock"
+        ):
             return
 
         # Initialize fields if they don't exist
-        if not hasattr(user, 'failed_login_attempts') or user.failed_login_attempts is None:
+        if (
+            not hasattr(user, "failed_login_attempts")
+            or user.failed_login_attempts is None
+        ):
             user.failed_login_attempts = 0
-        if not hasattr(user, 'lockout_until'):
+        if not hasattr(user, "lockout_until"):
             user.lockout_until = None
 
         user.failed_login_attempts += 1
@@ -324,7 +330,7 @@ class AuthService:
         # Lock account if max attempts reached
         if user.failed_login_attempts >= MAX_LOGIN_ATTEMPTS:
             lockout_duration = timedelta(minutes=ACCOUNT_LOCKOUT_MINUTES)
-            user.lockout_until = datetime.now(timezone.utc) + lockout_duration
+            user.lockout_until = datetime.now(UTC) + lockout_duration
 
             log_security_event(
                 "account_locked",
@@ -342,8 +348,8 @@ class AuthService:
                     "type": "account_lockout",
                     "severity": "high",
                     "failed_attempts": user.failed_login_attempts,
-                    "lockout_minutes": ACCOUNT_LOCKOUT_MINUTES
-                }
+                    "lockout_minutes": ACCOUNT_LOCKOUT_MINUTES,
+                },
             )
 
         # Update user in database
@@ -354,7 +360,9 @@ class AuthService:
             }
             db_service.update_user(user.id, update_data)
         except Exception as e:
-            logger.error(f"Failed to update failed login attempts for user {user.id}: {e}")
+            logger.error(
+                f"Failed to update failed login attempts for user {user.id}: {e}"
+            )
 
     def _reset_failed_attempts(self, user: User, db_service):
         """Reset failed login attempts after successful login"""
@@ -369,23 +377,31 @@ class AuthService:
             }
             db_service.update_user(user.id, update_data)
         except Exception as e:
-            logger.error(f"Failed to reset failed login attempts for user {user.id}: {e}")
+            logger.error(
+                f"Failed to reset failed login attempts for user {user.id}: {e}"
+            )
 
-    def get_account_lockout_status(self, user_id: str) -> Dict[str, Any]:
+    def get_account_lockout_status(self, user_id: str) -> dict[str, Any]:
         """Get account lockout status for a user"""
         user = db_service.get_user_by_id(user_id)
         if not user:
             return {"locked": False, "reason": "user_not_found"}
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         is_locked = self._is_account_locked(user)
 
         return {
             "locked": is_locked,
-            "failed_attempts": getattr(user, 'failed_login_attempts', 0),
+            "failed_attempts": getattr(user, "failed_login_attempts", 0),
             "max_attempts": MAX_LOGIN_ATTEMPTS,
-            "lockout_until": user.lockout_until.isoformat() if user.lockout_until else None,
-            "lockout_remaining_minutes": int((user.lockout_until - now).total_seconds() / 60) if is_locked else 0,
+            "lockout_until": user.lockout_until.isoformat()
+            if user.lockout_until
+            else None,
+            "lockout_remaining_minutes": int(
+                (user.lockout_until - now).total_seconds() / 60
+            )
+            if is_locked
+            else 0,
         }
 
     def unlock_account(self, user_id: str) -> bool:
@@ -414,8 +430,8 @@ class AuthService:
             return False
 
     def get_current_user_optional(
-        self, credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
-    ) -> Optional[dict]:
+        self, credentials: HTTPAuthorizationCredentials | None = Depends(security)
+    ) -> dict | None:
         """Get current user if authenticated, otherwise return None"""
         try:
             user = self.get_current_user(credentials)
@@ -423,7 +439,7 @@ class AuthService:
                 "id": user.id,
                 "username": user.username,
                 "email": user.email,
-                "role": user.role
+                "role": user.role,
             }
         except HTTPException:
             return None
@@ -431,7 +447,7 @@ class AuthService:
     def get_current_user(
         self,
         request: Request,
-        credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
+        credentials: HTTPAuthorizationCredentials | None = Depends(security),
     ) -> User:
         """Get current authenticated user from JWT token (Header or Cookie)"""
         from app.services.infrastructure.storage.database_service import db_service
@@ -439,7 +455,7 @@ class AuthService:
         token = None
         if credentials:
             token = credentials.credentials
-        
+
         if not token:
             token = request.cookies.get("access_token")
 
@@ -459,8 +475,11 @@ class AuthService:
 
         # Support test mock tokens without a DB-backed user
         # SECURITY: Only allow this in non-production environments
-        is_dev_env = os.getenv("ENVIRONMENT", "development").lower() in ["development", "test"]
-        
+        is_dev_env = os.getenv("ENVIRONMENT", "development").lower() in [
+            "development",
+            "test",
+        ]
+
         if is_dev_env and isinstance(user_id, str) and user_id.startswith("mock_"):
 
             class _MockUser:
@@ -528,7 +547,7 @@ class AuthService:
 
         return permission_checker
 
-    def validate_password_strength(self, password: str) -> List[str]:
+    def validate_password_strength(self, password: str) -> list[str]:
         """Validate password strength and return list of errors"""
         errors = []
 
@@ -556,6 +575,6 @@ class AuthService:
 auth_service = AuthService()
 
 
-def verify_token(token: str) -> Dict[str, Any]:
+def verify_token(token: str) -> dict[str, Any]:
     """Module helper to verify a token using the global auth_service instance."""
     return auth_service.decode_token(token)

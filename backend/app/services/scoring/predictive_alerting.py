@@ -3,13 +3,11 @@ Predictive Alerting System
 AI-powered anomaly detection and intelligent alert management for system monitoring.
 """
 
-import asyncio
-import json
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -41,11 +39,11 @@ class Alert:
     severity: AlertSeverity
     title: str
     description: str
-    metrics: Dict[str, Any]
+    metrics: dict[str, Any]
     predicted_impact: str
-    recommended_actions: List[str]
+    recommended_actions: list[str]
     confidence_score: float
-    time_to_impact: Optional[timedelta]
+    time_to_impact: timedelta | None
     created_at: datetime
     acknowledged: bool = False
     resolved: bool = False
@@ -56,21 +54,21 @@ class MetricData:
     """Time-series metric data"""
 
     name: str
-    values: List[float]
-    timestamps: List[datetime]
-    metadata: Dict[str, Any]
+    values: list[float]
+    timestamps: list[datetime]
+    metadata: dict[str, Any]
 
 
 class PredictiveAlertingEngine:
     """AI-powered predictive alerting system"""
 
     def __init__(self):
-        self.alerts: Dict[str, Alert] = {}
-        self.metrics_history: Dict[str, MetricData] = {}
+        self.alerts: dict[str, Alert] = {}
+        self.metrics_history: dict[str, MetricData] = {}
         self.anomaly_thresholds = self._initialize_thresholds()
         self.learning_enabled = True
 
-    def _initialize_thresholds(self) -> Dict[str, Dict[str, float]]:
+    def _initialize_thresholds(self) -> dict[str, dict[str, float]]:
         """Initialize adaptive anomaly detection thresholds"""
         return {
             "cpu_usage": {"warning": 70.0, "critical": 90.0, "trend_threshold": 5.0},
@@ -89,7 +87,7 @@ class PredictiveAlertingEngine:
             },
         }
 
-    async def analyze_metrics(self, metrics: Dict[str, Any]) -> List[Alert]:
+    async def analyze_metrics(self, metrics: dict[str, Any]) -> list[Alert]:
         """
         Analyze system metrics and generate predictive alerts
 
@@ -123,7 +121,7 @@ class PredictiveAlertingEngine:
 
     async def _analyze_metric(
         self, metric_name: str, current_value: float
-    ) -> Optional[Alert]:
+    ) -> Alert | None:
         """Analyze individual metric for anomalies"""
         if metric_name not in self.anomaly_thresholds:
             return None
@@ -190,20 +188,19 @@ class PredictiveAlertingEngine:
                 time_to_impact = timedelta(minutes=15)
 
         # Resource exhaustion prediction
-        elif metric_name in ["disk_usage", "memory_usage"]:
-            if (
-                trend > thresholds["trend_threshold"]
-                and current_value > thresholds["warning"]
-            ):
-                severity = AlertSeverity.MEDIUM
-                predicted_impact = f"{metric_name} trending toward exhaustion"
-                recommended_actions = [
-                    f"Monitor {metric_name} growth rate",
-                    "Plan capacity expansion",
-                    "Implement data cleanup if applicable",
-                ]
-                confidence_score = min(0.8, trend_magnitude / 10.0)
-                time_to_impact = timedelta(days=7)
+        elif metric_name in ["disk_usage", "memory_usage"] and (
+            trend > thresholds["trend_threshold"]
+            and current_value > thresholds["warning"]
+        ):
+            severity = AlertSeverity.MEDIUM
+            predicted_impact = f"{metric_name} trending toward exhaustion"
+            recommended_actions = [
+                f"Monitor {metric_name} growth rate",
+                "Plan capacity expansion",
+                "Implement data cleanup if applicable",
+            ]
+            confidence_score = min(0.8, trend_magnitude / 10.0)
+            time_to_impact = timedelta(days=7)
 
         # Generate alert if severity is not LOW
         if severity != AlertSeverity.LOW and confidence_score > 0.6:
@@ -232,7 +229,7 @@ class PredictiveAlertingEngine:
 
         return None
 
-    async def _analyze_metric_patterns(self, metrics: Dict[str, Any]) -> List[Alert]:
+    async def _analyze_metric_patterns(self, metrics: dict[str, Any]) -> list[Alert]:
         """Analyze patterns across multiple metrics for complex issues"""
         alerts = []
 
@@ -303,7 +300,7 @@ class PredictiveAlertingEngine:
 
         return alerts
 
-    def _calculate_trend(self, values: List[float]) -> float:
+    def _calculate_trend(self, values: list[float]) -> float:
         """Calculate linear trend slope"""
         if len(values) < 2:
             return 0.0
@@ -313,7 +310,7 @@ class PredictiveAlertingEngine:
         return slope
 
     def _calculate_correlation(
-        self, series1: List[float], series2: List[float]
+        self, series1: list[float], series2: list[float]
     ) -> float:
         """Calculate Pearson correlation coefficient"""
         if len(series1) != len(series2) or len(series1) < 2:
@@ -334,7 +331,7 @@ class PredictiveAlertingEngine:
         else:
             return AlertType.SECURITY_ANOMALY
 
-    def _detect_capacity_trend(self, metrics: Dict[str, Any]) -> bool:
+    def _detect_capacity_trend(self, metrics: dict[str, Any]) -> bool:
         """Detect if system is trending toward capacity limits"""
         capacity_indicators = ["cpu_usage", "memory_usage", "disk_usage"]
         trending_toward_limit = 0
@@ -350,7 +347,7 @@ class PredictiveAlertingEngine:
 
         return trending_toward_limit >= 2  # At least 2 indicators trending up
 
-    async def _update_metrics_history(self, metrics: Dict[str, Any]):
+    async def _update_metrics_history(self, metrics: dict[str, Any]):
         """Update metrics history for trend analysis"""
         current_time = datetime.now()
 
@@ -370,7 +367,7 @@ class PredictiveAlertingEngine:
                     history.values = history.values[-1000:]
                     history.timestamps = history.timestamps[-1000:]
 
-    def get_active_alerts(self) -> List[Alert]:
+    def get_active_alerts(self) -> list[Alert]:
         """Get all active (unresolved) alerts"""
         return [alert for alert in self.alerts.values() if not alert.resolved]
 
@@ -388,7 +385,7 @@ class PredictiveAlertingEngine:
             return True
         return False
 
-    def get_alert_summary(self) -> Dict[str, Any]:
+    def get_alert_summary(self) -> dict[str, Any]:
         """Get alert summary statistics"""
         active_alerts = self.get_active_alerts()
         severity_counts = {}

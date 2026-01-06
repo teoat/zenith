@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it } from '@jest/globals';
 import { validateEmail, validatePassword, validatePhone, validateSSN } from '../validation';
 
 describe('Validation Utils', () => {

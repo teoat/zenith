@@ -1,16 +1,15 @@
 import logging
-from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
-
-from app.services.infrastructure.security.audit_service import audit_service
 from app.services.infrastructure.auth_service import auth_service
 from app.services.infrastructure.cache_service import (
     clear_all_cache,
     clear_cache_namespace,
     get_cache_stats,
 )
+from app.services.infrastructure.security.audit_service import audit_service
 from app.services.infrastructure.storage.database_service import db_service
+from fastapi import APIRouter, Depends, HTTPException
+
 from core.database import User
 
 logger = logging.getLogger(__name__)
@@ -58,7 +57,12 @@ async def require_admin(
     Raises:
         HTTPException: 403 if user is not an admin
     """
-    if str(current_user.role).upper() not in ["ADMIN", "SUPER_ADMIN", "admin", "super_admin"]:
+    if str(current_user.role).upper() not in [
+        "ADMIN",
+        "SUPER_ADMIN",
+        "admin",
+        "super_admin",
+    ]:
         logger.warning(
             f"User {current_user.id} attempted admin operation without permission",
             extra={"user_id": current_user.id, "role": current_user.role},
@@ -130,7 +134,7 @@ async def optimize_database(admin: User = Depends(require_admin)):
 
 @router.post("/database/analyze-query")
 async def analyze_query(
-    query: str, params: dict = None, admin: User = Depends(require_admin)
+    query: str, params: dict | None = None, admin: User = Depends(require_admin)
 ):
     """Analyze query performance with EXPLAIN (Admin only)"""
     try:
@@ -231,11 +235,14 @@ async def clear_entire_cache(admin: User = Depends(require_admin)):
     except Exception as e:
         logger.error(f"Cache clearing failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/system/diagnostics")
 async def get_system_diagnostics(admin: User = Depends(require_admin)):
     """Get comprehensive system diagnostics and performance history (Admin only)"""
     try:
         from app.services.infrastructure.monitoring_service import monitoring_service
+
         data = monitoring_service.get_dashboard_data()
         return data
     except Exception as e:
@@ -248,6 +255,7 @@ async def get_current_system_metrics(admin: User = Depends(require_admin)):
     """Get real-time system metrics (Admin only)"""
     try:
         from app.services.infrastructure.performance_monitor import performance_monitor
+
         return performance_monitor.get_current_metrics()
     except Exception as e:
         logger.error(f"Failed to get current metrics: {e}")
@@ -257,6 +265,7 @@ async def get_current_system_metrics(admin: User = Depends(require_admin)):
 # ===== PLUGIN MANAGEMENT ENDPOINTS (PHASE 3) =====
 from core.database import SessionLocal
 from core.plugin_system.models import PluginRegistry
+
 
 @router.get("/plugins")
 async def list_plugins(admin: User = Depends(require_admin)):
@@ -268,14 +277,14 @@ async def list_plugins(admin: User = Depends(require_admin)):
             "plugins": [
                 {
                     "id": p.plugin_id,
-                    "name": p.name, # PluginRegistry model might not have name directly if in metadata_json?
-                    # Let's check model definition. The script used 'namespace'. 
+                    "name": p.name,  # PluginRegistry model might not have name directly if in metadata_json?
+                    # Let's check model definition. The script used 'namespace'.
                     # Assuming standard fields. Let's start with safe fields.
                     "namespace": p.namespace,
                     "version": p.version,
                     "status": p.status,
                     "updated_at": p.updated_at,
-                    "metadata": p.metadata_json
+                    "metadata": p.metadata_json,
                 }
                 for p in plugins
             ]
@@ -292,26 +301,37 @@ async def toggle_plugin_status(plugin_id: str, admin: User = Depends(require_adm
     """Toggle plugin active/inactive status (Admin only)"""
     db = SessionLocal()
     try:
-        plugin = db.query(PluginRegistry).filter(PluginRegistry.plugin_id == plugin_id).first()
+        plugin = (
+            db.query(PluginRegistry)
+            .filter(PluginRegistry.plugin_id == plugin_id)
+            .first()
+        )
         if not plugin:
             # Try searching by namespace if UUID fail
-            plugin = db.query(PluginRegistry).filter(PluginRegistry.namespace == plugin_id).first()
-            
+            plugin = (
+                db.query(PluginRegistry)
+                .filter(PluginRegistry.namespace == plugin_id)
+                .first()
+            )
+
         if not plugin:
             raise HTTPException(status_code=404, detail="Plugin not found")
-            
+
         new_status = "inactive" if plugin.status == "active" else "active"
         plugin.status = new_status
         db.commit()
-        
+
         audit_service.log_security_event(
             user_id=admin.id,
             action="PLUGIN_STATUS_CHANGE",
             resource_type="plugin",
             details={"plugin": plugin.namespace, "new_status": new_status},
         )
-        
-        return {"message": f"Plugin {plugin.namespace} is now {new_status}", "status": new_status}
+
+        return {
+            "message": f"Plugin {plugin.namespace} is now {new_status}",
+            "status": new_status,
+        }
     except HTTPException:
         raise
     except Exception as e:
@@ -319,6 +339,7 @@ async def toggle_plugin_status(plugin_id: str, admin: User = Depends(require_adm
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         db.close()
+
 
 @router.get("/plugins/metrics")
 async def get_plugin_metrics(admin: User = Depends(require_admin)):
@@ -328,7 +349,7 @@ async def get_plugin_metrics(admin: User = Depends(require_admin)):
         "metrics": {
             "active_plugins": 14,
             "shadow_executions_24h": 1250,
-            "anomalies_detected": 42
+            "anomalies_detected": 42,
         },
-        "note": "Real-time metrics integration pending ShadowExecutor persistence link."
+        "note": "Real-time metrics integration pending ShadowExecutor persistence link.",
     }

@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/intelligence/fraud_detection_engine.py
+# hypothesis_version: 6.148.8
+
+[0.0, '__main__', 'alert_id', 'alerts', 'confidence', 'description', 'details', 'fraud_type', 'risk_score', 'round_trip', 'structuring', 'transactions', 'typology_rule', 'unusual_pattern', 'velocity']

@@ -9,14 +9,15 @@ try:
     import aiohttp
 except Exception:
     aiohttp = None
-import json
 import logging
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 
-from app.services.infrastructure.circuit_breaker import circuit_breaker, CircuitBreakerConfig
+from app.services.infrastructure.circuit_breaker import (
+    CircuitBreakerConfig,
+    circuit_breaker,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +74,7 @@ class GeocodingService:
             """
             )
 
-    def _load_fallback_locations(self) -> Dict[str, Location]:
+    def _load_fallback_locations(self) -> dict[str, Location]:
         """Load fallback location data for common cities/countries."""
         return {
             # Major cities
@@ -115,7 +116,7 @@ class GeocodingService:
         """Create a normalized key for location caching."""
         return f"{city.lower().strip()}, {country.lower().strip()}"
 
-    async def geocode_location(self, city: str, country: str) -> Optional[Location]:
+    async def geocode_location(self, city: str, country: str) -> Location | None:
         """
         Geocode a city/country combination to coordinates.
 
@@ -161,7 +162,7 @@ class GeocodingService:
         logger.warning(f"Could not geocode location: {city}, {country}")
         return None
 
-    def _get_cached_location(self, location_key: str) -> Optional[Location]:
+    def _get_cached_location(self, location_key: str) -> Location | None:
         """Retrieve location from cache."""
         try:
             with sqlite3.connect(self.cache_db_path) as conn:
@@ -211,13 +212,18 @@ class GeocodingService:
         except Exception as e:
             logger.error(f"Error caching location: {e}")
 
-    @circuit_breaker("external_api_geocoding", CircuitBreakerConfig(
-        failure_threshold=5, 
-        recovery_timeout=120.0, 
-        expected_exception=(aiohttp.ClientError if aiohttp else Exception, Exception)
-    ))
-
-    async def _geocode_online(self, city: str, country: str) -> Optional[Location]:
+    @circuit_breaker(
+        "external_api_geocoding",
+        CircuitBreakerConfig(
+            failure_threshold=5,
+            recovery_timeout=120.0,
+            expected_exception=(
+                aiohttp.ClientError if aiohttp else Exception,
+                Exception,
+            ),
+        ),
+    )
+    async def _geocode_online(self, city: str, country: str) -> Location | None:
         """Attempt online geocoding using free APIs with circuit breaker protection."""
         query = f"{city}, {country}"
 
@@ -231,7 +237,6 @@ class GeocodingService:
                     params=params,
                     headers={"User-Agent": "FraudDetectionApp/1.0"},
                 ) as response:
-
                     if response.status == 200:
                         data = await response.json()
                         if data:
@@ -249,8 +254,8 @@ class GeocodingService:
         return None
 
     async def batch_geocode(
-        self, locations: List[Tuple[str, str]]
-    ) -> Dict[Tuple[str, str], Optional[Location]]:
+        self, locations: list[tuple[str, str]]
+    ) -> dict[tuple[str, str], Location | None]:
         """
         Geocode multiple locations in batch.
 
@@ -296,7 +301,7 @@ class GeocodingService:
         except Exception as e:
             logger.error(f"Error clearing geocoding cache: {e}")
 
-    def get_cache_stats(self) -> Dict[str, int]:
+    def get_cache_stats(self) -> dict[str, int]:
         """Get cache statistics."""
         try:
             with sqlite3.connect(self.cache_db_path) as conn:
@@ -314,7 +319,7 @@ geocoding_service = GeocodingService()
 
 async def geocode_transaction_location(
     city: str, country: str
-) -> Optional[Dict[str, float]]:
+) -> dict[str, float] | None:
     """
     Convenience function to geocode a transaction location.
 

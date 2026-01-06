@@ -7,25 +7,18 @@ import { jest } from '@jest/globals';
  * Creates a properly typed API success response mock
  * Eliminates 'any' types from API testing
  */
-export function createApiSuccessMock<T>(data: T) {
+export function createApiSuccessMock<T>(data: T): jest.Mock {
   return jest.fn().mockResolvedValue({
     success: true,
     data
-  } as any);
-}
-
-export function createApiErrorMock(error: string, code = 'UNKNOWN_ERROR') {
-  return jest.fn().mockResolvedValue({
-    success: false,
-    error: { code, message: error }
-  } as any);
+  });
 }
 
 /**
  * Creates a properly typed API error response mock
  * Eliminates 'any' types from error testing
  */
-export function createApiErrorMock(error: string, code = 'UNKNOWN_ERROR') {
+export function createApiErrorMock(error: string, code = 'UNKNOWN_ERROR'): jest.Mock {
   return jest.fn().mockResolvedValue({
     success: false,
     error: { code, message: error }

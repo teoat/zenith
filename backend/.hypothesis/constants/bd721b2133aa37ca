@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/repositories/case.py
+# hypothesis_version: 6.148.8
+
+[100, 1800, 'archived', 'case', 'closed', 'id', 'medium', 'open']

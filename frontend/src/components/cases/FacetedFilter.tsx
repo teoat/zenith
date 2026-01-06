@@ -97,7 +97,7 @@ const FacetedFilter: React.FC<FacetedFilterProps> = ({ filterOptions, selectedFi
                   <input 
                     type="checkbox" 
                     className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    checked={(internalFilters[option.id] || []).includes(opt.value)}
+                    checked={Array.isArray(internalFilters[option.id]) ? (internalFilters[option.id] as string[]).includes(opt.value) : false}
                     onChange={(e) => handleCheckboxChange(option.id, opt.value, e.target.checked)}
                   />
                   <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-blue-600">{opt.label}</span>

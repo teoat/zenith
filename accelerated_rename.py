@@ -4,12 +4,12 @@ Accelerated rename script for critical Zenith to Zenith changes
 """
 
 import os
-import re
+
 
 def replace_in_file(filepath, replacements):
     """Replace multiple strings in a file"""
     try:
-        with open(filepath, 'r', encoding='utf-8', errors='ignore') as file:
+        with open(filepath, encoding="utf-8", errors="ignore") as file:
             content = file.read()
 
         original_content = content
@@ -17,12 +17,13 @@ def replace_in_file(filepath, replacements):
             content = content.replace(old_text, new_text)
 
         if content != original_content:
-            with open(filepath, 'w', encoding='utf-8') as file:
+            with open(filepath, "w", encoding="utf-8") as file:
                 file.write(content)
             return True
     except Exception as e:
         print(f"Error processing {filepath}: {e}")
     return False
+
 
 def main():
     # Critical files to update first
@@ -43,45 +44,45 @@ def main():
         "/Users/Arief/Desktop/Zenith/docs/COMPREHENSIVE_13_DAY_IMPLEMENTATION_COMPLETION_REPORT.md",
         "/Users/Arief/Desktop/Zenith/docs/SYSTEM_ORCHESTRATION_FRAMEWORK.md",
         "/Users/Arief/Desktop/Zenith/docs/reports/DIAMOND_STANDARD_CERTIFICATION_FINAL.md",
-        "/Users/Arief/Desktop/Zenith/docs/hardware-security.md"
+        "/Users/Arief/Desktop/Zenith/docs/hardware-security.md",
     ]
 
     # Key replacements
     replacements = {
-        'Zenith Fraud Detection Platform': 'Zenith Fraud Detection Platform',
-        'Zenith Fraud Detection': 'Zenith Fraud Detection',
-        'Zenith Platform': 'Zenith Platform',
-        'Zenith Forensic Engine': 'Zenith Forensic Engine',
-        'Zenith Documentation': 'Zenith Documentation',
-        'api.Zenith.com': 'api.zenith.com',
-        'app.Zenith.com': 'app.zenith.com',
-        'docs.Zenith.com': 'docs.zenith.com',
-        'support@Zenith.com': 'support@zenith.com',
-        'docs@Zenith.com': 'docs@zenith.com',
-        'project-updates@Zenith.com': 'project-updates@zenith.com',
-        'executive-reports@Zenith.com': 'executive-reports@zenith.com',
-        'success@Zenith.com': 'success@zenith.com',
-        'security@Zenith.com': 'security@zenith.com',
-        'devops@Zenith.com': 'devops@zenith.com',
-        'cto@Zenith.com': 'cto@zenith.com',
-        'management@Zenith.com': 'management@zenith.com',
-        'legal@Zenith.com': 'legal@zenith.com',
-        'pr@Zenith.com': 'pr@zenith.com',
-        'hardware-security@Zenith.com': 'hardware-security@zenith.com',
-        'infra-security@Zenith.com': 'infra-security@zenith.com',
-        'emergency-hardware@Zenith.com': 'emergency-hardware@zenith.com',
-        'oncall@Zenith.com': 'oncall@zenith.com',
-        'escalation@Zenith.com': 'escalation@zenith.com',
-        'ops-management@Zenith.com': 'ops-management@zenith.com',
-        'infrastructure@Zenith.com': 'infrastructure@zenith.com',
-        'doc-team@Zenith.com': 'doc-team@zenith.com',
-        'https://dashboard.Zenith.com': 'https://dashboard.zenith.com',
-        'https://support.Zenith.com': 'https://support.zenith.com',
-        'https://community.Zenith.com': 'https://community.zenith.com',
-        'https://status.Zenith.com': 'https://status.zenith.com',
-        'https://download.Zenith.com': 'https://download.zenith.com',
-        'Zenith team': 'Zenith team',
-        'Zenith': 'Zenith'
+        "Zenith Fraud Detection Platform": "Zenith Fraud Detection Platform",
+        "Zenith Fraud Detection": "Zenith Fraud Detection",
+        "Zenith Platform": "Zenith Platform",
+        "Zenith Forensic Engine": "Zenith Forensic Engine",
+        "Zenith Documentation": "Zenith Documentation",
+        "api.Zenith.com": "api.zenith.com",
+        "app.Zenith.com": "app.zenith.com",
+        "docs.Zenith.com": "docs.zenith.com",
+        "support@Zenith.com": "support@zenith.com",
+        "docs@Zenith.com": "docs@zenith.com",
+        "project-updates@Zenith.com": "project-updates@zenith.com",
+        "executive-reports@Zenith.com": "executive-reports@zenith.com",
+        "success@Zenith.com": "success@zenith.com",
+        "security@Zenith.com": "security@zenith.com",
+        "devops@Zenith.com": "devops@zenith.com",
+        "cto@Zenith.com": "cto@zenith.com",
+        "management@Zenith.com": "management@zenith.com",
+        "legal@Zenith.com": "legal@zenith.com",
+        "pr@Zenith.com": "pr@zenith.com",
+        "hardware-security@Zenith.com": "hardware-security@zenith.com",
+        "infra-security@Zenith.com": "infra-security@zenith.com",
+        "emergency-hardware@Zenith.com": "emergency-hardware@zenith.com",
+        "oncall@Zenith.com": "oncall@zenith.com",
+        "escalation@Zenith.com": "escalation@zenith.com",
+        "ops-management@Zenith.com": "ops-management@zenith.com",
+        "infrastructure@Zenith.com": "infrastructure@zenith.com",
+        "doc-team@Zenith.com": "doc-team@zenith.com",
+        "https://dashboard.Zenith.com": "https://dashboard.zenith.com",
+        "https://support.Zenith.com": "https://support.zenith.com",
+        "https://community.Zenith.com": "https://community.zenith.com",
+        "https://status.Zenith.com": "https://status.zenith.com",
+        "https://download.Zenith.com": "https://download.zenith.com",
+        "Zenith team": "Zenith team",
+        "Zenith": "Zenith",
     }
 
     print("Starting accelerated rename of critical documentation files...")
@@ -100,8 +101,11 @@ def main():
     # Quick validation check
     print("\nRunning quick validation check...")
     os.chdir("/Users/Arief/Desktop/Zenith")
-    result = os.popen("python scripts/documentation/validate_docs.py 2>/dev/null | tail -5").read()
+    result = os.popen(
+        "python scripts/documentation/validate_docs.py 2>/dev/null | tail -5"
+    ).read()
     print(result)
+
 
 if __name__ == "__main__":
     main()

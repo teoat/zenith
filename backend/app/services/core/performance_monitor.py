@@ -1,9 +1,11 @@
 # Performance Monitoring Setup
+import builtins
+import contextlib
 import threading
 import time
 from collections import deque
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List
+from datetime import UTC, datetime
+from typing import Any
 
 import psutil
 
@@ -51,17 +53,15 @@ class PerformanceMonitor:
             except Exception as e:
                 # Avoid logging if we are shutting down (interpreter cleanup)
                 if not self._stop_event.is_set():
-                    try:
+                    with contextlib.suppress(builtins.BaseException):
                         logger.error(f"Performance monitoring error: {e}")
-                    except:
-                        pass
                 if self._stop_event.wait(60):
                     break
 
-    def _collect_metrics(self) -> Dict[str, Any]:
+    def _collect_metrics(self) -> dict[str, Any]:
         """Collect current system metrics"""
         return {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "cpu_percent": psutil.cpu_percent(interval=1),
             "memory_percent": psutil.virtual_memory().percent,
             "disk_usage": psutil.disk_usage("/").percent,
@@ -71,7 +71,7 @@ class PerformanceMonitor:
             ),
         }
 
-    def _update_baselines(self, metrics: Dict[str, Any]):
+    def _update_baselines(self, metrics: dict[str, Any]):
         """Update performance baselines"""
         for key, value in metrics.items():
             if key != "timestamp" and value is not None:
@@ -91,7 +91,7 @@ class PerformanceMonitor:
                         baseline["avg"] * (baseline["count"] - 1) + value
                     ) / baseline["count"]
 
-    def get_baselines(self) -> Dict[str, Any]:
+    def get_baselines(self) -> dict[str, Any]:
         """Get current performance baselines"""
         return {
             "baselines": self.baselines,
@@ -102,7 +102,7 @@ class PerformanceMonitor:
             ),
         }
 
-    def get_current_metrics(self) -> Dict[str, Any]:
+    def get_current_metrics(self) -> dict[str, Any]:
         """Get current system metrics"""
         return self._collect_metrics()
 
@@ -111,7 +111,7 @@ class PerformanceMonitor:
     ):
         """Record API call performance"""
         api_metric = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "endpoint": endpoint,
             "method": method,
             "response_time_ms": response_time_ms,
@@ -126,7 +126,7 @@ class PerformanceMonitor:
     ):
         """Record database query performance"""
         db_metric = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "query_type": query_type,
             "execution_time_ms": execution_time_ms,
             "success": success,
@@ -134,7 +134,7 @@ class PerformanceMonitor:
 
         self.database_queries.append(db_metric)
 
-    def _get_default_alert_rules(self) -> Dict[str, Dict[str, Any]]:
+    def _get_default_alert_rules(self) -> dict[str, dict[str, Any]]:
         """Get default alert rules"""
         return {
             "high_cpu_usage": {
@@ -184,7 +184,7 @@ class PerformanceMonitor:
         error_count = sum(1 for call in recent_calls if call.get("is_error", False))
         return error_count / len(recent_calls)
 
-    def check_thresholds(self) -> List[str]:
+    def check_thresholds(self) -> list[str]:
         """Check if current metrics exceed thresholds"""
         alerts = []
         current = self._collect_metrics()
@@ -221,13 +221,13 @@ class PerformanceMonitor:
             "type": alert_type,
             "message": message,
             "severity": severity,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         self.alerts.append(alert)
         logger.warning(f"Performance Alert [{severity.upper()}]: {message}")
 
-    def get_performance_summary(self) -> Dict[str, Any]:
+    def get_performance_summary(self) -> dict[str, Any]:
         """Get comprehensive performance summary"""
         current_metrics = self._collect_metrics() if self.metrics_history else {}
 
@@ -251,7 +251,7 @@ class PerformanceMonitor:
 
         return summary
 
-    def _calculate_trends(self) -> Dict[str, Any]:
+    def _calculate_trends(self) -> dict[str, Any]:
         """Calculate performance trends"""
         trends = {}
         if len(self.metrics_history) >= 10:
@@ -276,7 +276,7 @@ class PerformanceMonitor:
 
         return trends
 
-    def _generate_recommendations(self) -> List[str]:
+    def _generate_recommendations(self) -> list[str]:
         """Generate performance improvement recommendations"""
         recommendations = []
 
@@ -319,8 +319,8 @@ class PerformanceMonitor:
         self.anomaly_detection_enabled = True
 
     async def perform_root_cause_analysis(
-        self, incident_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, incident_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Perform AI-powered root cause analysis for incidents"""
         analysis = {
             "primary_cause": "unknown",
@@ -379,7 +379,7 @@ class PerformanceMonitor:
 
         return analysis
 
-    async def generate_predictive_alerts(self) -> List[Dict[str, Any]]:
+    async def generate_predictive_alerts(self) -> list[dict[str, Any]]:
         """Generate predictive alerts based on trend analysis"""
         alerts = []
 
@@ -452,8 +452,8 @@ class PerformanceMonitor:
         return alerts
 
     async def create_incident_response_workflow(
-        self, incident_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, incident_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Create automated incident response workflow"""
         workflow = {
             "incident_id": f"INC-{int(time.time())}",
@@ -463,7 +463,7 @@ class PerformanceMonitor:
             "automated_actions": [],
             "manual_steps": [],
             "timeline": {
-                "detected_at": datetime.now(timezone.utc).isoformat(),
+                "detected_at": datetime.now(UTC).isoformat(),
                 "analysis_complete": None,
                 "containment_complete": None,
                 "resolution_complete": None,
@@ -503,7 +503,7 @@ class PerformanceMonitor:
 
         return workflow
 
-    async def implement_comprehensive_logging(self) -> Dict[str, Any]:
+    async def implement_comprehensive_logging(self) -> dict[str, Any]:
         """Implement comprehensive logging with advanced analytics"""
         logging_config = {
             "log_levels": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
@@ -531,7 +531,7 @@ class PerformanceMonitor:
             "alert_effectiveness": 95,
         }
 
-    def _calculate_trend_slope(self, values: List[float]) -> float:
+    def _calculate_trend_slope(self, values: list[float]) -> float:
         """Calculate the slope of a trend line"""
         if len(values) < 2:
             return 0
@@ -548,7 +548,7 @@ class PerformanceMonitor:
 
         return numerator / denominator if denominator != 0 else 0
 
-    def _determine_responsible_team(self, incident_data: Dict[str, Any]) -> str:
+    def _determine_responsible_team(self, incident_data: dict[str, Any]) -> str:
         """Determine which team should handle the incident"""
         incident_type = incident_data.get("type", "")
 
@@ -563,10 +563,10 @@ class PerformanceMonitor:
         # Default to DevOps for unknown types
         return team_mapping.get(incident_type, "DevOps Team")
 
-    async def generate_performance_report(self) -> Dict[str, Any]:
+    async def generate_performance_report(self) -> dict[str, Any]:
         """Generate comprehensive performance report"""
         report = {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "period_analyzed": f"{len(self.metrics_history)} measurements",
             "summary": {
                 "overall_health": "good",
@@ -604,7 +604,7 @@ class PerformanceMonitor:
 
         return report
 
-    def get_alerts(self, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_alerts(self, limit: int = 10) -> list[dict[str, Any]]:
         """Get recent alerts"""
         return list(self.alerts)[-limit:]
 
@@ -681,7 +681,7 @@ class AdvancedMonitoringSuite:
             },
         ]
 
-    async def get_advanced_monitoring_status(self) -> Dict[str, Any]:
+    async def get_advanced_monitoring_status(self) -> dict[str, Any]:
         """Get comprehensive advanced monitoring status"""
         status = {
             "monitoring_active": True,
@@ -694,7 +694,7 @@ class AdvancedMonitoringSuite:
             "active_workflows": len(self.incident_workflows),
             "predictive_models": self.predictive_models,
             "system_health_score": 96,
-            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "last_updated": datetime.now(UTC).isoformat(),
         }
 
         return status

@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/onboarding.py
+# hypothesis_version: 6.148.8
+
+['/onboarding/roles', 'Administrator', 'Compliance Auditor', 'Financial Analyst', 'Fraud Investigator', 'accepted', 'admin', 'analyst', 'auditor', 'complete_training', 'completed_items', 'description', 'id', 'investigator', 'message', 'name', 'pending_items', 'progress', 'review_policies', 'roles', 'setup_2fa', 'status', 'success', 'user', 'user_id', 'verify_email']

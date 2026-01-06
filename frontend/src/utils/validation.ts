@@ -228,3 +228,22 @@ export const paginationSchema = z.object({
 export function validatePagination(params: { page?: number; limit?: number }) {
   return paginationSchema.parse(params);
 }
+// Basic phone validation
+export function validatePhone(phone: string): boolean {
+  return /^\+?[\d\s-]{10,}$/.test(phone);
+}
+
+// Basic SSN validation (US format)
+export function validateSSN(ssn: string): boolean {
+  return /^\d{3}-?\d{2}-?\d{4}$/.test(ssn);
+}
+
+// Password validation wrapper
+export function validatePassword(password: string): boolean {
+  try {
+    passwordSchema.parse(password);
+    return true;
+  } catch {
+    return false;
+  }
+}

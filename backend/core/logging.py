@@ -1,11 +1,11 @@
-import json
+import contextlib
 import json
 import logging
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class JSONFormatter(logging.Formatter):
@@ -13,7 +13,7 @@ class JSONFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         log_entry = {
-            "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
+            "timestamp": datetime.now(UTC).isoformat() + "Z",
             "level": record.levelname,
             "logger": record.name,
             "message": record.getMessage(),
@@ -41,11 +41,11 @@ class JSONFormatter(logging.Formatter):
 def setup_logging(
     level: str = "INFO",
     format_type: str = "json",
-    log_file: Optional[str] = None,
+    log_file: str | None = None,
     max_file_size: int = 10 * 1024 * 1024,  # 10MB
     backup_count: int = 5,
     enable_console: bool = True,
-    enable_file: bool = True
+    enable_file: bool = True,
 ) -> logging.Logger:
     """Enhanced logging setup with better configuration options"""
 
@@ -66,7 +66,7 @@ def setup_logging(
     else:
         formatter = logging.Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(module)s:%(lineno)d - %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S"
+            datefmt="%Y-%m-%d %H:%M:%S",
         )
 
     # Console handler
@@ -82,11 +82,9 @@ def setup_logging(
         log_path.parent.mkdir(parents=True, exist_ok=True)
 
         from logging.handlers import RotatingFileHandler
+
         fh = RotatingFileHandler(
-            log_file,
-            maxBytes=max_file_size,
-            backupCount=backup_count,
-            encoding='utf-8'
+            log_file, maxBytes=max_file_size, backupCount=backup_count, encoding="utf-8"
         )
         fh.setLevel(numeric_level)
         fh.setFormatter(formatter)
@@ -104,7 +102,7 @@ logger = setup_logging(
     max_file_size=int(os.getenv("LOG_MAX_SIZE_MB", "10")) * 1024 * 1024,
     backup_count=int(os.getenv("LOG_BACKUP_COUNT", "5")),
     enable_console=os.getenv("LOG_CONSOLE", "true").lower() == "true",
-    enable_file=os.getenv("LOG_FILE_ENABLED", "true").lower() == "true"
+    enable_file=os.getenv("LOG_FILE_ENABLED", "true").lower() == "true",
 )
 
 
@@ -114,7 +112,7 @@ def log_request(
     path: str,
     status_code: int,
     duration: float,
-    user_id: Optional[str] = None,
+    user_id: str | None = None,
 ):
     """Log HTTP request details (single call to module logger)."""
     extra_fields = {
@@ -143,17 +141,15 @@ def log_request(
     try:
         logger.info("HTTP request", extra=extra_fields)
     except Exception:
-        try:
+        with contextlib.suppress(Exception):
             logging.getLogger("Zenith").info("HTTP request", extra=extra_fields)
-        except Exception:
-            pass
 
 
 def log_error(
     error_type: str,
     message: str,
-    details: Optional[Dict[str, Any]] = None,
-    user_id: Optional[str] = None,
+    details: dict[str, Any] | None = None,
+    user_id: str | None = None,
 ):
     """Log application errors."""
     extra_fields = {"error_type": error_type, "details": details or {}}
@@ -174,17 +170,15 @@ def log_error(
     try:
         logger.error(message, extra=extra_fields)
     except Exception:
-        try:
+        with contextlib.suppress(Exception):
             logging.getLogger("Zenith").error(message, extra=extra_fields)
-        except Exception:
-            pass
 
 
 def log_security_event(
     event_type: str,
-    user_id: Optional[str] = None,
-    ip_address: Optional[str] = None,
-    details: Optional[Dict[str, Any]] = None,
+    user_id: str | None = None,
+    ip_address: str | None = None,
+    details: dict[str, Any] | None = None,
 ):
     """Log security-related events."""
     extra_fields = {
@@ -211,15 +205,11 @@ def log_security_event(
     try:
         logger.warning("Security event", extra=extra_fields)
     except Exception:
-        try:
+        with contextlib.suppress(Exception):
             logging.getLogger("Zenith").warning("Security event", extra=extra_fields)
-        except Exception:
-            pass
 
 
-def log_performance(
-    metric_name: str, value: float, tags: Optional[Dict[str, Any]] = None
-):
+def log_performance(metric_name: str, value: float, tags: dict[str, Any] | None = None):
     """Log performance metrics."""
     extra_fields = {
         "metric_name": metric_name,
@@ -241,10 +231,8 @@ def log_performance(
     try:
         logger.info("Performance metric", extra=extra_fields)
     except Exception:
-        try:
+        with contextlib.suppress(Exception):
             logging.getLogger("Zenith").info("Performance metric", extra=extra_fields)
-        except Exception:
-            pass
 
 
 def configure_environment_logging():
@@ -254,10 +242,7 @@ def configure_environment_logging():
     if env == "development":
         # Development: more verbose, console only, human-readable
         setup_logging(
-            level="DEBUG",
-            format_type="text",
-            enable_console=True,
-            enable_file=False
+            level="DEBUG", format_type="text", enable_console=True, enable_file=False
         )
     elif env == "testing":
         # Testing: capture all logs, minimal output, structured
@@ -266,7 +251,7 @@ def configure_environment_logging():
             format_type="json",
             log_file="logs/test.log",
             enable_console=False,
-            enable_file=True
+            enable_file=True,
         )
     elif env == "staging":
         # Staging: balanced logging, both console and file
@@ -275,7 +260,7 @@ def configure_environment_logging():
             format_type="json",
             log_file="logs/staging.log",
             enable_console=True,
-            enable_file=True
+            enable_file=True,
         )
     else:  # production
         # Production: minimal, structured logging, file only
@@ -284,7 +269,7 @@ def configure_environment_logging():
             format_type="json",
             log_file="logs/production.log",
             enable_console=False,
-            enable_file=True
+            enable_file=True,
         )
 
 

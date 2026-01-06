@@ -6,7 +6,6 @@ Identifies and locks all files that should be SSOT protected
 
 import hashlib
 import json
-import os
 import sys
 from dataclasses import dataclass
 from datetime import datetime
@@ -66,13 +65,11 @@ class ComprehensiveSSOTLockApplier:
         # Business logic files
         if any(
             keyword in file_str for keyword in ["fraud", "database", "service", "core"]
+        ) and (
+            "database" in file_str
+            or any(keyword in file_str for keyword in ["fraud", "detection", "scoring"])
         ):
-            if "database" in file_str:
-                return "business_logic"
-            elif any(
-                keyword in file_str for keyword in ["fraud", "detection", "scoring"]
-            ):
-                return "business_logic"
+            return "business_logic"
 
         # Security files
         if any(
@@ -124,7 +121,7 @@ class ComprehensiveSSOTLockApplier:
         else:
             return "test_fixtures"
 
-    def load_existing_protections(self) -> Set[str]:
+    def load_existing_protections(self) -> set[str]:
         """Load currently protected files"""
         protected = set()
 
@@ -132,7 +129,7 @@ class ComprehensiveSSOTLockApplier:
         for lockfile in self.diagnostics_dir.glob("*.lock"):
             if lockfile.exists():
                 try:
-                    with open(lockfile, "r") as f:
+                    with open(lockfile) as f:
                         data = json.load(f)
                         if "files" in data and isinstance(data["files"], dict):
                             protected.update(data["files"].keys())
@@ -141,7 +138,7 @@ class ComprehensiveSSOTLockApplier:
 
         return protected
 
-    def identify_files_to_protect(self) -> List[FileProtection]:
+    def identify_files_to_protect(self) -> list[FileProtection]:
         """Identify all files that should be SSOT protected"""
         files_to_protect = []
         existing_protections = self.load_existing_protections()
@@ -288,8 +285,8 @@ class ComprehensiveSSOTLockApplier:
         return "low"
 
     def _should_protect_file(
-        self, file_path: Path, category: str, rules: Dict
-    ) -> Tuple[bool, int, str]:
+        self, file_path: Path, category: str, rules: dict
+    ) -> tuple[bool, int, str]:
         """Determine if file should be protected and calculate risk"""
         base_risk = 0
 
@@ -325,8 +322,8 @@ class ComprehensiveSSOTLockApplier:
         return should_protect, min(100, base_risk), reason
 
     def apply_lockfile_protection(
-        self, files_to_protect: List[FileProtection]
-    ) -> Dict[str, Any]:
+        self, files_to_protect: list[FileProtection]
+    ) -> dict[str, Any]:
         """Apply SSOT protection to identified files"""
         lockfiles_created = {}
         files_locked = 0
@@ -354,7 +351,7 @@ class ComprehensiveSSOTLockApplier:
                 print(f"✅ Created {category}.lock with {len(files)} protected files")
 
             except Exception as e:
-                print(f"❌ Failed to create {category}.lock: {str(e)}")
+                print(f"❌ Failed to create {category}.lock: {e!s}")
 
         return {
             "lockfiles_created": len(lockfiles_created),
@@ -364,8 +361,8 @@ class ComprehensiveSSOTLockApplier:
         }
 
     def _create_lockfile_data(
-        self, category: str, files: List[FileProtection]
-    ) -> Dict[str, Any]:
+        self, category: str, files: list[FileProtection]
+    ) -> dict[str, Any]:
         """Create lockfile data structure"""
         lockfile_data = {
             "category": category,
@@ -398,8 +395,8 @@ class ComprehensiveSSOTLockApplier:
         return lockfile_data
 
     def generate_protection_report(
-        self, files_to_protect: List[FileProtection], lockfile_results: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, files_to_protect: list[FileProtection], lockfile_results: dict[str, Any]
+    ) -> dict[str, Any]:
         """Generate comprehensive protection report"""
         report = {
             "timestamp": datetime.now().isoformat(),

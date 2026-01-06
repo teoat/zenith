@@ -5,15 +5,15 @@ Advanced risk management with predictive mitigation and automated response
 """
 
 import asyncio
-import json
 import logging
 import statistics
 import time
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -57,9 +57,9 @@ class Risk:
     risk_score: float  # calculated: probability * impact
     identified_at: datetime
     identified_by: str
-    affected_systems: List[str]
-    triggers: List[str]
-    indicators: List[str]
+    affected_systems: list[str]
+    triggers: list[str]
+    indicators: list[str]
     status: MitigationStatus = MitigationStatus.IDENTIFIED
 
 
@@ -78,9 +78,9 @@ class MitigationAction:
     timeline_days: int
     status: MitigationStatus
     created_at: datetime
-    completed_at: Optional[datetime] = None
-    effectiveness_score: Optional[float] = None
-    dependencies: List[str] = field(default_factory=list)
+    completed_at: datetime | None = None
+    effectiveness_score: float | None = None
+    dependencies: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -99,11 +99,11 @@ class ComprehensiveRiskMitigationFramework:
     """Advanced risk mitigation with predictive capabilities"""
 
     def __init__(self):
-        self.risks: Dict[str, Risk] = {}
-        self.mitigation_actions: Dict[str, MitigationAction] = {}
-        self.risk_patterns: Dict[str, Dict] = {}
-        self.predictive_models: Dict[str, Any] = {}
-        self.monitoring_alerts: Dict[str, Callable] = {}
+        self.risks: dict[str, Risk] = {}
+        self.mitigation_actions: dict[str, MitigationAction] = {}
+        self.risk_patterns: dict[str, dict] = {}
+        self.predictive_models: dict[str, Any] = {}
+        self.monitoring_alerts: dict[str, Callable] = {}
 
         self._initialize_risk_templates()
         self._setup_predictive_monitoring()
@@ -204,7 +204,7 @@ class ComprehensiveRiskMitigationFramework:
             "incident_response": self._auto_initiate_incident_response,
         }
 
-    async def identify_risk(self, risk_data: Dict[str, Any]) -> Risk:
+    async def identify_risk(self, risk_data: dict[str, Any]) -> Risk:
         """Identify and register a new risk"""
         risk_id = f"risk_{int(time.time())}_{risk_data['category']}"
 
@@ -253,7 +253,7 @@ class ComprehensiveRiskMitigationFramework:
 
         # Identify applicable mitigation templates
         applicable_templates = []
-        for pattern_name, pattern in self.risk_patterns.items():
+        for pattern in self.risk_patterns.values():
             if pattern["category"] == risk.category:
                 applicable_templates.append(pattern)
 
@@ -277,7 +277,7 @@ class ComprehensiveRiskMitigationFramework:
 
             self.mitigation_actions[action_id] = mitigation_action
 
-    def _estimate_mitigation_cost(self, risk: Risk, template: Dict) -> float:
+    def _estimate_mitigation_cost(self, risk: Risk, template: dict) -> float:
         """Estimate cost of mitigation action"""
         base_costs = {
             RiskSeverity.LOW: 1000,
@@ -360,7 +360,7 @@ class ComprehensiveRiskMitigationFramework:
         while True:
             try:
                 # Run all monitoring checks
-                for alert_name, alert_func in self.monitoring_alerts.items():
+                for alert_func in self.monitoring_alerts.values():
                     risks_identified = await alert_func()
                     for risk_data in risks_identified:
                         await self.identify_risk(risk_data)
@@ -374,7 +374,7 @@ class ComprehensiveRiskMitigationFramework:
                 logger.error(f"Risk monitoring error: {e}")
                 await asyncio.sleep(300)  # Retry in 5 minutes
 
-    async def _monitor_technical_debt(self) -> List[Dict[str, Any]]:
+    async def _monitor_technical_debt(self) -> list[dict[str, Any]]:
         """Monitor for technical debt risks"""
         risks = []
 
@@ -396,7 +396,7 @@ class ComprehensiveRiskMitigationFramework:
 
         return risks
 
-    async def _monitor_performance_risks(self) -> List[Dict[str, Any]]:
+    async def _monitor_performance_risks(self) -> list[dict[str, Any]]:
         """Monitor for performance risks"""
         risks = []
 
@@ -418,7 +418,7 @@ class ComprehensiveRiskMitigationFramework:
 
         return risks
 
-    async def _monitor_security_threats(self) -> List[Dict[str, Any]]:
+    async def _monitor_security_threats(self) -> list[dict[str, Any]]:
         """Monitor for security risks"""
         risks = []
 
@@ -439,7 +439,7 @@ class ComprehensiveRiskMitigationFramework:
 
         return risks
 
-    async def _monitor_compliance_risks(self) -> List[Dict[str, Any]]:
+    async def _monitor_compliance_risks(self) -> list[dict[str, Any]]:
         """Monitor for compliance risks"""
         risks = []
 
@@ -460,7 +460,7 @@ class ComprehensiveRiskMitigationFramework:
 
         return risks
 
-    async def _monitor_business_risks(self) -> List[Dict[str, Any]]:
+    async def _monitor_business_risks(self) -> list[dict[str, Any]]:
         """Monitor for business continuity risks"""
         risks = []
 
@@ -532,7 +532,7 @@ class ComprehensiveRiskMitigationFramework:
         # In production, this would create tickets, send notifications, etc.
         return random.random() > 0.3  # 70% success rate for manual processes
 
-    def get_risk_dashboard(self) -> Dict[str, Any]:
+    def get_risk_dashboard(self) -> dict[str, Any]:
         """Get comprehensive risk dashboard"""
         total_risks = len(self.risks)
         mitigated_risks = len(
@@ -566,21 +566,21 @@ class ComprehensiveRiskMitigationFramework:
             "top_risks": self._get_top_risks(),
         }
 
-    def _get_risks_by_category(self) -> Dict[str, int]:
+    def _get_risks_by_category(self) -> dict[str, int]:
         """Get risk count by category"""
         categories = defaultdict(int)
         for risk in self.risks.values():
             categories[risk.category.value] += 1
         return dict(categories)
 
-    def _get_risks_by_severity(self) -> Dict[str, int]:
+    def _get_risks_by_severity(self) -> dict[str, int]:
         """Get risk count by severity"""
         severities = defaultdict(int)
         for risk in self.risks.values():
             severities[risk.severity.value] += 1
         return dict(severities)
 
-    def _get_top_risks(self) -> List[Dict[str, Any]]:
+    def _get_top_risks(self) -> list[dict[str, Any]]:
         """Get top 5 risks by score"""
         sorted_risks = sorted(
             self.risks.values(), key=lambda r: r.risk_score, reverse=True

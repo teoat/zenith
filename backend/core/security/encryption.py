@@ -1,8 +1,5 @@
-import base64
-import os
-
 from cryptography.fernet import Fernet
-from sqlalchemy.types import String, Text, TypeDecorator
+from sqlalchemy.types import Text, TypeDecorator
 
 from core.config import settings
 from core.logging import logger
@@ -30,10 +27,7 @@ class VersionedEncryptedString(TypeDecorator):
 
         # Initialize Fernet instances for all key versions
         for version, key_value in self.KEY_VERSIONS.items():
-            if isinstance(key_value, str):
-                key_bytes = key_value.encode()
-            else:
-                key_bytes = key_value
+            key_bytes = key_value.encode() if isinstance(key_value, str) else key_value
             self._fernet_instances[version] = Fernet(key_bytes)
 
         # Use current version for encryption
@@ -64,7 +58,11 @@ class VersionedEncryptedString(TypeDecorator):
             version, encrypted_data = value.split(":", 1)
             if version in self._fernet_instances:
                 try:
-                    return self._fernet_instances[version].decrypt(encrypted_data.encode()).decode()
+                    return (
+                        self._fernet_instances[version]
+                        .decrypt(encrypted_data.encode())
+                        .decode()
+                    )
                 except Exception as e:
                     logger.error(f"Decryption failed for {version}: {e}")
                     # Continue to fallback logic
@@ -79,14 +77,15 @@ class VersionedEncryptedString(TypeDecorator):
                 continue
 
         # Final fallback: return raw value (might be unencrypted legacy data)
-        logger.error(f"All decryption attempts failed for value starting with: {value[:50]}...")
+        logger.error(
+            f"All decryption attempts failed for value starting with: {value[:50]}..."
+        )
         return value
 
 
 # Backward compatibility alias
 class EncryptedString(VersionedEncryptedString):
     """Backward compatibility alias for VersionedEncryptedString"""
-    pass
 
 
 # Helper methods

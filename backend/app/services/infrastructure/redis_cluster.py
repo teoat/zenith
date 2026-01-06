@@ -2,19 +2,21 @@
 Advanced Redis Clustering for Scalability
 Provides distributed caching, session management, and high availability
 """
+
 import asyncio
 import json
 import logging
-import hashlib
 import pickle
-from dataclasses import dataclass, asdict
-from typing import Any, Dict, List, Optional, Union, Callable
-from datetime import datetime, timedelta
+from collections.abc import Callable
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Any
 
 try:
     import redis.asyncio as redis
     from redis.asyncio.cluster import RedisCluster
     from redis.asyncio.sentinel import Sentinel
+
     REDIS_AVAILABLE = True
 except ImportError:
     redis = None
@@ -28,8 +30,9 @@ logger = logging.getLogger(__name__)
 @dataclass
 class RedisConfig:
     """Configuration for Redis cluster"""
-    hosts: List[str]  # List of host:port strings
-    password: Optional[str] = None
+
+    hosts: list[str]  # List of host:port strings
+    password: str | None = None
     db: int = 0
     cluster_mode: bool = False
     sentinel_mode: bool = False
@@ -47,10 +50,12 @@ class RedisClusterManager:
 
     def __init__(self, config: RedisConfig):
         if not REDIS_AVAILABLE:
-            raise ImportError("redis library not available. Install with: pip install redis")
+            raise ImportError(
+                "redis library not available. Install with: pip install redis"
+            )
 
         self.config = config
-        self.client: Optional[Union[redis.Redis, RedisCluster, Sentinel]] = None
+        self.client: redis.Redis | RedisCluster | Sentinel | None = None
         self.is_connected = False
         self.connection_pool = None
 
@@ -129,7 +134,9 @@ class RedisClusterManager:
                     # Multiple instances - use round-robin
                     self.connection_pool = redis.ConnectionPool(
                         host=self.config.hosts[0].split(":")[0],
-                        port=int(self.config.hosts[0].split(":")[1]) if ":" in self.config.hosts[0] else 6379,
+                        port=int(self.config.hosts[0].split(":")[1])
+                        if ":" in self.config.hosts[0]
+                        else 6379,
                         password=self.config.password,
                         db=self.config.db,
                         max_connections=self.config.max_connections,
@@ -140,7 +147,9 @@ class RedisClusterManager:
             # Test connection
             await self.client.ping()
             self.is_connected = True
-            logger.info(f"Successfully connected to Redis cluster: {len(self.config.hosts)} nodes")
+            logger.info(
+                f"Successfully connected to Redis cluster: {len(self.config.hosts)} nodes"
+            )
             return True
 
         except Exception as e:
@@ -171,7 +180,8 @@ class RedisClusterManager:
                 # Update metrics
                 self.operations_count += 1
                 self.avg_response_time = (
-                    (self.avg_response_time * (self.operations_count - 1)) + response_time
+                    (self.avg_response_time * (self.operations_count - 1))
+                    + response_time
                 ) / self.operations_count
 
                 return result
@@ -179,21 +189,25 @@ class RedisClusterManager:
             except Exception as e:
                 self.error_count += 1
                 if attempt == max_retries - 1:
-                    logger.error(f"Redis operation failed after {max_retries} attempts: {e}")
+                    logger.error(
+                        f"Redis operation failed after {max_retries} attempts: {e}"
+                    )
                     raise
 
-                delay = base_delay * (2 ** attempt)
-                logger.warning(f"Redis operation failed (attempt {attempt + 1}), retrying in {delay}s: {e}")
+                delay = base_delay * (2**attempt)
+                logger.warning(
+                    f"Redis operation failed (attempt {attempt + 1}), retrying in {delay}s: {e}"
+                )
                 await asyncio.sleep(delay)
 
     # Core Redis operations with enhanced error handling
-    async def get(self, key: str) -> Optional[str]:
+    async def get(self, key: str) -> str | None:
         """Get value from Redis"""
         if not self.is_connected:
             return None
         return await self._execute_with_retry(self.client.get, key)
 
-    async def set(self, key: str, value: str, ex: Optional[int] = None) -> bool:
+    async def set(self, key: str, value: str, ex: int | None = None) -> bool:
         """Set value in Redis with optional expiration"""
         if not self.is_connected:
             return False
@@ -224,11 +238,11 @@ class RedisClusterManager:
         return await self._execute_with_retry(self.client.ttl, key)
 
     # Advanced operations
-    async def set_json(self, key: str, data: Any, ex: Optional[int] = None) -> bool:
+    async def set_json(self, key: str, data: Any, ex: int | None = None) -> bool:
         """Set JSON data in Redis"""
         return await self.set(key, json.dumps(data), ex=ex)
 
-    async def get_json(self, key: str) -> Optional[Any]:
+    async def get_json(self, key: str) -> Any | None:
         """Get JSON data from Redis"""
         data = await self.get(key)
         if data:
@@ -239,21 +253,21 @@ class RedisClusterManager:
                 return None
         return None
 
-    async def set_pickle(self, key: str, data: Any, ex: Optional[int] = None) -> bool:
+    async def set_pickle(self, key: str, data: Any, ex: int | None = None) -> bool:
         """Set pickled Python object in Redis"""
         try:
             pickled_data = pickle.dumps(data)
-            return await self.set(key, pickled_data.decode('latin1'), ex=ex)
+            return await self.set(key, pickled_data.decode("latin1"), ex=ex)
         except Exception as e:
             logger.error(f"Failed to pickle data for key {key}: {e}")
             return False
 
-    async def get_pickle(self, key: str) -> Optional[Any]:
+    async def get_pickle(self, key: str) -> Any | None:
         """Get pickled Python object from Redis"""
         try:
             data = await self.get(key)
             if data:
-                return pickle.loads(data.encode('latin1'))
+                return pickle.loads(data.encode("latin1"))
         except Exception as e:
             logger.error(f"Failed to unpickle data for key {key}: {e}")
         return None
@@ -274,7 +288,7 @@ class RedisClusterManager:
         return pubsub
 
     # Hash operations
-    async def hget(self, key: str, field: str) -> Optional[str]:
+    async def hget(self, key: str, field: str) -> str | None:
         """Get hash field value"""
         if not self.is_connected:
             return None
@@ -286,7 +300,7 @@ class RedisClusterManager:
             return False
         return bool(await self._execute_with_retry(self.client.hset, key, field, value))
 
-    async def hgetall(self, key: str) -> Dict[str, str]:
+    async def hgetall(self, key: str) -> dict[str, str]:
         """Get all hash fields"""
         if not self.is_connected:
             return {}
@@ -324,7 +338,7 @@ class RedisClusterManager:
         return await self._execute_with_retry(self.client.sismember, key, member)
 
     # Sorted set operations
-    async def zadd(self, key: str, mapping: Dict[str, float]) -> int:
+    async def zadd(self, key: str, mapping: dict[str, float]) -> int:
         """Add members to sorted set with scores"""
         if not self.is_connected:
             return 0
@@ -334,22 +348,26 @@ class RedisClusterManager:
         """Get range from sorted set"""
         if not self.is_connected:
             return []
-        return await self._execute_with_retry(self.client.zrange, key, start, end, withscores=withscores)
+        return await self._execute_with_retry(
+            self.client.zrange, key, start, end, withscores=withscores
+        )
 
     async def zrevrange(self, key: str, start: int, end: int, withscores: bool = False):
         """Get reverse range from sorted set"""
         if not self.is_connected:
             return []
-        return await self._execute_with_retry(self.client.zrevrange, key, start, end, withscores=withscores)
+        return await self._execute_with_retry(
+            self.client.zrevrange, key, start, end, withscores=withscores
+        )
 
-    async def zscore(self, key: str, member: str) -> Optional[float]:
+    async def zscore(self, key: str, member: str) -> float | None:
         """Get score of member in sorted set"""
         if not self.is_connected:
             return None
         return await self._execute_with_retry(self.client.zscore, key, member)
 
     # Cluster-specific operations
-    async def get_cluster_info(self) -> Dict[str, Any]:
+    async def get_cluster_info(self) -> dict[str, Any]:
         """Get cluster information"""
         if not self.is_connected or not self.config.cluster_mode:
             return {"cluster_mode": False}
@@ -368,7 +386,7 @@ class RedisClusterManager:
             logger.error(f"Failed to get cluster info: {e}")
             return {"cluster_mode": False, "error": str(e)}
 
-    async def get_health_status(self) -> Dict[str, Any]:
+    async def get_health_status(self) -> dict[str, Any]:
         """Get comprehensive health status"""
         status = {
             "connected": self.is_connected,
@@ -404,12 +422,14 @@ class RedisClusterManager:
         return status
 
     # Session management
-    async def store_session(self, session_id: str, data: Dict[str, Any], ttl_seconds: int = 3600) -> bool:
+    async def store_session(
+        self, session_id: str, data: dict[str, Any], ttl_seconds: int = 3600
+    ) -> bool:
         """Store session data with TTL"""
         key = f"session:{session_id}"
         return await self.set_json(key, data, ex=ttl_seconds)
 
-    async def get_session(self, session_id: str) -> Optional[Dict[str, Any]]:
+    async def get_session(self, session_id: str) -> dict[str, Any] | None:
         """Retrieve session data"""
         key = f"session:{session_id}"
         return await self.get_json(key)
@@ -420,7 +440,7 @@ class RedisClusterManager:
         return bool(await self.delete(key))
 
     # Distributed locking
-    async def acquire_lock(self, lock_key: str, ttl_seconds: int = 30) -> Optional[str]:
+    async def acquire_lock(self, lock_key: str, ttl_seconds: int = 30) -> str | None:
         """Acquire a distributed lock"""
         lock_value = f"{lock_key}:{datetime.now().isoformat()}"
         key = f"lock:{lock_key}"

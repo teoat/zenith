@@ -24,22 +24,19 @@ import asyncio
 import json
 import logging
 import os
-import subprocess
-import sys
 import time
-import psutil
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
-import aiohttp
-import numpy as np
+from typing import Any, Dict, List, Tuple
+
+import psutil
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
+
 
 class EnhancedDiagnosticOrchestrator:
     """Enhanced diagnostic orchestrator with deep sub-sector analysis and scoring"""
@@ -47,7 +44,7 @@ class EnhancedDiagnosticOrchestrator:
     def __init__(self):
         self.project_root = Path(__file__).parent.parent.parent
         self.results = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "orchestrator_version": "3.0.0",
             "diagnostic_type": "enhanced_deep_analysis",
             "sectors": {},
@@ -55,28 +52,32 @@ class EnhancedDiagnosticOrchestrator:
             "executive_summary": {},
             "recommendations": [],
             "risk_assessment": {},
-            "trends": {}
+            "trends": {},
         }
         self.scoring_weights = {
             "criticality": 0.3,
             "performance": 0.25,
             "reliability": 0.2,
             "security": 0.15,
-            "maintainability": 0.1
+            "maintainability": 0.1,
         }
 
-    def calculate_score(self, metrics: Dict[str, Any], sector: str) -> Tuple[float, str, Dict[str, Any]]:
+    def calculate_score(
+        self, metrics: dict[str, Any], sector: str
+    ) -> tuple[float, str, dict[str, Any]]:
         """Calculate comprehensive score with breakdown"""
         scores = {
             "criticality": self._score_criticality(metrics, sector),
             "performance": self._score_performance(metrics, sector),
             "reliability": self._score_reliability(metrics, sector),
             "security": self._score_security(metrics, sector),
-            "maintainability": self._score_maintainability(metrics, sector)
+            "maintainability": self._score_maintainability(metrics, sector),
         }
 
         # Weighted overall score
-        overall_score = sum(scores[aspect] * self.scoring_weights[aspect] for aspect in scores)
+        overall_score = sum(
+            scores[aspect] * self.scoring_weights[aspect] for aspect in scores
+        )
 
         # Determine rating
         if overall_score >= 9:
@@ -92,13 +93,10 @@ class EnhancedDiagnosticOrchestrator:
 
         return round(overall_score, 2), rating, scores
 
-    def _score_criticality(self, metrics: Dict[str, Any], sector: str) -> float:
+    def _score_criticality(self, metrics: dict[str, Any], sector: str) -> float:
         """Score based on business criticality"""
         critical_sectors = ["backend", "database", "ai_ml", "security"]
-        if sector in critical_sectors:
-            base_score = 8.5
-        else:
-            base_score = 7.0
+        base_score = 8.5 if sector in critical_sectors else 7.0
 
         # Reduce score based on issues
         issues = metrics.get("issues", [])
@@ -107,7 +105,7 @@ class EnhancedDiagnosticOrchestrator:
 
         return max(1, min(10, base_score - score_reduction))
 
-    def _score_performance(self, metrics: Dict[str, Any], sector: str) -> float:
+    def _score_performance(self, metrics: dict[str, Any], sector: str) -> float:
         """Score based on performance metrics"""
         if "metrics" not in metrics:
             return 7.0
@@ -121,8 +119,11 @@ class EnhancedDiagnosticOrchestrator:
 
         elif sector == "backend":
             api_checks = metrics.get("apis", {})
-            healthy_apis = sum(1 for api in api_checks.values()
-                             if isinstance(api, dict) and api.get("status") == "healthy")
+            healthy_apis = sum(
+                1
+                for api in api_checks.values()
+                if isinstance(api, dict) and api.get("status") == "healthy"
+            )
             total_apis = len([a for a in api_checks.values() if isinstance(a, dict)])
             if total_apis == 0:
                 return 7.0
@@ -130,7 +131,7 @@ class EnhancedDiagnosticOrchestrator:
 
         return 7.5  # Default good score
 
-    def _score_reliability(self, metrics: Dict[str, Any], sector: str) -> float:
+    def _score_reliability(self, metrics: dict[str, Any], sector: str) -> float:
         """Score based on reliability indicators"""
         status = metrics.get("status", "unknown")
 
@@ -147,17 +148,19 @@ class EnhancedDiagnosticOrchestrator:
         else:
             return 4.0
 
-    def _score_security(self, metrics: Dict[str, Any], sector: str) -> float:
+    def _score_security(self, metrics: dict[str, Any], sector: str) -> float:
         """Score based on security posture"""
         if sector == "security":
             auth_checks = metrics.get("authentication", {})
-            jwt_configured = auth_checks.get("jwt_secret", {}).get("status") == "configured"
+            jwt_configured = (
+                auth_checks.get("jwt_secret", {}).get("status") == "configured"
+            )
             return 8.5 if jwt_configured else 4.5
 
         # General security score
         return 7.5
 
-    def _score_maintainability(self, metrics: Dict[str, Any], sector: str) -> float:
+    def _score_maintainability(self, metrics: dict[str, Any], sector: str) -> float:
         """Score based on maintainability factors"""
         # Check for documentation, testing, configuration
         if sector == "documentation":
@@ -174,7 +177,7 @@ class EnhancedDiagnosticOrchestrator:
 
     # ===== ENHANCED SECTOR ANALYSES =====
 
-    async def diagnose_infrastructure_enhanced(self) -> Dict[str, Any]:
+    async def diagnose_infrastructure_enhanced(self) -> dict[str, Any]:
         """Enhanced infrastructure diagnosis with sub-sectors"""
         results = await self.diagnose_infrastructure()  # Run basic first
 
@@ -184,18 +187,20 @@ class EnhancedDiagnosticOrchestrator:
             "network_connectivity": await self._analyze_network_connectivity(),
             "service_health": await self._analyze_service_health(),
             "storage_systems": await self._analyze_storage_systems(),
-            "container_orchestration": await self._analyze_container_orchestration()
+            "container_orchestration": await self._analyze_container_orchestration(),
         }
 
         results["sub_sectors"] = sub_sectors
 
         # Calculate enhanced score
-        overall_score, rating, score_breakdown = self.calculate_score(results, "infrastructure")
+        overall_score, rating, score_breakdown = self.calculate_score(
+            results, "infrastructure"
+        )
         results["scoring"] = {
             "overall_score": overall_score,
             "rating": rating,
             "breakdown": score_breakdown,
-            "weighted_factors": self.scoring_weights
+            "weighted_factors": self.scoring_weights,
         }
 
         # Detailed analysis
@@ -203,38 +208,60 @@ class EnhancedDiagnosticOrchestrator:
 
         return results
 
-    async def _analyze_system_resources(self) -> Dict[str, Any]:
+    async def _analyze_system_resources(self) -> dict[str, Any]:
         """Deep analysis of system resources"""
         metrics = self._check_system_resources()
 
         analysis = {
             "cpu_analysis": {
                 "utilization": metrics["cpu_percent"],
-                "status": "optimal" if metrics["cpu_percent"] < 70 else "high" if metrics["cpu_percent"] < 90 else "critical",
-                "recommendation": "Consider CPU optimization" if metrics["cpu_percent"] > 80 else "CPU usage normal"
+                "status": "optimal"
+                if metrics["cpu_percent"] < 70
+                else "high"
+                if metrics["cpu_percent"] < 90
+                else "critical",
+                "recommendation": "Consider CPU optimization"
+                if metrics["cpu_percent"] > 80
+                else "CPU usage normal",
             },
             "memory_analysis": {
                 "utilization": metrics["memory_percent"],
                 "used_gb": round(metrics["memory_used_gb"], 2),
                 "total_gb": metrics["memory_total_gb"],
-                "status": "optimal" if metrics["memory_percent"] < 75 else "high" if metrics["memory_percent"] < 90 else "critical",
-                "recommendation": "Consider memory optimization" if metrics["memory_percent"] > 85 else "Memory usage normal"
+                "status": "optimal"
+                if metrics["memory_percent"] < 75
+                else "high"
+                if metrics["memory_percent"] < 90
+                else "critical",
+                "recommendation": "Consider memory optimization"
+                if metrics["memory_percent"] > 85
+                else "Memory usage normal",
             },
             "disk_analysis": {
                 "utilization": metrics["disk_usage_percent"],
-                "status": "optimal" if metrics["disk_usage_percent"] < 80 else "warning" if metrics["disk_usage_percent"] < 95 else "critical",
-                "recommendation": "Monitor disk space" if metrics["disk_usage_percent"] > 85 else "Disk usage normal"
+                "status": "optimal"
+                if metrics["disk_usage_percent"] < 80
+                else "warning"
+                if metrics["disk_usage_percent"] < 95
+                else "critical",
+                "recommendation": "Monitor disk space"
+                if metrics["disk_usage_percent"] > 85
+                else "Disk usage normal",
             },
             "load_analysis": {
                 "load_average": metrics.get("load_average", [0, 0, 0]),
-                "status": "normal" if metrics.get("load_average", [0])[0] < psutil.cpu_count() else "high",
-                "recommendation": "High system load detected" if metrics.get("load_average", [0])[0] > psutil.cpu_count() else "Load average normal"
-            }
+                "status": "normal"
+                if metrics.get("load_average", [0])[0] < psutil.cpu_count()
+                else "high",
+                "recommendation": "High system load detected"
+                if metrics.get("load_average", [0])[0] > psutil.cpu_count()
+                else "Load average normal",
+            },
         }
 
         return analysis
 
-    async def _analyze_network_connectivity(self) -> Dict[str, Any]:
+    async def _analyze_network_connectivity(self) -> dict[str, Any]:
         """Analyze network connectivity and external dependencies"""
         network_results = await self._check_network_connectivity()
 
@@ -242,7 +269,7 @@ class EnhancedDiagnosticOrchestrator:
             "internal_services": {},
             "external_dependencies": {},
             "latency_analysis": {},
-            "reliability_score": 0
+            "reliability_score": 0,
         }
 
         # Analyze each service
@@ -251,19 +278,28 @@ class EnhancedDiagnosticOrchestrator:
                 analysis["internal_services"][service] = {
                     "status": status.get("status", "unknown"),
                     "response_time": status.get("response_time", 0),
-                    "reliability": "high" if status.get("status") == "healthy" else "low",
-                    "issues": [] if status.get("status") == "healthy" else ["Connectivity issues detected"]
+                    "reliability": "high"
+                    if status.get("status") == "healthy"
+                    else "low",
+                    "issues": []
+                    if status.get("status") == "healthy"
+                    else ["Connectivity issues detected"],
                 }
 
         # Calculate overall reliability
-        healthy_services = sum(1 for s in analysis["internal_services"].values()
-                             if s["status"] == "healthy")
+        healthy_services = sum(
+            1
+            for s in analysis["internal_services"].values()
+            if s["status"] == "healthy"
+        )
         total_services = len(analysis["internal_services"])
-        analysis["reliability_score"] = (healthy_services / total_services * 100) if total_services > 0 else 0
+        analysis["reliability_score"] = (
+            (healthy_services / total_services * 100) if total_services > 0 else 0
+        )
 
         return analysis
 
-    async def _analyze_service_health(self) -> Dict[str, Any]:
+    async def _analyze_service_health(self) -> dict[str, Any]:
         """Analyze service health and availability"""
         service_status = self._check_service_status()
 
@@ -271,7 +307,7 @@ class EnhancedDiagnosticOrchestrator:
             "service_matrix": {},
             "availability_score": 0,
             "critical_services": ["backend", "database"],
-            "monitoring_gaps": []
+            "monitoring_gaps": [],
         }
 
         running_services = 0
@@ -284,11 +320,15 @@ class EnhancedDiagnosticOrchestrator:
             analysis["service_matrix"][service] = {
                 "running": is_running,
                 "process_count": status.get("process_count", 0),
-                "criticality": "high" if service in ["backend", "database"] else "medium",
-                "restart_required": not is_running
+                "criticality": "high"
+                if service in ["backend", "database"]
+                else "medium",
+                "restart_required": not is_running,
             }
 
-        analysis["availability_score"] = (running_services / total_services * 100) if total_services > 0 else 0
+        analysis["availability_score"] = (
+            (running_services / total_services * 100) if total_services > 0 else 0
+        )
 
         # Identify monitoring gaps
         if not service_status.get("backend", {}).get("running"):
@@ -298,32 +338,38 @@ class EnhancedDiagnosticOrchestrator:
 
         return analysis
 
-    async def _analyze_storage_systems(self) -> Dict[str, Any]:
+    async def _analyze_storage_systems(self) -> dict[str, Any]:
         """Analyze storage systems and data persistence"""
         analysis = {
             "file_systems": {},
             "database_storage": {},
             "backup_status": {},
-            "data_integrity": {}
+            "data_integrity": {},
         }
 
         # File system analysis
-        disk_usage = psutil.disk_usage('/')
+        disk_usage = psutil.disk_usage("/")
         analysis["file_systems"]["root"] = {
             "total_gb": round(disk_usage.total / (1024**3), 2),
             "used_gb": round(disk_usage.used / (1024**3), 2),
             "free_gb": round(disk_usage.free / (1024**3), 2),
             "usage_percent": disk_usage.percent,
-            "status": "healthy" if disk_usage.percent < 85 else "warning" if disk_usage.percent < 95 else "critical"
+            "status": "healthy"
+            if disk_usage.percent < 85
+            else "warning"
+            if disk_usage.percent < 95
+            else "critical",
         }
 
         # Database storage (placeholder - would need actual DB connection)
         analysis["database_storage"]["status"] = "unknown"
-        analysis["database_storage"]["note"] = "Database storage analysis requires connection implementation"
+        analysis["database_storage"]["note"] = (
+            "Database storage analysis requires connection implementation"
+        )
 
         return analysis
 
-    async def _analyze_container_orchestration(self) -> Dict[str, Any]:
+    async def _analyze_container_orchestration(self) -> dict[str, Any]:
         """Analyze container orchestration and deployment"""
         container_status = self._check_containers()
 
@@ -331,25 +377,29 @@ class EnhancedDiagnosticOrchestrator:
             "containerization": container_status.get("status", "unknown"),
             "orchestration_status": "not_detected",
             "deployment_health": {},
-            "scaling_capability": {}
+            "scaling_capability": {},
         }
 
         if container_status.get("status") == "healthy":
             analysis["deployment_health"] = {
                 "containers_running": container_status.get("container_count", 0),
                 "all_containers_healthy": True,
-                "orchestration_ready": False
+                "orchestration_ready": False,
             }
         else:
             analysis["deployment_health"] = {
                 "containers_running": 0,
                 "issues": ["No containers detected or Docker not running"],
-                "recommendations": ["Consider containerizing services for better deployment management"]
+                "recommendations": [
+                    "Consider containerizing services for better deployment management"
+                ],
             }
 
         return analysis
 
-    def _analyze_infrastructure_findings(self, results: Dict[str, Any]) -> Dict[str, Any]:
+    def _analyze_infrastructure_findings(
+        self, results: dict[str, Any]
+    ) -> dict[str, Any]:
         """Analyze infrastructure findings and provide insights"""
         analysis = {
             "strengths": [],
@@ -357,14 +407,16 @@ class EnhancedDiagnosticOrchestrator:
             "opportunities": [],
             "threats": [],
             "insights": [],
-            "priority_actions": []
+            "priority_actions": [],
         }
 
         # Analyze CPU usage
         cpu_percent = results.get("metrics", {}).get("cpu_percent", 0)
         if cpu_percent > 90:
             analysis["weaknesses"].append("Extremely high CPU usage detected")
-            analysis["priority_actions"].append("URGENT: Investigate CPU-intensive processes")
+            analysis["priority_actions"].append(
+                "URGENT: Investigate CPU-intensive processes"
+            )
         elif cpu_percent > 75:
             analysis["weaknesses"].append("High CPU usage detected")
             analysis["priority_actions"].append("Monitor CPU usage trends")
@@ -373,18 +425,26 @@ class EnhancedDiagnosticOrchestrator:
         memory_percent = results.get("metrics", {}).get("memory_percent", 0)
         if memory_percent > 85:
             analysis["weaknesses"].append("High memory usage detected")
-            analysis["priority_actions"].append("Optimize memory usage or increase allocation")
+            analysis["priority_actions"].append(
+                "Optimize memory usage or increase allocation"
+            )
 
         # Service availability
         services = results.get("checks", {}).get("services", {})
-        running_services = sum(1 for s in services.values() if s.get("status") == "running")
+        running_services = sum(
+            1 for s in services.values() if s.get("status") == "running"
+        )
         total_services = len(services)
 
         if running_services == total_services:
             analysis["strengths"].append("All critical services are running")
         else:
-            stopped_services = [s for s, status in services.items() if status.get("status") != "running"]
-            analysis["weaknesses"].extend([f"Service {s} is not running" for s in stopped_services])
+            stopped_services = [
+                s for s, status in services.items() if status.get("status") != "running"
+            ]
+            analysis["weaknesses"].extend(
+                [f"Service {s} is not running" for s in stopped_services]
+            )
 
         # Network connectivity
         network = results.get("checks", {}).get("network", {})
@@ -395,7 +455,7 @@ class EnhancedDiagnosticOrchestrator:
 
         return analysis
 
-    async def diagnose_backend_enhanced(self) -> Dict[str, Any]:
+    async def diagnose_backend_enhanced(self) -> dict[str, Any]:
         """Enhanced backend diagnosis"""
         results = await self.diagnose_backend()
 
@@ -405,24 +465,26 @@ class EnhancedDiagnosticOrchestrator:
             "service_dependencies": await self._analyze_service_dependencies(),
             "configuration_management": await self._analyze_configuration_management(),
             "error_handling": await self._analyze_error_handling(),
-            "performance_characteristics": await self._analyze_performance_characteristics()
+            "performance_characteristics": await self._analyze_performance_characteristics(),
         }
 
         results["sub_sectors"] = sub_sectors
 
         # Calculate enhanced score
-        overall_score, rating, score_breakdown = self.calculate_score(results, "backend")
+        overall_score, rating, score_breakdown = self.calculate_score(
+            results, "backend"
+        )
         results["scoring"] = {
             "overall_score": overall_score,
             "rating": rating,
-            "breakdown": score_breakdown
+            "breakdown": score_breakdown,
         }
 
         results["analysis"] = self._analyze_backend_findings(results)
 
         return results
 
-    async def _analyze_api_endpoints(self) -> Dict[str, Any]:
+    async def _analyze_api_endpoints(self) -> dict[str, Any]:
         """Deep analysis of API endpoints"""
         api_checks = await self._check_api_endpoints()
 
@@ -431,7 +493,7 @@ class EnhancedDiagnosticOrchestrator:
             "response_times": {},
             "error_rates": {},
             "authentication_status": {},
-            "documentation_coverage": {}
+            "documentation_coverage": {},
         }
 
         healthy_endpoints = 0
@@ -447,20 +509,24 @@ class EnhancedDiagnosticOrchestrator:
                     "status": status["status"],
                     "response_time": status.get("response_time", 0),
                     "is_authenticated": status.get("response_code") == 401,
-                    "performance_grade": "excellent" if status.get("response_time", 0) < 0.1 else
-                                      "good" if status.get("response_time", 0) < 0.5 else
-                                      "poor"
+                    "performance_grade": "excellent"
+                    if status.get("response_time", 0) < 0.1
+                    else "good"
+                    if status.get("response_time", 0) < 0.5
+                    else "poor",
                 }
 
         analysis["overall_health"] = {
             "healthy_endpoints": healthy_endpoints,
             "total_endpoints": total_endpoints,
-            "health_percentage": (healthy_endpoints / total_endpoints * 100) if total_endpoints > 0 else 0
+            "health_percentage": (healthy_endpoints / total_endpoints * 100)
+            if total_endpoints > 0
+            else 0,
         }
 
         return analysis
 
-    async def _analyze_service_dependencies(self) -> Dict[str, Any]:
+    async def _analyze_service_dependencies(self) -> dict[str, Any]:
         """Analyze service dependencies and integrations"""
         service_checks = self._check_backend_services()
 
@@ -468,20 +534,25 @@ class EnhancedDiagnosticOrchestrator:
             "dependency_matrix": {},
             "health_scores": {},
             "failure_impacts": {},
-            "redundancy_analysis": {}
+            "redundancy_analysis": {},
         }
 
         for service_name, service_status in service_checks.items():
             analysis["dependency_matrix"][service_name] = {
                 "status": service_status.get("status", "unknown"),
-                "criticality": "high" if service_name in ["database", "cache"] else "medium",
-                "failure_impact": "severe" if service_name == "database" else "moderate",
-                "has_fallback": service_name in ["cache", "ai_service"]  # Services with fallbacks
+                "criticality": "high"
+                if service_name in ["database", "cache"]
+                else "medium",
+                "failure_impact": "severe"
+                if service_name == "database"
+                else "moderate",
+                "has_fallback": service_name
+                in ["cache", "ai_service"],  # Services with fallbacks
             }
 
         return analysis
 
-    async def _analyze_configuration_management(self) -> Dict[str, Any]:
+    async def _analyze_configuration_management(self) -> dict[str, Any]:
         """Analyze configuration management"""
         config_checks = self._check_backend_configuration()
 
@@ -489,7 +560,7 @@ class EnhancedDiagnosticOrchestrator:
             "configuration_coverage": {},
             "security_compliance": {},
             "environment_variables": {},
-            "file_integrity": {}
+            "file_integrity": {},
         }
 
         # Analyze environment variables
@@ -500,40 +571,35 @@ class EnhancedDiagnosticOrchestrator:
             env_vars[var] = {
                 "configured": os.getenv(var) is not None,
                 "security_level": "high" if var == "SECRET_KEY" else "medium",
-                "required": True
+                "required": True,
             }
 
         analysis["environment_variables"] = env_vars
 
         # Configuration file analysis
         config_files = config_checks
-        analysis["file_integrity"] = {
-            file: status for file, status in config_files.items()
-        }
+        analysis["file_integrity"] = dict(config_files.items())
 
         return analysis
 
-    async def _analyze_error_handling(self) -> Dict[str, Any]:
+    async def _analyze_error_handling(self) -> dict[str, Any]:
         """Analyze error handling capabilities"""
         analysis = {
             "error_patterns": {},
             "exception_handling": {},
             "logging_effectiveness": {},
-            "recovery_mechanisms": {}
+            "recovery_mechanisms": {},
         }
 
         # Check for error handling in recent logs
-        log_files = [
-            "backend/backend.log",
-            "logs/backend_startup.log"
-        ]
+        log_files = ["backend/backend.log", "logs/backend_startup.log"]
 
         error_patterns = {}
         for log_file in log_files:
             log_path = self.project_root / log_file
             if log_path.exists():
                 try:
-                    with open(log_path, 'r') as f:
+                    with open(log_path) as f:
                         content = f.read()
                         error_count = content.count("ERROR")
                         warning_count = content.count("WARNING")
@@ -543,7 +609,11 @@ class EnhancedDiagnosticOrchestrator:
                             "error_count": error_count,
                             "warning_count": warning_count,
                             "exception_count": exception_count,
-                            "error_rate": "high" if error_count > 10 else "medium" if error_count > 5 else "low"
+                            "error_rate": "high"
+                            if error_count > 10
+                            else "medium"
+                            if error_count > 5
+                            else "low",
                         }
                 except Exception as e:
                     error_patterns[log_file] = {"status": "unreadable", "error": str(e)}
@@ -552,25 +622,25 @@ class EnhancedDiagnosticOrchestrator:
 
         return analysis
 
-    async def _analyze_performance_characteristics(self) -> Dict[str, Any]:
+    async def _analyze_performance_characteristics(self) -> dict[str, Any]:
         """Analyze performance characteristics"""
         analysis = {
             "throughput_analysis": {},
             "latency_distribution": {},
             "resource_utilization": {},
-            "bottleneck_identification": {}
+            "bottleneck_identification": {},
         }
 
         # Simple performance analysis based on available metrics
         analysis["throughput_analysis"] = {
             "current_load": "unknown",
             "capacity_utilization": "unknown",
-            "scalability_assessment": "requires_detailed_monitoring"
+            "scalability_assessment": "requires_detailed_monitoring",
         }
 
         return analysis
 
-    def _analyze_backend_findings(self, results: Dict[str, Any]) -> Dict[str, Any]:
+    def _analyze_backend_findings(self, results: dict[str, Any]) -> dict[str, Any]:
         """Analyze backend findings"""
         analysis = {
             "strengths": [],
@@ -578,13 +648,16 @@ class EnhancedDiagnosticOrchestrator:
             "opportunities": [],
             "threats": [],
             "insights": [],
-            "priority_actions": []
+            "priority_actions": [],
         }
 
         # API health analysis
         apis = results.get("apis", {})
-        healthy_apis = sum(1 for api in apis.values()
-                          if isinstance(api, dict) and api.get("status") == "healthy")
+        healthy_apis = sum(
+            1
+            for api in apis.values()
+            if isinstance(api, dict) and api.get("status") == "healthy"
+        )
         total_apis = sum(1 for api in apis.values() if isinstance(api, dict))
 
         if healthy_apis == total_apis and total_apis > 0:
@@ -601,13 +674,15 @@ class EnhancedDiagnosticOrchestrator:
             if service_status.get("status") not in ["healthy", "available"]:
                 analysis["weaknesses"].append(f"{service_name} service has issues")
                 if service_name in ["database"]:
-                    analysis["priority_actions"].append(f"URGENT: Fix {service_name} service issues")
+                    analysis["priority_actions"].append(
+                        f"URGENT: Fix {service_name} service issues"
+                    )
 
         return analysis
 
     # ===== AI/ML ENHANCED ANALYSIS =====
 
-    async def diagnose_ai_ml_enhanced(self) -> Dict[str, Any]:
+    async def diagnose_ai_ml_enhanced(self) -> dict[str, Any]:
         """Enhanced AI/ML diagnosis"""
         results = await self.diagnose_ai_ml()
 
@@ -617,7 +692,7 @@ class EnhancedDiagnosticOrchestrator:
             "vector_operations": await self._analyze_vector_operations(),
             "embedding_quality": await self._analyze_embedding_quality(),
             "search_accuracy": await self._analyze_search_accuracy(),
-            "resource_efficiency": await self._analyze_resource_efficiency()
+            "resource_efficiency": await self._analyze_resource_efficiency(),
         }
 
         results["sub_sectors"] = sub_sectors
@@ -627,20 +702,20 @@ class EnhancedDiagnosticOrchestrator:
         results["scoring"] = {
             "overall_score": overall_score,
             "rating": rating,
-            "breakdown": score_breakdown
+            "breakdown": score_breakdown,
         }
 
         results["analysis"] = self._analyze_ai_ml_findings(results)
 
         return results
 
-    async def _analyze_model_performance(self) -> Dict[str, Any]:
+    async def _analyze_model_performance(self) -> dict[str, Any]:
         """Analyze AI model performance"""
         analysis = {
             "model_loading": {},
             "inference_speed": {},
             "accuracy_metrics": {},
-            "resource_usage": {}
+            "resource_usage": {},
         }
 
         try:
@@ -648,9 +723,11 @@ class EnhancedDiagnosticOrchestrator:
 
             analysis["model_loading"] = {
                 "model_loaded": ai_service.model is not None,
-                "model_type": "sentence-transformers/all-MiniLM-L6-v2" if ai_service.model else None,
+                "model_type": "sentence-transformers/all-MiniLM-L6-v2"
+                if ai_service.model
+                else None,
                 "loading_time": "unknown",  # Would need timing data
-                "memory_footprint": "unknown"
+                "memory_footprint": "unknown",
             }
 
             # Test inference speed
@@ -661,8 +738,12 @@ class EnhancedDiagnosticOrchestrator:
 
                 analysis["inference_speed"] = {
                     "embedding_time_ms": round(inference_time * 1000, 2),
-                    "performance_rating": "excellent" if inference_time < 0.1 else "good" if inference_time < 0.5 else "slow",
-                    "bottleneck": "GPU_acceleration" if inference_time > 1.0 else None
+                    "performance_rating": "excellent"
+                    if inference_time < 0.1
+                    else "good"
+                    if inference_time < 0.5
+                    else "slow",
+                    "bottleneck": "GPU_acceleration" if inference_time > 1.0 else None,
                 }
             else:
                 analysis["inference_speed"] = {"status": "model_not_loaded"}
@@ -672,13 +753,13 @@ class EnhancedDiagnosticOrchestrator:
 
         return analysis
 
-    async def _analyze_vector_operations(self) -> Dict[str, Any]:
+    async def _analyze_vector_operations(self) -> dict[str, Any]:
         """Analyze vector operations and storage"""
         analysis = {
             "vector_storage": {},
             "index_performance": {},
             "search_operations": {},
-            "data_integrity": {}
+            "data_integrity": {},
         }
 
         try:
@@ -686,21 +767,29 @@ class EnhancedDiagnosticOrchestrator:
 
             analysis["vector_storage"] = {
                 "document_count": len(ai_service.vector_store),
-                "storage_backend": "SQLite" if hasattr(ai_service, 'db_path') else "In-memory",
-                "index_type": "FAISS" if hasattr(ai_service, 'faiss_index') else "TF-IDF",
-                "total_vectors": len(ai_service.vector_store)
+                "storage_backend": "SQLite"
+                if hasattr(ai_service, "db_path")
+                else "In-memory",
+                "index_type": "FAISS"
+                if hasattr(ai_service, "faiss_index")
+                else "TF-IDF",
+                "total_vectors": len(ai_service.vector_store),
             }
 
-            if hasattr(ai_service, 'faiss_index') and ai_service.faiss_index:
+            if hasattr(ai_service, "faiss_index") and ai_service.faiss_index:
                 analysis["index_performance"] = {
                     "index_built": True,
-                    "dimension": ai_service.faiss_index.d if hasattr(ai_service.faiss_index, 'd') else "unknown",
-                    "total_vectors": ai_service.faiss_index.ntotal if hasattr(ai_service.faiss_index, 'ntotal') else 0
+                    "dimension": ai_service.faiss_index.d
+                    if hasattr(ai_service.faiss_index, "d")
+                    else "unknown",
+                    "total_vectors": ai_service.faiss_index.ntotal
+                    if hasattr(ai_service.faiss_index, "ntotal")
+                    else 0,
                 }
             else:
                 analysis["index_performance"] = {
                     "index_built": False,
-                    "reason": "FAISS index not initialized"
+                    "reason": "FAISS index not initialized",
                 }
 
         except Exception as e:
@@ -708,13 +797,13 @@ class EnhancedDiagnosticOrchestrator:
 
         return analysis
 
-    async def _analyze_embedding_quality(self) -> Dict[str, Any]:
+    async def _analyze_embedding_quality(self) -> dict[str, Any]:
         """Analyze embedding quality and consistency"""
         analysis = {
             "embedding_dimensions": {},
             "quality_metrics": {},
             "consistency_checks": {},
-            "drift_detection": {}
+            "drift_detection": {},
         }
 
         try:
@@ -723,7 +812,9 @@ class EnhancedDiagnosticOrchestrator:
             if ai_service.model and ai_service.vector_store:
                 # Check embedding dimensions
                 sample_vectors = []
-                for doc_data in list(ai_service.vector_store.values())[:5]:  # Check first 5
+                for doc_data in list(ai_service.vector_store.values())[
+                    :5
+                ]:  # Check first 5
                     if doc_data.get("vector") is not None:
                         sample_vectors.append(len(doc_data["vector"]))
 
@@ -732,7 +823,7 @@ class EnhancedDiagnosticOrchestrator:
                         "expected_dimension": 384,  # Standard for all-MiniLM-L6-v2
                         "actual_dimensions": sample_vectors,
                         "consistent": len(set(sample_vectors)) == 1,
-                        "dimension_match": all(d == 384 for d in sample_vectors)
+                        "dimension_match": all(d == 384 for d in sample_vectors),
                     }
                 else:
                     analysis["embedding_dimensions"] = {"status": "no_vectors_found"}
@@ -741,7 +832,7 @@ class EnhancedDiagnosticOrchestrator:
                 "model_type": "sentence-transformers",
                 "embedding_method": "transformer_based",
                 "expected_quality": "high",
-                "validation_status": "requires_similarity_testing"
+                "validation_status": "requires_similarity_testing",
             }
 
         except Exception as e:
@@ -749,13 +840,13 @@ class EnhancedDiagnosticOrchestrator:
 
         return analysis
 
-    async def _analyze_search_accuracy(self) -> Dict[str, Any]:
+    async def _analyze_search_accuracy(self) -> dict[str, Any]:
         """Analyze search accuracy and relevance"""
         analysis = {
             "search_performance": {},
             "result_quality": {},
             "relevance_metrics": {},
-            "user_satisfaction": {}
+            "user_satisfaction": {},
         }
 
         # Placeholder - would need actual search analytics
@@ -763,33 +854,39 @@ class EnhancedDiagnosticOrchestrator:
             "average_response_time": "unknown",
             "query_success_rate": "unknown",
             "result_relevance": "unknown",
-            "recommendation": "Implement search analytics to measure accuracy"
+            "recommendation": "Implement search analytics to measure accuracy",
         }
 
         return analysis
 
-    async def _analyze_resource_efficiency(self) -> Dict[str, Any]:
+    async def _analyze_resource_efficiency(self) -> dict[str, Any]:
         """Analyze resource efficiency of AI operations"""
         analysis = {
             "memory_usage": {},
             "cpu_utilization": {},
             "storage_efficiency": {},
-            "cost_effectiveness": {}
+            "cost_effectiveness": {},
         }
 
         try:
             # Get AI service memory usage (rough estimate)
             ai_process = None
-            for proc in psutil.process_iter(['pid', 'name', 'memory_info']):
-                if 'python' in proc.info['name'].lower() and 'ai' in ' '.join(proc.cmdline()):
+            for proc in psutil.process_iter(["pid", "name", "memory_info"]):
+                if "python" in proc.info["name"].lower() and "ai" in " ".join(
+                    proc.cmdline()
+                ):
                     ai_process = proc
                     break
 
             if ai_process:
-                memory_mb = ai_process.info['memory_info'].rss / (1024 * 1024)
+                memory_mb = ai_process.info["memory_info"].rss / (1024 * 1024)
                 analysis["memory_usage"] = {
                     "ai_service_memory_mb": round(memory_mb, 2),
-                    "efficiency_rating": "good" if memory_mb < 500 else "high" if memory_mb < 1000 else "concerning"
+                    "efficiency_rating": "good"
+                    if memory_mb < 500
+                    else "high"
+                    if memory_mb < 1000
+                    else "concerning",
                 }
             else:
                 analysis["memory_usage"] = {"status": "ai_process_not_found"}
@@ -799,7 +896,7 @@ class EnhancedDiagnosticOrchestrator:
 
         return analysis
 
-    def _analyze_ai_ml_findings(self, results: Dict[str, Any]) -> Dict[str, Any]:
+    def _analyze_ai_ml_findings(self, results: dict[str, Any]) -> dict[str, Any]:
         """Analyze AI/ML findings"""
         analysis = {
             "strengths": [],
@@ -807,14 +904,16 @@ class EnhancedDiagnosticOrchestrator:
             "opportunities": [],
             "threats": [],
             "insights": [],
-            "priority_actions": []
+            "priority_actions": [],
         }
 
         # Check AI service status
         ai_status = results.get("services", {}).get("ai_service", {})
 
         if ai_status.get("status") == "healthy":
-            analysis["strengths"].append("AI service is operational with semantic capabilities")
+            analysis["strengths"].append(
+                "AI service is operational with semantic capabilities"
+            )
         else:
             analysis["weaknesses"].append("AI service has initialization issues")
             analysis["priority_actions"].append("Fix AI service initialization")
@@ -823,7 +922,9 @@ class EnhancedDiagnosticOrchestrator:
         model_status = results.get("models", {})
 
         if model_status.get("sentence_transformer", {}).get("status") == "loaded":
-            analysis["strengths"].append("SentenceTransformer model loaded successfully")
+            analysis["strengths"].append(
+                "SentenceTransformer model loaded successfully"
+            )
         else:
             analysis["weaknesses"].append("ML model loading failed")
             analysis["priority_actions"].append("URGENT: Fix model loading issues")
@@ -832,9 +933,13 @@ class EnhancedDiagnosticOrchestrator:
         vector_status = results.get("data", {}).get("vector_store", {})
 
         if vector_status.get("document_count", 0) > 0:
-            analysis["strengths"].append(f"Vector store contains {vector_status['document_count']} documents")
+            analysis["strengths"].append(
+                f"Vector store contains {vector_status['document_count']} documents"
+            )
         else:
-            analysis["opportunities"].append("Populate vector store with documents for better search")
+            analysis["opportunities"].append(
+                "Populate vector store with documents for better search"
+            )
 
         return analysis
 
@@ -850,14 +955,16 @@ class EnhancedDiagnosticOrchestrator:
         critical_issues = 0
         high_priority_actions = 0
 
-        for sector_name, sector_data in sectors.items():
+        for sector_data in sectors.values():
             if "scoring" in sector_data:
                 total_score += sector_data["scoring"]["overall_score"]
                 sector_count += 1
 
             # Count critical issues and priority actions
             analysis = sector_data.get("analysis", {})
-            critical_issues += len([i for i in analysis.get("weaknesses", []) if "critical" in i.lower()])
+            critical_issues += len(
+                [i for i in analysis.get("weaknesses", []) if "critical" in i.lower()]
+            )
             high_priority_actions += len(analysis.get("priority_actions", []))
 
         overall_score = total_score / sector_count if sector_count > 0 else 0
@@ -886,16 +993,16 @@ class EnhancedDiagnosticOrchestrator:
             "sectors_analyzed": sector_count,
             "critical_issues_count": critical_issues,
             "high_priority_actions": high_priority_actions,
-            "assessment_timestamp": datetime.now(timezone.utc).isoformat(),
+            "assessment_timestamp": datetime.now(UTC).isoformat(),
             "key_insights": self._extract_key_insights(),
             "strategic_recommendations": self._generate_strategic_recommendations(),
             "risk_assessment": self._assess_system_risks(),
-            "next_steps": self._define_next_steps()
+            "next_steps": self._define_next_steps(),
         }
 
         self.results["executive_summary"] = executive_summary
 
-    def _extract_key_insights(self) -> List[str]:
+    def _extract_key_insights(self) -> list[str]:
         """Extract key insights from all sector analyses"""
         insights = []
 
@@ -905,15 +1012,20 @@ class EnhancedDiagnosticOrchestrator:
         infra = sectors.get("infrastructure", {})
         cpu_usage = infra.get("metrics", {}).get("cpu_percent", 0)
         if cpu_usage > 90:
-            insights.append("Extremely high CPU utilization detected - potential performance bottleneck")
+            insights.append(
+                "Extremely high CPU utilization detected - potential performance bottleneck"
+            )
         elif cpu_usage > 75:
             insights.append("Elevated CPU usage trending upward - monitor closely")
 
         # Backend insights
         backend = sectors.get("backend", {})
         api_health = backend.get("apis", {})
-        unhealthy_apis = sum(1 for api in api_health.values()
-                           if isinstance(api, dict) and api.get("status") != "healthy")
+        unhealthy_apis = sum(
+            1
+            for api in api_health.values()
+            if isinstance(api, dict) and api.get("status") != "healthy"
+        )
         if unhealthy_apis > 0:
             insights.append(f"{unhealthy_apis} API endpoints showing health issues")
 
@@ -926,54 +1038,64 @@ class EnhancedDiagnosticOrchestrator:
 
         return insights[:5]  # Top 5 insights
 
-    def _generate_strategic_recommendations(self) -> List[Dict[str, Any]]:
+    def _generate_strategic_recommendations(self) -> list[dict[str, Any]]:
         """Generate strategic recommendations based on findings"""
         recommendations = []
 
         sectors = self.results["sectors"]
 
         # High-priority infrastructure recommendations
-        infra_score = sectors.get("infrastructure", {}).get("scoring", {}).get("overall_score", 5)
+        infra_score = (
+            sectors.get("infrastructure", {}).get("scoring", {}).get("overall_score", 5)
+        )
         if infra_score < 7:
-            recommendations.append({
-                "priority": "HIGH",
-                "category": "INFRASTRUCTURE",
-                "recommendation": "Optimize system resource utilization and implement monitoring alerts",
-                "estimated_effort": "2-3 weeks",
-                "expected_impact": "Improved system stability and performance"
-            })
+            recommendations.append(
+                {
+                    "priority": "HIGH",
+                    "category": "INFRASTRUCTURE",
+                    "recommendation": "Optimize system resource utilization and implement monitoring alerts",
+                    "estimated_effort": "2-3 weeks",
+                    "expected_impact": "Improved system stability and performance",
+                }
+            )
 
         # Backend optimization
-        backend_score = sectors.get("backend", {}).get("scoring", {}).get("overall_score", 5)
+        backend_score = (
+            sectors.get("backend", {}).get("scoring", {}).get("overall_score", 5)
+        )
         if backend_score < 7:
-            recommendations.append({
-                "priority": "HIGH",
-                "category": "BACKEND",
-                "recommendation": "Implement comprehensive API monitoring and error tracking",
-                "estimated_effort": "1-2 weeks",
-                "expected_impact": "Enhanced API reliability and debugging capabilities"
-            })
+            recommendations.append(
+                {
+                    "priority": "HIGH",
+                    "category": "BACKEND",
+                    "recommendation": "Implement comprehensive API monitoring and error tracking",
+                    "estimated_effort": "1-2 weeks",
+                    "expected_impact": "Enhanced API reliability and debugging capabilities",
+                }
+            )
 
         # AI/ML enhancement
         ai_score = sectors.get("ai_ml", {}).get("scoring", {}).get("overall_score", 5)
         if ai_score >= 8:
-            recommendations.append({
-                "priority": "MEDIUM",
-                "category": "AI/ML",
-                "recommendation": "Expand AI capabilities with additional models and use cases",
-                "estimated_effort": "3-4 weeks",
-                "expected_impact": "Advanced AI features and improved user experience"
-            })
+            recommendations.append(
+                {
+                    "priority": "MEDIUM",
+                    "category": "AI/ML",
+                    "recommendation": "Expand AI capabilities with additional models and use cases",
+                    "estimated_effort": "3-4 weeks",
+                    "expected_impact": "Advanced AI features and improved user experience",
+                }
+            )
 
         return recommendations
 
-    def _assess_system_risks(self) -> Dict[str, Any]:
+    def _assess_system_risks(self) -> dict[str, Any]:
         """Assess system risks based on findings"""
         risk_assessment = {
             "overall_risk_level": "LOW",
             "risk_factors": [],
             "mitigation_strategies": [],
-            "monitoring_requirements": []
+            "monitoring_requirements": [],
         }
 
         sectors = self.results["sectors"]
@@ -1002,20 +1124,32 @@ class EnhancedDiagnosticOrchestrator:
 
         # Add specific risk factors
         if "infrastructure" in low_scoring_sectors:
-            risk_assessment["risk_factors"].append("Infrastructure instability could impact all services")
-            risk_assessment["mitigation_strategies"].append("Implement resource monitoring and auto-scaling")
+            risk_assessment["risk_factors"].append(
+                "Infrastructure instability could impact all services"
+            )
+            risk_assessment["mitigation_strategies"].append(
+                "Implement resource monitoring and auto-scaling"
+            )
 
         if "backend" in low_scoring_sectors:
-            risk_assessment["risk_factors"].append("Backend service issues could cause API failures")
-            risk_assessment["mitigation_strategies"].append("Add comprehensive error handling and monitoring")
+            risk_assessment["risk_factors"].append(
+                "Backend service issues could cause API failures"
+            )
+            risk_assessment["mitigation_strategies"].append(
+                "Add comprehensive error handling and monitoring"
+            )
 
         if "ai_ml" in low_scoring_sectors:
-            risk_assessment["risk_factors"].append("AI service failures could degrade search functionality")
-            risk_assessment["mitigation_strategies"].append("Implement AI service redundancy and fallbacks")
+            risk_assessment["risk_factors"].append(
+                "AI service failures could degrade search functionality"
+            )
+            risk_assessment["mitigation_strategies"].append(
+                "Implement AI service redundancy and fallbacks"
+            )
 
         return risk_assessment
 
-    def _define_next_steps(self) -> List[Dict[str, Any]]:
+    def _define_next_steps(self) -> list[dict[str, Any]]:
         """Define next steps for system improvement"""
         next_steps = [
             {
@@ -1023,45 +1157,54 @@ class EnhancedDiagnosticOrchestrator:
                 "actions": [
                     "Address critical issues identified in diagnostics",
                     "Implement basic monitoring alerts for key metrics",
-                    "Review and fix any failing API endpoints"
-                ]
+                    "Review and fix any failing API endpoints",
+                ],
             },
             {
                 "phase": "SHORT_TERM (1-2 weeks)",
                 "actions": [
                     "Implement comprehensive logging and error tracking",
                     "Set up automated testing and CI/CD improvements",
-                    "Optimize resource utilization based on findings"
-                ]
+                    "Optimize resource utilization based on findings",
+                ],
             },
             {
                 "phase": "MEDIUM_TERM (1-3 months)",
                 "actions": [
                     "Implement advanced monitoring and analytics",
                     "Enhance security posture and compliance",
-                    "Scale infrastructure based on performance requirements"
-                ]
+                    "Scale infrastructure based on performance requirements",
+                ],
             },
             {
                 "phase": "LONG_TERM (3-6 months)",
                 "actions": [
                     "Implement AI-driven operations and automation",
                     "Build comprehensive business intelligence dashboards",
-                    "Establish predictive maintenance and issue prevention"
-                ]
-            }
+                    "Establish predictive maintenance and issue prevention",
+                ],
+            },
         ]
 
         return next_steps
 
     # ===== MAIN EXECUTION =====
 
-    async def run_enhanced_diagnostics(self, sectors: List[str] = None, output_file: str = None):
+    async def run_enhanced_diagnostics(
+        self, sectors: list[str] | None = None, output_file: str | None = None
+    ):
         """Run enhanced diagnostics with deep sub-sector analysis"""
         logger.info("🚀 Starting Enhanced Deep Sector Diagnostic Orchestration")
 
         if sectors is None or "all" in sectors:
-            sectors = ["infrastructure", "backend", "frontend", "database", "ai_ml", "security"]
+            sectors = [
+                "infrastructure",
+                "backend",
+                "frontend",
+                "database",
+                "ai_ml",
+                "security",
+            ]
 
         enhanced_sector_methods = {
             "infrastructure": self.diagnose_infrastructure_enhanced,
@@ -1073,21 +1216,23 @@ class EnhancedDiagnosticOrchestrator:
             "performance": self.diagnose_performance,
             "testing": self.diagnose_testing,
             "documentation": self.diagnose_documentation,
-            "integration": self.diagnose_integration
+            "integration": self.diagnose_integration,
         }
 
         for sector in sectors:
             if sector in enhanced_sector_methods:
                 logger.info(f"🔍 Conducting deep analysis of {sector} sector...")
                 try:
-                    self.results["sectors"][sector] = await enhanced_sector_methods[sector]()
+                    self.results["sectors"][sector] = await enhanced_sector_methods[
+                        sector
+                    ]()
                     logger.info(f"✅ {sector} deep analysis completed")
                 except Exception as e:
                     logger.error(f"❌ {sector} deep analysis failed: {e}")
                     self.results["sectors"][sector] = {
                         "status": "failed",
                         "error": str(e),
-                        "timestamp": datetime.now(timezone.utc).isoformat()
+                        "timestamp": datetime.now(UTC).isoformat(),
                     }
 
         # Generate executive summary and final analysis
@@ -1099,7 +1244,7 @@ class EnhancedDiagnosticOrchestrator:
             output_path = Path(output_file)
             output_path.parent.mkdir(parents=True, exist_ok=True)
 
-            with open(output_path, 'w') as f:
+            with open(output_path, "w") as f:
                 json.dump(self.results, f, indent=2, default=str)
 
             logger.info(f"📊 Enhanced diagnostic results saved to {output_path}")
@@ -1120,66 +1265,72 @@ class EnhancedDiagnosticOrchestrator:
         infra_score = infra.get("scoring", {}).get("overall_score", 7)
 
         if infra_score < 6:
-            recommendations.extend([
-                {
-                    "category": "INFRASTRUCTURE_OPTIMIZATION",
-                    "priority": "CRITICAL",
-                    "title": "Resource Utilization Optimization",
-                    "description": "High CPU/memory usage detected. Implement resource monitoring and optimization.",
-                    "actions": [
-                        "Deploy comprehensive resource monitoring",
-                        "Implement auto-scaling policies",
-                        "Optimize application performance",
-                        "Set up alerting for resource thresholds"
-                    ],
-                    "estimated_effort": "2-4 weeks",
-                    "expected_benefits": "30-50% improvement in resource efficiency"
-                }
-            ])
+            recommendations.extend(
+                [
+                    {
+                        "category": "INFRASTRUCTURE_OPTIMIZATION",
+                        "priority": "CRITICAL",
+                        "title": "Resource Utilization Optimization",
+                        "description": "High CPU/memory usage detected. Implement resource monitoring and optimization.",
+                        "actions": [
+                            "Deploy comprehensive resource monitoring",
+                            "Implement auto-scaling policies",
+                            "Optimize application performance",
+                            "Set up alerting for resource thresholds",
+                        ],
+                        "estimated_effort": "2-4 weeks",
+                        "expected_benefits": "30-50% improvement in resource efficiency",
+                    }
+                ]
+            )
 
         # Backend recommendations
         backend = sectors.get("backend", {})
         backend_score = backend.get("scoring", {}).get("overall_score", 7)
 
         if backend_score < 7:
-            recommendations.extend([
-                {
-                    "category": "API_RELIABILITY",
-                    "priority": "HIGH",
-                    "title": "API Health and Monitoring Enhancement",
-                    "description": "API endpoints showing inconsistent health. Implement comprehensive monitoring.",
-                    "actions": [
-                        "Deploy API health monitoring",
-                        "Implement distributed tracing",
-                        "Set up error tracking and alerting",
-                        "Create API performance dashboards"
-                    ],
-                    "estimated_effort": "1-2 weeks",
-                    "expected_benefits": "95%+ API uptime improvement"
-                }
-            ])
+            recommendations.extend(
+                [
+                    {
+                        "category": "API_RELIABILITY",
+                        "priority": "HIGH",
+                        "title": "API Health and Monitoring Enhancement",
+                        "description": "API endpoints showing inconsistent health. Implement comprehensive monitoring.",
+                        "actions": [
+                            "Deploy API health monitoring",
+                            "Implement distributed tracing",
+                            "Set up error tracking and alerting",
+                            "Create API performance dashboards",
+                        ],
+                        "estimated_effort": "1-2 weeks",
+                        "expected_benefits": "95%+ API uptime improvement",
+                    }
+                ]
+            )
 
         # AI/ML recommendations
         ai_ml = sectors.get("ai_ml", {})
         ai_score = ai_ml.get("scoring", {}).get("overall_score", 7)
 
         if ai_score >= 8:
-            recommendations.extend([
-                {
-                    "category": "AI_ENHANCEMENT",
-                    "priority": "MEDIUM",
-                    "title": "Advanced AI Capabilities Expansion",
-                    "description": "AI services performing well. Expand capabilities for better user experience.",
-                    "actions": [
-                        "Implement multi-modal AI processing",
-                        "Add predictive analytics features",
-                        "Enhance search with natural language understanding",
-                        "Integrate advanced ML models"
-                    ],
-                    "estimated_effort": "4-6 weeks",
-                    "expected_benefits": "Significant UX improvements and advanced features"
-                }
-            ])
+            recommendations.extend(
+                [
+                    {
+                        "category": "AI_ENHANCEMENT",
+                        "priority": "MEDIUM",
+                        "title": "Advanced AI Capabilities Expansion",
+                        "description": "AI services performing well. Expand capabilities for better user experience.",
+                        "actions": [
+                            "Implement multi-modal AI processing",
+                            "Add predictive analytics features",
+                            "Enhance search with natural language understanding",
+                            "Integrate advanced ML models",
+                        ],
+                        "estimated_effort": "4-6 weeks",
+                        "expected_benefits": "Significant UX improvements and advanced features",
+                    }
+                ]
+            )
 
         self.results["comprehensive_recommendations"] = recommendations
 
@@ -1187,20 +1338,24 @@ class EnhancedDiagnosticOrchestrator:
         """Print comprehensive enhanced diagnostic report"""
         exec_summary = self.results.get("executive_summary", {})
 
-        print("\n" + "="*100)
+        print("\n" + "=" * 100)
         print("🔬 ENHANCED COMPREHENSIVE SYSTEM DIAGNOSTIC REPORT")
-        print("="*100)
+        print("=" * 100)
 
-        print(f"📊 OVERALL SYSTEM HEALTH: {exec_summary.get('overall_system_health', 'UNKNOWN')}")
+        print(
+            f"📊 OVERALL SYSTEM HEALTH: {exec_summary.get('overall_system_health', 'UNKNOWN')}"
+        )
         print(f"🎯 COMPOSITE SCORE: {exec_summary.get('composite_score', 0)}/10")
         print(f"🏆 OVERALL RATING: {exec_summary.get('overall_rating', 'UNKNOWN')}")
         print(f"📋 SECTORS ANALYZED: {exec_summary.get('sectors_analyzed', 0)}")
         print(f"🚨 CRITICAL ISSUES: {exec_summary.get('critical_issues_count', 0)}")
-        print(f"⚡ HIGH PRIORITY ACTIONS: {exec_summary.get('high_priority_actions', 0)}")
+        print(
+            f"⚡ HIGH PRIORITY ACTIONS: {exec_summary.get('high_priority_actions', 0)}"
+        )
 
-        print("\n" + "-"*50)
+        print("\n" + "-" * 50)
         print("📈 SECTOR PERFORMANCE SCORES")
-        print("-"*50)
+        print("-" * 50)
 
         sectors = self.results["sectors"]
         for sector_name, sector_data in sectors.items():
@@ -1218,7 +1373,9 @@ class EnhancedDiagnosticOrchestrator:
             else:
                 icon = "🔴"
 
-            print(f"{icon} {sector_name.upper():15} | Score: {score:4.1f}/10 | Rating: {rating}")
+            print(
+                f"{icon} {sector_name.upper():15} | Score: {score:4.1f}/10 | Rating: {rating}"
+            )
 
             # Show sub-sector breakdown if available
             sub_sectors = sector_data.get("sub_sectors", {})
@@ -1226,20 +1383,26 @@ class EnhancedDiagnosticOrchestrator:
                 for sub_name, sub_data in sub_sectors.items():
                     if isinstance(sub_data, dict) and "status" in sub_data:
                         status = sub_data["status"]
-                        status_icon = "✅" if status in ["healthy", "good", "excellent"] else "⚠️" if status in ["warning", "degraded"] else "❌"
+                        status_icon = (
+                            "✅"
+                            if status in ["healthy", "good", "excellent"]
+                            else "⚠️"
+                            if status in ["warning", "degraded"]
+                            else "❌"
+                        )
                         print(f"  └─ {sub_name}: {status_icon} {status}")
 
-        print("\n" + "-"*50)
+        print("\n" + "-" * 50)
         print("🔍 KEY INSIGHTS")
-        print("-"*50)
+        print("-" * 50)
 
         insights = exec_summary.get("key_insights", [])
         for i, insight in enumerate(insights, 1):
             print(f"{i}. {insight}")
 
-        print("\n" + "-"*50)
+        print("\n" + "-" * 50)
         print("🎯 STRATEGIC RECOMMENDATIONS")
-        print("-"*50)
+        print("-" * 50)
 
         strategic_recs = exec_summary.get("strategic_recommendations", [])
         for rec in strategic_recs:
@@ -1247,24 +1410,23 @@ class EnhancedDiagnosticOrchestrator:
                 "CRITICAL": "🚨",
                 "HIGH": "⚡",
                 "MEDIUM": "📋",
-                "LOW": "📝"
+                "LOW": "📝",
             }.get(rec["priority"], "📋")
 
             print(f"{priority_icon} {rec['priority']}: {rec['recommendation']}")
-            print(f"   ⏱️  Effort: {rec['estimated_effort']} | 💡 Impact: {rec['expected_impact']}")
+            print(
+                f"   ⏱️  Effort: {rec['estimated_effort']} | 💡 Impact: {rec['expected_impact']}"
+            )
 
-        print("\n" + "-"*50)
+        print("\n" + "-" * 50)
         print("⚠️  RISK ASSESSMENT")
-        print("-"*50)
+        print("-" * 50)
 
         risk = exec_summary.get("risk_assessment", {})
         risk_level = risk.get("overall_risk_level", "UNKNOWN")
-        risk_icon = {
-            "HIGH": "🔴",
-            "MEDIUM": "🟠",
-            "LOW-MEDIUM": "🟡",
-            "LOW": "🟢"
-        }.get(risk_level, "⚪")
+        risk_icon = {"HIGH": "🔴", "MEDIUM": "🟠", "LOW-MEDIUM": "🟡", "LOW": "🟢"}.get(
+            risk_level, "⚪"
+        )
 
         print(f"Overall Risk Level: {risk_icon} {risk_level}")
 
@@ -1280,30 +1442,27 @@ class EnhancedDiagnosticOrchestrator:
             for strategy in mitigation:
                 print(f"  ✓ {strategy}")
 
-        print("\n" + "-"*50)
+        print("\n" + "-" * 50)
         print("🛣️  NEXT STEPS ROADMAP")
-        print("-"*50)
+        print("-" * 50)
 
         next_steps = exec_summary.get("next_steps", [])
         for step in next_steps:
             print(f"📅 {step['phase']}:")
-            for action in step['actions']:
+            for action in step["actions"]:
                 print(f"   • {action}")
             print()
 
-        print(f"\n📅 Assessment completed: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}")
-        print("="*100)
+        print(
+            f"\n📅 Assessment completed: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}"
+        )
+        print("=" * 100)
 
     # ===== LEGACY METHOD COMPATIBILITY =====
 
     async def diagnose_infrastructure(self):
         """Basic infrastructure diagnosis for compatibility"""
-        results = {
-            "status": "healthy",
-            "checks": {},
-            "issues": [],
-            "metrics": {}
-        }
+        results = {"status": "healthy", "checks": {}, "issues": [], "metrics": {}}
 
         # Basic system resources
         results["metrics"] = self._check_system_resources()
@@ -1322,12 +1481,7 @@ class EnhancedDiagnosticOrchestrator:
 
     async def diagnose_backend(self):
         """Basic backend diagnosis for compatibility"""
-        results = {
-            "status": "healthy",
-            "apis": {},
-            "services": {},
-            "issues": []
-        }
+        results = {"status": "healthy", "apis": {}, "services": {}, "issues": []}
 
         # Basic API checks
         try:
@@ -1346,7 +1500,7 @@ class EnhancedDiagnosticOrchestrator:
             "status": "healthy",
             "build_status": {},
             "runtime_status": {},
-            "issues": []
+            "issues": [],
         }
 
         results["build_status"] = self._check_frontend_build()
@@ -1360,11 +1514,7 @@ class EnhancedDiagnosticOrchestrator:
 
     async def diagnose_database(self):
         """Basic database diagnosis for compatibility"""
-        results = {
-            "status": "healthy",
-            "connectivity": {},
-            "issues": []
-        }
+        results = {"status": "healthy", "connectivity": {}, "issues": []}
 
         results["connectivity"] = self._check_database_connectivity()
 
@@ -1372,12 +1522,7 @@ class EnhancedDiagnosticOrchestrator:
 
     async def diagnose_ai_ml(self):
         """Basic AI/ML diagnosis for compatibility"""
-        results = {
-            "status": "healthy",
-            "models": {},
-            "services": {},
-            "issues": []
-        }
+        results = {"status": "healthy", "models": {}, "services": {}, "issues": []}
 
         results["services"]["ai_service"] = self._check_ai_service()
         results["models"] = self._check_ml_models()
@@ -1386,11 +1531,7 @@ class EnhancedDiagnosticOrchestrator:
 
     async def diagnose_security(self):
         """Basic security diagnosis for compatibility"""
-        results = {
-            "status": "healthy",
-            "authentication": {},
-            "issues": []
-        }
+        results = {"status": "healthy", "authentication": {}, "issues": []}
 
         results["authentication"] = self._check_authentication()
 
@@ -1403,11 +1544,7 @@ class EnhancedDiagnosticOrchestrator:
 
     async def diagnose_performance(self):
         """Basic performance diagnosis for compatibility"""
-        results = {
-            "status": "healthy",
-            "metrics": {},
-            "issues": []
-        }
+        results = {"status": "healthy", "metrics": {}, "issues": []}
 
         results["metrics"] = self._collect_performance_metrics()
 
@@ -1415,11 +1552,7 @@ class EnhancedDiagnosticOrchestrator:
 
     async def diagnose_testing(self):
         """Basic testing diagnosis for compatibility"""
-        results = {
-            "status": "healthy",
-            "unit_tests": {},
-            "issues": []
-        }
+        results = {"status": "healthy", "unit_tests": {}, "issues": []}
 
         results["unit_tests"]["backend"] = self._run_backend_tests()
         results["unit_tests"]["frontend"] = self._run_frontend_tests()
@@ -1428,11 +1561,7 @@ class EnhancedDiagnosticOrchestrator:
 
     async def diagnose_documentation(self):
         """Basic documentation diagnosis for compatibility"""
-        results = {
-            "status": "healthy",
-            "api_docs": {},
-            "issues": []
-        }
+        results = {"status": "healthy", "api_docs": {}, "issues": []}
 
         try:
             results["api_docs"] = await self._check_api_documentation()
@@ -1443,11 +1572,7 @@ class EnhancedDiagnosticOrchestrator:
 
     async def diagnose_integration(self):
         """Basic integration diagnosis for compatibility"""
-        results = {
-            "status": "healthy",
-            "dependencies": {},
-            "issues": []
-        }
+        results = {"status": "healthy", "dependencies": {}, "issues": []}
 
         results["dependencies"]["backend"] = self._check_backend_dependencies()
 
@@ -1456,24 +1581,36 @@ class EnhancedDiagnosticOrchestrator:
 
 async def main():
     """Main execution function"""
-    parser = argparse.ArgumentParser(description="Enhanced Comprehensive Diagnostic Orchestrator")
+    parser = argparse.ArgumentParser(
+        description="Enhanced Comprehensive Diagnostic Orchestrator"
+    )
     parser.add_argument(
         "sectors",
         nargs="*",
-        choices=["infrastructure", "backend", "frontend", "database", "ai_ml",
-                "security", "performance", "testing", "documentation", "integration", "all"],
+        choices=[
+            "infrastructure",
+            "backend",
+            "frontend",
+            "database",
+            "ai_ml",
+            "security",
+            "performance",
+            "testing",
+            "documentation",
+            "integration",
+            "all",
+        ],
         default=["all"],
-        help="Sectors to diagnose (default: all)"
+        help="Sectors to diagnose (default: all)",
     )
     parser.add_argument(
-        "--output", "-o",
+        "--output",
+        "-o",
         default=f"enhanced_diagnostic_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
-        help="Output file for results"
+        help="Output file for results",
     )
     parser.add_argument(
-        "--deep",
-        action="store_true",
-        help="Enable deep sub-sector analysis"
+        "--deep", action="store_true", help="Enable deep sub-sector analysis"
     )
 
     args = parser.parse_args()
@@ -1495,10 +1632,12 @@ async def main():
         # Save results
         if args.output:
             import json
-            with open(args.output, 'w') as f:
+
+            with open(args.output, "w") as f:
                 json.dump(results, f, indent=2, default=str)
 
         orchestrator._print_summary(results)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

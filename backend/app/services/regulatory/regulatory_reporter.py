@@ -5,12 +5,11 @@ Generates and manages regulatory compliance reports (SAR, CTR, etc.)
 
 import json
 import logging
-import re
-import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
+
 from .fincen_builder import FinCENXMLBuilder
 from .schema_validator import SchemaValidator
 
@@ -44,14 +43,14 @@ class RegulatoryReport:
     institution_id: str
     reporting_date: date
     status: ReportStatus
-    subject_info: Dict[str, Any]
-    activity_details: Dict[str, Any]
+    subject_info: dict[str, Any]
+    activity_details: dict[str, Any]
     narrative: str
-    supporting_evidence: List[Dict[str, Any]]
-    regulatory_requirements: Dict[str, Any]
+    supporting_evidence: list[dict[str, Any]]
+    regulatory_requirements: dict[str, Any]
     generated_at: datetime
-    submitted_at: Optional[datetime] = None
-    submission_reference: Optional[str] = None
+    submitted_at: datetime | None = None
+    submission_reference: str | None = None
 
 
 class AutomatedRegulatoryReporter:
@@ -63,7 +62,7 @@ class AutomatedRegulatoryReporter:
         self.submission_gateways = self._initialize_submission_gateways()
         self.schema_validator = SchemaValidator()
 
-    def _load_report_templates(self) -> Dict[ReportType, Dict[str, Any]]:
+    def _load_report_templates(self) -> dict[ReportType, dict[str, Any]]:
         """Load regulatory report templates"""
         return {
             ReportType.SAR: {
@@ -99,7 +98,7 @@ class AutomatedRegulatoryReporter:
             },
         }
 
-    def _load_regulatory_requirements(self) -> Dict[str, Dict[str, Any]]:
+    def _load_regulatory_requirements(self) -> dict[str, dict[str, Any]]:
         """Load regulatory requirements by jurisdiction"""
         return {
             "US_FINCEN": {
@@ -125,7 +124,7 @@ class AutomatedRegulatoryReporter:
             },
         }
 
-    def _initialize_submission_gateways(self) -> Dict[str, Dict[str, Any]]:
+    def _initialize_submission_gateways(self) -> dict[str, dict[str, Any]]:
         """Initialize regulatory submission gateways"""
         return {
             "FINCEN_GATEWAY": {
@@ -189,10 +188,12 @@ class AutomatedRegulatoryReporter:
 
         return report
 
-    async def _fetch_case_data(self, case_id: str) -> Dict[str, Any]:
+    async def _fetch_case_data(self, case_id: str) -> dict[str, Any]:
         """Fetch case data from case management system"""
         from app.services.business.case_service import case_service
-        from app.services.infrastructure.storage.database_service import database_service
+        from app.services.infrastructure.storage.database_service import (
+            database_service,
+        )
 
         with database_service.get_db() as db:
             case = case_service.get_case(db, case_id)
@@ -201,47 +202,53 @@ class AutomatedRegulatoryReporter:
 
             # Transform Case SQL Alchemy model to dictionary required by the report
             # Mappping Case -> Dict structure
-            
+
             # Entities (Subject Info)
-            # Assuming 'case.customer_id' or 'case.metadata' holds entity info, 
+            # Assuming 'case.customer_id' or 'case.metadata' holds entity info,
             # if unavailable, we extract from available metadata or return a placeholder aware of missing data.
             entities = []
             if getattr(case, "customer_name", None):
-                 entities.append({
-                     "name": case.customer_name,
-                     "type": "individual",  # Defaulting as we might not have this column
-                     "identifiers": {},     # Placeholder as we don't store SSN in raw case
-                     "address": "Unknown Address", 
-                     "occupation": "Unknown"
-                 })
-            
+                entities.append(
+                    {
+                        "name": case.customer_name,
+                        "type": "individual",  # Defaulting as we might not have this column
+                        "identifiers": {},  # Placeholder as we don't store SSN in raw case
+                        "address": "Unknown Address",
+                        "occupation": "Unknown",
+                    }
+                )
+
             # Transactions
             # Assuming 'case.transactions' or similar relation exists, otherwise we look at metadata
             transactions = []
-            # Note: The current Case model might not have direct relation loaded. 
+            # Note: The current Case model might not have direct relation loaded.
             # We map from what appears to be available in standard Case model.
-            
+
             # Analysis
             # Use risk_score if available
             risk_score = getattr(case, "risk_score", 0.0)
-            
+
             return {
                 "case_id": case.id,
                 "title": case.title,
-                "status": case.status.value if hasattr(case.status, 'value') else str(case.status),
-                "priority": case.priority.value if hasattr(case.priority, 'value') else str(case.priority),
-                "transactions": transactions, # Empty if no direct relation (better than fake data)
+                "status": case.status.value
+                if hasattr(case.status, "value")
+                else str(case.status),
+                "priority": case.priority.value
+                if hasattr(case.priority, "value")
+                else str(case.priority),
+                "transactions": transactions,  # Empty if no direct relation (better than fake data)
                 "entities": entities,
-                "evidence": [], # Would need evidence service to fetch this
+                "evidence": [],  # Would need evidence service to fetch this
                 "analysis": {
                     "risk_score": risk_score,
-                    "suspicious_patterns": [], # Would need analysis service
+                    "suspicious_patterns": [],  # Would need analysis service
                     "amount_involved": getattr(case, "amount", 0.0),
                 },
             }
 
     def _validate_report_requirements(
-        self, case_data: Dict[str, Any], report_type: ReportType, jurisdiction: str
+        self, case_data: dict[str, Any], report_type: ReportType, jurisdiction: str
     ):
         """Validate that case data meets regulatory requirements"""
         requirements = self.regulatory_requirements.get(jurisdiction, {})
@@ -269,7 +276,7 @@ class AutomatedRegulatoryReporter:
                     f"Transaction amount ${total_amount} below CTR threshold ${threshold}"
                 )
 
-    def _has_required_data(self, case_data: Dict[str, Any], field: str) -> bool:
+    def _has_required_data(self, case_data: dict[str, Any], field: str) -> bool:
         """Check if case data has required field"""
         if field == "subject_info":
             return len(case_data.get("entities", [])) > 0
@@ -280,8 +287,8 @@ class AutomatedRegulatoryReporter:
         return field in case_data
 
     async def _generate_report_content(
-        self, case_data: Dict[str, Any], report_type: ReportType
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any], report_type: ReportType
+    ) -> dict[str, Any]:
         """Generate the content for the regulatory report"""
         if report_type == ReportType.SAR:
             return self._generate_sar_content(case_data)
@@ -290,7 +297,7 @@ class AutomatedRegulatoryReporter:
         else:
             raise ValueError(f"Unsupported report type: {report_type}")
 
-    def _generate_sar_content(self, case_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _generate_sar_content(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Generate SAR-specific content"""
         primary_entity = case_data.get("entities", [{}])[0]
         primary_transaction = case_data.get("transactions", [{}])[0]
@@ -314,7 +321,7 @@ class AutomatedRegulatoryReporter:
             "evidence": self._format_evidence_list(case_data.get("evidence", [])),
         }
 
-    def _generate_ctr_content(self, case_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _generate_ctr_content(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Generate CTR-specific content"""
         primary_transaction = case_data.get("transactions", [{}])[0]
 
@@ -333,7 +340,7 @@ class AutomatedRegulatoryReporter:
             "evidence": self._format_evidence_list(case_data.get("evidence", [])),
         }
 
-    def _generate_structured_narrative(self, case_data: Dict[str, Any]) -> str:
+    def _generate_structured_narrative(self, case_data: dict[str, Any]) -> str:
         """Generate a structured narrative for regulatory reporting"""
         analysis = case_data.get("analysis", {})
         transactions = case_data.get("transactions", [])
@@ -379,8 +386,8 @@ class AutomatedRegulatoryReporter:
         return " ".join(narrative_parts)
 
     def _format_evidence_list(
-        self, evidence: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+        self, evidence: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
         """Format evidence list for regulatory submission"""
         formatted_evidence = []
 
@@ -403,7 +410,7 @@ class AutomatedRegulatoryReporter:
         # This would be configured per deployment
         return "INST_001"
 
-    async def submit_report(self, report: RegulatoryReport) -> Dict[str, Any]:
+    async def submit_report(self, report: RegulatoryReport) -> dict[str, Any]:
         """
         Submit report to regulatory authority
 
@@ -443,7 +450,7 @@ class AutomatedRegulatoryReporter:
 
     def _get_submission_gateway(
         self, report_type: ReportType, jurisdiction: str
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """Get appropriate submission gateway"""
         if jurisdiction == "US_FINCEN":
             return self.submission_gateways.get("FINCEN_GATEWAY")
@@ -455,7 +462,7 @@ class AutomatedRegulatoryReporter:
         return None
 
     def _format_report_for_submission(
-        self, report: RegulatoryReport, gateway: Dict[str, Any]
+        self, report: RegulatoryReport, gateway: dict[str, Any]
     ) -> str:
         """Format report for gateway submission"""
         if gateway["format"] == "XML":
@@ -469,20 +476,20 @@ class AutomatedRegulatoryReporter:
         """Format report as XML for regulatory submission using FinCENXMLBuilder"""
         builder = FinCENXMLBuilder()
         builder.build_header(submission_type=report.report_type.value)
-        
+
         # Prepare activity data from report
         activity_data = {
             "type": "Suspicious",
             "amount": report.activity_details.get("amount", 0.0),
             "currency": report.activity_details.get("currency", "USD"),
             "subject": report.subject_info,
-            "narrative": report.narrative
+            "narrative": report.narrative,
         }
         builder.add_activity(activity_data)
-        
+
         return builder.to_xml_string()
 
-    def _report_to_dict(self, report: RegulatoryReport) -> Dict[str, Any]:
+    def _report_to_dict(self, report: RegulatoryReport) -> dict[str, Any]:
         """Convert report to dictionary"""
         return {
             "report_id": report.report_id,
@@ -499,14 +506,16 @@ class AutomatedRegulatoryReporter:
         }
 
     async def _submit_to_gateway(
-        self, formatted_report: str, gateway: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, formatted_report: str, gateway: dict[str, Any]
+    ) -> dict[str, Any]:
         """Submit formatted report to regulatory gateway"""
         # SAFE SIMULATION MODE
         # In a real production environment, this would use mTLS/HTTPS to submit to FinCEN/FCA.
         # For this deployment, we simulate the submission to avoid actual regulatory filings.
 
-        logger.info(f"SIMULATION: Submitting {gateway['format']} report to {gateway['endpoint']}")
+        logger.info(
+            f"SIMULATION: Submitting {gateway['format']} report to {gateway['endpoint']}"
+        )
 
         # Simulate API call delay
         await asyncio.sleep(1)
@@ -517,21 +526,21 @@ class AutomatedRegulatoryReporter:
             "submission_timestamp": datetime.now().isoformat(),
             "status": "accepted",
             "is_simulation": True,
-            "note": "This was a simulated submission. No data was sent to external authorities."
+            "note": "This was a simulated submission. No data was sent to external authorities.",
         }
 
-    def get_report_status(self, report_id: str) -> Optional[RegulatoryReport]:
+    def get_report_status(self, report_id: str) -> RegulatoryReport | None:
         """Get report by ID"""
         # This would query the report database
         # For now, return None
         return None
 
-    def get_pending_reports(self) -> List[RegulatoryReport]:
+    def get_pending_reports(self) -> list[RegulatoryReport]:
         """Get reports pending submission"""
         # This would query for reports with status DRAFT or REVIEW
         return []
 
-    def validate_report_compliance(self, report: RegulatoryReport) -> Dict[str, Any]:
+    def validate_report_compliance(self, report: RegulatoryReport) -> dict[str, Any]:
         """Validate report compliance with regulatory requirements"""
         issues = []
 
@@ -562,8 +571,8 @@ class AutomatedRegulatoryReporter:
             "requirements_met": len(required_fields) - len(issues),
             "total_requirements": len(required_fields),
         }
-    
-    def validate_xml_schema(self, xml_content: str) -> Tuple[bool, str]:
+
+    def validate_xml_schema(self, xml_content: str) -> tuple[bool, str]:
         """Validate generated XML against schema"""
         return self.schema_validator.validate_structure(xml_content)
 

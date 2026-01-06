@@ -4,9 +4,7 @@ Comprehensive Router Authentication Enhancement
 Systematically adds authentication to all unprotected API endpoints
 """
 
-import os
 import re
-import sys
 from pathlib import Path
 
 # Router files to secure with their endpoint counts
@@ -28,7 +26,7 @@ ROUTERS_TO_SECURE = {
 def update_router_file(filepath: Path) -> dict:
     """Add authentication to a single router file"""
 
-    with open(filepath, "r") as f:
+    with open(filepath) as f:
         content = f.read()
 
     original_content = content

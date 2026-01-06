@@ -5,7 +5,7 @@ integrate with existing fraud detection services.
 """
 
 # backend/app/services/ai_integration_hub.py
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from app.services.ai.ai_service import AIService
 from app.services.federated_learning import FederatedLearningCoordinator
@@ -33,8 +33,8 @@ class AIIntegrationHub:
         }
 
     async def process_ai_request(
-        self, request_type: str, request_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, request_type: str, request_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Main entry point for AI requests - routes to appropriate handler"""
 
         if request_type not in self.integration_routes:
@@ -44,8 +44,8 @@ class AIIntegrationHub:
         return await handler(request_data)
 
     async def _handle_federated_request(
-        self, request_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, request_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Handle federated learning requests"""
         action = request_data.get("action")
 
@@ -65,8 +65,8 @@ class AIIntegrationHub:
         raise ValueError(f"Unknown federated action: {action}")
 
     async def _handle_realtime_request(
-        self, request_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, request_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Handle real-time adaptation requests"""
         transaction_data = request_data.get("transaction_data", {})
         context_data = request_data.get("context_data", {})
@@ -87,8 +87,8 @@ class AIIntegrationHub:
         }
 
     async def _handle_multimodal_request(
-        self, request_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, request_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Handle multi-modal analysis requests"""
         entity_id = request_data.get("entity_id")
         modalities_data = request_data.get("modalities", {})
@@ -114,12 +114,12 @@ class AIIntegrationHub:
         }
 
     async def _handle_legacy_request(
-        self, request_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, request_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Handle legacy AI service requests for backward compatibility"""
         return await self.ai_service.analyze_transaction(request_data)
 
-    def _generate_multimodal_recommendations(self, result) -> List[str]:
+    def _generate_multimodal_recommendations(self, result) -> list[str]:
         """Generate recommendations based on multimodal analysis"""
         recommendations = []
 

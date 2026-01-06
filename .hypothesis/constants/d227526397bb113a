@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/specialized_reports.py
+# hypothesis_version: 6.148.8
+
+[0.85, 0.92, 3.1, 6.5, 8.5, 45.0, 65.0, 78.5, 82.5, 87.5, 94.2, 25000.0, 150000.0, 1250000.0, 114, 150, 156, 500, '/analytics/overview', 'activeCases', 'audit_log_001', 'avgResolutionTime', 'compliance_violation', 'falsePositiveRate', 'finding_1', 'finding_2', 'fraudDetectionRate', 'high', 'investigating', 'lastUpdated', 'medium', 'moderate_risk', 'reporting', 'resolvedCases', 'suspicious_pattern', 'systemHealthScore', 'test-user-id', 'test@test.com', 'testuser', 'totalCases', 'totalFlaggedAmount', 'transaction_log_001', 'transaction_log_002', 'user']

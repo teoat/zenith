@@ -1,7 +1,6 @@
 import logging
-import os
 from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from typing import Any
 
 import psutil
 
@@ -16,7 +15,7 @@ class StorageMonitor:
         self.growth_predictions = {}
         self.alerts = []
 
-    def monitor_storage_growth(self) -> Dict[str, Any]:
+    def monitor_storage_growth(self) -> dict[str, Any]:
         """Monitor storage usage and predict future requirements"""
         try:
             # Get current storage metrics
@@ -51,10 +50,10 @@ class StorageMonitor:
             }
 
         except Exception as e:
-            logger.error(f"Storage monitoring failed: {str(e)}")
+            logger.error(f"Storage monitoring failed: {e!s}")
             return {"error": str(e)}
 
-    def _analyze_growth_trends(self) -> Dict[str, Any]:
+    def _analyze_growth_trends(self) -> dict[str, Any]:
         """Analyze storage growth patterns"""
         if len(self.storage_metrics) < 7:
             return {
@@ -106,7 +105,7 @@ class StorageMonitor:
             ),  # Confidence based on data points
         }
 
-    def _check_storage_thresholds(self, current_usage: Dict[str, Any]) -> List[str]:
+    def _check_storage_thresholds(self, current_usage: dict[str, Any]) -> list[str]:
         """Check storage thresholds and generate alerts"""
         alerts = []
 
@@ -132,8 +131,8 @@ class StorageMonitor:
         return alerts
 
     def _generate_storage_recommendations(
-        self, current_usage: Dict[str, Any], growth_analysis: Dict[str, Any]
-    ) -> List[str]:
+        self, current_usage: dict[str, Any], growth_analysis: dict[str, Any]
+    ) -> list[str]:
         """Generate storage management recommendations"""
         recommendations = []
 
@@ -178,7 +177,7 @@ class StorageMonitor:
 
         return recommendations
 
-    def get_storage_report(self) -> Dict[str, Any]:
+    def get_storage_report(self) -> dict[str, Any]:
         """Generate comprehensive storage report"""
         current_monitoring = self.monitor_storage_growth()
 
@@ -193,7 +192,7 @@ class StorageMonitor:
 
         return report
 
-    def _get_historical_trends(self) -> Dict[str, Any]:
+    def _get_historical_trends(self) -> dict[str, Any]:
         """Get historical storage usage trends"""
         if len(self.storage_metrics) < 7:
             return {"status": "insufficient_data"}
@@ -220,7 +219,7 @@ class StorageMonitor:
             ),
         }
 
-    def _get_capacity_planning(self) -> Dict[str, Any]:
+    def _get_capacity_planning(self) -> dict[str, Any]:
         """Get capacity planning recommendations"""
         if not self.storage_metrics:
             return {"status": "no_data"}
@@ -247,7 +246,7 @@ class StorageMonitor:
 
         return planning
 
-    def _get_optimization_opportunities(self) -> List[str]:
+    def _get_optimization_opportunities(self) -> list[str]:
         """Identify storage optimization opportunities"""
         opportunities = []
 

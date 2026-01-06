@@ -4,8 +4,8 @@
 Creates a new keypair and archives the previous keys with a timestamped suffix.
 This is a convenience script; rotate keys carefully and distribute public key to verifiers.
 """
+
 import datetime
-import os
 from pathlib import Path
 
 KEY_DIR = Path.home() / ".Zenith"

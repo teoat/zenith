@@ -2,114 +2,89 @@
 Performance Monitoring and Metrics Collection
 Tracks API response times, database queries, fraud detection latency
 """
-import time
+
 import functools
-from typing import Callable, Any
-from prometheus_client import Counter, Histogram, Gauge, generate_latest
-from fastapi import Request, Response
-from starlette.middleware.base import BaseHTTPMiddleware
 import logging
+import time
+from collections.abc import Callable
+from typing import Any
+
+from fastapi import Request, Response
+from prometheus_client import Counter, Gauge, Histogram, generate_latest
+from starlette.middleware.base import BaseHTTPMiddleware
 
 logger = logging.getLogger(__name__)
 
 # Prometheus Metrics
 http_requests_total = Counter(
-    'http_requests_total',
-    'Total HTTP requests',
-    ['method', 'endpoint', 'status']
+    "http_requests_total", "Total HTTP requests", ["method", "endpoint", "status"]
 )
 
 http_request_duration_seconds = Histogram(
-    'http_request_duration_seconds',
-    'HTTP request latency',
-    ['method', 'endpoint']
+    "http_request_duration_seconds", "HTTP request latency", ["method", "endpoint"]
 )
 
 fraud_detections_total = Counter(
-    'fraud_detections_total',
-    'Total fraud detections',
-    ['risk_level']
+    "fraud_detections_total", "Total fraud detections", ["risk_level"]
 )
 
 ai_predictions_total = Counter(
-    'ai_predictions_total',
-    'Total AI predictions made',
-    ['model_type']
+    "ai_predictions_total", "Total AI predictions made", ["model_type"]
 )
 
-pending_cases = Gauge(
-    'pending_cases',
-    'Number of pending fraud cases'
-)
+pending_cases = Gauge("pending_cases", "Number of pending fraud cases")
 
 database_query_duration = Histogram(
-    'database_query_duration_seconds',
-    'Database query execution time',
-    ['query_type']
+    "database_query_duration_seconds", "Database query execution time", ["query_type"]
 )
 
-cache_hits_total = Counter(
-    'cache_hits_total',
-    'Total cache hits',
-    ['cache_type']
-)
+cache_hits_total = Counter("cache_hits_total", "Total cache hits", ["cache_type"])
 
-cache_misses_total = Counter(
-    'cache_misses_total',
-    'Total cache misses',
-    ['cache_type']
-)
+cache_misses_total = Counter("cache_misses_total", "Total cache misses", ["cache_type"])
 
-websocket_connections = Gauge(
-    'websocket_connections',
-    'Active WebSocket connections'
-)
+websocket_connections = Gauge("websocket_connections", "Active WebSocket connections")
 
 
 class PerformanceMonitoringMiddleware(BaseHTTPMiddleware):
     """Middleware to monitor request performance"""
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         # Start timing
         start_time = time.time()
-        
+
         # Process request
         response = await call_next(request)
-        
+
         # Calculate duration
         duration = time.time() - start_time
-        
+
         # Extract endpoint and method
         endpoint = request.url.path
         method = request.method
         status = response.status_code
-        
+
         # Record metrics
         http_requests_total.labels(
-            method=method,
-            endpoint=endpoint,
-            status=status
+            method=method, endpoint=endpoint, status=status
         ).inc()
-        
-        http_request_duration_seconds.labels(
-            method=method,
-            endpoint=endpoint
-        ).observe(duration)
-        
+
+        http_request_duration_seconds.labels(method=method, endpoint=endpoint).observe(
+            duration
+        )
+
         # Add performance headers
-        response.headers['X-Response-Time'] = f"{duration:.4f}s"
-        
+        response.headers["X-Response-Time"] = f"{duration:.4f}s"
+
         # Log slow requests
         if duration > 1.0:  # More than 1 second
-            logger.warning(
-                f"Slow request: {method} {endpoint} took {duration:.2f}s"
-            )
-        
+            logger.warning(f"Slow request: {method} {endpoint} took {duration:.2f}s")
+
         return response
 
 
-def track_performance(metric_name: str = None):
+def track_performance(metric_name: str | None = None):
     """Decorator to track function performance"""
+
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         async def async_wrapper(*args, **kwargs) -> Any:
@@ -121,7 +96,7 @@ def track_performance(metric_name: str = None):
                 duration = time.time() - start_time
                 name = metric_name or func.__name__
                 logger.debug(f"{name} took {duration:.4f}s")
-        
+
         @functools.wraps(func)
         def sync_wrapper(*args, **kwargs) -> Any:
             start_time = time.time()
@@ -132,14 +107,15 @@ def track_performance(metric_name: str = None):
                 duration = time.time() - start_time
                 name = metric_name or func.__name__
                 logger.debug(f"{name} took {duration:.4f}s")
-        
+
         # Return appropriate wrapper based on function type
         import asyncio
+
         if asyncio.iscoroutinefunction(func):
             return async_wrapper
         else:
             return sync_wrapper
-    
+
     return decorator
 
 
@@ -185,19 +161,19 @@ def decrement_ws_connections():
 
 class PerformanceTracker:
     """Context manager for tracking operation performance"""
-    
+
     def __init__(self, operation_name: str):
         self.operation_name = operation_name
         self.start_time = None
-    
+
     def __enter__(self):
         self.start_time = time.time()
         return self
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         duration = time.time() - self.start_time
         logger.info(f"Performance: {self.operation_name} completed in {duration:.4f}s")
-        
+
         # Record to Prometheus if it's a known metric
         if "fraud_detection" in self.operation_name.lower():
             # Record fraud detection timing

@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/ai/intelligence_methods/multi_source_fusion.py
+# hypothesis_version: 6.148.8
+
+[0.1, 0.2, 0.25, 0.3, 0.5, 'confidence', 'confidence_score', 'consensus_findings', 'count', 'data', 'external', 'finding', 'findings', 'fused_risk_score', 'fusion_timestamp', 'key_findings', 'knowledge_graph', 'plugin', 'real_time_learning', 'risk_score', 'source_summary', 'sources', 'sources_count', 'timestamp']

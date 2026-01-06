@@ -6,9 +6,7 @@ Tests all three fraud detection algorithms
 from datetime import datetime, timedelta
 
 import pytest
-
 from app.services.intelligence.fraud_detection_engine import (
-    FraudAlert,
     FraudDetectionEngine,
     FraudType,
     Transaction,

@@ -1,59 +1,60 @@
-import datetime
-import uuid
-import os
-import json
 import asyncio
+import datetime
+import json
+import os
+import uuid
 from enum import Enum
-from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from app.services.infrastructure.auth_service import auth_service
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.services.infrastructure.auth_service import auth_service
 from core.database import User, get_db
 
 router = APIRouter()
 
 # --- Models ---
 
+
 class ReportGenerationResponse(BaseModel):
-    jobId: str
+    job_id: str
     status: str
     message: str
-    estimatedCompletionMinutes: int
+    estimated_completion_minutes: int
+
 
 class ReportJobStatus(BaseModel):
     id: str
     status: str
     progress: int
     created_at: str
-    updated_at: Optional[str] = None
-    error: Optional[str] = None
+    updated_at: str | None = None
+    error: str | None = None
 
 
 class CaseAnalytics(BaseModel):
-    totalCases: int
-    activeCases: int
-    resolvedCases: int
-    casesByStatus: Dict[str, int]
-    avgResolutionTimeDays: float
-    urgentCases: int
+    total_cases: int
+    active_cases: int
+    resolved_cases: int
+    cases_by_status: dict[str, int]
+    avg_resolution_time_days: float
+    urgent_cases: int
 
 
 class TransactionAnalytics(BaseModel):
-    totalVolume: float
-    flaggedVolume: float
-    transactionCount: int
-    flaggedCount: int
-    riskDistribution: Dict[str, int]
+    total_volume: float
+    flagged_volume: float
+    transaction_count: int
+    flagged_count: int
+    risk_distribution: dict[str, int]
 
 
 class SystemOverview(BaseModel):
-    ingestionRate: float
-    activeUsers: int
-    systemHealth: float
-    lastSyncTime: datetime.datetime
+    ingestion_rate: float
+    active_users: int
+    system_health: float
+    last_sync_time: datetime.datetime
 
 
 class ReportFormat(str, Enum):
@@ -70,33 +71,33 @@ class ReportTemplate(str, Enum):
 
 
 class ReportRequest(BaseModel):
-    reportType: str = "standard"  # Added missing field
-    caseId: Optional[str] = None   # Added missing field
-    caseIds: Optional[List[str]] = None
-    dateRange: Optional[Dict[str, str]] = None
+    report_type: str = "standard"  # Added missing field
+    case_id: str | None = None  # Added missing field
+    case_ids: list[str] | None = None
+    date_range: dict[str, str] | None = None
     format: ReportFormat = ReportFormat.PDF
     template: ReportTemplate = ReportTemplate.STANDARD
-    includeSensitiveData: bool = False
+    include_sensitive_data: bool = False
 
 
 class ReportResponse(BaseModel):
-    reportUrl: str
-    generatedAt: datetime.datetime
-    expiresAt: datetime.datetime
+    report_url: str
+    generated_at: datetime.datetime
+    expires_at: datetime.datetime
 
 
 class CaseSummaryStats(BaseModel):
-    caseId: str
+    case_id: str
     status: str
-    dataQuality: float
-    daysToResolution: int
-    totalRecords: int
-    matchRate: float
-    flaggedAmount: float
-    confirmedFraud: int
-    falsePositives: int
-    alertsResolved: int
-    avgResolutionTimeMinutes: float
+    data_quality: float
+    days_to_resolution: int
+    total_records: int
+    match_rate: float
+    flagged_amount: float
+    confirmed_fraud: int
+    false_positives: int
+    alerts_resolved: int
+    avg_resolution_time_minutes: float
 
 
 class Finding(BaseModel):
@@ -104,12 +105,12 @@ class Finding(BaseModel):
     type: str
     severity: str
     description: str
-    evidence: Optional[List[str]] = None
+    evidence: list[str] | None = None
 
 
 class CaseSummaryResponse(BaseModel):
     stats: CaseSummaryStats
-    findings: List[Finding]
+    findings: list[Finding]
 
 
 class ScheduleFrequency(str, Enum):
@@ -123,8 +124,8 @@ class ScheduledReportRequest(BaseModel):
     name: str
     frequency: ScheduleFrequency
     template: ReportTemplate
-    recipients: List[str]
-    caseIds: Optional[List[str]] = None
+    recipients: list[str]
+    case_ids: list[str] | None = None
     enabled: bool = True
 
 
@@ -133,9 +134,9 @@ class ScheduledReport(BaseModel):
     name: str
     frequency: ScheduleFrequency
     template: ReportTemplate
-    recipients: List[str]
-    nextRunAt: datetime.datetime
-    lastRunAt: Optional[datetime.datetime]
+    recipients: list[str]
+    next_run_at: datetime.datetime
+    last_run_at: datetime.datetime | None
     enabled: bool
 
 
@@ -143,8 +144,8 @@ class ReportTemplateInfo(BaseModel):
     id: str
     name: str
     description: str
-    sections: List[str]
-    estimatedPages: str
+    sections: list[str]
+    estimated_pages: str
 
 
 # --- Endpoints ---
@@ -153,11 +154,12 @@ class ReportTemplateInfo(BaseModel):
 # Removed duplicated analytics routes as they are in analytics.py
 
 
-
-
-
-
-@router.post("/generate", response_model=ReportGenerationResponse, status_code=202, tags=["reporting"])
+@router.post(
+    "/generate",
+    response_model=ReportGenerationResponse,
+    status_code=202,
+    tags=["reporting"],
+)
 async def generate_report(
     request: ReportRequest,
     background_tasks: BackgroundTasks,
@@ -175,11 +177,11 @@ async def generate_report(
         # Create report job record
         job_data = {
             "id": report_id,
-            "type": request.reportType,
+            "type": request.report_type,
             "format": request.format.value,
             "parameters": request.dict(),
             "status": "queued",
-            "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "created_at": datetime.datetime.now(datetime.UTC).isoformat(),
             "created_by": current_user.id if current_user else None,
             "progress": 0,
             "estimated_completion": None,
@@ -189,7 +191,7 @@ async def generate_report(
         jobs_dir = "reports/jobs"
         os.makedirs(jobs_dir, exist_ok=True)
         job_file = os.path.join(jobs_dir, f"{report_id}.json")
-        with open(job_file, 'w') as f:
+        with open(job_file, "w") as f:
             json.dump(job_data, f, indent=2)
 
         # Add background task
@@ -202,20 +204,22 @@ async def generate_report(
         )
 
         return ReportGenerationResponse(
-            jobId=report_id,
+            job_id=report_id,
             status="queued",
             message="Report generation started",
-            estimatedCompletionMinutes=5,  # Estimate based on report complexity
+            estimated_completion_minutes=5,  # Estimate based on report complexity
         )
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to start report generation: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to start report generation: {e!s}"
+        )
 
 
 async def generate_report_background(
     report_id: str,
     request: ReportRequest,
-    user_id: Optional[str],
+    user_id: str | None,
     db: Session,
 ):
     """Background task to generate the actual report"""
@@ -224,11 +228,11 @@ async def generate_report_background(
         update_job_status(report_id, "processing", 10)
 
         # Simulate report generation process
-        if request.reportType == "case_summary":
+        if request.report_type == "case_summary":
             await generate_case_summary_report(report_id, request, db)
-        elif request.reportType == "financial_analysis":
+        elif request.report_type == "financial_analysis":
             await generate_financial_analysis_report(report_id, request, db)
-        elif request.reportType == "compliance_audit":
+        elif request.report_type == "compliance_audit":
             await generate_compliance_audit_report(report_id, request, db)
         else:
             await generate_generic_report(report_id, request, db)
@@ -241,7 +245,9 @@ async def generate_report_background(
         update_job_status(report_id, "failed", 0, str(e))
 
 
-async def generate_case_summary_report(report_id: str, request: ReportRequest, db: Session):
+async def generate_case_summary_report(
+    report_id: str, request: ReportRequest, db: Session
+):
     """Generate case summary report"""
     update_job_status(report_id, "processing", 30)
 
@@ -252,7 +258,7 @@ async def generate_case_summary_report(report_id: str, request: ReportRequest, d
     pdf_content = f"""
     Case Summary Report
     Generated: {datetime.datetime.now()}
-    Case ID: {request.caseId}
+    Case ID: {request.case_id}
     Format: {request.format.value}
     """
 
@@ -261,13 +267,15 @@ async def generate_case_summary_report(report_id: str, request: ReportRequest, d
     os.makedirs(reports_dir, exist_ok=True)
     report_file = os.path.join(reports_dir, f"{report_id}.pdf")
 
-    with open(report_file, 'w') as f:
+    with open(report_file, "w") as f:
         f.write(pdf_content)
 
     update_job_status(report_id, "processing", 80)
 
 
-async def generate_financial_analysis_report(report_id: str, request: ReportRequest, db: Session):
+async def generate_financial_analysis_report(
+    report_id: str, request: ReportRequest, db: Session
+):
     """Generate financial analysis report"""
     update_job_status(report_id, "processing", 25)
 
@@ -280,13 +288,15 @@ async def generate_financial_analysis_report(report_id: str, request: ReportRequ
     os.makedirs(reports_dir, exist_ok=True)
     report_file = os.path.join(reports_dir, f"{report_id}.pdf")
 
-    with open(report_file, 'w') as f:
+    with open(report_file, "w") as f:
         f.write(pdf_content)
 
     update_job_status(report_id, "processing", 75)
 
 
-async def generate_compliance_audit_report(report_id: str, request: ReportRequest, db: Session):
+async def generate_compliance_audit_report(
+    report_id: str, request: ReportRequest, db: Session
+):
     """Generate compliance audit report"""
     update_job_status(report_id, "processing", 20)
 
@@ -298,7 +308,7 @@ async def generate_compliance_audit_report(report_id: str, request: ReportReques
     os.makedirs(reports_dir, exist_ok=True)
     report_file = os.path.join(reports_dir, f"{report_id}.pdf")
 
-    with open(report_file, 'w') as f:
+    with open(report_file, "w") as f:
         f.write(pdf_content)
 
     update_job_status(report_id, "processing", 85)
@@ -316,29 +326,33 @@ async def generate_generic_report(report_id: str, request: ReportRequest, db: Se
     os.makedirs(reports_dir, exist_ok=True)
     report_file = os.path.join(reports_dir, f"{report_id}.pdf")
 
-    with open(report_file, 'w') as f:
+    with open(report_file, "w") as f:
         f.write(pdf_content)
 
     update_job_status(report_id, "processing", 60)
 
 
-def update_job_status(report_id: str, status: str, progress: int, error: Optional[str] = None):
+def update_job_status(
+    report_id: str, status: str, progress: int, error: str | None = None
+):
     """Update job status"""
     jobs_dir = "reports/jobs"
     job_file = os.path.join(jobs_dir, f"{report_id}.json")
 
     try:
-        with open(job_file, 'r') as f:
+        with open(job_file) as f:
             job_data = json.load(f)
 
         job_data["status"] = status
         job_data["progress"] = progress
-        job_data["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        job_data["updated_at"] = datetime.datetime.now(
+            datetime.UTC
+        ).isoformat()
 
         if error:
             job_data["error"] = error
 
-        with open(job_file, 'w') as f:
+        with open(job_file, "w") as f:
             json.dump(job_data, f, indent=2)
 
     except Exception as e:
@@ -346,7 +360,9 @@ def update_job_status(report_id: str, status: str, progress: int, error: Optiona
 
 
 @router.get("/job/{job_id}", response_model=ReportJobStatus, tags=["reporting"])
-async def get_report_job_status(job_id: str, current_user: User = Depends(auth_service.get_current_user)):
+async def get_report_job_status(
+    job_id: str, current_user: User = Depends(auth_service.get_current_user)
+):
     """Get the status of a report generation job"""
     try:
         jobs_dir = "reports/jobs"
@@ -355,7 +371,7 @@ async def get_report_job_status(job_id: str, current_user: User = Depends(auth_s
         if not os.path.exists(job_file):
             raise HTTPException(status_code=404, detail="Report job not found")
 
-        with open(job_file, 'r') as f:
+        with open(job_file) as f:
             job_data = json.load(f)
 
         return ReportJobStatus(**job_data)
@@ -363,11 +379,13 @@ async def get_report_job_status(job_id: str, current_user: User = Depends(auth_s
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get job status: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get job status: {e!s}")
 
 
 @router.get("/download/{report_id}", tags=["reporting"])
-async def download_report(report_id: str, current_user: User = Depends(auth_service.get_current_user)):
+async def download_report(
+    report_id: str, current_user: User = Depends(auth_service.get_current_user)
+):
     """Download a completed report"""
     try:
         reports_dir = "reports/generated"
@@ -381,23 +399,26 @@ async def download_report(report_id: str, current_user: User = Depends(auth_serv
         job_file = os.path.join(jobs_dir, f"{report_id}.json")
 
         if os.path.exists(job_file):
-            with open(job_file, 'r') as f:
+            with open(job_file) as f:
                 job_data = json.load(f)
 
             if job_data.get("status") != "completed":
-                raise HTTPException(status_code=409, detail="Report is not yet completed")
+                raise HTTPException(
+                    status_code=409, detail="Report is not yet completed"
+                )
 
         from fastapi.responses import FileResponse
+
         return FileResponse(
             report_file,
-            media_type='application/pdf',
-            filename=f"report_{report_id}.pdf"
+            media_type="application/pdf",
+            filename=f"report_{report_id}.pdf",
         )
 
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to download report: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to download report: {e!s}")
 
 
 @router.get(
@@ -412,17 +433,17 @@ async def get_case_summary(case_id: str):
     """
     return {
         "stats": {
-            "caseId": case_id,
+            "case_id": case_id,
             "status": "success",
-            "dataQuality": 99.8,
-            "daysToResolution": 45,
-            "totalRecords": 12450,
-            "matchRate": 94.2,
-            "flaggedAmount": 4800000.0,
-            "confirmedFraud": 3,
-            "falsePositives": 45,
-            "alertsResolved": 98,
-            "avgResolutionTimeMinutes": 8.3,
+            "data_quality": 99.8,
+            "days_to_resolution": 45,
+            "total_records": 12450,
+            "match_rate": 94.2,
+            "flagged_amount": 4800000.0,
+            "confirmed_fraud": 3,
+            "false_positives": 45,
+            "alerts_resolved": 98,
+            "avg_resolution_time_minutes": 8.3,
         },
         "findings": [
             {
@@ -461,9 +482,7 @@ async def get_case_summary(case_id: str):
     }
 
 
-@router.get(
-    "/templates", response_model=List[ReportTemplateInfo], tags=["reporting"]
-)
+@router.get("/templates", response_model=list[ReportTemplateInfo], tags=["reporting"])
 async def get_report_templates():
     """
     Get available report templates with their metadata.
@@ -480,7 +499,7 @@ async def get_report_templates():
                 "Key Visualizations",
                 "Signature Block",
             ],
-            "estimatedPages": "2-3",
+            "estimated_pages": "2-3",
         },
         {
             "id": "standard",
@@ -496,7 +515,7 @@ async def get_report_templates():
                 "Recommendations",
                 "Signature Block",
             ],
-            "estimatedPages": "8-12",
+            "estimated_pages": "8-12",
         },
         {
             "id": "detailed",
@@ -514,7 +533,7 @@ async def get_report_templates():
                 "Chain of Custody",
                 "Signature Block",
             ],
-            "estimatedPages": "15-25",
+            "estimated_pages": "15-25",
         },
         {
             "id": "compliance",
@@ -528,19 +547,17 @@ async def get_report_templates():
                 "Supporting Documentation",
                 "Filer Certification",
             ],
-            "estimatedPages": "10-15",
+            "estimated_pages": "10-15",
         },
     ]
 
 
-@router.get(
-    "/scheduled", response_model=List[ScheduledReport], tags=["reporting"]
-)
+@router.get("/scheduled", response_model=list[ScheduledReport], tags=["reporting"])
 async def get_scheduled_reports():
     """
     Get list of configured scheduled reports.
     """
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     return [
         {
             "id": "sched_001",
@@ -548,8 +565,8 @@ async def get_scheduled_reports():
             "frequency": "weekly",
             "template": "executive",
             "recipients": ["admin@example.com", "manager@example.com"],
-            "nextRunAt": now + datetime.timedelta(days=7 - now.weekday()),
-            "lastRunAt": now - datetime.timedelta(days=now.weekday()),
+            "next_run_at": now + datetime.timedelta(days=7 - now.weekday()),
+            "last_run_at": now - datetime.timedelta(days=now.weekday()),
             "enabled": True,
         },
         {
@@ -558,10 +575,10 @@ async def get_scheduled_reports():
             "frequency": "monthly",
             "template": "compliance",
             "recipients": ["compliance@example.com"],
-            "nextRunAt": (now.replace(day=1) + datetime.timedelta(days=32)).replace(
+            "next_run_at": (now.replace(day=1) + datetime.timedelta(days=32)).replace(
                 day=1
             ),
-            "lastRunAt": now.replace(day=1) - datetime.timedelta(days=1),
+            "last_run_at": now.replace(day=1) - datetime.timedelta(days=1),
             "enabled": True,
         },
     ]
@@ -572,7 +589,7 @@ async def create_scheduled_report(request: ScheduledReportRequest):
     """
     Create a new scheduled report configuration.
     """
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
 
     # Calculate next run based on frequency
     if request.frequency == ScheduleFrequency.DAILY:
@@ -593,8 +610,8 @@ async def create_scheduled_report(request: ScheduledReportRequest):
         "frequency": request.frequency,
         "template": request.template,
         "recipients": request.recipients,
-        "nextRunAt": next_run,
-        "lastRunAt": None,
+        "next_run_at": next_run,
+        "last_run_at": None,
         "enabled": request.enabled,
     }
 
@@ -613,40 +630,53 @@ async def get_financial_health(case_id: str, db: Session = Depends(get_db)):
     Get financial health data for the FinancialHealth component.
     Includes cashflow waterfall and burn rate data.
     """
-    from core.database import Transaction, FraudAlertModel
     from sqlalchemy import func
+
+    from core.database import FraudAlertModel, Transaction
 
     try:
         # Get transaction aggregates
-        inflows = db.query(func.sum(Transaction.amount)).filter(
-            Transaction.case_id == case_id,
-            Transaction.transaction_type == "CREDIT"
-        ).scalar() or 0.0
+        inflows = (
+            db.query(func.sum(Transaction.amount))
+            .filter(
+                Transaction.case_id == case_id, Transaction.transaction_type == "CREDIT"
+            )
+            .scalar()
+            or 0.0
+        )
 
-        outflows = db.query(func.sum(Transaction.amount)).filter(
-            Transaction.case_id == case_id,
-            Transaction.transaction_type == "DEBIT"
-        ).scalar() or 0.0
+        outflows = (
+            db.query(func.sum(Transaction.amount))
+            .filter(
+                Transaction.case_id == case_id, Transaction.transaction_type == "DEBIT"
+            )
+            .scalar()
+            or 0.0
+        )
 
         # Get suspicious flagged amount
-        suspicious = db.query(func.sum(Transaction.amount)).join(
-            FraudAlertModel, FraudAlertModel.case_id == Transaction.case_id
-        ).filter(
-            Transaction.case_id == case_id,
-            Transaction.confidence_score < 0.8 # Heuristic for suspicious
-        ).scalar() or 0.0
+        suspicious = (
+            db.query(func.sum(Transaction.amount))
+            .join(FraudAlertModel, FraudAlertModel.case_id == Transaction.case_id)
+            .filter(
+                Transaction.case_id == case_id,
+                Transaction.confidence_score < 0.8,  # Heuristic for suspicious
+            )
+            .scalar()
+            or 0.0
+        )
 
-        budget = 500000.0 # Standard project budget for now
+        budget = 500000.0  # Standard project budget for now
         total_spend = abs(outflows)
         balance = inflows - total_spend
 
         return {
-            "caseId": case_id,
+            "case_id": case_id,
             "budget": budget,
-            "totalSpend": total_spend,
-            "suspiciousFlow": suspicious,
-            "burnRate": round((total_spend / budget * 100), 2) if budget > 0 else 0,
-            "projectedRunway": 45,  # Simplified default
+            "total_spend": total_spend,
+            "suspicious_flow": suspicious,
+            "burn_rate": round((total_spend / budget * 100), 2) if budget > 0 else 0,
+            "projected_runway": 45,  # Simplified default
             "waterfall": [
                 {"name": "Inflow", "amount": inflows, "type": "positive"},
                 {"name": "Outflow", "amount": -total_spend, "type": "negative"},
@@ -658,12 +688,12 @@ async def get_financial_health(case_id: str, db: Session = Depends(get_db)):
         logger.error(f"Error getting financial health: {e}")
         # Return intelligent defaults if calculation fails
         return {
-            "caseId": case_id,
+            "case_id": case_id,
             "budget": 500000.0,
-            "totalSpend": 0.0,
-            "suspiciousFlow": 0.0,
-            "burnRate": 0.0,
-            "projectedRunway": 0,
+            "total_spend": 0.0,
+            "suspicious_flow": 0.0,
+            "burn_rate": 0.0,
+            "projected_runway": 0,
             "waterfall": [],
         }
 
@@ -674,42 +704,42 @@ async def get_project_tracker(case_id: str):
     Get project milestone and benchmark data for the ProjectTracker component.
     """
     return {
-        "caseId": case_id,
+        "case_id": case_id,
         "milestones": [
             {
                 "id": "m1",
                 "name": "Down Payment",
                 "status": "complete",
                 "amount": 50000,
-                "completedAt": "2025-01-15",
+                "completed_at": "2025-01-15",
             },
             {
                 "id": "m2",
                 "name": "Foundation",
                 "status": "complete",
                 "amount": 100000,
-                "completedAt": "2025-02-28",
+                "completed_at": "2025-02-28",
             },
             {
                 "id": "m3",
                 "name": "Structure",
                 "status": "delayed",
                 "amount": 150000,
-                "dueDate": "2025-04-15",
+                "due_date": "2025-04-15",
             },
             {
                 "id": "m4",
                 "name": "Finishes",
                 "status": "pending",
                 "amount": 100000,
-                "dueDate": "2025-06-30",
+                "due_date": "2025-06-30",
             },
             {
                 "id": "m5",
                 "name": "Handover",
                 "status": "pending",
                 "amount": 50000,
-                "dueDate": "2025-08-15",
+                "due_date": "2025-08-15",
             },
         ],
         "benchmarks": [
@@ -718,5 +748,5 @@ async def get_project_tracker(case_id: str):
             {"category": "Equipment", "project": 110, "industry": 100},
             {"category": "Overhead", "project": 85, "industry": 100},
         ],
-        "overallProgress": 45,
+        "overall_progress": 45,
     }

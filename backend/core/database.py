@@ -2,14 +2,13 @@
 import json
 import os
 import uuid
-from datetime import date, datetime
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from typing import Any
 
 from sqlalchemy import (
     JSON,
     Boolean,
     Column,
-    Date,
     DateTime,
     Enum,
     Float,
@@ -97,7 +96,9 @@ class User(Base):
     mfa_secret = Column(EncryptedString, nullable=True)
 
     # Relationships
-    cases = relationship("Case", back_populates="assignee", foreign_keys="Case.assignee_id")
+    cases = relationship(
+        "Case", back_populates="assignee", foreign_keys="Case.assignee_id"
+    )
     activities = relationship("CaseActivity", back_populates="user")
 
 
@@ -129,7 +130,9 @@ class Case(Base):
     __tablename__ = "cases"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    project_id = Column(String, ForeignKey("projects.id"), index=True, default="default")
+    project_id = Column(
+        String, ForeignKey("projects.id"), index=True, default="default"
+    )
     title = Column(String, nullable=False, index=True)
     description = Column(EncryptedString)
     status = Column(String, default=CaseStatus.OPEN, index=True)
@@ -306,11 +309,15 @@ class FraudAlert(Base):
 def get_database_url():
     """Get database URL from settings or fallback to SQLite"""
     from core.config import settings
-    
+
     # Priority 1: Settings/Env Variable (Postgres support)
-    if hasattr(settings, "DATABASE_URL") and settings.DATABASE_URL and "sqlite" not in settings.DATABASE_URL:
+    if (
+        hasattr(settings, "DATABASE_URL")
+        and settings.DATABASE_URL
+        and "sqlite" not in settings.DATABASE_URL
+    ):
         return settings.DATABASE_URL
-        
+
     # Priority 2: Local SQLite Default
     app_data_dir = os.path.expanduser("~/.zenith")
     os.makedirs(app_data_dir, exist_ok=True)
@@ -478,7 +485,6 @@ class AuditLog(Base):
     signature = Column(String)
     data = Column(EncryptedString, default=lambda: json.dumps({}))
     checksum = Column(String)
-    checksum = Column(String)
     previous_checksum = Column(String)
     is_error = Column(Boolean, default=False, index=True)
 
@@ -602,10 +608,10 @@ class SAR(Base):
 
     id = Column(String, primary_key=True, index=True)
     case_id = Column(String, ForeignKey("cases.id"), index=True)
-    sar_id = Column(String, unique=True, index=True) # External tracking ID
-    status = Column(String, default="draft") # draft, pending, submitted, accepted
+    sar_id = Column(String, unique=True, index=True)  # External tracking ID
+    status = Column(String, default="draft")  # draft, pending, submitted, accepted
     priority = Column(String, default="medium")
-    report_data = Column(EncryptedString) # JSON of the actual report content
+    report_data = Column(EncryptedString)  # JSON of the actual report content
     created_by = Column(String, ForeignKey("users.id"), index=True)
     created_at = Column(DateTime, default=utc_now, index=True)
     submitted_at = Column(DateTime, nullable=True)
@@ -751,7 +757,6 @@ class TrainingRecord(Base):
 # Database optimization utilities
 import functools
 import time
-from typing import Any, Dict, List, Optional
 
 from sqlalchemy import event, text
 from sqlalchemy.engine import Engine
@@ -768,7 +773,7 @@ def cached_query(ttl: int = _cache_ttl):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            cache_key = f"{func.__name__}:{str(args)}:{str(sorted(kwargs.items()))}"
+            cache_key = f"{func.__name__}:{args!s}:{sorted(kwargs.items())!s}"
             current_time = time.time()
 
             if cache_key in _query_cache:
@@ -806,7 +811,7 @@ class DatabaseOptimizer:
         self.engine = engine
         self.performance_metrics = {}
 
-    def create_performance_indexes(self) -> List[str]:
+    def create_performance_indexes(self) -> list[str]:
         """Create comprehensive performance indexes"""
         indexes = [
             # Case management indexes
@@ -844,7 +849,7 @@ class DatabaseOptimizer:
         ]
         return indexes
 
-    def optimize_connection_pooling(self) -> Dict[str, Any]:
+    def optimize_connection_pooling(self) -> dict[str, Any]:
         """Optimize database connection pooling for high performance"""
         pool_config = {
             "poolclass": QueuePool,
@@ -869,7 +874,7 @@ class DatabaseOptimizer:
 
         return pool_config
 
-    def enable_query_monitoring(self) -> Dict[str, Any]:
+    def enable_query_monitoring(self) -> dict[str, Any]:
         """Enable comprehensive query performance monitoring"""
         query_stats = {
             "slow_queries": [],
@@ -915,7 +920,7 @@ class DatabaseOptimizer:
         self.performance_metrics["query_monitoring"] = query_stats
         return query_stats
 
-    def implement_query_caching(self) -> Dict[str, Any]:
+    def implement_query_caching(self) -> dict[str, Any]:
         """Implement intelligent query result caching"""
         cache_config = {
             "enabled": True,
@@ -940,7 +945,7 @@ class DatabaseOptimizer:
         self.performance_metrics["query_caching"] = cache_config
         return cache_config
 
-    def get_performance_report(self) -> Dict[str, Any]:
+    def get_performance_report(self) -> dict[str, Any]:
         """Generate comprehensive performance report"""
         return {
             "query_monitoring": self.performance_metrics.get("query_monitoring", {}),
@@ -997,9 +1002,9 @@ def optimize_database_performance():
         try:
             conn.execute(text("ANALYZE;"))  # Update table statistics
             conn.commit()
-            optimization_results["performance_improvements"][
-                "statistics_updated"
-            ] = True
+            optimization_results["performance_improvements"]["statistics_updated"] = (
+                True
+            )
         except Exception as e:
             logger.warning(f"Failed to update statistics: {e}")
 
@@ -1075,7 +1080,6 @@ def get_db():
 
 
 # Security hardening: Parameterized query enforcement
-from sqlalchemy import text
 
 
 def secure_query_execution(query_template: str, params: dict) -> str:
@@ -1086,7 +1090,7 @@ def secure_query_execution(query_template: str, params: dict) -> str:
         # Implementation would use session.execute(safe_query, params)
         return "Query executed safely"
     except Exception as e:
-        logger.error(f"Secure query execution failed: {str(e)}")
+        logger.error(f"Secure query execution failed: {e!s}")
         raise
 
 
@@ -1135,39 +1139,41 @@ class UserOnboardingState(Base):
 __all__ = [
     # Base class
     "Base",
+    "Case",
+    "CaseActivity",
+    "CaseNote",
+    "CasePriority",
     # Enums
     "CaseStatus",
-    "CasePriority",
     "CaseType",
-    "UserRole",
+    "Entity",
+    "Evidence",
+    "FraudAlert",
+    "FraudRule",
+    "GraphSnapshot",
+    "IntegrationConfigModel",
     "ReconciliationType",
+    "Relationship",
+    "RookieChecklist",
+    "SessionLocal",
+    "Team",
+    "Transaction",
     # Models
     "User",
-    "Team",
-    "Case",
-    "Transaction",
-    "Evidence",
-    "CaseNote",
-    "CaseActivity",
-    "FraudAlert",
-    "Entity",
-    "Relationship",
-    "GraphSnapshot",
     "UserDevice",
-    "RookieChecklist",
-    "FraudRule",
-    "IntegrationConfigModel",
     "UserOnboardingState",
-    # Utilities
-    "utc_now",
-    "get_database_url",
+    "UserRole",
     "create_engine_and_session",
     "create_tables",
-    "get_db",
-    "SessionLocal",
     "engine",
+    "get_database_url",
+    "get_db",
     "secure_query_execution",
+    # Utilities
+    "utc_now",
 ]
+
+
 class FrozenEntity(Base):
     __tablename__ = "frozen_entities"
 
@@ -1177,5 +1183,5 @@ class FrozenEntity(Base):
     frozen_at = Column(DateTime, default=utc_now)
     frozen_by = Column(String)
     reason = Column(Text)
-    status = Column(String, default="frozen") # frozen, thawed
+    status = Column(String, default="frozen")  # frozen, thawed
     metadata_json = Column(JSON, default=dict)

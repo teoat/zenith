@@ -2,44 +2,50 @@
 Proactive Monitoring and Alerting Service for 99.99% Uptime
 Provides real-time monitoring, anomaly detection, and automated alerting
 """
+
 import asyncio
 import json
 import time
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional
-import logging
+from datetime import UTC, datetime
+from typing import Any
 
 from core.logging import logger
 
+
 class AlertSeverity:
     """Alert severity levels"""
+
     INFO = "info"
     WARNING = "warning"
     ERROR = "error"
     CRITICAL = "critical"
 
+
 class AlertStatus:
     """Alert status"""
+
     ACTIVE = "active"
     RESOLVED = "resolved"
     ACKNOWLEDGED = "acknowledged"
+
 
 class ProactiveMonitoringService:
     """Service for proactive monitoring and alerting to maintain 99.99% uptime"""
 
     def __init__(self):
-        self.alerts: Dict[str, Dict[str, Any]] = {}
-        self.metrics_history: Dict[str, List[float]] = {}
+        self.alerts: dict[str, dict[str, Any]] = {}
+        self.metrics_history: dict[str, list[float]] = {}
         self.anomaly_thresholds = {
             "response_time_p95": 2000,  # 2 seconds
-            "error_rate": 0.001,        # 0.1%
-            "cpu_usage": 85,           # 85%
-            "memory_usage": 90,        # 90%
-            "circuit_breaker_open": 0  # 0 = no breakers open
+            "error_rate": 0.001,  # 0.1%
+            "cpu_usage": 85,  # 85%
+            "memory_usage": 90,  # 90%
+            "circuit_breaker_open": 0,  # 0 = no breakers open
         }
         self.alert_cooldown = 300  # 5 minutes between similar alerts
         self._monitoring_active = False
         self._alerting_active = False
+        self._background_tasks: list[asyncio.Task] = []
 
     async def start_monitoring(self):
         """Start proactive monitoring"""
@@ -49,10 +55,12 @@ class ProactiveMonitoringService:
         self._monitoring_active = True
         logger.info("Starting proactive monitoring for 99.99% uptime")
 
-        # Start background monitoring tasks
-        asyncio.create_task(self._continuous_health_monitoring())
-        asyncio.create_task(self._anomaly_detection_loop())
-        asyncio.create_task(self._uptime_calculation_loop())
+        # Start background monitoring tasks and store references
+        self._background_tasks = [
+            asyncio.create_task(self._continuous_health_monitoring()),
+            asyncio.create_task(self._anomaly_detection_loop()),
+            asyncio.create_task(self._uptime_calculation_loop())
+        ]
 
     async def stop_monitoring(self):
         """Stop proactive monitoring"""
@@ -73,8 +81,9 @@ class ProactiveMonitoringService:
         """Perform comprehensive health checks"""
         try:
             from app.routers.health import health_check
-            from app.services.infrastructure.storage.database_service import db_service
-            from app.services.infrastructure.circuit_breaker import get_all_circuit_breakers
+            from app.services.infrastructure.circuit_breaker import (
+                get_all_circuit_breakers,
+            )
 
             # Get comprehensive health status
             health_result = await health_check()
@@ -89,12 +98,18 @@ class ProactiveMonitoringService:
 
             # Circuit breakers
             circuit_breakers = get_all_circuit_breakers()
-            open_breakers = [name for name, status in circuit_breakers.items() if status["state"] == "open"]
+            open_breakers = [
+                name
+                for name, status in circuit_breakers.items()
+                if status["state"] == "open"
+            ]
             if open_breakers:
                 critical_issues.append(f"Open circuit breakers: {open_breakers}")
 
             # System resources
-            system_resources = health_result.get("components", {}).get("system_resources", {})
+            system_resources = health_result.get("components", {}).get(
+                "system_resources", {}
+            )
             if system_resources.get("status") in ["critical", "degraded"]:
                 critical_issues.append(f"System resources critical: {system_resources}")
 
@@ -104,12 +119,16 @@ class ProactiveMonitoringService:
                     alert_type="health_critical",
                     severity=AlertSeverity.CRITICAL,
                     message=f"Critical health issue detected: {issue}",
-                    details={"health_result": health_result, "issue": issue}
+                    details={"health_result": health_result, "issue": issue},
                 )
 
             # Track metrics for anomaly detection
-            self._track_metric("response_time", health_result.get("response_time_ms", 0))
-            self._track_metric("error_rate", self._calculate_error_rate_from_health(health_result))
+            self._track_metric(
+                "response_time", health_result.get("response_time_ms", 0)
+            )
+            self._track_metric(
+                "error_rate", self._calculate_error_rate_from_health(health_result)
+            )
 
         except Exception as e:
             logger.error(f"Error performing health checks: {e}")
@@ -117,7 +136,7 @@ class ProactiveMonitoringService:
                 alert_type="monitoring_failure",
                 severity=AlertSeverity.ERROR,
                 message=f"Health monitoring failed: {e}",
-                details={"error": str(e)}
+                details={"error": str(e)},
             )
 
     async def _anomaly_detection_loop(self):
@@ -141,12 +160,14 @@ class ProactiveMonitoringService:
             threshold = self.anomaly_thresholds["response_time_p95"]
 
             if recent_avg > threshold:
-                anomalies.append({
-                    "metric": "response_time",
-                    "value": recent_avg,
-                    "threshold": threshold,
-                    "message": f"Response time anomaly: {recent_avg:.2f}ms > {threshold}ms"
-                })
+                anomalies.append(
+                    {
+                        "metric": "response_time",
+                        "value": recent_avg,
+                        "threshold": threshold,
+                        "message": f"Response time anomaly: {recent_avg:.2f}ms > {threshold}ms",
+                    }
+                )
 
         # Check error rate anomalies
         error_rates = self.metrics_history.get("error_rate", [])
@@ -155,12 +176,14 @@ class ProactiveMonitoringService:
             threshold = self.anomaly_thresholds["error_rate"]
 
             if recent_avg > threshold:
-                anomalies.append({
-                    "metric": "error_rate",
-                    "value": recent_avg,
-                    "threshold": threshold,
-                    "message": f"Error rate anomaly: {recent_avg:.4f} > {threshold}"
-                })
+                anomalies.append(
+                    {
+                        "metric": "error_rate",
+                        "value": recent_avg,
+                        "threshold": threshold,
+                        "message": f"Error rate anomaly: {recent_avg:.4f} > {threshold}",
+                    }
+                )
 
         # Create alerts for anomalies
         for anomaly in anomalies:
@@ -168,7 +191,7 @@ class ProactiveMonitoringService:
                 alert_type="metric_anomaly",
                 severity=AlertSeverity.WARNING,
                 message=anomaly["message"],
-                details=anomaly
+                details=anomaly,
             )
 
     async def _uptime_calculation_loop(self):
@@ -185,11 +208,13 @@ class ProactiveMonitoringService:
         """Calculate current uptime metrics"""
         try:
             # Calculate uptime based on health checks over last 24 hours
-            current_time = datetime.now(timezone.utc)
+            current_time = datetime.now(UTC)
 
             # In a real implementation, this would track actual downtime events
             # For now, we'll use health check results as a proxy
-            uptime_percentage = 99.95  # Placeholder - would be calculated from actual data
+            uptime_percentage = (
+                99.95  # Placeholder - would be calculated from actual data
+            )
 
             # Alert if uptime drops below 99.9%
             if uptime_percentage < 99.9:
@@ -200,8 +225,8 @@ class ProactiveMonitoringService:
                     details={
                         "current_uptime": uptime_percentage,
                         "target_uptime": 99.99,
-                        "time_window": "24h"
-                    }
+                        "time_window": "24h",
+                    },
                 )
             elif uptime_percentage < 99.95:
                 await self._create_alert(
@@ -211,8 +236,8 @@ class ProactiveMonitoringService:
                     details={
                         "current_uptime": uptime_percentage,
                         "target_uptime": 99.99,
-                        "time_window": "24h"
-                    }
+                        "time_window": "24h",
+                    },
                 )
 
         except Exception as e:
@@ -229,19 +254,23 @@ class ProactiveMonitoringService:
         if len(self.metrics_history[metric_name]) > 100:
             self.metrics_history[metric_name] = self.metrics_history[metric_name][-100:]
 
-    def _calculate_error_rate_from_health(self, health_result: Dict[str, Any]) -> float:
+    def _calculate_error_rate_from_health(self, health_result: dict[str, Any]) -> float:
         """Calculate error rate from health check results"""
         try:
             # This is a simplified calculation - in reality you'd track actual errors
             components = health_result.get("components", {})
 
             unhealthy_components = sum(
-                1 for comp in components.values()
-                if isinstance(comp, dict) and comp.get("status") in ["unhealthy", "degraded"]
+                1
+                for comp in components.values()
+                if isinstance(comp, dict)
+                and comp.get("status") in ["unhealthy", "degraded"]
             )
 
             total_components = len(components)
-            return unhealthy_components / total_components if total_components > 0 else 0
+            return (
+                unhealthy_components / total_components if total_components > 0 else 0
+            )
 
         except Exception:
             return 0
@@ -251,7 +280,7 @@ class ProactiveMonitoringService:
         alert_type: str,
         severity: str,
         message: str,
-        details: Dict[str, Any] = None
+        details: dict[str, Any] | None = None,
     ):
         """Create an alert with deduplication"""
         alert_key = f"{alert_type}_{hash(json.dumps(details or {}, sort_keys=True))}"
@@ -272,22 +301,25 @@ class ProactiveMonitoringService:
             "details": details or {},
             "status": AlertStatus.ACTIVE,
             "created_at": time.time(),
-            "updated_at": time.time()
+            "updated_at": time.time(),
         }
 
         self.alerts[alert_key] = alert
 
         # Log alert
-        logger.warning(f"🚨 Proactive Alert [{severity.upper()}]: {message}", extra={
-            "alert_type": alert_type,
-            "alert_id": alert_key,
-            "alert_details": details
-        })
+        logger.warning(
+            f"🚨 Proactive Alert [{severity.upper()}]: {message}",
+            extra={
+                "alert_type": alert_type,
+                "alert_id": alert_key,
+                "alert_details": details,
+            },
+        )
 
         # In production, this would send notifications via email, Slack, PagerDuty, etc.
         await self._send_notifications(alert)
 
-    async def _send_notifications(self, alert: Dict[str, Any]):
+    async def _send_notifications(self, alert: dict[str, Any]):
         """Send alert notifications (email, Slack, PagerDuty, etc.)"""
         try:
             # Placeholder for notification logic
@@ -295,25 +327,26 @@ class ProactiveMonitoringService:
 
             if alert["severity"] == AlertSeverity.CRITICAL:
                 # Send immediate notifications for critical alerts
-                logger.critical(f"🚨 CRITICAL ALERT: {alert['message']}", extra={
-                    "alert_id": alert["id"],
-                    "notification_sent": True
-                })
+                logger.critical(
+                    f"🚨 CRITICAL ALERT: {alert['message']}",
+                    extra={"alert_id": alert["id"], "notification_sent": True},
+                )
 
             elif alert["severity"] == AlertSeverity.WARNING:
                 # Send warning notifications
-                logger.warning(f"⚠️ WARNING ALERT: {alert['message']}", extra={
-                    "alert_id": alert["id"],
-                    "notification_sent": True
-                })
+                logger.warning(
+                    f"⚠️ WARNING ALERT: {alert['message']}",
+                    extra={"alert_id": alert["id"], "notification_sent": True},
+                )
 
         except Exception as e:
             logger.error(f"Failed to send alert notifications: {e}")
 
-    def get_active_alerts(self) -> List[Dict[str, Any]]:
+    def get_active_alerts(self) -> list[dict[str, Any]]:
         """Get all active alerts"""
         return [
-            alert for alert in self.alerts.values()
+            alert
+            for alert in self.alerts.values()
             if alert["status"] == AlertStatus.ACTIVE
         ]
 
@@ -333,7 +366,7 @@ class ProactiveMonitoringService:
             return True
         return False
 
-    def get_monitoring_status(self) -> Dict[str, Any]:
+    def get_monitoring_status(self) -> dict[str, Any]:
         """Get comprehensive monitoring status"""
         return {
             "monitoring_active": self._monitoring_active,
@@ -343,7 +376,7 @@ class ProactiveMonitoringService:
             "tracked_metrics": list(self.metrics_history.keys()),
             "uptime_target": "99.99%",
             "anomaly_thresholds": self.anomaly_thresholds,
-            "last_check": datetime.now(timezone.utc).isoformat()
+            "last_check": datetime.now(UTC).isoformat(),
         }
 
 

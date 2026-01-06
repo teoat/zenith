@@ -4,12 +4,9 @@ Synchronization Protocol Service for System Orchestration Framework
 Handles synchronization between different system components.
 """
 
-import asyncio
-import json
 import logging
 from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +16,9 @@ class SynchronizationProtocolService:
 
     def __init__(self):
         self.sync_protocols = self._initialize_sync_protocols()
-        self.sync_history: List[Dict[str, Any]] = []
+        self.sync_history: list[dict[str, Any]] = []
 
-    def _initialize_sync_protocols(self) -> Dict[str, Dict[str, Any]]:
+    def _initialize_sync_protocols(self) -> dict[str, dict[str, Any]]:
         """Initialize synchronization protocols."""
         return {
             "code_documentation": {
@@ -97,7 +94,7 @@ class SynchronizationProtocolService:
             },
         }
 
-    async def check_sync_status(self) -> Dict[str, Any]:
+    async def check_sync_status(self) -> dict[str, Any]:
         """Check synchronization status across all protocols."""
         status_report = {
             "timestamp": datetime.now().isoformat(),
@@ -137,8 +134,8 @@ class SynchronizationProtocolService:
         return status_report
 
     async def _check_protocol_sync_status(
-        self, protocol_name: str, config: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, protocol_name: str, config: dict[str, Any]
+    ) -> dict[str, Any]:
         """Check sync status for a specific protocol."""
         # This is a simplified implementation - in practice, this would check actual sync status
 
@@ -169,7 +166,7 @@ class SynchronizationProtocolService:
             "next_check": (datetime.now() + timedelta(hours=1)).isoformat(),
         }
 
-    async def _check_code_doc_sync(self) -> Dict[str, Any]:
+    async def _check_code_doc_sync(self) -> dict[str, Any]:
         """Check code-documentation synchronization."""
         # Simplified check - in practice, would compare API schemas with docs
         return {
@@ -179,7 +176,7 @@ class SynchronizationProtocolService:
             "outdated_docs": [],
         }
 
-    async def _check_frontend_backend_sync(self) -> Dict[str, Any]:
+    async def _check_frontend_backend_sync(self) -> dict[str, Any]:
         """Check frontend-backend synchronization."""
         # Simplified check - in practice, would validate API contracts
         return {
@@ -189,7 +186,7 @@ class SynchronizationProtocolService:
             "type_definitions_current": True,
         }
 
-    async def _check_test_implementation_sync(self) -> Dict[str, Any]:
+    async def _check_test_implementation_sync(self) -> dict[str, Any]:
         """Check tests-implementation synchronization."""
         # Simplified check - in practice, would analyze test coverage
         return {
@@ -201,7 +198,7 @@ class SynchronizationProtocolService:
             "severity": "medium",
         }
 
-    async def _check_security_performance_sync(self) -> Dict[str, Any]:
+    async def _check_security_performance_sync(self) -> dict[str, Any]:
         """Check security-performance synchronization."""
         return {
             "status": "synced",
@@ -210,7 +207,7 @@ class SynchronizationProtocolService:
             "balance_score": 0.92,
         }
 
-    async def _check_deployment_monitoring_sync(self) -> Dict[str, Any]:
+    async def _check_deployment_monitoring_sync(self) -> dict[str, Any]:
         """Check deployment-monitoring synchronization."""
         return {
             "status": "synced",
@@ -221,7 +218,7 @@ class SynchronizationProtocolService:
 
     async def trigger_sync_action(
         self, protocol_name: str, action: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Trigger a specific synchronization action."""
         if protocol_name not in self.sync_protocols:
             return {"error": f"Unknown protocol: {protocol_name}"}
@@ -270,7 +267,7 @@ class SynchronizationProtocolService:
 
         return sync_event
 
-    async def _run_relevant_tests(self) -> Dict[str, Any]:
+    async def _run_relevant_tests(self) -> dict[str, Any]:
         """Run relevant tests after code changes."""
         # In practice, this would run the test suite
         return {
@@ -280,7 +277,7 @@ class SynchronizationProtocolService:
             "coverage": 0.89,
         }
 
-    async def _generate_api_docs(self) -> Dict[str, Any]:
+    async def _generate_api_docs(self) -> dict[str, Any]:
         """Generate API documentation."""
         # In practice, this would generate docs from code
         return {
@@ -290,8 +287,8 @@ class SynchronizationProtocolService:
         }
 
     async def configure_protocol(
-        self, protocol_name: str, config: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, protocol_name: str, config: dict[str, Any]
+    ) -> dict[str, Any]:
         """Configure a synchronization protocol."""
         if protocol_name not in self.sync_protocols:
             return {"error": f"Unknown protocol: {protocol_name}"}
@@ -305,7 +302,7 @@ class SynchronizationProtocolService:
             "config": self.sync_protocols[protocol_name],
         }
 
-    def get_sync_history(self, limit: int = 50) -> List[Dict[str, Any]]:
+    def get_sync_history(self, limit: int = 50) -> list[dict[str, Any]]:
         """Get synchronization history."""
         return self.sync_history[-limit:]
 

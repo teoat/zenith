@@ -1,14 +1,16 @@
-from core.plugin_system import PluginInterface, PluginMetadata, PluginContext
-from typing import Dict, Any, List
 import logging
+from typing import Any
+
+from core.plugin_system import PluginContext, PluginInterface, PluginMetadata
 
 logger = logging.getLogger(__name__)
+
 
 class EvidenceAnalysisPlugin(PluginInterface):
     """
     Analyzes case evidence for suspicious keywords and metadata anomalies.
     """
-    
+
     @property
     def metadata(self) -> PluginMetadata:
         return PluginMetadata(
@@ -20,24 +22,24 @@ class EvidenceAnalysisPlugin(PluginInterface):
             dependencies={},
             capabilities=["intelligence", "case_analysis"],
             security_level="official",
-            api_version="v1"
+            api_version="v1",
         )
-    
+
     async def initialize(self, context: PluginContext) -> bool:
         self.context = context
         return True
-    
-    async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+
+    async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         """
         Expects {"case_data": {...}}
         """
         case_data = inputs.get("case_data")
         if not case_data:
             return {"error": "No case data provided"}
-            
+
         return await self._analyze_evidence(case_data)
 
-    async def _analyze_evidence(self, case_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def _analyze_evidence(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Analyze evidence for fraud indicators"""
         insights = []
         recommendations = []
@@ -77,17 +79,16 @@ class EvidenceAnalysisPlugin(PluginInterface):
                 created = metadata["created_date"]
                 modified = metadata["modified_date"]
                 # Logic simplified for plugin example
-                pass
 
         return {
             "insights": insights,
             "recommendations": recommendations,
             "confidence": min(confidence, 1.0),
-            "risk_score": 0, # Evidence alone rarely sets distinct risk score unless critical
+            "risk_score": 0,  # Evidence alone rarely sets distinct risk score unless critical
         }
 
     async def cleanup(self) -> None:
         pass
 
-    def validate_config(self, config: Dict[str, Any]) -> List[str]:
+    def validate_config(self, config: dict[str, Any]) -> list[str]:
         return []

@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/plugins/zenith/integration/blockchain/simulation/plugin.py
+# hypothesis_version: 6.148.8
+
+[0.0, 0.6, 0.7, '(mix|tumbl|blend)', '1.0.0', '1Sanction', 'Unknown action', 'action', 'address', 'address_screening', 'bitcoin', 'blockchain', 'categories', 'check_transaction', 'confidence', 'error', 'is_high_risk', 'metadata', 'method', 'mixer', 'official', 'on_sanctions_list', 'provider', 'regex', 'risk_score', 'screen_address', 'simulated', 'simulation', 'timestamp', 'tx_hash', 'v1']

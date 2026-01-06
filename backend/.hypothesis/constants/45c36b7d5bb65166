@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/regulatory/regulatory_reporter.py
+# hypothesis_version: 6.148.8
+
+['AML_REPORT', 'CTR', 'EU_STR', 'FINCEN', 'SAR', 'US_FINCEN', 'Validation failed', 'action', 'data', 'details', 'draft', 'error', 'errors', 'fincen', 'get_template', 'jurisdiction', 'regulatory_gateway', 'rejected', 'report_template', 'submit_report', 'submitted', 'type', 'unknown', 'valid', 'validate']

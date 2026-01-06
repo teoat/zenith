@@ -74,7 +74,7 @@ export const monitoringService = {
     }
   },
 
-  getSystemDiagnostics: async (): Promise<any> => {
+  getSystemDiagnostics: async (): Promise<import('../types/system-diagnostics').SystemDiagnosticsResponse> => {
     try {
       return await request('/admin/system/diagnostics');
     } catch (error) {
@@ -85,7 +85,7 @@ export const monitoringService = {
     }
   },
 
-  resolveDiagnosticIssue: async (issueId: string): Promise<any> => {
+  resolveDiagnosticIssue: async (issueId: string): Promise<{ message: string }> => {
     return request(`/admin/system/diagnostics/issues/${issueId}/resolve`, {
         method: 'POST'
     });

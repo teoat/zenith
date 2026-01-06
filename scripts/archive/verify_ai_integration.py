@@ -1,7 +1,5 @@
-import asyncio
 import os
 import sys
-from datetime import datetime, timezone
 
 from fastapi.testclient import TestClient
 
@@ -62,7 +60,7 @@ def verify_integration():
             print("✅ WebSocket connection accepted")
             websocket.close()
     except Exception as e:
-        print(f"ℹ️ WebSocket check result: {str(e)}")
+        print(f"ℹ️ WebSocket check result: {e!s}")
         # If we get 403, the route exists but rejected us. 404 means missing.
         if "403" in str(e):
             print("✅ WebSocket route exists (returned 403 Forbidden)")

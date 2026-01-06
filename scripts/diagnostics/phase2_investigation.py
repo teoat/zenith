@@ -8,10 +8,9 @@ import asyncio
 import json
 import logging
 import random
-import time
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +23,10 @@ class HighPriorityInvestigationResult:
     issue_title: str
     category: str
     severity: str
-    findings: List[str]
+    findings: list[str]
     issues_found: int
     remediation_required: bool
-    remediation_plan: List[str]
+    remediation_plan: list[str]
     estimated_fix_time: str
     impact_level: str
     status: str
@@ -37,12 +36,12 @@ class Phase2Investigator:
     """Investigator for Phase 2 high-priority issues"""
 
     def __init__(self):
-        self.investigation_results: Dict[str, HighPriorityInvestigationResult] = {}
+        self.investigation_results: dict[str, HighPriorityInvestigationResult] = {}
         self.performance_analyzer = PerformanceAnalyzer()
         self.integration_tester = IntegrationTester()
         self.compliance_auditor = ComplianceAuditor()
 
-    async def investigate_all_high_priority_issues(self) -> Dict[str, Any]:
+    async def investigate_all_high_priority_issues(self) -> dict[str, Any]:
         """Investigate all Phase 2 high-priority issues"""
 
         print("🔬 PHASE 2 INVESTIGATION: High Priority Issues")
@@ -664,7 +663,7 @@ class Phase2Investigator:
         )
 
     # Helper methods for investigations
-    async def _audit_key_management(self) -> Dict[str, Any]:
+    async def _audit_key_management(self) -> dict[str, Any]:
         """Audit cryptographic key management"""
         await asyncio.sleep(0.1)
         return {
@@ -675,12 +674,12 @@ class Phase2Investigator:
             "access_logging": random.random() > 0.3,
         }
 
-    async def _check_key_exposure_risks(self) -> Dict[str, Any]:
+    async def _check_key_exposure_risks(self) -> dict[str, Any]:
         """Check for key exposure risks"""
         await asyncio.sleep(0.05)
         return {"exposed_keys": random.randint(0, 2)}
 
-    async def _scan_dependencies(self) -> Dict[str, Any]:
+    async def _scan_dependencies(self) -> dict[str, Any]:
         """Scan dependencies for vulnerabilities"""
         await asyncio.sleep(0.15)
         return {
@@ -691,12 +690,12 @@ class Phase2Investigator:
             "license_issues": random.randint(0, 3),
         }
 
-    async def _analyze_supply_chain(self) -> Dict[str, Any]:
+    async def _analyze_supply_chain(self) -> dict[str, Any]:
         """Analyze dependency supply chain risks"""
         await asyncio.sleep(0.1)
         return {"compromised_sources": random.randint(0, 1)}
 
-    async def _analyze_model_drift(self) -> Dict[str, Any]:
+    async def _analyze_model_drift(self) -> dict[str, Any]:
         """Analyze ML model drift"""
         await asyncio.sleep(0.1)
         return {
@@ -705,7 +704,7 @@ class Phase2Investigator:
             "feature_drift": random.uniform(0.02, 0.15),
         }
 
-    async def _check_model_monitoring(self) -> Dict[str, Any]:
+    async def _check_model_monitoring(self) -> dict[str, Any]:
         """Check ML model monitoring setup"""
         await asyncio.sleep(0.05)
         return {
@@ -713,7 +712,7 @@ class Phase2Investigator:
             "drift_detection": random.random() > 0.5,
         }
 
-    async def _check_retraining_pipeline(self) -> Dict[str, Any]:
+    async def _check_retraining_pipeline(self) -> dict[str, Any]:
         """Check ML model retraining pipeline"""
         await asyncio.sleep(0.05)
         return {
@@ -721,7 +720,7 @@ class Phase2Investigator:
             "retraining_overdue": random.randint(0, 2),
         }
 
-    async def _generate_phase2_report(self) -> Dict[str, Any]:
+    async def _generate_phase2_report(self) -> dict[str, Any]:
         """Generate comprehensive Phase 2 investigation report"""
         total_issues = sum(
             result.issues_found for result in self.investigation_results.values()
@@ -751,7 +750,9 @@ class Phase2Investigator:
             "overall_impact_assessment": (
                 "CRITICAL"
                 if critical_issues > 0
-                else "HIGH" if high_impact_issues > 3 else "MEDIUM"
+                else "HIGH"
+                if high_impact_issues > 3
+                else "MEDIUM"
             ),
             "immediate_action_required": total_issues > 0,
             "estimated_total_fix_time": self._calculate_phase2_fix_time(),
@@ -803,7 +804,7 @@ class Phase2Investigator:
 
         return f"{total_min:.1f}-{total_max:.1f} weeks"
 
-    def _get_category_breakdown(self) -> Dict[str, int]:
+    def _get_category_breakdown(self) -> dict[str, int]:
         """Get breakdown of issues by category"""
         categories = {}
         for result in self.investigation_results.values():
@@ -812,14 +813,14 @@ class Phase2Investigator:
             )
         return categories
 
-    def _consolidate_phase2_findings(self) -> List[str]:
+    def _consolidate_phase2_findings(self) -> list[str]:
         """Consolidate all Phase 2 findings"""
         all_findings = []
         for result in self.investigation_results.values():
             all_findings.extend(result.findings)
         return all_findings
 
-    def _generate_phase2_actions(self) -> List[str]:
+    def _generate_phase2_actions(self) -> list[str]:
         """Generate consolidated Phase 2 recommended actions"""
         actions = []
 
@@ -918,7 +919,7 @@ class Phase2Investigator:
 class PerformanceAnalyzer:
     """Performance analysis capabilities"""
 
-    async def profile_memory_usage(self) -> Dict[str, Any]:
+    async def profile_memory_usage(self) -> dict[str, Any]:
         await asyncio.sleep(0.1)
         return {
             "memory_leaks_detected": random.randint(0, 3),
@@ -926,15 +927,15 @@ class PerformanceAnalyzer:
             "large_objects": random.randint(50, 200),
         }
 
-    async def analyze_memory_trends(self) -> Dict[str, Any]:
+    async def analyze_memory_trends(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {"memory_growth_rate": random.uniform(0.01, 0.08)}
 
-    async def analyze_object_retention(self) -> Dict[str, Any]:
+    async def analyze_object_retention(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {"retained_objects": random.randint(500, 2000)}
 
-    async def analyze_query_performance(self) -> Dict[str, Any]:
+    async def analyze_query_performance(self) -> dict[str, Any]:
         await asyncio.sleep(0.1)
         return {
             "slow_queries": random.randint(5, 20),
@@ -942,14 +943,14 @@ class PerformanceAnalyzer:
             "missing_indexes": random.randint(1, 6),
         }
 
-    async def analyze_index_effectiveness(self) -> Dict[str, Any]:
+    async def analyze_index_effectiveness(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "unused_indexes": random.randint(2, 10),
             "duplicate_indexes": random.randint(0, 2),
         }
 
-    async def analyze_connection_usage(self) -> Dict[str, Any]:
+    async def analyze_connection_usage(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {"connection_pool_exhaustion": random.randint(0, 3)}
 
@@ -957,7 +958,7 @@ class PerformanceAnalyzer:
 class IntegrationTester:
     """Integration testing capabilities"""
 
-    async def test_api_reliability(self) -> Dict[str, Any]:
+    async def test_api_reliability(self) -> dict[str, Any]:
         await asyncio.sleep(0.15)
         return {
             "failure_rate": random.uniform(0.01, 0.08),
@@ -965,15 +966,15 @@ class IntegrationTester:
             "timeout_errors": random.randint(5, 25),
         }
 
-    async def check_rate_limit_compliance(self) -> Dict[str, Any]:
+    async def check_rate_limit_compliance(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {"compliant": random.random() > 0.4}
 
-    async def analyze_error_handling(self) -> Dict[str, Any]:
+    async def analyze_error_handling(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {"unhandled_errors": random.randint(2, 12)}
 
-    async def verify_sla_compliance(self) -> Dict[str, Any]:
+    async def verify_sla_compliance(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "sla_met": random.random() > 0.5,
@@ -984,7 +985,7 @@ class IntegrationTester:
 class ComplianceAuditor:
     """Compliance auditing capabilities"""
 
-    async def analyze_audit_trails(self) -> Dict[str, Any]:
+    async def analyze_audit_trails(self) -> dict[str, Any]:
         await asyncio.sleep(0.1)
         return {
             "missing_events": random.randint(0, 3),
@@ -992,18 +993,18 @@ class ComplianceAuditor:
             "immutable_storage": random.random() > 0.5,
         }
 
-    async def check_audit_retention(self) -> Dict[str, Any]:
+    async def check_audit_retention(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "gdpr_compliant": random.random() > 0.6,
             "sox_compliant": random.random() > 0.7,
         }
 
-    async def verify_log_integrity(self) -> Dict[str, Any]:
+    async def verify_log_integrity(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {"integrity_verified": random.random() > 0.4}
 
-    async def check_audit_access_controls(self) -> Dict[str, Any]:
+    async def check_audit_access_controls(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {"unauthorized_access": random.randint(0, 2)}
 
@@ -1015,7 +1016,7 @@ async def main():
     report = await investigator.investigate_all_high_priority_issues()
 
     # Display results
-    print(f"\n🎯 PHASE 2 INVESTIGATION COMPLETE")
+    print("\n🎯 PHASE 2 INVESTIGATION COMPLETE")
     print(f"Total Issues Investigated: {report['total_issues_investigated']}")
     print(f"Total Issues Found: {report['total_issues_found']}")
     print(f"Critical Impact Issues: {report['critical_impact_issues']}")
@@ -1033,8 +1034,8 @@ async def main():
 
     print("\n💾 Detailed report saved to: phase2_investigation_report.json")
     # Summary of findings
-    print(f"\n📊 KEY FINDINGS SUMMARY:")
-    for issue_id, result in investigator.investigation_results.items():
+    print("\n📊 KEY FINDINGS SUMMARY:")
+    for result in investigator.investigation_results.values():
         status = (
             "❌ NEEDS REMEDIATION" if result.remediation_required else "✅ NO ISSUES"
         )

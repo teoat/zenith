@@ -4,7 +4,6 @@ Batch Authentication Enhancement Script
 Adds authentication to all unprotected router endpoints
 """
 
-import os
 import re
 from pathlib import Path
 
@@ -41,7 +40,7 @@ def add_auth_imports(content: str) -> str:
     import_lines = content.split("\n")
     insert_index = 0
     for i, line in enumerate(import_lines):
-        if line.startswith("from ") or line.startswith("import "):
+        if line.startswith(("from ", "import ")):
             insert_index = i + 1
         if line.startswith("router = APIRouter()"):
             break
@@ -92,7 +91,7 @@ def add_auth_to_endpoint(match) -> str:
 def secure_router_file(filepath: Path) -> tuple[bool, str]:
     """Add authentication to a router file"""
     try:
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             content = f.read()
 
         original_content = content
@@ -116,7 +115,7 @@ def secure_router_file(filepath: Path) -> tuple[bool, str]:
             return False, "No changes needed"
 
     except Exception as e:
-        return False, f"Error: {str(e)}"
+        return False, f"Error: {e!s}"
 
 
 def main():

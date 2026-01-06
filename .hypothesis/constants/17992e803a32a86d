@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/fraud_detection.py
+# hypothesis_version: 6.148.8
+
+[0.8, 404, 500, 9500, 9900, '2024-01-01', '2024-01-02', 'CashFlowSheet', 'Plugin not found', 'amount', 'confidence', 'date', 'fraud-detection', 'id', 'plugin', 'reason', 'transactions', 'tx1', 'tx2', 'tx3']

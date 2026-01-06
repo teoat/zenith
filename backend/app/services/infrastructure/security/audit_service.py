@@ -1,3 +1,5 @@
+import builtins
+import contextlib
 import hashlib
 import json
 import logging
@@ -5,7 +7,7 @@ import sqlite3
 import threading
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -84,16 +86,16 @@ class AuditService:
 
     def log_request(
         self,
-        user_id: Optional[str],
-        session_id: Optional[str],
+        user_id: str | None,
+        session_id: str | None,
         method: str,
         endpoint: str,
         status_code: int,
-        ip_address: Optional[str] = None,
-        user_agent: Optional[str] = None,
-        response_size: Optional[int] = None,
-        processing_time: Optional[float] = None,
-        details: Optional[Dict[str, Any]] = None,
+        ip_address: str | None = None,
+        user_agent: str | None = None,
+        response_size: int | None = None,
+        processing_time: float | None = None,
+        details: dict[str, Any] | None = None,
     ) -> None:
         """Log an API request for audit purposes"""
 
@@ -127,9 +129,9 @@ class AuditService:
         user_id: str,
         action: str,
         resource_type: str,
-        resource_id: Optional[str] = None,
-        details: Optional[Dict[str, Any]] = None,
-        ip_address: Optional[str] = None,
+        resource_id: str | None = None,
+        details: dict[str, Any] | None = None,
+        ip_address: str | None = None,
     ) -> None:
         """Log a user action"""
 
@@ -151,9 +153,9 @@ class AuditService:
         event_type: str,
         severity: str,
         description: str,
-        user_id: Optional[str] = None,
-        resource_id: Optional[str] = None,
-        details: Optional[Dict[str, Any]] = None,
+        user_id: str | None = None,
+        resource_id: str | None = None,
+        details: dict[str, Any] | None = None,
     ) -> None:
         """Log a security event"""
 
@@ -200,7 +202,7 @@ class AuditService:
         else:
             logger.info(f"Security event: {description}")
 
-    def _insert_audit_log(self, entry: Dict[str, Any]) -> None:
+    def _insert_audit_log(self, entry: dict[str, Any]) -> None:
         """Insert audit log entry"""
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -233,7 +235,7 @@ class AuditService:
         except Exception as e:
             logger.error(f"Failed to insert audit log: {e}")
 
-    def _insert_compliance_event(self, event: Dict[str, Any]) -> None:
+    def _insert_compliance_event(self, event: dict[str, Any]) -> None:
         """Insert compliance event"""
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -257,14 +259,14 @@ class AuditService:
         except Exception as e:
             logger.error(f"Failed to insert compliance event: {e}")
 
-    def _calculate_checksum(self, data: Dict[str, Any]) -> str:
+    def _calculate_checksum(self, data: dict[str, Any]) -> str:
         """Calculate checksum for audit integrity"""
         # Remove checksum field if present
         data_copy = {k: v for k, v in data.items() if k != "checksum"}
         data_str = json.dumps(data_copy, sort_keys=True, default=str)
         return hashlib.sha256(data_str.encode()).hexdigest()
 
-    def _check_for_suspicious_activity(self, audit_entry: Dict[str, Any]) -> None:
+    def _check_for_suspicious_activity(self, audit_entry: dict[str, Any]) -> None:
         """Check for suspicious activity patterns"""
         user_id = audit_entry.get("user_id")
         status_code = audit_entry.get("status_code", 200)
@@ -294,7 +296,7 @@ class AuditService:
                 resource_id=endpoint,
             )
 
-    def _check_failed_auth_attempts(self, user_id: Optional[str]) -> None:
+    def _check_failed_auth_attempts(self, user_id: str | None) -> None:
         """Check for multiple failed authentication attempts"""
         if not user_id:
             return
@@ -350,22 +352,18 @@ class AuditService:
             with sqlite3.connect(self.db_path) as conn:
                 # Delete old audit logs
                 conn.execute(
-                    """
+                    f"""
                     DELETE FROM audit_log
-                    WHERE timestamp < datetime('now', '-{} days')
-                """.format(
-                        self.retention_days
-                    )
+                    WHERE timestamp < datetime('now', '-{self.retention_days} days')
+                """
                 )
 
                 # Delete old compliance events (keep longer for compliance)
                 conn.execute(
-                    """
+                    f"""
                     DELETE FROM compliance_events
-                    WHERE timestamp < datetime('now', '-{} days')
-                """.format(
-                        self.retention_days * 2
-                    )
+                    WHERE timestamp < datetime('now', '-{self.retention_days * 2} days')
+                """
                 )  # Keep compliance events longer
 
                 deleted_count = conn.total_changes
@@ -377,13 +375,13 @@ class AuditService:
 
     def get_audit_trail(
         self,
-        user_id: Optional[str] = None,
-        action: Optional[str] = None,
-        resource_type: Optional[str] = None,
+        user_id: str | None = None,
+        action: str | None = None,
+        resource_type: str | None = None,
         limit: int = 100,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-    ) -> List[Dict[str, Any]]:
+        start_date: str | None = None,
+        end_date: str | None = None,
+    ) -> list[dict[str, Any]]:
         """Get audit trail with filtering"""
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -421,10 +419,8 @@ class AuditService:
                     result = dict(zip(columns, row))
                     # Parse JSON details
                     if result.get("details"):
-                        try:
+                        with contextlib.suppress(builtins.BaseException):
                             result["details"] = json.loads(result["details"])
-                        except:
-                            pass
                     results.append(result)
 
                 return results
@@ -434,8 +430,8 @@ class AuditService:
             return []
 
     def get_compliance_report(
-        self, start_date: Optional[str] = None, end_date: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, start_date: str | None = None, end_date: str | None = None
+    ) -> dict[str, Any]:
         """Generate compliance report"""
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -504,7 +500,7 @@ class AuditService:
             logger.error(f"Failed to generate compliance report: {e}")
             return {"error": str(e)}
 
-    def verify_audit_integrity(self) -> Dict[str, Any]:
+    def verify_audit_integrity(self) -> dict[str, Any]:
         """Verify audit log integrity by checking checksums"""
         try:
             with sqlite3.connect(self.db_path) as conn:

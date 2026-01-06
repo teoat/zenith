@@ -7,9 +7,8 @@ significantly better performance than simple keyword matching.
 """
 
 import logging
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
-import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -18,8 +17,8 @@ logger = logging.getLogger(__name__)
 
 class LocalRAGEngine:
     def __init__(self):
-        self.documents: Dict[str, str] = {}
-        self.doc_ids: List[str] = []
+        self.documents: dict[str, str] = {}
+        self.doc_ids: list[str] = []
         self.vectorizer = TfidfVectorizer(stop_words="english")
         self.tfidf_matrix = None
         self._is_dirty = False
@@ -45,7 +44,7 @@ class LocalRAGEngine:
             # Handle empty vocabulary or other edge cases
             self.tfidf_matrix = None
 
-    def retrieve(self, query: str, k: int = 3) -> List[Dict[str, Any]]:
+    def retrieve(self, query: str, k: int = 3) -> list[dict[str, Any]]:
         """Retrieve top-k relevant documents for the query."""
         if not self.documents:
             return []

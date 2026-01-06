@@ -1,9 +1,51 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 
-jest.mock('../../services/auth');
-jest.mock('../../services/cases');
-jest.mock('../../services/evidence');
+
+const mockAuthService = {
+  login: jest.fn() as any,
+  logout: jest.fn() as any,
+  getCurrentUser: jest.fn() as any,
+  refreshToken: jest.fn() as any,
+  register: jest.fn() as any,
+  verifyEmail: jest.fn() as any,
+  resetPassword: jest.fn() as any,
+  changePassword: jest.fn() as any
+};
+
+const mockCaseService = {
+  getCases: jest.fn() as any,
+  getCase: jest.fn() as any,
+  createCase: jest.fn() as any,
+  updateCase: jest.fn() as any,
+  deleteCase: jest.fn() as any,
+  getCaseNotes: jest.fn() as any,
+  addCaseNote: jest.fn() as any,
+  updateCaseNote: jest.fn() as any,
+  deleteCaseNote: jest.fn() as any,
+  getCaseStatistics: jest.fn() as any,
+  bulkUpdateCases: jest.fn() as any,
+  getCaseById: jest.fn() as any
+};
+
+const mockEvidenceService = {
+  getEvidenceByCaseId: jest.fn() as any,
+  uploadEvidence: jest.fn() as any,
+  deleteEvidence: jest.fn() as any,
+  updateEvidence: jest.fn() as any,
+  getEvidenceById: jest.fn() as any
+};
+
+jest.mock('../../services/auth', () => ({
+  authService: mockAuthService
+}));
+
+jest.mock('../../services/cases', () => ({
+  caseService: mockCaseService
+}));
+
+jest.mock('../../services/evidence', () => ({
+  evidenceService: mockEvidenceService
+}));
 
 describe('Authentication Flow Integration', () => {
   beforeEach(() => {
@@ -13,16 +55,19 @@ describe('Authentication Flow Integration', () => {
 
   describe('complete login flow', () => {
     it('should login and navigate to dashboard', async () => {
-      const authBase = await import('../../services/auth');
-      const authService = authBase.authService || authBase.default;
-      const casesBase = await import('../../services/cases');
-      const caseService = casesBase.caseService || casesBase.default;
-
-      (authService.login as jest.Mock).mockResolvedValue({
+      mockAuthService.login.mockResolvedValue({
         access_token: 'token',
         user: { id: '1', email: 'test@example.com', role: 'investigator' }
       });
-      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
+      mockCaseService.getCases.mockResolvedValue({
+        data: [],
+        pagination: {
+          page: 1,
+          pageSize: 10,
+          total: 0,
+          totalPages: 0
+        }
+      });
 
       const App = (await import('../../App')).default;
 
@@ -49,10 +94,7 @@ describe('Authentication Flow Integration', () => {
     });
 
     it('should show error on invalid credentials', async () => {
-      const authBase = await import('../../services/auth');
-      const authService = authBase.authService || authBase.default;
-
-      (authService.login as jest.Mock).mockRejectedValue(
+      mockAuthService.login.mockRejectedValue(
         new Error('Invalid credentials')
       );
 
@@ -103,18 +145,21 @@ describe('Authentication Flow Integration', () => {
     });
 
     it('should allow access when authenticated', async () => {
-      const authBase = await import('../../services/auth');
-      const authService = authBase.authService || authBase.default;
-      const casesBase = await import('../../services/cases');
-      const caseService = casesBase.caseService || casesBase.default;
-
       localStorage.setItem('token', 'valid-token');
-      (authService.getCurrentUser as jest.Mock).mockResolvedValue({
+      mockAuthService.getCurrentUser.mockResolvedValue({
         id: '1',
         email: 'test@example.com',
         role: 'investigator'
       });
-      (caseService.getAllCases as jest.Mock).mockResolvedValue([]);
+      mockCaseService.getCases.mockResolvedValue({
+        data: [],
+        pagination: {
+          page: 1,
+          pageSize: 10,
+          total: 0,
+          totalPages: 0
+        }
+      });
 
       const Dashboard = (await import('../../pages/Dashboard')).default;
       const { AppProviders } = await import('../../providers/AppProviders');
@@ -136,8 +181,7 @@ describe('Authentication Flow Integration', () => {
 
   describe('session persistence', () => {
     it('should restore session on page reload', async () => {
-      const authBase = await import('../../services/auth');
-      const authService = authBase.authService || authBase.default;
+      const { authService } = await import('../../services/auth');
 
       localStorage.setItem('token', 'stored-token');
       (authService.getCurrentUser as jest.Mock).mockResolvedValue({
@@ -156,11 +200,8 @@ describe('Authentication Flow Integration', () => {
     });
 
     it('should handle expired token', async () => {
-      const authBase = await import('../../services/auth');
-      const authService = authBase.authService || authBase.default;
-
       localStorage.setItem('token', 'expired-token');
-      (authService.getCurrentUser as jest.Mock).mockRejectedValue(
+      mockAuthService.getCurrentUser.mockRejectedValue(
         new Error('Token expired')
       );
 

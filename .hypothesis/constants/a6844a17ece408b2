@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/fraud/engine.py
+# hypothesis_version: 6.148.8
+
+[0.0, 0.8, 100, 1000, 'ENGINE_TOTAL', 'active', 'alerts_generated', 'capabilities', 'confidence', 'config_schema', 'context', 'critical', 'details', 'duration_ms', 'enabled', 'engine.py', 'executed_at', 'file', 'fraud_detection', 'fraud_rule', 'high', 'id', 'last_run', 'low', 'medium', 'reason', 'risk_score', 'rule_name', 'rules_executed', 'severity', 'transaction', 'transaction_id', 'triggered', 'unknown']

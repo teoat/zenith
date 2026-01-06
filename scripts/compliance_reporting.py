@@ -5,11 +5,10 @@ Generates compliance reports for regulatory requirements
 """
 
 import json
-import csv
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Any, Optional
-import re
+from typing import Any, Dict, List, Optional
+
 
 class ComplianceReporter:
     """Automated compliance reporting system"""
@@ -21,12 +20,14 @@ class ComplianceReporter:
             "SOX": self._sox_compliance_check,
             "PCI_DSS": self._pci_dss_compliance_check,
             "HIPAA": self._hipaa_compliance_check,
-            "NIST": self._nist_compliance_check
+            "NIST": self._nist_compliance_check,
         }
 
         self.compliance_results = {}
 
-    def run_compliance_audit(self, frameworks: Optional[List[str]] = None) -> Dict[str, Any]:
+    def run_compliance_audit(
+        self, frameworks: list[str] | None = None
+    ) -> dict[str, Any]:
         """Run comprehensive compliance audit"""
 
         print("⚖️ AUTOMATED COMPLIANCE AUDIT")
@@ -40,7 +41,7 @@ class ComplianceReporter:
             "overall_compliance_score": 0.0,
             "framework_results": {},
             "critical_findings": [],
-            "recommendations": []
+            "recommendations": [],
         }
 
         total_score = 0
@@ -69,25 +70,25 @@ class ComplianceReporter:
                 print(f"   Critical Issues: {len(result.get('critical_issues', []))}")
 
                 # Collect critical findings
-                for issue in result.get('critical_issues', []):
-                    audit_results["critical_findings"].append({
-                        "framework": framework,
-                        "issue": issue,
-                        "severity": "critical"
-                    })
+                for issue in result.get("critical_issues", []):
+                    audit_results["critical_findings"].append(
+                        {"framework": framework, "issue": issue, "severity": "critical"}
+                    )
 
         if framework_count > 0:
             audit_results["overall_compliance_score"] = total_score / framework_count
 
         # Generate recommendations
-        audit_results["recommendations"] = self._generate_compliance_recommendations(audit_results)
+        audit_results["recommendations"] = self._generate_compliance_recommendations(
+            audit_results
+        )
 
         # Save audit results
         self._save_audit_results(audit_results)
 
         return audit_results
 
-    def _gdpr_compliance_check(self) -> Dict[str, Any]:
+    def _gdpr_compliance_check(self) -> dict[str, Any]:
         """Check GDPR compliance"""
         result = {
             "framework": "GDPR",
@@ -95,7 +96,7 @@ class ComplianceReporter:
             "compliance_percentage": 75,
             "critical_issues": [],
             "findings": [],
-            "evidence": []
+            "evidence": [],
         }
 
         # Check for data processing agreements
@@ -112,7 +113,7 @@ class ComplianceReporter:
 
         return result
 
-    def _ccpa_compliance_check(self) -> Dict[str, Any]:
+    def _ccpa_compliance_check(self) -> dict[str, Any]:
         """Check CCPA compliance"""
         result = {
             "framework": "CCPA",
@@ -120,7 +121,7 @@ class ComplianceReporter:
             "compliance_percentage": 70,
             "critical_issues": [],
             "findings": [],
-            "evidence": []
+            "evidence": [],
         }
 
         # CCPA-specific checks
@@ -132,7 +133,7 @@ class ComplianceReporter:
 
         return result
 
-    def _sox_compliance_check(self) -> Dict[str, Any]:
+    def _sox_compliance_check(self) -> dict[str, Any]:
         """Check SOX compliance"""
         result = {
             "framework": "SOX",
@@ -140,7 +141,7 @@ class ComplianceReporter:
             "compliance_percentage": 90,
             "critical_issues": [],
             "findings": [],
-            "evidence": []
+            "evidence": [],
         }
 
         # SOX financial controls
@@ -150,7 +151,7 @@ class ComplianceReporter:
 
         return result
 
-    def _pci_dss_compliance_check(self) -> Dict[str, Any]:
+    def _pci_dss_compliance_check(self) -> dict[str, Any]:
         """Check PCI DSS compliance"""
         result = {
             "framework": "PCI_DSS",
@@ -158,7 +159,7 @@ class ComplianceReporter:
             "compliance_percentage": 95,
             "critical_issues": [],
             "findings": [],
-            "evidence": []
+            "evidence": [],
         }
 
         # PCI DSS requirements
@@ -168,7 +169,7 @@ class ComplianceReporter:
 
         return result
 
-    def _hipaa_compliance_check(self) -> Dict[str, Any]:
+    def _hipaa_compliance_check(self) -> dict[str, Any]:
         """Check HIPAA compliance"""
         result = {
             "framework": "HIPAA",
@@ -176,7 +177,7 @@ class ComplianceReporter:
             "compliance_percentage": 92,
             "critical_issues": [],
             "findings": [],
-            "evidence": []
+            "evidence": [],
         }
 
         # HIPAA requirements
@@ -186,7 +187,7 @@ class ComplianceReporter:
 
         return result
 
-    def _nist_compliance_check(self) -> Dict[str, Any]:
+    def _nist_compliance_check(self) -> dict[str, Any]:
         """Check NIST compliance"""
         result = {
             "framework": "NIST",
@@ -194,7 +195,7 @@ class ComplianceReporter:
             "compliance_percentage": 88,
             "critical_issues": [],
             "findings": [],
-            "evidence": []
+            "evidence": [],
         }
 
         # NIST cybersecurity framework
@@ -206,93 +207,109 @@ class ComplianceReporter:
 
         return result
 
-    def _generate_compliance_recommendations(self, audit_results: Dict[str, Any]) -> List[str]:
+    def _generate_compliance_recommendations(
+        self, audit_results: dict[str, Any]
+    ) -> list[str]:
         """Generate compliance recommendations based on audit results"""
 
         recommendations = []
 
         if audit_results["overall_compliance_score"] < 80:
-            recommendations.append("URGENT: Overall compliance score below 80% - immediate remediation required")
+            recommendations.append(
+                "URGENT: Overall compliance score below 80% - immediate remediation required"
+            )
 
         critical_count = len(audit_results["critical_findings"])
         if critical_count > 0:
-            recommendations.append(f"Address {critical_count} critical compliance findings immediately")
+            recommendations.append(
+                f"Address {critical_count} critical compliance findings immediately"
+            )
 
         # Framework-specific recommendations
         for framework, result in audit_results["framework_results"].items():
             if result["status"] == "non_compliant":
-                recommendations.append(f"ACHIEVE {framework} COMPLIANCE - Complete remediation required")
+                recommendations.append(
+                    f"ACHIEVE {framework} COMPLIANCE - Complete remediation required"
+                )
             elif result["status"] == "partial":
-                recommendations.append(f"IMPROVE {framework} COMPLIANCE - Address remaining gaps")
+                recommendations.append(
+                    f"IMPROVE {framework} COMPLIANCE - Address remaining gaps"
+                )
 
         # General recommendations
-        recommendations.extend([
-            "Schedule quarterly compliance audits",
-            "Implement automated compliance monitoring",
-            "Maintain compliance documentation and evidence",
-            "Conduct regular compliance training for staff",
-            "Establish compliance breach response procedures"
-        ])
+        recommendations.extend(
+            [
+                "Schedule quarterly compliance audits",
+                "Implement automated compliance monitoring",
+                "Maintain compliance documentation and evidence",
+                "Conduct regular compliance training for staff",
+                "Establish compliance breach response procedures",
+            ]
+        )
 
         return recommendations
 
-    def _save_audit_results(self, results: Dict[str, Any]):
+    def _save_audit_results(self, results: dict[str, Any]):
         """Save compliance audit results"""
 
         # Save JSON report
         report_path = Path("compliance_audit_report.json")
-        with open(report_path, 'w') as f:
+        with open(report_path, "w") as f:
             json.dump(results, f, indent=2)
 
         # Generate compliance dashboard
         dashboard_path = Path("COMPLIANCE_DASHBOARD.md")
-        with open(dashboard_path, 'w') as f:
+        with open(dashboard_path, "w") as f:
             f.write("# 🛡️ COMPLIANCE DASHBOARD\n\n")
             f.write(f"**Last Audit:** {results['audit_timestamp']}\n")
-            f.write(f"**Overall Score:** {results['overall_compliance_score']:.1f}%\n\n")
+            f.write(
+                f"**Overall Score:** {results['overall_compliance_score']:.1f}%\n\n"
+            )
 
             f.write("## 📊 FRAMEWORK COMPLIANCE\n\n")
-            for framework, result in results['framework_results'].items():
+            for framework, result in results["framework_results"].items():
                 status_emoji = {
                     "compliant": "✅",
                     "partial": "⚠️",
-                    "non_compliant": "❌"
-                }.get(result['status'], "❓")
+                    "non_compliant": "❌",
+                }.get(result["status"], "❓")
 
                 f.write(f"### {framework}\n")
-                f.write(f"{status_emoji} **{result['status'].upper()}** ({result['compliance_percentage']}%)\n\n")
+                f.write(
+                    f"{status_emoji} **{result['status'].upper()}** ({result['compliance_percentage']}%)\n\n"
+                )
 
-                if result.get('critical_issues'):
+                if result.get("critical_issues"):
                     f.write("**Critical Issues:**\n")
-                    for issue in result['critical_issues']:
+                    for issue in result["critical_issues"]:
                         f.write(f"- 🚨 {issue}\n")
                     f.write("\n")
 
-                if result.get('findings'):
+                if result.get("findings"):
                     f.write("**Compliance Evidence:**\n")
-                    for finding in result['findings'][:3]:  # Show first 3
+                    for finding in result["findings"][:3]:  # Show first 3
                         f.write(f"- ✅ {finding}\n")
-                    if len(result['findings']) > 3:
+                    if len(result["findings"]) > 3:
                         f.write(f"- ... and {len(result['findings']) - 3} more\n")
                     f.write("\n")
 
             f.write("## 🚨 CRITICAL FINDINGS\n\n")
-            if results['critical_findings']:
-                for finding in results['critical_findings']:
+            if results["critical_findings"]:
+                for finding in results["critical_findings"]:
                     f.write(f"- **{finding['framework']}**: {finding['issue']}\n")
             else:
                 f.write("✅ No critical findings\n")
             f.write("\n")
 
             f.write("## 💡 RECOMMENDATIONS\n\n")
-            for rec in results['recommendations']:
+            for rec in results["recommendations"]:
                 f.write(f"- 📋 {rec}\n")
             f.write("\n")
 
         print(f"✅ Compliance audit report saved to: {report_path}")
         print(f"✅ Compliance dashboard saved to: {dashboard_path}")
 
-    def generate_compliance_certificate(self, framework: str) -> Optional[Dict[str, Any]]:
+    def generate_compliance_certificate(self, framework: str) -> dict[str, Any] | None:
         """Generate compliance certificate for a specific framework"""
 
         if framework not in self.compliance_frameworks:
@@ -310,15 +327,16 @@ class ComplianceReporter:
             "issued_by": "Automated Compliance System",
             "evidence": result.get("evidence", []),
             "scope": "Fraud Detection Platform",
-            "version": "1.0"
+            "version": "1.0",
         }
 
         # Save certificate
         cert_path = Path(f"compliance_certificate_{framework.lower()}.json")
-        with open(cert_path, 'w') as f:
+        with open(cert_path, "w") as f:
             json.dump(certificate, f, indent=2)
 
         return certificate
+
 
 def main():
     """Main compliance reporting function"""
@@ -337,13 +355,13 @@ def main():
     print(f"Critical Findings: {len(audit_results['critical_findings'])}")
 
     # Determine compliance status
-    if audit_results['overall_compliance_score'] >= 90:
+    if audit_results["overall_compliance_score"] >= 90:
         status = "EXCELLENT"
         emoji = "🎉"
-    elif audit_results['overall_compliance_score'] >= 80:
+    elif audit_results["overall_compliance_score"] >= 80:
         status = "GOOD"
         emoji = "✅"
-    elif audit_results['overall_compliance_score'] >= 70:
+    elif audit_results["overall_compliance_score"] >= 70:
         status = "ACCEPTABLE"
         emoji = "⚠️"
     else:
@@ -354,8 +372,8 @@ def main():
 
     # Generate certificates for compliant frameworks
     certificates_generated = 0
-    for framework, result in audit_results['framework_results'].items():
-        if result['status'] == 'compliant':
+    for framework, result in audit_results["framework_results"].items():
+        if result["status"] == "compliant":
             cert = reporter.generate_compliance_certificate(framework)
             if cert:
                 certificates_generated += 1
@@ -363,12 +381,13 @@ def main():
 
     print(f"\n🏆 Generated {certificates_generated} compliance certificates")
 
-    if audit_results['overall_compliance_score'] >= 80:
+    if audit_results["overall_compliance_score"] >= 80:
         print("\n🎉 COMPLIANCE AUDIT COMPLETED SUCCESSFULLY!")
     else:
         print("\n⚠️ COMPLIANCE ISSUES IDENTIFIED - Review reports for remediation steps")
 
     return audit_results
+
 
 if __name__ == "__main__":
     main()

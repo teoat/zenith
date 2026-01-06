@@ -445,40 +445,40 @@ def generate_terraform_config_from_ssot():
 
         # Infrastructure as Code from SSOT
         terraform_config = f"""# Generated from SSOT - Single Source of Truth
-# Perfection Level: {ssot_manager.get_value('system.perfection_level')}
-# Zero Defects: {ssot_manager.get_value('system.zero_defects')}
-# Quantum Enhanced: {ssot_manager.get_value('system.quantum_enhanced')}
+# Perfection Level: {ssot_manager.get_value("system.perfection_level")}
+# Zero Defects: {ssot_manager.get_value("system.zero_defects")}
+# Quantum Enhanced: {ssot_manager.get_value("system.quantum_enhanced")}
 
 terraform {{
-  required_version = "{ssot_manager.get_value('infrastructure.terraform.version', '>= 1.0')}"
+  required_version = "{ssot_manager.get_value("infrastructure.terraform.version", ">= 1.0")}"
   required_providers {{
     aws = {{
       source  = "hashicorp/aws"
-      version = "{ssot_manager.get_value('infrastructure.terraform.aws_provider_version', '~> 5.0')}"
+      version = "{ssot_manager.get_value("infrastructure.terraform.aws_provider_version", "~> 5.0")}"
     }}
   }}
 }}
 
 provider "aws" {{
-  region = "{ssot_manager.get_value('infrastructure.aws.region', 'us-east-1')}"
+  region = "{ssot_manager.get_value("infrastructure.aws.region", "us-east-1")}"
 }}
 
 # VPC Configuration
 resource "aws_vpc" "fraud_detection" {{
-  cidr_block           = "{ssot_manager.get_value('infrastructure.vpc.cidr_block', '10.0.0.0/16')}"
-  enable_dns_hostnames = {str(ssot_manager.get_value('infrastructure.vpc.dns_hostnames', True)).lower()}
-  enable_dns_support   = {str(ssot_manager.get_value('infrastructure.vpc.dns_support', True)).lower()}
+  cidr_block           = "{ssot_manager.get_value("infrastructure.vpc.cidr_block", "10.0.0.0/16")}"
+  enable_dns_hostnames = {str(ssot_manager.get_value("infrastructure.vpc.dns_hostnames", True)).lower()}
+  enable_dns_support   = {str(ssot_manager.get_value("infrastructure.vpc.dns_support", True)).lower()}
 
   tags = {{
     Name        = "fraud-detection-vpc"
-    Environment = "{ssot_manager.get_value('infrastructure.environment', 'production')}"
-    Perfection  = "{ssot_manager.get_value('system.perfection_level')}"
+    Environment = "{ssot_manager.get_value("infrastructure.environment", "production")}"
+    Perfection  = "{ssot_manager.get_value("system.perfection_level")}"
   }}
 }}
 
 # ECS Cluster
 resource "aws_ecs_cluster" "fraud_detection" {{
-  name = "{ssot_manager.get_value('infrastructure.ecs.cluster_name', 'fraud-detection-cluster')}"
+  name = "{ssot_manager.get_value("infrastructure.ecs.cluster_name", "fraud-detection-cluster")}"
 
   setting {{
     name  = "containerInsights"
@@ -486,29 +486,29 @@ resource "aws_ecs_cluster" "fraud_detection" {{
   }}
 
   tags = {{
-    Environment = "{ssot_manager.get_value('infrastructure.environment')}"
-    Perfection  = "{ssot_manager.get_value('system.perfection_level')}"
+    Environment = "{ssot_manager.get_value("infrastructure.environment")}"
+    Perfection  = "{ssot_manager.get_value("system.perfection_level")}"
   }}
 }}
 
 # RDS Database
 resource "aws_db_instance" "fraud_detection" {{
-  identifier             = "{ssot_manager.get_value('infrastructure.rds.identifier', 'fraud-detection-db')}"
-  engine                 = "{ssot_manager.get_value('infrastructure.rds.engine', 'postgres')}"
-  engine_version         = "{ssot_manager.get_value('infrastructure.rds.engine_version', '15.4')}"
-  instance_class         = "{ssot_manager.get_value('infrastructure.rds.instance_class', 'db.t3.medium')}"
-  allocated_storage      = {ssot_manager.get_value('infrastructure.rds.allocated_storage', 20)}
-  db_name                = "{ssot_manager.get_value('infrastructure.rds.db_name', 'fraud_detection')}"
-  username               = "{ssot_manager.get_value('infrastructure.rds.username', 'fraud_user')}"
+  identifier             = "{ssot_manager.get_value("infrastructure.rds.identifier", "fraud-detection-db")}"
+  engine                 = "{ssot_manager.get_value("infrastructure.rds.engine", "postgres")}"
+  engine_version         = "{ssot_manager.get_value("infrastructure.rds.engine_version", "15.4")}"
+  instance_class         = "{ssot_manager.get_value("infrastructure.rds.instance_class", "db.t3.medium")}"
+  allocated_storage      = {ssot_manager.get_value("infrastructure.rds.allocated_storage", 20)}
+  db_name                = "{ssot_manager.get_value("infrastructure.rds.db_name", "fraud_detection")}"
+  username               = "{ssot_manager.get_value("infrastructure.rds.username", "fraud_user")}"
   password               = var.db_password
   parameter_group_name   = aws_db_parameter_group.fraud_detection.name
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name   = aws_db_subnet_group.fraud_detection.name
-  skip_final_snapshot    = {str(ssot_manager.get_value('infrastructure.rds.skip_final_snapshot', True)).lower()}
+  skip_final_snapshot    = {str(ssot_manager.get_value("infrastructure.rds.skip_final_snapshot", True)).lower()}
 
   tags = {{
-    Environment = "{ssot_manager.get_value('infrastructure.environment')}"
-    Perfection  = "{ssot_manager.get_value('system.perfection_level')}"
+    Environment = "{ssot_manager.get_value("infrastructure.environment")}"
+    Perfection  = "{ssot_manager.get_value("system.perfection_level")}"
   }}
 }}
 
@@ -573,11 +573,11 @@ def apply_ssot_to_monitoring_config():
 
         # Generate Prometheus configuration from SSOT
         prometheus_config = f"""# Generated from SSOT - Single Source of Truth
-# Perfection Level: {ssot_manager.get_value('system.perfection_level')}
+# Perfection Level: {ssot_manager.get_value("system.perfection_level")}
 
 global:
-  scrape_interval: {ssot_manager.get_value('monitoring.prometheus.scrape_interval', '15s')}
-  evaluation_interval: {ssot_manager.get_value('monitoring.prometheus.evaluation_interval', '15s')}
+  scrape_interval: {ssot_manager.get_value("monitoring.prometheus.scrape_interval", "15s")}
+  evaluation_interval: {ssot_manager.get_value("monitoring.prometheus.evaluation_interval", "15s")}
 
 rule_files:
   - "rules.yml"
@@ -586,23 +586,23 @@ scrape_configs:
   - job_name: 'fraud-backend'
     static_configs:
       - targets: ['backend:8000']
-    scrape_interval: {ssot_manager.get_value('monitoring.backend.scrape_interval', '5s')}
-    metrics_path: {ssot_manager.get_value('monitoring.backend.metrics_path', '/metrics')}
+    scrape_interval: {ssot_manager.get_value("monitoring.backend.scrape_interval", "5s")}
+    metrics_path: {ssot_manager.get_value("monitoring.backend.metrics_path", "/metrics")}
 
   - job_name: 'fraud-frontend'
     static_configs:
       - targets: ['frontend:5173']
-    scrape_interval: {ssot_manager.get_value('monitoring.frontend.scrape_interval', '30s')}
+    scrape_interval: {ssot_manager.get_value("monitoring.frontend.scrape_interval", "30s")}
 
   - job_name: 'redis'
     static_configs:
       - targets: ['redis:6379']
-    scrape_interval: {ssot_manager.get_value('monitoring.redis.scrape_interval', '30s')}
+    scrape_interval: {ssot_manager.get_value("monitoring.redis.scrape_interval", "30s")}
 
   - job_name: 'perfect-ssot-monitor'
     static_configs:
       - targets: ['ssot-monitor:9090']
-    scrape_interval: {ssot_manager.get_value('monitoring.ssot.scrape_interval', '60s')}
+    scrape_interval: {ssot_manager.get_value("monitoring.ssot.scrape_interval", "60s")}
 """
 
         # Write Prometheus configuration

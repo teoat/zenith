@@ -1,25 +1,30 @@
-import asyncio
 import logging
-from typing import List, Any
+from typing import Any
+
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: List[WebSocket] = []
+        self.active_connections: list[WebSocket] = []
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
-        logger.info(f"WebSocket client connected. Total: {len(self.active_connections)}")
+        logger.info(
+            f"WebSocket client connected. Total: {len(self.active_connections)}"
+        )
 
     def disconnect(self, websocket: WebSocket):
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
-            logger.info(f"WebSocket client disconnected. Total: {len(self.active_connections)}")
+            logger.info(
+                f"WebSocket client disconnected. Total: {len(self.active_connections)}"
+            )
 
     async def broadcast(self, message: Any):
         for connection in self.active_connections:
@@ -28,9 +33,10 @@ class ConnectionManager:
             except Exception as e:
                 logger.error(f"Failed to send message: {e}")
                 # Ideally remove dead connection here
-                pass
+
 
 manager = ConnectionManager()
+
 
 @router.websocket("/ws/alerts")
 async def websocket_endpoint(websocket: WebSocket):
@@ -48,13 +54,11 @@ async def websocket_endpoint(websocket: WebSocket):
         logger.error(f"WebSocket error: {e}")
         manager.disconnect(websocket)
 
+
 # Endpoint to trigger a test alert (for demo/zenith showcase)
 @router.post("/broadcast_alert")
 async def trigger_alert(alert_data: dict):
-    await manager.broadcast({
-        "type": "new_alert",
-        "data": alert_data
-    })
+    await manager.broadcast({"type": "new_alert", "data": alert_data})
     return {"status": "broadcasted"}
 
 

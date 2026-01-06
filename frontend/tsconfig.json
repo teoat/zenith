@@ -15,12 +15,13 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-         "jsx": "react-jsx",
-         "types": [
-             "jest",
-             "@testing-library/jest-dom"
-         ],
-         /* Linting */
+        "jsx": "react-jsx",
+        "types": [
+            "jest",
+            "@types/node", 
+            "@testing-library/jest-dom"
+        ],
+        /* Linting */
         "forceConsistentCasingInFileNames": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
@@ -37,6 +38,15 @@
             ]
         }
     },
+    "exclude": [
+        "src 2",
+        "coverage",
+        "coverage-e2e",
+        "coverage-e2e 2",
+        "dist",
+        "node_modules",
+        "e2e"
+    ],
     "include": [
         "src"
     ]

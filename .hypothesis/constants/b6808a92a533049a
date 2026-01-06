@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/financial.py
+# hypothesis_version: 6.148.8
+
+[404, '%b %d', 'Case not found', 'Project not found', 'Unknown', '_', 'amount', 'category', 'description', 'equipment', 'financial', 'home_expenses', 'insurance', 'lat', 'lng', 'materials', 'name', 'personal_shopping', 'supplier', 'utilities', 'verified', 'wages']

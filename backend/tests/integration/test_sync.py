@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -38,7 +38,6 @@ def test_force_sync(mock_sync_manager):
     # It has @router.get("/status"), @router.get("/documents"), @router.get("/documents/{id}"), @router.post("/documents/{id}/operations"), @router.get("/stats"), @router.post("/broadcast"), @router.delete("/documents/{id}")
     # There is NO /sync/sync or /sync/force endpoint.
     # I will comment out test_force_sync or change it to test_broadcast as a proxy for "action".
-    pass
 
 
 def test_resolve_conflict_remote(mock_sync_manager):

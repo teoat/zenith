@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/middleware/logging.py
+# hypothesis_version: 6.148.8
+
+[0.1, 0.5, 2.0, 200, 400, 500, 1000, 10000, '***REDACTED***', '...', '/api/', '/auth/login', '/auth/register', 'X-Processed-At', 'X-Request-ID', 'X-Response-Time', 'ZENITH_APP', 'acceptable', 'api_key', 'authorization', 'body', 'body_error', 'client_ip', 'content-length', 'content-type', 'content_length', 'content_type', 'cookie', 'error_message', 'error_type', 'excellent', 'good', 'headers', 'key', 'method', 'password', 'path', 'performance', 'proxy-authorization', 'query_params', 'replace', 'request_id', 'response_time', 'secret', 'set-cookie', 'slow', 'status_code', 'timestamp', 'token', 'url', 'user', 'user-agent', 'user_agent', 'user_id', 'username', 'utf-8', 'x-api-key', 'x-auth-token']

@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/frenly_workflow_engine.py
+# hypothesis_version: 6.148.8
+
+[1.0, 'analyze_patterns', 'collect_evidence', 'completed', 'description', 'draft', 'draft_report', 'error', 'failed', 'generate_sar', 'handoff_id', 'init', 'legal_handof', 'name', 'notify_counsel', 'package_evidence', 'pending', 'report_id', 'result', 'running', 'sent', 'status', 'step', 'workflow_completed', 'workflow_failed', 'workflow_id', 'workflow_progress', 'workflow_started']

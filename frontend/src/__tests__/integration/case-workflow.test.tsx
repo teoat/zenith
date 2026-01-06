@@ -1,10 +1,50 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 
-jest.mock('../../services/cases');
-jest.mock('../../services/evidence');
-jest.mock('../../services/ai');
+
+const mockCaseService = {
+  getCases: jest.fn() as jest.Mock,
+  getCase: jest.fn() as jest.Mock,
+  createCase: jest.fn() as jest.Mock,
+  updateCase: jest.fn() as jest.Mock,
+  deleteCase: jest.fn() as jest.Mock,
+  getCaseNotes: jest.fn() as jest.Mock,
+  addCaseNote: jest.fn() as jest.Mock,
+  updateCaseNote: jest.fn() as jest.Mock,
+  deleteCaseNote: jest.fn() as jest.Mock,
+  getCaseStatistics: jest.fn() as jest.Mock,
+  bulkUpdateCases: jest.fn() as jest.Mock,
+  getCaseById: jest.fn() as jest.Mock
+};
+
+const mockEvidenceService = {
+  getEvidenceByCaseId: jest.fn(),
+  uploadEvidence: jest.fn(),
+  deleteEvidence: jest.fn(),
+  updateEvidence: jest.fn(),
+  getEvidenceById: jest.fn()
+};
+
+const mockAiService = {
+  analyzeCase: jest.fn(),
+  generateSuggestions: jest.fn(),
+  chat: jest.fn(),
+  getAnalysis: jest.fn(),
+  generateInsights: jest.fn()
+};
+
+jest.mock('../../services/cases', () => ({
+  caseService: mockCaseService
+}));
+
+jest.mock('../../services/evidence', () => ({
+  evidenceService: mockEvidenceService
+}));
+
+jest.mock('../../services/ai', () => ({
+  aiService: mockAiService
+}));
 
 describe('Case Workflow Integration', () => {
   beforeEach(() => {
@@ -13,13 +53,16 @@ describe('Case Workflow Integration', () => {
 
   describe('case creation workflow', () => {
     it('should create case and navigate to details', async () => {
-      const { caseService } = await import('../../services/cases');
-      
-      (caseService.createCase as jest.Mock).mockResolvedValue({
-        id: 'new-case-123',
-        title: 'New Fraud Case',
-        status: 'open',
-        priority: 'high'
+      mockCaseService.createCase.mockResolvedValue({
+        data: {
+          id: 'new-case-123',
+          case: {
+            id: 'new-case-123',
+            title: 'New Fraud Case',
+            status: 'OPEN',
+            priority: 'HIGH'
+          }
+        }
       });
 
       const CaseForm = (await import('../../components/cases/CaseForm')).default;
@@ -52,19 +95,19 @@ describe('Case Workflow Integration', () => {
 
   describe('evidence upload workflow', () => {
     it('should upload evidence and update case', async () => {
-      const { evidenceService } = await import('../../services/evidence');
-      const { caseService } = await import('../../services/cases');
-
-      (evidenceService.uploadEvidence as jest.Mock).mockResolvedValue({
-        id: 'evidence-1',
-        filename: 'document.pdf',
-        case_id: 'case-123'
+      mockEvidenceService.uploadEvidence.mockResolvedValue({
+        data: {
+          id: 'evidence-1',
+          filename: 'document.pdf',
+          caseId: 'case-123'
+        }
       });
 
-      (caseService.getCaseById as jest.Mock).mockResolvedValue({
-        id: 'case-123',
-        title: 'Test Case',
-        evidence: []
+      mockCaseService.getCaseById.mockResolvedValue({
+        data: {
+          id: 'case-123',
+          title: 'Test Case'
+        }
       });
 
       const EvidenceUploader = (await import('../../components/evidence/EvidenceUploader')).default;
@@ -86,7 +129,7 @@ describe('Case Workflow Integration', () => {
       fireEvent.click(uploadButton);
 
       await waitFor(() => {
-        expect(evidenceService.uploadEvidence).toHaveBeenCalledWith(
+        expect(mockEvidenceService.uploadEvidence).toHaveBeenCalledWith(
           'case-123',
           file,
           expect.any(Object)
@@ -98,20 +141,25 @@ describe('Case Workflow Integration', () => {
 
   describe('case investigation workflow', () => {
     it('should complete investigation steps with AI assistance', async () => {
-      const { caseService } = await import('../../services/cases');
-      const { evidenceService } = await import('../../services/evidence');
-      const { aiService } = await import('../../services/ai');
-
-      (caseService.createCase as jest.Mock).mockResolvedValue({
-        id: 'case-123',
-        title: 'Investigation Case'
+      mockCaseService.createCase.mockResolvedValue({
+        data: {
+          id: 'case-123',
+          case: {
+            id: 'case-123',
+            title: 'Investigation Case'
+          }
+        }
       });
-      (evidenceService.uploadEvidence as jest.Mock).mockResolvedValue({
-        id: 'evidence-1'
+      mockEvidenceService.uploadEvidence.mockResolvedValue({
+        data: {
+          id: 'evidence-1'
+        }
       });
-      (aiService.generateInsights as jest.Mock).mockResolvedValue({
-        summary: 'Fraud pattern detected',
-        confidence: 0.9
+      mockAiService.analyzeCase.mockResolvedValue({
+        data: {
+          summary: 'Fraud pattern detected',
+          confidence: 0.9
+        }
       });
 
       const InvestigationWizard = (await import('../../components/investigation/InvestigationWizard')).default;
@@ -134,7 +182,7 @@ describe('Case Workflow Integration', () => {
 
       // Step 3: AI Analysis
       await waitFor(() => {
-        expect(aiService.generateInsights).toHaveBeenCalled();
+        expect(mockAiService.generateInsights).toHaveBeenCalled();
         expect(screen.getByText(/Fraud pattern detected/i)).toBeInTheDocument();
       });
     });
@@ -142,19 +190,27 @@ describe('Case Workflow Integration', () => {
 
   describe('case update workflow', () => {
     it('should update case status and notify stakeholders', async () => {
-      const { caseService } = await import('../../services/cases');
-
-      (caseService.updateCase as jest.Mock).mockResolvedValue({
-        id: 'case-123',
-        status: 'closed',
-        resolution: 'Fraud confirmed'
+      mockCaseService.updateCase.mockResolvedValue({
+        data: {
+          id: 'case-123',
+          status: 'CLOSED',
+          resolution: 'Fraud confirmed'
+        }
       });
 
       const mockCases = [
-        { id: 'case-123', title: 'Test Case', status: 'open', priority: 'high' }
+        { id: 'case-123', title: 'Test Case', status: 'OPEN', priority: 'HIGH' }
       ];
 
-      (caseService.getAllCases as jest.Mock).mockResolvedValue(mockCases);
+      mockCaseService.getCases.mockResolvedValue({
+        data: mockCases,
+        pagination: {
+          page: 1,
+          pageSize: 10,
+          total: 1,
+          totalPages: 1
+        }
+      });
 
       const Cases = (await import('../../pages/Cases')).default;
 
@@ -179,8 +235,8 @@ describe('Case Workflow Integration', () => {
       fireEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(caseService.updateCase).toHaveBeenCalledWith('case-123', {
-          status: 'closed'
+        expect(mockCaseService.updateCase).toHaveBeenCalledWith('case-123', {
+          status: 'CLOSED'
         });
       });
     });
@@ -188,16 +244,22 @@ describe('Case Workflow Integration', () => {
 
   describe('bulk case operations', () => {
     it('should perform bulk status update', async () => {
-      const { caseService } = await import('../../services/cases');
-
       const mockCases = [
-        { id: '1', title: 'Case 1', status: 'open', priority: 'high' },
-        { id: '2', title: 'Case 2', status: 'open', priority: 'medium' }
+        { id: '1', title: 'Case 1', status: 'OPEN', priority: 'HIGH' },
+        { id: '2', title: 'Case 2', status: 'OPEN', priority: 'MEDIUM' }
       ];
 
-      (caseService.getAllCases as jest.Mock).mockResolvedValue(mockCases);
-      (caseService.bulkUpdateCases as jest.Mock).mockResolvedValue({
-        updated: 2
+      mockCaseService.getCases.mockResolvedValue({
+        data: mockCases,
+        pagination: {
+          page: 1,
+          pageSize: 10,
+          total: 2,
+          totalPages: 1
+        }
+      });
+      mockCaseService.bulkUpdateCases.mockResolvedValue({
+        data: { updated: 2 }
       });
 
       const Cases = (await import('../../pages/Cases')).default;
@@ -221,9 +283,9 @@ describe('Case Workflow Integration', () => {
       fireEvent.click(screen.getByText(/close selected/i));
 
       await waitFor(() => {
-        expect(caseService.bulkUpdateCases).toHaveBeenCalledWith(
+        expect(mockCaseService.bulkUpdateCases).toHaveBeenCalledWith(
           ['1', '2'],
-          { status: 'closed' }
+          { status: 'CLOSED' }
         );
       });
     });

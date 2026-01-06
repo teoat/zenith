@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/infrastructure/storage/database_optimizer_service.py
+# hypothesis_version: 6.148.8
+
+[0.001, 1.0, 100, 200, 'aggregates', 'assignee_id', 'audit_logs', 'avg_amount', 'avg_query_time', 'case', 'case_activities', 'case_notes', 'cases', 'detail', 'error', 'estimated_size_mb', 'evidence', 'execution_time', 'file', 'fraud_alerts', 'index', 'max_amount', 'min_amount', 'nested loop', 'order by', 'page', 'params', 'per_page', 'priority', 'query', 'query_metrics', 'query_plan', 'risk_level', 'row_count', 'scan', 'search', 'slow_queries', 'sort', 'status', 'timestamp', 'total_amount', 'total_count', 'total_pages', 'total_queries', 'transactions', 'unique_merchants', 'users']

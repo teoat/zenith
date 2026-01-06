@@ -1,21 +1,21 @@
 """
 Error handling middleware for consistent API error responses
 """
+
 import logging
 import uuid
 from datetime import datetime
-from typing import Any, Dict, Optional
-from fastapi import Request, HTTPException
-from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
-from pydantic import ValidationError
 
 from app.models.error_responses import (
     APIErrorResponse,
-    ValidationErrorResponse,
+    ErrorCodes,
     ErrorDetail,
-    ErrorCodes
+    ValidationErrorResponse,
 )
+from fastapi import HTTPException, Request
+from fastapi.responses import JSONResponse
+from pydantic import ValidationError
+from starlette.middleware.base import BaseHTTPMiddleware
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ class StandardizedErrorMiddleware(BaseHTTPMiddleware):
                 "error_type": type(exc).__name__,
                 "error_message": str(exc),
             },
-            exc_info=True
+            exc_info=True,
         )
 
         # Handle different exception types
@@ -76,7 +76,9 @@ class StandardizedErrorMiddleware(BaseHTTPMiddleware):
             503: ErrorCodes.SERVICE_UNAVAILABLE,
         }
 
-        error_code = error_code_map.get(exc.status_code, ErrorCodes.INTERNAL_SERVER_ERROR)
+        error_code = error_code_map.get(
+            exc.status_code, ErrorCodes.INTERNAL_SERVER_ERROR
+        )
 
         error_detail = ErrorDetail(
             message=str(exc.detail),
@@ -108,7 +110,7 @@ class StandardizedErrorMiddleware(BaseHTTPMiddleware):
                     field=field_path,
                     message=error["msg"],
                     code=ErrorCodes.VALIDATION_ERROR,
-                    details={"validation_error": error}
+                    details={"validation_error": error},
                 )
             )
 

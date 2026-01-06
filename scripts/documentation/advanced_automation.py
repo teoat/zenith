@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Advanced Automation & AI Features
 Automated content generation, quality analysis, and intelligent assistance
@@ -189,7 +190,7 @@ HEADERS = {{
 
 # Example Request
 def example_request():
-    endpoint = "/{topic}/example"
+    endpoint = "/{{topic}}/example"
     url = f"{{BASE_URL}}{{endpoint}}"
     
     data = {{
@@ -209,7 +210,7 @@ def example_request():
         return None
 
 # Best Practices
-class {topic.title()}Client:
+class {{topic.title()}}Client:
     def __init__(self, api_token: str):
         self.api_token = api_token
         self.base_url = BASE_URL
@@ -232,23 +233,23 @@ class {topic.title()}Client:
         return response
     
     def get_resource(self, resource_id: str):
-        """Get resource by ID"""
+        \"\"\"Get resource by ID\"\"\"
         return self._make_request("GET", f"/{{topic}}/{{resource_id}}")
     
     def create_resource(self, resource_data: dict):
-        """Create new resource"""
+        \"\"\"Create new resource\"\"\"
         return self._make_request("POST", f"/{{topic}}", data=resource_data)
     
     def update_resource(self, resource_id: str, resource_data: dict):
-        """Update existing resource"""
+        \"\"\"Update existing resource\"\"\"
         return self._make_request("PUT", f"/{{topic}}/{{resource_id}}", data=resource_data)
     
     def delete_resource(self, resource_id: str):
-        """Delete resource"""
+        \"\"\"Delete resource\"\"\"
         return self._make_request("DELETE", f"/{{topic}}/{{resource_id}}")
 
 # Usage Example
-client = {topic.title()}Client("your-api-token")
+client = {{topic.title()}}Client("your-api-token")
 cases = client.get_resource("cases-12345")
 new_case = client.create_resource({{
     "title": "New Fraud Case",
@@ -256,6 +257,7 @@ new_case = client.create_resource({{
     "priority": "high"
 }})
 ```
+        """
         return examples
     
     def _generate_fraud_examples(self, topic: str, context: Dict[str, Any]) -> str:
@@ -279,7 +281,7 @@ class FraudRiskScorer:
         self.scaler = StandardScaler()
         
     def calculate_risk_score(self, transaction_features: dict) -> float:
-        """Calculate risk score (0.0 - 1.0)"""
+        \"\"\"Calculate risk score (0.0 - 1.0)\"\"\"
         
         # Feature extraction
         features = self._extract_features(transaction_features)
@@ -306,7 +308,7 @@ class FraudRiskScorer:
         return float(risk_score)
     
     def _extract_features(self, transaction: dict) -> dict:
-        """Extract relevant features from transaction"""
+        \"\"\"Extract relevant features from transaction\"\"\"
         return {{
             "amount": float(transaction.get("amount", 0)),
             "time_of_day": int(datetime.strptime(transaction["timestamp"], "%Y-%m-%dT%H:%M:%S").hour),
@@ -317,7 +319,7 @@ class FraudRiskScorer:
         }}
     
     def _calculate_amount_risk(self, amount: float) -> float:
-        """Calculate risk based on transaction amount"""
+        \"\"\"Calculate risk based on transaction amount\"\"\"
         # Logarithmic scaling for large amounts
         if amount <= 100:
             return 0.1
@@ -329,7 +331,7 @@ class FraudRiskScorer:
             return 0.8
     
     def _calculate_time_risk(self, hour: int) -> float:
-        """Calculate risk based on time of day"""
+        \"\"\"Calculate risk based on time of day\"\"\"
         # Higher risk during unusual hours (late night, early morning)
         if 22 <= hour <= 6 or 2 <= hour <= 4:
             return 0.3
@@ -337,7 +339,7 @@ class FraudRiskScorer:
             return 0.1
     
     def _calculate_user_history_risk(self, history_count: int) -> float:
-        """Calculate risk based on user transaction history"""
+        \"\"\"Calculate risk based on user transaction history\"\"\"
         if history_count <= 5:
             return 0.3
         elif history_count <= 20:
@@ -346,20 +348,20 @@ class FraudRiskScorer:
             return 0.1
     
     def _calculate_merchant_risk(self, merchant_id: str) -> float:
-        """Calculate merchant risk score"""
+        \"\"\"Calculate merchant risk score\"\"\"
         # This would typically use a merchant database
         # Placeholder for demonstration
-        merchant_risk_scores = {{
+        merchant_risk_scores = {
             "legit_merchant": 0.1,
             "new_merchant": 0.3,
             "high_risk_merchant": 0.7,
             "unknown_merchant": 0.5
-        }}
+        }
         return merchant_risk_scores.get(merchant_id, 0.5)
 
 # Usage Example
 scorer = FraudRiskScorer()
-transaction = {{
+transaction = {
     "amount": 5000.00,
     "time_of_day": "23:30:00",
     "user_history": 3,
@@ -367,11 +369,12 @@ transaction = {{
     "location": "US",
     "device_fingerprint": "device_abc123",
     "timestamp": "2025-12-20T23:30:00Z"
-}}
+}
 
 risk_score = scorer.calculate_risk_score(transaction)
-print(f"Risk Score: {{risk_score:.3f}}")
+print(f"Risk Score: {risk_score:.3f}")
 ```
+        """
         return examples
     
     def _generate_devops_examples(self, topic: str, context: Dict[str, Any]) -> str:
@@ -387,9 +390,9 @@ version: '3.8'
 
 services:
   app:
-    image: 378x492/fraud-detection:latest
+    image: 378{{'x'}}492/fraud-detection:latest
     deploy:
-      replicas: 3
+      replicas: {{3}}
       resources:
         limits:
           cpus: '1.0'
@@ -402,15 +405,15 @@ services:
       - REDIS_URL=redis://redis:6379/0
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: {{30}}s
+      timeout: {{10}}s
+      retries: {{3}}
 
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
-      - "443:443"
+      - "{{80}}:{{80}}"
+      - "{{443}}:{{443}}"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
@@ -425,7 +428,7 @@ kind: Deployment
 metadata:
   name: fraud-detection-api
 spec:
-  replicas: 3
+  replicas: {{3}}
   selector:
     matchLabels:
       app: fraud-detection-api
@@ -436,9 +439,9 @@ spec:
     spec:
       containers:
       - name: app
-        image: 378x492/fraud-detection:latest
+        image: 378{{'x'}}492/fraud-detection:latest
         ports:
-          - containerPort: 8000
+          - containerPort: {{8000}}
         env:
           - name: DATABASE_URL
             valueFrom:
@@ -460,16 +463,17 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 8000
-          initialDelaySeconds: 30
-          periodSeconds: 10
+            port: {{8000}}
+          initialDelaySeconds: {{30}}
+          periodSeconds: {{10}}
         readinessProbe:
           httpGet:
             path: /ready
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 5
+            port: {{8000}}
+          initialDelaySeconds: {{5}}
+          periodSeconds: {{5}}
 ```
+        """
         return examples
     
     def _generate_general_examples(self, topic: str, context: Dict[str, Any]) -> str:
@@ -511,14 +515,15 @@ content = template_engine.render_document(
         "endpoint_name": "Fraud Analysis",
         "method": "POST",
         "parameters": [
-            {{"name": "amount", "type": "float", "required": True},
-            {{"name": "user_id", "type": "string", "required": True}
+            {{"name": "amount", "type": "float", "required": True}},
+            {{"name": "user_id", "type": "string", "required": True}}
         ]
     }}
 )
 
 print(content)
 ```
+        """
         return examples
     
     def _generate_metadata(self, topic: str, block_type: str) -> Dict[str, Any]:
@@ -563,7 +568,7 @@ print(content)
             'deployment': 'Intermediate',
             'monitoring': 'Intermediate',
             'getting_started': 'Beginner',
-            'tutorials': 'Intermediate'
+            'tutorials': 'Intermediate',
             'troubleshooting': 'Intermediate'
         }
         
@@ -754,7 +759,7 @@ print(content)
             'metadata': {
                 'generated_at': datetime.datetime.utcnow().isoformat(),
                 'version': '2.0.0',
-                'total_topics': len(topics)
+                'total_topics': len(topics),
                 'automation_level': 'AI-powered'
             }
         }

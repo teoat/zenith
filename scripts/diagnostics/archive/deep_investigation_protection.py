@@ -6,12 +6,11 @@ Identifies and protects all remaining files that should be SSOT locked
 
 import hashlib
 import json
-import os
 import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any, Dict, List, Set
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
@@ -28,7 +27,7 @@ class DeepFileAnalysis:
     protection_reason: str
     business_impact: str
     security_impact: str
-    dependencies: List[str]
+    dependencies: list[str]
     estimated_protection_value: int
 
 
@@ -121,7 +120,7 @@ class DeepSSOTInvestigator:
             },
         }
 
-    def _load_existing_protections(self) -> Set[str]:
+    def _load_existing_protections(self) -> set[str]:
         """Load all currently protected files"""
         protected = set()
 
@@ -129,7 +128,7 @@ class DeepSSOTInvestigator:
         for lockfile in self.diagnostics_dir.glob("*.lock"):
             if lockfile.exists():
                 try:
-                    with open(lockfile, "r") as f:
+                    with open(lockfile) as f:
                         data = json.load(f)
                         if "files" in data and isinstance(data["files"], dict):
                             protected.update(data["files"].keys())
@@ -138,7 +137,7 @@ class DeepSSOTInvestigator:
 
         return protected
 
-    def deep_file_investigation(self) -> List[DeepFileAnalysis]:
+    def deep_file_investigation(self) -> list[DeepFileAnalysis]:
         """Perform deep investigation of all files for protection needs"""
         investigation_results = []
 
@@ -298,8 +297,8 @@ class DeepSSOTInvestigator:
         return None
 
     def apply_additional_protections(
-        self, investigations: List[DeepFileAnalysis]
-    ) -> Dict[str, Any]:
+        self, investigations: list[DeepFileAnalysis]
+    ) -> dict[str, Any]:
         """Apply additional SSOT protections based on deep investigation"""
         additional_protections = {
             "database": [],
@@ -349,7 +348,7 @@ class DeepSSOTInvestigator:
                 print(f"✅ Extended protection for {category}: {len(files)} files")
 
             except Exception as e:
-                print(f"❌ Failed to create extended lockfile for {category}: {str(e)}")
+                print(f"❌ Failed to create extended lockfile for {category}: {e!s}")
 
         return {
             "total_additional_protections": total_protected,
@@ -362,8 +361,8 @@ class DeepSSOTInvestigator:
         }
 
     def _create_extended_lockfile(
-        self, category: str, files: List[DeepFileAnalysis]
-    ) -> Dict[str, Any]:
+        self, category: str, files: list[DeepFileAnalysis]
+    ) -> dict[str, Any]:
         """Create extended lockfile data"""
         lockfile_data = {
             "category": f"{category}_extended",
@@ -413,8 +412,8 @@ class DeepSSOTInvestigator:
             return "error_calculating"
 
     def generate_investigation_report(
-        self, investigations: List[DeepFileAnalysis], protection_results: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, investigations: list[DeepFileAnalysis], protection_results: dict[str, Any]
+    ) -> dict[str, Any]:
         """Generate comprehensive investigation and protection report"""
         total_files_investigated = len(investigations)
         total_protection_value = sum(

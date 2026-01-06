@@ -1,12 +1,11 @@
 from datetime import datetime
-from typing import Optional
 
 import pyotp
-from fastapi import APIRouter, Body, Depends, HTTPException, Request, status, Response
-from pydantic import BaseModel, Field
-
 from app.services.infrastructure.auth_service import auth_service
 from app.services.infrastructure.storage.database_service import db_service
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from pydantic import BaseModel, Field
+
 from core.database import User
 from core.logging import logger
 
@@ -17,7 +16,7 @@ router = APIRouter()
 class LoginRequest(BaseModel):
     username: str = Field(..., min_length=1, max_length=50)
     password: str = Field(..., min_length=8)
-    mfa_code: Optional[str] = None
+    mfa_code: str | None = None
 
 
 class TokenResponse(BaseModel):
@@ -41,10 +40,37 @@ class RegisterRequest(BaseModel):
     email: str = Field(..., pattern=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
     password: str = Field(..., min_length=8, max_length=128)
     full_name: str = Field(..., min_length=1, max_length=100)
-    role: Optional[str] = "ANALYST"  # Default role
+    role: str | None = "ANALYST"  # Default role
+
+
+
+class UserProfileResponse(BaseModel):
+    id: str
+    username: str
+    email: str
+    full_name: str
+    role: str
+    is_active: bool
+    mfa_enabled: bool
+    created_at: datetime
+    last_login: datetime | None
+
+
+
+class UserProfileResponse(BaseModel):
+    id: str
+    username: str
+    email: str
+    full_name: str
+    role: str
+    is_active: bool
+    mfa_enabled: bool
+    created_at: datetime
+    last_login: datetime | None
 
 
 # ===== AUTHENTICATION ENDPOINTS =====
+
 
 class RegisterResponse(BaseModel):
     user_id: str
@@ -53,7 +79,10 @@ class RegisterResponse(BaseModel):
     message: str
     created_at: datetime
 
-@router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED
+)
 async def register(user_data: RegisterRequest):
     """
     Register a new user with password strength validation
@@ -66,56 +95,50 @@ async def register(user_data: RegisterRequest):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
                     "message": "Password does not meet security requirements",
-                    "errors": password_errors
-                }
+                    "errors": password_errors,
+                },
             )
-        
+
         # Check if username already exists
         existing_user = auth_service.get_user_by_username(user_data.username)
         if existing_user:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Username already exists"
+                status_code=status.HTTP_409_CONFLICT, detail="Username already exists"
             )
-        
+
         # Check if email already exists
         existing_email = auth_service.get_user_by_email(user_data.email)
         if existing_email:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Email already registered"
+                status_code=status.HTTP_409_CONFLICT, detail="Email already registered"
             )
-        
+
         # Create user
         new_user = auth_service.create_user(user_data)
-        
+
         logger.info(f"New user registered: {new_user.username}")
-        
+
         return {
             "id": new_user.id,
             "username": new_user.username,
             "email": new_user.email,
             "full_name": new_user.full_name,
             "role": new_user.role,
-            "message": "User registered successfully"
+            "message": "User registered successfully",
         }
-    
+
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Registration error: {str(e)}")
+        logger.error(f"Registration error: {e!s}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An internal error occurred during registration."
+            detail="An internal error occurred during registration.",
         )
 
 
 @router.post("/login", response_model=UserProfileResponse)
-async def login(
-    login_data: LoginRequest, 
-    request: Request, 
-    response: Response
-):
+async def login(login_data: LoginRequest, request: Request, response: Response):
     """
     Authenticate user and set HttpOnly cookies.
     """
@@ -156,41 +179,47 @@ async def login(
         # Track user journey
         try:
             from app.services.business.user_journey_tracker import user_journey_tracker
+
             user_journey_tracker.track_event(
                 user_id=user.id,
                 event_type="login",
-                metadata={"role": user.role, "mfa": user.mfa_enabled}
+                metadata={"role": user.role, "mfa": user.mfa_enabled},
             )
         except Exception:
             pass
 
         # Create tokens
         access_token = auth_service.create_access_token(
-            {"sub": user.id, "username": user.username, "role": user.role, "mfa_verified": user.mfa_enabled}
+            {
+                "sub": user.id,
+                "username": user.username,
+                "role": user.role,
+                "mfa_verified": user.mfa_enabled,
+            }
         )
         refresh_token = auth_service.create_refresh_token(user.id)
 
         # Set HttpOnly Cookies
         # Secure=True in production (HTTPS), False in dev if needed
-        secure_cookie = True 
-        
+        secure_cookie = True
+
         response.set_cookie(
             key="access_token",
             value=access_token,
             httponly=True,
             secure=secure_cookie,
             samesite="strict",
-            max_age=1800 # 30 minutes
+            max_age=1800,  # 30 minutes
         )
-        
+
         response.set_cookie(
             key="refresh_token",
             value=refresh_token,
             httponly=True,
             secure=secure_cookie,
             samesite="strict",
-            path="/api/v1/auth/refresh", 
-            max_age=7 * 24 * 60 * 60 # 7 days
+            path="/api/v1/auth/refresh",
+            max_age=7 * 24 * 60 * 60,  # 7 days
         )
 
         return {
@@ -202,13 +231,13 @@ async def login(
             "is_active": user.is_active,
             "mfa_enabled": user.mfa_enabled,
             "created_at": user.created_at,
-            "last_login": user.last_login
+            "last_login": user.last_login,
         }
 
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Login error: {str(e)}")
+        logger.error(f"Login error: {e!s}")
         raise HTTPException(status_code=500, detail="Internal login error")
 
 
@@ -219,6 +248,7 @@ class MFAVerifyRequest(BaseModel):
 class MFASetupResponse(BaseModel):
     secret: str
     otpauth_url: str
+
 
 @router.get("/mfa/setup", response_model=MFASetupResponse)
 async def mfa_setup(current_user: User = Depends(auth_service.get_current_user)):
@@ -250,6 +280,7 @@ async def mfa_setup(current_user: User = Depends(auth_service.get_current_user))
 class MFAVerifyResponse(BaseModel):
     verified: bool
     message: str
+
 
 @router.post("/mfa/verify", response_model=MFAVerifyResponse)
 async def mfa_verify(
@@ -289,30 +320,36 @@ async def refresh_token(request: Request, response: Response):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Refresh cookie missing")
-        
+
     try:
         # Verify refresh token
         payload = auth_service.decode_token(refresh_token)
         if payload.get("type") != "refresh":
             raise HTTPException(status_code=401, detail="Invalid token type")
-            
+
         user_id = payload.get("sub")
-        
+
         # Determine claims
-        user = auth_service.get_user(user_id) if hasattr(auth_service, 'get_user') else None
-        
+        user = (
+            auth_service.get_user(user_id)
+            if hasattr(auth_service, "get_user")
+            else None
+        )
+
         claims = {"sub": user_id}
         if user:
-             claims.update({
-                "username": user.username,
-                "role": user.role,
-                "mfa_verified": user.mfa_enabled 
-             })
+            claims.update(
+                {
+                    "username": user.username,
+                    "role": user.role,
+                    "mfa_verified": user.mfa_enabled,
+                }
+            )
         else:
-             claims.update({"username": "unknown", "role": "analyst"})
+            claims.update({"username": "unknown", "role": "analyst"})
 
         new_access_token = auth_service.create_access_token(claims)
-        
+
         # Set new access token cookie
         response.set_cookie(
             key="access_token",
@@ -320,17 +357,18 @@ async def refresh_token(request: Request, response: Response):
             httponly=True,
             secure=True,
             samesite="strict",
-            max_age=1800 # 30 minutes
+            max_age=1800,  # 30 minutes
         )
-        
+
         return {"message": "Token refreshed"}
 
     except Exception as e:
         logger.warning(f"Refresh failed: {e}")
-         # Clear cookies on failure
+        # Clear cookies on failure
         response.delete_cookie("access_token")
         response.delete_cookie("refresh_token", path="/api/v1/auth/refresh")
         raise HTTPException(status_code=401, detail="Invalid refresh token")
+
 
 @router.post("/logout")
 async def logout(response: Response):
@@ -342,19 +380,13 @@ async def logout(response: Response):
     return {"message": "Logged out successfully"}
 
 
-class UserProfileResponse(BaseModel):
-    id: str
-    username: str
-    email: str
-    full_name: str
-    role: str
-    is_active: bool
-    mfa_enabled: bool
-    created_at: datetime
-    last_login: Optional[datetime]
+
+
 
 @router.get("/me", response_model=UserProfileResponse)
-async def get_current_user_profile(current_user: User = Depends(auth_service.get_current_user)):
+async def get_current_user_profile(
+    current_user: User = Depends(auth_service.get_current_user),
+):
     """Get current user profile"""
     return {
         "id": current_user.id,
@@ -365,5 +397,5 @@ async def get_current_user_profile(current_user: User = Depends(auth_service.get
         "is_active": current_user.is_active,
         "mfa_enabled": current_user.mfa_enabled,
         "created_at": current_user.created_at,
-        "last_login": current_user.last_login
+        "last_login": current_user.last_login,
     }

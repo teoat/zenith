@@ -4,16 +4,15 @@ Provides endpoints for AI analysis and semantic search
 """
 
 import logging
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Literal, Optional, Tuple
+from datetime import UTC, datetime
+from typing import Any, Literal
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Body
-from fastapi.responses import JSONResponse
+from app.services.ai.ai_service import get_ai_service
+from fastapi import APIRouter, BackgroundTasks, Body, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from core.database import User, get_db
-from app.services.ai.ai_service import get_ai_service
 
 logger = logging.getLogger(__name__)
 
@@ -24,22 +23,22 @@ router = APIRouter(
 )
 
 # Import for deprecated monitoring
-from app.middleware.deprecated_monitor import get_deprecated_usage_stats
 
 # Authentication Dependency
 from app.services.infrastructure.auth_service import auth_service
-from core.database import User
 
 # Request/Response Models
 
 
 class EmbeddingRequest(BaseModel):
     text: str = Field(..., description="Text to embed")
-    metadata: Optional[Dict[str, Any]] = Field(None, description="Metadata associated with the text")
+    metadata: dict[str, Any] | None = Field(
+        None, description="Metadata associated with the text"
+    )
 
 
 class EmbeddingResponse(BaseModel):
-    embedding: List[float]
+    embedding: list[float]
     dimension: int
     model: str
     processing_time_ms: float
@@ -50,13 +49,15 @@ class SemanticSearchRequest(BaseModel):
     top_k: int = Field(
         default=10, ge=1, le=100, description="Maximum results to return"
     )
-    threshold: float = Field(default=0.6, ge=0.0, le=1.0, description="Minimum similarity threshold")
-    filters: Optional[Dict[str, Any]] = Field(None, description="Search filters")
+    threshold: float = Field(
+        default=0.6, ge=0.0, le=1.0, description="Minimum similarity threshold"
+    )
+    filters: dict[str, Any] | None = Field(None, description="Search filters")
 
 
 class SearchRequest(BaseModel):
     query: str = Field(..., description="Natural language search query")
-    filters: Optional[Dict[str, Any]] = Field(None, description="Search filters")
+    filters: dict[str, Any] | None = Field(None, description="Search filters")
     limit: int = Field(
         default=10, ge=1, le=100, description="Maximum results to return"
     )
@@ -66,13 +67,13 @@ class SearchResult(BaseModel):
     id: str
     similarity: float
     content: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
     created_at: str
 
 
 class SearchResponse(BaseModel):
     success: bool = True
-    results: List[SearchResult]
+    results: list[SearchResult]
     total: int
 
 
@@ -84,36 +85,36 @@ class AnalysisRequest(BaseModel):
         "risk_assessment",
         "evidence_analysis",
     ] = Field(..., description="Type of analysis to perform")
-    data: Dict[str, Any] = Field(..., description="Analysis input data")
-    caseId: Optional[str] = Field(None, description="Associated case ID")
+    data: dict[str, Any] = Field(..., description="Analysis input data")
+    case_id: str | None = Field(None, description="Associated case ID")
 
 
 class AnalysisResponse(BaseModel):
     success: bool = True
-    analysis: Dict[str, Any]
+    analysis: dict[str, Any]
     confidence: float
-    jobId: Optional[str] = None
+    job_id: str | None = None
 
 
 class InsightsRequest(BaseModel):
-    context: Dict[str, Any] = Field(..., description="Current application context")
+    context: dict[str, Any] = Field(..., description="Current application context")
 
 
 class InsightsResponse(BaseModel):
     success: bool = True
-    insights: Dict[str, Any]
+    insights: dict[str, Any]
 
 
 class FeedbackRequest(BaseModel):
     insight_id: str
     is_positive: bool
-    feedback_text: Optional[str] = None
-    context: Optional[Dict[str, Any]] = None
+    feedback_text: str | None = None
+    context: dict[str, Any] | None = None
 
 
 class MultiPersonaRequest(BaseModel):
     case_id: str
-    personas: List[str]
+    personas: list[str]
 
 
 class ProactiveRequest(BaseModel):
@@ -124,8 +125,8 @@ class ProactiveRequest(BaseModel):
 class CodeReviewRequest(BaseModel):
     code: str
     language: str = "python"
-    file_path: Optional[str] = None
-    context: Optional[Dict[str, Any]] = None
+    file_path: str | None = None
+    context: dict[str, Any] | None = None
 
 
 class CodeIssue(BaseModel):
@@ -141,7 +142,7 @@ class CodeIssue(BaseModel):
 
 
 class CodeReviewResponse(BaseModel):
-    issues: List[CodeIssue]
+    issues: list[CodeIssue]
     quality_score: float
     summary: str
 
@@ -151,7 +152,8 @@ class CodeReviewResponse(BaseModel):
 
 @router.post("/embeddings", response_model=EmbeddingResponse)
 async def create_embeddings(
-    request: EmbeddingRequest, current_user: User = Depends(auth_service.get_current_user)
+    request: EmbeddingRequest,
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     Create embeddings for text content.
@@ -160,6 +162,7 @@ async def create_embeddings(
     production-grade ML models for semantic search and similarity matching.
     """
     import time
+
     try:
         ai_service = await get_ai_service()
         start_time = time.time()
@@ -169,9 +172,7 @@ async def create_embeddings(
 
         # Add the document to the vector store
         success = await ai_service.add_document(
-            doc_id=doc_id,
-            content=request.text,
-            metadata=request.metadata
+            doc_id=doc_id, content=request.text, metadata=request.metadata
         )
 
         if not success:
@@ -184,17 +185,18 @@ async def create_embeddings(
             embedding=[],  # Not returned for security/privacy
             dimension=384,  # Standard dimension for sentence-transformers
             model="sentence-transformers/all-MiniLM-L6-v2",
-            processing_time_ms=round(processing_time, 2)
+            processing_time_ms=round(processing_time, 2),
         )
 
     except Exception as e:
         logger.error(f"Embedding creation failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Embedding creation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Embedding creation failed: {e!s}")
 
 
 @router.post("/semantic-search", response_model=SearchResponse)
 async def semantic_search_new(
-    request: SemanticSearchRequest, current_user: User = Depends(auth_service.get_current_user)
+    request: SemanticSearchRequest,
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     Perform semantic search across case data and evidence.
@@ -211,13 +213,15 @@ async def semantic_search_new(
 
         # Filter by threshold if specified
         if request.threshold > 0:
-            results = [r for r in results if r.get("similarity", 0) >= request.threshold]
+            results = [
+                r for r in results if r.get("similarity", 0) >= request.threshold
+            ]
 
         return SearchResponse(results=results, total=len(results))
 
     except Exception as e:
         logger.error(f"Semantic search failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Search failed: {e!s}")
 
 
 @router.post("/search", response_model=SearchResponse)
@@ -242,14 +246,16 @@ async def semantic_search_legacy(
 
     except Exception as e:
         logger.error(f"Semantic search failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Search failed: {e!s}")
 
 
 @router.post("/analyze", response_model=AnalysisResponse)
 async def ai_analyze(
     request: AnalysisRequest,
     background_tasks: BackgroundTasks,
-    current_user: Optional[dict] = Depends(auth_service.get_current_user_optional),  # Make auth optional for E2E testing
+    current_user: dict | None = Depends(
+        auth_service.get_current_user_optional
+    ),  # Make auth optional for E2E testing
 ):
     """
     Perform AI-powered analysis on case data or evidence.
@@ -272,11 +278,14 @@ async def ai_analyze(
                 analysis={
                     "status": "completed",
                     "message": "Fraud pattern analysis completed",
-                    "patterns_detected": ["suspicious_transaction_amount", "unusual_timing"],
+                    "patterns_detected": [
+                        "suspicious_transaction_amount",
+                        "unusual_timing",
+                    ],
                     "risk_score": 0.75,
                 },
                 confidence=0.75,
-                jobId=f"completed_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+                job_id=f"completed_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
             )
 
         # For complex analysis, run in background
@@ -286,7 +295,7 @@ async def ai_analyze(
 
             # Add to background tasks
             background_tasks.add_task(
-                process_ai_analysis, job_id, request.type, request.data, request.caseId
+                process_ai_analysis, job_id, request.type, request.data, request.case_id
             )
 
             return AnalysisResponse(
@@ -295,7 +304,7 @@ async def ai_analyze(
                     "message": "Analysis started in background",
                 },
                 confidence=0.0,
-                jobId=job_id,
+                job_id=job_id,
             )
 
         # For simple analysis, process immediately
@@ -309,7 +318,7 @@ async def ai_analyze(
 
     except Exception as e:
         logger.error(f"AI analysis failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {e!s}")
 
 
 @router.post("/insights", response_model=InsightsResponse)
@@ -332,12 +341,12 @@ async def get_insights(
 
     except Exception as e:
         logger.error(f"Insights generation failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Insights failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Insights failed: {e!s}")
 
 
 @router.post("/documents")
 async def add_document(
-    doc_id: str, content: str, metadata: Optional[Dict[str, Any]] = None
+    doc_id: str, content: str, metadata: dict[str, Any] | None = None
 ):
     """
     Add a document to the AI vector store for semantic search.
@@ -360,9 +369,7 @@ async def add_document(
 
     except Exception as e:
         logger.error(f"Document addition failed: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Document addition failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Document addition failed: {e!s}")
 
 
 @router.delete("/documents/{doc_id}")
@@ -383,9 +390,7 @@ async def remove_document(doc_id: str):
 
     except Exception as e:
         logger.error(f"Document removal failed: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Document removal failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Document removal failed: {e!s}")
 
 
 @router.post("/multi-persona-analysis")
@@ -404,7 +409,7 @@ async def multi_persona_analysis(
         return results
     except Exception as e:
         logger.error(f"Multi-persona analysis failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {e!s}")
 
 
 @router.post("/investigate/{subject_id}")
@@ -420,7 +425,7 @@ async def investigate_subject(
         return results
     except Exception as e:
         logger.error(f"Subject investigation failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Investigation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Investigation failed: {e!s}")
 
 
 @router.post("/proactive-suggestions")
@@ -439,7 +444,7 @@ async def get_proactive_suggestions(
         return results
     except Exception as e:
         logger.error(f"Proactive suggestions failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Suggestions failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Suggestions failed: {e!s}")
 
 
 @router.get("/status")
@@ -454,8 +459,8 @@ async def get_ai_status():
         ai_service = await get_ai_service()
 
         # Check LLM API availability
-        import os
         from app.services.intelligence.advanced_llm_service import AdvancedLLMService
+
         llm_service = AdvancedLLMService()
         llm_available = llm_service.is_api_available()
 
@@ -484,7 +489,7 @@ async def get_ai_status():
 
 # Background task processing
 async def process_ai_analysis(
-    job_id: str, analysis_type: str, data: Dict[str, Any], case_id: Optional[str]
+    job_id: str, analysis_type: str, data: dict[str, Any], case_id: str | None
 ):
     """
     Background task for processing complex AI analysis
@@ -507,22 +512,21 @@ async def process_ai_analysis(
 
 class ChatRequest(BaseModel):
     message: str
-    context: Optional[Dict[str, Any]] = None
-    persona: Optional[str] = "frenly"
+    context: dict[str, Any] | None = None
+    persona: str | None = "frenly"
 
 
 class ChatResponse(BaseModel):
     response: str
     confidence: float
     persona: str
-    suggestions: Optional[List[Dict[str, Any]]] = None
+    suggestions: list[dict[str, Any]] | None = None
 
 
 # Duplicate chat endpoint removed to use the enhanced version below
 
 
 # Functions from Stashed Changes (Restored)
-from core.database import get_db
 
 
 @router.post("/analyze/case")
@@ -558,14 +562,22 @@ async def ai_health_check():
             "timestamp": datetime.now().isoformat(),
             "components": {
                 "vector_store": {
-                    "status": "healthy" if hasattr(ai_service, 'vector_store') and ai_service.vector_store else "empty",
-                    "documents": len(ai_service.vector_store) if hasattr(ai_service, 'vector_store') and ai_service.vector_store else 0,
+                    "status": "healthy"
+                    if hasattr(ai_service, "vector_store") and ai_service.vector_store
+                    else "empty",
+                    "documents": len(ai_service.vector_store)
+                    if hasattr(ai_service, "vector_store") and ai_service.vector_store
+                    else 0,
                 },
                 "search_index": {
-                    "status": "healthy" if hasattr(ai_service, 'tfidf_vectorizer') and ai_service.tfidf_vectorizer else "building",
+                    "status": "healthy"
+                    if hasattr(ai_service, "tfidf_vectorizer")
+                    and ai_service.tfidf_vectorizer
+                    else "building",
                     "features": (
-                        getattr(ai_service.tfidf_vectorizer, 'n_features_', 0)
-                        if hasattr(ai_service, 'tfidf_vectorizer') and ai_service.tfidf_vectorizer
+                        getattr(ai_service.tfidf_vectorizer, "n_features_", 0)
+                        if hasattr(ai_service, "tfidf_vectorizer")
+                        and ai_service.tfidf_vectorizer
                         else 0
                     ),
                 },
@@ -597,7 +609,7 @@ async def get_model_status(db: Session = Depends(get_db)):
 
         return {
             "models": model_status,
-            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "last_updated": datetime.now(UTC).isoformat(),
             "status": "operational",
         }
 
@@ -609,7 +621,7 @@ async def get_model_status(db: Session = Depends(get_db)):
                 "status": "initializing",
                 "message": "AI models are being initialized",
             },
-            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "last_updated": datetime.now(UTC).isoformat(),
             "status": "initializing",
         }
     except Exception as e:
@@ -617,7 +629,7 @@ async def get_model_status(db: Session = Depends(get_db)):
         # Return a structured error response instead of raising HTTPException
         return {
             "models": {"status": "error", "error_message": str(e)},
-            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "last_updated": datetime.now(UTC).isoformat(),
             "status": "error",
         }
 
@@ -635,7 +647,7 @@ async def get_case_insights(case_id: str, db: Session = Depends(get_db)):
         return {
             "case_id": case_id,
             "insights": insights,
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
@@ -645,7 +657,7 @@ async def get_case_insights(case_id: str, db: Session = Depends(get_db)):
 
 @router.post("/feedback/{transaction_id}")
 async def submit_ai_feedback(
-    transaction_id: str, feedback: Dict[str, Any], db: Session = Depends(get_db)
+    transaction_id: str, feedback: dict[str, Any], db: Session = Depends(get_db)
 ):
     """
     Submit feedback on AI analysis results for model improvement
@@ -654,7 +666,9 @@ async def submit_ai_feedback(
         ai_service = AIService(db)
 
         await ai_service.store_feedback(
-            transaction_id, feedback, "test_user"  # Mock user ID for testing
+            transaction_id,
+            feedback,
+            "test_user",  # Mock user ID for testing
         )
 
         # Log feedback submission
@@ -677,7 +691,7 @@ async def submit_ai_feedback(
 
 @router.post("/federated/update")
 async def apply_federated_update(
-    model_updates: List[Dict[str, Any]], db: Session = Depends(get_db)
+    model_updates: list[dict[str, Any]], db: Session = Depends(get_db)
 ):
     """
     Apply federated learning updates from partner institutions
@@ -700,7 +714,7 @@ async def apply_federated_update(
         return result
 
     except Exception as e:
-        logger.error(f"Federated update failed: {str(e)}")
+        logger.error(f"Federated update failed: {e!s}")
         raise HTTPException(status_code=500, detail="Federated update failed")
 
 
@@ -722,7 +736,7 @@ async def get_ai_performance_metrics():
 
 
 @router.post("/anomaly-detection")
-async def detect_anomalies(data: Dict[str, Any], db: Session = Depends(get_db)):
+async def detect_anomalies(data: dict[str, Any], db: Session = Depends(get_db)):
     """
     Real-time anomaly detection using AI
     """
@@ -734,7 +748,7 @@ async def detect_anomalies(data: Dict[str, Any], db: Session = Depends(get_db)):
         return {
             "anomalies_detected": anomalies,
             "confidence": anomalies[0].get("confidence", 0) if anomalies else 0,
-            "detected_at": datetime.now(timezone.utc).isoformat(),
+            "detected_at": datetime.now(UTC).isoformat(),
         }
 
     except Exception as e:
@@ -744,9 +758,9 @@ async def detect_anomalies(data: Dict[str, Any], db: Session = Depends(get_db)):
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat_with_ai(
-    request: ChatRequest, 
+    request: ChatRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(auth_service.get_current_user)
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     Enhanced AI Assistant with Persona integration and HITL Suggestions
@@ -754,113 +768,136 @@ async def chat_with_ai(
     try:
         # Get LLM Service
         from app.services.intelligence.advanced_llm_service import get_llm_service
+
         llm_service = await get_llm_service()
-        
+
         # Determine persona
         persona = request.persona or "frenly"
-        
+
         # Generate Response using Real/Fallback Service
         llm_response = await llm_service.generate_response(
-            prompt=request.message,
-            context=request.context,
-            persona=persona
+            prompt=request.message, context=request.context, persona=persona
         )
-        
+
         # Propose actions based on keywords (Heuristic Layer)
         suggestions = []
         msg_lower = request.message.lower()
-        
+
         if "delete" in msg_lower or "remove" in msg_lower:
-             suggestions.append({
-                 "id": "sugg_1",
-                 "label": "Bulk Delete Suspect Files",
-                 "action": "bulk_delete",
-                 "type": "delete",
-                 "impact": "high",
-                 "description": "Remove all temporary processing files from high-risk evidence buckets.",
-                 "reasoning": "User expressed intent to cleanup; high risk files should be non-persistent.",
-                 "confidence": 0.98
-             })
-        
+            suggestions.append(
+                {
+                    "id": "sugg_1",
+                    "label": "Bulk Delete Suspect Files",
+                    "action": "bulk_delete",
+                    "type": "delete",
+                    "impact": "high",
+                    "description": "Remove all temporary processing files from high-risk evidence buckets.",
+                    "reasoning": "User expressed intent to cleanup; high risk files should be non-persistent.",
+                    "confidence": 0.98,
+                }
+            )
+
         if "freeze" in msg_lower or "block" in msg_lower:
-            suggestions.append({
-                 "id": "sugg_2",
-                 "label": "Apply Account Freeze",
-                 "action": "freeze_account",
-                 "type": "financial",
-                 "impact": "critical",
-                 "description": "Place a 48-hour administrative hold on the suspected beneficiary account.",
-                 "reasoning": "Detected urgent risk of fund dissipation during investigation.",
-                 "confidence": 0.85
-            })
-            
+            suggestions.append(
+                {
+                    "id": "sugg_2",
+                    "label": "Apply Account Freeze",
+                    "action": "freeze_account",
+                    "type": "financial",
+                    "impact": "critical",
+                    "description": "Place a 48-hour administrative hold on the suspected beneficiary account.",
+                    "reasoning": "Detected urgent risk of fund dissipation during investigation.",
+                    "confidence": 0.85,
+                }
+            )
+
         if "report" in msg_lower or "sar" in msg_lower:
-            suggestions.append({
-                 "id": "sugg_3",
-                 "label": "Generate Draft SAR",
-                 "action": "create_sar",
-                 "type": "create",
-                 "impact": "medium",
-                 "description": "Auto-populate a Suspicious Activity Report with current forensic findings.",
-                 "reasoning": "Activity exceeds the $5,000 regulatory reporting threshold.",
-                 "confidence": 0.92
-            })
+            suggestions.append(
+                {
+                    "id": "sugg_3",
+                    "label": "Generate Draft SAR",
+                    "action": "create_sar",
+                    "type": "create",
+                    "impact": "medium",
+                    "description": "Auto-populate a Suspicious Activity Report with current forensic findings.",
+                    "reasoning": "Activity exceeds the $5,000 regulatory reporting threshold.",
+                    "confidence": 0.92,
+                }
+            )
 
         # Red Team (Devil's Advocate) persona - Challenge assumptions and strengthen case
         if persona == "redteam":
-            suggestions.append({
-                "id": "redteam_1",
-                "label": "Challenge Evidence Authenticity",
-                "action": "verify_chain_of_custody",
-                "type": "update",
-                "impact": "medium",
-                "description": "Review chain of custody and verify evidence wasn't tampered with or misattributed.",
-                "reasoning": "Red Team: Evidence should be independently verified before drawing conclusions.",
-                "confidence": 0.95
-            })
-            suggestions.append({
-                "id": "redteam_2",
-                "label": "Find Alternative Explanations",
-                "action": "generate_alternative_hypotheses",
-                "type": "update",
-                "impact": "high",
-                "description": "Generate 3 alternative benign explanations for the observed behavior.",
-                "reasoning": "Red Team: Confirmation bias can lead to false positives. Consider innocent explanations.",
-                "confidence": 0.88
-            })
-            suggestions.append({
-                "id": "redteam_3",
-                "label": "Stress Test Timeline",
-                "action": "verify_timeline_integrity",
-                "type": "update",
-                "impact": "medium",
-                "description": "Check for gaps, inconsistencies, or anomalies in the reconstructed timeline.",
-                "reasoning": "Red Team: Timeline reconstruction may have errors that weaken prosecution.",
-                "confidence": 0.92
-            })
-            suggestions.append({
-                "id": "redteam_4",
-                "label": "Defense Attorney Perspective",
-                "action": "simulate_defense_arguments",
-                "type": "update",
-                "impact": "critical",
-                "description": "Simulate how a defense attorney would attack the current evidence and conclusions.",
-                "reasoning": "Red Team: Proactively address weaknesses before they're exploited in court.",
-                "confidence": 0.85
-            })
+            suggestions.append(
+                {
+                    "id": "redteam_1",
+                    "label": "Challenge Evidence Authenticity",
+                    "action": "verify_chain_of_custody",
+                    "type": "update",
+                    "impact": "medium",
+                    "description": "Review chain of custody and verify evidence wasn't tampered with or misattributed.",
+                    "reasoning": "Red Team: Evidence should be independently verified before drawing conclusions.",
+                    "confidence": 0.95,
+                }
+            )
+            suggestions.append(
+                {
+                    "id": "redteam_2",
+                    "label": "Find Alternative Explanations",
+                    "action": "generate_alternative_hypotheses",
+                    "type": "update",
+                    "impact": "high",
+                    "description": "Generate 3 alternative benign explanations for the observed behavior.",
+                    "reasoning": "Red Team: Confirmation bias can lead to false positives. Consider innocent explanations.",
+                    "confidence": 0.88,
+                }
+            )
+            suggestions.append(
+                {
+                    "id": "redteam_3",
+                    "label": "Stress Test Timeline",
+                    "action": "verify_timeline_integrity",
+                    "type": "update",
+                    "impact": "medium",
+                    "description": "Check for gaps, inconsistencies, or anomalies in the reconstructed timeline.",
+                    "reasoning": "Red Team: Timeline reconstruction may have errors that weaken prosecution.",
+                    "confidence": 0.92,
+                }
+            )
+            suggestions.append(
+                {
+                    "id": "redteam_4",
+                    "label": "Defense Attorney Perspective",
+                    "action": "simulate_defense_arguments",
+                    "type": "update",
+                    "impact": "critical",
+                    "description": "Simulate how a defense attorney would attack the current evidence and conclusions.",
+                    "reasoning": "Red Team: Proactively address weaknesses before they're exploited in court.",
+                    "confidence": 0.85,
+                }
+            )
 
         # Default fallback suggestions
         if not suggestions:
             suggestions = [
-                {"label": "Deep Scan for Entities", "action": "scan_entities", "type": "update", "impact": "low"},
-                {"label": "Link to Related Case", "action": "link_case", "type": "update", "impact": "medium"}
+                {
+                    "label": "Deep Scan for Entities",
+                    "action": "scan_entities",
+                    "type": "update",
+                    "impact": "low",
+                },
+                {
+                    "label": "Link to Related Case",
+                    "action": "link_case",
+                    "type": "update",
+                    "impact": "medium",
+                },
             ]
 
         return ChatResponse(
             response=llm_response.content,
             confidence=llm_response.confidence,
             persona=llm_response.provider,  # Use provider or mapped persona
-            suggestions=suggestions
+            suggestions=suggestions,
         )
 
     except Exception as e:
@@ -870,7 +907,8 @@ async def chat_with_ai(
 
 @router.post("/code-review", response_model=CodeReviewResponse)
 async def analyze_code(
-    request: CodeReviewRequest, current_user: User = Depends(auth_service.get_current_user)
+    request: CodeReviewRequest,
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     AI-powered automated code review and security analysis
@@ -900,7 +938,7 @@ async def analyze_code(
                     title="Potential Hardcoded Secret",
                     description="Detected patterns resembling hardcoded credentials.",
                     suggestion="Use environment variables.",
-                    confidence_score=0.95
+                    confidence_score=0.95,
                 )
             )
 
@@ -916,14 +954,14 @@ async def analyze_code(
                     title="AI Analysis Result",
                     description=response.content[:200] + "...",
                     suggestion="Review generated insights.",
-                    confidence_score=response.confidence
+                    confidence_score=response.confidence,
                 )
             )
-            
+
         return CodeReviewResponse(
             issues=issues,
             quality_score=85.0 if not issues else 70.0,
-            summary=response.content
+            summary=response.content,
         )
 
     except Exception as e:
@@ -939,7 +977,7 @@ async def multi_persona_chat(
     Get responses from multiple personas concurrently for comprehensive analysis
     """
     try:
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
 
         # Get LLM service for multi-persona analysis
         from app.services.intelligence.advanced_llm_service import get_llm_service
@@ -974,7 +1012,7 @@ async def multi_persona_chat(
         overall_confidence = sum(confidences) / len(confidences) if confidences else 0.0
 
         response_time = int(
-            (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            (datetime.now(UTC) - start_time).total_seconds() * 1000
         )
 
         # Log multi-persona interaction
@@ -1002,7 +1040,7 @@ async def multi_persona_chat(
 
 
 async def _generate_persona_synthesis(
-    responses: Dict[str, ChatResponse], original_query: str
+    responses: dict[str, ChatResponse], original_query: str
 ) -> str:
     """Generate synthesized analysis combining multiple persona perspectives"""
     try:
@@ -1067,14 +1105,14 @@ async def _generate_persona_synthesis(
 
 
 @router.post("/analyze/multimodal")
-async def multimodal_analysis(case_data: Dict[str, Any], db: Session = Depends(get_db)):
+async def multimodal_analysis(case_data: dict[str, Any], db: Session = Depends(get_db)):
     """
     Perform multi-modal analysis combining transaction, behavioral, network, and document analysis
     """
     try:
         ai_service = AIService(db)
 
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
 
         # Perform enhanced multi-modal analysis
         analysis_result = await ai_service.analyze_case(
@@ -1082,12 +1120,12 @@ async def multimodal_analysis(case_data: Dict[str, Any], db: Session = Depends(g
         )
 
         response_time = int(
-            (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            (datetime.now(UTC) - start_time).total_seconds() * 1000
         )
 
         # Add performance metrics
         analysis_result["response_time_ms"] = response_time
-        analysis_result["timestamp"] = datetime.now(timezone.utc).isoformat()
+        analysis_result["timestamp"] = datetime.now(UTC).isoformat()
 
         # Log multi-modal analysis
         await audit_service.log_access(
@@ -1123,7 +1161,7 @@ async def get_llm_status():
 
         return {
             "status": "operational",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "providers": status,
             "capabilities": {
                 "real_llm_integration": True,
@@ -1147,43 +1185,49 @@ async def get_llm_status():
 
 
 @router.get("/deprecated/usage")
-async def get_deprecated_usage(current_user: User = Depends(auth_service.get_current_user)):
+async def get_deprecated_usage(
+    current_user: User = Depends(auth_service.get_current_user),
+):
     """Get statistics on deprecated endpoint usage for migration monitoring"""
     try:
         from app.middleware.deprecated_monitor import get_deprecated_usage_stats
+
         stats = get_deprecated_usage_stats()
         return {
             "deprecated_endpoints": stats,
             "migration_status": "active",
             "removal_deadline": "2026-02-01",
-            "days_remaining": None  # Would calculate from current date
+            "days_remaining": None,  # Would calculate from current date
         }
     except Exception as e:
         logger.error(f"Deprecated usage stats failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get deprecated usage stats: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get deprecated usage stats: {e!s}"
+        )
+
 
 @router.post("/analyze/batch")
 async def analyze_batch(
-    payload: Dict[str, Any] = Body(...),
+    payload: dict[str, Any] = Body(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """Perform batch AI analysis on multiple cases or evidence"""
     try:
-        case_ids = payload.get("caseIds", [])
+        case_ids = payload.get("case_ids", [])
         if not case_ids:
             return {"status": "success", "processed": 0}
 
         ai_service = await get_ai_service()
-        
+
         # In a real implementation, we would queue background tasks
         logger.info(f"Batch AI analysis started for {len(case_ids)} cases")
-        
+
         return {
             "status": "success",
             "processed": len(case_ids),
             "job_id": f"batch_{int(datetime.now().timestamp())}",
-            "message": "Batch analysis has been queued"
+            "message": "Batch analysis has been queued",
         }
     except Exception as e:
         logger.error(f"Batch analysis failed: {e}")

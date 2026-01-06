@@ -47,7 +47,7 @@ def run_tests():
         "Export Report",
         "/reporting/export",
         "POST",
-        {"caseIds": ["CASE-123"], "format": "pdf"},
+        {"case_ids": ["CASE-123"], "format": "pdf"},
     ):
         passed = False
 

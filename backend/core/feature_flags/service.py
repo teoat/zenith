@@ -1,14 +1,16 @@
-from typing import Dict, Any, Optional
+import hashlib
 import json
+import logging
 from datetime import datetime
+from typing import Any
+
 from sqlalchemy.orm import Session
-from sqlalchemy import select, update
+
 from core.cache import cache_service
 from core.feature_flags.models import FeatureFlag
-import hashlib
-import logging
 
 logger = logging.getLogger(__name__)
+
 
 class FeatureFlagService:
     def __init__(self):
@@ -18,8 +20,8 @@ class FeatureFlagService:
         self,
         db: Session,
         flag_name: str,
-        user_id: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None
+        user_id: str | None = None,
+        context: dict[str, Any] | None = None,
     ) -> bool:
         """
         Check if feature flag is enabled for user/context.
@@ -53,11 +55,15 @@ class FeatureFlagService:
 
             # Target users logic
             if flag.target_users and user_id:
-                 # target_users is stored as JSON list
-                 target_users_list = flag.target_users if isinstance(flag.target_users, list) else json.loads(flag.target_users)
-                 if user_id not in target_users_list:
-                     return False
-            
+                # target_users is stored as JSON list
+                target_users_list = (
+                    flag.target_users
+                    if isinstance(flag.target_users, list)
+                    else json.loads(flag.target_users)
+                )
+                if user_id not in target_users_list:
+                    return False
+
             # Cache result
             cache_service.set(cache_key, True, self.cache_ttl)
             return True
@@ -77,11 +83,12 @@ class FeatureFlagService:
             flag.disabled_reason = reason
             flag.disabled_at = datetime.now()
             db.commit()
-            
+
             # Invalidate cache
             try:
                 cache_service.invalidate_pattern(f"feature_flag:{flag_name}:*")
             except Exception as e:
                 logger.error(f"Failed to invalidate cache for flag {flag_name}: {e}")
+
 
 feature_flag_service = FeatureFlagService()

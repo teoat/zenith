@@ -25,7 +25,6 @@ from core.database import (
     CaseStatus,
     CaseType,
     Evidence,
-    FraudAlert,
     Transaction,
     User,
     UserRole,
@@ -201,7 +200,7 @@ def seed_cases(session, users):
         case = Case(
             id=str(uuid.uuid4()),
             title=title,
-            description=f"Investigation into suspicious activity patterns. Case involves multiple entities and complex transaction flows requiring detailed forensic analysis.",
+            description="Investigation into suspicious activity patterns. Case involves multiple entities and complex transaction flows requiring detailed forensic analysis.",
             status=random.choice(STATUSES),
             priority=random.choice(PRIORITIES),
             case_type=random.choice(CASE_TYPES),

@@ -6,7 +6,6 @@ Analyzes all project files and evaluates SSOT/lockfile coverage
 
 import hashlib
 import json
-import os
 import sys
 from dataclasses import dataclass, field
 from enum import Enum
@@ -47,7 +46,7 @@ class FileAnalysis:
     size_bytes: int
     checksum: str
     last_modified: str
-    dependencies: List[str] = field(default_factory=list)
+    dependencies: list[str] = field(default_factory=list)
     risk_score: int = 0
     reason: str = ""
 
@@ -77,7 +76,7 @@ class ComprehensiveFileAnalyzer:
 
     def __init__(self):
         self.project_root = project_root
-        self.analysis_results: Dict[str, FileAnalysis] = {}
+        self.analysis_results: dict[str, FileAnalysis] = {}
 
         # Load existing SSOT/lockfile data
         self.existing_ssot_files = self._load_existing_ssot_files()
@@ -184,7 +183,7 @@ class ComprehensiveFileAnalyzer:
             ],
         }
 
-    def _load_existing_ssot_files(self) -> Set[str]:
+    def _load_existing_ssot_files(self) -> set[str]:
         """Load currently SSOT protected files"""
         ssot_files = set()
 
@@ -192,10 +191,9 @@ class ComprehensiveFileAnalyzer:
         ssot_master = self.project_root / "scripts" / "diagnostics" / "ssot_master.json"
         if ssot_master.exists():
             try:
-                with open(ssot_master, "r") as f:
+                with open(ssot_master) as f:
                     data = json.load(f)
                     # SSOT master contains system metrics, not file paths
-                    pass
             except:
                 pass
 
@@ -204,31 +202,31 @@ class ComprehensiveFileAnalyzer:
         for lockfile in lockfile_dir.glob("*.lock"):
             if lockfile.exists():
                 try:
-                    with open(lockfile, "r") as f:
+                    with open(lockfile) as f:
                         data = json.load(f)
                         if "files" in data:
-                            for filename in data["files"].keys():
+                            for filename in data["files"]:
                                 ssot_files.add(filename)
                 except:
                     pass
 
         return ssot_files
 
-    def _load_existing_lockfiles(self) -> Dict[str, Any]:
+    def _load_existing_lockfiles(self) -> dict[str, Any]:
         """Load existing lockfile data"""
         lockfiles = {}
 
         lockfile_dir = self.project_root / "scripts" / "diagnostics"
         for lockfile in lockfile_dir.glob("*.lock"):
             try:
-                with open(lockfile, "r") as f:
+                with open(lockfile) as f:
                     lockfiles[lockfile.name] = json.load(f)
             except:
                 pass
 
         return lockfiles
 
-    def _calculate_file_category(self, file_path: Path) -> Tuple[FileCategory, str]:
+    def _calculate_file_category(self, file_path: Path) -> tuple[FileCategory, str]:
         """Determine file category and reason"""
         file_str = str(file_path)
 
@@ -242,18 +240,18 @@ class ComprehensiveFileAnalyzer:
             if Path(file_str).match(pattern):
                 return (
                     FileCategory.CRITICAL,
-                    f"Core business logic/security/API contract",
+                    "Core business logic/security/API contract",
                 )
 
         # Check high priority patterns
         for pattern in self.file_patterns[FileCategory.HIGH]:
             if Path(file_str).match(pattern):
-                return FileCategory.HIGH, f"Important infrastructure/configuration"
+                return FileCategory.HIGH, "Important infrastructure/configuration"
 
         # Check medium priority patterns
         for pattern in self.file_patterns[FileCategory.MEDIUM]:
             if Path(file_str).match(pattern):
-                return FileCategory.MEDIUM, f"Supporting services/utilities"
+                return FileCategory.MEDIUM, "Supporting services/utilities"
 
         # Default to low priority
         return FileCategory.LOW, "Documentation/examples/supporting files"
@@ -364,7 +362,7 @@ class ComprehensiveFileAnalyzer:
                 checksum="",
                 last_modified="",
                 risk_score=0,
-                reason=f"Error analyzing: {str(e)}",
+                reason=f"Error analyzing: {e!s}",
             )
 
     def analyze_all_files(self) -> CoverageAnalysis:
@@ -460,7 +458,7 @@ class ComprehensiveFileAnalyzer:
 
         return coverage
 
-    def generate_report(self, coverage: CoverageAnalysis) -> Dict[str, Any]:
+    def generate_report(self, coverage: CoverageAnalysis) -> dict[str, Any]:
         """Generate comprehensive analysis report"""
         report = {
             "timestamp": str(Path(__file__).stat().st_mtime),

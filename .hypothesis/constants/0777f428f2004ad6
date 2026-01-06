@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/ai_models.py
+# hypothesis_version: 6.148.8
+
+[400, 403, 404, 500, '/', '/ai/models', '/compare', '/deploy', '/{model_name}', 'AI Models', 'Metrics to compare', 'Model info requested', 'Model info retrieved', 'Number of replicas', 'Resource limits', 'Version to deploy', 'admin', 'ai_model_deployed', 'analyst', 'compare_models', 'deploy_model', 'deployment_id', 'endpoint', 'environment', 'error', 'framework_filter', 'get_model_info', 'list_models', 'message', 'model_name', 'models', 'models_compared', 'models_count', 'replicas', 'status_filter', 'stop_deployment', 'user_id', 'version']

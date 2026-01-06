@@ -6,12 +6,11 @@ Diagnoses all critical files to ensure they are error-free and properly locked
 
 import hashlib
 import json
-import os
 import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
@@ -42,43 +41,43 @@ class SSOTDiagnosticSuite:
             with open(file_path, "rb") as f:
                 return hashlib.sha256(f.read()).hexdigest()
         except Exception as e:
-            return f"error: {str(e)}"
+            return f"error: {e!s}"
 
-    def validate_json_file(self, file_path: Path) -> Tuple[bool, str]:
+    def validate_json_file(self, file_path: Path) -> tuple[bool, str]:
         """Validate JSON file syntax and structure"""
         if not file_path.exists():
             return False, "File does not exist"
 
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 json.load(f)
             return True, "Valid JSON"
         except json.JSONDecodeError as e:
-            return False, f"Invalid JSON: {str(e)}"
+            return False, f"Invalid JSON: {e!s}"
         except Exception as e:
-            return False, f"Error reading file: {str(e)}"
+            return False, f"Error reading file: {e!s}"
 
-    def validate_python_file(self, file_path: Path) -> Tuple[bool, str]:
+    def validate_python_file(self, file_path: Path) -> tuple[bool, str]:
         """Validate Python file syntax"""
         if not file_path.exists():
             return False, "File does not exist"
 
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 compile(f.read(), str(file_path), "exec")
             return True, "Valid Python syntax"
         except SyntaxError as e:
-            return False, f"Python syntax error: {str(e)}"
+            return False, f"Python syntax error: {e!s}"
         except Exception as e:
-            return False, f"Error reading file: {str(e)}"
+            return False, f"Error reading file: {e!s}"
 
-    def validate_typescript_file(self, file_path: Path) -> Tuple[bool, str]:
+    def validate_typescript_file(self, file_path: Path) -> tuple[bool, str]:
         """Validate TypeScript file (basic checks)"""
         if not file_path.exists():
             return False, "File does not exist"
 
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 content = f.read()
 
             # Basic validation - check for obvious syntax issues
@@ -90,9 +89,9 @@ class SSOTDiagnosticSuite:
 
             return True, "Basic TypeScript validation passed"
         except Exception as e:
-            return False, f"Error reading file: {str(e)}"
+            return False, f"Error reading file: {e!s}"
 
-    def validate_shell_script(self, file_path: Path) -> Tuple[bool, str]:
+    def validate_shell_script(self, file_path: Path) -> tuple[bool, str]:
         """Validate shell script syntax"""
         if not file_path.exists():
             return False, "File does not exist"
@@ -113,9 +112,9 @@ class SSOTDiagnosticSuite:
         except subprocess.TimeoutExpired:
             return False, "Script validation timed out"
         except Exception as e:
-            return False, f"Error validating script: {str(e)}"
+            return False, f"Error validating script: {e!s}"
 
-    def diagnose_ssot_master(self) -> Dict[str, Any]:
+    def diagnose_ssot_master(self) -> dict[str, Any]:
         """Diagnose SSOT master file"""
         ssot_file = self.diagnostics_dir / "ssot_master.json"
 
@@ -142,7 +141,7 @@ class SSOTDiagnosticSuite:
 
         # Load and analyze content
         try:
-            with open(ssot_file, "r") as f:
+            with open(ssot_file) as f:
                 data = json.load(f)
 
             # Check required fields
@@ -167,7 +166,7 @@ class SSOTDiagnosticSuite:
 
             # Check for infinite values (as per system design)
             infinite_values = 0
-            for key, entry in data.items():
+            for entry in data.values():
                 if entry.get("value") == "infinite":
                     infinite_values += 1
 
@@ -183,11 +182,11 @@ class SSOTDiagnosticSuite:
 
         except Exception as e:
             result["status"] = "critical"
-            result["issues"].append(f"Error analyzing SSOT content: {str(e)}")
+            result["issues"].append(f"Error analyzing SSOT content: {e!s}")
 
         return result
 
-    def diagnose_lockfiles(self) -> Dict[str, Any]:
+    def diagnose_lockfiles(self) -> dict[str, Any]:
         """Diagnose all lockfiles"""
         lockfiles = {
             "dependencies.lock": "dependencies",
@@ -252,7 +251,7 @@ class SSOTDiagnosticSuite:
 
         return result
 
-    def diagnose_critical_files(self) -> Dict[str, Any]:
+    def diagnose_critical_files(self) -> dict[str, Any]:
         """Diagnose critical system files"""
         critical_files = {
             # Core business logic
@@ -320,7 +319,7 @@ class SSOTDiagnosticSuite:
                 else:
                     # For other file types, just check if readable
                     try:
-                        with open(file_path, "r") as f:
+                        with open(file_path) as f:
                             f.read(1024)  # Read first 1KB
                         is_valid, message = True, "File readable"
                     except Exception as e:
@@ -393,7 +392,7 @@ class SSOTDiagnosticSuite:
 
         self.results["recommendations"] = recommendations
 
-    def run_full_diagnostics(self) -> Dict[str, Any]:
+    def run_full_diagnostics(self) -> dict[str, Any]:
         """Run comprehensive diagnostics"""
         print("🔍 Running Comprehensive SSOT and Lockfile Diagnostics")
         print("=" * 60)
@@ -483,7 +482,7 @@ class SSOTDiagnosticSuite:
             if len(critical_issues) > 10:
                 print(f"  ... and {len(critical_issues) - 10} more")
 
-    def save_report(self, output_file: str = None):
+    def save_report(self, output_file: str | None = None):
         """Save diagnostic report to file"""
         if not output_file:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -521,7 +520,7 @@ def main():
             sys.exit(0)
 
     except Exception as e:
-        print(f"❌ Diagnostic suite failed: {str(e)}")
+        print(f"❌ Diagnostic suite failed: {e!s}")
         import traceback
 
         traceback.print_exc()

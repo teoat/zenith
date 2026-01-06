@@ -10,14 +10,15 @@ import psutil
 from fastapi import APIRouter, Response
 from prometheus_client import (
     CONTENT_TYPE_LATEST,
+    REGISTRY,
     Counter,
     Gauge,
     Histogram,
     generate_latest,
-    REGISTRY,
 )
 
 router = APIRouter()
+
 
 def get_or_create_metric(metric_class, name, documentation, labelnames=(), **kwargs):
     """Safely get or create a prometheus metric to handle reloads"""
@@ -30,9 +31,13 @@ def get_or_create_metric(metric_class, name, documentation, labelnames=(), **kwa
             return REGISTRY._names_to_collectors[name]
         raise
 
+
 # HTTP Metrics
 http_requests_total = get_or_create_metric(
-    Counter, "http_requests_total", "Total HTTP requests", ["method", "endpoint", "status"]
+    Counter,
+    "http_requests_total",
+    "Total HTTP requests",
+    ["method", "endpoint", "status"],
 )
 
 http_request_duration_seconds = get_or_create_metric(
@@ -51,17 +56,27 @@ ai_prediction_confidence = get_or_create_metric(
     Histogram, "ai_prediction_confidence", "AI prediction confidence scores"
 )
 
-pending_cases_total = get_or_create_metric(Gauge, "pending_cases_total", "Number of pending cases")
+pending_cases_total = get_or_create_metric(
+    Gauge, "pending_cases_total", "Number of pending cases"
+)
 
-approval_queue_size = get_or_create_metric(Gauge, "approval_queue_size", "Number of items in approval queue")
+approval_queue_size = get_or_create_metric(
+    Gauge, "approval_queue_size", "Number of items in approval queue"
+)
 
 # System Metrics
 db_query_duration_seconds = get_or_create_metric(
-    Histogram, "db_query_duration_seconds", "Database query duration in seconds", ["query_type"]
+    Histogram,
+    "db_query_duration_seconds",
+    "Database query duration in seconds",
+    ["query_type"],
 )
 
 cache_requests_total = get_or_create_metric(
-    Counter, "cache_requests_total", "Total cache requests", ["result"]  # hit or miss
+    Counter,
+    "cache_requests_total",
+    "Total cache requests",
+    ["result"],  # hit or miss
 )
 
 websocket_connections = get_or_create_metric(
@@ -83,6 +98,7 @@ async def metrics():
     """
     # Use a simple cache to avoid regenerating metrics too frequently
     import time
+
     cache_key = "_metrics_cache"
     cache_timeout = 10  # Cache for 10 seconds
 

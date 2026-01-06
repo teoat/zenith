@@ -9,11 +9,13 @@ Generates detailed diagnostic reports with sector analysis, scoring, and recomme
 import asyncio
 import json
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Any
-import psutil
+from typing import Any, Dict, List
+
 import aiohttp
+import psutil
+
 
 class ComprehensiveDiagnosticReport:
     """Generate comprehensive diagnostic reports with scoring"""
@@ -22,26 +24,32 @@ class ComprehensiveDiagnosticReport:
         self.project_root = Path(__file__).parent.parent.parent
         self.report = {
             "title": "Zenith Fraud Detection System - Comprehensive Diagnostic Report",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "version": "3.0",
             "sectors": {},
             "executive_summary": {},
-            "recommendations": []
+            "recommendations": [],
         }
 
-    def calculate_sector_score(self, sector_name: str, data: Dict[str, Any]) -> Dict[str, Any]:
+    def calculate_sector_score(
+        self, sector_name: str, data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Calculate comprehensive score for a sector"""
         scores = {
-            "criticality": 8.5 if sector_name in ["backend", "database", "ai_ml", "security"] else 7.0,
+            "criticality": 8.5
+            if sector_name in ["backend", "database", "ai_ml", "security"]
+            else 7.0,
             "performance": 7.5,
             "reliability": 8.0 if data.get("status") == "healthy" else 4.0,
             "security": 7.5,
-            "maintainability": 7.0
+            "maintainability": 7.0,
         }
 
         # Adjust based on actual data
-        if "issues" in data and data["issues"]:
-            critical_issues = len([i for i in data["issues"] if "critical" in i.lower()])
+        if data.get("issues"):
+            critical_issues = len(
+                [i for i in data["issues"] if "critical" in i.lower()]
+            )
             scores["reliability"] -= critical_issues * 1.5
 
         if sector_name == "infrastructure":
@@ -66,10 +74,18 @@ class ComprehensiveDiagnosticReport:
             "overall_score": round(overall_score, 2),
             "rating": rating,
             "breakdown": scores,
-            "grade": "A" if overall_score >= 9 else "B" if overall_score >= 7 else "C" if overall_score >= 5 else "D" if overall_score >= 3 else "F"
+            "grade": "A"
+            if overall_score >= 9
+            else "B"
+            if overall_score >= 7
+            else "C"
+            if overall_score >= 5
+            else "D"
+            if overall_score >= 3
+            else "F",
         }
 
-    async def analyze_infrastructure_sector(self) -> Dict[str, Any]:
+    async def analyze_infrastructure_sector(self) -> dict[str, Any]:
         """Deep analysis of infrastructure sector"""
         analysis = {
             "status": "healthy",
@@ -78,12 +94,12 @@ class ComprehensiveDiagnosticReport:
                 "network_infrastructure": {},
                 "service_orchestration": {},
                 "storage_systems": {},
-                "monitoring_infrastructure": {}
+                "monitoring_infrastructure": {},
             },
             "issues": [],
             "metrics": {},
             "insights": [],
-            "recommendations": []
+            "recommendations": [],
         }
 
         # System Resources Analysis
@@ -92,9 +108,11 @@ class ComprehensiveDiagnosticReport:
             "memory_percent": psutil.virtual_memory().percent,
             "memory_used_gb": round(psutil.virtual_memory().used / (1024**3), 2),
             "memory_total_gb": round(psutil.virtual_memory().total / (1024**3), 2),
-            "disk_usage_percent": psutil.disk_usage('/').percent,
-            "load_average": psutil.getloadavg() if hasattr(psutil, 'getloadavg') else None,
-            "process_count": len(psutil.pids())
+            "disk_usage_percent": psutil.disk_usage("/").percent,
+            "load_average": psutil.getloadavg()
+            if hasattr(psutil, "getloadavg")
+            else None,
+            "process_count": len(psutil.pids()),
         }
 
         analysis["metrics"] = system_metrics
@@ -104,7 +122,9 @@ class ComprehensiveDiagnosticReport:
         if cpu_percent > 90:
             analysis["issues"].append("CRITICAL: Extremely high CPU utilization")
             analysis["sub_sectors"]["system_resources"]["cpu_status"] = "critical"
-            analysis["recommendations"].append("URGENT: Investigate CPU-intensive processes")
+            analysis["recommendations"].append(
+                "URGENT: Investigate CPU-intensive processes"
+            )
         elif cpu_percent > 75:
             analysis["issues"].append("WARNING: High CPU utilization detected")
             analysis["sub_sectors"]["system_resources"]["cpu_status"] = "warning"
@@ -117,7 +137,9 @@ class ComprehensiveDiagnosticReport:
         if memory_percent > 85:
             analysis["issues"].append("WARNING: High memory utilization")
             analysis["sub_sectors"]["system_resources"]["memory_status"] = "warning"
-            analysis["recommendations"].append("Optimize memory usage or increase allocation")
+            analysis["recommendations"].append(
+                "Optimize memory usage or increase allocation"
+            )
         else:
             analysis["sub_sectors"]["system_resources"]["memory_status"] = "optimal"
 
@@ -130,26 +152,34 @@ class ComprehensiveDiagnosticReport:
                 result = await asyncio.create_subprocess_shell(
                     f"pgrep -f {service}",
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
-                stdout, _ = await result.communicate()
+                _stdout, _ = await result.communicate()
                 if result.returncode == 0:
                     running_services += 1
-                    analysis["sub_sectors"]["service_orchestration"][service] = "running"
+                    analysis["sub_sectors"]["service_orchestration"][service] = (
+                        "running"
+                    )
                 else:
-                    analysis["sub_sectors"]["service_orchestration"][service] = "stopped"
+                    analysis["sub_sectors"]["service_orchestration"][service] = (
+                        "stopped"
+                    )
                     analysis["issues"].append(f"Service {service} is not running")
             except Exception:
                 analysis["sub_sectors"]["service_orchestration"][service] = "unknown"
 
-        analysis["sub_sectors"]["service_orchestration"]["running_percentage"] = (running_services / len(services_to_check)) * 100
+        analysis["sub_sectors"]["service_orchestration"]["running_percentage"] = (
+            running_services / len(services_to_check)
+        ) * 100
 
         # Network Analysis
         try:
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as session:
+            async with aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(total=5)
+            ) as session:
                 test_urls = {
                     "backend_api": "http://localhost:8001/health",
-                    "frontend_dev": "http://localhost:5173"
+                    "frontend_dev": "http://localhost:5173",
                 }
 
                 healthy_connections = 0
@@ -157,22 +187,34 @@ class ComprehensiveDiagnosticReport:
                     try:
                         async with session.get(url) as response:
                             if response.status < 400:
-                                analysis["sub_sectors"]["network_infrastructure"][name] = "healthy"
+                                analysis["sub_sectors"]["network_infrastructure"][
+                                    name
+                                ] = "healthy"
                                 healthy_connections += 1
                             else:
-                                analysis["sub_sectors"]["network_infrastructure"][name] = "unhealthy"
-                                analysis["issues"].append(f"{name} endpoint returning status {response.status}")
+                                analysis["sub_sectors"]["network_infrastructure"][
+                                    name
+                                ] = "unhealthy"
+                                analysis["issues"].append(
+                                    f"{name} endpoint returning status {response.status}"
+                                )
                     except Exception as e:
-                        analysis["sub_sectors"]["network_infrastructure"][name] = "unreachable"
-                        analysis["issues"].append(f"{name} unreachable: {str(e)}")
+                        analysis["sub_sectors"]["network_infrastructure"][name] = (
+                            "unreachable"
+                        )
+                        analysis["issues"].append(f"{name} unreachable: {e!s}")
 
-                analysis["sub_sectors"]["network_infrastructure"]["connectivity_score"] = (healthy_connections / len(test_urls)) * 100
+                analysis["sub_sectors"]["network_infrastructure"][
+                    "connectivity_score"
+                ] = (healthy_connections / len(test_urls)) * 100
 
         except Exception as e:
-            analysis["issues"].append(f"Network analysis failed: {str(e)}")
+            analysis["issues"].append(f"Network analysis failed: {e!s}")
 
         # Overall status
-        critical_issues = len([i for i in analysis["issues"] if "CRITICAL" in i or "URGENT" in i])
+        critical_issues = len(
+            [i for i in analysis["issues"] if "CRITICAL" in i or "URGENT" in i]
+        )
         warning_issues = len([i for i in analysis["issues"] if "WARNING" in i])
 
         if critical_issues > 0:
@@ -185,12 +227,12 @@ class ComprehensiveDiagnosticReport:
         analysis["insights"] = [
             f"System running with {system_metrics['cpu_percent']:.1f}% CPU and {system_metrics['memory_percent']:.1f}% memory utilization",
             f"{running_services}/{len(services_to_check)} critical services are running",
-            f"Network connectivity: {analysis['sub_sectors']['network_infrastructure'].get('connectivity_score', 0):.0f}% healthy endpoints"
+            f"Network connectivity: {analysis['sub_sectors']['network_infrastructure'].get('connectivity_score', 0):.0f}% healthy endpoints",
         ]
 
         return analysis
 
-    async def analyze_backend_sector(self) -> Dict[str, Any]:
+    async def analyze_backend_sector(self) -> dict[str, Any]:
         """Deep analysis of backend sector"""
         analysis = {
             "status": "healthy",
@@ -199,26 +241,28 @@ class ComprehensiveDiagnosticReport:
                 "database_layer": {},
                 "service_dependencies": {},
                 "error_handling": {},
-                "performance_metrics": {}
+                "performance_metrics": {},
             },
             "issues": [],
             "metrics": {},
             "insights": [],
-            "recommendations": []
+            "recommendations": [],
         }
 
         # API Endpoints Analysis
         api_endpoints = {
             "/health": "System health check",
             "/api/v1/ai/status": "AI service status",
-            "/docs": "API documentation"
+            "/docs": "API documentation",
         }
 
         healthy_endpoints = 0
         total_endpoints = len(api_endpoints)
 
         try:
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as session:
+            async with aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(total=5)
+            ) as session:
                 for endpoint, description in api_endpoints.items():
                     url = f"http://localhost:8001{endpoint}"
                     try:
@@ -234,30 +278,39 @@ class ComprehensiveDiagnosticReport:
                                 "status": status,
                                 "response_code": response.status,
                                 "response_time": round(response_time, 3),
-                                "description": description
+                                "description": description,
                             }
 
                             if response.status >= 400:
-                                analysis["issues"].append(f"API endpoint {endpoint} returning {response.status}")
+                                analysis["issues"].append(
+                                    f"API endpoint {endpoint} returning {response.status}"
+                                )
 
                     except Exception as e:
                         analysis["sub_sectors"]["api_endpoints"][endpoint] = {
                             "status": "unreachable",
                             "error": str(e),
-                            "description": description
+                            "description": description,
                         }
-                        analysis["issues"].append(f"API endpoint {endpoint} unreachable")
+                        analysis["issues"].append(
+                            f"API endpoint {endpoint} unreachable"
+                        )
 
         except Exception as e:
-            analysis["issues"].append(f"API analysis failed: {str(e)}")
+            analysis["issues"].append(f"API analysis failed: {e!s}")
 
-        analysis["sub_sectors"]["api_endpoints"]["health_score"] = (healthy_endpoints / total_endpoints) * 100
+        analysis["sub_sectors"]["api_endpoints"]["health_score"] = (
+            healthy_endpoints / total_endpoints
+        ) * 100
 
         # Database Layer Analysis
         analysis["sub_sectors"]["database_layer"] = {
             "status": "unknown",
             "note": "Database connectivity requires specific implementation",
-            "recommendations": ["Implement database health checks", "Add connection pooling monitoring"]
+            "recommendations": [
+                "Implement database health checks",
+                "Add connection pooling monitoring",
+            ],
         }
 
         # Service Dependencies Analysis
@@ -268,15 +321,19 @@ class ComprehensiveDiagnosticReport:
             try:
                 if dep == "ai_service":
                     from app.services.ai.ai_service import ai_service
+
                     if ai_service.initialized:
                         analysis["sub_sectors"]["service_dependencies"][dep] = "healthy"
                         healthy_deps += 1
                     else:
-                        analysis["sub_sectors"]["service_dependencies"][dep] = "unhealthy"
+                        analysis["sub_sectors"]["service_dependencies"][dep] = (
+                            "unhealthy"
+                        )
                         analysis["issues"].append("AI service not properly initialized")
                 elif dep == "cache_service":
                     import redis
-                    r = redis.Redis(host='localhost', port=6379, db=0, socket_timeout=5)
+
+                    r = redis.Redis(host="localhost", port=6379, db=0, socket_timeout=5)
                     r.ping()
                     analysis["sub_sectors"]["service_dependencies"][dep] = "healthy"
                     healthy_deps += 1
@@ -286,14 +343,19 @@ class ComprehensiveDiagnosticReport:
                 analysis["sub_sectors"]["service_dependencies"][dep] = "unhealthy"
                 analysis["issues"].append(f"{dep} dependency issues detected")
 
-        analysis["sub_sectors"]["service_dependencies"]["dependency_score"] = (healthy_deps / len(dependencies)) * 100
+        analysis["sub_sectors"]["service_dependencies"]["dependency_score"] = (
+            healthy_deps / len(dependencies)
+        ) * 100
 
         # Performance Metrics
         analysis["sub_sectors"]["performance_metrics"] = {
             "average_response_time": "unknown",
             "error_rate": "unknown",
             "throughput": "unknown",
-            "recommendations": ["Implement comprehensive API monitoring", "Add performance metrics collection"]
+            "recommendations": [
+                "Implement comprehensive API monitoring",
+                "Add performance metrics collection",
+            ],
         }
 
         # Overall status
@@ -305,18 +367,20 @@ class ComprehensiveDiagnosticReport:
         analysis["insights"] = [
             f"API health: {healthy_endpoints}/{total_endpoints} endpoints healthy",
             f"Service dependencies: {healthy_deps}/{len(dependencies)} healthy",
-            f"Identified {len(analysis['issues'])} issues requiring attention"
+            f"Identified {len(analysis['issues'])} issues requiring attention",
         ]
 
-        analysis["recommendations"].extend([
-            "Implement comprehensive API health monitoring",
-            "Add database connectivity checks",
-            "Set up service dependency monitoring"
-        ])
+        analysis["recommendations"].extend(
+            [
+                "Implement comprehensive API health monitoring",
+                "Add database connectivity checks",
+                "Set up service dependency monitoring",
+            ]
+        )
 
         return analysis
 
-    async def analyze_ai_ml_sector(self) -> Dict[str, Any]:
+    async def analyze_ai_ml_sector(self) -> dict[str, Any]:
         """Deep analysis of AI/ML sector"""
         analysis = {
             "status": "healthy",
@@ -325,12 +389,12 @@ class ComprehensiveDiagnosticReport:
                 "vector_operations": {},
                 "embedding_quality": {},
                 "search_accuracy": {},
-                "resource_efficiency": {}
+                "resource_efficiency": {},
             },
             "issues": [],
             "metrics": {},
             "insights": [],
-            "recommendations": []
+            "recommendations": [],
         }
 
         try:
@@ -342,13 +406,13 @@ class ComprehensiveDiagnosticReport:
                     "model_loaded": True,
                     "model_type": "sentence-transformers/all-MiniLM-L6-v2",
                     "embedding_dimension": 384,
-                    "status": "operational"
+                    "status": "operational",
                 }
             else:
                 analysis["sub_sectors"]["model_performance"] = {
                     "model_loaded": False,
                     "status": "failed",
-                    "error": "ML model not initialized"
+                    "error": "ML model not initialized",
                 }
                 analysis["issues"].append("CRITICAL: AI model not loaded")
                 analysis["status"] = "critical"
@@ -357,21 +421,27 @@ class ComprehensiveDiagnosticReport:
             vector_count = len(ai_service.vector_store)
             analysis["sub_sectors"]["vector_operations"] = {
                 "vector_store_size": vector_count,
-                "index_type": "FAISS" if hasattr(ai_service, 'faiss_index') and ai_service.faiss_index else "TF-IDF",
+                "index_type": "FAISS"
+                if hasattr(ai_service, "faiss_index") and ai_service.faiss_index
+                else "TF-IDF",
                 "storage_backend": "SQLite",
-                "status": "operational" if vector_count > 0 else "empty"
+                "status": "operational" if vector_count > 0 else "empty",
             }
 
             if vector_count == 0:
-                analysis["issues"].append("Vector store is empty - no documents indexed")
-                analysis["recommendations"].append("Populate vector store with document embeddings")
+                analysis["issues"].append(
+                    "Vector store is empty - no documents indexed"
+                )
+                analysis["recommendations"].append(
+                    "Populate vector store with document embeddings"
+                )
 
             # Embedding Quality Analysis
             analysis["sub_sectors"]["embedding_quality"] = {
                 "embedding_method": "transformer_based",
                 "dimension_consistency": "unknown",
                 "quality_assessment": "high",
-                "validation_status": "requires_testing"
+                "validation_status": "requires_testing",
             }
 
             # Search Accuracy Analysis
@@ -379,7 +449,7 @@ class ComprehensiveDiagnosticReport:
                 "search_capability": "semantic_search",
                 "similarity_algorithm": "cosine_similarity",
                 "performance_metrics": "unknown",
-                "accuracy_assessment": "requires_benchmarking"
+                "accuracy_assessment": "requires_benchmarking",
             }
 
             # Resource Efficiency Analysis
@@ -387,36 +457,38 @@ class ComprehensiveDiagnosticReport:
                 "memory_usage": "unknown",
                 "cpu_usage": "unknown",
                 "inference_speed": "unknown",
-                "optimization_status": "requires_monitoring"
+                "optimization_status": "requires_monitoring",
             }
 
             analysis["metrics"] = {
                 "documents_indexed": vector_count,
                 "model_initialized": ai_service.initialized,
                 "vector_dimensions": 384,
-                "search_method": "semantic"
+                "search_method": "semantic",
             }
 
         except Exception as e:
-            analysis["issues"].append(f"AI service analysis failed: {str(e)}")
+            analysis["issues"].append(f"AI service analysis failed: {e!s}")
             analysis["status"] = "critical"
 
         analysis["insights"] = [
             f"AI service initialized: {analysis.get('status') != 'critical'}",
             f"Documents indexed: {analysis['metrics'].get('documents_indexed', 0)}",
-            f"Model operational: {analysis['sub_sectors']['model_performance'].get('model_loaded', False)}"
+            f"Model operational: {analysis['sub_sectors']['model_performance'].get('model_loaded', False)}",
         ]
 
         if analysis["status"] == "healthy":
-            analysis["recommendations"].extend([
-                "Implement AI performance monitoring",
-                "Add embedding quality validation",
-                "Set up search accuracy benchmarking"
-            ])
+            analysis["recommendations"].extend(
+                [
+                    "Implement AI performance monitoring",
+                    "Add embedding quality validation",
+                    "Set up search accuracy benchmarking",
+                ]
+            )
 
         return analysis
 
-    async def analyze_security_sector(self) -> Dict[str, Any]:
+    async def analyze_security_sector(self) -> dict[str, Any]:
         """Deep analysis of security sector"""
         analysis = {
             "status": "healthy",
@@ -425,12 +497,12 @@ class ComprehensiveDiagnosticReport:
                 "authorization": {},
                 "data_protection": {},
                 "network_security": {},
-                "compliance": {}
+                "compliance": {},
             },
             "issues": [],
             "metrics": {},
             "insights": [],
-            "recommendations": []
+            "recommendations": [],
         }
 
         # Authentication Analysis
@@ -445,14 +517,16 @@ class ComprehensiveDiagnosticReport:
                 analysis["sub_sectors"]["authentication"][var] = "missing"
                 analysis["issues"].append(f"Security variable {var} not configured")
 
-        analysis["sub_sectors"]["authentication"]["security_score"] = (configured_auth / len(auth_vars)) * 100
+        analysis["sub_sectors"]["authentication"]["security_score"] = (
+            configured_auth / len(auth_vars)
+        ) * 100
 
         # Authorization Analysis
         analysis["sub_sectors"]["authorization"] = {
             "role_based_access": "implemented",
             "permission_system": "active",
             "audit_logging": "enabled",
-            "status": "healthy"
+            "status": "healthy",
         }
 
         # Data Protection Analysis
@@ -461,7 +535,7 @@ class ComprehensiveDiagnosticReport:
             "encryption_in_transit": "unknown",
             "data_masking": "unknown",
             "pii_protection": "unknown",
-            "status": "requires_review"
+            "status": "requires_review",
         }
 
         # Network Security Analysis
@@ -478,22 +552,30 @@ class ComprehensiveDiagnosticReport:
                         "X-Content-Type-Options": headers.get("X-Content-Type-Options"),
                         "X-Frame-Options": headers.get("X-Frame-Options"),
                         "X-XSS-Protection": headers.get("X-XSS-Protection"),
-                        "Strict-Transport-Security": headers.get("Strict-Transport-Security"),
-                        "Content-Security-Policy": headers.get("Content-Security-Policy")
+                        "Strict-Transport-Security": headers.get(
+                            "Strict-Transport-Security"
+                        ),
+                        "Content-Security-Policy": headers.get(
+                            "Content-Security-Policy"
+                        ),
                     }
 
-                    implemented_headers = sum(1 for v in security_checks.values() if v is not None)
+                    implemented_headers = sum(
+                        1 for v in security_checks.values() if v is not None
+                    )
                     analysis["sub_sectors"]["network_security"] = {
                         "security_headers_implemented": implemented_headers,
                         "total_security_headers": len(security_checks),
                         "https_enabled": test_url.startswith("https"),
-                        "status": "good" if implemented_headers >= 3 else "needs_improvement"
+                        "status": "good"
+                        if implemented_headers >= 3
+                        else "needs_improvement",
                     }
 
         except Exception as e:
             analysis["sub_sectors"]["network_security"] = {
                 "status": "error",
-                "error": str(e)
+                "error": str(e),
             }
 
         # Compliance Analysis
@@ -502,7 +584,7 @@ class ComprehensiveDiagnosticReport:
             "hipaa_compliance": "unknown",
             "audit_trail": "enabled",
             "data_retention": "unknown",
-            "status": "requires_audit"
+            "status": "requires_audit",
         }
 
         # Overall security status
@@ -517,22 +599,24 @@ class ComprehensiveDiagnosticReport:
         analysis["insights"] = [
             f"Authentication security: {analysis['sub_sectors']['authentication']['security_score']:.0f}% configured",
             f"Security headers implemented: {analysis['sub_sectors']['network_security'].get('security_headers_implemented', 0)}/5",
-            f"Identified {len(analysis['issues'])} security issues"
+            f"Identified {len(analysis['issues'])} security issues",
         ]
 
-        analysis["recommendations"].extend([
-            "Implement HTTPS in production",
-            "Add comprehensive security headers",
-            "Set up automated security scanning",
-            "Implement security monitoring and alerting"
-        ])
+        analysis["recommendations"].extend(
+            [
+                "Implement HTTPS in production",
+                "Add comprehensive security headers",
+                "Set up automated security scanning",
+                "Implement security monitoring and alerting",
+            ]
+        )
 
         return analysis
 
-    async def generate_comprehensive_report(self) -> Dict[str, Any]:
+    async def generate_comprehensive_report(self) -> dict[str, Any]:
         """Generate comprehensive diagnostic report"""
         print("🔬 Generating Comprehensive System Diagnostic Report...")
-        print("="*80)
+        print("=" * 80)
 
         # Analyze all sectors
         sectors_to_analyze = ["infrastructure", "backend", "ai_ml", "security"]
@@ -541,26 +625,34 @@ class ComprehensiveDiagnosticReport:
             print(f"📋 Analyzing {sector} sector...")
             try:
                 if sector == "infrastructure":
-                    self.report["sectors"][sector] = await self.analyze_infrastructure_sector()
+                    self.report["sectors"][
+                        sector
+                    ] = await self.analyze_infrastructure_sector()
                 elif sector == "backend":
                     self.report["sectors"][sector] = await self.analyze_backend_sector()
                 elif sector == "ai_ml":
                     self.report["sectors"][sector] = await self.analyze_ai_ml_sector()
                 elif sector == "security":
-                    self.report["sectors"][sector] = await self.analyze_security_sector()
+                    self.report["sectors"][
+                        sector
+                    ] = await self.analyze_security_sector()
 
                 # Calculate scoring
                 sector_data = self.report["sectors"][sector]
-                sector_data["scoring"] = self.calculate_sector_score(sector, sector_data)
+                sector_data["scoring"] = self.calculate_sector_score(
+                    sector, sector_data
+                )
 
-                print(f"✅ {sector} analysis completed - Score: {sector_data['scoring']['overall_score']}/10 ({sector_data['scoring']['rating']})")
+                print(
+                    f"✅ {sector} analysis completed - Score: {sector_data['scoring']['overall_score']}/10 ({sector_data['scoring']['rating']})"
+                )
 
             except Exception as e:
                 print(f"❌ {sector} analysis failed: {e}")
                 self.report["sectors"][sector] = {
                     "status": "error",
                     "error": str(e),
-                    "scoring": {"overall_score": 0, "rating": "ERROR"}
+                    "scoring": {"overall_score": 0, "rating": "ERROR"},
                 }
 
         # Generate executive summary
@@ -618,12 +710,12 @@ class ComprehensiveDiagnosticReport:
             "sectors_analyzed": sector_count,
             "critical_sectors": critical_sectors,
             "total_issues_identified": len(all_issues),
-            "assessment_timestamp": datetime.now(timezone.utc).isoformat(),
+            "assessment_timestamp": datetime.now(UTC).isoformat(),
             "key_findings": self.extract_key_findings(),
-            "risk_assessment": self.assess_system_risks()
+            "risk_assessment": self.assess_system_risks(),
         }
 
-    def extract_key_findings(self) -> List[str]:
+    def extract_key_findings(self) -> list[str]:
         """Extract key findings from all sectors"""
         findings = []
 
@@ -633,34 +725,54 @@ class ComprehensiveDiagnosticReport:
         if "infrastructure" in sectors:
             infra = sectors["infrastructure"]
             cpu_percent = infra.get("metrics", {}).get("cpu_percent", 0)
-            findings.append(f"System CPU utilization at {cpu_percent:.1f}% - {'concerning' if cpu_percent > 80 else 'normal'}")
+            findings.append(
+                f"System CPU utilization at {cpu_percent:.1f}% - {'concerning' if cpu_percent > 80 else 'normal'}"
+            )
 
             service_issues = len([s for s in infra.get("issues", []) if "Service" in s])
             if service_issues > 0:
-                findings.append(f"{service_issues} service availability issues detected")
+                findings.append(
+                    f"{service_issues} service availability issues detected"
+                )
 
         # Backend findings
         if "backend" in sectors:
             backend = sectors["backend"]
-            api_health = backend.get("sub_sectors", {}).get("api_endpoints", {}).get("health_score", 0)
+            api_health = (
+                backend.get("sub_sectors", {})
+                .get("api_endpoints", {})
+                .get("health_score", 0)
+            )
             findings.append(f"API endpoint health: {api_health:.0f}% operational")
 
         # AI/ML findings
         if "ai_ml" in sectors:
             ai_ml = sectors["ai_ml"]
             docs_indexed = ai_ml.get("metrics", {}).get("documents_indexed", 0)
-            model_loaded = ai_ml.get("sub_sectors", {}).get("model_performance", {}).get("model_loaded", False)
-            findings.append(f"AI system: {'operational' if model_loaded else 'has issues'}, {docs_indexed} documents indexed")
+            model_loaded = (
+                ai_ml.get("sub_sectors", {})
+                .get("model_performance", {})
+                .get("model_loaded", False)
+            )
+            findings.append(
+                f"AI system: {'operational' if model_loaded else 'has issues'}, {docs_indexed} documents indexed"
+            )
 
         # Security findings
         if "security" in sectors:
             security = sectors["security"]
-            auth_score = security.get("sub_sectors", {}).get("authentication", {}).get("security_score", 0)
-            findings.append(f"Security posture: {auth_score:.0f}% authentication variables configured")
+            auth_score = (
+                security.get("sub_sectors", {})
+                .get("authentication", {})
+                .get("security_score", 0)
+            )
+            findings.append(
+                f"Security posture: {auth_score:.0f}% authentication variables configured"
+            )
 
         return findings[:5]  # Top 5 findings
 
-    def assess_system_risks(self) -> Dict[str, Any]:
+    def assess_system_risks(self) -> dict[str, Any]:
         """Assess system risks"""
         sectors = self.report["sectors"]
 
@@ -686,7 +798,9 @@ class ComprehensiveDiagnosticReport:
             "overall_risk_level": risk_level,
             "critical_sector_count": critical_sector_count,
             "risk_factors": risk_factors,
-            "mitigation_priority": "HIGH" if risk_level in ["HIGH", "MEDIUM"] else "MEDIUM"
+            "mitigation_priority": "HIGH"
+            if risk_level in ["HIGH", "MEDIUM"]
+            else "MEDIUM",
         }
 
     def generate_final_recommendations(self):
@@ -698,71 +812,81 @@ class ComprehensiveDiagnosticReport:
         # Infrastructure recommendations
         infra = sectors.get("infrastructure", {})
         if infra.get("scoring", {}).get("overall_score", 7) < 7:
-            recommendations.append({
-                "category": "INFRASTRUCTURE_OPTIMIZATION",
-                "priority": "HIGH",
-                "title": "Resource Utilization Optimization",
-                "description": "High system resource utilization detected",
-                "estimated_effort": "2-4 weeks",
-                "expected_impact": "30-50% improvement in system performance"
-            })
+            recommendations.append(
+                {
+                    "category": "INFRASTRUCTURE_OPTIMIZATION",
+                    "priority": "HIGH",
+                    "title": "Resource Utilization Optimization",
+                    "description": "High system resource utilization detected",
+                    "estimated_effort": "2-4 weeks",
+                    "expected_impact": "30-50% improvement in system performance",
+                }
+            )
 
         # Backend recommendations
         backend = sectors.get("backend", {})
         if backend.get("scoring", {}).get("overall_score", 7) < 7:
-            recommendations.append({
-                "category": "API_RELIABILITY",
-                "priority": "HIGH",
-                "title": "API Health and Monitoring Enhancement",
-                "description": "API endpoints showing inconsistent health",
-                "estimated_effort": "1-2 weeks",
-                "expected_impact": "95%+ API uptime improvement"
-            })
+            recommendations.append(
+                {
+                    "category": "API_RELIABILITY",
+                    "priority": "HIGH",
+                    "title": "API Health and Monitoring Enhancement",
+                    "description": "API endpoints showing inconsistent health",
+                    "estimated_effort": "1-2 weeks",
+                    "expected_impact": "95%+ API uptime improvement",
+                }
+            )
 
         # AI/ML recommendations
         ai_ml = sectors.get("ai_ml", {})
         if ai_ml.get("scoring", {}).get("overall_score", 7) < 7:
-            recommendations.append({
-                "category": "AI_SYSTEM_STABILITY",
-                "priority": "CRITICAL",
-                "title": "AI Service Initialization and Stability",
-                "description": "AI services showing initialization issues",
-                "estimated_effort": "1 week",
-                "expected_impact": "Restore AI semantic search capabilities"
-            })
+            recommendations.append(
+                {
+                    "category": "AI_SYSTEM_STABILITY",
+                    "priority": "CRITICAL",
+                    "title": "AI Service Initialization and Stability",
+                    "description": "AI services showing initialization issues",
+                    "estimated_effort": "1 week",
+                    "expected_impact": "Restore AI semantic search capabilities",
+                }
+            )
 
         # Security recommendations
         security = sectors.get("security", {})
         if security.get("scoring", {}).get("overall_score", 7) < 8:
-            recommendations.append({
-                "category": "SECURITY_ENHANCEMENT",
-                "priority": "MEDIUM",
-                "title": "Security Configuration and Monitoring",
-                "description": "Security posture needs enhancement",
-                "estimated_effort": "2-3 weeks",
-                "expected_impact": "Improved security compliance and monitoring"
-            })
+            recommendations.append(
+                {
+                    "category": "SECURITY_ENHANCEMENT",
+                    "priority": "MEDIUM",
+                    "title": "Security Configuration and Monitoring",
+                    "description": "Security posture needs enhancement",
+                    "estimated_effort": "2-3 weeks",
+                    "expected_impact": "Improved security compliance and monitoring",
+                }
+            )
 
         self.report["recommendations"] = recommendations
 
     def print_comprehensive_report(self):
         """Print comprehensive diagnostic report"""
-        print("\n" + "="*100)
+        print("\n" + "=" * 100)
         print("🔬 COMPREHENSIVE SYSTEM DIAGNOSTIC REPORT")
-        print("="*100)
+        print("=" * 100)
 
         exec_summary = self.report.get("executive_summary", {})
 
-        print(f"📊 OVERALL SYSTEM HEALTH: {exec_summary.get('overall_system_health', 'UNKNOWN')}")
+        print(
+            f"📊 OVERALL SYSTEM HEALTH: {exec_summary.get('overall_system_health', 'UNKNOWN')}"
+        )
         print(f"🎯 COMPOSITE SCORE: {exec_summary.get('composite_score', 0)}/10")
         print(f"🏆 OVERALL RATING: {exec_summary.get('overall_rating', 'UNKNOWN')}")
         print(f"📋 SECTORS ANALYZED: {exec_summary.get('sectors_analyzed', 0)}")
         print(f"🚨 CRITICAL SECTORS: {len(exec_summary.get('critical_sectors', []))}")
         print(f"⚠️  TOTAL ISSUES: {exec_summary.get('total_issues_identified', 0)}")
 
-        print("\n" + "-"*60)
+        print("\n" + "-" * 60)
         print("📈 SECTOR PERFORMANCE SCORES")
-        print("-"*60)
+        print("-" * 60)
 
         sectors = self.report["sectors"]
         for sector_name, sector_data in sectors.items():
@@ -781,7 +905,9 @@ class ComprehensiveDiagnosticReport:
             else:
                 icon = "🔴"
 
-            print(f"{icon} {sector_name.upper():15} | Score: {score:4.1f}/10 | Rating: {rating:8} | Grade: {grade}")
+            print(
+                f"{icon} {sector_name.upper():15} | Score: {score:4.1f}/10 | Rating: {rating:8} | Grade: {grade}"
+            )
 
             # Show sub-sector status
             sub_sectors = sector_data.get("sub_sectors", {})
@@ -789,24 +915,32 @@ class ComprehensiveDiagnosticReport:
                 for sub_name, sub_data in sub_sectors.items():
                     if isinstance(sub_data, dict) and "status" in sub_data:
                         sub_status = sub_data["status"]
-                        sub_icon = "✅" if sub_status in ["healthy", "optimal", "good"] else "⚠️" if sub_status in ["warning", "degraded"] else "❌"
+                        sub_icon = (
+                            "✅"
+                            if sub_status in ["healthy", "optimal", "good"]
+                            else "⚠️"
+                            if sub_status in ["warning", "degraded"]
+                            else "❌"
+                        )
                         print(f"  └─ {sub_name}: {sub_icon} {sub_status}")
 
-        print("\n" + "-"*60)
+        print("\n" + "-" * 60)
         print("🔍 KEY FINDINGS")
-        print("-"*60)
+        print("-" * 60)
 
         key_findings = exec_summary.get("key_findings", [])
         for i, finding in enumerate(key_findings, 1):
             print(f"{i}. {finding}")
 
-        print("\n" + "-"*60)
+        print("\n" + "-" * 60)
         print("⚠️  RISK ASSESSMENT")
-        print("-"*60)
+        print("-" * 60)
 
         risk = exec_summary.get("risk_assessment", {})
         risk_level = risk.get("overall_risk_level", "UNKNOWN")
-        risk_icon = {"HIGH": "🔴", "MEDIUM": "🟠", "LOW-MEDIUM": "🟡", "LOW": "🟢"}.get(risk_level, "⚪")
+        risk_icon = {"HIGH": "🔴", "MEDIUM": "🟠", "LOW-MEDIUM": "🟡", "LOW": "🟢"}.get(
+            risk_level, "⚪"
+        )
 
         print(f"Overall Risk Level: {risk_icon} {risk_level}")
         print(f"Critical Sectors: {risk.get('critical_sector_count', 0)}")
@@ -818,20 +952,27 @@ class ComprehensiveDiagnosticReport:
             for factor in risk_factors:
                 print(f"  • {factor}")
 
-        print("\n" + "-"*60)
+        print("\n" + "-" * 60)
         print("💡 STRATEGIC RECOMMENDATIONS")
-        print("-"*60)
+        print("-" * 60)
 
         recommendations = self.report.get("recommendations", [])
         for rec in recommendations:
-            priority_icon = {"CRITICAL": "🚨", "HIGH": "⚡", "MEDIUM": "📋"}.get(rec["priority"], "📝")
+            priority_icon = {"CRITICAL": "🚨", "HIGH": "⚡", "MEDIUM": "📋"}.get(
+                rec["priority"], "📝"
+            )
             print(f"{priority_icon} {rec['priority']}: {rec['title']}")
             print(f"   📝 {rec['description']}")
-            print(f"   ⏱️  Effort: {rec['estimated_effort']} | 💡 Impact: {rec['expected_impact']}")
+            print(
+                f"   ⏱️  Effort: {rec['estimated_effort']} | 💡 Impact: {rec['expected_impact']}"
+            )
             print()
 
-        print(f"\n📅 Report generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}")
-        print("="*100)
+        print(
+            f"\n📅 Report generated: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}"
+        )
+        print("=" * 100)
+
 
 async def main():
     """Main execution"""
@@ -842,13 +983,14 @@ async def main():
 
     # Save detailed report
     output_file = f"comprehensive_diagnostic_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    with open(f"scripts/diagnostics/{output_file}", 'w') as f:
+    with open(f"scripts/diagnostics/{output_file}", "w") as f:
         json.dump(report, f, indent=2, default=str)
 
     print(f"📊 Detailed report saved to: scripts/diagnostics/{output_file}")
 
     # Print executive summary
     report_generator.print_comprehensive_report()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

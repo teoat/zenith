@@ -1,13 +1,11 @@
 """Unit tests for fraud detection services"""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
 from app.services.ai.ai_service import AIService
-from app.services.fraud import AlertSeverity, FraudAlert
-from app.services.fraud.engine import RuleEngine, FraudRule
+from app.services.fraud.engine import FraudRule, RuleEngine
 from app.services.fraud.fraud_service import FraudDetectionService
 from app.services.infrastructure.monitoring_service import MonitoringService
 
@@ -40,8 +38,8 @@ class TestFraudDetectionService:
         mock_transaction = MagicMock()
         mock_transaction.id = "tx1"
         mock_transaction.amount = 1000.0
-        mock_transaction.timestamp = datetime.now(timezone.utc)
-        
+        mock_transaction.timestamp = datetime.now(UTC)
+
         # Setup db query mock to handle both Case and Transaction queries
         # Since db.query(...).filter(...) returns the same mock object by default,
         # we can configure both first() (for Case) and all() (for Transactions) on it.
@@ -49,7 +47,7 @@ class TestFraudDetectionService:
         mock_filter = mock_query.filter.return_value
         mock_filter.first.return_value = mock_case
         mock_filter.all.return_value = [mock_transaction]
-        
+
         # Ensure side_effect is cleared if it was set previously (though fresh fixture should handle it)
         fraud_service.db.query.side_effect = None
 
@@ -65,7 +63,7 @@ class TestFraudDetectionService:
         mock_alert.description = "Test fraud alert"
         mock_alert.transaction_ids = ["tx1"]
         mock_alert.recommendations = []
-        
+
         mock_engine_instance.execute_rules = AsyncMock(return_value=[mock_alert])
 
         result = await fraud_service.analyze_case("case123")
@@ -107,16 +105,16 @@ class TestFraudRulesEngine:
                 "transaction_type": "DEBIT",
             }
         ]
-        
+
         # Register a mock rule to ensure something happens
         mock_rule = MagicMock(spec=FraudRule)
         mock_rule.name = "MockRule"
         mock_rule.enabled = True
-        mock_rule.execute = AsyncMock(return_value=[]) 
+        mock_rule.execute = AsyncMock(return_value=[])
         rules_engine.register_rule(mock_rule)
 
         result = await rules_engine.execute_rules(transactions)
-        
+
         assert isinstance(result, list)
         mock_rule.execute.assert_called_once()
 
@@ -131,7 +129,7 @@ class TestFraudRulesEngine:
         mock_rule = MagicMock()
         mock_rule.name = "TestRule"
         rules_engine.register_rule(mock_rule)
-        
+
         # Check that rules are registered
         assert "TestRule" in rules_engine.rules
         assert rules_engine.rules["TestRule"] == mock_rule

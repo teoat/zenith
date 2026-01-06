@@ -3,9 +3,9 @@ import sys
 from unittest.mock import MagicMock
 
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
-from fastapi.testclient import TestClient
 
 # Ensure backend directory is at the front of sys.path to avoid import conflicts
 # with the root 'app' directory shims
@@ -51,11 +51,12 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 def test_user(db_session):
     """Standard test user entity persisted in DB"""
     from core.database import User, UserRole
+
     # Check if exists
     existing = db_session.query(User).filter(User.username == "testuser").first()
     if existing:
         return existing
-        
+
     user = User(
         id="test_user_id",
         username="testuser",
@@ -64,12 +65,13 @@ def test_user(db_session):
         role=UserRole.ANALYST,
         is_active=True,
         # Hash for "password123" (pbkdf2_sha256)
-        password_hash="$pbkdf2-sha256$29000$N2YJ..$..." # Mock hash or use auth_service
+        password_hash="$pbkdf2-sha256$29000$N2YJ..$...",  # Mock hash or use auth_service
     )
     # Use auth_service to hash properly if reachable
     from app.services.infrastructure.auth_service import auth_service
+
     user.password_hash = auth_service.hash_password("password123")
-    
+
     db_session.add(user)
     db_session.commit()
     return user
@@ -79,13 +81,13 @@ def test_user(db_session):
 def auth_headers(test_user):
     """Standard authorized headers with REAL token for test_user"""
     from app.services.infrastructure.auth_service import auth_service
-    
-    role_val = test_user.role.value if hasattr(test_user.role, 'value') else test_user.role
-    token = auth_service.create_access_token({
-        "sub": test_user.id,
-        "username": test_user.username,
-        "role": role_val
-    })
+
+    role_val = (
+        test_user.role.value if hasattr(test_user.role, "value") else test_user.role
+    )
+    token = auth_service.create_access_token(
+        {"sub": test_user.id, "username": test_user.username, "role": role_val}
+    )
     return {"Authorization": f"Bearer {token}"}
 
 
@@ -163,8 +165,9 @@ def client(db_session):
 @pytest.fixture(autouse=True)
 def patch_db_service(db_session):
     """Patch db_service to use the test session"""
-    from app.services.infrastructure.storage.database_service import db_service
     from contextlib import contextmanager
+
+    from app.services.infrastructure.storage.database_service import db_service
 
     @contextmanager
     def mock_get_db():

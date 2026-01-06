@@ -1,0 +1,69 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/index.ts",
+    "src/pages/",
+    "src/components/",
+    "src/lib/",
+    "src/hooks/",
+    "src/services/",
+    "src/types/"
+  ],
+  "out": "../docs/03-api/frontend-api",
+  "exclude": [
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/__tests__/**",
+    "**/__mocks__/**",
+    "**/node_modules/**",
+    "**/dist/**"
+  ],
+  "name": "378x492 Forensic Engine - Frontend API",
+  "includeVersion": true,
+  "disableSources": false,
+  "excludeExternals": true,
+  "excludeInternal": false,
+  "excludePrivate": false,
+  "excludeProtected": false,
+  "hideGenerator": false,
+  "readme": "README.md",
+  "theme": "default",
+  "lightHighlightTheme": "github-light",
+  "darkHighlightTheme": "github-dark",
+  "sort": ["source-order"],
+  "searchInComments": true,
+  "cleanOutputDir": true,
+  "emit": "docs",
+  "commentsFormat": "html",
+  "categorizeByGroup": true,
+  "defaultCategory": "Other",
+  "categoryOrder": [
+    "Pages",
+    "Components",
+    "Hooks",
+    "Services",
+    "Utilities",
+    "Types",
+    "Other"
+  ],
+  "groupOrder": [
+    "Pages",
+    "Components",
+    "Hooks",
+    "Services",
+    "Utilities",
+    "Types",
+    "Other"
+  ],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true,
+    "includeFolders": true
+  },
+  "visibilityFilters": {
+    "protected": true,
+    "private": true,
+    "inherited": true,
+    "external": true
+  }
+}

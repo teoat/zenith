@@ -4,7 +4,7 @@ Timeline Reconstruction Service - Automated investigation timeline builder
 
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -19,11 +19,11 @@ class TimelineEvent(BaseModel):
     event_type: str
     title: str
     description: str
-    evidence_ids: List[str]
+    evidence_ids: list[str]
     confidence_score: float
     risk_level: str  # low, medium, high, critical
     ai_persona: str
-    metadata: Dict[str, Any] = {}
+    metadata: dict[str, Any] = {}
 
 
 class InvestigationTimeline(BaseModel):
@@ -33,10 +33,10 @@ class InvestigationTimeline(BaseModel):
     title: str
     description: str
     start_date: datetime
-    end_date: Optional[datetime] = None
-    events: List[TimelineEvent]
+    end_date: datetime | None = None
+    events: list[TimelineEvent]
     summary: str
-    total_duration: Optional[timedelta] = None
+    total_duration: timedelta | None = None
 
 
 class TimelineReconstructionEngine:
@@ -76,9 +76,9 @@ class TimelineReconstructionEngine:
     async def reconstruct_timeline(
         self,
         case_id: str,
-        evidence_data: List[Dict[str, Any]],
-        transaction_data: List[Dict[str, Any]],
-        ai_insights: List[Dict[str, Any]],
+        evidence_data: list[dict[str, Any]],
+        transaction_data: list[dict[str, Any]],
+        ai_insights: list[dict[str, Any]],
     ) -> InvestigationTimeline:
         """Reconstruct investigation timeline from multiple data sources"""
         try:
@@ -127,7 +127,7 @@ class TimelineReconstructionEngine:
                     timestamp=tx["timestamp"],
                     event_type="transaction_analysis",
                     title=f"Transaction Analysis: {tx['id']}",
-                    description=f"Analyzed transaction for risk indicators",
+                    description="Analyzed transaction for risk indicators",
                     evidence_ids=[tx["id"]],
                     confidence_score=tx.get("risk_score", 0.5),
                     risk_level=self._calculate_risk_level(tx.get("risk_score", 0.5)),
@@ -168,7 +168,7 @@ class TimelineReconstructionEngine:
             return InvestigationTimeline(
                 case_id=case_id,
                 title="Timeline Reconstruction Failed",
-                description=f"Error: {str(e)}",
+                description=f"Error: {e!s}",
                 start_date=datetime.now(),
                 events=[],
                 summary="Failed to reconstruct timeline due to technical error",
@@ -186,7 +186,7 @@ class TimelineReconstructionEngine:
         else:
             return "low"
 
-    def _generate_timeline_summary(self, events: List[TimelineEvent]) -> str:
+    def _generate_timeline_summary(self, events: list[TimelineEvent]) -> str:
         """Generate AI-powered summary of investigation timeline"""
         if not events:
             return "No events found for timeline reconstruction."
@@ -211,7 +211,7 @@ class TimelineReconstructionEngine:
 
         return " | ".join(summary_parts)
 
-    async def get_case_template(self, case_type: str) -> Dict[str, Any]:
+    async def get_case_template(self, case_type: str) -> dict[str, Any]:
         """Get predefined template for specific case types"""
         return self.case_templates.get(
             case_type, self.case_templates["fraud_detection"]
@@ -219,7 +219,7 @@ class TimelineReconstructionEngine:
 
     async def validate_timeline_integrity(
         self, timeline: InvestigationTimeline
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate reconstructed timeline for data integrity and consistency"""
         validation_result = {
             "is_valid": True,
@@ -254,7 +254,7 @@ class TimelineReconstructionEngine:
 
         except Exception as e:
             validation_result["is_valid"] = False
-            validation_result["issues"].append(f"Validation failed: {str(e)}")
+            validation_result["issues"].append(f"Validation failed: {e!s}")
 
         return validation_result
 
@@ -289,66 +289,88 @@ class TimelineReconstructionEngine:
         return timeline
 
     async def impute_missing_windows(
-        self, transactions: List[Dict[str, Any]], window_size_days: int = 30
-    ) -> List[Dict[str, Any]]:
+        self, transactions: list[dict[str, Any]], window_size_days: int = 30
+    ) -> list[dict[str, Any]]:
         """
         Implementation of the Timeline Interpolator (Forensic Imputation).
         Detects gaps in transaction dates and fills them with "Ghost" events based on patterns.
         """
         if not transactions:
             return []
-            
+
         # 1. Sort transactions by date
-        sorted_txs = sorted(transactions, key=lambda x: x.get("timestamp") or x.get("date"))
-        
+        sorted_txs = sorted(
+            transactions, key=lambda x: x.get("timestamp") or x.get("date")
+        )
+
         imputed_events = []
-        
+
         # 2. Scan for gaps > window_size_days
         for i in range(len(sorted_txs) - 1):
             curr_date = sorted_txs[i].get("timestamp") or sorted_txs[i].get("date")
-            next_date = sorted_txs[i+1].get("timestamp") or sorted_txs[i+1].get("date")
-            
-            if isinstance(curr_date, str): curr_date = datetime.fromisoformat(curr_date.replace("Z", "+00:00"))
-            if isinstance(next_date, str): next_date = datetime.fromisoformat(next_date.replace("Z", "+00:00"))
-            
+            next_date = sorted_txs[i + 1].get("timestamp") or sorted_txs[i + 1].get(
+                "date"
+            )
+
+            if isinstance(curr_date, str):
+                curr_date = datetime.fromisoformat(curr_date.replace("Z", "+00:00"))
+            if isinstance(next_date, str):
+                next_date = datetime.fromisoformat(next_date.replace("Z", "+00:00"))
+
             delta = (next_date - curr_date).days
-            
+
             if delta > window_size_days:
-                logger.info(f"Gap detected between {curr_date} and {next_date} ({delta} days)")
-                
+                logger.info(
+                    f"Gap detected between {curr_date} and {next_date} ({delta} days)"
+                )
+
                 # 3. Pattern Extrapolation (Simple: project recurring descriptions)
                 # In production, we'd use a more sophisticated frequency analysis
                 recurring_candidates = [
-                    tx for tx in sorted_txs 
-                    if any(term in tx.get("description", "").upper() for term in ["RENT", "SALARY", "INTEREST", "SUBSCRIPTION", "UTILITY"])
+                    tx
+                    for tx in sorted_txs
+                    if any(
+                        term in tx.get("description", "").upper()
+                        for term in [
+                            "RENT",
+                            "SALARY",
+                            "INTEREST",
+                            "SUBSCRIPTION",
+                            "UTILITY",
+                        ]
+                    )
                 ]
-                
+
                 # Create inferred events for each month in the gap
                 gap_start = curr_date + timedelta(days=window_size_days)
                 while gap_start < next_date:
-                    for rec in recurring_candidates[:2]: # Fill with top 2 recurring patterns
-                        imputed_events.append({
-                            "id": f"imputed_{gap_start.strftime('%Y%m')}_{rec['id']}",
-                            "timestamp": gap_start,
-                            "event_type": "forensic_imputation",
-                            "title": f"Inferred Detail: {rec.get('description', 'Recurring Transaction')}",
-                            "description": "Ghost transaction projected from historical patterns to fill data gap.",
-                            "confidence_score": 0.4, # Low confidence as per spec
-                            "risk_level": "low",
-                            "ai_persona": "forensic_accountant",
-                            "metadata": {
-                                "imputed": True,
-                                "source_pattern_id": rec["id"],
-                                "gap_days": delta
+                    for rec in recurring_candidates[
+                        :2
+                    ]:  # Fill with top 2 recurring patterns
+                        imputed_events.append(
+                            {
+                                "id": f"imputed_{gap_start.strftime('%Y%m')}_{rec['id']}",
+                                "timestamp": gap_start,
+                                "event_type": "forensic_imputation",
+                                "title": f"Inferred Detail: {rec.get('description', 'Recurring Transaction')}",
+                                "description": "Ghost transaction projected from historical patterns to fill data gap.",
+                                "confidence_score": 0.4,  # Low confidence as per spec
+                                "risk_level": "low",
+                                "ai_persona": "forensic_accountant",
+                                "metadata": {
+                                    "imputed": True,
+                                    "source_pattern_id": rec["id"],
+                                    "gap_days": delta,
+                                },
                             }
-                        })
+                        )
                     gap_start += timedelta(days=30)
-                    
+
         return imputed_events
 
     async def unmask_redacted_fields(
-        self, transactions: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+        self, transactions: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
         """
         Implementation of the Triangulation Engine (Redaction Resolution).
         Infers redacted merchant names using a Global Vendor Graph (Mocked).
@@ -360,36 +382,42 @@ class TimelineReconstructionEngine:
             99.99: "AWS_T3_MICRO_RESERVED",
             49.00: "OPENAI_API_CREDITS",
             20.00: "CHATGPT_PLUS",
-            2500.00: "WEWORK_DESK_RENTAL"
+            2500.00: "WEWORK_DESK_RENTAL",
         }
-        
+
         results = []
         for tx in transactions:
             description = tx.get("description", "").upper()
             amount = abs(tx.get("amount", 0))
-            
+
             if "REDACTED" in description or "****" in description:
                 # Attempt to unmask via amount triangulation
                 inferred_name = VENDOR_GRAPH.get(amount)
-                
+
                 if inferred_name:
-                    logger.info(f"Unmasked redacted field for amount {amount}: {inferred_name}")
-                    results.append({
-                        "original_id": tx.get("id"),
-                        "redacted_field": "description/merchant",
-                        "inferred_value": inferred_name,
-                        "confidence": 0.85,
-                        "inference_method": "AMOUNT_TRIANGULATION",
-                        "reasoning": f"Amount ${amount} matches known recurring tier for {inferred_name} in Global Vendor Graph."
-                    })
+                    logger.info(
+                        f"Unmasked redacted field for amount {amount}: {inferred_name}"
+                    )
+                    results.append(
+                        {
+                            "original_id": tx.get("id"),
+                            "redacted_field": "description/merchant",
+                            "inferred_value": inferred_name,
+                            "confidence": 0.85,
+                            "inference_method": "AMOUNT_TRIANGULATION",
+                            "reasoning": f"Amount ${amount} matches known recurring tier for {inferred_name} in Global Vendor Graph.",
+                        }
+                    )
                 else:
-                    results.append({
-                        "original_id": tx.get("id"),
-                        "redacted_field": "description/merchant",
-                        "inferred_value": "UNKNOWN_VENDOR",
-                        "confidence": 0.1,
-                        "inference_method": "FAILED",
-                        "reasoning": "No unique match found in Global Vendor Graph for this amount."
-                    })
-                    
+                    results.append(
+                        {
+                            "original_id": tx.get("id"),
+                            "redacted_field": "description/merchant",
+                            "inferred_value": "UNKNOWN_VENDOR",
+                            "confidence": 0.1,
+                            "inference_method": "FAILED",
+                            "reasoning": "No unique match found in Global Vendor Graph for this amount.",
+                        }
+                    )
+
         return results

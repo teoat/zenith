@@ -3,7 +3,7 @@ Case Service - Business logic for case management
 """
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload, selectinload
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class CaseService:
     """Service for managing fraud investigation cases"""
 
-    def get_case(self, db: Session, case_id: str) -> Optional[Case]:
+    def get_case(self, db: Session, case_id: str) -> Case | None:
         """Get a case by ID with optimized eager loading for performance"""
         return (
             db.query(Case)
@@ -24,16 +24,18 @@ class CaseService:
                 joinedload(Case.assignee),  # Load assignee relationship
                 joinedload(Case.project),  # Load project relationship
                 # Use selectinload for collections to avoid N+1 queries
-                selectinload(Case.evidence),  # Load evidence with selectin for better performance
-                selectinload(Case.notes),     # Load notes with selectin
-                selectinload(Case.activities), # Load activities with selectin
-                selectinload(Case.alerts),    # Load alerts with selectin
+                selectinload(
+                    Case.evidence
+                ),  # Load evidence with selectin for better performance
+                selectinload(Case.notes),  # Load notes with selectin
+                selectinload(Case.activities),  # Load activities with selectin
+                selectinload(Case.alerts),  # Load alerts with selectin
             )
             .filter(Case.id == case_id)
             .first()
         )
 
-    def get_case_summary(self, db: Session, case_id: str) -> Optional[Dict[str, Any]]:
+    def get_case_summary(self, db: Session, case_id: str) -> dict[str, Any] | None:
         """Get case summary with selective fields for performance"""
         result = (
             db.query(
@@ -44,8 +46,8 @@ class CaseService:
                 Case.priority,
                 Case.created_at,
                 Case.updated_at,
-                func.count(Case.evidence).label('evidence_count'),
-                func.count(Case.notes).label('notes_count'),
+                func.count(Case.evidence).label("evidence_count"),
+                func.count(Case.notes).label("notes_count"),
             )
             .outerjoin(Case.evidence)
             .outerjoin(Case.notes)
@@ -56,34 +58,31 @@ class CaseService:
 
         if result:
             return {
-                'id': result.id,
-                'title': result.title,
-                'description': result.description,
-                'status': result.status,
-                'priority': result.priority,
-                'created_at': result.created_at,
-                'updated_at': result.updated_at,
-                'evidence_count': result.evidence_count or 0,
-                'notes_count': result.notes_count or 0,
+                "id": result.id,
+                "title": result.title,
+                "description": result.description,
+                "status": result.status,
+                "priority": result.priority,
+                "created_at": result.created_at,
+                "updated_at": result.updated_at,
+                "evidence_count": result.evidence_count or 0,
+                "notes_count": result.notes_count or 0,
             }
         return None
 
     def get_cases(
         self,
         db: Session,
-        status: Optional[str] = None,
-        priority: Optional[str] = None,
-        project_id: Optional[str] = None,
+        status: str | None = None,
+        priority: str | None = None,
+        project_id: str | None = None,
         limit: int = 100,
         offset: int = 0,
-    ) -> List[Case]:
+    ) -> list[Case]:
         """Get cases with optimized querying and pagination"""
-        query = (
-            db.query(Case)
-            .options(
-                joinedload(Case.assignee),  # Eager load assignee for performance
-                # Avoid loading heavy relationships by default
-            )
+        query = db.query(Case).options(
+            joinedload(Case.assignee),  # Eager load assignee for performance
+            # Avoid loading heavy relationships by default
         )
 
         # Apply filters efficiently
@@ -103,19 +102,19 @@ class CaseService:
     def get_cases_with_counts(
         self,
         db: Session,
-        status: Optional[str] = None,
-        priority: Optional[str] = None,
-        project_id: Optional[str] = None,
+        status: str | None = None,
+        priority: str | None = None,
+        project_id: str | None = None,
         limit: int = 100,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get cases with evidence/note counts for dashboard performance"""
         from sqlalchemy import func
 
         query = (
             db.query(
                 Case,
-                func.count(Case.evidence).label('evidence_count'),
-                func.count(Case.notes).label('notes_count'),
+                func.count(Case.evidence).label("evidence_count"),
+                func.count(Case.notes).label("notes_count"),
             )
             .outerjoin(Case.evidence)
             .outerjoin(Case.notes)
@@ -134,16 +133,16 @@ class CaseService:
         results = []
         for case, evidence_count, notes_count in query.all():
             case_dict = {
-                'id': case.id,
-                'title': case.title,
-                'description': case.description,
-                'status': case.status,
-                'priority': case.priority,
-                'created_at': case.created_at,
-                'updated_at': case.updated_at,
-                'assignee': case.assignee.username if case.assignee else None,
-                'evidence_count': evidence_count or 0,
-                'notes_count': notes_count or 0,
+                "id": case.id,
+                "title": case.title,
+                "description": case.description,
+                "status": case.status,
+                "priority": case.priority,
+                "created_at": case.created_at,
+                "updated_at": case.updated_at,
+                "assignee": case.assignee.username if case.assignee else None,
+                "evidence_count": evidence_count or 0,
+                "notes_count": notes_count or 0,
             }
             results.append(case_dict)
 
@@ -173,7 +172,7 @@ class CaseService:
         db.refresh(case)
         return case
 
-    def update_case(self, db: Session, case_id: str, **updates) -> Optional[Case]:
+    def update_case(self, db: Session, case_id: str, **updates) -> Case | None:
         """Update a case"""
         case = self.get_case(db, case_id)
         if not case:
@@ -200,12 +199,14 @@ class CaseService:
         db.commit()
         return True
 
-    def get_case_stats(self, db: Session, project_id: Optional[str] = None) -> Dict[str, Any]:
+    def get_case_stats(
+        self, db: Session, project_id: str | None = None
+    ) -> dict[str, Any]:
         """Get case statistics"""
         query = db.query(Case)
         if project_id:
             query = query.filter(Case.project_id == project_id)
-            
+
         total = query.count()
         open_cases = query.filter(Case.status == "open").count()
         closed = query.filter(Case.status == "closed").count()
@@ -218,10 +219,9 @@ class CaseService:
             "critical_cases": critical,
         }
 
-
     def get_cases_paginated(
-        self, db: Session, page: int, per_page: int, filters: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, db: Session, page: int, per_page: int, filters: dict[str, Any]
+    ) -> dict[str, Any]:
         """Get cases with pagination and filtering"""
         import math
 
@@ -239,7 +239,7 @@ class CaseService:
 
         total = query.count()
         total_pages = math.ceil(total / per_page)
-        
+
         # Ensure page is valid
         if page < 1:
             page = 1
@@ -259,8 +259,9 @@ class CaseService:
             "cases": cases,
             "total": total,
             "total_pages": total_pages,
-            "current_page": page
+            "current_page": page,
         }
+
 
 # Singleton instance
 case_service = CaseService()

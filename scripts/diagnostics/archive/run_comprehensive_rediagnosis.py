@@ -16,9 +16,9 @@ from app.services.comprehensive_diagnostic_service import ComprehensiveDiagnosti
 
 def print_section_header(title: str, emoji: str = "🔍"):
     """Print a formatted section header."""
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f" {emoji} {title}")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
 
 def print_metric(title: str, value: any, unit: str = "", status: str = ""):
@@ -191,7 +191,7 @@ async def main():
         exit(exit_code)
 
     except Exception as e:
-        print(f"\n❌ Comprehensive rediagnosis failed: {str(e)}")
+        print(f"\n❌ Comprehensive rediagnosis failed: {e!s}")
         import traceback
 
         traceback.print_exc()

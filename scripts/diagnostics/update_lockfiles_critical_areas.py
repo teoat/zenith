@@ -161,7 +161,7 @@ def update_dependencies_lockfile():
     # Load existing dependencies lockfile
     deps_lock_path = Path("dependencies.lock")
     if deps_lock_path.exists():
-        with open(deps_lock_path, "r") as f:
+        with open(deps_lock_path) as f:
             deps_data = json.load(f)
     else:
         deps_data = {}

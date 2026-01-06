@@ -1,12 +1,15 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath('.'))
+
+sys.path.insert(0, os.path.abspath("."))
 
 # tests/unit/test_auth.py
-import pytest
 from unittest.mock import Mock, patch
-from backend.app.services.infrastructure.auth_service import AuthService, auth_service
-from core.database import User, UserRole
+
+import pytest
+
+from backend.app.services.infrastructure.auth_service import AuthService
+from core.database import UserRole
 
 
 class TestAuthService:
@@ -46,7 +49,7 @@ class TestAuthService:
         assert decoded["type"] == "access"
         assert "exp" in decoded
         assert "iat" in decoded
-        assert decoded["iss"] == "Zenith"
+        assert decoded["iss"] == "zenith"
 
     def test_create_refresh_token(self, auth_svc):
         """Test JWT refresh token creation"""
@@ -70,7 +73,7 @@ class TestAuthService:
         with pytest.raises(Exception):
             auth_svc.decode_token("")
 
-    @patch('backend.app.services.infrastructure.auth_service.db_service')
+    @patch("backend.app.services.infrastructure.auth_service.db_service")
     def test_authenticate_user_success(self, mock_db, auth_svc):
         """Test successful user authentication"""
         # Mock user
@@ -83,13 +86,15 @@ class TestAuthService:
         assert result == mock_user
         mock_db.get_user_by_username.assert_called_once_with("testuser")
 
-    @patch('backend.app.services.infrastructure.auth_service.db_service')
+    @patch("backend.app.services.infrastructure.auth_service.db_service")
     def test_authenticate_user_failure(self, mock_db, auth_svc):
         """Test failed user authentication"""
         # Mock user
         mock_user = Mock()
         mock_user.password_hash = auth_svc.hash_password("correct_password")
-        mock_db.get_user_by_username.side_effect = lambda username: mock_user if username == "testuser" else None
+        mock_db.get_user_by_username.side_effect = (
+            lambda username: mock_user if username == "testuser" else None
+        )
 
         # Wrong password
         result = auth_svc.authenticate_user("testuser", "wrong_password")
@@ -99,7 +104,7 @@ class TestAuthService:
         result = auth_svc.authenticate_user("nonexistent", "password")
         assert result is None
 
-    @patch('app.services.infrastructure.storage.database_service.db_service')
+    @patch("app.services.infrastructure.storage.database_service.db_service")
     def test_get_current_user_success(self, mock_db, auth_svc):
         """Test getting current authenticated user"""
         # Mock user
@@ -113,6 +118,7 @@ class TestAuthService:
         token = auth_svc.create_access_token(token_data)
 
         from fastapi.security import HTTPAuthorizationCredentials
+
         credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials=token)
 
         result = auth_svc.get_current_user(credentials)
@@ -120,7 +126,7 @@ class TestAuthService:
         assert result == mock_user
         mock_db.get_user.assert_called_once_with("user123")
 
-    @patch('backend.app.services.infrastructure.auth_service.db_service')
+    @patch("backend.app.services.infrastructure.auth_service.db_service")
     def test_get_current_user_inactive(self, mock_db, auth_svc):
         """Test getting inactive user fails"""
         # Mock inactive user
@@ -132,6 +138,7 @@ class TestAuthService:
         token = auth_svc.create_access_token(token_data)
 
         from fastapi.security import HTTPAuthorizationCredentials
+
         credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials=token)
 
         with pytest.raises(Exception):  # Should raise HTTPException
@@ -190,7 +197,7 @@ class TestAuthService:
             "nouppercase123",
             "NOLOWERCASE123",
             "NoNumbers",
-            "NoSpecial123"
+            "NoSpecial123",
         ]
 
         for password in weak_passwords:

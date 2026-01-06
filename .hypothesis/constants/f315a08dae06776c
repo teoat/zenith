@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/infrastructure/database_scaling.py
+# hypothesis_version: 6.148.8
+
+[0.5, 300, 1000, 1800, '0', '0.2', '0.8', '1', '10', 'AUTO_SCALING_ENABLED', 'DATABASE_SHARD_COUNT', 'DATABASE_SHARD_KEY', 'MAX_DATABASE_SHARDS', 'READ', 'SCALE_DOWN_THRESHOLD', 'SCALE_UP_THRESHOLD', 'SELECT', 'SELECT 1', 'false', 'healthy', 'id', 'is_read_replica', 'key_value', 'operation', 'read', 'replica_status', 'shard_id', 'shard_status', 'status', 'total_replicas', 'total_shards', 'true']

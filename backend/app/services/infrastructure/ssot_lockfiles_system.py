@@ -4,7 +4,6 @@ SSOT (Single Source of Truth) and Lockfiles System
 Centralized configuration and dependency management for perfect reproducibility
 """
 
-import asyncio
 import hashlib
 import json
 import logging
@@ -12,7 +11,7 @@ import os
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -20,13 +19,9 @@ logger = logging.getLogger(__name__)
 class SSOTViolationError(Exception):
     """Raised when SSOT integrity is violated"""
 
-    pass
-
 
 class LockfileIntegrityError(Exception):
     """Raised when lockfile integrity check fails"""
-
-    pass
 
 
 @dataclass
@@ -38,8 +33,8 @@ class SSOTEntry:
     version: str
     timestamp: datetime
     checksum: str
-    dependencies: List[str] = field(default_factory=list)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    dependencies: list[str] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -50,9 +45,9 @@ class DependencyLock:
     version: str
     checksum: str
     source: str
-    dependencies: List[str] = field(default_factory=list)
-    security_scan_result: Optional[Dict[str, Any]] = None
-    license_info: Optional[str] = None
+    dependencies: list[str] = field(default_factory=list)
+    security_scan_result: dict[str, Any] | None = None
+    license_info: str | None = None
 
 
 @dataclass
@@ -61,21 +56,21 @@ class ConfigurationLock:
 
     component: str
     config_hash: str
-    dependencies: List[str]
-    environment_constraints: Dict[str, Any]
+    dependencies: list[str]
+    environment_constraints: dict[str, Any]
     timestamp: datetime
 
 
 class SSOTManager:
     """Centralized Single Source of Truth manager"""
 
-    def __init__(self, ssot_file: str = None):
+    def __init__(self, ssot_file: str | None = None):
         if ssot_file is None:
             # Use the current working directory + ssot_master.json
             # This will work when running from scripts/diagnostics
             ssot_file = "ssot_master.json"
         self.ssot_file = ssot_file
-        self.ssot_data: Dict[str, SSOTEntry] = {}
+        self.ssot_data: dict[str, SSOTEntry] = {}
         self.lockfile_manager = LockfileManager()
         self.integrity_checker = IntegrityChecker()
 
@@ -86,7 +81,7 @@ class SSOTManager:
         """Load existing SSOT or create new one"""
         if os.path.exists(self.ssot_file):
             try:
-                with open(self.ssot_file, "r") as f:
+                with open(self.ssot_file) as f:
                     data = json.load(f)
                     for key, entry_data in data.items():
                         self.ssot_data[key] = SSOTEntry(**entry_data)
@@ -142,7 +137,7 @@ class SSOTManager:
             self.set_value(key, value, "system_initialization")
 
     def set_value(
-        self, key: str, value: Any, author: str, dependencies: List[str] = None
+        self, key: str, value: Any, author: str, dependencies: list[str] | None = None
     ) -> bool:
         """Set a value in the SSOT with integrity checking"""
         try:
@@ -274,10 +269,10 @@ class SSOTManager:
             if not os.path.exists(f"{self.ssot_file}.checksum"):
                 return False
 
-            with open(f"{self.ssot_file}.checksum", "r") as f:
+            with open(f"{self.ssot_file}.checksum") as f:
                 expected_checksum = f.read().strip()
 
-            with open(self.ssot_file, "r") as f:
+            with open(self.ssot_file) as f:
                 ssot_content = f.read()
 
             actual_checksum = hashlib.sha256(ssot_content.encode()).hexdigest()
@@ -288,7 +283,7 @@ class SSOTManager:
                 return True
 
             # Verify individual entries
-            for key, entry in self.ssot_data.items():
+            for entry in self.ssot_data.values():
                 if not self.integrity_checker.verify_entry(entry):
                     return False
 
@@ -301,7 +296,7 @@ class SSOTManager:
     def _regenerate_checksum(self):
         """Regenerate checksum for current SSOT content"""
         try:
-            with open(self.ssot_file, "r") as f:
+            with open(self.ssot_file) as f:
                 ssot_content = f.read()
 
             actual_checksum = hashlib.sha256(ssot_content.encode()).hexdigest()
@@ -313,7 +308,7 @@ class SSOTManager:
         except Exception as e:
             logger.error(f"Failed to regenerate checksum: {e}")
 
-    def get_all_values(self) -> Dict[str, Any]:
+    def get_all_values(self) -> dict[str, Any]:
         """Get all SSOT values with integrity verification"""
         if not self.verify_integrity():
             raise SSOTViolationError("SSOT integrity check failed")
@@ -325,9 +320,9 @@ class LockfileManager:
     """Comprehensive lockfile management system"""
 
     def __init__(self):
-        self.dependency_locks: Dict[str, DependencyLock] = {}
-        self.config_locks: Dict[str, ConfigurationLock] = {}
-        self.environment_locks: Dict[str, Dict[str, Any]] = {}
+        self.dependency_locks: dict[str, DependencyLock] = {}
+        self.config_locks: dict[str, ConfigurationLock] = {}
+        self.environment_locks: dict[str, dict[str, Any]] = {}
 
         # Initialize lockfiles
         self._load_existing_locks()
@@ -340,7 +335,7 @@ class LockfileManager:
         for lock_file in lock_files:
             if os.path.exists(lock_file):
                 try:
-                    with open(lock_file, "r") as f:
+                    with open(lock_file) as f:
                         data = json.load(f)
                         if "dependencies" in lock_file:
                             for name, lock_data in data.items():
@@ -507,7 +502,7 @@ class LockfileManager:
             except Exception as e:
                 logger.error(f"Failed to persist lockfile {filename}: {e}")
 
-    def verify_all_lockfiles(self) -> Dict[str, bool]:
+    def verify_all_lockfiles(self) -> dict[str, bool]:
         """Verify integrity of all lockfiles"""
         results = {}
 
@@ -516,10 +511,10 @@ class LockfileManager:
         for lock_file in lock_files:
             if os.path.exists(lock_file) and os.path.exists(f"{lock_file}.checksum"):
                 try:
-                    with open(f"{lock_file}.checksum", "r") as f:
+                    with open(f"{lock_file}.checksum") as f:
                         expected_checksum = f.read().strip()
 
-                    with open(lock_file, "r") as f:
+                    with open(lock_file) as f:
                         content = f.read()
 
                     actual_checksum = hashlib.sha256(content.encode()).hexdigest()
@@ -552,7 +547,7 @@ class IntegrityChecker:
 
     def verify_system_integrity(
         self, ssot_manager: SSOTManager, lockfile_manager: LockfileManager
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Comprehensive system integrity verification"""
         results = {
             "ssot_integrity": ssot_manager.verify_integrity(),
@@ -563,13 +558,13 @@ class IntegrityChecker:
         }
 
         # Check dependency integrity
-        for dep_name in lockfile_manager.dependency_locks.keys():
+        for dep_name in lockfile_manager.dependency_locks:
             if not lockfile_manager.verify_dependency_integrity(dep_name):
                 results["dependency_integrity"] = False
                 break
 
         # Check configuration integrity
-        for component, lock in lockfile_manager.config_locks.items():
+        for component in lockfile_manager.config_locks:
             if component in ssot_manager.ssot_data:
                 ssot_entry = ssot_manager.ssot_data[component]
                 if not lockfile_manager.verify_config_integrity(
@@ -596,4 +591,4 @@ ssot_manager = SSOTManager()
 integrity_checker = IntegrityChecker()
 
 # Export for use by other modules
-__all__ = ["ssot_manager", "integrity_checker"]
+__all__ = ["integrity_checker", "ssot_manager"]

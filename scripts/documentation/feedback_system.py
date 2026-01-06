@@ -1,9 +1,13 @@
-# Feedback Processing Service
+#!/usr/bin/env python3
+"""
+Feedback Processing Service
 Automated feedback collection, analysis, and response management
+"""
 
 import json
 import time
 import datetime
+import sqlite3
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -40,11 +44,16 @@ class FeedbackItem:
     response_sent: bool = False
     responded_at: Optional[datetime] = None
     assigned_to: Optional[str] = None
-    auto_responses: List[str] = []
-    tags: List[str]
-        resolution_time: Optional[datetime] = None
+    auto_responses: List[str] = None
+    tags: List[str] = None
+    resolution_time: Optional[datetime] = None
+    
+    def __post_init__(self):
+        if self.auto_responses is None:
+            self.auto_responses = []
+        if self.tags is None:
+            self.tags = []
 
-@dataclass
 class FeedbackProcessingService:
     """Automated feedback processing and analysis"""
     
@@ -52,6 +61,7 @@ class FeedbackProcessingService:
         self.feedback_queue = asyncio.Queue()
         self.processed_feedback = asyncio.Queue()
         self.feedback_cache = {}
+        self.feedback_db = "feedback.db"
         
     async def process_feedback_queue(self):
         """Process feedback queue continuously"""
@@ -71,20 +81,20 @@ class FeedbackProcessingService:
                     result = await self._process_feedback_item(feedback_item)
                     
                     # Update status
-                    await self._update_feedback_status(feedback_item.id, result.status)
+                    # await self._update_feedback_status(feedback_item.id, result.status)
                     
                     # Mark as completed
                     feedback_item.status = FeedbackStatus.RESOLVED
                     await self._mark_feedback_completed(feedback_item.id)
                     
                     # Queue next item
-                    await self._queue.task_done()
+                    await self.feedback_queue.task_done()
                 
             except Exception as e:
                 print(f"Error processing feedback: {e}")
+                break
         
-        finally:
-            print("Feedback processing stopped")
+        print("Feedback processing stopped")
     
     async def _mark_feedback_in_review(self, feedback_id: str) -> None:
         """Mark feedback as in review"""
@@ -92,11 +102,10 @@ class FeedbackProcessingService:
             # Update in database
             with sqlite3.connect(self.feedback_db) as conn:
                 cursor = conn.cursor()
-                cursor.execute('UPDATE feedback SET status = ? WHERE id = ?', (FeedbackStatus.IN_REVIEW,))
+                cursor.execute('UPDATE feedback SET status = ? WHERE id = ?', (FeedbackStatus.IN_REVIEW.value, feedback_id))
                 cursor.execute('''
-                    UPDATE feedback SET reviewed_by = ? WHERE id = ?, reviewed_at = ?', (datetime.datetime.utcnow(),))
-                WHERE id = ?)
-                ''', (feedback_id,))
+                    UPDATE feedback SET reviewed_by = ?, reviewed_at = ? WHERE id = ?
+                ''', ('auto_moderator', datetime.datetime.utcnow(), feedback_id))
                 
             conn.commit()
         except Exception as e:
@@ -108,9 +117,8 @@ class FeedbackProcessingService:
             with sqlite3.connect(self.feedback_db) as conn:
                 cursor = conn.cursor()
                 cursor.execute('''
-                UPDATE feedback SET status = ?, resolved_at = ? WHERE id = ?', (FeedbackStatus.RESOLVED, datetime.datetime.utcnow(), resolved_by = ?)
-                WHERE id = ?
-                ''', (feedback_id,))
+                    UPDATE feedback SET status = ?, resolved_at = ?, resolved_by = ? WHERE id = ?
+                ''', (FeedbackStatus.RESOLVED.value, datetime.datetime.utcnow(), 'auto_moderator', feedback_id))
             conn.commit()
         except Exception as e:
             print(f"Error marking feedback {feedback_id} as completed")
@@ -145,16 +153,16 @@ class FeedbackProcessingService:
             auto_response = self._generate_improvement_suggestions(feedback_item)
         
         # Update database
-        processed_item.status = FeedbackStatus.RESOLVED
-        processed_item.processed_at = datetime.datetime.utcnow()
-        processed_item.resolved_by = 'auto_moderator'
+        feedback_item['status'] = FeedbackStatus.RESOLVED
+        feedback_item['processed_at'] = datetime.datetime.utcnow()
+        feedback_item['resolved_by'] = 'auto_moderator'
         
         # Send response
         if auto_response:
             await self._send_feedback_response(feedback_item, auto_response)
         
         return {
-            'status': processed_item.status,
+            'status': feedback_item['status'],
             'insights': analysis.get('insights'),
             'auto_response': auto_response
         }
@@ -250,11 +258,11 @@ class FeedbackProcessingService:
             'system_errors'
         ]
         
-        return [
-            theme for theme in fraud_themes 
-            for theme in fraud_themes
-            if any(keyword in text.lower() for keyword in theme)
-        ]
+        found_themes = []
+        for theme in fraud_themes + technical_themes:
+            if any(keyword in text.lower() for keyword in theme.split('_')):
+                found_themes.append(theme)
+        return found_themes
     
     def _assess_urgency(self, feedback_item: Dict[str, Any]) -> str:
         """Assess urgency of feedback"""
@@ -290,7 +298,7 @@ class FeedbackProcessingService:
     def _generate_bug_fix_response(self, feedback_item: Dict[str, Any]) -> str:
         """Generate bug fix response"""
         
-        issue_id = hashlib.md5(f"bug_{int(time.time())}")
+        issue_id = hashlib.md5(f"bug_{int(time.time())}".encode()).hexdigest()
         
         response = f"""
 Thank you for reporting this bug issue (Reference: {issue_id}).
@@ -343,7 +351,7 @@ Best regards,
                 "Add more detailed error messages",
                 "Implement API rate limiting",
                 "Add automated testing for critical endpoints",
-                "Document edge cases"
+                "Document edge cases",
                 "Add SDK examples"
             ]
         
@@ -362,7 +370,7 @@ Best regards,
                 "Review authentication flows",
                 "Add additional security checks",
                 "Document security best practices",
-                "Implement security monitoring"
+                "Implement security monitoring",
                 "Review access control implementation"
             ]
         
@@ -371,7 +379,7 @@ Best regards,
                 "Expand with more practical examples",
                 "Add more visual aids and diagrams",
                 "Improve technical accuracy",
-                "Add cross-references"
+                "Add cross-references",
                 "Update outdated information",
                 "Include real-world use cases"
             ]
@@ -400,7 +408,7 @@ Best regards,
                 from email.mime.text import MIMEText
                 msg = MIMEText()
                 
-                msg.set_param("Subject", f"Update on Your Feedback (#{feedback_item['id']}")
+                msg.set_param("Subject", f"Update on Your Feedback (#{feedback_item['id']})")
                 msg.set_param("From", "378x492 Support")
                 
                 # Create HTML email
@@ -408,13 +416,12 @@ Best regards,
                 <h2>Update on Your Feedback</h2>
                 <p>Dear User,</p>
                 <p>Thank you for your feedback regarding {feedback_item.get('title', '')}.</p>
-                <p><strong>Issue ID:</strong> #{feedback_item['id']}</p></p>
-                <p><strong>Status:</strong> {feedback_item.get('status').value.title()}</p></p>
+                <p><strong>Issue ID:</strong> #{feedback_item['id']}</p>
+                <p><strong>Status:</strong> {feedback_item.get('status', 'Unknown')}</p>
                 <p><strong>Our Response:</strong></p>
-                {response}</p>
+                <p>{response}</p>
                 
                 <p>Best regards,<br/>The 378x492 Support Team</p>
-                </p>
             """
                 
                 msg.attach(MIMEText(html_content))
@@ -441,10 +448,9 @@ Best regards,
         try:
             with sqlite3.connect(self.feedback_db) as conn:
                 cursor = conn.cursor()
-                cursor.execute('UPDATE feedback SET status = ?, reviewed_by = ?, WHERE id = ?', (FeedbackStatus.IN_REVIEW,))
-                WHERE id = ?', (datetime.datetime.utcnow(),))
-                WHERE id = ?)
-                ''', (feedback_id,))
+                cursor.execute('''
+                    UPDATE feedback SET status = ?, reviewed_by = ?, reviewed_at = ? WHERE id = ?
+                ''', (FeedbackStatus.IN_REVIEW.value, 'auto_moderator', datetime.datetime.utcnow(), feedback_id))
                 conn.commit()
         except Exception as e:
                 print(f"Error marking feedback {feedback_id} for review: {e}")
@@ -455,9 +461,8 @@ Best regards,
             with sqlite3.connect(self.feedback_db) as conn:
                 cursor = conn.cursor()
                 cursor.execute('''
-                UPDATE feedback SET status = ?, resolved_at = ?, resolved_by = ?, WHERE id = ?, (FeedbackStatus.RESOLVED, datetime.datetime.utcnow(), resolved_by = self._get_assigned_reviewer(feedback_id), 
-                WHERE id = ?
-                ''', (feedback_id,))
+                    UPDATE feedback SET status = ?, resolved_at = ?, resolved_by = ? WHERE id = ?
+                ''', (FeedbackStatus.RESOLVED.value, datetime.datetime.utcnow(), self._get_assigned_reviewer(feedback_id), feedback_id))
                 conn.commit()
         except Exception as e:
                 print(f"Error marking feedback {feedback_id} as completed: {e}")
@@ -477,8 +482,7 @@ def main():
     """Main feedback service function"""
     print("🔄 Starting Feedback Processing Service...")
     
-    system = FeedbackSystem()
-    system.initialize_database()
+    system = FeedbackProcessingService()
     system.process_feedback_queue()
 
 if __name__ == "__main__":

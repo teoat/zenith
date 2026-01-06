@@ -24,9 +24,7 @@ try:
     import hashlib
     import hmac
 
-    payload = f"{entry.id}|{entry.action}|{entry.user_id}|{entry.timestamp}".encode(
-        "utf-8"
-    )
+    payload = f"{entry.id}|{entry.action}|{entry.user_id}|{entry.timestamp}".encode()
     sig = hmac.new(
         os.environ["AUTH_ENCRYPTION_KEY"].encode("utf-8"), payload, hashlib.sha256
     ).hexdigest()

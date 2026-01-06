@@ -7,10 +7,12 @@ This script provides a detailed diagnostic analysis with scoring across all majo
 """
 
 import asyncio
-import psutil
-from datetime import datetime, timezone
-import aiohttp
 import os
+from datetime import UTC, datetime, timezone
+
+import aiohttp
+import psutil
+
 
 class DiagnosticReport:
     """Generate comprehensive diagnostic report with scoring"""
@@ -21,16 +23,20 @@ class DiagnosticReport:
     def calculate_score(self, sector_name: str, data: dict) -> dict:
         """Calculate comprehensive score for a sector"""
         scores = {
-            "criticality": 8.5 if sector_name in ["backend", "database", "ai_ml", "security"] else 7.0,
+            "criticality": 8.5
+            if sector_name in ["backend", "database", "ai_ml", "security"]
+            else 7.0,
             "performance": 7.5,
             "reliability": 8.0 if data.get("status") == "healthy" else 4.0,
             "security": 7.5,
-            "maintainability": 7.0
+            "maintainability": 7.0,
         }
 
         # Adjust based on actual data
-        if "issues" in data and data["issues"]:
-            critical_issues = len([i for i in data["issues"] if "CRITICAL" in i.lower()])
+        if data.get("issues"):
+            critical_issues = len(
+                [i for i in data["issues"] if "CRITICAL" in i.lower()]
+            )
             scores["reliability"] -= critical_issues * 1.5
 
         if sector_name == "infrastructure":
@@ -55,7 +61,7 @@ class DiagnosticReport:
             "overall_score": round(overall_score, 2),
             "rating": rating,
             "grade": grade,
-            "breakdown": scores
+            "breakdown": scores,
         }
 
     async def analyze_infrastructure(self):
@@ -63,7 +69,7 @@ class DiagnosticReport:
         metrics = {
             "cpu_percent": psutil.cpu_percent(interval=1),
             "memory_percent": psutil.virtual_memory().percent,
-            "disk_usage_percent": psutil.disk_usage('/').percent
+            "disk_usage_percent": psutil.disk_usage("/").percent,
         }
 
         issues = []
@@ -84,9 +90,9 @@ class DiagnosticReport:
                 result = await asyncio.create_subprocess_shell(
                     f"pgrep -f {service}",
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
-                stdout, _ = await result.communicate()
+                _stdout, _ = await result.communicate()
                 if result.returncode == 0:
                     services_running += 1
                 else:
@@ -94,7 +100,13 @@ class DiagnosticReport:
             except:
                 issues.append(f"Unable to check {service}")
 
-        status = "critical" if len([i for i in issues if "CRITICAL" in i]) > 0 else "degraded" if issues else "healthy"
+        status = (
+            "critical"
+            if len([i for i in issues if "CRITICAL" in i]) > 0
+            else "degraded"
+            if issues
+            else "healthy"
+        )
 
         return {
             "status": status,
@@ -103,9 +115,11 @@ class DiagnosticReport:
             "services_running": f"{services_running}/{len(services_checked)}",
             "analysis": {
                 "system_load": "HIGH" if metrics["cpu_percent"] > 80 else "NORMAL",
-                "memory_pressure": "HIGH" if metrics["memory_percent"] > 85 else "NORMAL",
-                "service_availability": f"{(services_running/len(services_checked))*100:.0f}%"
-            }
+                "memory_pressure": "HIGH"
+                if metrics["memory_percent"] > 85
+                else "NORMAL",
+                "service_availability": f"{(services_running / len(services_checked)) * 100:.0f}%",
+            },
         }
 
     async def analyze_backend(self):
@@ -117,7 +131,9 @@ class DiagnosticReport:
         healthy_endpoints = 0
 
         try:
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as session:
+            async with aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(total=5)
+            ) as session:
                 for endpoint in api_endpoints:
                     try:
                         url = f"http://localhost:8001{endpoint}"
@@ -125,7 +141,9 @@ class DiagnosticReport:
                             if response.status < 400:
                                 healthy_endpoints += 1
                             else:
-                                issues.append(f"API {endpoint} returned {response.status}")
+                                issues.append(
+                                    f"API {endpoint} returned {response.status}"
+                                )
                     except:
                         issues.append(f"API {endpoint} unreachable")
         except:
@@ -134,6 +152,7 @@ class DiagnosticReport:
         # Service dependency checks
         try:
             from app.services.ai.ai_service import ai_service
+
             ai_status = "healthy" if ai_service.initialized else "unhealthy"
             if not ai_service.initialized:
                 issues.append("AI service not initialized")
@@ -150,12 +169,12 @@ class DiagnosticReport:
             "service_dependencies": {
                 "ai_service": ai_status,
                 "cache_service": "unknown",
-                "database": "unknown"
+                "database": "unknown",
             },
             "analysis": {
-                "api_reliability": f"{(healthy_endpoints/len(api_endpoints))*100:.0f}%",
-                "dependency_health": "REQUIRES_IMPROVEMENT" if issues else "GOOD"
-            }
+                "api_reliability": f"{(healthy_endpoints / len(api_endpoints)) * 100:.0f}%",
+                "dependency_health": "REQUIRES_IMPROVEMENT" if issues else "GOOD",
+            },
         }
 
     async def analyze_ai_ml(self):
@@ -175,7 +194,7 @@ class DiagnosticReport:
                 issues.append("Vector store is empty")
 
         except Exception as e:
-            issues.append(f"AI service analysis failed: {str(e)}")
+            issues.append(f"AI service analysis failed: {e!s}")
             model_loaded = False
             docs_indexed = 0
             service_initialized = False
@@ -191,8 +210,8 @@ class DiagnosticReport:
             "analysis": {
                 "semantic_capability": "OPERATIONAL" if model_loaded else "FAILED",
                 "data_readiness": "POPULATED" if docs_indexed > 0 else "EMPTY",
-                "overall_health": "CRITICAL" if status == "critical" else "GOOD"
-            }
+                "overall_health": "CRITICAL" if status == "critical" else "GOOD",
+            },
         }
 
     async def analyze_security(self):
@@ -204,37 +223,53 @@ class DiagnosticReport:
         configured_auth = sum(1 for var in auth_vars if os.getenv(var))
 
         if configured_auth < len(auth_vars):
-            issues.append(f"Missing {len(auth_vars) - configured_auth} authentication variables")
+            issues.append(
+                f"Missing {len(auth_vars) - configured_auth} authentication variables"
+            )
 
         # Basic security headers check
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get("http://localhost:8001/health") as response:
                     headers = dict(response.headers)
-                    security_headers = ["X-Content-Type-Options", "X-Frame-Options", "X-XSS-Protection"]
+                    security_headers = [
+                        "X-Content-Type-Options",
+                        "X-Frame-Options",
+                        "X-XSS-Protection",
+                    ]
                     implemented = sum(1 for h in security_headers if headers.get(h))
                     if implemented < 2:
-                        issues.append(f"Only {implemented}/{len(security_headers)} security headers implemented")
+                        issues.append(
+                            f"Only {implemented}/{len(security_headers)} security headers implemented"
+                        )
         except:
             issues.append("Security headers check failed")
 
-        status = "critical" if len([i for i in issues if "CRITICAL" in i]) > 0 else "warning" if issues else "healthy"
+        status = (
+            "critical"
+            if len([i for i in issues if "CRITICAL" in i]) > 0
+            else "warning"
+            if issues
+            else "healthy"
+        )
 
         return {
             "status": status,
             "issues": issues,
-            "authentication_score": f"{(configured_auth/len(auth_vars))*100:.0f}%",
+            "authentication_score": f"{(configured_auth / len(auth_vars)) * 100:.0f}%",
             "security_headers": f"{implemented if 'implemented' in locals() else 0}/3 implemented",
             "analysis": {
-                "authentication_strength": "STRONG" if configured_auth == len(auth_vars) else "WEAK",
-                "header_protection": "ADEQUATE" if implemented >= 2 else "INSUFFICIENT"
-            }
+                "authentication_strength": "STRONG"
+                if configured_auth == len(auth_vars)
+                else "WEAK",
+                "header_protection": "ADEQUATE" if implemented >= 2 else "INSUFFICIENT",
+            },
         }
 
     async def generate_report(self):
         """Generate comprehensive diagnostic report"""
         print("🔬 COMPREHENSIVE SYSTEM DIAGNOSTIC ANALYSIS")
-        print("="*80)
+        print("=" * 80)
 
         sectors = {}
         total_score = 0
@@ -245,7 +280,7 @@ class DiagnosticReport:
             ("infrastructure", self.analyze_infrastructure),
             ("backend", self.analyze_backend),
             ("ai_ml", self.analyze_ai_ml),
-            ("security", self.analyze_security)
+            ("security", self.analyze_security),
         ]
 
         for sector_name, analysis_func in sector_analyses:
@@ -259,7 +294,9 @@ class DiagnosticReport:
                 total_score += scoring["overall_score"]
                 sector_count += 1
 
-                print(f"✅ {sector_name}: Score {scoring['overall_score']}/10 ({scoring['rating']})")
+                print(
+                    f"✅ {sector_name}: Score {scoring['overall_score']}/10 ({scoring['rating']})"
+                )
 
             except Exception as e:
                 print(f"❌ {sector_name} analysis failed: {e}")
@@ -285,14 +322,14 @@ class DiagnosticReport:
             health_status = "URGENT_INTERVENTION"
 
         # Print executive summary
-        print(f"\n📊 EXECUTIVE SUMMARY")
+        print("\n📊 EXECUTIVE SUMMARY")
         print(f"Overall System Health: {health_status}")
         print(f"Composite Score: {overall_score:.2f}/10")
         print(f"Overall Rating: {overall_rating}")
         print(f"Sectors Analyzed: {sector_count}")
 
         # Print sector breakdown
-        print(f"\n📈 SECTOR PERFORMANCE SCORES")
+        print("\n📈 SECTOR PERFORMANCE SCORES")
         print("-" * 50)
 
         for sector_name, sector_data in sectors.items():
@@ -301,8 +338,18 @@ class DiagnosticReport:
             rating = scoring.get("rating", "UNKNOWN")
             grade = scoring.get("grade", "F")
 
-            icon = "🟢" if score >= 9 else "🟡" if score >= 7 else "🟠" if score >= 5 else "🔴"
-            print(f"{icon} {sector_name.upper():15} | Score: {score:4.1f}/10 | Rating: {rating:8} | Grade: {grade}")
+            icon = (
+                "🟢"
+                if score >= 9
+                else "🟡"
+                if score >= 7
+                else "🟠"
+                if score >= 5
+                else "🔴"
+            )
+            print(
+                f"{icon} {sector_name.upper():15} | Score: {score:4.1f}/10 | Rating: {rating:8} | Grade: {grade}"
+            )
 
             # Show key metrics
             if "analysis" in sector_data:
@@ -321,7 +368,7 @@ class DiagnosticReport:
         for sector_data in sectors.values():
             all_issues.extend(sector_data.get("issues", []))
 
-        print(f"\n🔍 KEY FINDINGS")
+        print("\n🔍 KEY FINDINGS")
         print("-" * 30)
         print(f"Total Issues Identified: {len(all_issues)}")
 
@@ -330,7 +377,9 @@ class DiagnosticReport:
         if "infrastructure" in sectors:
             infra = sectors["infrastructure"]
             cpu = infra.get("metrics", {}).get("cpu_percent", 0)
-            insights.append(f"System CPU utilization at {cpu:.1f}% - {'HIGH' if cpu > 80 else 'NORMAL'}")
+            insights.append(
+                f"System CPU utilization at {cpu:.1f}% - {'HIGH' if cpu > 80 else 'NORMAL'}"
+            )
 
         if "backend" in sectors:
             backend = sectors["backend"]
@@ -341,7 +390,9 @@ class DiagnosticReport:
             ai_ml = sectors["ai_ml"]
             docs = ai_ml.get("documents_indexed", 0)
             model = ai_ml.get("model_loaded", False)
-            insights.append(f"AI system: {'Operational' if model else 'Has issues'}, {docs} documents indexed")
+            insights.append(
+                f"AI system: {'Operational' if model else 'Has issues'}, {docs} documents indexed"
+            )
 
         if "security" in sectors:
             security = sectors["security"]
@@ -352,41 +403,59 @@ class DiagnosticReport:
             print(f"{i}. {insight}")
 
         # Recommendations
-        print(f"\n💡 PRIORITY RECOMMENDATIONS")
+        print("\n💡 PRIORITY RECOMMENDATIONS")
         print("-" * 30)
 
         recommendations = []
 
         # Infrastructure recommendations
-        infra_score = sectors.get("infrastructure", {}).get("scoring", {}).get("overall_score", 7)
+        infra_score = (
+            sectors.get("infrastructure", {}).get("scoring", {}).get("overall_score", 7)
+        )
         if infra_score < 7:
-            recommendations.append("🔧 INFRASTRUCTURE: Optimize system resource utilization and implement monitoring")
+            recommendations.append(
+                "🔧 INFRASTRUCTURE: Optimize system resource utilization and implement monitoring"
+            )
 
         # Backend recommendations
-        backend_score = sectors.get("backend", {}).get("scoring", {}).get("overall_score", 7)
+        backend_score = (
+            sectors.get("backend", {}).get("scoring", {}).get("overall_score", 7)
+        )
         if backend_score < 7:
-            recommendations.append("🔧 BACKEND: Implement comprehensive API monitoring and health checks")
+            recommendations.append(
+                "🔧 BACKEND: Implement comprehensive API monitoring and health checks"
+            )
 
         # AI/ML recommendations
         ai_score = sectors.get("ai_ml", {}).get("scoring", {}).get("overall_score", 7)
         if ai_score < 7:
-            recommendations.append("🤖 AI/ML: Fix AI service initialization and populate vector store")
+            recommendations.append(
+                "🤖 AI/ML: Fix AI service initialization and populate vector store"
+            )
 
         # Security recommendations
-        security_score = sectors.get("security", {}).get("scoring", {}).get("overall_score", 7)
+        security_score = (
+            sectors.get("security", {}).get("scoring", {}).get("overall_score", 7)
+        )
         if security_score < 8:
-            recommendations.append("🔒 SECURITY: Configure authentication variables and security headers")
+            recommendations.append(
+                "🔒 SECURITY: Configure authentication variables and security headers"
+            )
 
         for rec in recommendations:
             print(f"• {rec}")
 
-        print(f"\n📅 Assessment completed: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}")
-        print("="*80)
+        print(
+            f"\n📅 Assessment completed: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}"
+        )
+        print("=" * 80)
+
 
 async def main():
     """Main execution"""
     report_gen = DiagnosticReport()
     await report_gen.generate_report()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

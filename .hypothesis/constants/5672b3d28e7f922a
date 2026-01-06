@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/phase6b.py
+# hypothesis_version: 6.148.8
+
+[0.0, 'burst_detected', 'case_id', 'correlated_entities', 'count_now', 'endpoint', 'entity_id', 'fields', 'ip', 'mean_hist', 'metadata_correlation', 'std_hist', 'temporal_burst', 'window_minutes', 'z_score']

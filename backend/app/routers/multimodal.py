@@ -1,14 +1,19 @@
 # api/multimodal.py
+import builtins
+import contextlib
 import logging
 import os
 import tempfile
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
+from app.services.intelligence.evidence_service import (
+    EvidenceProcessor,
+    ProcessingResult,
+)
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
-from app.services.intelligence.evidence_service import EvidenceProcessor, ProcessingResult
 from core.database import get_db
 
 logger = logging.getLogger(__name__)
@@ -62,16 +67,32 @@ async def analyze_uploaded_file(
             # This returns a List[ProcessingResult]
             results = await processor.process_files_batch([temp_file_path], options)
             if not results:
-                raise HTTPException(status_code=500, detail="Analysis produced no results")
-            
+                raise HTTPException(
+                    status_code=500, detail="Analysis produced no results"
+                )
+
             analysis = results[0]
 
             if analysis.error:
                 # If it's a processing error (like invalid image), return 400 instead of 500
                 # to match API expectations for invalid input
                 error_lower = analysis.error.lower()
-                status_code = 400 if any(kw in error_lower for kw in ["unsupported", "cannot identify", "invalid", "failed to process"]) else 500
-                raise HTTPException(status_code=status_code, detail=f"Analysis failed: {analysis.error}")
+                status_code = (
+                    400
+                    if any(
+                        kw in error_lower
+                        for kw in [
+                            "unsupported",
+                            "cannot identify",
+                            "invalid",
+                            "failed to process",
+                        ]
+                    )
+                    else 500
+                )
+                raise HTTPException(
+                    status_code=status_code, detail=f"Analysis failed: {analysis.error}"
+                )
 
             # Convert ProcessingResult to the Response format frontend expects
             result = _map_processing_result(analysis, file.filename, options)
@@ -80,16 +101,14 @@ async def analyze_uploaded_file(
 
         finally:
             # Clean up temporary file
-            try:
+            with contextlib.suppress(builtins.BaseException):
                 os.unlink(temp_file_path)
-            except:
-                pass
 
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Multi-modal analysis failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        logger.error(f"Multi-modal analysis failed: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {e!s}")
 
 
 @router.post("/analyze/path")
@@ -120,14 +139,28 @@ async def analyze_file_path(
         # Perform analysis
         results = await processor.process_files_batch([file_path], options)
         if not results:
-             raise HTTPException(status_code=500, detail="Analysis produced no results")
-            
+            raise HTTPException(status_code=500, detail="Analysis produced no results")
+
         analysis = results[0]
 
         if analysis.error:
             error_lower = analysis.error.lower()
-            status_code = 400 if any(kw in error_lower for kw in ["unsupported", "cannot identify", "invalid", "failed to process"]) else 500
-            raise HTTPException(status_code=status_code, detail=f"Analysis failed: {analysis.error}")
+            status_code = (
+                400
+                if any(
+                    kw in error_lower
+                    for kw in [
+                        "unsupported",
+                        "cannot identify",
+                        "invalid",
+                        "failed to process",
+                    ]
+                )
+                else 500
+            )
+            raise HTTPException(
+                status_code=status_code, detail=f"Analysis failed: {analysis.error}"
+            )
 
         # Convert to dict for JSON response
         result = _map_processing_result(analysis, os.path.basename(file_path), options)
@@ -137,13 +170,13 @@ async def analyze_file_path(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Multi-modal analysis failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        logger.error(f"Multi-modal analysis failed: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {e!s}")
 
 
 @router.post("/analyze/batch")
 async def analyze_batch_files(
-    files: List[UploadFile] = File(...),
+    files: list[UploadFile] = File(...),
     enable_ocr: bool = Form(True),
     enable_forensics: bool = Form(True),
     enable_object_detection: bool = Form(False),
@@ -165,7 +198,7 @@ async def analyze_batch_files(
             "enable_face_detection": enable_face_detection,
         }
 
-        temp_files_map = {} # path -> filename
+        temp_files_map = {}  # path -> filename
         temp_paths = []
 
         try:
@@ -186,20 +219,28 @@ async def analyze_batch_files(
 
             # Perform batch analysis
             analysis_results = await processor.process_files_batch(temp_paths, options)
-            
+
             # Map results
             mapped_results = []
             for res in analysis_results:
                 original_filename = temp_files_map.get(res.file_path, "unknown")
                 if res.error:
-                     mapped_results.append({"filename": original_filename, "error": res.error, "success": False})
+                    mapped_results.append(
+                        {
+                            "filename": original_filename,
+                            "error": res.error,
+                            "success": False,
+                        }
+                    )
                 else:
-                     mapped = _map_processing_result(res, original_filename, options)
-                     # Flatten structure slightly for batch response to match previous API if needed?
-                     # Previous API returned full structure. We will return full structure + success flag.
-                     mapped["success"] = True
-                     mapped["filename"] = original_filename # Ensure filename at top level
-                     mapped_results.append(mapped)
+                    mapped = _map_processing_result(res, original_filename, options)
+                    # Flatten structure slightly for batch response to match previous API if needed?
+                    # Previous API returned full structure. We will return full structure + success flag.
+                    mapped["success"] = True
+                    mapped["filename"] = (
+                        original_filename  # Ensure filename at top level
+                    )
+                    mapped_results.append(mapped)
 
             return {
                 "success": True,
@@ -208,22 +249,20 @@ async def analyze_batch_files(
                     [r for r in mapped_results if r.get("success", False)]
                 ),
                 "results": mapped_results,
-                "analysis_timestamp": datetime.now(timezone.utc).isoformat(),
+                "analysis_timestamp": datetime.now(UTC).isoformat(),
             }
 
         finally:
             # Clean up temporary files
             for temp_file_path in temp_paths:
-                try:
+                with contextlib.suppress(builtins.BaseException):
                     os.unlink(temp_file_path)
-                except:
-                    pass
 
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Batch multi-modal analysis failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Batch analysis failed: {str(e)}")
+        logger.error(f"Batch multi-modal analysis failed: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Batch analysis failed: {e!s}")
 
 
 @router.get("/capabilities")
@@ -237,7 +276,7 @@ async def get_analysis_capabilities():
     return {
         "success": True,
         "capabilities": {
-            "ocr_available": True, # processing_service uses pytesseract
+            "ocr_available": True,  # processing_service uses pytesseract
             "image_analysis_available": True,
             "document_analysis_available": True,
             "forensic_available": True,
@@ -246,12 +285,12 @@ async def get_analysis_capabilities():
                 "entity_extraction": True,
                 "sentiment_analysis": True,
                 "visual_analysis": True,
-                "object_detection": False, 
+                "object_detection": False,
                 "face_detection": False,
                 "forensic_analysis": True,
-            }
+            },
         },
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -265,15 +304,17 @@ async def get_analysis_status():
         "status": {
             "service_status": "healthy",
             "processor": "EvidenceProcessor",
-            "backend": "production_evidence_service"
+            "backend": "production_evidence_service",
         },
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
-def _map_processing_result(analysis: ProcessingResult, filename: str, options: Dict[str, Any]) -> Dict[str, Any]:
+def _map_processing_result(
+    analysis: ProcessingResult, filename: str, options: dict[str, Any]
+) -> dict[str, Any]:
     """Helper to map EvidenceProcessor result to the JSON structure expected by frontend"""
-    
+
     # Extract metadata fields if they exist
     meta = analysis.metadata or {}
     forensics = meta.get("forensics", {})
@@ -292,7 +333,7 @@ def _map_processing_result(analysis: ProcessingResult, filename: str, options: D
             "evidence_id": analysis.file_id,
             "file_type": analysis.file_type,
             "size_bytes": analysis.size_bytes,
-            "path": analysis.file_path
+            "path": analysis.file_path,
         },
         "text_analysis": {
             "extracted_text": analysis.extracted_text,
@@ -302,7 +343,9 @@ def _map_processing_result(analysis: ProcessingResult, filename: str, options: D
         },
         "visual_analysis": {
             "visual_features": meta.get("visual_features", {}),
-            "objects_detected": meta.get("objects_detected", []), # Features missing in evidence_service for now
+            "objects_detected": meta.get(
+                "objects_detected", []
+            ),  # Features missing in evidence_service for now
             "faces_detected": meta.get("faces_detected", []),
         },
         "document_analysis": {
@@ -319,12 +362,12 @@ def _map_processing_result(analysis: ProcessingResult, filename: str, options: D
         },
         "quality_assessment": {
             "quality_score": analysis.quality_score,
-            "relevance_score": 0.0, # Not computed by EvidenceProcessor
+            "relevance_score": 0.0,  # Not computed by EvidenceProcessor
             "admissibility_score": 0.0,
         },
         "processing_info": {
             "processing_time": analysis.processing_time,
-            "analysis_timestamp": datetime.now(timezone.utc).isoformat(),
+            "analysis_timestamp": datetime.now(UTC).isoformat(),
             "errors": [analysis.error] if analysis.error else [],
         },
     }

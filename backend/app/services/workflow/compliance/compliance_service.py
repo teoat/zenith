@@ -1,13 +1,12 @@
 import json
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from sqlalchemy.orm import Session
 
 from core.database import (
     AccessReview,
-    Case,
     ComplianceAuditLog,
     RegulatoryReport,
     SecurityIncident,
@@ -28,9 +27,9 @@ class ComplianceService:
         resource_id: str,
         user_id: str,
         user_role: str,
-        details: Dict[str, Any],
-        ip_address: str = None,
-        user_agent: str = None,
+        details: dict[str, Any],
+        ip_address: str | None = None,
+        user_agent: str | None = None,
     ) -> str:
         """Log a compliance-related event for audit purposes"""
         try:
@@ -66,7 +65,7 @@ class ComplianceService:
             return audit_log.id
 
         except Exception as e:
-            logger.error(f"Failed to log compliance event: {str(e)}")
+            logger.error(f"Failed to log compliance event: {e!s}")
             await self.db.rollback()
             return None
 
@@ -74,9 +73,9 @@ class ComplianceService:
         self,
         report_type: str,
         case_id: str,
-        report_data: Dict[str, Any],
+        report_data: dict[str, Any],
         created_by: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Create a regulatory report (SAR, CTR, etc.)"""
         try:
             # Generate unique report ID
@@ -113,13 +112,13 @@ class ComplianceService:
             }
 
         except Exception as e:
-            logger.error(f"Failed to create regulatory report: {str(e)}")
+            logger.error(f"Failed to create regulatory report: {e!s}")
             await self.db.rollback()
             return {"error": str(e)}
 
     async def submit_security_incident(
-        self, incident_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, incident_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Submit a security incident report"""
         try:
             incident = SecurityIncident(
@@ -149,13 +148,13 @@ class ComplianceService:
             }
 
         except Exception as e:
-            logger.error(f"Failed to submit security incident: {str(e)}")
+            logger.error(f"Failed to submit security incident: {e!s}")
             await self.db.rollback()
             return {"error": str(e)}
 
     async def initiate_access_review(
         self, user_id: str, reviewer_id: str, review_period_months: int = 12
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Initiate an access review for a user"""
         try:
             # Calculate review period
@@ -183,7 +182,7 @@ class ComplianceService:
             }
 
         except Exception as e:
-            logger.error(f"Failed to initiate access review: {str(e)}")
+            logger.error(f"Failed to initiate access review: {e!s}")
             await self.db.rollback()
             return {"error": str(e)}
 
@@ -192,8 +191,8 @@ class ComplianceService:
         user_id: str,
         training_type: str,
         training_module: str,
-        score: float = None,
-    ) -> Dict[str, Any]:
+        score: float | None = None,
+    ) -> dict[str, Any]:
         """Record completion of compliance training"""
         try:
             # Calculate expiry date (typically 1 year from completion)
@@ -224,11 +223,11 @@ class ComplianceService:
             }
 
         except Exception as e:
-            logger.error(f"Failed to record training completion: {str(e)}")
+            logger.error(f"Failed to record training completion: {e!s}")
             await self.db.rollback()
             return {"error": str(e)}
 
-    async def get_compliance_dashboard(self) -> Dict[str, Any]:
+    async def get_compliance_dashboard(self) -> dict[str, Any]:
         """Get comprehensive compliance dashboard data"""
         try:
             # Get recent audit logs
@@ -290,12 +289,12 @@ class ComplianceService:
             }
 
         except Exception as e:
-            logger.error(f"Failed to get compliance dashboard: {str(e)}")
+            logger.error(f"Failed to get compliance dashboard: {e!s}")
             return {"error": str(e)}
 
     def _determine_compliance_flags(
-        self, action: str, resource_type: str, details: Dict[str, Any]
-    ) -> List[str]:
+        self, action: str, resource_type: str, details: dict[str, Any]
+    ) -> list[str]:
         """Determine which compliance frameworks this event relates to"""
         flags = []
 
@@ -318,7 +317,7 @@ class ComplianceService:
         return flags
 
     def _calculate_event_risk(
-        self, action: str, resource_type: str, details: Dict[str, Any]
+        self, action: str, resource_type: str, details: dict[str, Any]
     ) -> float:
         """Calculate risk score for the compliance event"""
         risk_score = 0.0
@@ -353,8 +352,8 @@ class ComplianceService:
         return min(risk_score, 1.0)
 
     async def automate_regulatory_reporting(
-        self, case_id: str, report_types: List[str]
-    ) -> Dict[str, Any]:
+        self, case_id: str, report_types: list[str]
+    ) -> dict[str, Any]:
         """Automate generation and filing of regulatory reports"""
         automation_results = {
             "reports_generated": [],
@@ -406,7 +405,7 @@ class ComplianceService:
 
             except Exception as e:
                 automation_results["errors"].append(
-                    f"Error processing {report_type}: {str(e)}"
+                    f"Error processing {report_type}: {e!s}"
                 )
 
         # Calculate automation rate
@@ -420,7 +419,7 @@ class ComplianceService:
 
     async def implement_ai_powered_compliance_assessment(
         self, case_id: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Implement AI-powered compliance risk assessment"""
         try:
             # Get case data
@@ -453,7 +452,7 @@ class ComplianceService:
 
     async def deploy_compliance_dashboard_with_predictive_analytics(
         self,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Deploy comprehensive compliance dashboard with predictive analytics"""
         try:
             # Current compliance status
@@ -488,7 +487,7 @@ class ComplianceService:
 
     async def _generate_report_data(
         self, case_id: str, report_type: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate regulatory report data automatically"""
         # Mock implementation - would integrate with actual data sources
         base_data = {
@@ -535,7 +534,7 @@ class ComplianceService:
         except Exception:
             return False
 
-    async def _get_case_data_for_assessment(self, case_id: str) -> Dict[str, Any]:
+    async def _get_case_data_for_assessment(self, case_id: str) -> dict[str, Any]:
         """Get comprehensive case data for AI assessment"""
         # Mock implementation
         return {
@@ -555,8 +554,8 @@ class ComplianceService:
         }
 
     async def _perform_ai_risk_analysis(
-        self, case_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Perform AI-powered risk analysis"""
         # Mock AI analysis
         risk_factors = []
@@ -600,8 +599,8 @@ class ComplianceService:
         }
 
     async def _generate_ai_compliance_recommendations(
-        self, risk_assessment: Dict[str, Any]
-    ) -> List[str]:
+        self, risk_assessment: dict[str, Any]
+    ) -> list[str]:
         """Generate AI-powered compliance recommendations"""
         recommendations = []
         risk_score = risk_assessment.get("overall_risk_score", 0)
@@ -635,8 +634,8 @@ class ComplianceService:
         return recommendations
 
     async def _execute_automated_compliance_actions(
-        self, recommendations: List[str]
-    ) -> List[str]:
+        self, recommendations: list[str]
+    ) -> list[str]:
         """Execute automated compliance actions based on recommendations"""
         executed_actions = []
 
@@ -650,7 +649,7 @@ class ComplianceService:
 
         return executed_actions
 
-    def _calculate_assessment_score(self, risk_assessment: Dict[str, Any]) -> float:
+    def _calculate_assessment_score(self, risk_assessment: dict[str, Any]) -> float:
         """Calculate overall compliance assessment score"""
         risk_score = risk_assessment.get("overall_risk_score", 0)
         confidence = risk_assessment.get("confidence_level", 0)
@@ -659,7 +658,7 @@ class ComplianceService:
         assessment_score = (100 - risk_score) * confidence
         return round(assessment_score, 1)
 
-    async def _generate_compliance_predictions(self) -> Dict[str, Any]:
+    async def _generate_compliance_predictions(self) -> dict[str, Any]:
         """Generate predictive analytics for compliance trends"""
         return {
             "next_month_risk": 65,
@@ -673,7 +672,7 @@ class ComplianceService:
             ],
         }
 
-    async def _analyze_risk_trends(self) -> Dict[str, Any]:
+    async def _analyze_risk_trends(self) -> dict[str, Any]:
         """Analyze compliance risk trends"""
         return {
             "current_trend": "improving",
@@ -691,8 +690,8 @@ class ComplianceService:
         }
 
     async def _generate_predictive_alerts(
-        self, predictions: Dict[str, Any], trends: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, predictions: dict[str, Any], trends: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Generate predictive compliance alerts"""
         alerts = []
 
@@ -719,8 +718,8 @@ class ComplianceService:
         return alerts
 
     async def _generate_actionable_insights(
-        self, current_status: Dict[str, Any], predictions: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, current_status: dict[str, Any], predictions: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Generate actionable compliance insights"""
         insights = []
 
@@ -765,7 +764,7 @@ class ComplianceService:
 
         return insights
 
-    async def send_training_reminders(self) -> Dict[str, Any]:
+    async def send_training_reminders(self) -> dict[str, Any]:
         """Send automated training reminders to improve completion rates"""
         try:
             from datetime import datetime, timedelta
@@ -818,14 +817,12 @@ class ComplianceService:
             return reminders_sent
 
         except Exception as e:
-            logger.error(f"Failed to send training reminders: {str(e)}")
+            logger.error(f"Failed to send training reminders: {e!s}")
             return {"error": str(e)}
 
-    async def get_training_completion_analytics(self) -> Dict[str, Any]:
+    async def get_training_completion_analytics(self) -> dict[str, Any]:
         """Get detailed training completion analytics"""
         try:
-            from datetime import datetime
-
             from core.database import TrainingRecord
 
             # Get completion statistics
@@ -874,10 +871,10 @@ class ComplianceService:
             }
 
         except Exception as e:
-            logger.error(f"Failed to get training analytics: {str(e)}")
+            logger.error(f"Failed to get training analytics: {e!s}")
             return {"error": str(e)}
 
-    def _calculate_completion_trends(self) -> Dict[str, Any]:
+    def _calculate_completion_trends(self) -> dict[str, Any]:
         """Calculate training completion trends"""
         # Simplified trend calculation
         return {
@@ -888,8 +885,8 @@ class ComplianceService:
         }
 
     def _generate_training_recommendations(
-        self, completion_rate: float, type_breakdown: Dict[str, Dict[str, int]]
-    ) -> List[str]:
+        self, completion_rate: float, type_breakdown: dict[str, dict[str, int]]
+    ) -> list[str]:
         """Generate training improvement recommendations"""
         recommendations = []
 
@@ -979,7 +976,7 @@ class ComplianceService:
         # Ensure score doesn't go below 0
         return max(score, 0.0)
 
-    async def get_regional_compliance_status(self) -> Dict[str, Any]:
+    async def get_regional_compliance_status(self) -> dict[str, Any]:
         """Get compliance status across different regions/jurisdictions"""
         try:
             # Mock regional compliance data - in production this would be stored in database
@@ -1028,10 +1025,10 @@ class ComplianceService:
             return {"regions": regions}
 
         except Exception as e:
-            logger.error(f"Failed to get regional compliance status: {str(e)}")
+            logger.error(f"Failed to get regional compliance status: {e!s}")
             return {"error": str(e)}
 
-    async def get_data_residency_rules(self) -> Dict[str, Any]:
+    async def get_data_residency_rules(self) -> dict[str, Any]:
         """Get data residency and localization rules for different regions"""
         try:
             rules = [
@@ -1065,16 +1062,16 @@ class ComplianceService:
             return {"rules": rules}
 
         except Exception as e:
-            logger.error(f"Failed to get data residency rules: {str(e)}")
+            logger.error(f"Failed to get data residency rules: {e!s}")
             return {"error": str(e)}
 
     async def update_regional_compliance(
         self,
         region: str,
         framework: str,
-        compliance_data: Dict[str, Any],
+        compliance_data: dict[str, Any],
         updated_by: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Update regional compliance settings and status"""
         try:
             # In a real implementation, this would update a database
@@ -1105,5 +1102,5 @@ class ComplianceService:
             return result
 
         except Exception as e:
-            logger.error(f"Failed to update regional compliance: {str(e)}")
+            logger.error(f"Failed to update regional compliance: {e!s}")
             return {"error": str(e)}

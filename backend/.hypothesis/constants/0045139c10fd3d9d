@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/plugins/zenith/integration/ai/local_minilm/plugin.py
+# hypothesis_version: 6.148.8
+
+[384, '1.0.0', 'Unknown action', 'action', 'ai_embedding', 'all-MiniLM-L6-v2', 'dimensions', 'embed_text', 'embedding', 'error', 'local', 'local_ai', 'local_minilm', 'metadata', 'model', 'model_name', 'official', 'provider', 'text', 'text_analysis', 'v1']

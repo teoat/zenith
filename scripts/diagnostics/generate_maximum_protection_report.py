@@ -15,7 +15,7 @@ def generate_maximum_protection_report():
     print("=" * 70)
 
     # Read the latest diagnostic results
-    with open("comprehensive_lockfiles_ssot_diagnostic_report.json", "r") as f:
+    with open("comprehensive_lockfiles_ssot_diagnostic_report.json") as f:
         diagnostic = json.load(f)
 
     # Create achievement report

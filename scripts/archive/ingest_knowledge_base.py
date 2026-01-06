@@ -27,7 +27,7 @@ async def ingest_knowledge_base():
 
     for file_path in md_files:
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 content = f.read()
 
             # ID is relative path without extension, e.g., "typologies/aml/layering"

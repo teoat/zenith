@@ -3,14 +3,6 @@
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from fastapi import HTTPException
-from main import app
-from starlette.testclient import TestClient
-
-from app.routers.analytics import router as analytics_router
-from app.routers.cases import router as cases_router
-from app.routers.evidence import router as evidence_router
-from app.routers.fraud import router as fraud_router
 
 
 class TestCasesRouter:
@@ -84,7 +76,9 @@ class TestEvidenceRouter:
     @pytest.fixture
     def mock_evidence_processor(self):
         """Mock evidence processor"""
-        with patch("app.services.intelligence.evidence_service.evidence_processor") as mock:
+        with patch(
+            "app.services.intelligence.evidence_service.evidence_processor"
+        ) as mock:
             yield mock
 
     @patch("app.services.infrastructure.auth_service.auth_service.get_current_user")
@@ -106,9 +100,10 @@ class TestEvidenceRouter:
         """Test evidence upload"""
         mock_user = MagicMock()
         mock_get_user.return_value = mock_user
-        
+
         # Mock the result of process_files_batch
         from app.services.intelligence.evidence_service import ProcessingResult
+
         mock_result = MagicMock(spec=ProcessingResult)
         mock_result.file_id = "evidence123"
         mock_result.file_type = "application/pdf"
@@ -119,8 +114,10 @@ class TestEvidenceRouter:
         mock_result.key_entities = []
         mock_result.sentiment_score = 0.0
         mock_result.quality_score = 0.0
-        
-        mock_evidence_processor.process_files_batch = AsyncMock(return_value=[mock_result])
+
+        mock_evidence_processor.process_files_batch = AsyncMock(
+            return_value=[mock_result]
+        )
 
         # Create test case in DB
         from core.database import Case
@@ -133,9 +130,7 @@ class TestEvidenceRouter:
         files = {"file": ("test.pdf", b"test content", "application/pdf")}
         data = {"case_id": "case123"}
 
-        response = client.post(
-            "/api/v1/evidence/upload", files=files, data=data
-        )
+        response = client.post("/api/v1/evidence/upload", files=files, data=data)
 
         # 500 might happen if file processing fails in test environment without proper mocking of all dependencies
         assert response.status_code in [200, 201, 500]

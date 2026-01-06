@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/rate_limiting.py
+# hypothesis_version: 6.148.8
+
+[100, 200, 300, 500, 1000, 3600, '/api/v1', '/api/v1/auth/login', '/api/v1/auth/token', '/api/v1/cases', '/api/v1/search', '/api/v1/transactions', '/docs', '/favicon.ico', '/health', '/health/live', '/health/ready', '/health/startup', '/metrics', '/openapi.json', 'Authorization', 'Bearer ', 'HEAD', 'OPTIONS', 'Rate limit exceeded', 'Retry-After', 'category', 'client_id', 'code', 'current_requests', 'default', 'error', 'limits', 'message', 'method', 'path', 'rate_limit_exceeded', 'remaining_requests', 'requests', 'retry_after', 'security_error', 'unknown', 'window']

@@ -1,0 +1,813 @@
+
+> frontend@0.0.0 type-check
+> tsc --noEmit
+
+src/__tests__/badge.test.tsx(7,1): error TS6133: 'React' is declared but its value is never read.
+src/__tests__/button.test.tsx(7,1): error TS6133: 'React' is declared but its value is never read.
+src/__tests__/card.test.tsx(7,1): error TS6133: 'React' is declared but its value is never read.
+src/__tests__/component-mock-utils.ts(23,10): error TS6133: 'importFn' is declared but its value is never read.
+src/__tests__/components.test.tsx(277,79): error TS1261: Already included file name '/Users/Arief/Desktop/378x492/frontend/src/components/ui/dialog.tsx' differs from file name '/Users/Arief/Desktop/378x492/frontend/src/components/ui/Dialog.tsx' only in casing.
+  The file is in the program because:
+    Imported via '../components/ui/dialog' from file '/Users/Arief/Desktop/378x492/frontend/src/__tests__/components.test.tsx'
+    Imported via '../components/ui/dialog' from file '/Users/Arief/Desktop/378x492/frontend/src/__tests__/dialog.test.tsx'
+    Imported via '@/components/ui/dialog' from file '/Users/Arief/Desktop/378x492/frontend/src/components/investigation/InvestigationCanvas.tsx'
+    Imported via '@/components/ui/dialog' from file '/Users/Arief/Desktop/378x492/frontend/src/components/collaboration/EvidenceBoard.tsx'
+    Imported via '@/components/ui/dialog' from file '/Users/Arief/Desktop/378x492/frontend/src/components/collaboration/HypothesisBoard.tsx'
+    Matched by include pattern 'src' in '/Users/Arief/Desktop/378x492/frontend/tsconfig.json'
+src/__tests__/dialog.test.tsx(6,1): error TS6133: 'React' is declared but its value is never read.
+src/__tests__/factories.ts(8,21): error TS2724: '"../types/schema"' has no exported member named 'CaseId'. Did you mean 'Case'?
+src/__tests__/factories.ts(8,29): error TS2724: '"../types/schema"' has no exported member named 'UserId'. Did you mean 'User'?
+src/__tests__/factories.ts(8,73): error TS2305: Module '"../types/schema"' has no exported member 'ProjectId'.
+src/__tests__/factories.ts(73,3): error TS2353: Object literal may only specify known properties, and 'projectId' does not exist in type 'Case'.
+src/__tests__/hooks.test.tsx(29,13): error TS2339: Property 'AuthContext' does not exist on type 'typeof import("/Users/Arief/Desktop/378x492/frontend/src/context/AuthContext")'.
+src/__tests__/integration/auth-flow.test.tsx(17,60): error TS2339: Property 'default' does not exist on type 'typeof import("/Users/Arief/Desktop/378x492/frontend/src/services/auth")'.
+src/__tests__/integration/auth-flow.test.tsx(19,62): error TS2339: Property 'default' does not exist on type 'typeof import("/Users/Arief/Desktop/378x492/frontend/src/services/cases")'.
+src/__tests__/integration/auth-flow.test.tsx(21,58): error TS2345: Argument of type '{ access_token: string; user: { id: string; email: string; role: string; }; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/auth-flow.test.tsx(25,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/__tests__/integration/auth-flow.test.tsx(33,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/__tests__/integration/auth-flow.test.tsx(47,48): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/__tests__/integration/auth-flow.test.tsx(53,60): error TS2339: Property 'default' does not exist on type 'typeof import("/Users/Arief/Desktop/378x492/frontend/src/services/auth")'.
+src/__tests__/integration/auth-flow.test.tsx(56,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/__tests__/integration/auth-flow.test.tsx(80,58): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/__tests__/integration/auth-flow.test.tsx(107,60): error TS2339: Property 'default' does not exist on type 'typeof import("/Users/Arief/Desktop/378x492/frontend/src/services/auth")'.
+src/__tests__/integration/auth-flow.test.tsx(109,62): error TS2339: Property 'default' does not exist on type 'typeof import("/Users/Arief/Desktop/378x492/frontend/src/services/cases")'.
+src/__tests__/integration/auth-flow.test.tsx(112,67): error TS2345: Argument of type '{ id: string; email: string; role: string; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/auth-flow.test.tsx(117,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/__tests__/integration/auth-flow.test.tsx(132,48): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/__tests__/integration/auth-flow.test.tsx(140,60): error TS2339: Property 'default' does not exist on type 'typeof import("/Users/Arief/Desktop/378x492/frontend/src/services/auth")'.
+src/__tests__/integration/auth-flow.test.tsx(143,67): error TS2345: Argument of type '{ id: string; email: string; role: string; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/auth-flow.test.tsx(160,60): error TS2339: Property 'default' does not exist on type 'typeof import("/Users/Arief/Desktop/378x492/frontend/src/services/auth")'.
+src/__tests__/integration/auth-flow.test.tsx(164,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(19,63): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(59,71): error TS2345: Argument of type '{ id: string; filename: string; case_id: string; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(65,64): error TS2345: Argument of type '{ id: string; title: string; evidence: never[]; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(83,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/__tests__/integration/case-workflow.test.tsx(106,63): error TS2345: Argument of type '{ id: string; title: string; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(110,71): error TS2345: Argument of type '{ id: string; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(113,67): error TS2345: Argument of type '{ summary: string; confidence: number; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(139,61): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/__tests__/integration/case-workflow.test.tsx(148,63): error TS2345: Argument of type '{ id: string; status: string; resolution: string; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(158,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(169,47): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/__tests__/integration/case-workflow.test.tsx(199,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(200,68): error TS2345: Argument of type '{ updated: number; }' is not assignable to parameter of type 'never'.
+src/__tests__/integration/case-workflow.test.tsx(213,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/__tests__/typed-mock-utils.ts(11,38): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/__tests__/typed-mock-utils.ts(17,17): error TS2323: Cannot redeclare exported variable 'createApiErrorMock'.
+src/__tests__/typed-mock-utils.ts(17,17): error TS2393: Duplicate function implementation.
+src/__tests__/typed-mock-utils.ts(18,38): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/__tests__/typed-mock-utils.ts(28,17): error TS2323: Cannot redeclare exported variable 'createApiErrorMock'.
+src/__tests__/typed-mock-utils.ts(28,17): error TS2393: Duplicate function implementation.
+src/__tests__/typed-mock-utils.ts(29,38): error TS2345: Argument of type '{ success: boolean; error: { code: string; message: string; }; }' is not assignable to parameter of type 'never'.
+src/App.tsx(186,11): error TS2339: Property 'user' does not exist on type '{} | null'.
+src/App.tsx(186,17): error TS2339: Property 'isLoading' does not exist on type '{} | null'.
+src/App.tsx(200,11): error TS2339: Property 'token' does not exist on type '{} | null'.
+src/components/__tests__/ErrorMessage.test.tsx(10,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(16,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(22,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(23,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(30,23): error TS2339: Property 'toHaveClass' does not exist on type 'Matchers<void, Element | null> & SnapshotMatchers<void, Element | null> & Inverse<JestMatchers<void, Element | null>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(35,61): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, Element | null> & SnapshotMatchers<void, Element | null> & Inverse<JestMatchers<void, Element | null>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(38,65): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, Element | null> & SnapshotMatchers<void, Element | null> & Inverse<JestMatchers<void, Element | null>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(41,61): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, Element | null> & SnapshotMatchers<void, Element | null> & Inverse<JestMatchers<void, Element | null>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(47,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(48,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(56,25): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(66,29): error TS2339: Property 'toBeInTheDocument' does not exist on type 'JestMatchers<void, HTMLElement | null>'.
+src/components/__tests__/ErrorMessage.test.tsx(81,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(86,43): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, SVGSVGElement | null> & SnapshotMatchers<void, SVGSVGElement | null> & Inverse<JestMatchers<void, SVGSVGElement | null>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(89,43): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, SVGSVGElement | null> & SnapshotMatchers<void, SVGSVGElement | null> & Inverse<JestMatchers<void, SVGSVGElement | null>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(92,43): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, SVGSVGElement | null> & SnapshotMatchers<void, SVGSVGElement | null> & Inverse<JestMatchers<void, SVGSVGElement | null>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(99,26): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(106,43): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/ErrorMessage.test.tsx(114,23): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, Element | null> & SnapshotMatchers<void, Element | null> & Inverse<JestMatchers<void, Element | null>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(24,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(38,65): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(39,164): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(76,43): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(77,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(91,43): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(92,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(93,64): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(94,70): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(108,65): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/__tests__/PageErrorBoundary.test.tsx(124,23): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, Element | null> & SnapshotMatchers<void, Element | null> & Inverse<JestMatchers<void, Element | null>> & PromiseMatchers<...>'.
+src/components/accessibility/VoiceControl.tsx(8,21): error TS6133: 'setSupported' is declared but its value is never read.
+src/components/ai/__tests__/AIAssistant.test.tsx(3,8): error TS2613: Module '"/Users/Arief/Desktop/378x492/frontend/src/components/ai/AIAssistant"' has no default export. Did you mean to use 'import { AIAssistant } from "/Users/Arief/Desktop/378x492/frontend/src/components/ai/AIAssistant"' instead?
+src/components/ai/__tests__/AIAssistant.test.tsx(16,64): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(17,61): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(22,73): error TS2345: Argument of type '{ role: string; content: string; }[]' is not assignable to parameter of type 'never'.
+src/components/ai/__tests__/AIAssistant.test.tsx(30,63): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(31,71): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(39,55): error TS2345: Argument of type '{ response: string; confidence: number; }' is not assignable to parameter of type 'never'.
+src/components/ai/__tests__/AIAssistant.test.tsx(52,60): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(68,51): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(76,65): error TS2345: Argument of type '{ text: string; type: string; }[]' is not assignable to parameter of type 'never'.
+src/components/ai/__tests__/AIAssistant.test.tsx(84,65): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(85,65): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(91,65): error TS2345: Argument of type '{ text: string; type: string; }[]' is not assignable to parameter of type 'never'.
+src/components/ai/__tests__/AIAssistant.test.tsx(94,55): error TS2345: Argument of type '{ response: string; }' is not assignable to parameter of type 'never'.
+src/components/ai/__tests__/AIAssistant.test.tsx(114,55): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/components/ai/__tests__/AIAssistant.test.tsx(124,61): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(131,32): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/components/ai/__tests__/AIAssistant.test.tsx(132,32): error TS2345: Argument of type '{ response: string; }' is not assignable to parameter of type 'never'.
+src/components/ai/__tests__/AIAssistant.test.tsx(142,64): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(148,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(156,55): error TS2345: Argument of type '{ response: string; confidence: number; }' is not assignable to parameter of type 'never'.
+src/components/ai/__tests__/AIAssistant.test.tsx(169,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(190,76): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/__tests__/AIAssistant.test.tsx(191,69): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ai/AIAssistant.tsx(191,31): error TS2339: Property 'response' does not exist on type 'ApiResponse<AIChatResponse>'.
+src/components/ai/AIAssistant.tsx(193,31): error TS2339: Property 'persona' does not exist on type 'ApiResponse<AIChatResponse>'.
+src/components/ai/AIAssistant.tsx(194,35): error TS2339: Property 'suggestions' does not exist on type 'ApiResponse<AIChatResponse>'.
+src/components/ai/AIAssistant.tsx(200,22): error TS2339: Property 'suggestions' does not exist on type 'ApiResponse<AIChatResponse>'.
+src/components/ai/AIAssistant.tsx(200,46): error TS2339: Property 'suggestions' does not exist on type 'ApiResponse<AIChatResponse>'.
+src/components/ai/AIAssistant.tsx(201,47): error TS2339: Property 'suggestions' does not exist on type 'ApiResponse<AIChatResponse>'.
+src/components/ai/AIAssistant.tsx(219,73): error TS2339: Property 'response' does not exist on type 'ApiResponse<AIChatResponse>'.
+src/components/ai/AIAssistant.tsx(220,75): error TS2339: Property 'confidence' does not exist on type 'ApiResponse<AIChatResponse>'.
+src/components/auth/LoginForm.tsx(19,11): error TS2339: Property 'login' does not exist on type '{} | null'.
+src/components/cases/__tests__/CaseForm.test.tsx(19,47): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/cases/__tests__/CaseForm.test.tsx(20,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/cases/__tests__/CaseForm.test.tsx(21,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/cases/__tests__/CaseForm.test.tsx(34,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/cases/__tests__/CaseForm.test.tsx(35,60): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/cases/__tests__/CaseForm.test.tsx(46,56): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/cases/__tests__/CaseForm.test.tsx(61,61): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/cases/__tests__/CaseForm.test.tsx(92,38): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/components/cases/__tests__/CaseForm.test.tsx(102,56): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/cases/__tests__/CaseForm.test.tsx(126,61): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/cases/CaseKanban.tsx(220,42): error TS2339: Property 'cases' does not exist on type 'CollectionResponse<Case> & { pagination: PaginationInfo; }'.
+src/components/cases/FacetedFilter.tsx(42,13): error TS2488: Type 'FilterValue' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/components/cases/FacetedFilter.tsx(43,23): error TS2339: Property 'filter' does not exist on type 'FilterValue'.
+  Property 'filter' does not exist on type 'string'.
+src/components/cases/FacetedFilter.tsx(62,37): error TS2322: Type 'FilterValue | undefined' is not assignable to type 'FilterValue'.
+  Type 'undefined' is not assignable to type 'FilterValue'.
+src/components/cases/FacetedFilter.tsx(100,65): error TS2339: Property 'includes' does not exist on type 'FilterValue'.
+  Property 'includes' does not exist on type 'number'.
+src/components/cases/FacetedFilter.tsx(116,25): error TS2322: Type 'FilterValue' is not assignable to type 'number'.
+  Type 'string' is not assignable to type 'number'.
+src/components/collaboration/CollaborativeEditor.tsx(2,27): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/collaboration/CollaborativeEditor.tsx(7,1): error TS6133: 'secureLogger' is declared but its value is never read.
+src/components/collaboration/CollaborativeEditor.tsx(10,11): error TS6196: 'UserPresence' is declared but never used.
+src/components/common/__tests__/WelcomeMessage.test.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/common/ProjectSwitcher.tsx(9,8): error TS1261: Already included file name '/Users/Arief/Desktop/378x492/frontend/src/components/ui/select.tsx' differs from file name '/Users/Arief/Desktop/378x492/frontend/src/components/ui/Select.tsx' only in casing.
+  The file is in the program because:
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/components/common/ProjectSwitcher.tsx'
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/pages/AgentApprovals.tsx'
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/components/compliance/SARCreationWizard.tsx'
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/pages/EnhancedEvidenceLocker.tsx'
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/components/evidence/EvidenceSearchFilters.tsx'
+    Imported via '../components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/__tests__/components.test.tsx'
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/components/investigation/InvestigationCanvas.tsx'
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/components/investigation/EntityForm.tsx'
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/components/investigation/RelationshipForm.tsx'
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/components/collaboration/EvidenceBoard.tsx'
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/components/intelligence/CourtDocumentGenerator.tsx'
+    Imported via '@/components/ui/select' from file '/Users/Arief/Desktop/378x492/frontend/src/components/intelligence/PredictiveDashboard.tsx'
+    Matched by include pattern 'src' in '/Users/Arief/Desktop/378x492/frontend/tsconfig.json'
+src/components/common/RookieChecklist.tsx(73,11): error TS2339: Property 'user' does not exist on type '{} | null'.
+src/components/compliance/__tests__/ComplianceDashboard.test.tsx(51,42): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/compliance/__tests__/ComplianceDashboard.test.tsx(52,54): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/compliance/__tests__/ComplianceDashboard.test.tsx(57,79): error TS2345: Argument of type '{ overall_compliance_score: number; pending_regulatory_reports: number; open_security_incidents: number; }' is not assignable to parameter of type 'ComplianceMetrics'.
+  Type '{ overall_compliance_score: number; pending_regulatory_reports: number; open_security_incidents: number; }' is missing the following properties from type 'ComplianceMetrics': recent_audit_events, overdue_access_reviews, expiring_training_records, high_risk_events_last_100
+src/components/compliance/__tests__/ComplianceDashboard.test.tsx(67,13): error TS2353: Object literal may only specify known properties, and 'status' does not exist in type 'RegionalCompliance'.
+src/components/compliance/__tests__/ComplianceDashboard.test.tsx(77,42): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/compliance/__tests__/ComplianceDashboard.test.tsx(78,40): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/compliance/__tests__/ComplianceDashboard.test.tsx(85,81): error TS2345: Argument of type '{ overall_compliance_score: number; pending_regulatory_reports: number; open_security_incidents: number; }' is not assignable to parameter of type 'ComplianceMetrics'.
+  Type '{ overall_compliance_score: number; pending_regulatory_reports: number; open_security_incidents: number; }' is missing the following properties from type 'ComplianceMetrics': recent_audit_events, overdue_access_reviews, expiring_training_records, high_risk_events_last_100
+src/components/compliance/__tests__/ComplianceDashboard.test.tsx(97,24): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/compliance/ComplianceDashboard.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/compliance/ComplianceDashboard.tsx(23,1): error TS6192: All imports in import declaration are unused.
+src/components/compliance/ComplianceDashboard.tsx(65,21): error TS2339: Property 'status' does not exist on type 'RegionalCompliance'.
+src/components/compliance/SARCreationWizard.tsx(45,28): error TS2339: Property 'cases' does not exist on type 'CollectionResponse<Case> & { pagination: PaginationInfo; }'.
+src/components/dashboard/ThreatMap.tsx(65,28): error TS2339: Property 'VITE_ENABLE_THREAT_MAP' does not exist on type 'EnvVars'.
+src/components/dashboard/ThreatMap.tsx(256,13): error TS2339: Property 'VITE_MAPBOX_TOKEN' does not exist on type 'EnvVars'.
+src/components/evidence/__tests__/EvidenceCard.test.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(17,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(19,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(20,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(24,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(26,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(32,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(40,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(45,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; multiple: true; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(56,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(57,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(64,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(69,24): error TS2339: Property 'toHaveClass' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(73,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(83,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(90,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(98,62): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(103,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; maxSize: number; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(111,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(119,71): error TS2345: Argument of type '{ id: string; filename: string; }' is not assignable to parameter of type 'never'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(124,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(152,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(163,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(170,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(173,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(184,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(191,48): error TS2322: Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  Property 'onUpload' does not exist on type 'IntrinsicAttributes & EvidenceUploaderProps'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(199,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/evidence/__tests__/EvidenceUploader.test.tsx(205,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'JestMatchers<void, HTMLElement | null>'.
+src/components/i18n/LanguageSelector.tsx(3,8): error TS2613: Module '"/Users/Arief/Desktop/378x492/frontend/src/hooks/usePersistedState"' has no default export. Did you mean to use 'import { usePersistedState } from "/Users/Arief/Desktop/378x492/frontend/src/hooks/usePersistedState"' instead?
+src/components/i18n/LanguageSelector.tsx(17,10): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Record<Language, Record<string, string>>'.
+src/components/ingestion/IngestionStepper.tsx(12,1): error TS6133: 'secureRandom' is declared but its value is never read.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(12,28): error TS2322: Type '{ caseId: string; }' is not assignable to type 'IntrinsicAttributes & InvestigationWizardProps'.
+  Property 'caseId' does not exist on type 'IntrinsicAttributes & InvestigationWizardProps'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(26,43): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(27,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(36,45): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(44,63): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(49,45): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(57,24): error TS2339: Property 'toHaveAttribute' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(65,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(66,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(67,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(76,56): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(88,67): error TS2339: Property 'toBeDisabled' does not exist on type 'JestMatchers<void, HTMLElement>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(103,54): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(121,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(129,67): error TS2345: Argument of type '{ summary: string; confidence: number; }' is not assignable to parameter of type 'never'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(146,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(152,67): error TS2345: Argument of type '{ summary: string; recommendations: string[]; }' is not assignable to parameter of type 'never'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(169,67): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(170,58): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(191,56): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(192,56): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(198,63): error TS2345: Argument of type '{ id: string; title: string; }' is not assignable to parameter of type 'never'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(219,60): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(237,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(254,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(258,13): error TS6133: 'mockNavigate' is declared but its value is never read.
+src/components/investigation/__tests__/InvestigationWizard.test.tsx(265,58): error TS2339: Property 'toBeInTheDocument' does not exist on type 'JestMatchers<void, HTMLElement | null>'.
+src/components/layout/Header.tsx(15,8): error TS6133: 'React' is declared but its value is never read.
+src/components/onboarding/TourGuide.tsx(1,27): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/RoleSelection.tsx(4,1): error TS6192: All imports in import declaration are unused.
+src/components/RoleSelection.tsx(5,1): error TS6133: 'Badge' is declared but its value is never read.
+src/context/__tests__/AuthContext.test.tsx(15,56): error TS2554: Expected 1 arguments, but got 2.
+src/context/__tests__/AuthContext.test.tsx(37,49): error TS2339: Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/context/__tests__/AuthContext.test.tsx(44,67): error TS2345: Argument of type '{ id: string; email: string; }' is not assignable to parameter of type 'never'.
+src/context/__tests__/AuthContext.test.tsx(58,50): error TS2339: Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/context/__tests__/AuthContext.test.tsx(66,58): error TS2345: Argument of type '{ access_token: string; user: { id: string; email: string; }; }' is not assignable to parameter of type 'never'.
+src/context/__tests__/AuthContext.test.tsx(83,51): error TS2339: Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/context/__tests__/AuthContext.test.tsx(84,50): error TS2339: Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/context/__tests__/AuthContext.test.tsx(90,58): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/context/__tests__/AuthContext.test.tsx(104,51): error TS2339: Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/context/__tests__/AuthContext.test.tsx(112,58): error TS2345: Argument of type '{ access_token: string; user: { id: string; email: string; }; }' is not assignable to parameter of type 'never'.
+src/context/__tests__/AuthContext.test.tsx(116,59): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'never'.
+src/context/__tests__/AuthContext.test.tsx(129,51): error TS2339: Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/context/__tests__/AuthContext.test.tsx(135,51): error TS2339: Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/context/__tests__/AuthContext.test.tsx(145,67): error TS2345: Argument of type '{ id: string; email: string; }' is not assignable to parameter of type 'never'.
+src/context/__tests__/AuthContext.test.tsx(149,65): error TS2345: Argument of type '{ access_token: string; }' is not assignable to parameter of type 'never'.
+src/context/__tests__/AuthContext.test.tsx(164,51): error TS2339: Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/context/AuthContext.tsx(31,27): error TS6133: 'setIsSetupRequired' is declared but its value is never read.
+src/context/AuthContext.tsx(40,19): error TS2345: Argument of type '{ id: string; email: string; role: string; } | null' is not assignable to parameter of type 'SetStateAction<User | null>'.
+  Type '{ id: string; email: string; role: string; }' is not assignable to type 'SetStateAction<User | null>'.
+    Property 'name' is missing in type '{ id: string; email: string; role: string; }' but required in type 'User'.
+src/context/AuthContext.tsx(97,26): error TS6133: 'permission' is declared but its value is never read.
+src/documentation/openapi-generator.ts(4,32): error TS2307: Cannot find module 'openapi-types' or its corresponding type declarations.
+src/documentation/openapi-generator.ts(12,3): error TS6133: 'type' is declared but its value is never read.
+src/documentation/openapi-generator.ts(351,3): error TS6133: 'endpoint' is declared but its value is never read.
+src/documentation/openapi-generator.ts(431,11): error TS6133: 'baseUrl' is declared but its value is never read.
+src/hooks/__tests__/useAuth.test.tsx(26,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(26,29): error TS2339: Property 'isLoading' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(27,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(27,29): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(28,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(28,29): error TS2339: Property 'isAuthenticated' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(40,67): error TS2345: Argument of type '{ id: string; email: string; role: string; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(45,16): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(45,31): error TS2339: Property 'isLoading' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(48,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(48,29): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(49,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(49,29): error TS2339: Property 'isAuthenticated' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(56,16): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(56,31): error TS2339: Property 'isLoading' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(59,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(59,29): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(60,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(60,29): error TS2339: Property 'isAuthenticated' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(78,58): error TS2345: Argument of type '{ access_token: string; user: { id: string; email: string; role: string; }; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(83,15): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(83,30): error TS2339: Property 'login' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(86,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(86,29): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(87,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(87,29): error TS2339: Property 'isAuthenticated' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(88,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(88,29): error TS2339: Property 'error' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(94,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(101,11): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(101,26): error TS2339: Property 'login' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(105,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(105,29): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(106,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(106,29): error TS2339: Property 'isAuthenticated' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(107,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(107,29): error TS2339: Property 'error' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(120,9): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(120,24): error TS2339: Property 'login' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(123,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(123,29): error TS2339: Property 'isLoading' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(130,16): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(130,31): error TS2339: Property 'isLoading' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(138,59): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(148,15): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(148,30): error TS2339: Property 'logout' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(151,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(151,29): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(152,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(152,29): error TS2339: Property 'isAuthenticated' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(159,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(165,15): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(165,30): error TS2339: Property 'logout' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(169,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(169,29): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(170,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(170,29): error TS2339: Property 'isAuthenticated' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(183,61): error TS2345: Argument of type '{ access_token: string; user: { id: string; email: string; role: string; }; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(191,15): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(191,30): error TS2339: Property 'register' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(198,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(198,29): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(199,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(199,29): error TS2339: Property 'isAuthenticated' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(205,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(212,11): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(212,26): error TS2339: Property 'register' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(220,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(220,29): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(221,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(221,29): error TS2339: Property 'error' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(230,65): error TS2345: Argument of type '{ access_token: string; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(236,67): error TS2345: Argument of type '{ id: string; email: string; role: string; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(257,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(262,67): error TS2345: Argument of type '{ id: string; email: string; role: string; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(271,16): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(271,31): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(289,67): error TS2345: Argument of type '{ id: string; email: string; role: string; permissions: string[]; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(294,16): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(294,31): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(297,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(297,29): error TS2339: Property 'hasPermission' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(298,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(298,29): error TS2339: Property 'hasPermission' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(310,67): error TS2345: Argument of type '{ id: string; email: string; role: string; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(315,16): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(315,31): error TS2339: Property 'user' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(318,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(318,29): error TS2339: Property 'hasRole' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(319,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(319,29): error TS2339: Property 'hasRole' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(327,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(334,11): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(334,26): error TS2339: Property 'login' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(338,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(338,29): error TS2339: Property 'error' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(346,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(353,11): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(353,26): error TS2339: Property 'login' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(357,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(357,29): error TS2339: Property 'error' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(360,62): error TS2345: Argument of type '{ access_token: string; user: { id: string; email: string; }; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useAuth.test.tsx(366,15): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(366,30): error TS2339: Property 'login' does not exist on type '{}'.
+src/hooks/__tests__/useAuth.test.tsx(369,14): error TS18047: 'result.current' is possibly 'null'.
+src/hooks/__tests__/useAuth.test.tsx(369,29): error TS2339: Property 'error' does not exist on type '{}'.
+src/hooks/__tests__/useCases.test.tsx(16,29): error TS2339: Property 'cases' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+  Property 'cases' does not exist on type 'QueryObserverRefetchErrorResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+src/hooks/__tests__/useCases.test.tsx(27,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useCases.test.tsx(29,23): error TS2339: Property 'waitFor' does not exist on type 'RenderHookResult<UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>, unknown>'.
+src/hooks/__tests__/useCases.test.tsx(35,29): error TS2339: Property 'cases' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+  Property 'cases' does not exist on type 'QueryObserverRefetchErrorResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+src/hooks/__tests__/useCases.test.tsx(50,63): error TS2345: Argument of type '{ id: string; status: string; title: string; priority: "high"; description: string; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useCases.test.tsx(55,30): error TS2339: Property 'createCase' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+  Property 'createCase' does not exist on type 'QueryObserverRefetchErrorResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+src/hooks/__tests__/useCases.test.tsx(65,63): error TS2345: Argument of type '{ id: string; status: string; }' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useCases.test.tsx(73,30): error TS2339: Property 'updateCase' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+  Property 'updateCase' does not exist on type 'QueryObserverRefetchErrorResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+src/hooks/__tests__/useCases.test.tsx(83,63): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useCases.test.tsx(88,30): error TS2339: Property 'deleteCase' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+  Property 'deleteCase' does not exist on type 'QueryObserverRefetchErrorResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+src/hooks/__tests__/useCases.test.tsx(99,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useCases.test.tsx(102,23): error TS2339: Property 'waitFor' does not exist on type 'RenderHookResult<UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>, unknown>'.
+src/hooks/__tests__/useCases.test.tsx(117,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/hooks/__tests__/useCases.test.tsx(119,23): error TS2339: Property 'waitFor' does not exist on type 'RenderHookResult<UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>, unknown>'.
+src/hooks/__tests__/useCases.test.tsx(124,30): error TS2339: Property 'refresh' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+  Property 'refresh' does not exist on type 'QueryObserverRefetchErrorResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+src/hooks/__tests__/useWebSocket.test.tsx(21,56): error TS2345: Argument of type 'string' is not assignable to parameter of type 'UseWebSocketOptions'.
+src/hooks/__tests__/useWebSocket.test.tsx(28,15): error TS6133: 'result' is declared but its value is never read.
+src/hooks/__tests__/useWebSocket.test.tsx(28,23): error TS2339: Property 'waitFor' does not exist on type 'RenderHookResult<UseWebSocketReturn, unknown>'.
+src/hooks/__tests__/useWebSocket.test.tsx(28,65): error TS2345: Argument of type 'string' is not assignable to parameter of type 'UseWebSocketOptions'.
+src/hooks/__tests__/useWebSocket.test.tsx(39,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/hooks/__tests__/useWebSocket.test.tsx(47,23): error TS2339: Property 'waitFor' does not exist on type 'RenderHookResult<UseWebSocketReturn, unknown>'.
+src/hooks/__tests__/useWebSocket.test.tsx(47,65): error TS2345: Argument of type 'string' is not assignable to parameter of type 'UseWebSocketOptions'.
+src/hooks/__tests__/useWebSocket.test.tsx(62,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/hooks/__tests__/useWebSocket.test.tsx(70,56): error TS2345: Argument of type 'string' is not assignable to parameter of type 'UseWebSocketOptions'.
+src/hooks/__tests__/useWebSocket.test.tsx(85,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/hooks/__tests__/useWebSocket.test.tsx(89,34): error TS2322: Type 'unknown' is not assignable to type '(() => void) | null'.
+src/hooks/__tests__/useWebSocket.test.tsx(95,60): error TS2554: Expected 1 arguments, but got 2.
+src/hooks/__tests__/useWebSocket.test.tsx(116,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/hooks/__tests__/useWebSocket.test.tsx(124,24): error TS2339: Property 'waitFor' does not exist on type 'RenderHookResult<UseWebSocketReturn, unknown>'.
+src/hooks/__tests__/useWebSocket.test.tsx(124,66): error TS2345: Argument of type 'string' is not assignable to parameter of type 'UseWebSocketOptions'.
+src/hooks/useAuth.ts(2,10): error TS2459: Module '"../context/AuthContext"' declares 'AuthContext' locally, but it is not exported.
+src/hooks/useSanitizedHTML.tsx(27,17): error TS2503: Cannot find namespace 'DOMPurify'.
+src/hooks/useSanitizedHTML.tsx(34,19): error TS2503: Cannot find namespace 'DOMPurify'.
+src/hooks/useSanitizedHTML.tsx(50,11): error TS2503: Cannot find namespace 'DOMPurify'.
+src/hooks/useWebSocket.ts(49,31): error TS2554: Expected 1 arguments, but got 0.
+src/lib/reliabilityManager.ts(281,3): error TS2304: Cannot find name 'useEffect'.
+src/lib/testGenerator.ts(9,1): error TS6133: 'request' is declared but its value is never read.
+src/pages/__tests__/Cases.test.tsx(32,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(37,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Cases.test.tsx(43,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(48,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Cases.test.tsx(59,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(64,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Cases.test.tsx(65,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Cases.test.tsx(78,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(87,45): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Cases.test.tsx(88,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'JestMatchers<void, HTMLElement | null>'.
+src/pages/__tests__/Cases.test.tsx(98,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(107,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Cases.test.tsx(108,54): error TS2339: Property 'toBeInTheDocument' does not exist on type 'JestMatchers<void, HTMLElement | null>'.
+src/pages/__tests__/Cases.test.tsx(120,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(143,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(155,47): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Cases.test.tsx(165,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(166,68): error TS2345: Argument of type '{ updated: number; }' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(203,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(216,45): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Cases.test.tsx(229,64): error TS2345: Argument of type '{ id: string; title: string; created_at: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(239,23): error TS2339: Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Cases.test.tsx(247,9): error TS2698: Spread types may only be created from object types.
+src/pages/__tests__/Cases.test.tsx(256,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(274,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(275,63): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(297,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(303,58): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Cases.test.tsx(310,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(311,31): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(333,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Cases.test.tsx(335,9): error TS2345: Argument of type 'Blob' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(1,10): error TS2300: Duplicate identifier 'render'.
+src/pages/__tests__/Dashboard.test.tsx(1,18): error TS2300: Duplicate identifier 'screen'.
+src/pages/__tests__/Dashboard.test.tsx(4,10): error TS2300: Duplicate identifier 'render'.
+src/pages/__tests__/Dashboard.test.tsx(4,18): error TS2300: Duplicate identifier 'screen'.
+src/pages/__tests__/Dashboard.test.tsx(7,23): error TS6133: 'QueryClientProvider' is declared but its value is never read.
+src/pages/__tests__/Dashboard.test.tsx(15,7): error TS6133: 'queryClient' is declared but its value is never read.
+src/pages/__tests__/Dashboard.test.tsx(82,3): error TS2698: Spread types may only be created from object types.
+src/pages/__tests__/Dashboard.test.tsx(84,10): error TS6133: 'importFn' is declared but its value is never read.
+src/pages/__tests__/Dashboard.test.tsx(177,70): error TS2345: Argument of type '{ total: number; open: number; in_progress: number; closed: number; }' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(183,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(188,48): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(200,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(217,70): error TS2345: Argument of type '{ total: number; open: number; in_progress: number; closed: number; by_priority: { high: number; medium: number; low: number; }; }' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(218,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(223,41): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(224,40): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(225,40): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(233,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(234,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(247,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(253,62): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(259,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(260,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(297,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(298,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; created_at: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(303,51): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(304,51): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(318,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(319,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; created_at: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(332,9): error TS2698: Spread types may only be created from object types.
+src/pages/__tests__/Dashboard.test.tsx(345,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(346,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; created_at: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(362,70): error TS2345: Argument of type '{ open: number; in_progress: number; closed: number; }' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(367,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(372,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(378,70): error TS2345: Argument of type '{ by_priority: { high: number; medium: number; low: number; }; }' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(385,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(390,54): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(403,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(404,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; created_at: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(413,45): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(414,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'JestMatchers<void, HTMLElement | null>'.
+src/pages/__tests__/Dashboard.test.tsx(424,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(425,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; created_at: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(435,28): error TS2339: Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(442,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(443,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(447,56): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(453,9): error TS2698: Spread types may only be created from object types.
+src/pages/__tests__/Dashboard.test.tsx(458,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(459,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(482,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(483,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; created_at: string; alert: boolean; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(488,59): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(496,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(497,64): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(502,42): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(503,64): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Dashboard.test.tsx(509,70): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Dashboard.test.tsx(510,64): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; created_at: string; }[]' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Login.test.tsx(1,10): error TS2300: Duplicate identifier 'render'.
+src/pages/__tests__/Login.test.tsx(1,18): error TS2300: Duplicate identifier 'screen'.
+src/pages/__tests__/Login.test.tsx(1,26): error TS2300: Duplicate identifier 'fireEvent'.
+src/pages/__tests__/Login.test.tsx(1,37): error TS2300: Duplicate identifier 'waitFor'.
+src/pages/__tests__/Login.test.tsx(2,1): error TS6133: 'React' is declared but its value is never read.
+src/pages/__tests__/Login.test.tsx(4,10): error TS2300: Duplicate identifier 'render'.
+src/pages/__tests__/Login.test.tsx(4,18): error TS2300: Duplicate identifier 'screen'.
+src/pages/__tests__/Login.test.tsx(4,26): error TS2300: Duplicate identifier 'fireEvent'.
+src/pages/__tests__/Login.test.tsx(4,37): error TS2300: Duplicate identifier 'waitFor'.
+src/pages/__tests__/Login.test.tsx(38,47): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Login.test.tsx(39,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Login.test.tsx(40,64): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Login.test.tsx(49,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Login.test.tsx(58,51): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Login.test.tsx(74,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Login.test.tsx(88,59): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Login.test.tsx(95,53): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Login.test.tsx(115,53): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/pages/__tests__/Login.test.tsx(130,58): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Login.test.tsx(145,67): error TS2339: Property 'toBeDisabled' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Login.test.tsx(157,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'JestMatchers<void, HTMLElement | null>'.
+src/pages/__tests__/Login.test.tsx(168,47): error TS2339: Property 'toHaveAttribute' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/__tests__/Login.test.tsx(169,50): error TS2339: Property 'toHaveAttribute' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/pages/AILab.tsx(19,10): error TS6133: 'activeTab' is declared but its value is never read.
+src/pages/ComplianceMonitoring.tsx(16,3): error TS6133: 'TrendingUp' is declared but its value is never read.
+src/pages/ComplianceMonitoring.tsx(17,3): error TS6133: 'Bell' is declared but its value is never read.
+src/pages/ComplianceMonitoring.tsx(93,23): error TS2345: Argument of type '{ name: string; status: string; message: string; }[]' is not assignable to parameter of type 'SetStateAction<HealthCheck[]>'.
+  Type '{ name: string; status: string; message: string; }[]' is not assignable to type 'HealthCheck[]'.
+    Type '{ name: string; status: string; message: string; }' is not assignable to type 'HealthCheck'.
+      Types of property 'status' are incompatible.
+        Type 'string' is not assignable to type '"healthy" | "warning" | "degraded" | "unhealthy"'.
+src/pages/EnhancedEvidenceLocker.tsx(4,1): error TS6133: 'Badge' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(5,1): error TS6133: 'Input' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(11,3): error TS6133: 'Search' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(14,3): error TS6133: 'Network' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(16,3): error TS6133: 'Filter' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(18,3): error TS6133: 'Database' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(22,3): error TS6133: 'File' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(23,3): error TS6133: 'Pointer' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(24,3): error TS6133: 'Download' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(27,1): error TS6192: All imports in import declaration are unused.
+src/pages/EnhancedEvidenceLocker.tsx(28,1): error TS6133: 'Separator' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(87,9): error TS6133: 'fileTypes' is declared but its value is never read.
+src/pages/EnhancedEvidenceLocker.tsx(176,71): error TS2345: Argument of type 'EvidenceItem' is not assignable to parameter of type 'SetStateAction<EvidenceMetadata | null>'.
+  Type 'EvidenceItem' is missing the following properties from type 'EvidenceMetadata': uploadedBy, chainOfCustody, correlations
+src/pages/EnhancedEvidenceLocker.tsx(188,69): error TS2345: Argument of type 'EvidenceItem' is not assignable to parameter of type 'SetStateAction<EvidenceMetadata | null>'.
+  Type 'EvidenceItem' is missing the following properties from type 'EvidenceMetadata': uploadedBy, chainOfCustody, correlations
+src/pages/SystemDiagnosticsCenter.tsx(215,15): error TS6133: 'monitoringService' is declared but its value is never read.
+src/providers/__tests__/WebSocketProvider.test.tsx(4,1): error TS6133: 'ReactNode' is declared but its value is never read.
+src/providers/__tests__/WebSocketProvider.test.tsx(29,43): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/providers/__tests__/WebSocketProvider.test.tsx(77,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/providers/__tests__/WebSocketProvider.test.tsx(105,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/providers/__tests__/WebSocketProvider.test.tsx(109,34): error TS2322: Type 'unknown' is not assignable to type '(() => void) | null'.
+src/providers/__tests__/WebSocketProvider.test.tsx(148,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/providers/__tests__/WebSocketProvider.test.tsx(152,36): error TS2322: Type 'unknown' is not assignable to type '((event: MessageEvent<any>) => void) | null'.
+src/providers/__tests__/WebSocketProvider.test.tsx(170,48): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/providers/__tests__/WebSocketProvider.test.tsx(181,54): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/providers/__tests__/WebSocketProvider.test.tsx(190,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/providers/__tests__/WebSocketProvider.test.tsx(194,36): error TS2322: Type 'unknown' is not assignable to type '((event: MessageEvent<any>) => void) | null'.
+src/providers/__tests__/WebSocketProvider.test.tsx(203,9): error TS2686: 'React' refers to a UMD global, but the current file is a module. Consider adding an import instead.
+src/providers/__tests__/WebSocketProvider.test.tsx(236,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/providers/__tests__/WebSocketProvider.test.tsx(265,7): error TS2304: Cannot find name 'fireEvent'.
+src/providers/__tests__/WebSocketProvider.test.tsx(275,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/providers/__tests__/WebSocketProvider.test.tsx(308,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/providers/__tests__/WebSocketProvider.test.tsx(312,33): error TS2322: Type 'unknown' is not assignable to type '(() => void) | null'.
+src/providers/__tests__/WebSocketProvider.test.tsx(329,48): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/providers/__tests__/WebSocketProvider.test.tsx(336,47): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/providers/__tests__/WebSocketProvider.test.tsx(346,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/providers/__tests__/WebSocketProvider.test.tsx(350,34): error TS2322: Type 'unknown' is not assignable to type '(() => void) | null'.
+src/providers/__tests__/WebSocketProvider.test.tsx(382,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/providers/__tests__/WebSocketProvider.test.tsx(386,36): error TS2322: Type 'unknown' is not assignable to type '((event: MessageEvent<any>) => void) | null'.
+src/providers/__tests__/WebSocketProvider.test.tsx(395,9): error TS2686: 'React' refers to a UMD global, but the current file is a module. Consider adding an import instead.
+src/providers/__tests__/WebSocketProvider.test.tsx(443,8): error TS2352: Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' is missing the following properties from type 'Mock<UnknownFunction>': _isMockFunction, _protoImpl, getMockImplementation, getMockName, and 15 more.
+src/providers/__tests__/WebSocketProvider.test.tsx(447,36): error TS2322: Type 'unknown' is not assignable to type '((event: MessageEvent<any>) => void) | null'.
+src/providers/__tests__/WebSocketProvider.test.tsx(456,9): error TS2686: 'React' refers to a UMD global, but the current file is a module. Consider adding an import instead.
+src/providers/AuthenticationProvider.tsx(6,15): error TS2459: Module '"../context/AuthContext"' declares 'LoginCredentials' locally, but it is not exported.
+src/providers/AuthenticationProvider.tsx(7,10): error TS2459: Module '"../context/AuthContext"' declares 'AuthContext' locally, but it is not exported.
+src/providers/AuthProvider.tsx(6,15): error TS2459: Module '"../context/AuthContext"' declares 'LoginCredentials' locally, but it is not exported.
+src/providers/AuthProvider.tsx(7,10): error TS2459: Module '"../context/AuthContext"' declares 'AuthContext' locally, but it is not exported.
+src/services/__tests__/ai.test.ts(4,1): error TS2322: Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'unknown' is not assignable to type 'Promise<Response>'.
+src/services/__tests__/ai.test.ts(20,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ summary: string; confidence: number; recommendations: string[]; entities: string[]; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/ai.test.ts(27,21): error TS2339: Property 'confidence' does not exist on type 'ApiResponse<any>'.
+src/services/__tests__/ai.test.ts(31,57): error TS2345: Argument of type '{ ok: boolean; status: number; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/ai.test.ts(48,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ riskScore: number; factors: string[]; threshold: number; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/ai.test.ts(54,21): error TS2339: Property 'riskScore' does not exist on type 'ApiResponse<any>'.
+src/services/__tests__/ai.test.ts(55,21): error TS2339: Property 'factors' does not exist on type 'ApiResponse<any>'.
+src/services/__tests__/ai.test.ts(67,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ score: number; magnitude: number; label: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/ai.test.ts(73,21): error TS2339: Property 'label' does not exist on type 'ApiResponse<any>'.
+src/services/__tests__/ai.test.ts(86,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ persons: string[]; organizations: string[]; amounts: string[]; dates: string[]; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/ai.test.ts(91,38): error TS2339: Property 'extractEntities' does not exist on type 'AIService'.
+src/services/__tests__/ai.test.ts(104,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ action: string; confidence: number; reason: string; }[]>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/ai.test.ts(109,38): error TS2339: Property 'suggestActions' does not exist on type 'AIService'.
+src/services/__tests__/auth.test.ts(5,1): error TS2322: Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'unknown' is not assignable to type 'Promise<Response>'.
+src/services/__tests__/auth.test.ts(29,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ access_token: string; token_type: string; user: { id: string; email: string; role: string; }; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(47,57): error TS2345: Argument of type '{ ok: boolean; status: number; json: () => Promise<{ detail: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(54,48): error TS2554: Expected 1 arguments, but got 2.
+src/services/__tests__/auth.test.ts(60,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(64,47): error TS2554: Expected 1 arguments, but got 2.
+src/services/__tests__/auth.test.ts(73,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{}>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(87,9): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(106,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; email: string; role: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(124,57): error TS2345: Argument of type '{ ok: boolean; status: number; json: () => Promise<{ detail: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(144,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ access_token: string; token_type: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(158,57): error TS2345: Argument of type '{ ok: boolean; status: number; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(176,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; email: string; role: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(191,57): error TS2345: Argument of type '{ ok: boolean; status: number; json: () => Promise<{ detail: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(209,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ valid: boolean; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(219,57): error TS2345: Argument of type '{ ok: boolean; status: number; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(231,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ message: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(242,57): error TS2345: Argument of type '{ ok: boolean; status: number; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(257,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ message: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/auth.test.ts(270,57): error TS2345: Argument of type '{ ok: boolean; status: number; json: () => Promise<{ detail: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(4,1): error TS2322: Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'unknown' is not assignable to type 'Promise<Response>'.
+src/services/__tests__/cases.test.ts(30,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; title: string; status: string; priority: string; created_at: string; }[]>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(49,57): error TS2345: Argument of type '{ ok: boolean; status: number; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(58,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<never[]>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(88,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; title: string; status: string; priority: string; description: string; created_at: string; updated_at: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(103,57): error TS2345: Argument of type '{ ok: boolean; status: number; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(127,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; status: string; created_at: string; title: string; priority: "high"; description: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(132,51): error TS2345: Argument of type '{ title: string; priority: "high"; description: string; }' is not assignable to parameter of type 'Partial<Case>'.
+  Types of property 'priority' are incompatible.
+    Type '"high"' is not assignable to type 'CasePriority | undefined'. Did you mean '"HIGH"'?
+src/services/__tests__/cases.test.ts(145,57): error TS2345: Argument of type '{ ok: boolean; status: number; json: () => Promise<{ detail: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(152,45): error TS2820: Type '"low"' is not assignable to type 'CasePriority | undefined'. Did you mean '"LOW"'?
+src/services/__tests__/cases.test.ts(172,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ updated_at: string; status: "closed"; resolution: string; id: string; title: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(177,59): error TS2345: Argument of type '{ status: "closed"; resolution: string; }' is not assignable to parameter of type 'Partial<Case>'.
+  Types of property 'status' are incompatible.
+    Type '"closed"' is not assignable to type 'CaseStatus | undefined'. Did you mean '"CLOSED"'?
+src/services/__tests__/cases.test.ts(192,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ status: "in_progress"; id: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(197,44): error TS2345: Argument of type '{ status: "in_progress"; }' is not assignable to parameter of type 'Partial<Case>'.
+  Types of property 'status' are incompatible.
+    Type '"in_progress"' is not assignable to type 'CaseStatus | undefined'. Did you mean '"IN_PROGRESS"'?
+src/services/__tests__/cases.test.ts(200,31): error TS2571: Object is of type 'unknown'.
+src/services/__tests__/cases.test.ts(209,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ message: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(225,57): error TS2345: Argument of type '{ ok: boolean; status: number; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(249,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ case_id: string; created_at: string; content: string; author: string; id: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(254,40): error TS2339: Property 'addNote' does not exist on type '{ getCases: (params?: Record<string, unknown> | undefined) => Promise<CollectionResponse<Case> & { pagination: PaginationInfo; }>; ... 13 more ...; searchCases: (query: string) => Promise<...>; }'.
+src/services/__tests__/cases.test.ts(265,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; assigned_to: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(273,25): error TS2339: Property 'assignCase' does not exist on type '{ getCases: (params?: Record<string, unknown> | undefined) => Promise<CollectionResponse<Case> & { pagination: PaginationInfo; }>; ... 13 more ...; searchCases: (query: string) => Promise<...>; }'.
+src/services/__tests__/cases.test.ts(298,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ total: number; open: number; in_progress: number; closed: number; by_priority: { high: number; medium: number; low: number; }; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(317,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; title: string; score: number; }[]>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(332,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<never[]>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(347,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ updated: number; ids: string[]; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/cases.test.ts(355,65): error TS2345: Argument of type '{ status: "reviewed"; }' is not assignable to parameter of type 'Partial<Case>'.
+  Types of property 'status' are incompatible.
+    Type '"reviewed"' is not assignable to type 'CaseStatus | undefined'.
+src/services/__tests__/cases.test.ts(373,57): error TS2345: Argument of type '{ ok: boolean; blob: () => Promise<Blob>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/compliance.test.ts(4,1): error TS2322: Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'unknown' is not assignable to type 'Promise<Response>'.
+src/services/__tests__/compliance.test.ts(22,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ compliant: boolean; checks: { rule: string; passed: boolean; }[]; score: number; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/compliance.test.ts(27,46): error TS2339: Property 'checkCompliance' does not exist on type 'ComplianceService'.
+src/services/__tests__/compliance.test.ts(41,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; status: string; data: { suspiciousActivity: string; }; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/compliance.test.ts(46,46): error TS2339: Property 'generateSAR' does not exist on type 'ComplianceService'.
+src/services/__tests__/compliance.test.ts(60,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ submitted: boolean; confirmationNumber: string; timestamp: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/compliance.test.ts(65,46): error TS2339: Property 'submitRegulatory' does not exist on type 'ComplianceService'.
+src/services/__tests__/evidence.test.ts(17,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ items: { id: string; fileName: string; case_id: string; uploadedAt: string; }[]; total: number; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/evidence.test.ts(37,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ items: { id: string; fileName: string; case_id: string; uploadedAt: string; }[]; total: number; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/evidence.test.ts(53,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ items: { id: string; fileName: string; case_id: string; uploadedAt: string; }[]; total: number; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/evidence.test.ts(80,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; fileName: string; size: number; type: string; case_id: string; uploadedAt: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/evidence.test.ts(102,57): error TS2345: Argument of type '{ ok: boolean; status: number; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/evidence.test.ts(118,54): error TS2345: Argument of type '{ fileType: string; sizeBytes: number; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/graph.test.ts(4,1): error TS2322: Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'unknown' is not assignable to type 'Promise<Response>'.
+src/services/__tests__/graph.test.ts(23,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ nodes: { id: string; label: string; type: string; }[]; edges: { source: string; target: string; label: string; }[]; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/graph.test.ts(28,41): error TS2339: Property 'getRelationships' does not exist on type '{ getGraphData: () => Promise<any>; getCentralEntities: (topN?: number) => Promise<CentralEntity[]>; getSuspiciousPatterns: () => Promise<SuspiciousPattern[]>; ... 5 more ...; exportGraph: (format: string) => Promise<...>; }'.
+src/services/__tests__/graph.test.ts(42,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ path: string[]; distance: number; relationships: string[]; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/graph.test.ts(47,41): error TS2339: Property 'findShortestPath' does not exist on type '{ getGraphData: () => Promise<any>; getCentralEntities: (topN?: number) => Promise<CentralEntity[]>; getSuspiciousPatterns: () => Promise<SuspiciousPattern[]>; ... 5 more ...; exportGraph: (format: string) => Promise<...>; }'.
+src/services/__tests__/graph.test.ts(60,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; members: string[]; density: number; }[]>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/graph.test.ts(65,41): error TS2551: Property 'detectCommunities' does not exist on type '{ getGraphData: () => Promise<any>; getCentralEntities: (topN?: number) => Promise<CentralEntity[]>; getSuspiciousPatterns: () => Promise<SuspiciousPattern[]>; ... 5 more ...; exportGraph: (format: string) => Promise<...>; }'. Did you mean 'getCommunities'?
+src/services/__tests__/notifications.test.ts(4,1): error TS2322: Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'unknown' is not assignable to type 'Promise<Response>'.
+src/services/__tests__/notifications.test.ts(12,82): error TS2345: Argument of type '"granted"' is not assignable to parameter of type 'never'.
+src/services/__tests__/notifications.test.ts(17,33): error TS2339: Property 'requestPermission' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+src/services/__tests__/notifications.test.ts(23,84): error TS2345: Argument of type '"denied"' is not assignable to parameter of type 'never'.
+src/services/__tests__/notifications.test.ts(25,48): error TS2339: Property 'requestPermission' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+src/services/__tests__/notifications.test.ts(35,27): error TS2551: Property 'sendNotification' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'. Did you mean 'getNotifications'?
+src/services/__tests__/notifications.test.ts(49,27): error TS2551: Property 'sendNotification' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'. Did you mean 'getNotifications'?
+src/services/__tests__/notifications.test.ts(57,27): error TS2339: Property 'queueNotification' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+src/services/__tests__/notifications.test.ts(62,41): error TS2339: Property 'getQueue' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+src/services/__tests__/notifications.test.ts(68,27): error TS2339: Property 'queueNotification' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+src/services/__tests__/notifications.test.ts(69,27): error TS2339: Property 'queueNotification' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+src/services/__tests__/notifications.test.ts(71,34): error TS2339: Property 'getQueue' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+src/services/__tests__/notifications.test.ts(73,27): error TS2339: Property 'clearQueue' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+src/services/__tests__/notifications.test.ts(75,34): error TS2339: Property 'getQueue' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+src/services/__tests__/reporting.test.ts(4,1): error TS2322: Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'unknown' is not assignable to type 'Promise<Response>'.
+src/services/__tests__/reporting.test.ts(24,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; type: string; data: { caseId: string; title: string; summary: string; }; generatedAt: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/reporting.test.ts(29,60): error TS2345: Argument of type '"case-123"' is not assignable to parameter of type '"pdf" | "html" | "csv" | undefined'.
+src/services/__tests__/reporting.test.ts(39,57): error TS2345: Argument of type '{ ok: boolean; status: number; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/reporting.test.ts(45,41): error TS2345: Argument of type '"case-123"' is not assignable to parameter of type '"pdf" | "html" | "csv" | undefined'.
+src/services/__tests__/reporting.test.ts(54,57): error TS2345: Argument of type '{ ok: boolean; blob: () => Promise<Blob>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/reporting.test.ts(71,57): error TS2345: Argument of type '{ ok: boolean; blob: () => Promise<Blob>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/reporting.test.ts(94,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; reportType: string; frequency: string; nextRun: string; }>; }' is not assignable to parameter of type 'never'.
+src/services/__tests__/reporting.test.ts(116,57): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ id: string; type: string; generatedAt: string; }[]>; }' is not assignable to parameter of type 'never'.
+src/services/costOptimization.ts(1,19): error TS6133: 'API_BASE' is declared but its value is never read.
+src/services/costOptimization.ts(1,29): error TS6133: 'getToken' is declared but its value is never read.
+src/services/edge/inferenceService.ts(17,11): error TS6133: 'modelPath' is declared but its value is never read.
+src/store/__tests__/authStore.test.ts(39,24): error TS2339: Property 'initializeAuth' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(53,24): error TS2339: Property 'setAuth' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(72,24): error TS2339: Property 'setAuth' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(90,24): error TS2339: Property 'setError' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(96,24): error TS2339: Property 'setAuth' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(111,24): error TS2339: Property 'setAuth' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(130,24): error TS2339: Property 'setAuth' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(153,24): error TS2551: Property 'setLoading' does not exist on type 'AuthState'. Did you mean 'isLoading'?
+src/store/__tests__/authStore.test.ts(159,24): error TS2551: Property 'setLoading' does not exist on type 'AuthState'. Did you mean 'isLoading'?
+src/store/__tests__/authStore.test.ts(171,24): error TS2339: Property 'setError' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(181,24): error TS2339: Property 'setError' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(199,24): error TS2339: Property 'setAuth' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(210,29): error TS2339: Property 'hasPermission' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(211,29): error TS2339: Property 'hasPermission' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(212,29): error TS2339: Property 'hasPermission' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(218,29): error TS2339: Property 'hasPermission' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(227,24): error TS2339: Property 'setAuth' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(233,29): error TS2339: Property 'hasRole' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(234,29): error TS2339: Property 'hasRole' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(243,24): error TS2339: Property 'setAuth' does not exist on type 'AuthState'.
+src/store/__tests__/authStore.test.ts(250,37): error TS2554: Expected 0 arguments, but got 1.
+src/store/__tests__/authStore.test.ts(271,24): error TS2339: Property 'setAuth' does not exist on type 'AuthState'.
+src/store/__tests__/caseStore.test.ts(9,7): error TS2353: Object literal may only specify known properties, and 'selectedCase' does not exist in type 'CaseStore | Partial<CaseStore> | ((state: CaseStore) => CaseStore | Partial<CaseStore>)'.
+src/store/__tests__/caseStore.test.ts(26,33): error TS2345: Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'Case[]'.
+  Type '{ id: string; title: string; status: string; priority: string; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(37,143): error TS2353: Object literal may only specify known properties, and 'riskScore' does not exist in type 'Case'.
+src/store/__tests__/caseStore.test.ts(44,24): error TS2339: Property 'addCase' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(56,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "high"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(73,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "high"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(74,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "medium"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(94,24): error TS2551: Property 'selectCase' does not exist on type 'CaseStore'. Did you mean 'deleteCase'?
+src/store/__tests__/caseStore.test.ts(97,29): error TS2551: Property 'selectedCase' does not exist on type 'CaseStore'. Did you mean 'deleteCase'?
+src/store/__tests__/caseStore.test.ts(104,24): error TS2551: Property 'selectCase' does not exist on type 'CaseStore'. Did you mean 'deleteCase'?
+src/store/__tests__/caseStore.test.ts(107,29): error TS2551: Property 'selectedCase' does not exist on type 'CaseStore'. Did you mean 'deleteCase'?
+src/store/__tests__/caseStore.test.ts(110,24): error TS2339: Property 'clearSelection' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(113,29): error TS2551: Property 'selectedCase' does not exist on type 'CaseStore'. Did you mean 'deleteCase'?
+src/store/__tests__/caseStore.test.ts(122,24): error TS2339: Property 'setFilter' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(125,29): error TS2339: Property 'filter' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(132,24): error TS2339: Property 'setFilter' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(135,29): error TS2339: Property 'filter' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(138,24): error TS2339: Property 'clearFilter' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(141,29): error TS2339: Property 'filter' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(149,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "high"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(150,11): error TS2739: Type '{ id: string; title: string; status: "closed"; priority: "low"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(151,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "medium"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(153,24): error TS2339: Property 'setFilter' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(156,39): error TS2339: Property 'getFilteredCases' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(159,29): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/store/__tests__/caseStore.test.ts(169,39): error TS2561: Object literal may only specify known properties, but 'created_at' does not exist in type 'Case'. Did you mean to write 'createdAt'?
+src/store/__tests__/caseStore.test.ts(170,39): error TS2561: Object literal may only specify known properties, but 'created_at' does not exist in type 'Case'. Did you mean to write 'createdAt'?
+src/store/__tests__/caseStore.test.ts(171,39): error TS2561: Object literal may only specify known properties, but 'created_at' does not exist in type 'Case'. Did you mean to write 'createdAt'?
+src/store/__tests__/caseStore.test.ts(175,37): error TS2339: Property 'getSortedCases' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(186,11): error TS2739: Type '{ id: string; title: string; priority: "low"; status: "open"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(187,11): error TS2739: Type '{ id: string; title: string; priority: "high"; status: "open"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(188,11): error TS2739: Type '{ id: string; title: string; priority: "medium"; status: "open"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(192,37): error TS2339: Property 'getSortedCases' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(205,24): error TS2551: Property 'setLoading' does not exist on type 'CaseStore'. Did you mean 'loading'?
+src/store/__tests__/caseStore.test.ts(208,29): error TS2551: Property 'isLoading' does not exist on type 'CaseStore'. Did you mean 'loading'?
+src/store/__tests__/caseStore.test.ts(211,24): error TS2551: Property 'setLoading' does not exist on type 'CaseStore'. Did you mean 'loading'?
+src/store/__tests__/caseStore.test.ts(214,29): error TS2551: Property 'isLoading' does not exist on type 'CaseStore'. Did you mean 'loading'?
+src/store/__tests__/caseStore.test.ts(221,24): error TS2339: Property 'setError' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(231,24): error TS2339: Property 'setError' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(237,24): error TS2339: Property 'clearError' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(250,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "high"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(251,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "high"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(252,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "high"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(257,24): error TS2339: Property 'bulkUpdate' does not exist on type 'CaseStore'.
+src/store/__tests__/caseStore.test.ts(270,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "high"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(271,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "high"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/store/__tests__/caseStore.test.ts(272,11): error TS2739: Type '{ id: string; title: string; status: "open"; priority: "high"; }' is missing the following properties from type 'Case': createdAt, updatedAt
+src/utils/__tests__/formatting.test.ts(42,31): error TS2559: Type '"short"' has no properties in common with type 'DateTimeFormatOptions'.
+src/utils/__tests__/formatting.test.ts(43,31): error TS2559: Type '"long"' has no properties in common with type 'DateTimeFormatOptions'.
+src/utils/electron.ts(54,3): error TS2739: Type '{}' is missing the following properties from type 'ExecuteResult': changes, lastInsertRowid

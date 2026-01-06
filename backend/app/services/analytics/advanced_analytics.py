@@ -3,16 +3,11 @@ Advanced Analytics & Business Intelligence Dashboard
 Real-time fraud trend analysis with predictive insights and executive reporting.
 """
 
-import asyncio
-import json
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
-
-import numpy as np
-import pandas as pd
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +38,8 @@ class AnalyticsInsight:
     description: str
     impact_level: str  # "high", "medium", "low"
     confidence_score: float
-    recommended_actions: List[str]
-    supporting_data: Dict[str, Any]
+    recommended_actions: list[str]
+    supporting_data: dict[str, Any]
     generated_at: datetime
 
 
@@ -56,22 +51,22 @@ class PredictiveTrend:
     current_value: float
     predicted_value: float
     trend_direction: str  # "increasing", "decreasing", "stable"
-    confidence_interval: Tuple[float, float]
+    confidence_interval: tuple[float, float]
     time_horizon: str
-    drivers: List[str]
+    drivers: list[str]
 
 
 class AdvancedAnalyticsEngine:
     """Advanced analytics and business intelligence engine"""
 
     def __init__(self):
-        self.metrics_cache: Dict[str, Any] = {}
-        self.insights_cache: List[AnalyticsInsight] = []
-        self.trend_models: Dict[str, Any] = {}
+        self.metrics_cache: dict[str, Any] = {}
+        self.insights_cache: list[AnalyticsInsight] = []
+        self.trend_models: dict[str, Any] = {}
 
     async def generate_executive_dashboard(
         self, timeframe: AnalyticsTimeframe = AnalyticsTimeframe.MONTH
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Generate comprehensive executive dashboard with AI insights
 
@@ -109,7 +104,7 @@ class AdvancedAnalyticsEngine:
 
     async def _calculate_core_metrics(
         self, timeframe: AnalyticsTimeframe
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Calculate core business metrics"""
         # This would integrate with actual data sources
         # Mock data for demonstration
@@ -152,8 +147,8 @@ class AdvancedAnalyticsEngine:
         return metrics
 
     async def _generate_ai_insights(
-        self, metrics: Dict[str, Any]
-    ) -> List[AnalyticsInsight]:
+        self, metrics: dict[str, Any]
+    ) -> list[AnalyticsInsight]:
         """Generate AI-powered business insights"""
         insights = []
 
@@ -257,7 +252,7 @@ class AdvancedAnalyticsEngine:
 
     async def _calculate_predictive_trends(
         self, timeframe: AnalyticsTimeframe
-    ) -> List[PredictiveTrend]:
+    ) -> list[PredictiveTrend]:
         """Calculate predictive trends using time series analysis"""
         trends = []
 
@@ -328,8 +323,8 @@ class AdvancedAnalyticsEngine:
         return trends
 
     def _generate_executive_summary(
-        self, metrics: Dict[str, Any], insights: List[AnalyticsInsight]
-    ) -> Dict[str, Any]:
+        self, metrics: dict[str, Any], insights: list[AnalyticsInsight]
+    ) -> dict[str, Any]:
         """Generate executive summary with key highlights"""
         fraud_detection = metrics["fraud_detection"]
         financial = metrics["financial_impact"]
@@ -344,10 +339,10 @@ class AdvancedAnalyticsEngine:
 
         # Generate summary text
         summary_text = f"""
-        The fraud detection platform prevented ${financial['cost_savings']:,.0f} in fraudulent activity
-        this period, achieving a {fraud_detection['detection_rate']:.1%} detection rate with an average
-        response time of {fraud_detection['average_response_time']:.1f} hours. The platform delivered
-        {financial['roi_percentage']:.0f}% ROI, significantly exceeding performance expectations.
+        The fraud detection platform prevented ${financial["cost_savings"]:,.0f} in fraudulent activity
+        this period, achieving a {fraud_detection["detection_rate"]:.1%} detection rate with an average
+        response time of {fraud_detection["average_response_time"]:.1f} hours. The platform delivered
+        {financial["roi_percentage"]:.0f}% ROI, significantly exceeding performance expectations.
         """
 
         # Identify top insights
@@ -366,7 +361,7 @@ class AdvancedAnalyticsEngine:
 
     async def generate_risk_heatmaps(
         self, timeframe: AnalyticsTimeframe
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate risk heatmaps for geographic and temporal analysis"""
         # Mock geographic risk data
         geographic_risk = {
@@ -456,8 +451,8 @@ class AdvancedAnalyticsEngine:
         }
 
     def _calculate_performance_indicators(
-        self, metrics: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, metrics: dict[str, Any]
+    ) -> dict[str, Any]:
         """Calculate key performance indicators"""
         fraud = metrics["fraud_detection"]
         operational = metrics["operational_efficiency"]
@@ -473,7 +468,7 @@ class AdvancedAnalyticsEngine:
             / operational["system_uptime"],
         }
 
-    async def _generate_benchmarking_data(self) -> Dict[str, Any]:
+    async def _generate_benchmarking_data(self) -> dict[str, Any]:
         """Generate industry benchmarking data"""
         return {
             "detection_rate": {
@@ -502,14 +497,14 @@ class AdvancedAnalyticsEngine:
             },
         }
 
-    def _get_time_periods(self, timeframe: AnalyticsTimeframe) -> List[str]:
+    def _get_time_periods(self, timeframe: AnalyticsTimeframe) -> list[str]:
         """Get time periods for the specified timeframe"""
         # Simplified implementation
         return ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06"]
 
     def _generate_time_series_data(
         self, timeframe: AnalyticsTimeframe
-    ) -> Dict[str, List[Any]]:
+    ) -> dict[str, list[Any]]:
         """Generate time series data for metrics"""
         periods = self._get_time_periods(timeframe)
 

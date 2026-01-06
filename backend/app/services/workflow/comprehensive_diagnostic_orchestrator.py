@@ -6,17 +6,14 @@ with detailed scoring across all areas and dimensions.
 
 import asyncio
 import importlib
-import inspect
-import json
 import logging
 import statistics
-import sys
 import time
-from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta
+from collections.abc import Callable
+from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
-from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -67,8 +64,8 @@ class DiagnosticResult:
     status: str  # pass, fail, warning, error
     score: float  # 0.0 to 100.0
     message: str
-    details: Dict[str, Any]
-    recommendations: List[str]
+    details: dict[str, Any]
+    recommendations: list[str]
     execution_time: float
     timestamp: datetime
 
@@ -82,7 +79,7 @@ class DiagnosticSuite:
     description: str
     scope: DiagnosticScope
     priority: DiagnosticPriority
-    checks: List[Callable]
+    checks: list[Callable]
     estimated_duration: int  # seconds
 
 
@@ -95,24 +92,24 @@ class ComprehensiveReport:
     execution_duration: float
     overall_score: float
     overall_grade: str
-    scope_coverage: Dict[DiagnosticScope, float]
-    priority_distribution: Dict[DiagnosticPriority, int]
-    status_distribution: Dict[str, int]
-    critical_findings: List[Dict[str, Any]]
-    recommendations: List[Dict[str, Any]]
-    detailed_results: Dict[DiagnosticScope, List[DiagnosticResult]]
-    trends_analysis: Dict[str, Any]
-    predictive_insights: Dict[str, Any]
+    scope_coverage: dict[DiagnosticScope, float]
+    priority_distribution: dict[DiagnosticPriority, int]
+    status_distribution: dict[str, int]
+    critical_findings: list[dict[str, Any]]
+    recommendations: list[dict[str, Any]]
+    detailed_results: dict[DiagnosticScope, list[DiagnosticResult]]
+    trends_analysis: dict[str, Any]
+    predictive_insights: dict[str, Any]
 
 
 class DiagnosticOrchestrator:
     """Main orchestrator for comprehensive platform diagnostics"""
 
     def __init__(self):
-        self.diagnostic_suites: Dict[str, DiagnosticSuite] = {}
-        self.results_history: List[ComprehensiveReport] = []
-        self.active_diagnostics: Set[str] = set()
-        self.diagnostic_modules: Dict[str, Any] = {}
+        self.diagnostic_suites: dict[str, DiagnosticSuite] = {}
+        self.results_history: list[ComprehensiveReport] = []
+        self.active_diagnostics: set[str] = set()
+        self.diagnostic_modules: dict[str, Any] = {}
 
         # Initialize diagnostic suites
         self._initialize_diagnostic_suites()
@@ -468,7 +465,7 @@ class DiagnosticOrchestrator:
 
     async def run_comprehensive_diagnostics(
         self,
-        scopes: Optional[List[DiagnosticScope]] = None,
+        scopes: list[DiagnosticScope] | None = None,
         depth: DiagnosticDepth = DiagnosticDepth.STANDARD,
         parallel_execution: bool = True,
     ) -> ComprehensiveReport:
@@ -527,8 +524,8 @@ class DiagnosticOrchestrator:
         return report
 
     async def _run_parallel_diagnostics(
-        self, suites: List[DiagnosticSuite], depth: DiagnosticDepth
-    ) -> List[DiagnosticResult]:
+        self, suites: list[DiagnosticSuite], depth: DiagnosticDepth
+    ) -> list[DiagnosticResult]:
         """Run diagnostic suites in parallel"""
         tasks = []
         for suite in suites:
@@ -551,7 +548,7 @@ class DiagnosticOrchestrator:
                     priority=DiagnosticPriority.CRITICAL,
                     status="error",
                     score=0.0,
-                    message=f"Diagnostic execution failed: {str(result)}",
+                    message=f"Diagnostic execution failed: {result!s}",
                     details={"error": str(result)},
                     recommendations=["Fix diagnostic execution errors"],
                     execution_time=0.0,
@@ -564,8 +561,8 @@ class DiagnosticOrchestrator:
         return all_results
 
     async def _run_sequential_diagnostics(
-        self, suites: List[DiagnosticSuite], depth: DiagnosticDepth
-    ) -> List[DiagnosticResult]:
+        self, suites: list[DiagnosticSuite], depth: DiagnosticDepth
+    ) -> list[DiagnosticResult]:
         """Run diagnostic suites sequentially"""
         all_results = []
         for suite in suites:
@@ -579,7 +576,7 @@ class DiagnosticOrchestrator:
 
     async def _execute_diagnostic_suite(
         self, suite: DiagnosticSuite, depth: DiagnosticDepth
-    ) -> List[DiagnosticResult]:
+    ) -> list[DiagnosticResult]:
         """Execute a single diagnostic suite"""
         suite_start_time = time.time()
         results = []
@@ -598,7 +595,7 @@ class DiagnosticOrchestrator:
                 ]
 
                 perfect_available = False
-                for key in [perfect_system_key] + alternative_keys:
+                for key in [perfect_system_key, *alternative_keys]:
                     if key in self.diagnostic_modules:
                         perfect_available = True
                         break
@@ -608,14 +605,14 @@ class DiagnosticOrchestrator:
                     result_data = {
                         "status": "pass",
                         "score": 100.0,
-                        "message": f'Perfect {suite.suite_id.replace("_", " ")} implemented - absolute perfection achieved',
+                        "message": f"Perfect {suite.suite_id.replace('_', ' ')} implemented - absolute perfection achieved",
                         "details": {
                             "perfection_achieved": True,
                             "infinite_capability": True,
                             "zero_defects": True,
                         },
                         "recommendations": [
-                            f'{suite.suite_id.replace("_", " ").title()} is now perfect and self-optimizing'
+                            f"{suite.suite_id.replace('_', ' ').title()} is now perfect and self-optimizing"
                         ],
                     }
                 else:
@@ -650,7 +647,7 @@ class DiagnosticOrchestrator:
                     priority=suite.priority,
                     status="error",
                     score=0.0,
-                    message=f"Diagnostic check failed: {str(e)}",
+                    message=f"Diagnostic check failed: {e!s}",
                     details={"error": str(e)},
                     recommendations=["Fix diagnostic implementation"],
                     execution_time=time.time() - check_start_time,
@@ -666,8 +663,8 @@ class DiagnosticOrchestrator:
         return results
 
     def _process_diagnostic_results(
-        self, results: List[DiagnosticResult]
-    ) -> Dict[str, Any]:
+        self, results: list[DiagnosticResult]
+    ) -> dict[str, Any]:
         """Process and analyze diagnostic results"""
 
         # Group results by scope
@@ -769,8 +766,8 @@ class DiagnosticOrchestrator:
             return "F"
 
     def _generate_recommendations(
-        self, results: List[DiagnosticResult], critical_findings: List[Dict]
-    ) -> List[Dict]:
+        self, results: list[DiagnosticResult], critical_findings: list[dict]
+    ) -> list[dict]:
         """Generate prioritized recommendations"""
         recommendations = []
 
@@ -815,7 +812,7 @@ class DiagnosticOrchestrator:
 
         return recommendations
 
-    def _analyze_trends(self, results: List[DiagnosticResult]) -> Dict[str, Any]:
+    def _analyze_trends(self, results: list[DiagnosticResult]) -> dict[str, Any]:
         """Analyze trends from diagnostic results"""
         trends = {
             "score_trends": {},
@@ -854,8 +851,8 @@ class DiagnosticOrchestrator:
         return trends
 
     def _generate_predictive_insights(
-        self, results: List[DiagnosticResult]
-    ) -> Dict[str, Any]:
+        self, results: list[DiagnosticResult]
+    ) -> dict[str, Any]:
         """Generate predictive insights from diagnostic results"""
         insights = {
             "predicted_failures": [],
@@ -898,7 +895,9 @@ class DiagnosticOrchestrator:
             "overall_risk_level": (
                 "CRITICAL"
                 if len(high_risk_scopes) > 3
-                else "HIGH" if len(high_risk_scopes) > 1 else "MEDIUM"
+                else "HIGH"
+                if len(high_risk_scopes) > 1
+                else "MEDIUM"
             ),
             "mitigation_priority": "IMMEDIATE" if len(high_risk_scopes) > 2 else "HIGH",
         }
@@ -908,7 +907,7 @@ class DiagnosticOrchestrator:
     # Diagnostic check implementations (simplified for demonstration)
     async def _check_service_availability(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check service availability"""
         # In real implementation, would check actual service endpoints
         return {
@@ -919,7 +918,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Implement additional redundancy for 100% uptime"],
         }
 
-    async def _check_system_resources(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_system_resources(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check system resource utilization"""
         return {
             "status": "pass",
@@ -931,7 +930,7 @@ class DiagnosticOrchestrator:
             ],
         }
 
-    async def _check_database_health(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_database_health(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check database health"""
         return {
             "status": "pass",
@@ -941,7 +940,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Continue monitoring query performance"],
         }
 
-    async def _check_cache_performance(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_cache_performance(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check cache performance"""
         return {
             "status": "pass",
@@ -953,7 +952,7 @@ class DiagnosticOrchestrator:
 
     async def _check_network_connectivity(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check network connectivity"""
         return {
             "status": "pass",
@@ -963,7 +962,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Monitor network patterns for anomalies"],
         }
 
-    async def _check_system_logs(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_system_logs(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check system logging"""
         return {
             "status": "pass",
@@ -975,7 +974,7 @@ class DiagnosticOrchestrator:
 
     async def _analyze_architecture_patterns(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Analyze architecture patterns"""
         return {
             "status": "pass",
@@ -985,7 +984,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Continue architectural improvements"],
         }
 
-    async def _check_code_modularity(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_code_modularity(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check code modularity"""
         return {
             "status": "pass",
@@ -995,7 +994,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Refactor highly coupled modules"],
         }
 
-    async def _assess_technical_debt(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _assess_technical_debt(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Assess technical debt"""
         return {
             "status": "warning",
@@ -1005,7 +1004,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Implement systematic debt reduction program"],
         }
 
-    async def _validate_design_patterns(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _validate_design_patterns(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Validate design patterns"""
         return {
             "status": "pass",
@@ -1015,7 +1014,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Document pattern usage guidelines"],
         }
 
-    async def _check_api_maturity(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_api_maturity(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check API maturity"""
         return {
             "status": "pass",
@@ -1027,7 +1026,7 @@ class DiagnosticOrchestrator:
 
     async def _analyze_coupling_cohesion(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Analyze coupling and cohesion"""
         return {
             "status": "pass",
@@ -1037,7 +1036,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Improve cohesion in select modules"],
         }
 
-    async def _analyze_code_complexity(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_code_complexity(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze code complexity"""
         return {
             "status": "pass",
@@ -1047,7 +1046,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Refactor highly complex functions"],
         }
 
-    async def _check_test_coverage(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_test_coverage(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check test coverage"""
         return {
             "status": "pass",
@@ -1057,7 +1056,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Increase coverage for edge cases"],
         }
 
-    async def _detect_code_smells(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _detect_code_smells(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Detect code smells"""
         return {
             "status": "warning",
@@ -1069,7 +1068,7 @@ class DiagnosticOrchestrator:
 
     async def _validate_coding_standards(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate coding standards"""
         return {
             "status": "pass",
@@ -1081,7 +1080,7 @@ class DiagnosticOrchestrator:
 
     async def _check_documentation_coverage(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check documentation coverage"""
         return {
             "status": "pass",
@@ -1091,7 +1090,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Add more inline documentation"],
         }
 
-    async def _analyze_code_duplication(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_code_duplication(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze code duplication"""
         return {
             "status": "pass",
@@ -1101,7 +1100,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Extract common functionality to utilities"],
         }
 
-    async def _assess_threat_models(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _assess_threat_models(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Assess threat models"""
         return {
             "status": "pass",
@@ -1111,7 +1110,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Update models for new attack vectors"],
         }
 
-    async def _scan_vulnerabilities(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _scan_vulnerabilities(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Scan for vulnerabilities"""
         return {
             "status": "pass",
@@ -1123,7 +1122,7 @@ class DiagnosticOrchestrator:
 
     async def _check_zero_trust_implementation(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check zero trust implementation"""
         return {
             "status": "pass",
@@ -1133,7 +1132,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Complete remaining zero trust controls"],
         }
 
-    async def _analyze_attack_surface(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_attack_surface(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze attack surface"""
         return {
             "status": "pass",
@@ -1145,7 +1144,7 @@ class DiagnosticOrchestrator:
 
     async def _validate_security_controls(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate security controls"""
         return {
             "status": "pass",
@@ -1155,7 +1154,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Enhance security monitoring capabilities"],
         }
 
-    async def _check_compliance_status(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_compliance_status(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check compliance status"""
         return {
             "status": "pass",
@@ -1165,7 +1164,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Maintain compliance monitoring"],
         }
 
-    async def _analyze_response_times(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_response_times(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze response times"""
         return {
             "status": "pass",
@@ -1175,7 +1174,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Monitor response time trends"],
         }
 
-    async def _check_scalability_limits(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_scalability_limits(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check scalability limits"""
         return {
             "status": "pass",
@@ -1187,7 +1186,7 @@ class DiagnosticOrchestrator:
 
     async def _assess_resource_utilization(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess resource utilization"""
         return {
             "status": "pass",
@@ -1199,7 +1198,7 @@ class DiagnosticOrchestrator:
 
     async def _validate_performance_benchmarks(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate performance benchmarks"""
         return {
             "status": "pass",
@@ -1211,7 +1210,7 @@ class DiagnosticOrchestrator:
 
     async def _check_caching_effectiveness(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check caching effectiveness"""
         return {
             "status": "pass",
@@ -1221,7 +1220,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Monitor cache performance metrics"],
         }
 
-    async def _analyze_bottlenecks(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_bottlenecks(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze performance bottlenecks"""
         return {
             "status": "pass",
@@ -1233,7 +1232,7 @@ class DiagnosticOrchestrator:
 
     async def _assess_strategic_alignment(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess strategic alignment"""
         return {
             "status": "pass",
@@ -1243,7 +1242,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Continue strategic alignment monitoring"],
         }
 
-    async def _analyze_market_position(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_market_position(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze market position"""
         return {
             "status": "pass",
@@ -1255,7 +1254,7 @@ class DiagnosticOrchestrator:
 
     async def _check_customer_satisfaction(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check customer satisfaction"""
         return {
             "status": "pass",
@@ -1267,7 +1266,7 @@ class DiagnosticOrchestrator:
 
     async def _validate_business_metrics(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate business metrics"""
         return {
             "status": "pass",
@@ -1279,7 +1278,7 @@ class DiagnosticOrchestrator:
 
     async def _assess_competitive_advantage(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess competitive advantage"""
         return {
             "status": "pass",
@@ -1289,7 +1288,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Strengthen competitive moats"],
         }
 
-    async def _check_roi_achievement(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_roi_achievement(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check ROI achievement"""
         return {
             "status": "pass",
@@ -1299,7 +1298,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Continue ROI optimization efforts"],
         }
 
-    async def _assess_devops_maturity(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _assess_devops_maturity(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Assess DevOps maturity"""
         return {
             "status": "pass",
@@ -1311,7 +1310,7 @@ class DiagnosticOrchestrator:
 
     async def _analyze_monitoring_coverage(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Analyze monitoring coverage"""
         return {
             "status": "pass",
@@ -1321,7 +1320,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Enhance monitoring dashboards"],
         }
 
-    async def _check_incident_response(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_incident_response(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check incident response"""
         return {
             "status": "pass",
@@ -1333,7 +1332,7 @@ class DiagnosticOrchestrator:
 
     async def _validate_automation_level(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate automation level"""
         return {
             "status": "pass",
@@ -1343,7 +1342,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Increase automation coverage"],
         }
 
-    async def _assess_change_management(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _assess_change_management(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Assess change management"""
         return {
             "status": "pass",
@@ -1353,7 +1352,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Improve change management processes"],
         }
 
-    async def _check_capacity_planning(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_capacity_planning(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check capacity planning"""
         return {
             "status": "pass",
@@ -1365,7 +1364,7 @@ class DiagnosticOrchestrator:
 
     async def _assess_innovation_velocity(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess innovation velocity"""
         # Check if perfect innovation readiness system is available
         if "perfect_innovation_readiness_system" in self.diagnostic_modules:
@@ -1397,7 +1396,7 @@ class DiagnosticOrchestrator:
 
     async def _check_experimentation_framework(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check experimentation framework"""
         # Check if perfect innovation readiness system is available
         if "perfect_innovation_readiness_system" in self.diagnostic_modules:
@@ -1423,7 +1422,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Implement comprehensive experimentation platform"],
         }
 
-    async def _analyze_ai_ml_readiness(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_ai_ml_readiness(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze AI/ML readiness"""
         return {
             "status": "pass",
@@ -1435,7 +1434,7 @@ class DiagnosticOrchestrator:
 
     async def _validate_rapid_prototyping(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate rapid prototyping"""
         return {
             "status": "pass",
@@ -1445,7 +1444,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Streamline prototyping processes"],
         }
 
-    async def _check_learning_culture(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_learning_culture(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check learning culture"""
         return {
             "status": "pass",
@@ -1457,7 +1456,7 @@ class DiagnosticOrchestrator:
 
     async def _assess_technology_agility(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess technology agility"""
         return {
             "status": "pass",
@@ -1469,7 +1468,7 @@ class DiagnosticOrchestrator:
 
     async def _analyze_infrastructure_costs(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Analyze infrastructure costs"""
         return {
             "status": "pass",
@@ -1481,7 +1480,7 @@ class DiagnosticOrchestrator:
 
     async def _assess_operational_efficiency(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess operational efficiency"""
         return {
             "status": "pass",
@@ -1493,7 +1492,7 @@ class DiagnosticOrchestrator:
 
     async def _check_licensing_optimization(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check licensing optimization"""
         return {
             "status": "warning",
@@ -1505,7 +1504,7 @@ class DiagnosticOrchestrator:
             ],
         }
 
-    async def _validate_cost_monitoring(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _validate_cost_monitoring(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Validate cost monitoring"""
         return {
             "status": "pass",
@@ -1515,7 +1514,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Enhance cost monitoring granularity"],
         }
 
-    async def _analyze_roi_achievements(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_roi_achievements(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze ROI achievements"""
         return {
             "status": "pass",
@@ -1525,7 +1524,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Continue ROI-focused project selection"],
         }
 
-    async def _check_budget_compliance(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_budget_compliance(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check budget compliance"""
         return {
             "status": "pass",
@@ -1537,7 +1536,7 @@ class DiagnosticOrchestrator:
 
     async def _assess_environmental_impact(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess environmental impact"""
         # Check if perfect systems suite is available
         if "perfect_systems_suite" in self.diagnostic_modules:
@@ -1563,7 +1562,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Implement green computing initiatives"],
         }
 
-    async def _analyze_code_lifespan(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_code_lifespan(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze code lifespan"""
         return {
             "status": "pass",
@@ -1573,7 +1572,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Improve code maintainability for longer lifespan"],
         }
 
-    async def _check_vendor_lock_in(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_vendor_lock_in(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check vendor lock-in risk"""
         return {
             "status": "pass",
@@ -1583,7 +1582,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Increase multi-cloud and multi-vendor strategies"],
         }
 
-    async def _validate_future_proofing(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _validate_future_proofing(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Validate future-proofing"""
         return {
             "status": "pass",
@@ -1595,7 +1594,7 @@ class DiagnosticOrchestrator:
 
     async def _assess_knowledge_distribution(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess knowledge distribution"""
         return {
             "status": "pass",
@@ -1607,7 +1606,7 @@ class DiagnosticOrchestrator:
 
     async def _check_technical_obsolescence(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check technical obsolescence"""
         return {
             "status": "warning",
@@ -1617,7 +1616,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Plan technology refresh cycles"],
         }
 
-    async def _analyze_market_share(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_market_share(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze market share"""
         return {
             "status": "pass",
@@ -1629,7 +1628,7 @@ class DiagnosticOrchestrator:
 
     async def _assess_competitive_advantages(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess competitive advantages"""
         return {
             "status": "pass",
@@ -1639,7 +1638,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Build on existing competitive advantages"],
         }
 
-    async def _check_innovation_gaps(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_innovation_gaps(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check innovation gaps"""
         # Check if perfect competitive positioning system is available
         if "perfect_competitive_positioning_system" in self.diagnostic_modules:
@@ -1671,7 +1670,7 @@ class DiagnosticOrchestrator:
             ],
         }
 
-    async def _validate_brand_strength(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _validate_brand_strength(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Validate brand strength"""
         return {
             "status": "pass",
@@ -1683,7 +1682,7 @@ class DiagnosticOrchestrator:
 
     async def _analyze_partner_ecosystem(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Analyze partner ecosystem"""
         return {
             "status": "pass",
@@ -1693,7 +1692,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Expand strategic partnerships"],
         }
 
-    async def _check_market_penetration(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_market_penetration(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check market penetration"""
         return {
             "status": "warning",
@@ -1703,7 +1702,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Develop market penetration strategies"],
         }
 
-    async def _identify_business_risks(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _identify_business_risks(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Identify business risks"""
         # Check if perfect risk management system is available
         if "perfect_risk_management_system" in self.diagnostic_modules:
@@ -1731,7 +1730,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Develop comprehensive risk mitigation strategies"],
         }
 
-    async def _assess_technical_risks(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _assess_technical_risks(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Assess technical risks"""
         # Check if perfect risk management system is available
         if "perfect_risk_management_system" in self.diagnostic_modules:
@@ -1757,7 +1756,7 @@ class DiagnosticOrchestrator:
 
     async def _analyze_operational_risks(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Analyze operational risks"""
         # Check if perfect risk management system is available
         if "perfect_risk_management_system" in self.diagnostic_modules:
@@ -1781,7 +1780,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Enhance operational risk monitoring"],
         }
 
-    async def _check_risk_mitigation(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_risk_mitigation(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check risk mitigation effectiveness"""
         return {
             "status": "warning",
@@ -1791,7 +1790,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Strengthen risk mitigation frameworks"],
         }
 
-    async def _validate_risk_monitoring(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _validate_risk_monitoring(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Validate risk monitoring"""
         return {
             "status": "pass",
@@ -1801,7 +1800,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Enhance risk monitoring capabilities"],
         }
 
-    async def _assess_risk_exposure(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _assess_risk_exposure(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Assess risk exposure"""
         return {
             "status": "warning",
@@ -1811,7 +1810,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Reduce overall risk exposure through mitigation"],
         }
 
-    async def _check_gdpr_compliance(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_gdpr_compliance(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check GDPR compliance"""
         return {
             "status": "pass",
@@ -1821,7 +1820,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Maintain GDPR compliance standards"],
         }
 
-    async def _validate_sox_compliance(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _validate_sox_compliance(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Validate SOX compliance"""
         return {
             "status": "pass",
@@ -1833,7 +1832,7 @@ class DiagnosticOrchestrator:
 
     async def _assess_industry_standards(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Assess industry standards compliance"""
         return {
             "status": "pass",
@@ -1843,7 +1842,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Pursue additional industry certifications"],
         }
 
-    async def _check_audit_readiness(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_audit_readiness(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check audit readiness"""
         return {
             "status": "pass",
@@ -1853,7 +1852,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Maintain audit readiness posture"],
         }
 
-    async def _validate_data_protection(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _validate_data_protection(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Validate data protection"""
         return {
             "status": "pass",
@@ -1863,7 +1862,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Continue data protection enhancements"],
         }
 
-    async def _check_privacy_compliance(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_privacy_compliance(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check privacy compliance"""
         return {
             "status": "pass",
@@ -1873,7 +1872,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Enhance privacy monitoring capabilities"],
         }
 
-    async def _check_horizontal_scaling(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_horizontal_scaling(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check horizontal scaling capability"""
         return {
             "status": "pass",
@@ -1883,7 +1882,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Improve auto-scaling algorithms"],
         }
 
-    async def _analyze_vertical_scaling(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_vertical_scaling(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze vertical scaling limits"""
         return {
             "status": "pass",
@@ -1893,7 +1892,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Monitor resource utilization trends"],
         }
 
-    async def _validate_load_balancing(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _validate_load_balancing(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Validate load balancing effectiveness"""
         return {
             "status": "pass",
@@ -1903,7 +1902,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Fine-tune load balancing algorithms"],
         }
 
-    async def _check_auto_scaling(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_auto_scaling(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check auto-scaling functionality"""
         return {
             "status": "pass",
@@ -1913,7 +1912,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Optimize scaling triggers"],
         }
 
-    async def _assess_resource_limits(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _assess_resource_limits(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Assess resource limits and constraints"""
         return {
             "status": "pass",
@@ -1923,7 +1922,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Plan for resource limit increases"],
         }
 
-    async def _validate_scaling_limits(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _validate_scaling_limits(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Validate scaling limits and thresholds"""
         return {
             "status": "warning",
@@ -1933,7 +1932,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Increase scaling limits and test higher loads"],
         }
 
-    async def _analyze_uptime_metrics(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_uptime_metrics(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze uptime metrics and reliability"""
         return {
             "status": "pass",
@@ -1943,7 +1942,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Maintain high availability standards"],
         }
 
-    async def _check_fault_tolerance(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_fault_tolerance(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check fault tolerance capabilities"""
         return {
             "status": "pass",
@@ -1953,7 +1952,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Test fault tolerance scenarios regularly"],
         }
 
-    async def _assess_redundancy(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _assess_redundancy(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Assess system redundancy levels"""
         return {
             "status": "pass",
@@ -1963,7 +1962,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Maintain redundancy across all critical components"],
         }
 
-    async def _validate_backup_systems(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _validate_backup_systems(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Validate backup systems effectiveness"""
         return {
             "status": "pass",
@@ -1973,7 +1972,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Test backup and recovery procedures regularly"],
         }
 
-    async def _check_disaster_recovery(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_disaster_recovery(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check disaster recovery capabilities"""
         return {
             "status": "pass",
@@ -1983,7 +1982,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Conduct disaster recovery drills regularly"],
         }
 
-    async def _analyze_mtbf_mttr(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_mtbf_mttr(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze MTBF and MTTR metrics"""
         return {
             "status": "pass",
@@ -1995,7 +1994,7 @@ class DiagnosticOrchestrator:
 
     async def _check_monitoring_coverage(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check monitoring system coverage"""
         return {
             "status": "pass",
@@ -2007,7 +2006,7 @@ class DiagnosticOrchestrator:
 
     async def _validate_alert_effectiveness(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate alert system effectiveness"""
         return {
             "status": "pass",
@@ -2017,7 +2016,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Reduce false positive alerts"],
         }
 
-    async def _assess_logging_quality(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _assess_logging_quality(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Assess logging system quality"""
         return {
             "status": "pass",
@@ -2029,7 +2028,7 @@ class DiagnosticOrchestrator:
 
     async def _check_metrics_completeness(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check metrics collection completeness"""
         return {
             "status": "pass",
@@ -2041,7 +2040,7 @@ class DiagnosticOrchestrator:
 
     async def _validate_dashboard_usefulness(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate dashboard usefulness"""
         return {
             "status": "pass",
@@ -2051,7 +2050,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Improve dashboard user experience"],
         }
 
-    async def _analyze_monitoring_gaps(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _analyze_monitoring_gaps(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Analyze monitoring system gaps"""
         return {
             "status": "warning",
@@ -2061,7 +2060,7 @@ class DiagnosticOrchestrator:
             "recommendations": ["Address critical monitoring gaps"],
         }
 
-    async def _check_ci_cd_automation(self, depth: DiagnosticDepth) -> Dict[str, Any]:
+    async def _check_ci_cd_automation(self, depth: DiagnosticDepth) -> dict[str, Any]:
         """Check CI/CD automation level"""
         return {
             "status": "pass",
@@ -2073,7 +2072,7 @@ class DiagnosticOrchestrator:
 
     async def _analyze_deployment_automation(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Analyze deployment automation"""
         return {
             "status": "pass",
@@ -2085,7 +2084,7 @@ class DiagnosticOrchestrator:
 
     async def _validate_testing_automation(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate testing automation"""
         return {
             "status": "pass",
@@ -2097,7 +2096,7 @@ class DiagnosticOrchestrator:
 
     async def _check_monitoring_automation(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check monitoring automation"""
         return {
             "status": "pass",
@@ -2109,7 +2108,7 @@ class DiagnosticOrchestrator:
 
     async def _validate_process_automation(
         self, depth: DiagnosticDepth
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate process automation"""
         return {
             "status": "pass",

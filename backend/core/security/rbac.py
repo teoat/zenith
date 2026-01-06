@@ -3,7 +3,6 @@ Role-Based Access Control (RBAC) for Zenith Fraud Detection Platform
 """
 
 from enum import Enum
-from typing import Any, Dict, List
 
 
 class Permission(str, Enum):
@@ -35,7 +34,7 @@ class Permission(str, Enum):
 
 
 # Role definitions
-ROLE_PERMISSIONS: Dict[str, List[str]] = {
+ROLE_PERMISSIONS: dict[str, list[str]] = {
     "viewer": [
         Permission.VIEW_CASES,
         Permission.VIEW_TRANSACTIONS,
@@ -114,6 +113,6 @@ def has_permission(user_role: str, permission: str) -> bool:
     return permission in ROLE_PERMISSIONS[user_role]
 
 
-def get_role_permissions(role: str) -> List[str]:
+def get_role_permissions(role: str) -> list[str]:
     """Get all permissions for a role"""
     return ROLE_PERMISSIONS.get(role, [])

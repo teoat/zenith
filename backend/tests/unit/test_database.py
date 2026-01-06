@@ -5,19 +5,15 @@ import uuid
 from unittest.mock import MagicMock, patch
 
 import pytest
-from sqlalchemy.orm import Session
-
 from app.services.infrastructure.auth_service import AuthService
 from app.services.infrastructure.storage.database_service import DatabaseService
+from sqlalchemy.orm import Session
+
 from core.database import (
     Case,
-    CaseActivity,
-    CaseNote,
     CaseStatus,
     CaseType,
     Evidence,
-    FraudAlert,
-    Team,
     Transaction,
     User,
     UserRole,
@@ -114,7 +110,9 @@ class TestDatabaseService:
         assert db_service is not None
         assert hasattr(db_service, "get_db")
 
-    @patch("app.services.infrastructure.storage.database_service.DatabaseService.get_db")
+    @patch(
+        "app.services.infrastructure.storage.database_service.DatabaseService.get_db"
+    )
     def test_get_cases_paginated(self, mock_get_db, db_service, mock_session):
         """Test paginated case retrieval"""
         mock_get_db.return_value.__enter__.return_value = mock_session
@@ -135,7 +133,9 @@ class TestDatabaseService:
         assert "page" in result
         assert "per_page" in result
 
-    @patch("app.services.infrastructure.storage.database_service.DatabaseService.get_db")
+    @patch(
+        "app.services.infrastructure.storage.database_service.DatabaseService.get_db"
+    )
     def test_create_case(self, mock_get_db, db_service, mock_session):
         """Test case creation"""
         mock_get_db.return_value.__enter__.return_value = mock_session
@@ -152,7 +152,9 @@ class TestDatabaseService:
         mock_session.add.assert_called_once()
         mock_session.commit.assert_called_once()
 
-    @patch("app.services.infrastructure.storage.database_service.DatabaseService.get_db")
+    @patch(
+        "app.services.infrastructure.storage.database_service.DatabaseService.get_db"
+    )
     def test_get_user_by_username(self, mock_get_db, db_service, mock_session):
         """Test user retrieval by username"""
         mock_get_db.return_value.__enter__.return_value = mock_session
@@ -257,7 +259,7 @@ class TestAuthService:
         """Test authentication with non-existent user"""
         mock_db_service.get_user_by_username.return_value = None
         mock_db_service.get_user_by_email.return_value = None
-        
+
         # Also mock get_db to return a mock that doesn't return data for Scans
         mock_db = mock_db_service.get_db.return_value.__enter__.return_value
         mock_db.query.return_value.filter.return_value.first.return_value = None

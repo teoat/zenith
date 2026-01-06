@@ -1,5 +1,6 @@
 import { getFileIcon, getFileTypeColor, isImageFile, isVideoFile, isAudioFile, isDocumentFile } from '../fileUtils';
 import { render } from '@testing-library/react';
+import '@testing-library/jest-dom';
 
 describe('fileUtils', () => {
   describe('getFileIcon', () => {

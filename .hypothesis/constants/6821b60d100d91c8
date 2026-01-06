@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/business/evidence_service.py
+# hypothesis_version: 6.148.8
+
+[' AND ', '1=1', 'caseId', 'case_id', 'customerName', 'e.case_id = :case_id', 'evidence_service.py', 'file', 'fileName', 'filePath', 'fileType', 'file_type', 'fraudAmount', 'id', 'ids', 'items', 'limit', 'ocrText', 'offset', 'page', 'page_size', 'processingStatus', 'project_id', 'q', 'sizeBytes', 'total', 'total_pages', 'uploadedAt']

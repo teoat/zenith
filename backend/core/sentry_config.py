@@ -15,31 +15,60 @@ try:
 except ImportError:
     # Dummy mock for environments where sentry-sdk cannot be installed
     import logging
+
     logger = logging.getLogger(__name__)
     logger.warning("sentry-sdk not installed. Using dummy mocks.")
 
     class DummySentry:
-        def init(self, *args, **kwargs): pass
-        def capture_exception(self, *args, **kwargs): pass
-        def capture_message(self, *args, **kwargs): pass
-        def set_user(self, *args, **kwargs): pass
-        def start_transaction(self, *args, **kwargs): 
+        def init(self, *args, **kwargs):
+            pass
+
+        def capture_exception(self, *args, **kwargs):
+            pass
+
+        def capture_message(self, *args, **kwargs):
+            pass
+
+        def set_user(self, *args, **kwargs):
+            pass
+
+        def start_transaction(self, *args, **kwargs):
             class CM:
-                def __enter__(self): return self
-                def __exit__(self, *args): pass
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, *args):
+                    pass
+
             return CM()
+
         def push_scope(self):
             class Scope:
-                def __enter__(self): return self
-                def __exit__(self, *args): pass
-                def set_extra(self, *args, **kwargs): pass
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, *args):
+                    pass
+
+                def set_extra(self, *args, **kwargs):
+                    pass
+
             return Scope()
 
     sentry_sdk = DummySentry()
-    FastApiIntegration = lambda *args, **kwargs: None
-    LoggingIntegration = lambda *args, **kwargs: None
-    RedisIntegration = lambda *args, **kwargs: None
-    SqlalchemyIntegration = lambda *args, **kwargs: None
+
+    def FastApiIntegration(*args, **kwargs):
+        return None
+
+    def LoggingIntegration(*args, **kwargs):
+        return None
+
+    def RedisIntegration(*args, **kwargs):
+        return None
+
+    def SqlalchemyIntegration(*args, **kwargs):
+        return None
+
 
 logger = logging.getLogger(__name__)
 
@@ -131,14 +160,13 @@ def before_send_filter(event, hint):
                 return None
 
     # Rate limit errors are expected, don't spam Sentry
-    if "tags" in event:
-        if event["tags"].get("error.type") == "RateLimitExceeded":
-            return None
+    if "tags" in event and event["tags"].get("error.type") == "RateLimitExceeded":
+        return None
 
     return event
 
 
-def capture_exception(error: Exception, context: dict = None):
+def capture_exception(error: Exception, context: dict | None = None):
     """
     Manually capture an exception to Sentry with optional context
 
@@ -161,7 +189,7 @@ def capture_exception(error: Exception, context: dict = None):
         sentry_sdk.capture_exception(error)
 
 
-def capture_message(message: str, level: str = "info", context: dict = None):
+def capture_message(message: str, level: str = "info", context: dict | None = None):
     """
     Capture a message to Sentry (for non-exception events)
 
@@ -182,7 +210,9 @@ def capture_message(message: str, level: str = "info", context: dict = None):
         sentry_sdk.capture_message(message, level=level)
 
 
-def set_user_context(user_id: str, email: str = None, username: str = None):
+def set_user_context(
+    user_id: str, email: str | None = None, username: str | None = None
+):
     """
     Set user context for error tracking
 

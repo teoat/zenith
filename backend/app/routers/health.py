@@ -15,19 +15,15 @@ Used by:
 
 import logging
 from datetime import datetime
-from typing import Any, Dict
-
-from fastapi import APIRouter, HTTPException, status
-from fastapi.responses import JSONResponse
-from sqlalchemy import text
+from typing import Any
 
 from app.services.infrastructure.circuit_breaker import get_all_circuit_breakers
+from fastapi import APIRouter, HTTPException, status
+from fastapi.responses import JSONResponse
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Health"])
-
-
 
 
 @router.get(
@@ -57,11 +53,11 @@ router = APIRouter(tags=["Health"])
                         "components": {
                             "database": {"status": "healthy", "response_time_ms": 5},
                             "cache": {"status": "healthy"},
-                            "storage": {"status": "healthy"}
-                        }
+                            "storage": {"status": "healthy"},
+                        },
                     }
                 }
-            }
+            },
         },
         503: {
             "description": "System is degraded or unhealthy",
@@ -72,28 +68,29 @@ router = APIRouter(tags=["Health"])
                         "timestamp": "2025-12-19T06:00:00Z",
                         "version": "1.0.0",
                         "components": {
-                            "database": {"status": "unhealthy", "error": "Connection timeout"},
+                            "database": {
+                                "status": "unhealthy",
+                                "error": "Connection timeout",
+                            },
                             "cache": {"status": "healthy"},
-                            "storage": {"status": "not_configured"}
-                        }
+                            "storage": {"status": "not_configured"},
+                        },
                     }
                 }
-            }
-        }
-    }
+            },
+        },
+    },
 )
-
-
-
-async def health_check() -> Dict[str, Any]:
+async def health_check() -> dict[str, Any]:
     """
     Comprehensive health check for 99.99% uptime monitoring.
     """
-    import time
     import os
-    from app.services.infrastructure.storage.database_service import db_service
+    import time
+
     from app.services.infrastructure.circuit_breaker import get_all_circuit_breakers
     from app.services.infrastructure.performance_monitor import performance_monitor
+    from app.services.infrastructure.storage.database_service import db_service
 
     health_status = {
         "status": "healthy",
@@ -102,7 +99,7 @@ async def health_check() -> Dict[str, Any]:
         "environment": os.getenv("ENVIRONMENT", "development"),
         "uptime_target": "99.99%",
         "service": "fraud-detection-backend",
-        "components": {}
+        "components": {},
     }
 
     # Use a simple cache to avoid excessive health checks under load
@@ -130,20 +127,24 @@ async def health_check() -> Dict[str, Any]:
         health_status["components"]["database"] = {
             "status": "unhealthy",
             "error": str(e)[:200],
-            "service": "database"
+            "service": "database",
         }
 
     # Circuit breaker health check
     try:
         circuit_breakers = get_all_circuit_breakers()
-        open_breakers = [name for name, status in circuit_breakers.items() if status["state"] == "open"]
+        open_breakers = [
+            name
+            for name, status in circuit_breakers.items()
+            if status["state"] == "open"
+        ]
 
         health_status["components"]["circuit_breakers"] = {
             "status": "healthy" if not open_breakers else "degraded",
             "total_breakers": len(circuit_breakers),
             "open_breakers": len(open_breakers),
             "open_breaker_names": open_breakers[:5],  # Limit output
-            "details": circuit_breakers
+            "details": circuit_breakers,
         }
 
         if open_breakers:
@@ -152,7 +153,7 @@ async def health_check() -> Dict[str, Any]:
     except Exception as e:
         health_status["components"]["circuit_breakers"] = {
             "status": "unhealthy",
-            "error": str(e)[:200]
+            "error": str(e)[:200],
         }
 
     # Performance monitoring health check
@@ -179,7 +180,9 @@ async def health_check() -> Dict[str, Any]:
             "active": perf_baselines.get("monitoring_active", False),
             "metrics_collected": perf_baselines.get("metrics_collected", 0),
             "active_alerts": len(active_alerts),
-            "circuit_breaker_status": perf_baselines.get("circuit_breaker_status", "unknown"),
+            "circuit_breaker_status": perf_baselines.get(
+                "circuit_breaker_status", "unknown"
+            ),
             "issues": perf_issues,
             "current_cpu": current_metrics.get("cpu_percent"),
             "current_memory": current_metrics.get("memory_percent"),
@@ -192,7 +195,7 @@ async def health_check() -> Dict[str, Any]:
         health_status["components"]["performance_monitoring"] = {
             "status": "error",
             "error": str(e)[:200],
-            "recommendation": "Check performance monitoring configuration"
+            "recommendation": "Check performance monitoring configuration",
         }
         if health_status["status"] == "healthy":
             health_status["status"] = "degraded"
@@ -211,12 +214,12 @@ async def health_check() -> Dict[str, Any]:
     except ImportError:
         health_status["components"]["cache"] = {
             "status": "not_configured",
-            "reason": "Cache service not available"
+            "reason": "Cache service not available",
         }
     except Exception as e:
         health_status["components"]["cache"] = {
             "status": "unhealthy",
-            "error": str(e)[:200]
+            "error": str(e)[:200],
         }
         health_status["status"] = "degraded"
 
@@ -224,7 +227,7 @@ async def health_check() -> Dict[str, Any]:
     health_status["components"]["api_responsiveness"] = {
         "status": "healthy",
         "endpoints_tested": ["health", "health/live", "health/ready"],
-        "response_time_ms": health_status.get("response_time_ms", 0)
+        "response_time_ms": health_status.get("response_time_ms", 0),
     }
 
     # Overall uptime calculation (simplified)
@@ -232,8 +235,10 @@ async def health_check() -> Dict[str, Any]:
     health_status["uptime_calculation"] = {
         "target": "99.99%",
         "current_status": health_status["status"],
-        "estimated_monthly_downtime": "4.32 minutes" if health_status["status"] == "healthy" else "extended",
-        "critical_components": ["database", "circuit_breakers", "system_resources"]
+        "estimated_monthly_downtime": "4.32 minutes"
+        if health_status["status"] == "healthy"
+        else "extended",
+        "critical_components": ["database", "circuit_breakers", "system_resources"],
     }
 
     # Cache the result for future requests
@@ -241,29 +246,23 @@ async def health_check() -> Dict[str, Any]:
 
     # Return appropriate status code
     if health_status["status"] == "degraded":
-        return JSONResponse(
-            status_code=503,
-            content=health_status
-        )
+        return JSONResponse(status_code=503, content=health_status)
 
     return health_status
-
-
 
 
 @router.get(
     "/health/uptime",
     summary="Uptime and Proactive Monitoring Status",
     description="Get comprehensive uptime metrics and proactive monitoring status for 99.99% target",
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
-
-
-
 async def uptime_status():
     """Get uptime and proactive monitoring status"""
     try:
-        from app.services.infrastructure.proactive_monitoring import proactive_monitoring
+        from app.services.infrastructure.proactive_monitoring import (
+            proactive_monitoring,
+        )
 
         monitoring_status = proactive_monitoring.get_monitoring_status()
         active_alerts = proactive_monitoring.get_active_alerts()
@@ -276,7 +275,7 @@ async def uptime_status():
             "monthly_downtime_target": "4.32 minutes",
             "yearly_downtime_target": "52.56 minutes",
             "monitoring_active": monitoring_status["monitoring_active"],
-            "alerting_active": monitoring_status["alerting_active"]
+            "alerting_active": monitoring_status["alerting_active"],
         }
 
         return {
@@ -284,7 +283,7 @@ async def uptime_status():
             "monitoring_status": monitoring_status,
             "active_alerts": active_alerts,
             "alert_count": len(active_alerts),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
     except Exception as e:
@@ -294,33 +293,30 @@ async def uptime_status():
             content={
                 "error": "Uptime monitoring unavailable",
                 "details": str(e),
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         )
-
-
 
 
 @router.post(
     "/health/alerts/{alert_id}/acknowledge",
     summary="Acknowledge Alert",
     description="Acknowledge a proactive monitoring alert",
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
-
-
-
 async def acknowledge_alert(alert_id: str):
     """Acknowledge an alert"""
     try:
-        from app.services.infrastructure.proactive_monitoring import proactive_monitoring
+        from app.services.infrastructure.proactive_monitoring import (
+            proactive_monitoring,
+        )
 
         success = proactive_monitoring.acknowledge_alert(alert_id)
         if success:
             return {
                 "message": f"Alert {alert_id} acknowledged",
                 "alert_id": alert_id,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
         else:
             raise HTTPException(status_code=404, detail=f"Alert {alert_id} not found")
@@ -332,41 +328,26 @@ async def acknowledge_alert(alert_id: str):
         raise HTTPException(status_code=500, detail=f"Failed to acknowledge alert: {e}")
 
 
-
-
 @router.get(
     "/health/live",
     summary="Liveness Probe",
     description="Simple liveness check for Kubernetes. Returns 200 if the service process is running.",
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
-
-
-
 async def liveness():
     """
     Returns 200 if service is running.
     Used by Kubernetes liveness probe.
     """
-    return {
-        "status": "alive",
-        "timestamp": datetime.now().isoformat()
-    }
-
-
-
-
+    return {"status": "alive", "timestamp": datetime.now().isoformat()}
 
 
 @router.get(
     "/health/circuit-breakers",
     summary="Circuit Breaker Status",
     description="Get status of all circuit breakers in the system for monitoring fault tolerance.",
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
-
-
-
 async def circuit_breaker_status():
     """
     Returns status of all circuit breakers for monitoring system resilience.
@@ -376,7 +357,7 @@ async def circuit_breaker_status():
         return {
             "status": "success",
             "timestamp": datetime.now().isoformat(),
-            "circuit_breakers": circuit_breakers
+            "circuit_breakers": circuit_breakers,
         }
     except Exception as e:
         return JSONResponse(
@@ -384,10 +365,9 @@ async def circuit_breaker_status():
             content={
                 "status": "error",
                 "error": str(e),
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         )
-
 
 
 @router.get(
@@ -395,7 +375,7 @@ async def circuit_breaker_status():
     summary="Readiness Probe",
     description="Check if application is ready to accept traffic.",
     status_code=status.HTTP_200_OK,
-    responses={503: {"description": "Service not ready"}}
+    responses={503: {"description": "Service not ready"}},
 )
 async def readiness():
     """
@@ -408,10 +388,7 @@ async def readiness():
     db_status = health.get("components", {}).get("database", {}).get("status")
 
     if db_status == "healthy":
-        return {
-            "status": "ready",
-            "timestamp": datetime.now().isoformat()
-        }
+        return {"status": "ready", "timestamp": datetime.now().isoformat()}
     else:
         return JSONResponse(
             status_code=503,
@@ -419,29 +396,21 @@ async def readiness():
                 "status": "not_ready",
                 "reason": "database_unhealthy",
                 "details": health,
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         )
-
-
 
 
 @router.get(
     "/health/startup",
     summary="Startup Probe",
     description="Check if application has finished starting up. Used for slow-starting applications.",
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
-
-
-
 async def startup():
     """
     Returns 200 once application has completed startup.
     Used by Kubernetes startup probe for slow-starting containers.
     """
     # Could check if migrations are complete, etc.
-    return {
-        "status": "started",
-        "timestamp": datetime.now().isoformat()
-    }
+    return {"status": "started", "timestamp": datetime.now().isoformat()}

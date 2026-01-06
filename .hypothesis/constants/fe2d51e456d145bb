@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/database.py
+# hypothesis_version: 6.148.8
+
+['ADMIN', 'ANALYST', 'AUDITOR', 'EXACT', 'FUZZY', 'INVESTIGATOR', 'MANAGER', 'MANUAL', 'REJECTED', 'TESTING', 'VIEWER', 'account_takeover', 'aml_investigation', 'archived', 'closed', 'closed_approved', 'closed_denied', 'closed_no_action', 'compliance_review', 'critical', 'escalated', 'fraud_detection', 'fraud_suspected', 'high', 'identity_theft', 'investigating', 'low', 'medium', 'money_laundering', 'network_analysis', 'open', 'true', 'under_review']

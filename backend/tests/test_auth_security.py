@@ -1,6 +1,5 @@
-
-import sys
 import os
+import sys
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -9,10 +8,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
 
 # Now this should import from backend/app
 from app.services.infrastructure.auth_service import AuthService
-from core.database import User
+
 
 class TestAuthServiceFix(unittest.TestCase):
-
     @patch("app.services.infrastructure.auth_service.db_service")
     def test_create_user_uses_password(self, mock_db_service):
         """
@@ -20,7 +18,7 @@ class TestAuthServiceFix(unittest.TestCase):
         instead of a hardcoded default.
         """
         # Ensure we have the right class
-        if not hasattr(AuthService, 'hash_password'):
+        if not hasattr(AuthService, "hash_password"):
             self.skipTest("Loaded Shim AuthService instead of Real AuthService")
 
         # Setup mocks
@@ -41,7 +39,9 @@ class TestAuthServiceFix(unittest.TestCase):
 
         # Call create_user
         # We need to mock hash_password to verify what it was called with
-        with patch.object(auth_service, "hash_password", return_value="hashed_secret") as mock_hash:
+        with patch.object(
+            auth_service, "hash_password", return_value="hashed_secret"
+        ) as mock_hash:
             new_user = auth_service.create_user(user_data)
 
             # Verify hash_password was called with the specific password
@@ -57,7 +57,7 @@ class TestAuthServiceFix(unittest.TestCase):
         (fallback behavior).
         """
         # Ensure we have the right class
-        if not hasattr(AuthService, 'hash_password'):
+        if not hasattr(AuthService, "hash_password"):
             self.skipTest("Loaded Shim AuthService instead of Real AuthService")
 
         # Setup mocks
@@ -76,7 +76,9 @@ class TestAuthServiceFix(unittest.TestCase):
         data = UserData()
 
         # Call create_user
-        with patch.object(auth_service, "hash_password", return_value="hashed_random") as mock_hash:
+        with patch.object(
+            auth_service, "hash_password", return_value="hashed_random"
+        ) as mock_hash:
             new_user = auth_service.create_user(data)
 
             # Verify hash_password was NOT called with "default_temp_password"
@@ -85,6 +87,7 @@ class TestAuthServiceFix(unittest.TestCase):
 
             # Verify it was called with something (random token)
             self.assertTrue(len(args[0]) > 0)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -37,7 +37,7 @@ def fix_invalid_checksums():
 
         if lockfile_path.exists():
             # Read current lockfile content
-            with open(lockfile_path, "r") as f:
+            with open(lockfile_path) as f:
                 content = f.read()
 
             # Generate new checksum
@@ -80,10 +80,10 @@ def final_verification():
 
         if checksum_file.exists():
             # Verify checksum
-            with open(lockfile, "r") as f:
+            with open(lockfile) as f:
                 content = f.read()
 
-            with open(checksum_file, "r") as f:
+            with open(checksum_file) as f:
                 expected_checksum = f.read().strip()
 
             actual_checksum = generate_checksum(content)
@@ -137,11 +137,11 @@ def verify_ssot_integrity():
         return False
 
     # Read SSOT content
-    with open(ssot_path, "r") as f:
+    with open(ssot_path) as f:
         ssot_content = f.read()
 
     # Read expected checksum
-    with open(checksum_path, "r") as f:
+    with open(checksum_path) as f:
         expected_checksum = f.read().strip()
 
     # Generate actual checksum

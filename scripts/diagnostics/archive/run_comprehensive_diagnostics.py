@@ -16,9 +16,9 @@ from app.services.diagnostics.diagnostic_service import DiagnosticService
 
 def print_section_header(title: str):
     """Print a formatted section header."""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f" {title}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
 
 def print_area_diagnostics(area_name: str, diagnostics: dict):
@@ -168,7 +168,7 @@ async def main():
         sys.exit(0 if overall_score >= 0.8 else 1)
 
     except Exception as e:
-        print(f"\n❌ Diagnostic run failed: {str(e)}")
+        print(f"\n❌ Diagnostic run failed: {e!s}")
         sys.exit(1)
 
 

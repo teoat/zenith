@@ -5,14 +5,14 @@
  * and use proper branded types, preventing type errors in tests.
  */
 
-import type { Case, CaseId, UserId, CaseStatus, CasePriority, CaseType, ProjectId } from '../types/schema';
+import type { Case, CaseId, UserId, CaseStatus, CasePriority, CaseType, ProjectId } from '@/types/schema';
 
 /**
  * Create a mock Case with proper branded types
  * @param overrides - Partial Case properties to override defaults
  */
 export const createMockCase = (overrides?: Partial<Case>): Case => ({
-  id: 'mock-case-1' as CaseId,
+  id: `mock-case-${crypto.randomUUID()}` as CaseId,
   title: 'Mock Case',
   status: 'OPEN' as CaseStatus,
   priority: 'MEDIUM' as CasePriority,
@@ -70,7 +70,7 @@ export const createFullMockCase = (overrides?: Partial<Case>): Case => ({
   selectedPlugins: ['plugin-anomaly-detection', 'plugin-ml-scoring'],
   reconciliationType: 'project-based',
   type: 'FRAUD' as CaseType,
-  projectId: 'project-1' as ProjectId,
+  
   ...overrides
 });
 

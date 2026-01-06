@@ -1,12 +1,10 @@
 # backend/services/metadata_correlation.py
 import logging
 from collections import defaultdict
-from typing import Dict, List, Set, Tuple
 
-from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from core.database import Entity, Relationship, Transaction
+from core.database import Entity
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +30,7 @@ class MetadataCorrelationEngine:
             "name_similarity": 0.5,  # Fuzzy match on names
         }
 
-    def find_all_correlations(self, case_id: str) -> List[Dict]:
+    def find_all_correlations(self, case_id: str) -> list[dict]:
         """Find all metadata correlations within a case"""
         entities = self.session.query(Entity).filter(Entity.case_id == case_id).all()
 
@@ -55,7 +53,7 @@ class MetadataCorrelationEngine:
 
         return unique_correlations
 
-    def _find_phone_correlations(self, entities: List[Entity]) -> List[Dict]:
+    def _find_phone_correlations(self, entities: list[Entity]) -> list[dict]:
         """Find entities sharing phone numbers"""
         phone_map = defaultdict(list)
 
@@ -85,7 +83,7 @@ class MetadataCorrelationEngine:
 
         return correlations
 
-    def _find_email_correlations(self, entities: List[Entity]) -> List[Dict]:
+    def _find_email_correlations(self, entities: list[Entity]) -> list[dict]:
         """Find entities sharing email addresses"""
         email_map = defaultdict(list)
 
@@ -114,7 +112,7 @@ class MetadataCorrelationEngine:
 
         return correlations
 
-    def _find_address_correlations(self, entities: List[Entity]) -> List[Dict]:
+    def _find_address_correlations(self, entities: list[Entity]) -> list[dict]:
         """Find entities sharing physical addresses"""
         address_map = defaultdict(list)
 
@@ -144,7 +142,7 @@ class MetadataCorrelationEngine:
 
         return correlations
 
-    def _find_ip_correlations(self, entities: List[Entity]) -> List[Dict]:
+    def _find_ip_correlations(self, entities: list[Entity]) -> list[dict]:
         """Find entities sharing IP addresses"""
         ip_map = defaultdict(list)
 
@@ -173,7 +171,7 @@ class MetadataCorrelationEngine:
 
         return correlations
 
-    def _extract_phones(self, entity: Entity) -> Set[str]:
+    def _extract_phones(self, entity: Entity) -> set[str]:
         """Extract phone numbers from entity metadata"""
         phones = set()
         if entity.entity_metadata and "phone" in entity.entity_metadata:
@@ -182,7 +180,7 @@ class MetadataCorrelationEngine:
             phones.update(entity.entity_metadata["phones"])
         return phones
 
-    def _extract_emails(self, entity: Entity) -> Set[str]:
+    def _extract_emails(self, entity: Entity) -> set[str]:
         """Extract emails from entity metadata"""
         emails = set()
         if entity.entity_metadata and "email" in entity.entity_metadata:
@@ -191,7 +189,7 @@ class MetadataCorrelationEngine:
             emails.update(entity.entity_metadata["emails"])
         return emails
 
-    def _extract_addresses(self, entity: Entity) -> Set[str]:
+    def _extract_addresses(self, entity: Entity) -> set[str]:
         """Extract addresses from entity metadata"""
         addresses = set()
         if entity.entity_metadata and "address" in entity.entity_metadata:
@@ -200,7 +198,7 @@ class MetadataCorrelationEngine:
             addresses.update(entity.entity_metadata["addresses"])
         return addresses
 
-    def _extract_ips(self, entity: Entity) -> Set[str]:
+    def _extract_ips(self, entity: Entity) -> set[str]:
         """Extract IP addresses from entity metadata"""
         ips = set()
         if entity.entity_metadata and "ip_address" in entity.entity_metadata:

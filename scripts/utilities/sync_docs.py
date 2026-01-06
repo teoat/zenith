@@ -27,14 +27,14 @@ class DocSynchronizer:
     def __init__(self):
         self.metrics = {}
 
-    def extract_metrics(self) -> Dict:
+    def extract_metrics(self) -> dict:
         """Extract completion metrics from master_todo.md"""
         content = MASTER_TODO.read_text()
 
         # Extract task counts
         total = len(re.findall(r"^\s*- \[(x| )\]", content, re.MULTILINE))
         completed = len(re.findall(r"^\s*- \[x\]", content, re.MULTILINE))
-        percentage = int((completed / total * 100)) if total > 0 else 0
+        percentage = int(completed / total * 100) if total > 0 else 0
 
         # Extract by priority
         critical_total = len(re.findall(r"🔴 Critical.*\[(x| )\]", content))
@@ -73,25 +73,25 @@ class DocSynchronizer:
 
         new_table = f"""| Category | Total | Completed | Pending | Status |
 | :--- | :---: | :---: | :---: | :--- |
-| **Total Items** | **{m['total']}** | **{m['completed']}** ({m['percentage']}%) | {m['pending']} | 🟡 In Progress |
-| **Critical** | {m['critical']['total']} | **{m['critical']['done']}** ({calc_pct(m['critical']['done'], m['critical']['total'])}%) | {m['critical']['total'] - m['critical']['done']} | {'✅ **Complete**' if m['critical']['done'] == m['critical']['total'] else '🟢 Good'} |
-| **High** | {m['high']['total']} | **{m['high']['done']}** ({calc_pct(m['high']['done'], m['high']['total'])}%) | {m['high']['total'] - m['high']['done']} | 🟢 Good |
-| **Medium** | {m['medium']['total']} | **{m['medium']['done']}** ({calc_pct(m['medium']['done'], m['medium']['total'])}%) | {m['medium']['total'] - m['medium']['done']} | 🟡 Queued |
-| **Low** | {m['low']['total']} | **{m['low']['done']}** ({calc_pct(m['low']['done'], m['low']['total'])}%) | {m['low']['total'] - m['low']['done']} | ⚪ Pending |"""
+| **Total Items** | **{m["total"]}** | **{m["completed"]}** ({m["percentage"]}%) | {m["pending"]} | 🟡 In Progress |
+| **Critical** | {m["critical"]["total"]} | **{m["critical"]["done"]}** ({calc_pct(m["critical"]["done"], m["critical"]["total"])}%) | {m["critical"]["total"] - m["critical"]["done"]} | {"✅ **Complete**" if m["critical"]["done"] == m["critical"]["total"] else "🟢 Good"} |
+| **High** | {m["high"]["total"]} | **{m["high"]["done"]}** ({calc_pct(m["high"]["done"], m["high"]["total"])}%) | {m["high"]["total"] - m["high"]["done"]} | 🟢 Good |
+| **Medium** | {m["medium"]["total"]} | **{m["medium"]["done"]}** ({calc_pct(m["medium"]["done"], m["medium"]["total"])}%) | {m["medium"]["total"] - m["medium"]["done"]} | 🟡 Queued |
+| **Low** | {m["low"]["total"]} | **{m["low"]["done"]}** ({calc_pct(m["low"]["done"], m["low"]["total"])}%) | {m["low"]["total"] - m["low"]["done"]} | ⚪ Pending |"""
 
         # Replace table in orchestration plan
         pattern = r"\| Category \| Total.*?\| \*\*Low\*\* \|[^\n]*"
         content = re.sub(pattern, new_table, content, flags=re.DOTALL)
 
         ORCHESTRATION.write_text(content)
-        print(f"✅ Updated orchestration_plan.md metrics")
+        print("✅ Updated orchestration_plan.md metrics")
 
     def sync_all(self):
         """Run full synchronization"""
         print("📊 Extracting metrics from master_todo.md...")
         self.extract_metrics()
 
-        print(f"\n📈 Completion Status:")
+        print("\n📈 Completion Status:")
         print(
             f"   Total: {self.metrics['completed']}/{self.metrics['total']} ({self.metrics['percentage']}%)"
         )

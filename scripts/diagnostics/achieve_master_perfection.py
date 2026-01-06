@@ -128,10 +128,7 @@ async def main():
     print("-" * 35)
     for area, score in critical_areas.items():
         area_name = area.replace("_", " ").title()
-        if isinstance(score, float) and score > 1:
-            score_display = "∞"
-        else:
-            score_display = ".0f"
+        score_display = "∞" if isinstance(score, float) and score > 1 else ".0f"
         print(f"   ✅ {area_name}: {score_display}")
 
     # Overall achievement summary

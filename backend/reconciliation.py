@@ -2,7 +2,7 @@ from datetime import timedelta
 
 import numpy as np
 import pandas as pd
-from thefuzz import fuzz, process
+from thefuzz import fuzz
 
 
 def normalize_columns(df):
@@ -55,8 +55,9 @@ def reconcile_dataframes(df_a, df_b, date_tolerance_days=3):
 
     col_amt_a, col_amt_b = find_amount_column(df_a), find_amount_column(df_b)
     col_date_a, col_date_b = find_date_column(df_a), find_date_column(df_b)
-    col_desc_a, col_desc_b = find_description_column(df_a), find_description_column(
-        df_b
+    col_desc_a, col_desc_b = (
+        find_description_column(df_a),
+        find_description_column(df_b),
     )
 
     if not col_amt_a or not col_amt_b:

@@ -4,14 +4,12 @@ Dynamic, multi-factor risk assessment with predictive analytics and
 real-time risk score adjustments based on new data and patterns.
 """
 
-import asyncio
-import json
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -47,7 +45,7 @@ class RiskFactorScore:
     score: float  # 0.0 to 1.0
     confidence: float  # 0.0 to 1.0
     weight: float  # Relative importance
-    evidence: List[str] = field(default_factory=list)
+    evidence: list[str] = field(default_factory=list)
     last_updated: datetime = field(default_factory=datetime.now)
 
 
@@ -59,14 +57,14 @@ class RiskAssessment:
     assessment_id: str
     overall_risk_score: float
     risk_level: RiskLevel
-    factor_scores: Dict[RiskFactor, RiskFactorScore]
+    factor_scores: dict[RiskFactor, RiskFactorScore]
     risk_trend: str  # "increasing", "decreasing", "stable"
     confidence_score: float
-    assessment_reasoning: List[str]
-    recommended_actions: List[str]
+    assessment_reasoning: list[str]
+    recommended_actions: list[str]
     time_horizon: str  # "immediate", "short_term", "long_term"
     created_at: datetime
-    expires_at: Optional[datetime] = None
+    expires_at: datetime | None = None
 
 
 @dataclass
@@ -77,7 +75,7 @@ class RiskThreshold:
     risk_level: RiskLevel
     base_threshold: float
     adaptive_offset: float = 0.0
-    trigger_conditions: List[Dict[str, Any]] = field(default_factory=list)
+    trigger_conditions: list[dict[str, Any]] = field(default_factory=list)
     last_adjusted: datetime = field(default_factory=datetime.now)
 
 
@@ -85,10 +83,10 @@ class AdvancedRiskScoringEngine:
     """Advanced risk scoring with dynamic, multi-factor assessment"""
 
     def __init__(self):
-        self.risk_assessments: Dict[str, RiskAssessment] = {}
-        self.risk_factors: Dict[RiskFactor, Dict[str, Any]] = {}
-        self.risk_thresholds: Dict[str, RiskThreshold] = {}
-        self.historical_data: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+        self.risk_assessments: dict[str, RiskAssessment] = {}
+        self.risk_factors: dict[RiskFactor, dict[str, Any]] = {}
+        self.risk_thresholds: dict[str, RiskThreshold] = {}
+        self.historical_data: dict[str, list[dict[str, Any]]] = defaultdict(list)
 
         # Initialize default risk factors and thresholds
         self._initialize_risk_factors()
@@ -216,7 +214,7 @@ class AdvancedRiskScoringEngine:
     async def assess_risk(
         self,
         entity_id: str,
-        context_data: Dict[str, Any],
+        context_data: dict[str, Any],
         assessment_type: str = "comprehensive",
     ) -> RiskAssessment:
         """
@@ -290,7 +288,7 @@ class AdvancedRiskScoringEngine:
         return assessment
 
     async def _score_transaction_amount(
-        self, entity_id: str, context_data: Dict[str, Any]
+        self, entity_id: str, context_data: dict[str, Any]
     ) -> RiskFactorScore:
         """Score risk based on transaction amount"""
         transactions = context_data.get("transactions", [])
@@ -345,7 +343,7 @@ class AdvancedRiskScoringEngine:
         )
 
     async def _score_transaction_frequency(
-        self, entity_id: str, context_data: Dict[str, Any]
+        self, entity_id: str, context_data: dict[str, Any]
     ) -> RiskFactorScore:
         """Score risk based on transaction frequency"""
         transactions = context_data.get("transactions", [])
@@ -415,7 +413,7 @@ class AdvancedRiskScoringEngine:
             evidence=evidence,
         )
 
-    def _detect_frequency_burst(self, transactions: List[Dict[str, Any]]) -> bool:
+    def _detect_frequency_burst(self, transactions: list[dict[str, Any]]) -> bool:
         """Detect transaction frequency bursts"""
         if len(transactions) < 5:
             return False
@@ -425,7 +423,7 @@ class AdvancedRiskScoringEngine:
         return len(transactions) > 10  # Simplified heuristic
 
     async def _score_geographic_location(
-        self, entity_id: str, context_data: Dict[str, Any]
+        self, entity_id: str, context_data: dict[str, Any]
     ) -> RiskFactorScore:
         """Score risk based on geographic location patterns"""
         locations = context_data.get("locations", [])
@@ -478,7 +476,7 @@ class AdvancedRiskScoringEngine:
             evidence=evidence or ["Normal geographic patterns"],
         )
 
-    def _detect_location_anomalies(self, locations: List[Dict[str, Any]]) -> bool:
+    def _detect_location_anomalies(self, locations: list[dict[str, Any]]) -> bool:
         """Detect anomalous location patterns"""
         if len(locations) < 3:
             return False
@@ -498,7 +496,7 @@ class AdvancedRiskScoringEngine:
         return max_count / total_count < 0.7  # Less than 70% in primary country
 
     async def _score_time_pattern(
-        self, entity_id: str, context_data: Dict[str, Any]
+        self, entity_id: str, context_data: dict[str, Any]
     ) -> RiskFactorScore:
         """Score risk based on transaction timing patterns"""
         transactions = context_data.get("transactions", [])
@@ -552,7 +550,7 @@ class AdvancedRiskScoringEngine:
             evidence=evidence or ["Normal transaction timing patterns"],
         )
 
-    def _detect_timing_anomalies(self, hours: List[int]) -> bool:
+    def _detect_timing_anomalies(self, hours: list[int]) -> bool:
         """Detect anomalous timing patterns"""
         if len(hours) < 5:
             return False
@@ -567,7 +565,7 @@ class AdvancedRiskScoringEngine:
         return max_count > len(hours) * 0.4  # More than 40% at same hour
 
     async def _score_merchant_category(
-        self, entity_id: str, context_data: Dict[str, Any]
+        self, entity_id: str, context_data: dict[str, Any]
     ) -> RiskFactorScore:
         """Score risk based on merchant categories"""
         transactions = context_data.get("transactions", [])
@@ -620,7 +618,7 @@ class AdvancedRiskScoringEngine:
         )
 
     async def _score_device_fingerprint(
-        self, entity_id: str, context_data: Dict[str, Any]
+        self, entity_id: str, context_data: dict[str, Any]
     ) -> RiskFactorScore:
         """Score risk based on device fingerprint consistency"""
         devices = context_data.get("device_fingerprints", [])
@@ -634,7 +632,7 @@ class AdvancedRiskScoringEngine:
             )
 
         fingerprints = list(
-            set(d.get("fingerprint", "") for d in devices if d.get("fingerprint"))
+            {d.get("fingerprint", "") for d in devices if d.get("fingerprint")}
         )
         consistency_threshold = self.risk_factors[RiskFactor.DEVICE_FINGERPRINT][
             "consistency_threshold"
@@ -671,7 +669,7 @@ class AdvancedRiskScoringEngine:
             evidence=evidence,
         )
 
-    def _detect_device_swapping(self, devices: List[Dict[str, Any]]) -> bool:
+    def _detect_device_swapping(self, devices: list[dict[str, Any]]) -> bool:
         """Detect frequent device changes"""
         if len(devices) < 3:
             return False
@@ -681,7 +679,7 @@ class AdvancedRiskScoringEngine:
         return len(devices) > 5  # Simplified heuristic
 
     async def _score_behavioral_biometrics(
-        self, entity_id: str, context_data: Dict[str, Any]
+        self, entity_id: str, context_data: dict[str, Any]
     ) -> RiskFactorScore:
         """Score risk based on behavioral biometrics"""
         behavioral_data = context_data.get("behavioral_data", {})
@@ -725,7 +723,7 @@ class AdvancedRiskScoringEngine:
         )
 
     async def _score_social_network(
-        self, entity_id: str, context_data: Dict[str, Any]
+        self, entity_id: str, context_data: dict[str, Any]
     ) -> RiskFactorScore:
         """Score risk based on social network connections"""
         connections = context_data.get("social_connections", [])
@@ -763,7 +761,7 @@ class AdvancedRiskScoringEngine:
         )
 
     async def _score_historical_pattern(
-        self, entity_id: str, context_data: Dict[str, Any]
+        self, entity_id: str, context_data: dict[str, Any]
     ) -> RiskFactorScore:
         """Score risk based on historical patterns"""
         historical_data = self.historical_data.get(entity_id, [])
@@ -824,7 +822,7 @@ class AdvancedRiskScoringEngine:
             evidence=evidence,
         )
 
-    def _calculate_risk_trend_from_history(self, scores: List[float]) -> str:
+    def _calculate_risk_trend_from_history(self, scores: list[float]) -> str:
         """Calculate risk trend from historical scores"""
         if len(scores) < 3:
             return "stable"
@@ -841,7 +839,7 @@ class AdvancedRiskScoringEngine:
             return "stable"
 
     async def _score_external_data(
-        self, entity_id: str, context_data: Dict[str, Any]
+        self, entity_id: str, context_data: dict[str, Any]
     ) -> RiskFactorScore:
         """Score risk based on external data sources"""
         external_data = context_data.get("external_data", {})
@@ -876,13 +874,13 @@ class AdvancedRiskScoringEngine:
         )
 
     def _calculate_overall_risk_score(
-        self, factor_scores: Dict[RiskFactor, RiskFactorScore]
+        self, factor_scores: dict[RiskFactor, RiskFactorScore]
     ) -> float:
         """Calculate overall risk score using weighted ensemble"""
         total_weight = 0
         weighted_sum = 0
 
-        for factor, score_obj in factor_scores.items():
+        for score_obj in factor_scores.values():
             weight = score_obj.weight
             score = score_obj.score
             confidence = score_obj.confidence
@@ -908,7 +906,7 @@ class AdvancedRiskScoringEngine:
             return RiskLevel.VERY_LOW
 
     def _calculate_assessment_confidence(
-        self, factor_scores: Dict[RiskFactor, RiskFactorScore]
+        self, factor_scores: dict[RiskFactor, RiskFactorScore]
     ) -> float:
         """Calculate overall confidence in the assessment"""
         confidences = [score.confidence for score in factor_scores.values()]
@@ -935,8 +933,8 @@ class AdvancedRiskScoringEngine:
             return "stable"
 
     def _generate_assessment_reasoning(
-        self, factor_scores: Dict[RiskFactor, RiskFactorScore], overall_score: float
-    ) -> List[str]:
+        self, factor_scores: dict[RiskFactor, RiskFactorScore], overall_score: float
+    ) -> list[str]:
         """Generate human-readable assessment reasoning"""
         reasoning = []
 
@@ -969,8 +967,8 @@ class AdvancedRiskScoringEngine:
         return reasoning
 
     def _generate_risk_recommendations(
-        self, risk_level: RiskLevel, factor_scores: Dict[RiskFactor, RiskFactorScore]
-    ) -> List[str]:
+        self, risk_level: RiskLevel, factor_scores: dict[RiskFactor, RiskFactorScore]
+    ) -> list[str]:
         """Generate risk mitigation recommendations"""
         recommendations = []
 
@@ -1005,7 +1003,7 @@ class AdvancedRiskScoringEngine:
         return recommendations
 
     def _determine_time_horizon(
-        self, risk_level: RiskLevel, factor_scores: Dict[RiskFactor, RiskFactorScore]
+        self, risk_level: RiskLevel, factor_scores: dict[RiskFactor, RiskFactorScore]
     ) -> str:
         """Determine appropriate time horizon for risk monitoring"""
         if risk_level == RiskLevel.CRITICAL:
@@ -1017,7 +1015,7 @@ class AdvancedRiskScoringEngine:
         else:
             return "long_term"  # Weeks to months
 
-    def _update_historical_data(self, entity_id: str, assessment_data: Dict[str, Any]):
+    def _update_historical_data(self, entity_id: str, assessment_data: dict[str, Any]):
         """Update historical data for trend analysis"""
         self.historical_data[entity_id].append(assessment_data)
 
@@ -1025,23 +1023,22 @@ class AdvancedRiskScoringEngine:
         if len(self.historical_data[entity_id]) > 100:
             self.historical_data[entity_id] = self.historical_data[entity_id][-100:]
 
-    def get_risk_assessment(self, assessment_id: str) -> Optional[RiskAssessment]:
+    def get_risk_assessment(self, assessment_id: str) -> RiskAssessment | None:
         """Retrieve a specific risk assessment"""
         return self.risk_assessments.get(assessment_id)
 
     def get_entity_risk_history(
         self, entity_id: str, limit: int = 10
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get risk assessment history for an entity"""
         return self.historical_data[entity_id][-limit:]
 
-    def update_risk_thresholds(self, market_conditions: Dict[str, Any]):
+    def update_risk_thresholds(self, market_conditions: dict[str, Any]):
         """Update risk thresholds based on market conditions"""
         # Adjust thresholds based on current market volatility, etc.
         # Implementation would adapt thresholds dynamically
-        pass
 
-    def get_risk_statistics(self) -> Dict[str, Any]:
+    def get_risk_statistics(self) -> dict[str, Any]:
         """Get overall risk assessment statistics"""
         total_assessments = len(self.risk_assessments)
         if total_assessments == 0:
@@ -1065,7 +1062,7 @@ class AdvancedRiskScoringEngine:
             "assessment_trends": self._calculate_assessment_trends(),
         }
 
-    def _calculate_assessment_trends(self) -> Dict[str, Any]:
+    def _calculate_assessment_trends(self) -> dict[str, Any]:
         """Calculate trends in risk assessments"""
         if len(self.risk_assessments) < 5:
             return {"message": "Insufficient data for trend analysis"}
@@ -1097,7 +1094,7 @@ class AdvancedRiskScoringEngine:
             "change_rate": self._calculate_trend_slope(recent_scores),
         }
 
-    def _calculate_trend_slope(self, scores: List[float]) -> float:
+    def _calculate_trend_slope(self, scores: list[float]) -> float:
         """Calculate slope of risk score trend"""
         if len(scores) < 2:
             return 0.0

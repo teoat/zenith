@@ -3,7 +3,6 @@
 import random
 
 import pytest
-from main import app
 
 
 class TestHealthEndpoints:
@@ -77,7 +76,7 @@ class TestCasesEndpoints:
     def auth_token(self, client):
         """Get authentication token for tests"""
         # Register and login
-        email = f"test_cases_{random.randint(10000,99999)}@example.com"
+        email = f"test_cases_{random.randint(10000, 99999)}@example.com"
         client.post(
             "/api/v1/auth/register",
             json={

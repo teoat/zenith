@@ -5,13 +5,11 @@ Provides comprehensive security event monitoring, anomaly detection, and automat
 response capabilities to maintain platform security posture.
 """
 
-import asyncio
-import json
 import time
 from collections import defaultdict, deque
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta
+from typing import Any
 
 from core.logging import logger
 
@@ -19,12 +17,13 @@ from core.logging import logger
 @dataclass
 class SecurityEvent:
     """Represents a security event"""
+
     event_type: str
     severity: str  # 'low', 'medium', 'high', 'critical'
     source: str
-    user_id: Optional[str] = None
-    ip_address: Optional[str] = None
-    details: Dict[str, Any] = field(default_factory=dict)
+    user_id: str | None = None
+    ip_address: str | None = None
+    details: dict[str, Any] = field(default_factory=dict)
     timestamp: datetime = field(default_factory=datetime.now)
     event_id: str = field(default_factory=lambda: f"sec_{int(time.time() * 1000)}")
 
@@ -32,13 +31,14 @@ class SecurityEvent:
 @dataclass
 class SecurityAlert:
     """Represents a security alert"""
+
     alert_id: str
     alert_type: str
     severity: str
     description: str
-    events: List[SecurityEvent] = field(default_factory=list)
+    events: list[SecurityEvent] = field(default_factory=list)
     triggered_at: datetime = field(default_factory=datetime.now)
-    resolved_at: Optional[datetime] = None
+    resolved_at: datetime | None = None
     status: str = "active"  # 'active', 'resolved', 'dismissed'
 
 
@@ -50,19 +50,23 @@ class SecurityMonitor:
 
     def __init__(self):
         self.events: deque[SecurityEvent] = deque(maxlen=10000)  # Keep last 10k events
-        self.alerts: List[SecurityAlert] = []
+        self.alerts: list[SecurityAlert] = []
         self.anomaly_detectors = {}
 
         # Rate limiting tracking
-        self.ip_request_counts: Dict[str, deque] = defaultdict(lambda: deque(maxlen=100))
-        self.user_request_counts: Dict[str, deque] = defaultdict(lambda: deque(maxlen=100))
+        self.ip_request_counts: dict[str, deque] = defaultdict(
+            lambda: deque(maxlen=100)
+        )
+        self.user_request_counts: dict[str, deque] = defaultdict(
+            lambda: deque(maxlen=100)
+        )
 
         # Failed login tracking
-        self.failed_logins: Dict[str, List[datetime]] = defaultdict(list)
+        self.failed_logins: dict[str, list[datetime]] = defaultdict(list)
 
         # Suspicious activity tracking
-        self.suspicious_ips: Set[str] = set()
-        self.blocked_ips: Set[str] = set()
+        self.suspicious_ips: set[str] = set()
+        self.blocked_ips: set[str] = set()
 
         # Alert thresholds
         self.thresholds = {
@@ -145,18 +149,24 @@ class SecurityMonitor:
         # Clean request counts older than 1 hour
         cutoff_requests = now - timedelta(hours=1)
         for ip in list(self.ip_request_counts.keys()):
-            while self.ip_request_counts[ip] and self.ip_request_counts[ip][0] < cutoff_requests:
+            while (
+                self.ip_request_counts[ip]
+                and self.ip_request_counts[ip][0] < cutoff_requests
+            ):
                 self.ip_request_counts[ip].popleft()
             if not self.ip_request_counts[ip]:
                 del self.ip_request_counts[ip]
 
         for user in list(self.user_request_counts.keys()):
-            while self.user_request_counts[user] and self.user_request_counts[user][0] < cutoff_requests:
+            while (
+                self.user_request_counts[user]
+                and self.user_request_counts[user][0] < cutoff_requests
+            ):
                 self.user_request_counts[user].popleft()
             if not self.user_request_counts[user]:
                 del self.user_request_counts[user]
 
-    async def _check_anomalies(self, event: SecurityEvent) -> List[SecurityAlert]:
+    async def _check_anomalies(self, event: SecurityEvent) -> list[SecurityAlert]:
         """
         Check for security anomalies based on the event
 
@@ -175,7 +185,7 @@ class SecurityMonitor:
 
         return alerts
 
-    async def _detect_brute_force(self, event: SecurityEvent) -> Optional[SecurityAlert]:
+    async def _detect_brute_force(self, event: SecurityEvent) -> SecurityAlert | None:
         """Detect brute force login attempts"""
         if event.event_type != "login_failed":
             return None
@@ -187,8 +197,7 @@ class SecurityMonitor:
         # Count failures in last hour
         now = datetime.now()
         recent_failures_count = sum(
-            1 for ts in recent_failures
-            if now - ts < timedelta(hours=1)
+            1 for ts in recent_failures if now - ts < timedelta(hours=1)
         )
 
         if recent_failures_count >= self.thresholds["brute_force_attempts"]:
@@ -202,7 +211,9 @@ class SecurityMonitor:
 
         return None
 
-    async def _detect_unusual_traffic(self, event: SecurityEvent) -> Optional[SecurityAlert]:
+    async def _detect_unusual_traffic(
+        self, event: SecurityEvent
+    ) -> SecurityAlert | None:
         """Detect unusual traffic patterns"""
         if not event.ip_address:
             return None
@@ -210,7 +221,8 @@ class SecurityMonitor:
         # Count requests from this IP in the last minute
         now = datetime.now()
         recent_requests = [
-            ts for ts in self.ip_request_counts[event.ip_address]
+            ts
+            for ts in self.ip_request_counts[event.ip_address]
             if now - ts < timedelta(minutes=1)
         ]
 
@@ -225,17 +237,25 @@ class SecurityMonitor:
 
         return None
 
-    async def _detect_suspicious_patterns(self, event: SecurityEvent) -> Optional[SecurityAlert]:
+    async def _detect_suspicious_patterns(
+        self, event: SecurityEvent
+    ) -> SecurityAlert | None:
         """Detect suspicious patterns in requests"""
-        if event.event_type not in ["suspicious_input", "xss_attempt", "sql_injection_attempt"]:
+        if event.event_type not in [
+            "suspicious_input",
+            "xss_attempt",
+            "sql_injection_attempt",
+        ]:
             return None
 
         # Count suspicious events from this IP in the last hour
         now = datetime.now()
         suspicious_count = sum(
-            1 for e in self.events
+            1
+            for e in self.events
             if e.ip_address == event.ip_address
-            and e.event_type in ["suspicious_input", "xss_attempt", "sql_injection_attempt"]
+            and e.event_type
+            in ["suspicious_input", "xss_attempt", "sql_injection_attempt"]
             and now - e.timestamp < timedelta(hours=1)
         )
 
@@ -250,14 +270,17 @@ class SecurityMonitor:
 
         return None
 
-    async def _detect_privilege_escalation(self, event: SecurityEvent) -> Optional[SecurityAlert]:
+    async def _detect_privilege_escalation(
+        self, event: SecurityEvent
+    ) -> SecurityAlert | None:
         """Detect potential privilege escalation attempts"""
         if event.event_type not in ["unauthorized_access", "permission_denied"]:
             return None
 
         # Check for pattern of escalating privilege attempts
         user_events = [
-            e for e in self.events
+            e
+            for e in self.events
             if e.user_id == event.user_id
             and e.event_type in ["unauthorized_access", "permission_denied"]
             and datetime.now() - e.timestamp < timedelta(hours=1)
@@ -274,14 +297,21 @@ class SecurityMonitor:
 
         return None
 
-    async def _detect_data_exfiltration(self, event: SecurityEvent) -> Optional[SecurityAlert]:
+    async def _detect_data_exfiltration(
+        self, event: SecurityEvent
+    ) -> SecurityAlert | None:
         """Detect potential data exfiltration attempts"""
-        if event.event_type not in ["large_download", "bulk_export", "unusual_data_access"]:
+        if event.event_type not in [
+            "large_download",
+            "bulk_export",
+            "unusual_data_access",
+        ]:
             return None
 
         # Check for large data access patterns
         user_events = [
-            e for e in self.events
+            e
+            for e in self.events
             if e.user_id == event.user_id
             and e.event_type in ["large_download", "bulk_export", "unusual_data_access"]
             and datetime.now() - e.timestamp < timedelta(hours=1)
@@ -358,7 +388,7 @@ class SecurityMonitor:
             extra=log_data,
         )
 
-    def get_security_status(self) -> Dict[str, Any]:
+    def get_security_status(self) -> dict[str, Any]:
         """Get current security status and metrics"""
         now = datetime.now()
         last_hour = now - timedelta(hours=1)
@@ -381,10 +411,14 @@ class SecurityMonitor:
             "active_alerts": dict(alert_counts),
             "blocked_ips": len(self.blocked_ips),
             "suspicious_ips": len(self.suspicious_ips),
-            "system_health": "compromised" if alert_counts["critical"] > 0 else "warning" if alert_counts["high"] > 0 else "good",
+            "system_health": "compromised"
+            if alert_counts["critical"] > 0
+            else "warning"
+            if alert_counts["high"] > 0
+            else "good",
         }
 
-    def get_recent_alerts(self, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_recent_alerts(self, limit: int = 10) -> list[dict[str, Any]]:
         """Get recent security alerts"""
         alerts = self.alerts[-limit:] if limit > 0 else self.alerts
 
@@ -416,11 +450,11 @@ security_monitor = SecurityMonitor()
 
 async def log_security_event(
     event_type: str,
-    user_id: Optional[str] = None,
+    user_id: str | None = None,
     severity: str = "low",
     source: str = "system",
-    ip_address: Optional[str] = None,
-    **details
+    ip_address: str | None = None,
+    **details,
 ) -> None:
     """
     Log a security event to the monitoring system

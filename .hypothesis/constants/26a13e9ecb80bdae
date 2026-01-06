@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/ai_analysis.py
+# hypothesis_version: 6.148.8
+
+[0.0, 1.0, 400, 500, 1800, 3600, '/fraud-detection', '/pattern-analysis', '/risk-assessment', 'AI Analysis', 'Detected anomalies', 'Identified patterns', 'Recommended actions', 'Risk classification', 'Scope of assessment', 'analysis_type', 'analyze_fraud_risk', 'analyze_patterns', 'anomalies', 'anomalies_found', 'assess_entity_risk', 'comprehensive', 'confidence_level', 'data_points', 'endpoint', 'entity_id', 'entity_insights', 'entity_type', 'error', 'flags', 'flags_count', 'fraud_detection', 'generated_at', 'get_entity_insights', 'has_historical', 'high', 'insights', 'insights_length', 'overall_risk_score', 'pattern_analysis', 'patterns', 'patterns_found', 'risk_assessment', 'risk_factors', 'risk_level', 'risk_score', 'transaction', 'user_id']

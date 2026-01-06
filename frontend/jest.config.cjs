@@ -45,17 +45,17 @@ module.exports = {
      '^react-force-graph-2d$': '<rootDir>/src/__mocks__/forceGraphMock.js'
    },
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', {
-      tsconfig: {
-        jsx: 'react',
-        esModuleInterop: true,
-        allowSyntheticDefaultImports: true
-      },
-      diagnostics: {
-        ignoreCodes: [151001]
-      }
-    }]
-  },
+     '^.+\\.tsx?$': ['ts-jest', {
+       tsconfig: {
+         jsx: 'react',
+         esModuleInterop: true,
+         allowSyntheticDefaultImports: true
+       },
+       diagnostics: {
+         ignoreCodes: [151001]
+       }
+     }]
+   },
   testTimeout: 10000,
   maxWorkers: '50%'
 };

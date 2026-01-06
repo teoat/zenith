@@ -5,7 +5,7 @@ This shadow file is intentionally small and only implements the sync methods
 used by the test suite (get, post, put, delete, json(), status_code access, etc.).
 """
 
-from typing import Any
+import contextlib
 
 
 class AsyncClient:
@@ -34,10 +34,8 @@ class AsyncClient:
 
     # Close helper
     def close(self):
-        try:
+        with contextlib.suppress(Exception):
             self._client.__exit__(None, None, None)
-        except Exception:
-            pass
 
     # Context manager support
     def __enter__(self):

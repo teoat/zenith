@@ -9,22 +9,22 @@ Provides endpoints for fraud proof mechanisms that generate court-admissible evi
 """
 
 import logging
-from datetime import datetime, timezone
-from typing import List, Optional
-
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
+from datetime import UTC, datetime
 
 from app.services.graph_service import relationship_graph
 from app.services.immutable_audit_chain import (
-    ImmutableAuditChainService,
     immutable_audit_chain,
 )
-from app.services.intelligence.metadata_correlation_service import MetadataCorrelationEngine
+from app.services.intelligence.metadata_correlation_service import (
+    MetadataCorrelationEngine,
+)
 from app.services.temporal_burst_detector import (
     TemporalBurstDetector,
     temporal_burst_detector,
 )
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.orm import Session
+
 from core.database import get_db
 
 logger = logging.getLogger(__name__)
@@ -83,7 +83,7 @@ def get_metadata_correlations(case_id: str, db: Session = Depends(get_db)):
         return {
             "success": True,
             "case_id": case_id,
-            "analyzed_at": datetime.now(timezone.utc).isoformat(),
+            "analyzed_at": datetime.now(UTC).isoformat(),
             "correlation_count": len(correlations),
             "correlations": correlations,
             "summary": {
@@ -171,7 +171,7 @@ def detect_temporal_bursts(
 
 @router.post("/temporal-bursts/analyze")
 def analyze_transactions_for_bursts(
-    transactions: List[dict],
+    transactions: list[dict],
     burst_threshold: int = Query(
         10, description="Minimum transactions for burst detection"
     ),
@@ -230,10 +230,10 @@ def verify_audit_chain():
 
 @router.get("/audit-chain/export")
 def export_audit_chain_proof(
-    start_sequence: Optional[int] = Query(None, description="Starting sequence number"),
-    end_sequence: Optional[int] = Query(None, description="Ending sequence number"),
-    entity_type: Optional[str] = Query(None, description="Filter by entity type"),
-    entity_id: Optional[str] = Query(None, description="Filter by entity ID"),
+    start_sequence: int | None = Query(None, description="Starting sequence number"),
+    end_sequence: int | None = Query(None, description="Ending sequence number"),
+    entity_type: str | None = Query(None, description="Filter by entity type"),
+    entity_id: str | None = Query(None, description="Filter by entity ID"),
 ):
     """
     Export chain proof for court-admissible evidence.
@@ -278,10 +278,10 @@ def get_audit_chain_stats():
 def append_audit_entry(
     event_type: str = Query(..., description="Type of event"),
     action: str = Query(..., description="Action taken"),
-    entity_type: Optional[str] = Query(None, description="Entity type"),
-    entity_id: Optional[str] = Query(None, description="Entity ID"),
-    user_id: Optional[str] = Query(None, description="User ID"),
-    data: Optional[dict] = None,
+    entity_type: str | None = Query(None, description="Entity type"),
+    entity_id: str | None = Query(None, description="Entity ID"),
+    user_id: str | None = Query(None, description="User ID"),
+    data: dict | None = None,
 ):
     """
     Append a new entry to the immutable audit chain.
@@ -356,7 +356,7 @@ def detect_shell_networks(
             return {
                 "success": True,
                 "case_id": case_id,
-                "analyzed_at": datetime.now(timezone.utc).isoformat(),
+                "analyzed_at": datetime.now(UTC).isoformat(),
                 "transaction_count": 0,
                 "shell_networks": [],
                 "summary": {
@@ -375,7 +375,7 @@ def detect_shell_networks(
         return {
             "success": True,
             "case_id": case_id,
-            "analyzed_at": datetime.now(timezone.utc).isoformat(),
+            "analyzed_at": datetime.now(UTC).isoformat(),
             "transaction_count": len(txn_dicts),
             "shell_networks": shell_networks,
             "summary": {
@@ -548,7 +548,7 @@ def get_proof_summary(case_id: str, db: Session = Depends(get_db)):
         return {
             "success": True,
             "case_id": case_id,
-            "analyzed_at": datetime.now(timezone.utc).isoformat(),
+            "analyzed_at": datetime.now(UTC).isoformat(),
             "proof_summary": {
                 "metadata_correlations": metadata_summary,
                 "temporal_bursts": burst_summary,
@@ -558,7 +558,9 @@ def get_proof_summary(case_id: str, db: Session = Depends(get_db)):
                 "court_readiness": (
                     "high"
                     if overall_confidence >= 0.7
-                    else "medium" if overall_confidence >= 0.4 else "low"
+                    else "medium"
+                    if overall_confidence >= 0.4
+                    else "low"
                 ),
             },
         }

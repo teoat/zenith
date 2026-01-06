@@ -1,9 +1,14 @@
-from core.plugin_system import PluginInterface, PluginMetadata, PluginContext
-from typing import Dict, Any, List
-from app.services.infrastructure.cost_optimization_service import CostOptimizationService
 import logging
+from typing import Any
+
+from app.services.infrastructure.cost_optimization_service import (
+    CostOptimizationService,
+)
+
+from core.plugin_system import PluginContext, PluginInterface, PluginMetadata
 
 logger = logging.getLogger(__name__)
+
 
 class CostOptimizationPlugin(PluginInterface):
     """
@@ -19,10 +24,14 @@ class CostOptimizationPlugin(PluginInterface):
             namespace="zenith/infrastructure/cost_optimizer",
             author="Zenith Team",
             description="Infrastructure cost optimization and savings analysis",
-            capabilities=["cost_analysis", "infrastructure_monitoring", "financial_optimization"],
+            capabilities=[
+                "cost_analysis",
+                "infrastructure_monitoring",
+                "financial_optimization",
+            ],
             security_level="official",
             api_version="v1",
-            dependencies=[]
+            dependencies=[],
         )
 
     async def initialize(self, context: PluginContext) -> bool:
@@ -36,7 +45,7 @@ class CostOptimizationPlugin(PluginInterface):
             logger.error(f"Failed to initialize Cost Optimization Plugin: {e}")
             return False
 
-    async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         """
         Execute cost optimization analysis
 
@@ -64,17 +73,19 @@ class CostOptimizationPlugin(PluginInterface):
                         "savings": opt.get("savings", 0),
                         "estimated_savings": opt.get("estimated_savings", 0),
                         "complexity": opt.get("complexity", "medium"),
-                        "description": f"Potential savings: ${opt.get('savings', 0)}"
+                        "description": f"Potential savings: ${opt.get('savings', 0)}",
                     }
                     for i, opt in enumerate(analysis.optimizations or [])
                 ],
-                "roi_percentage": getattr(analysis, 'roi_percentage', 1200),
+                "roi_percentage": getattr(analysis, "roi_percentage", 1200),
                 "break_even_months": 1 if analysis.identified_savings > 0 else None,
                 "status": "success",
-                "timestamp": "2025-12-19T12:00:00Z"
+                "timestamp": "2025-12-19T12:00:00Z",
             }
 
-            logger.info(f"Cost optimization analysis completed: ${result['annual_savings']} annual savings potential")
+            logger.info(
+                f"Cost optimization analysis completed: ${result['annual_savings']} annual savings potential"
+            )
             return result
 
         except Exception as e:
@@ -85,15 +96,15 @@ class CostOptimizationPlugin(PluginInterface):
                 "current_spend": 0,
                 "projected_savings": 0,
                 "optimizations": [],
-                "timestamp": "2025-12-19T12:00:00Z"
+                "timestamp": "2025-12-19T12:00:00Z",
             }
 
-    async def validate_configuration(self, config: Dict[str, Any]) -> bool:
+    async def validate_configuration(self, config: dict[str, Any]) -> bool:
         """Validate plugin configuration"""
         # Cost optimization service handles its own validation
         return True
 
-    async def get_metrics(self) -> Dict[str, Any]:
+    async def get_metrics(self) -> dict[str, Any]:
         """Get plugin performance metrics"""
         return {
             "plugin_name": "cost_optimizer",
@@ -101,5 +112,5 @@ class CostOptimizationPlugin(PluginInterface):
             "status": "operational",
             "last_execution": "2025-12-19T12:00:00Z",
             "execution_count": 1,
-            "success_rate": 1.0
+            "success_rate": 1.0,
         }

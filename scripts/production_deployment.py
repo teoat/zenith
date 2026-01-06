@@ -5,11 +5,12 @@ Handles secure production deployment with proper configuration
 """
 
 import os
-import sys
 import shutil
 import subprocess
-from pathlib import Path
+import sys
 from datetime import datetime
+from pathlib import Path
+
 
 def setup_production_environment():
     """Set up production environment variables"""
@@ -25,11 +26,15 @@ def setup_production_environment():
 
     # Validate production configuration
     required_vars = [
-        'ENCRYPTION_KEY', 'SQLCIPHER_KEY', 'AUTH_ENCRYPTION_KEY',
-        'FIELD_ENCRYPTION_KEY', 'IPC_SECRET', 'JWT_SECRET_KEY'
+        "ENCRYPTION_KEY",
+        "SQLCIPHER_KEY",
+        "AUTH_ENCRYPTION_KEY",
+        "FIELD_ENCRYPTION_KEY",
+        "IPC_SECRET",
+        "JWT_SECRET_KEY",
     ]
 
-    with open(prod_env, 'r') as f:
+    with open(prod_env) as f:
         content = f.read()
 
     missing_vars = []
@@ -55,6 +60,7 @@ def setup_production_environment():
 
     return True
 
+
 def backup_current_deployment():
     """Create backup of current deployment"""
     print("\n💾 CREATING DEPLOYMENT BACKUP")
@@ -72,7 +78,7 @@ def backup_current_deployment():
             "logs/",
             ".env.production",
             "ssot_master.json",
-            "critical_areas.lock"
+            "critical_areas.lock",
         ]
 
         for file_path in files_to_backup:
@@ -90,6 +96,7 @@ def backup_current_deployment():
     except Exception as e:
         print(f"❌ Backup failed: {e}")
         return False
+
 
 def validate_system_health():
     """Validate system health before deployment"""
@@ -110,6 +117,7 @@ def validate_system_health():
         import fastapi
         import sqlalchemy
         import uvicorn
+
         checks.append(("Core Dependencies", True, "All present"))
     except ImportError as e:
         checks.append(("Core Dependencies", False, str(e)))
@@ -117,6 +125,7 @@ def validate_system_health():
     # Check database connectivity
     try:
         from backend.core.database import engine
+
         with engine.connect() as conn:
             conn.execute("SELECT 1")
         checks.append(("Database Connectivity", True, "Connected"))
@@ -140,6 +149,7 @@ def validate_system_health():
 
     return all_passed
 
+
 def deploy_application():
     """Deploy the application"""
     print("\n🚀 DEPLOYING APPLICATION")
@@ -151,12 +161,18 @@ def deploy_application():
 
         # Start the application
         cmd = [
-            sys.executable, "-m", "uvicorn",
+            sys.executable,
+            "-m",
+            "uvicorn",
             "backend.main:app",
-            "--host", "0.0.0.0",
-            "--port", "8000",
-            "--workers", "4",
-            "--log-level", "warning"
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8000",
+            "--workers",
+            "4",
+            "--log-level",
+            "warning",
         ]
 
         print("Starting production server...")
@@ -165,7 +181,7 @@ def deploy_application():
 
         # In a real deployment, you'd use a process manager like systemd
         # For now, we'll just validate the command works
-        result = subprocess.run(cmd + ["--help"], capture_output=True, text=True)
+        result = subprocess.run([*cmd, "--help"], capture_output=True, text=True)
 
         if result.returncode == 0:
             print("✅ Application deployment validation successful")
@@ -179,12 +195,14 @@ def deploy_application():
         print(f"❌ Deployment error: {e}")
         return False
 
+
 def post_deployment_checks():
     """Perform post-deployment health checks"""
     print("\n🔍 POST-DEPLOYMENT HEALTH CHECKS")
     print("=" * 40)
 
     import time
+
     import requests
 
     # Wait for service to start
@@ -207,6 +225,7 @@ def post_deployment_checks():
         print("⚠️ Service may still be starting up")
         return False
 
+
 def generate_deployment_report(success, backup_path=None):
     """Generate deployment report"""
 
@@ -221,24 +240,27 @@ def generate_deployment_report(success, backup_path=None):
             "Monitor application logs",
             "Configure monitoring alerts",
             "Set up log rotation",
-            "Configure backup automation"
-        ] if success else [
+            "Configure backup automation",
+        ]
+        if success
+        else [
             "Review deployment logs",
             "Fix identified issues",
             "Retry deployment",
-            "Contact development team if issues persist"
-        ]
+            "Contact development team if issues persist",
+        ],
     }
 
     # Save report
     report_path = Path("deployment_report.json")
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         import json
+
         json.dump(report, f, indent=2)
 
     # Generate summary
     summary_path = Path("DEPLOYMENT_REPORT.md")
-    with open(summary_path, 'w') as f:
+    with open(summary_path, "w") as f:
         f.write("# 🚀 PRODUCTION DEPLOYMENT REPORT\n\n")
         f.write(f"**Deployment Date:** {report['deployment_timestamp']}\n")
         f.write(f"**Status:** {report['deployment_status']}\n")
@@ -246,22 +268,28 @@ def generate_deployment_report(success, backup_path=None):
 
         f.write("## 📊 DEPLOYMENT SUMMARY\n\n")
         f.write(f"- **Backup Created:** {'✅' if report['backup_created'] else '❌'}\n")
-        if report['backup_path']:
+        if report["backup_path"]:
             f.write(f"- **Backup Location:** {report['backup_path']}\n")
-        f.write(f"- **Health Checks:** {'✅ PASSED' if report['health_checks_passed'] else '❌ FAILED'}\n\n")
+        f.write(
+            f"- **Health Checks:** {'✅ PASSED' if report['health_checks_passed'] else '❌ FAILED'}\n\n"
+        )
 
         f.write("## 🎯 NEXT STEPS\n\n")
-        for step in report['next_steps']:
+        for step in report["next_steps"]:
             f.write(f"- {'✅' if success else '🔧'} {step}\n")
         f.write("\n")
 
         if success:
             f.write("## 🎉 DEPLOYMENT SUCCESSFUL!\n\n")
             f.write("The Fraud Detection Platform is now running in production.\n")
-            f.write("Monitor the application and configure additional production settings.\n")
+            f.write(
+                "Monitor the application and configure additional production settings.\n"
+            )
         else:
             f.write("## ⚠️ DEPLOYMENT ISSUES DETECTED\n\n")
-            f.write("Review the deployment logs and fix identified issues before proceeding.\n")
+            f.write(
+                "Review the deployment logs and fix identified issues before proceeding.\n"
+            )
 
         f.write("\n---\n\n")
         f.write("**Generated by Production Deployment System**\n")
@@ -270,6 +298,7 @@ def generate_deployment_report(success, backup_path=None):
     print(f"📋 Summary saved to: {summary_path}")
 
     return report
+
 
 def main():
     print("🚀 FRAUD DETECTION PLATFORM - PRODUCTION DEPLOYMENT")
@@ -285,7 +314,9 @@ def main():
     backup_path = None
     if success:
         if backup_current_deployment():
-            backup_path = Path(f"backups/deployment_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
+            backup_path = Path(
+                f"backups/deployment_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            )
         else:
             print("⚠️ Continuing without backup...")
 
@@ -313,6 +344,7 @@ def main():
         print("❌ Deployment failed - check logs and reports")
 
     return 0 if success else 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

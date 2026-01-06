@@ -1,28 +1,32 @@
-from core.plugin_system import PluginInterface, PluginMetadata, PluginContext
-from typing import Dict, Any, List
 import logging
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any
+
+from core.plugin_system import PluginContext, PluginInterface, PluginMetadata
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class MirrorConfig:
     time_window_minutes: int
     amount_tolerance: float
 
+
 @dataclass
 class MirrorTransactionAlert:
-    transaction_ids: List[str]
+    transaction_ids: list[str]
     amount: float
     time_diff_seconds: float
     confidence: float
 
+
 def detect_mirror_transactions(
-    transactions: List[Dict[str, Any]],
+    transactions: list[dict[str, Any]],
     time_window_minutes: int = 60,
     amount_tolerance: float = 0.01,
-) -> List[MirrorTransactionAlert]:
+) -> list[MirrorTransactionAlert]:
     """
     Detects mirror transactions: A -> B followed by B -> A (or similar flow reversing)
     within a short time window with similar amounts.
@@ -30,7 +34,7 @@ def detect_mirror_transactions(
     alerts = []
     if not transactions:
         return alerts
-        
+
     sorted_tx = sorted(transactions, key=lambda x: x.get("date", ""))
 
     for i in range(len(sorted_tx)):
@@ -89,8 +93,8 @@ def detect_mirror_transactions(
 
     return alerts
 
+
 class MirrorTransactionPlugin(PluginInterface):
-    
     @property
     def metadata(self) -> PluginMetadata:
         return PluginMetadata(
@@ -102,55 +106,58 @@ class MirrorTransactionPlugin(PluginInterface):
             dependencies={},
             capabilities=["fraud_detection"],
             security_level="official",
-            api_version="v1"
+            api_version="v1",
         )
-    
+
     async def initialize(self, context: PluginContext) -> bool:
         self.context = context
-        config_dict = context.config if context.config else {
-            "time_window_minutes": 60,
-            "amount_tolerance": 0.01
-        }
+        config_dict = (
+            context.config
+            if context.config
+            else {"time_window_minutes": 60, "amount_tolerance": 0.01}
+        )
         self.config = MirrorConfig(**config_dict)
         return True
-    
-    async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+
+    async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         """
         Expects {"transactions": [...]}
         """
         transactions = inputs.get("transactions", [])
         if not transactions:
-             # Try single transaction wrapping (less effective for mirror but for interface consistency)
-             tx = inputs.get("transaction")
-             if tx:
-                 transactions = [tx]
-             else:
-                 return {"alerts": []}
-        
+            # Try single transaction wrapping (less effective for mirror but for interface consistency)
+            tx = inputs.get("transaction")
+            if tx:
+                transactions = [tx]
+            else:
+                return {"alerts": []}
+
         alerts = detect_mirror_transactions(
-            transactions, 
+            transactions,
             time_window_minutes=self.config.time_window_minutes,
-            amount_tolerance=self.config.amount_tolerance
+            amount_tolerance=self.config.amount_tolerance,
         )
-        
+
         results = []
         for alert in alerts:
-            results.append({
-                "transaction_ids": alert.transaction_ids,
-                "risk_score": 80.0, # Fixed score for this rule
-                "confidence": alert.confidence,
-                "is_fraud": True,
-                "reason": f"Mirror transaction (Amount: {alert.amount:.2f}, Time diff: {alert.time_diff_seconds:.0f}s)",
-                "details": {
-                    "amount": alert.amount,
-                    "time_diff_seconds": alert.time_diff_seconds
+            results.append(
+                {
+                    "transaction_ids": alert.transaction_ids,
+                    "risk_score": 80.0,  # Fixed score for this rule
+                    "confidence": alert.confidence,
+                    "is_fraud": True,
+                    "reason": f"Mirror transaction (Amount: {alert.amount:.2f}, Time diff: {alert.time_diff_seconds:.0f}s)",
+                    "details": {
+                        "amount": alert.amount,
+                        "time_diff_seconds": alert.time_diff_seconds,
+                    },
                 }
-            })
-            
+            )
+
         return {"alerts": results}
 
     async def cleanup(self) -> None:
         pass
 
-    def validate_config(self, config: Dict[str, Any]) -> List[str]:
+    def validate_config(self, config: dict[str, Any]) -> list[str]:
         return []

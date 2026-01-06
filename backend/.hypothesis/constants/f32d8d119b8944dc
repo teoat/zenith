@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/infrastructure/alert_intelligence.py
+# hypothesis_version: 6.148.8
+
+[0.0, 0.1, 0.2, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 2.0, 10.0, -1000, -100, 100, 300, 3600, 10000, 'Unknown Alert', 'VERCEL', 'ai:alert_intel:', 'alert_id', 'annotations', 'application', 'auth', 'confidence', 'connection', 'correlated_alerts', 'correlation', 'cpu', 'critical', 'database', 'db', 'description', 'group', 'high', 'id', 'incident_probability', 'info', 'intelligence_stats', 'is_correlated', 'labels', 'last_seen', 'learned_patterns', 'low', 'medium', 'memory', 'network', 'predictions', 'recommended_action', 'redis', 'risk_level', 'root_cause', 'security', 'severity', 'similar_incidents', 'source', 'system', 'timestamp', 'title', 'unknown']

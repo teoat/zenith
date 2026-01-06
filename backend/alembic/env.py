@@ -130,7 +130,6 @@ def check_current_version():
         str: Current revision ID or None if not stamped
     """
     from alembic.runtime.migration import MigrationContext
-    from alembic.script import ScriptDirectory
 
     # Get current revision from database
     configuration = config.get_section(config.config_ini_section)

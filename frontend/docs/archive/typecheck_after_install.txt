@@ -1,0 +1,314 @@
+
+> frontend@0.0.0 type-check
+> tsc --noEmit
+
+src/components/ai/AIAssistant.tsx(159,27): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'SetStateAction<string>'.
+  Type 'undefined' is not assignable to type 'SetStateAction<string>'.
+src/components/ai/AIAssistant.tsx(436,41): error TS2532: Object is possibly 'undefined'.
+src/components/CaseProgressBar.tsx(153,31): error TS18048: 'currentStage' is possibly 'undefined'.
+src/components/CaseProgressBar.tsx(156,16): error TS18048: 'currentStage' is possibly 'undefined'.
+src/components/CaseProgressBar.tsx(173,89): error TS18048: 'currentStage' is possibly 'undefined'.
+src/components/cases/CaseKanban.tsx(296,35): error TS2538: Type 'undefined' cannot be used as an index type.
+src/components/cases/CaseKanban.tsx(298,30): error TS2322: Type 'keyof KanbanState | undefined' is not assignable to type 'keyof KanbanState'.
+  Type 'undefined' is not assignable to type 'keyof KanbanState'.
+src/components/cases/CaseKanban.tsx(309,35): error TS2538: Type 'undefined' cannot be used as an index type.
+src/components/cases/CaseKanban.tsx(311,30): error TS2322: Type 'keyof KanbanState | undefined' is not assignable to type 'keyof KanbanState'.
+  Type 'undefined' is not assignable to type 'keyof KanbanState'.
+src/components/cases/FacetedFilter.tsx(49,34): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'FilterValue'.
+  Type 'undefined' is not assignable to type 'FilterValue'.
+src/components/cases/NewInvestigationWizard.tsx(59,77): error TS2532: Object is possibly 'undefined'.
+src/components/collaboration/HypothesisBoard.tsx(332,7): error TS2532: Object is possibly 'undefined'.
+src/components/collaboration/HypothesisBoard.tsx(406,41): error TS18048: 'groupedHypotheses.proposed' is possibly 'undefined'.
+src/components/collaboration/HypothesisBoard.tsx(409,16): error TS18048: 'groupedHypotheses.proposed' is possibly 'undefined'.
+src/components/collaboration/HypothesisBoard.tsx(425,41): error TS18048: 'groupedHypotheses.testing' is possibly 'undefined'.
+src/components/collaboration/HypothesisBoard.tsx(428,16): error TS18048: 'groupedHypotheses.testing' is possibly 'undefined'.
+src/components/collaboration/HypothesisBoard.tsx(444,41): error TS18048: 'groupedHypotheses.validated' is possibly 'undefined'.
+src/components/collaboration/HypothesisBoard.tsx(447,16): error TS18048: 'groupedHypotheses.validated' is possibly 'undefined'.
+src/components/common/JourneyProgress.tsx(250,16): error TS2532: Object is possibly 'undefined'.
+src/components/common/JourneyProgress.tsx(254,18): error TS2532: Object is possibly 'undefined'.
+src/components/common/JourneyProgress.tsx(256,16): error TS2532: Object is possibly 'undefined'.
+src/components/common/JourneyProgress.tsx(258,20): error TS2532: Object is possibly 'undefined'.
+src/components/common/ProjectSwitcher.tsx(33,24): error TS2532: Object is possibly 'undefined'.
+src/components/common/WelcomeMessage.tsx(76,60): error TS18048: 'message' is possibly 'undefined'.
+src/components/common/WelcomeMessage.tsx(89,44): error TS18048: 'message' is possibly 'undefined'.
+src/components/common/WelcomeMessage.tsx(92,12): error TS18048: 'message' is possibly 'undefined'.
+src/components/dashboard/AIWatchtower.tsx(83,34): error TS18048: 'latestInsight' is possibly 'undefined'.
+src/components/dashboard/AIWatchtower.tsx(85,21): error TS18048: 'latestInsight' is possibly 'undefined'.
+src/components/dashboard/AIWatchtower.tsx(86,24): error TS18048: 'latestInsight' is possibly 'undefined'.
+src/components/dashboard/AIWatchtower.tsx(86,66): error TS18048: 'latestInsight' is possibly 'undefined'.
+src/components/dashboard/AIWatchtower.tsx(87,26): error TS18048: 'latestInsight' is possibly 'undefined'.
+src/components/dashboard/AIWatchtower.tsx(88,40): error TS18048: 'latestInsight' is possibly 'undefined'.
+src/components/dashboard/AIWatchtower.tsx(89,24): error TS18048: 'latestInsight' is possibly 'undefined'.
+src/components/dashboard/MetricSparkline.tsx(43,31): error TS2532: Object is possibly 'undefined'.
+src/components/evidence/DocumentViewer.tsx(36,31): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type 'File | undefined' is not assignable to parameter of type 'Blob'.
+      Type 'undefined' is not assignable to type 'Blob'.
+src/components/forensics/HexViewer.tsx(22,20): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/components/forensics/HexViewer.tsx(23,20): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/components/forensics/HexViewer.tsx(26,18): error TS2345: Argument of type '{ offset: string; hex: string; ascii: string; }' is not assignable to parameter of type 'never'.
+src/components/forensics/HexViewer.tsx(45,73): error TS2339: Property 'offset' does not exist on type 'never'.
+src/components/forensics/HexViewer.tsx(47,21): error TS2339: Property 'hex' does not exist on type 'never'.
+src/components/forensics/HexViewer.tsx(51,91): error TS2339: Property 'ascii' does not exist on type 'never'.
+src/components/ingestion/DataMapping.tsx(147,19): error TS2322: Type 'string | undefined' is not assignable to type 'string | null'.
+  Type 'undefined' is not assignable to type 'string | null'.
+src/components/ingestion/IngestionStepper.tsx(75,67): error TS2345: Argument of type 'File | undefined' is not assignable to parameter of type 'File'.
+  Type 'undefined' is not assignable to type 'File'.
+src/components/ingestion/IngestionStepper.tsx(81,52): error TS2345: Argument of type 'File | undefined' is not assignable to parameter of type 'File'.
+  Type 'undefined' is not assignable to type 'File'.
+src/components/ingestion/IngestionStepper.tsx(83,63): error TS18048: 'file' is possibly 'undefined'.
+src/components/ingestion/IngestionStepper.tsx(119,50): error TS18048: 'file' is possibly 'undefined'.
+src/components/intelligence/AutoReportGenerator.tsx(162,169): error TS2532: Object is possibly 'undefined'.
+src/components/intelligence/AutoReportGenerator.tsx(188,19): error TS2345: Argument of type '(prev: ReportSection[]) => (ReportSection | { id: string | undefined; title: string | undefined; type: "timeline" | "evidence" | "recommendations" | "findings" | "executive_summary" | "appendix"; content: string; status: "generating"; })[]' is not assignable to parameter of type 'SetStateAction<ReportSection[]>'.
+  Type '(prev: ReportSection[]) => (ReportSection | { id: string | undefined; title: string | undefined; type: "timeline" | "evidence" | "recommendations" | "findings" | "executive_summary" | "appendix"; content: string; status: "generating"; })[]' is not assignable to type '(prevState: ReportSection[]) => ReportSection[]'.
+    Type '(ReportSection | { id: string | undefined; title: string | undefined; type: "timeline" | "evidence" | "recommendations" | "findings" | "executive_summary" | "appendix"; content: string; status: "generating"; })[]' is not assignable to type 'ReportSection[]'.
+      Type 'ReportSection | { id: string | undefined; title: string | undefined; type: "timeline" | "evidence" | "recommendations" | "findings" | "executive_summary" | "appendix"; content: string; status: "generating"; }' is not assignable to type 'ReportSection'.
+        Type '{ id: string | undefined; title: string | undefined; type: ReportSection["type"]; content: string; status: "generating"; }' is not assignable to type 'ReportSection'.
+          Types of property 'id' are incompatible.
+            Type 'string | undefined' is not assignable to type 'string'.
+              Type 'undefined' is not assignable to type 'string'.
+src/components/intelligence/AutoReportGenerator.tsx(200,47): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/intelligence/AutoReportGenerator.tsx(202,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/intelligence/AutoReportGenerator.tsx(203,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/investigation/InvestigationCanvas.tsx(570,15): error TS2322: Type 'Relationship | undefined' is not assignable to type 'Relationship'.
+  Type 'undefined' is not assignable to type 'Relationship'.
+src/components/investigation/PathfindingVisualizer.tsx(86,23): error TS2532: Object is possibly 'undefined'.
+src/components/investigation/PathfindingVisualizer.tsx(87,20): error TS2532: Object is possibly 'undefined'.
+src/components/investigation/ThreeDGraph.tsx(238,60): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/components/investigation/ThreeDGraph.tsx(272,21): error TS2345: Argument of type 'Vector3' is not assignable to parameter of type 'never'.
+src/components/investigation/ThreeDGraph.tsx(277,21): error TS2345: Argument of type 'Vector3' is not assignable to parameter of type 'never'.
+src/components/monitoring/RealTimeMonitoringDashboard.tsx(81,22): error TS2532: Object is possibly 'undefined'.
+src/components/onboarding/TourGuide.tsx(79,20): error TS2532: Object is possibly 'undefined'.
+src/components/onboarding/TourGuide.tsx(90,18): error TS2532: Object is possibly 'undefined'.
+src/components/plugins/ConfigurationWizard.tsx(97,13): error TS18048: 'step' is possibly 'undefined'.
+src/components/plugins/ConfigurationWizard.tsx(245,20): error TS2532: Object is possibly 'undefined'.
+src/components/RelationshipGraph.tsx(77,59): error TS2532: Object is possibly 'undefined'.
+src/components/RelationshipGraph.tsx(274,7): error TS2322: Type 'Entity | undefined' is not assignable to type 'null'.
+  Type 'undefined' is not assignable to type 'null'.
+src/components/RelationshipGraph.tsx(278,7): error TS2322: Type 'Entity | undefined' is not assignable to type 'null'.
+  Type 'undefined' is not assignable to type 'null'.
+src/components/RelationshipGraph.tsx(297,34): error TS2339: Property 'id' does not exist on type 'never'.
+src/components/RelationshipGraph.tsx(302,75): error TS2339: Property 'label' does not exist on type 'never'.
+src/components/RelationshipGraph.tsx(302,93): error TS2339: Property 'id' does not exist on type 'never'.
+src/components/ui/AdvancedSearch.tsx(52,28): error TS2554: Expected 1 arguments, but got 0.
+src/components/ui/AgentStatusStream.tsx(24,41): error TS2532: Object is possibly 'undefined'.
+src/components/ui/AgentStatusStream.tsx(34,48): error TS2532: Object is possibly 'undefined'.
+src/components/ui/AgentStatusStream.tsx(37,11): error TS2322: Type '"idle" | "busy" | "searching" | "analyzing" | undefined' is not assignable to type '"complete" | "idle" | "busy" | "searching" | "analyzing"'.
+  Type 'undefined' is not assignable to type '"complete" | "idle" | "busy" | "searching" | "analyzing"'.
+src/components/ui/AgentStatusStream.tsx(38,29): error TS2538: Type 'undefined' cannot be used as an index type.
+src/components/ui/Breadcrumbs.tsx(84,7): error TS2322: Type '{ label: string; parent?: string | undefined; } | undefined' is not assignable to type '{ label: string; parent?: string | undefined; }'.
+  Type 'undefined' is not assignable to type '{ label: string; parent?: string | undefined; }'.
+src/components/ui/FocusTrap.tsx(37,9): error TS2532: Object is possibly 'undefined'.
+src/components/ui/FocusTrap.tsx(53,23): error TS2304: Cannot find name 'scope'.
+src/components/ui/FocusTrap.tsx(117,7): error TS2532: Object is possibly 'undefined'.
+src/components/ui/FocusTrap.tsx(148,9): error TS2532: Object is possibly 'undefined'.
+src/components/ui/KeyboardNavigation.tsx(94,9): error TS2532: Object is possibly 'undefined'.
+src/components/ui/KeyboardNavigation.tsx(101,9): error TS2532: Object is possibly 'undefined'.
+src/components/ui/KeyboardNavigation.tsx(110,9): error TS2532: Object is possibly 'undefined'.
+src/components/ui/KeyboardNavigation.tsx(119,9): error TS2532: Object is possibly 'undefined'.
+src/components/ui/KeyboardNavigation.tsx(202,7): error TS2532: Object is possibly 'undefined'.
+src/components/ui/LiveRegion.tsx(27,22): error TS2554: Expected 1 arguments, but got 0.
+src/components/ui/LiveRegion.tsx(44,36): error TS18046: 'node.props' is of type 'unknown'.
+src/components/ui/LiveRegion.tsx(95,22): error TS2554: Expected 1 arguments, but got 0.
+src/components/ui/PerfectInteraction.tsx(36,11): error TS2532: Object is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(37,11): error TS2532: Object is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(80,45): error TS6133: 'event' is declared but its value is never read.
+src/components/ui/PerfectInteraction.tsx(171,62): error TS18046: 'child.props' is of type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(174,9): error TS18046: 'child.props' is of type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(178,9): error TS18046: 'child.props' is of type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(182,9): error TS18046: 'child.props' is of type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(186,9): error TS18046: 'child.props' is of type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(191,12): error TS18046: 'child.props' is of type 'unknown'.
+src/components/ui/PerfectInteraction.tsx(279,37): error TS6133: 'onRotate' is declared but its value is never read.
+src/components/ui/PerfectInteraction.tsx(281,10): error TS6133: 'touchEnd' is declared but its value is never read.
+src/components/ui/PerfectInteraction.tsx(287,26): error TS18048: 'touch' is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(287,44): error TS18048: 'touch' is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(289,18): error TS2532: Object is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(289,41): error TS2532: Object is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(290,18): error TS2532: Object is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(290,41): error TS2532: Object is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(298,18): error TS2532: Object is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(298,41): error TS2532: Object is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(299,18): error TS2532: Object is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(299,41): error TS2532: Object is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(309,24): error TS18048: 'touch' is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(309,42): error TS18048: 'touch' is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(313,24): error TS18048: 'touch' is possibly 'undefined'.
+src/components/ui/PerfectInteraction.tsx(314,24): error TS18048: 'touch' is possibly 'undefined'.
+src/components/ui/PerfectMobileExperience.tsx(29,24): error TS6133: 'setViewportMeta' is declared but its value is never read.
+src/components/ui/PerfectMobileExperience.tsx(38,29): error TS2554: Expected 1 arguments, but got 0.
+src/components/ui/PerfectMobileExperience.tsx(39,9): error TS6133: 'touchHandlerRef' is declared but its value is never read.
+src/components/ui/PerfectMobileExperience.tsx(360,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/components/ui/PerfectWebVitals.tsx(43,34): error TS2554: Expected 1 arguments, but got 0.
+src/components/ui/PerfectWebVitals.tsx(166,52): error TS6133: 'value' is declared but its value is never read.
+src/components/ui/QuickActionsMenu.tsx(116,5): error TS2532: Object is possibly 'undefined'.
+src/components/ui/RTLSwitcher.tsx(316,18): error TS2694: Namespace 'global.JSX' has no exported member 'IntrinsicElements'.
+src/components/ui/RTLSwitcher.tsx(343,6): error TS2604: JSX element type 'Component' does not have any construct or call signatures.
+src/components/ui/RTLSwitcher.tsx(343,6): error TS2786: 'Component' cannot be used as a JSX component.
+  Its type 'string | number | symbol' is not a valid JSX element type.
+    Type 'number' is not assignable to type 'ElementType'.
+src/components/ui/VirtualizedList.tsx(64,31): error TS2345: Argument of type 'T | undefined' is not assignable to parameter of type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'T | undefined'.
+src/components/ui/VirtualizedList.tsx(75,27): error TS2345: Argument of type 'T | undefined' is not assignable to parameter of type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'T | undefined'.
+src/components/VirtualizedEvidenceList.tsx(44,35): error TS2532: Object is possibly 'undefined'.
+src/components/VirtualizedEvidenceList.tsx(45,25): error TS2345: Argument of type 'EvidenceMetadata | undefined' is not assignable to parameter of type 'EvidenceMetadata'.
+  Type 'undefined' is not assignable to type 'EvidenceMetadata'.
+src/components/visualizations/NetworkGraph.tsx(105,24): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'SetStateAction<string | null>'.
+  Type 'undefined' is not assignable to type 'SetStateAction<string | null>'.
+src/components/visualizations/NetworkGraph.tsx(124,28): error TS2532: Object is possibly 'undefined'.
+src/components/visualizations/NetworkGraph.tsx(150,24): error TS2532: Object is possibly 'undefined'.
+src/context/UndoRedoContext.tsx(25,7): error TS2322: Type 'T | undefined' is not assignable to type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'T | undefined'.
+src/context/UndoRedoContext.tsx(35,7): error TS2322: Type 'T | undefined' is not assignable to type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'T | undefined'.
+src/contexts/ThemeContext.tsx(14,21): error TS18048: 'r' is possibly 'undefined'.
+src/contexts/ThemeContext.tsx(14,34): error TS18048: 'g' is possibly 'undefined'.
+src/contexts/ThemeContext.tsx(14,47): error TS18048: 'b' is possibly 'undefined'.
+src/contexts/ThemeContext.tsx(20,16): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/contexts/ThemeContext.tsx(21,16): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/contexts/ThemeContext.tsx(22,16): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/contexts/ThemeContext.tsx(263,28): error TS6133: 'isHighContrast' is declared but its value is never read.
+src/documentation/metrics-dashboard.ts(165,22): error TS2532: Object is possibly 'undefined'.
+src/documentation/metrics-dashboard.ts(166,20): error TS2538: Type 'undefined' cannot be used as an index type.
+src/documentation/metrics-dashboard.ts(166,40): error TS2538: Type 'undefined' cannot be used as an index type.
+src/documentation/metrics-dashboard.ts(193,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/documentation/metrics-dashboard.ts(287,17): error TS18048: 'current' is possibly 'undefined'.
+src/documentation/metrics-dashboard.ts(287,27): error TS18048: 'previous' is possibly 'undefined'.
+src/documentation/metrics-dashboard.ts(287,45): error TS18048: 'current' is possibly 'undefined'.
+src/documentation/metrics-dashboard.ts(287,55): error TS18048: 'previous' is possibly 'undefined'.
+src/documentation/metrics-dashboard.ts(289,48): error TS18048: 'previous' is possibly 'undefined'.
+src/documentation/metrics-dashboard.ts(289,59): error TS18048: 'current' is possibly 'undefined'.
+src/documentation/metrics-dashboard.ts(289,90): error TS18048: 'previous' is possibly 'undefined'.
+src/documentation/metrics-dashboard.ts(289,101): error TS18048: 'current' is possibly 'undefined'.
+src/hooks/useAccessibility.ts(140,7): error TS2532: Object is possibly 'undefined'.
+src/hooks/useAccessibility.ts(146,7): error TS2532: Object is possibly 'undefined'.
+src/hooks/useAccessibility.ts(153,7): error TS2532: Object is possibly 'undefined'.
+src/hooks/useAccessibility.ts(160,7): error TS2532: Object is possibly 'undefined'.
+src/hooks/useAccessibility.ts(175,13): error TS18048: 'lastElement' is possibly 'undefined'.
+src/hooks/useAccessibility.ts(180,13): error TS18048: 'firstElement' is possibly 'undefined'.
+src/hooks/useKeyboardShortcuts.ts(21,7): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/hooks/useTouchGestures.ts(27,12): error TS18048: 'touch' is possibly 'undefined'.
+src/hooks/useTouchGestures.ts(28,12): error TS18048: 'touch' is possibly 'undefined'.
+src/hooks/useTouchGestures.ts(37,22): error TS18048: 'touch' is possibly 'undefined'.
+src/hooks/useTouchGestures.ts(38,22): error TS18048: 'touch' is possibly 'undefined'.
+src/hooks/useVoiceNavigation.ts(30,21): error TS2532: Object is possibly 'undefined'.
+src/hooks/useWebSocketQueue.ts(114,17): error TS2345: Argument of type 'QueueItem | undefined' is not assignable to parameter of type 'QueueItem'.
+  Type 'undefined' is not assignable to type 'QueueItem'.
+src/lib/accessibility.ts(166,13): error TS18048: 'lastElement' is possibly 'undefined'.
+src/lib/accessibility.ts(172,13): error TS18048: 'firstElement' is possibly 'undefined'.
+src/lib/accessibility.ts(296,5): error TS2322: Type 'Element | undefined' is not assignable to type 'Element | null'.
+  Type 'undefined' is not assignable to type 'Element | null'.
+src/lib/accessibility.ts(297,5): error TS2322: Type 'Element | undefined' is not assignable to type 'Element | null'.
+  Type 'undefined' is not assignable to type 'Element | null'.
+src/lib/accessibility/focus-management.ts(18,7): error TS18048: 'firstElement' is possibly 'undefined'.
+src/lib/accessibility/focus-management.ts(27,13): error TS18048: 'lastElement' is possibly 'undefined'.
+src/lib/accessibility/focus-management.ts(33,13): error TS18048: 'firstElement' is possibly 'undefined'.
+src/lib/accessibility/focus-management.ts(154,9): error TS18048: 'lastElement' is possibly 'undefined'.
+src/lib/accessibility/focus-management.ts(160,9): error TS18048: 'firstElement' is possibly 'undefined'.
+src/lib/advancedMonitoring.ts(156,54): error TS2532: Object is possibly 'undefined'.
+src/lib/advancedTesting.ts(188,20): error TS2345: Argument of type '{ success: boolean; duration: number; status: number; error?: undefined; } | { success: boolean; duration: number; error: string; status?: undefined; }' is not assignable to parameter of type 'never'.
+  Type '{ success: boolean; duration: number; status: number; error?: undefined; }' is not assignable to type 'never'.
+src/lib/advancedTesting.ts(205,24): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/lib/AIFraudDetection.ts(76,61): error TS2345: Argument of type 'number[] | undefined' is not assignable to parameter of type 'number[]'.
+  Type 'undefined' is not assignable to type 'number[]'.
+src/lib/AIFraudDetection.ts(77,59): error TS2345: Argument of type 'number[] | undefined' is not assignable to parameter of type 'number[]'.
+  Type 'undefined' is not assignable to type 'number[]'.
+src/lib/AIFraudDetection.ts(285,20): error TS2345: Argument of type 'number[] | undefined' is not assignable to parameter of type 'number[]'.
+  Type 'undefined' is not assignable to type 'number[]'.
+src/lib/AIFraudDetection.ts(305,60): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(309,26): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/lib/AIFraudDetection.ts(310,26): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/lib/AIFraudDetection.ts(316,41): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(317,42): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(340,11): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(358,22): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(370,41): error TS2345: Argument of type 'number[] | undefined' is not assignable to parameter of type 'number[]'.
+  Type 'undefined' is not assignable to type 'number[]'.
+src/lib/AIFraudDetection.ts(371,23): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(376,11): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(376,53): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(376,53): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(392,14): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(392,32): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(410,25): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(417,9): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(417,26): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(425,9): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(425,34): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(425,43): error TS2532: Object is possibly 'undefined'.
+src/lib/AIFraudDetection.ts(437,35): error TS2532: Object is possibly 'undefined'.
+src/lib/LocalDataManager.ts(360,23): error TS2538: Type 'undefined' cannot be used as an index type.
+src/lib/LocalDataManager.ts(360,50): error TS2538: Type 'undefined' cannot be used as an index type.
+src/pages/AdjudicationQueue.tsx(110,21): error TS2532: Object is possibly 'undefined'.
+src/pages/AdjudicationQueue.tsx(116,50): error TS2532: Object is possibly 'undefined'.
+src/pages/AdjudicationQueue.tsx(119,34): error TS2532: Object is possibly 'undefined'.
+src/pages/AdjudicationQueue.tsx(202,23): error TS2532: Object is possibly 'undefined'.
+src/pages/BIAnalytics.tsx(4,3): error TS6133: 'LineChart' is declared but its value is never read.
+src/pages/BIAnalytics.tsx(4,14): error TS6133: 'Line' is declared but its value is never read.
+src/pages/BIAnalytics.tsx(4,20): error TS6133: 'PieChart' is declared but its value is never read.
+src/pages/BIAnalytics.tsx(4,30): error TS6133: 'Pie' is declared but its value is never read.
+src/pages/BIAnalytics.tsx(4,35): error TS6133: 'Cell' is declared but its value is never read.
+src/pages/BIAnalytics.tsx(23,7): error TS6133: 'COLORS' is declared but its value is never read.
+src/pages/Cases.tsx(115,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/pages/Cases.tsx(295,24): error TS2532: Object is possibly 'undefined'.
+src/pages/Cases.tsx(302,24): error TS2532: Object is possibly 'undefined'.
+src/pages/Cases.tsx(325,24): error TS2532: Object is possibly 'undefined'.
+src/pages/Cases.tsx(332,24): error TS2532: Object is possibly 'undefined'.
+src/pages/PerformanceDashboard.tsx(106,9): error TS6133: 't' is declared but its value is never read.
+src/pages/UnifiedPluginMarketplace.tsx(54,44): error TS2694: Namespace 'global.JSX' has no exported member 'Element'.
+src/pages/UnifiedPluginMarketplace.tsx(65,38): error TS2694: Namespace 'global.JSX' has no exported member 'Element'.
+src/plugins/translation/providers/MemoryProvider.ts(81,21): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/plugins/translation/providers/MemoryProvider.ts(93,25): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/plugins/translation/providers/MemoryProvider.ts(121,20): error TS2538: Type 'undefined' cannot be used as an index type.
+src/plugins/translation/providers/MemoryProvider.ts(121,41): error TS2538: Type 'undefined' cannot be used as an index type.
+src/plugins/translation/providers/MemoryProvider.ts(122,17): error TS2538: Type 'undefined' cannot be used as an index type.
+src/plugins/translation/providers/MemoryProvider.ts(124,25): error TS2538: Type 'undefined' cannot be used as an index type.
+src/plugins/translation/providers/MemoryProvider.ts(127,13): error TS2538: Type 'undefined' cannot be used as an index type.
+src/plugins/translation/TranslationManager.ts(150,59): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/providers/OfflineQueueContext.tsx(87,11): error TS2578: Unused '@ts-expect-error' directive.
+src/providers/OfflineQueueContext.tsx(89,13): error TS2578: Unused '@ts-expect-error' directive.
+src/services/biometricAuth.ts(65,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/services/CaseSyncEngine.ts(342,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/services/complianceMonitoring.ts(169,5): error TS2322: Type '{ id?: string | undefined; name?: string | undefined; condition?: string | undefined; threshold?: number | undefined; severity?: "high" | "low" | "critical" | "medium" | undefined; enabled?: boolean | undefined; last_triggered?: string; }' is not assignable to type 'AlertRule'.
+  Types of property 'id' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/services/draftPreviewService.ts(76,7): error TS18048: 'draft' is possibly 'undefined'.
+src/services/draftPreviewService.ts(81,7): error TS2322: Type 'DraftState | undefined' is not assignable to type 'DraftState | null'.
+  Type 'undefined' is not assignable to type 'DraftState | null'.
+src/services/edge/cacheManager.ts(18,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/services/evidence.ts(99,66): error TS2532: Object is possibly 'undefined'.
+src/services/EvidenceScorer.ts(334,21): error TS2532: Object is possibly 'undefined'.
+src/services/EvidenceScorer.ts(334,53): error TS2532: Object is possibly 'undefined'.
+src/services/fileProcessing.ts(125,23): error TS2532: Object is possibly 'undefined'.
+src/services/fileProcessing.ts(139,44): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/services/syncOrchestrator.ts(25,31): error TS2532: Object is possibly 'undefined'.
+src/utils/cookieAuth.ts(38,39): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/utils/cookieAuth.ts(46,39): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/utils/secureRandom.ts(7,12): error TS2532: Object is possibly 'undefined'.
+src/utils/secureRandom.ts(21,17): error TS2532: Object is possibly 'undefined'.
+src/utils/secureRandom.ts(22,17): error TS2532: Object is possibly 'undefined'.
+src/utils/secureTokenStorage.ts(153,37): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.

@@ -1,0 +1,17 @@
+
+> frontend@0.0.0 type-check
+> tsc --noEmit
+
+src/api/interceptors_partial.ts(2,3): error TS1434: Unexpected keyword or identifier.
+src/api/interceptors_partial.ts(2,27): error TS1005: ',' expected.
+src/api/interceptors_partial.ts(2,35): error TS1005: ';' expected.
+src/api/interceptors_partial.ts(3,9): error TS1005: ',' expected.
+src/api/interceptors_partial.ts(3,29): error TS1005: ',' expected.
+src/api/interceptors_partial.ts(5,10): error TS1359: Identifier expected. 'const' is a reserved word that cannot be used here.
+src/api/interceptors_partial.ts(5,16): error TS1005: ',' expected.
+src/api/interceptors_partial.ts(5,28): error TS1005: ',' expected.
+src/api/interceptors_partial.ts(5,31): error TS1005: ',' expected.
+src/api/interceptors_partial.ts(5,35): error TS1005: ',' expected.
+src/api/interceptors_partial.ts(5,53): error TS1005: ',' expected.
+src/api/interceptors_partial.ts(5,55): error TS1136: Property assignment expected.
+src/api/interceptors_partial.ts(32,3): error TS1128: Declaration or statement expected.

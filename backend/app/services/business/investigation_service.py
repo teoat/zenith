@@ -3,7 +3,7 @@ Investigation Service - Business logic for fraud investigations
 """
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from sqlalchemy.orm import Session, joinedload
 
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class InvestigationService:
     """Service for managing fraud investigations"""
 
-    def _get_case_with_relationships(self, db: Session, case_id: str) -> Optional[Case]:
+    def _get_case_with_relationships(self, db: Session, case_id: str) -> Case | None:
         """Get case with optimized eager loading to prevent N+1 queries"""
         return (
             db.query(Case)
@@ -29,7 +29,7 @@ class InvestigationService:
 
     def start_investigation(
         self, db: Session, case_id: str, investigator_id: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Start a new investigation for a case"""
         case = self._get_case_with_relationships(db, case_id)
         if not case:
@@ -45,7 +45,7 @@ class InvestigationService:
             "assigned_to": investigator_id,
         }
 
-    def get_investigation_status(self, db: Session, case_id: str) -> Dict[str, Any]:
+    def get_investigation_status(self, db: Session, case_id: str) -> dict[str, Any]:
         """Get current investigation status"""
         case = self._get_case_with_relationships(db, case_id)
         if not case:
@@ -59,8 +59,8 @@ class InvestigationService:
         }
 
     def close_investigation(
-        self, db: Session, case_id: str, resolution: str, notes: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, db: Session, case_id: str, resolution: str, notes: str | None = None
+    ) -> dict[str, Any]:
         """Close an investigation"""
         case = self._get_case_with_relationships(db, case_id)
         if not case:
@@ -76,7 +76,7 @@ class InvestigationService:
 
     def get_related_transactions(
         self, db: Session, case_id: str, limit: int = 50
-    ) -> List[Transaction]:
+    ) -> list[Transaction]:
         """Get transactions related to a case"""
         # This would typically query based on case relationships
         # For now, return flagged transactions as a placeholder

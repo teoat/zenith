@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/frenly_models.py
+# hypothesis_version: 6.148.8
+
+[1.0, 'frenly_conversations', 'frenly_preferences', 'frenly_user_actions', 'frenly_workflows', 'users.id']

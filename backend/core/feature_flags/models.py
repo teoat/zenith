@@ -1,6 +1,9 @@
-from sqlalchemy import Column, String, Boolean, DateTime, JSON, Integer, Text
 import uuid
+
+from sqlalchemy import JSON, Boolean, Column, DateTime, Integer, String, Text
+
 from core.database import Base, utc_now
+
 
 class FeatureFlag(Base):
     __tablename__ = "feature_flags"
@@ -9,7 +12,7 @@ class FeatureFlag(Base):
     name = Column(String, unique=True, nullable=False, index=True)
     description = Column(Text)
     enabled = Column(Boolean, default=False, index=True)
-    rollout_percentage = Column(Integer, default=0) # 0-100
+    rollout_percentage = Column(Integer, default=0)  # 0-100
     target_users = Column(JSON)  # List of user IDs
     target_contexts = Column(JSON)  # Targeting rules
     created_at = Column(DateTime, default=utc_now)

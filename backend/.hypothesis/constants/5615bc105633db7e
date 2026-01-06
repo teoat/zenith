@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/models/system_operations.py
+# hypothesis_version: 6.148.8
+
+[100, 'agent_approvals', 'extend_existing', 'in_progress', 'medium', 'pending', 'rookie_checklists', 'users.id']

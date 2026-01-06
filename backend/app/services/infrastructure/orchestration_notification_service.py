@@ -4,15 +4,13 @@ Notification Service for System Orchestration Framework
 Manages alerts and notifications for system events.
 """
 
-import asyncio
 import json
 import logging
-import smtplib
-from datetime import datetime, timedelta
+from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -36,10 +34,10 @@ class OrchestrationNotificationService:
 
     def __init__(self):
         self.notification_channels = self._initialize_channels()
-        self.notification_history: List[Dict[str, Any]] = []
+        self.notification_history: list[dict[str, Any]] = []
         self.alert_rules = self._initialize_alert_rules()
 
-    def _initialize_channels(self) -> Dict[str, Dict[str, Any]]:
+    def _initialize_channels(self) -> dict[str, dict[str, Any]]:
         """Initialize notification channels."""
         return {
             "email": {
@@ -62,7 +60,7 @@ class OrchestrationNotificationService:
             "dashboard": {"enabled": True, "persistent_alerts": True},
         }
 
-    def _initialize_alert_rules(self) -> Dict[str, Dict[str, Any]]:
+    def _initialize_alert_rules(self) -> dict[str, dict[str, Any]]:
         """Initialize alert rules."""
         return {
             "score_drop": {
@@ -100,7 +98,7 @@ class OrchestrationNotificationService:
             },
         }
 
-    async def check_and_send_alerts(self, system_data: Dict[str, Any]):
+    async def check_and_send_alerts(self, system_data: dict[str, Any]):
         """Check system data and send appropriate alerts."""
         alerts_to_send = []
 
@@ -123,8 +121,8 @@ class OrchestrationNotificationService:
             await self.send_notification(alert)
 
     def _check_score_drop_alert(
-        self, system_data: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+        self, system_data: dict[str, Any]
+    ) -> dict[str, Any] | None:
         """Check for score drop alerts."""
         rule = self.alert_rules["score_drop"]
         if not rule["enabled"]:
@@ -153,8 +151,8 @@ class OrchestrationNotificationService:
         return None
 
     def _check_critical_issue_alerts(
-        self, system_data: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, system_data: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Check for critical issue alerts."""
         rule = self.alert_rules["critical_issue"]
         if not rule["enabled"]:
@@ -190,8 +188,8 @@ class OrchestrationNotificationService:
         return alerts
 
     def _check_system_degradation_alert(
-        self, system_data: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+        self, system_data: dict[str, Any]
+    ) -> dict[str, Any] | None:
         """Check for system degradation alerts."""
         rule = self.alert_rules["system_degradation"]
         if not rule["enabled"]:
@@ -221,7 +219,7 @@ class OrchestrationNotificationService:
 
         return None
 
-    def _get_affected_dimensions(self, system_data: Dict[str, Any]) -> List[str]:
+    def _get_affected_dimensions(self, system_data: dict[str, Any]) -> list[str]:
         """Get dimensions affected by issues."""
         affected = []
         for dimension_name, dimension_data in system_data.items():
@@ -232,7 +230,7 @@ class OrchestrationNotificationService:
                     affected.append(dimension_name)
         return affected
 
-    async def send_notification(self, alert: Dict[str, Any]):
+    async def send_notification(self, alert: dict[str, Any]):
         """Send notification through configured channels."""
         alert_id = f"alert_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
@@ -263,7 +261,7 @@ class OrchestrationNotificationService:
         alert["delivery_status"] = f"{success_count}/{len(channels)} channels"
         self.notification_history.append(alert)
 
-    async def _send_email_alert(self, alert: Dict[str, Any]):
+    async def _send_email_alert(self, alert: dict[str, Any]):
         """Send alert via email."""
         channel_config = self.notification_channels["email"]
         if not channel_config["enabled"]:
@@ -278,15 +276,15 @@ class OrchestrationNotificationService:
             body = f"""
 System Alert Notification
 
-Title: {alert['title']}
-Priority: {alert['priority'].upper()}
-Time: {alert['timestamp']}
+Title: {alert["title"]}
+Priority: {alert["priority"].upper()}
+Time: {alert["timestamp"]}
 
 Message:
-{alert['message']}
+{alert["message"]}
 
 Details:
-{json.dumps(alert.get('details', {}), indent=2)}
+{json.dumps(alert.get("details", {}), indent=2)}
 
 This is an automated notification from the System Orchestration Framework.
             """
@@ -306,7 +304,7 @@ This is an automated notification from the System Orchestration Framework.
             logger.error(f"Email sending failed: {e}")
             raise
 
-    async def _send_slack_alert(self, alert: Dict[str, Any]):
+    async def _send_slack_alert(self, alert: dict[str, Any]):
         """Send alert via Slack."""
         channel_config = self.notification_channels["slack"]
         if not channel_config["enabled"]:
@@ -315,7 +313,7 @@ This is an automated notification from the System Orchestration Framework.
         # In a real implementation, send to Slack webhook
         logger.info(f"Slack alert sent (simulated): {alert['title']}")
 
-    async def _send_webhook_alert(self, alert: Dict[str, Any]):
+    async def _send_webhook_alert(self, alert: dict[str, Any]):
         """Send alert via webhook."""
         channel_config = self.notification_channels["webhook"]
         if not channel_config["enabled"]:
@@ -324,18 +322,18 @@ This is an automated notification from the System Orchestration Framework.
         # In a real implementation, send to webhook URL
         logger.info(f"Webhook alert sent (simulated): {alert['title']}")
 
-    async def _store_dashboard_alert(self, alert: Dict[str, Any]):
+    async def _store_dashboard_alert(self, alert: dict[str, Any]):
         """Store alert for dashboard display."""
         # In a real implementation, store in database or cache
         logger.info(f"Dashboard alert stored: {alert['title']}")
 
-    def get_recent_alerts(self, limit: int = 50) -> List[Dict[str, Any]]:
+    def get_recent_alerts(self, limit: int = 50) -> list[dict[str, Any]]:
         """Get recent alerts."""
         return self.notification_history[-limit:]
 
     def configure_channel(
-        self, channel_name: str, config: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, channel_name: str, config: dict[str, Any]
+    ) -> dict[str, Any]:
         """Configure a notification channel."""
         if channel_name not in self.notification_channels:
             raise ValueError(f"Unknown channel: {channel_name}")
@@ -344,8 +342,8 @@ This is an automated notification from the System Orchestration Framework.
         return self.notification_channels[channel_name]
 
     def configure_alert_rule(
-        self, rule_name: str, config: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, rule_name: str, config: dict[str, Any]
+    ) -> dict[str, Any]:
         """Configure an alert rule."""
         if rule_name not in self.alert_rules:
             raise ValueError(f"Unknown alert rule: {rule_name}")

@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/ai_analytics.py
+# hypothesis_version: 6.148.8
+
+[0.1, 0.2, 0.5, 365, 403, 404, 500, 1000, '/ai-analytics', '/ai/ensemble', '/ai/predict', '/analytics/forecast', '/analytics/insights', '/analytics/query', '/health', '/ml/models', '/ml/train', '/models/upload', '7d', 'AI prediction failed', 'Aggregation method', 'Entity type filter', 'Filter by model type', 'Filter by status', 'Model ID', 'Model ID to check', 'Model listing failed', 'Model parameters', 'Model upload failed', 'Not found', 'Query parameters', 'Time range', 'Type of insights', 'admin', 'ai-analytics', 'confidence_score', 'count', 'data_scientist', 'description', 'estimated_completion', 'generated_at', 'healthy', 'insights', 'metrics', 'ml_engineer', 'model_id', 'model_type', 'model_version', 'models', 'prediction', 'service', 'status', 'super_admin', 'time_range', 'timestamp', 'training_job_id', 'type', 'weighted']

@@ -26,7 +26,7 @@ def generate_final_comprehensive_report():
 
     for file in result_files:
         if Path(file).exists():
-            with open(file, "r") as f:
+            with open(file) as f:
                 phases_data[file] = json.load(f)
 
     # Final comprehensive report

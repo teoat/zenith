@@ -6,8 +6,7 @@ Achieving 10/10 maintainability through clean domain modeling
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
-from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 from uuid import UUID
 
 
@@ -15,12 +14,13 @@ from uuid import UUID
 @dataclass
 class DomainEvent:
     """Base class for all domain events"""
+
     event_id: UUID
     aggregate_id: UUID
     event_type: str
     timestamp: datetime
     version: int
-    data: Dict[str, Any]
+    data: dict[str, Any]
 
     def __post_init__(self):
         if not self.event_id:
@@ -33,6 +33,7 @@ class DomainEvent:
 @dataclass(frozen=True)
 class Money:
     """Money value object for precise financial calculations"""
+
     amount: float
     currency: str = "USD"
 
@@ -42,21 +43,22 @@ class Money:
         if not self.currency:
             raise ValueError("Currency is required")
 
-    def add(self, other: 'Money') -> 'Money':
+    def add(self, other: "Money") -> "Money":
         if self.currency != other.currency:
             raise ValueError("Cannot add different currencies")
         return Money(self.amount + other.amount, self.currency)
 
-    def multiply(self, factor: float) -> 'Money':
+    def multiply(self, factor: float) -> "Money":
         return Money(self.amount * factor, self.currency)
 
 
 @dataclass(frozen=True)
 class RiskScore:
     """Risk score value object with validation"""
+
     value: float
     confidence: float
-    factors: List[str]
+    factors: list[str]
 
     def __post_init__(self):
         if not (0.0 <= self.value <= 1.0):
@@ -68,14 +70,15 @@ class RiskScore:
 @dataclass(frozen=True)
 class EntityId:
     """Strongly typed entity identifier"""
+
     value: UUID
 
     @classmethod
-    def new(cls) -> 'EntityId':
+    def new(cls) -> "EntityId":
         return cls(UUID())
 
     @classmethod
-    def from_string(cls, value: str) -> 'EntityId':
+    def from_string(cls, value: str) -> "EntityId":
         return cls(UUID(value))
 
 
@@ -83,9 +86,10 @@ class EntityId:
 @dataclass
 class AggregateRoot(ABC):
     """Base class for aggregate roots"""
+
     id: EntityId
     version: int = 0
-    _uncommitted_events: List[DomainEvent] = None
+    _uncommitted_events: list[DomainEvent] = None
 
     def __post_init__(self):
         if self._uncommitted_events is None:
@@ -100,9 +104,8 @@ class AggregateRoot(ABC):
     @abstractmethod
     def _when(self, event: DomainEvent):
         """Handle domain event"""
-        pass
 
-    def get_uncommitted_events(self) -> List[DomainEvent]:
+    def get_uncommitted_events(self) -> list[DomainEvent]:
         """Get uncommitted domain events"""
         return self._uncommitted_events.copy()
 
@@ -114,14 +117,15 @@ class AggregateRoot(ABC):
 @dataclass
 class FraudCase(AggregateRoot):
     """Fraud case aggregate root"""
+
     title: str
-    description: Optional[str] = None
+    description: str | None = None
     status: str = "open"
     priority: str = "medium"
-    assignee_id: Optional[EntityId] = None
-    risk_score: Optional[RiskScore] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    assignee_id: EntityId | None = None
+    risk_score: RiskScore | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
     def __post_init__(self):
         super().__post_init__()
@@ -142,10 +146,12 @@ class FraudCase(AggregateRoot):
             timestamp=datetime.now(),
             version=self.version + 1,
             data={
-                "old_assignee": str(self.assignee_id.value) if self.assignee_id else None,
+                "old_assignee": str(self.assignee_id.value)
+                if self.assignee_id
+                else None,
                 "new_assignee": str(investigator_id.value),
-                "assigned_at": datetime.now().isoformat()
-            }
+                "assigned_at": datetime.now().isoformat(),
+            },
         )
         self._apply_event(event)
 
@@ -165,8 +171,8 @@ class FraudCase(AggregateRoot):
                 "new_score": risk_score.value,
                 "confidence": risk_score.confidence,
                 "factors": risk_score.factors,
-                "updated_at": datetime.now().isoformat()
-            }
+                "updated_at": datetime.now().isoformat(),
+            },
         )
         self._apply_event(event)
 
@@ -180,7 +186,7 @@ class FraudCase(AggregateRoot):
             self.risk_score = RiskScore(
                 value=event.data["new_score"],
                 confidence=event.data["confidence"],
-                factors=event.data["factors"]
+                factors=event.data["factors"],
             )
             self.updated_at = datetime.now()
 
@@ -188,13 +194,14 @@ class FraudCase(AggregateRoot):
 @dataclass
 class Transaction:
     """Transaction entity"""
+
     id: EntityId
     case_id: EntityId
     amount: Money
     merchant: str
     transaction_date: datetime
     flagged: bool = False
-    risk_factors: List[str] = None
+    risk_factors: list[str] = None
 
     def __post_init__(self):
         if self.risk_factors is None:
@@ -215,9 +222,7 @@ class FraudAnalysisService:
         self.risk_threshold = risk_threshold
 
     def analyze_transaction_patterns(
-        self,
-        transactions: List[Transaction],
-        case: FraudCase
+        self, transactions: list[Transaction], case: FraudCase
     ) -> RiskScore:
         """Analyze transaction patterns for fraud indicators"""
 
@@ -242,7 +247,9 @@ class FraudAnalysisService:
             sorted_txs = sorted(transactions, key=lambda x: x.transaction_date)
 
             for i in range(1, len(sorted_txs)):
-                diff = (sorted_txs[i].transaction_date - sorted_txs[i-1].transaction_date).seconds
+                diff = (
+                    sorted_txs[i].transaction_date - sorted_txs[i - 1].transaction_date
+                ).seconds
                 time_diffs.append(diff)
 
             avg_time_diff = sum(time_diffs) / len(time_diffs)
@@ -253,11 +260,15 @@ class FraudAnalysisService:
         base_risk = len(risk_factors) * 0.2
         risk_score = min(base_risk + (total_amount / 100000), 1.0)  # Cap at 1.0
 
-        confidence = min(0.5 + (len(transactions) * 0.1), 1.0)  # Higher confidence with more data
+        confidence = min(
+            0.5 + (len(transactions) * 0.1), 1.0
+        )  # Higher confidence with more data
 
         return RiskScore(risk_score, confidence, risk_factors)
 
-    def assess_case_risk(self, case: FraudCase, transactions: List[Transaction]) -> RiskScore:
+    def assess_case_risk(
+        self, case: FraudCase, transactions: list[Transaction]
+    ) -> RiskScore:
         """Assess overall case risk"""
         if not transactions:
             return RiskScore(0.1, 0.8, ["Insufficient transaction data"])
@@ -270,12 +281,12 @@ class FraudAnalysisService:
             "low": 0.5,
             "medium": 1.0,
             "high": 1.5,
-            "critical": 2.0
+            "critical": 2.0,
         }.get(case.priority.lower(), 1.0)
 
         adjusted_risk = min(transaction_risk.value * priority_multiplier, 1.0)
 
-        factors = transaction_risk.factors + [f"Priority: {case.priority}"]
+        factors = [*transaction_risk.factors, f"Priority: {case.priority}"]
 
         return RiskScore(adjusted_risk, transaction_risk.confidence, factors)
 
@@ -283,14 +294,12 @@ class FraudAnalysisService:
 class CaseAssignmentService:
     """Domain service for intelligent case assignment"""
 
-    def __init__(self, workload_capacity: Dict[str, int]):
+    def __init__(self, workload_capacity: dict[str, int]):
         self.workload_capacity = workload_capacity  # investigator_id -> max_cases
 
     def recommend_assignment(
-        self,
-        case: FraudCase,
-        available_investigators: List[Dict[str, Any]]
-    ) -> Optional[EntityId]:
+        self, case: FraudCase, available_investigators: list[dict[str, Any]]
+    ) -> EntityId | None:
         """
         Recommend case assignment based on:
         - Investigator expertise
@@ -305,9 +314,9 @@ class CaseAssignmentService:
         scored_investigators = []
 
         for investigator in available_investigators:
-            inv_id = investigator['id']
-            current_cases = investigator.get('current_cases', 0)
-            expertise = investigator.get('expertise', [])
+            inv_id = investigator["id"]
+            current_cases = investigator.get("current_cases", 0)
+            expertise = investigator.get("expertise", [])
 
             # Base score
             score = 100
@@ -318,15 +327,15 @@ class CaseAssignmentService:
                 score -= 50  # Significant penalty for full capacity
 
             # Adjust for expertise match
-            if 'fraud' in expertise:
+            if "fraud" in expertise:
                 score += 20
-            if 'financial_crime' in expertise:
+            if "financial_crime" in expertise:
                 score += 15
 
             # Adjust for case priority
-            if case.priority == 'critical':
+            if case.priority == "critical":
                 score += 30  # High priority gets priority assignment
-            elif case.priority == 'high':
+            elif case.priority == "high":
                 score += 20
 
             scored_investigators.append((inv_id, score))
@@ -348,7 +357,7 @@ class Repository(ABC):
         pass
 
     @abstractmethod
-    async def find_by_id(self, aggregate_id: EntityId) -> Optional[AggregateRoot]:
+    async def find_by_id(self, aggregate_id: EntityId) -> AggregateRoot | None:
         pass
 
 
@@ -356,15 +365,15 @@ class FraudCaseRepository(Repository):
     """Repository interface for fraud cases"""
 
     @abstractmethod
-    async def find_by_status(self, status: str) -> List[FraudCase]:
+    async def find_by_status(self, status: str) -> list[FraudCase]:
         pass
 
     @abstractmethod
-    async def find_by_assignee(self, assignee_id: EntityId) -> List[FraudCase]:
+    async def find_by_assignee(self, assignee_id: EntityId) -> list[FraudCase]:
         pass
 
     @abstractmethod
-    async def find_high_risk_cases(self, threshold: float) -> List[FraudCase]:
+    async def find_high_risk_cases(self, threshold: float) -> list[FraudCase]:
         pass
 
 
@@ -372,15 +381,17 @@ class TransactionRepository(ABC):
     """Repository interface for transactions"""
 
     @abstractmethod
-    async def find_by_case(self, case_id: EntityId) -> List[Transaction]:
+    async def find_by_case(self, case_id: EntityId) -> list[Transaction]:
         pass
 
     @abstractmethod
-    async def find_flagged_transactions(self) -> List[Transaction]:
+    async def find_flagged_transactions(self) -> list[Transaction]:
         pass
 
     @abstractmethod
-    async def find_suspicious_patterns(self, time_window_hours: int) -> List[Transaction]:
+    async def find_suspicious_patterns(
+        self, time_window_hours: int
+    ) -> list[Transaction]:
         pass
 
 
@@ -392,13 +403,8 @@ class CreateFraudCaseUseCase:
         self.case_repository = case_repository
 
     async def execute(
-        self,
-        title: str,
-        description: Optional[str],
-        priority: str,
-        creator_id: EntityId
+        self, title: str, description: str | None, priority: str, creator_id: EntityId
     ) -> FraudCase:
-
         # Create new case
         case_id = EntityId.new()
         case = FraudCase(
@@ -408,9 +414,9 @@ class CreateFraudCaseUseCase:
             status="open",
             priority=priority,
             assignee_id=None,  # Will be assigned later
-            risk_score=None,   # Will be calculated after transactions
+            risk_score=None,  # Will be calculated after transactions
             created_at=datetime.now(),
-            updated_at=datetime.now()
+            updated_at=datetime.now(),
         )
 
         # Save case
@@ -426,7 +432,7 @@ class AnalyzeCaseRiskUseCase:
         self,
         case_repository: FraudCaseRepository,
         transaction_repository: TransactionRepository,
-        fraud_analysis_service: FraudAnalysisService
+        fraud_analysis_service: FraudAnalysisService,
     ):
         self.case_repository = case_repository
         self.transaction_repository = transaction_repository
@@ -452,18 +458,18 @@ class AnalyzeCaseRiskUseCase:
 
 # Export domain objects
 __all__ = [
-    'DomainEvent',
-    'Money',
-    'RiskScore',
-    'EntityId',
-    'AggregateRoot',
-    'FraudCase',
-    'Transaction',
-    'FraudAnalysisService',
-    'CaseAssignmentService',
-    'Repository',
-    'FraudCaseRepository',
-    'TransactionRepository',
-    'CreateFraudCaseUseCase',
-    'AnalyzeCaseRiskUseCase'
+    "AggregateRoot",
+    "AnalyzeCaseRiskUseCase",
+    "CaseAssignmentService",
+    "CreateFraudCaseUseCase",
+    "DomainEvent",
+    "EntityId",
+    "FraudAnalysisService",
+    "FraudCase",
+    "FraudCaseRepository",
+    "Money",
+    "Repository",
+    "RiskScore",
+    "Transaction",
+    "TransactionRepository",
 ]

@@ -1,5 +1,5 @@
-import sqlite3
 import os
+import sqlite3
 
 # Expand user path manually to match the app logic
 db_path = os.path.expanduser("~/.zenith/fraud_detection.db")
@@ -7,7 +7,9 @@ db_path = os.path.expanduser("~/.zenith/fraud_detection.db")
 print(f"Migrating database at: {db_path}")
 
 if not os.path.exists(db_path):
-    print("Database file not found. Skipping migration (tables will be created by app startup).")
+    print(
+        "Database file not found. Skipping migration (tables will be created by app startup)."
+    )
     exit(0)
 
 conn = sqlite3.connect(db_path)
@@ -30,15 +32,19 @@ except sqlite3.OperationalError:
     );
     """)
     cursor.execute("CREATE INDEX ix_projects_name ON projects (name)")
-    
+
     # Add default project
-    import uuid
     from datetime import datetime
-    
+
     print("Seeding default project...")
     cursor.execute(
         "INSERT INTO projects (id, name, description, created_at) VALUES (?, ?, ?, ?)",
-        ("default", "Default Project", "Auto-generated during migration", datetime.utcnow())
+        (
+            "default",
+            "Default Project",
+            "Auto-generated during migration",
+            datetime.utcnow(),
+        ),
     )
 
 # 2. Add project_id to cases
@@ -64,7 +70,9 @@ try:
     print("Cases table already has customer_name.")
 except sqlite3.OperationalError:
     print("Adding customer_name to cases...")
-    cursor.execute("ALTER TABLE cases ADD COLUMN customer_name VARCHAR DEFAULT 'Unknown'")
+    cursor.execute(
+        "ALTER TABLE cases ADD COLUMN customer_name VARCHAR DEFAULT 'Unknown'"
+    )
 
 # 3. Add status to fraud_alerts
 try:
@@ -72,7 +80,9 @@ try:
     print("Fraud_alerts table already has status.")
 except sqlite3.OperationalError:
     print("Adding status to fraud_alerts...")
-    cursor.execute("ALTER TABLE fraud_alerts ADD COLUMN status VARCHAR DEFAULT 'pending'")
+    cursor.execute(
+        "ALTER TABLE fraud_alerts ADD COLUMN status VARCHAR DEFAULT 'pending'"
+    )
     cursor.execute("CREATE INDEX ix_fraud_alerts_status ON fraud_alerts (status)")
 
 conn.commit()

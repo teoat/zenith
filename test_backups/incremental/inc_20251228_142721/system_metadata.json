@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-12-28T14:27:21.485774",
+  "version": "1.0.0",
+  "system_info": {
+    "platform": "Darwin",
+    "python_version": "3.12",
+    "node_version": "v22.21.1"
+  },
+  "backup_config": {
+    "backup_dir": "./test_backups",
+    "database_path": "./test.db",
+    "evidence_dir": "./test_evidence",
+    "config_dir": "./data/config",
+    "retention_days": 7,
+    "max_backup_size_gb": 10,
+    "compression_level": 6,
+    "encryption_enabled": true,
+    "remote_backup_enabled": false,
+    "remote_backup_url": "",
+    "backup_schedule": "0 2 * * *",
+    "full_backup_interval_days": 7,
+    "incremental_backup_enabled": true
+  },
+  "backup_stats": {
+    "total_backups": 0,
+    "successful_backups": 0,
+    "failed_backups": 0,
+    "total_size_gb": 0.0,
+    "last_backup_duration": 0,
+    "compression_ratio": 0.0
+  }
+}

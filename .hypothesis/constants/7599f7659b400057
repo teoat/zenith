@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/search.py
+# hypothesis_version: 6.148.8
+
+[0.0, 500, '/semantic', '/semantic/stats', '/stats', 'endpoint', 'evidence_index_stats', 'initialized', 'query', 'results', 'search_evidence', 'total_documents', 'total_results']

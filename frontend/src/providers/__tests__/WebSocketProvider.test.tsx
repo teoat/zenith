@@ -1,5 +1,6 @@
 import {  render, screen, waitFor, act } from '@testing-library/react';
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import '@testing-library/jest-dom';
+import { describe, it, jest, beforeEach } from '@jest/globals';
 import { WebSocketProvider, useWebSocket } from '../WebSocketProvider';
 import { ReactNode } from 'react';
 

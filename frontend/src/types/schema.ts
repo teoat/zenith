@@ -76,3 +76,7 @@ export interface PaginatedResponse<T> {
   page: number;
   pageSize: number;
 }
+
+export type CaseId = string;
+export type UserId = string;
+export type ProjectId = string;

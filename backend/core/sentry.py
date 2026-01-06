@@ -53,7 +53,7 @@ def before_send_handler(event, hint):
     return event
 
 
-def capture_exception(error: Exception, context: dict = None):
+def capture_exception(error: Exception, context: dict | None = None):
     """Manually capture an exception with context"""
     with sentry_sdk.push_scope() as scope:
         if context:
@@ -62,7 +62,7 @@ def capture_exception(error: Exception, context: dict = None):
         sentry_sdk.capture_exception(error)
 
 
-def capture_message(message: str, level: str = "info", context: dict = None):
+def capture_message(message: str, level: str = "info", context: dict | None = None):
     """Capture a message with context"""
     with sentry_sdk.push_scope() as scope:
         if context:

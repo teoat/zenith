@@ -4,7 +4,6 @@ Provides comprehensive backup, recovery, and business continuity capabilities
 """
 
 import asyncio
-import gzip
 import hashlib
 import json
 import logging
@@ -12,12 +11,11 @@ import os
 import shutil
 import sqlite3
 import tarfile
-import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +25,7 @@ class BackupManager:
     Enterprise-grade backup and disaster recovery manager
     """
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: dict[str, Any]):
         self.config = {
             "backup_dir": "./data/backups",
             "database_path": "./data/fraud_detection.db",
@@ -80,11 +78,11 @@ class BackupManager:
 
         logger.info("Backup Manager initialized")
 
-    def _load_metadata(self) -> Dict[str, Any]:
+    def _load_metadata(self) -> dict[str, Any]:
         """Load backup metadata from disk"""
         try:
             if self.metadata_file.exists():
-                with open(self.metadata_file, "r") as f:
+                with open(self.metadata_file) as f:
                     return json.load(f)
         except Exception as e:
             logger.error(f"Failed to load backup metadata: {e}")
@@ -104,7 +102,7 @@ class BackupManager:
         except Exception as e:
             logger.error(f"Failed to save backup metadata: {e}")
 
-    async def create_full_backup(self, reason: str = "scheduled") -> Dict[str, Any]:
+    async def create_full_backup(self, reason: str = "scheduled") -> dict[str, Any]:
         """
         Create a full backup of all system data
         """
@@ -179,7 +177,7 @@ class BackupManager:
 
     async def create_incremental_backup(
         self, reason: str = "scheduled"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Create an incremental backup since last full backup
         """
@@ -256,7 +254,7 @@ class BackupManager:
         finally:
             self.is_backup_running = False
 
-    async def _backup_database(self, backup_dir: Path) -> Dict[str, Any]:
+    async def _backup_database(self, backup_dir: Path) -> dict[str, Any]:
         """Backup the SQLite database"""
         db_path = Path(self.config["database_path"])
         if not db_path.exists():
@@ -283,7 +281,7 @@ class BackupManager:
             with sqlite3.connect(dest_path) as dest:
                 source.backup(dest)
 
-    async def _backup_evidence(self, backup_dir: Path) -> Dict[str, Any]:
+    async def _backup_evidence(self, backup_dir: Path) -> dict[str, Any]:
         """Backup evidence files"""
         evidence_dir = Path(self.config["evidence_dir"])
         if not evidence_dir.exists():
@@ -310,7 +308,7 @@ class BackupManager:
             "path": str(backup_path),
         }
 
-    async def _backup_config(self, backup_dir: Path) -> Dict[str, Any]:
+    async def _backup_config(self, backup_dir: Path) -> dict[str, Any]:
         """Backup configuration files"""
         config_files = [
             ".env",
@@ -340,7 +338,7 @@ class BackupManager:
             "path": str(backup_path),
         }
 
-    async def _backup_metadata(self, backup_dir: Path) -> Dict[str, Any]:
+    async def _backup_metadata(self, backup_dir: Path) -> dict[str, Any]:
         """Backup system metadata"""
         metadata_path = backup_dir / "system_metadata.json"
 
@@ -380,7 +378,7 @@ class BackupManager:
             return "Unknown"
 
     async def _create_archive(
-        self, backup_id: str, backup_dir: Path, components: Dict[str, Any]
+        self, backup_id: str, backup_dir: Path, components: dict[str, Any]
     ) -> Path:
         """Create compressed archive of backup"""
         archive_name = f"{backup_id}.tar.gz"
@@ -418,7 +416,7 @@ class BackupManager:
 
         return hash_sha256.hexdigest()
 
-    async def _get_changes_since(self, since_datetime: datetime) -> Dict[str, Any]:
+    async def _get_changes_since(self, since_datetime: datetime) -> dict[str, Any]:
         """Get changes since specified datetime"""
         changes = {
             "database_modified": await self._check_database_changes(since_datetime),
@@ -464,8 +462,8 @@ class BackupManager:
         return False
 
     async def _backup_changed_components(
-        self, backup_dir: Path, changes: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, backup_dir: Path, changes: dict[str, Any]
+    ) -> dict[str, Any]:
         """Backup only changed components for incremental backup"""
         components = {}
 
@@ -483,7 +481,7 @@ class BackupManager:
 
         return components
 
-    def _update_backup_stats(self, backup_info: Dict[str, Any], success: bool):
+    def _update_backup_stats(self, backup_info: dict[str, Any], success: bool):
         """Update backup statistics"""
         self.backup_stats["total_backups"] += 1
 
@@ -557,7 +555,7 @@ class BackupManager:
         if removed_count > 0:
             logger.info(f"Cleaned up {removed_count} old backup files")
 
-    async def _upload_to_remote(self, archive_path: Path, backup_info: Dict[str, Any]):
+    async def _upload_to_remote(self, archive_path: Path, backup_info: dict[str, Any]):
         """Upload backup to remote storage"""
         try:
             # This would implement remote backup to S3, Azure, etc.
@@ -567,8 +565,8 @@ class BackupManager:
             logger.error(f"Remote backup upload failed: {e}")
 
     async def restore_backup(
-        self, backup_id: str, target_dir: str = None
-    ) -> Dict[str, Any]:
+        self, backup_id: str, target_dir: str | None = None
+    ) -> dict[str, Any]:
         """
         Restore system from backup
         """
@@ -624,8 +622,8 @@ class BackupManager:
             return {"success": False, "error": str(e)}
 
     async def _restore_components(
-        self, backup_dir: Path, backup_info: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, backup_dir: Path, backup_info: dict[str, Any]
+    ) -> dict[str, Any]:
         """Restore individual components"""
         results = {}
 
@@ -643,7 +641,7 @@ class BackupManager:
 
         return results
 
-    async def _restore_database(self, backup_dir: Path) -> Dict[str, Any]:
+    async def _restore_database(self, backup_dir: Path) -> dict[str, Any]:
         """Restore database from backup"""
         backup_db = backup_dir / "database.db"
         target_db = Path(self.config["database_path"])
@@ -666,7 +664,7 @@ class BackupManager:
 
         return {"status": "skipped", "reason": "Database backup not found"}
 
-    async def _restore_evidence(self, backup_dir: Path) -> Dict[str, Any]:
+    async def _restore_evidence(self, backup_dir: Path) -> dict[str, Any]:
         """Restore evidence files from backup"""
         backup_evidence = backup_dir / "evidence"
         target_evidence = Path(self.config["evidence_dir"])
@@ -694,7 +692,7 @@ class BackupManager:
 
         return {"status": "skipped", "reason": "Evidence backup not found"}
 
-    async def _restore_config(self, backup_dir: Path) -> Dict[str, Any]:
+    async def _restore_config(self, backup_dir: Path) -> dict[str, Any]:
         """Restore configuration files from backup"""
         backup_config = backup_dir / "config"
 
@@ -715,7 +713,7 @@ class BackupManager:
 
         return {"status": "skipped", "reason": "Config backup not found"}
 
-    def get_backup_status(self) -> Dict[str, Any]:
+    def get_backup_status(self) -> dict[str, Any]:
         """Get current backup system status"""
         return {
             "is_backup_running": self.is_backup_running,
@@ -736,11 +734,11 @@ class BackupManager:
             },
         }
 
-    def get_available_backups(self) -> List[Dict[str, Any]]:
+    def get_available_backups(self) -> list[dict[str, Any]]:
         """Get list of available backups"""
         return self.backup_metadata["backups"]
 
-    async def verify_backup_integrity(self, backup_id: str) -> Dict[str, Any]:
+    async def verify_backup_integrity(self, backup_id: str) -> dict[str, Any]:
         """Verify integrity of a backup"""
         try:
             backup_info = None
@@ -777,7 +775,7 @@ class BackupManager:
                         return {"valid": False, "error": "Archive is empty"}
 
             except Exception as e:
-                return {"valid": False, "error": f"Archive corrupted: {str(e)}"}
+                return {"valid": False, "error": f"Archive corrupted: {e!s}"}
 
             return {
                 "valid": True,

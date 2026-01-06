@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/core/exceptions.py
+# hypothesis_version: 6.148.8
+
+['AUTH_ERROR', 'BUSINESS_LOGIC_ERROR', 'DATA_INTEGRITY_ERROR', 'INTEGRATION_ERROR', 'INTERNAL_ERROR', 'NOT_FOUND', 'PERMISSION_ERROR', 'SERVICE_ERROR', 'SIMULATION_ERROR', 'VALIDATION_ERROR', 'id', 'resource']

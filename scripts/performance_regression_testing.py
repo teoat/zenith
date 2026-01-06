@@ -4,18 +4,20 @@ Automated Performance Regression Testing Framework
 Monitors and detects performance regressions in the fraud detection platform
 """
 
-import time
-import statistics
-import json
-from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, field
 import asyncio
+import json
+import statistics
+import time
+from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List
+
 
 @dataclass
 class PerformanceBenchmark:
     """Performance benchmark result"""
+
     test_name: str
     timestamp: datetime
     response_time: float
@@ -23,11 +25,13 @@ class PerformanceBenchmark:
     memory_usage: float
     cpu_usage: float
     error_rate: float
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
+
 
 @dataclass
 class PerformanceRegression:
     """Detected performance regression"""
+
     metric: str
     baseline_value: float
     current_value: float
@@ -36,28 +40,31 @@ class PerformanceRegression:
     severity: str
     description: str
 
+
 class PerformanceRegressionTester:
     """Automated performance regression testing system"""
 
     def __init__(self):
-        self.benchmarks: List[PerformanceBenchmark] = []
-        self.baseline_metrics: Dict[str, Dict[str, float]] = {}
+        self.benchmarks: list[PerformanceBenchmark] = []
+        self.baseline_metrics: dict[str, dict[str, float]] = {}
         self.regression_thresholds = {
             "response_time": 0.20,  # 20% degradation allowed
-            "throughput": -0.15,    # 15% throughput drop allowed
-            "memory_usage": 0.25,   # 25% memory increase allowed
-            "cpu_usage": 0.30,      # 30% CPU increase allowed
-            "error_rate": 0.10      # 10% error rate increase allowed
+            "throughput": -0.15,  # 15% throughput drop allowed
+            "memory_usage": 0.25,  # 25% memory increase allowed
+            "cpu_usage": 0.30,  # 30% CPU increase allowed
+            "error_rate": 0.10,  # 10% error rate increase allowed
         }
 
     def load_baseline_metrics(self):
         """Load baseline performance metrics"""
         baseline_file = Path("performance_baseline.json")
         if baseline_file.exists():
-            with open(baseline_file, 'r') as f:
+            with open(baseline_file) as f:
                 data = json.load(f)
                 self.baseline_metrics = data.get("metrics", {})
-                print(f"✅ Loaded baseline metrics from {len(self.baseline_metrics)} test runs")
+                print(
+                    f"✅ Loaded baseline metrics from {len(self.baseline_metrics)} test runs"
+                )
         else:
             print("⚠️ No baseline metrics found. Run performance tests first.")
 
@@ -76,14 +83,22 @@ class PerformanceRegressionTester:
                     "throughputs": [],
                     "memory_usages": [],
                     "cpu_usages": [],
-                    "error_rates": []
+                    "error_rates": [],
                 }
 
-            test_metrics[benchmark.test_name]["response_times"].append(benchmark.response_time)
-            test_metrics[benchmark.test_name]["throughputs"].append(benchmark.throughput)
-            test_metrics[benchmark.test_name]["memory_usages"].append(benchmark.memory_usage)
+            test_metrics[benchmark.test_name]["response_times"].append(
+                benchmark.response_time
+            )
+            test_metrics[benchmark.test_name]["throughputs"].append(
+                benchmark.throughput
+            )
+            test_metrics[benchmark.test_name]["memory_usages"].append(
+                benchmark.memory_usage
+            )
             test_metrics[benchmark.test_name]["cpu_usages"].append(benchmark.cpu_usage)
-            test_metrics[benchmark.test_name]["error_rates"].append(benchmark.error_rate)
+            test_metrics[benchmark.test_name]["error_rates"].append(
+                benchmark.error_rate
+            )
 
         # Calculate averages
         baseline_data = {"timestamp": datetime.now().isoformat(), "metrics": {}}
@@ -94,15 +109,17 @@ class PerformanceRegressionTester:
                 "avg_memory_usage": statistics.mean(metrics["memory_usages"]),
                 "avg_cpu_usage": statistics.mean(metrics["cpu_usages"]),
                 "avg_error_rate": statistics.mean(metrics["error_rates"]),
-                "sample_count": len(metrics["response_times"])
+                "sample_count": len(metrics["response_times"]),
             }
 
-        with open("performance_baseline.json", 'w') as f:
+        with open("performance_baseline.json", "w") as f:
             json.dump(baseline_data, f, indent=2)
 
         print(f"✅ Saved baseline metrics for {len(test_metrics)} tests")
 
-    async def run_performance_test(self, test_name: str, test_function, *args, **kwargs) -> PerformanceBenchmark:
+    async def run_performance_test(
+        self, test_name: str, test_function, *args, **kwargs
+    ) -> PerformanceBenchmark:
         """Run a performance test and capture metrics"""
 
         print(f"🏃 Running performance test: {test_name}")
@@ -124,8 +141,10 @@ class PerformanceRegressionTester:
 
             # Simulate metrics (in real implementation, would use actual monitoring)
             response_time = duration / 10  # Average response time
-            throughput = 100 / duration    # Requests per second
-            memory_usage = (start_metrics.get("memory", 50) + end_metrics.get("memory", 50)) / 2
+            throughput = 100 / duration  # Requests per second
+            memory_usage = (
+                start_metrics.get("memory", 50) + end_metrics.get("memory", 50)
+            ) / 2
             cpu_usage = (start_metrics.get("cpu", 30) + end_metrics.get("cpu", 30)) / 2
             error_rate = 0.001  # Very low error rate
 
@@ -140,8 +159,8 @@ class PerformanceRegressionTester:
                 metadata={
                     "duration": duration,
                     "start_metrics": start_metrics,
-                    "end_metrics": end_metrics
-                }
+                    "end_metrics": end_metrics,
+                },
             )
 
             self.benchmarks.append(benchmark)
@@ -160,22 +179,23 @@ class PerformanceRegressionTester:
                 memory_usage=100,
                 cpu_usage=100,
                 error_rate=1.0,
-                metadata={"error": str(e)}
+                metadata={"error": str(e)},
             )
 
-    async def _capture_system_metrics(self) -> Dict[str, float]:
+    async def _capture_system_metrics(self) -> dict[str, float]:
         """Capture current system metrics"""
         # In a real implementation, this would use psutil, prometheus client, etc.
         # For demo purposes, return simulated metrics
         import random
+
         return {
             "memory": random.uniform(40, 80),
             "cpu": random.uniform(20, 70),
             "disk": random.uniform(30, 60),
-            "network": random.uniform(10, 50)
+            "network": random.uniform(10, 50),
         }
 
-    def detect_regressions(self) -> List[PerformanceRegression]:
+    def detect_regressions(self) -> list[PerformanceRegression]:
         """Detect performance regressions compared to baseline"""
 
         regressions = []
@@ -193,11 +213,15 @@ class PerformanceRegressionTester:
 
             # Check each metric for regression
             metrics_to_check = [
-                ("response_time", benchmark.response_time, baseline["avg_response_time"]),
+                (
+                    "response_time",
+                    benchmark.response_time,
+                    baseline["avg_response_time"],
+                ),
                 ("throughput", benchmark.throughput, baseline["avg_throughput"]),
                 ("memory_usage", benchmark.memory_usage, baseline["avg_memory_usage"]),
                 ("cpu_usage", benchmark.cpu_usage, baseline["avg_cpu_usage"]),
-                ("error_rate", benchmark.error_rate, baseline["avg_error_rate"])
+                ("error_rate", benchmark.error_rate, baseline["avg_error_rate"]),
             ]
 
             for metric_name, current_value, baseline_value in metrics_to_check:
@@ -205,7 +229,12 @@ class PerformanceRegressionTester:
                     continue
 
                 # Calculate degradation (positive = worse performance)
-                if metric_name in ["response_time", "memory_usage", "cpu_usage", "error_rate"]:
+                if metric_name in [
+                    "response_time",
+                    "memory_usage",
+                    "cpu_usage",
+                    "error_rate",
+                ]:
                     degradation = (current_value - baseline_value) / baseline_value
                 else:  # throughput (negative = worse)
                     degradation = (baseline_value - current_value) / baseline_value
@@ -222,14 +251,16 @@ class PerformanceRegressionTester:
                         degradation_percentage=degradation * 100,
                         threshold_percentage=threshold * 100,
                         severity=severity,
-                        description=".2f"
+                        description=".2f",
                     )
 
                     regressions.append(regression)
 
         return regressions
 
-    def generate_regression_report(self, regressions: List[PerformanceRegression]) -> Dict[str, Any]:
+    def generate_regression_report(
+        self, regressions: list[PerformanceRegression]
+    ) -> dict[str, Any]:
         """Generate performance regression report"""
 
         report = {
@@ -239,76 +270,98 @@ class PerformanceRegressionTester:
             "overall_status": "PASS" if len(regressions) == 0 else "FAIL",
             "regressions": [],
             "benchmarks": [],
-            "recommendations": []
+            "recommendations": [],
         }
 
         # Add regression details
         for regression in regressions:
-            report["regressions"].append({
-                "metric": regression.metric,
-                "severity": regression.severity,
-                "baseline_value": regression.baseline_value,
-                "current_value": regression.current_value,
-                "degradation_percentage": regression.degradation_percentage,
-                "description": regression.description
-            })
+            report["regressions"].append(
+                {
+                    "metric": regression.metric,
+                    "severity": regression.severity,
+                    "baseline_value": regression.baseline_value,
+                    "current_value": regression.current_value,
+                    "degradation_percentage": regression.degradation_percentage,
+                    "description": regression.description,
+                }
+            )
 
         # Add benchmark summaries
         for benchmark in self.benchmarks:
-            report["benchmarks"].append({
-                "test_name": benchmark.test_name,
-                "timestamp": benchmark.timestamp.isoformat(),
-                "response_time": benchmark.response_time,
-                "throughput": benchmark.throughput,
-                "memory_usage": benchmark.memory_usage,
-                "cpu_usage": benchmark.cpu_usage,
-                "error_rate": benchmark.error_rate
-            })
+            report["benchmarks"].append(
+                {
+                    "test_name": benchmark.test_name,
+                    "timestamp": benchmark.timestamp.isoformat(),
+                    "response_time": benchmark.response_time,
+                    "throughput": benchmark.throughput,
+                    "memory_usage": benchmark.memory_usage,
+                    "cpu_usage": benchmark.cpu_usage,
+                    "error_rate": benchmark.error_rate,
+                }
+            )
 
         # Generate recommendations
         if regressions:
             high_severity = len([r for r in regressions if r.severity == "HIGH"])
             if high_severity > 0:
-                report["recommendations"].append("URGENT: Address high-severity performance regressions before deployment")
+                report["recommendations"].append(
+                    "URGENT: Address high-severity performance regressions before deployment"
+                )
 
-            report["recommendations"].append("Investigate root causes of detected performance regressions")
-            report["recommendations"].append("Consider performance optimizations for degraded metrics")
-            report["recommendations"].append("Update baseline metrics if performance changes are intentional")
+            report["recommendations"].append(
+                "Investigate root causes of detected performance regressions"
+            )
+            report["recommendations"].append(
+                "Consider performance optimizations for degraded metrics"
+            )
+            report["recommendations"].append(
+                "Update baseline metrics if performance changes are intentional"
+            )
         else:
-            report["recommendations"].append("Performance is within acceptable thresholds")
-            report["recommendations"].append("Continue monitoring for future regressions")
+            report["recommendations"].append(
+                "Performance is within acceptable thresholds"
+            )
+            report["recommendations"].append(
+                "Continue monitoring for future regressions"
+            )
 
         # Save report
         report_path = Path("performance_regression_report.json")
-        with open(report_path, 'w') as f:
+        with open(report_path, "w") as f:
             json.dump(report, f, indent=2, default=str)
 
         return report
+
 
 # Sample test functions
 async def api_response_time_test():
     """Test API response times"""
     await asyncio.sleep(0.1)  # Simulate API call
 
+
 async def fraud_detection_throughput_test():
     """Test fraud detection throughput"""
     await asyncio.sleep(0.05)  # Simulate processing
+
 
 async def database_query_performance_test():
     """Test database query performance"""
     await asyncio.sleep(0.02)  # Simulate DB query
 
+
 async def memory_intensive_operation_test():
     """Test memory-intensive operations"""
     # Simulate memory usage
-    data = [i for i in range(10000)]  # Create some data
+    data = list(range(10000))  # Create some data
     await asyncio.sleep(0.03)
+
 
 async def cpu_intensive_calculation_test():
     """Test CPU-intensive calculations"""
     # Simulate CPU work
-    result = sum(i*i for i in range(1000))
+    result = sum(i * i for i in range(1000))
     await asyncio.sleep(0.04)
+
 
 async def run_performance_regression_tests():
     """Run comprehensive performance regression testing"""
@@ -327,7 +380,7 @@ async def run_performance_regression_tests():
         ("Fraud Detection Throughput", fraud_detection_throughput_test),
         ("Database Query Performance", database_query_performance_test),
         ("Memory Intensive Operations", memory_intensive_operation_test),
-        ("CPU Intensive Calculations", cpu_intensive_calculation_test)
+        ("CPU Intensive Calculations", cpu_intensive_calculation_test),
     ]
 
     # Run all tests
@@ -358,9 +411,10 @@ async def run_performance_regression_tests():
     print(f"Tests Run: {report['benchmarks_run']}")
     print(f"Regressions Detected: {report['regressions_detected']}")
     print(f"Overall Status: {report['overall_status']}")
-    print(f"Report saved to: performance_regression_report.json")
+    print("Report saved to: performance_regression_report.json")
 
     return report
+
 
 if __name__ == "__main__":
     asyncio.run(run_performance_regression_tests())

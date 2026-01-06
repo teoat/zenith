@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/monitoring/phase1_monitoring.py
+# hypothesis_version: 6.148.8
+
+[0.0, 0.05, 0.1, 0.2, 0.8, 0.9, 0.99, 1.0, 3600.0, 180, 300, 500, 600, 1000, '!=', '<', '<=', '==', '>', '>=', 'API Error Rate', 'High Memory Usage', 'acknowledged', 'active', 'active_alerts', 'alert_rules', 'alerts_by_severity', 'api_error_rate', 'api_response_time', 'auth_attempt', 'auth_failure_rate', 'availability', 'business', 'category', 'critical', 'database', 'db_query_time', 'db_slow_query', 'db_slow_query_rate', 'degraded', 'error', 'healthy', 'id', 'info', 'labels', 'memory_usage', 'memory_usage_high', 'message', 'metadata', 'method', 'metric_value', 'metrics_tracked', 'path', 'performance', 'poor', 'resolved', 'rule_id', 'rule_name', 'security', 'severity', 'silenced', 'status', 'success', 'system', 'system_health', 'timestamp', 'triggered_at', 'uptime_seconds', 'value', 'warning']

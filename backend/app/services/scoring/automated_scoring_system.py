@@ -10,7 +10,7 @@ import logging
 import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from app.services.diagnostics.diagnostic_service import DiagnosticService
 
@@ -70,7 +70,7 @@ class AutomatedScoringSystem:
                 "CREATE INDEX IF NOT EXISTS idx_overall_timestamp ON overall_scores(timestamp)"
             )
 
-    async def run_scoring_cycle(self) -> Dict[str, Any]:
+    async def run_scoring_cycle(self) -> dict[str, Any]:
         """Run a complete scoring cycle."""
         try:
             logger.info("Starting automated scoring cycle")
@@ -104,8 +104,8 @@ class AutomatedScoringSystem:
             return {"error": str(e), "timestamp": datetime.now().isoformat()}
 
     async def _calculate_trends(
-        self, current_diagnostics: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, current_diagnostics: dict[str, Any]
+    ) -> dict[str, Any]:
         """Calculate trends based on historical data."""
         trends = {}
 
@@ -135,8 +135,8 @@ class AutomatedScoringSystem:
         return trends
 
     def _analyze_trend(
-        self, dimension: str, current_score: float, historical: Dict[str, List[float]]
-    ) -> Dict[str, Any]:
+        self, dimension: str, current_score: float, historical: dict[str, list[float]]
+    ) -> dict[str, Any]:
         """Analyze trend for a specific dimension."""
         historical_scores = historical.get(dimension, [])
 
@@ -144,7 +144,7 @@ class AutomatedScoringSystem:
             return {"trend": "insufficient_data", "change": 0, "volatility": 0}
 
         # Calculate recent trend (last 3 scores)
-        recent_scores = historical_scores[-3:] + [current_score]
+        recent_scores = [*historical_scores[-3:], current_score]
         change = recent_scores[-1] - recent_scores[0]
 
         # Determine trend
@@ -177,7 +177,7 @@ class AutomatedScoringSystem:
 
     def _get_historical_scores(
         self, days_back: int = 7
-    ) -> Dict[str, List[Dict[str, Any]]]:
+    ) -> dict[str, list[dict[str, Any]]]:
         """Get historical scoring data."""
         cutoff_date = (datetime.now() - timedelta(days=days_back)).isoformat()
 
@@ -208,7 +208,7 @@ class AutomatedScoringSystem:
         return historical
 
     async def _store_scoring_results(
-        self, diagnostics: Dict[str, Any], trends: Dict[str, Any]
+        self, diagnostics: dict[str, Any], trends: dict[str, Any]
     ):
         """Store scoring results in database."""
         timestamp = datetime.now().isoformat()
@@ -261,8 +261,8 @@ class AutomatedScoringSystem:
             conn.commit()
 
     def _generate_alerts(
-        self, diagnostics: Dict[str, Any], trends: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, diagnostics: dict[str, Any], trends: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Generate alerts based on diagnostics and trends."""
         alerts = []
 
@@ -319,7 +319,7 @@ class AutomatedScoringSystem:
 
         return alerts
 
-    async def get_scoring_history(self, days_back: int = 30) -> Dict[str, Any]:
+    async def get_scoring_history(self, days_back: int = 30) -> dict[str, Any]:
         """Get historical scoring data for dashboard."""
         cutoff_date = (datetime.now() - timedelta(days=days_back)).isoformat()
 

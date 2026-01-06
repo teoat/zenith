@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/models/projects.py
+# hypothesis_version: 6.148.8
+
+[100, 255, 500, 'Case', 'CaseActivity', 'CaseNote', 'CaseNote.created_at', 'Evidence', 'FraudAlert', 'Milestone', 'Project', 'Transaction', 'User', 'active', 'activities', 'archived', 'assigned_to', 'case', 'case_activities', 'case_notes', 'cases', 'cases.id', 'closed', 'created_at', 'critical', 'escalated', 'extend_existing', 'high', 'investigating', 'low', 'medium', 'milestones', 'notes', 'open', 'pending', 'project', 'projects', 'projects.id', 'users.id']

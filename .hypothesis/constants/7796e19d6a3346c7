@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/models/compliance_audit.py
+# hypothesis_version: 6.148.8
+
+[100, 255, 500, 'USD', 'audit_logs', 'cases.id', 'completed', 'draft', 'extend_existing', 'medium', 'regulatory_reports', 'report_number', 'sars', 'training_records', 'users.id']

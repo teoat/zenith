@@ -2,9 +2,7 @@ import json
 import logging
 import os
 import sqlite3
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +84,7 @@ class EvidenceSearchIndex:
             )
 
     def index_evidence(
-        self, evidence_id: str, file_path: str, processing_result: Dict[str, Any]
+        self, evidence_id: str, file_path: str, processing_result: dict[str, Any]
     ):
         """Index processed evidence for search"""
         try:
@@ -126,8 +124,8 @@ class EvidenceSearchIndex:
             return False
 
     def search_evidence(
-        self, query: str, limit: int = 20, filters: Optional[Dict[str, Any]] = None
-    ) -> List[Dict[str, Any]]:
+        self, query: str, limit: int = 20, filters: dict[str, Any] | None = None
+    ) -> list[dict[str, Any]]:
         """Search indexed evidence"""
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -200,7 +198,7 @@ class EvidenceSearchIndex:
             logger.error(f"Search failed: {e}")
             return []
 
-    def get_evidence_stats(self) -> Dict[str, Any]:
+    def get_evidence_stats(self) -> dict[str, Any]:
         """Get statistics about indexed evidence"""
         try:
             with sqlite3.connect(self.db_path) as conn:

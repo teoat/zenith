@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/providers.py
+# hypothesis_version: 6.148.8
+
+[404, '/categories', '/health', '/providers', '/status', '/{category}/current', '/{category}/validate', 'Provider Management', 'ai_embedding', 'blockchain', 'categories', 'category', 'count', 'degraded', 'description', 'email', 'error', 'errors', 'geographic_risk', 'has_config', 'healthy', 'is_configured', 'is_paid', 'llm', 'message', 'name', 'namespace', 'overall_status', 'payment', 'plugin_namespace', 'provider', 'providers', 'simulation', 'valid', 'validate_config']

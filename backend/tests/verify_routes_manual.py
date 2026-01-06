@@ -11,7 +11,6 @@ sys.path.append(backend_dir)
 sys.path.append(project_root)
 
 # MOCK MISSING DEPENDENCIES
-from unittest.mock import MagicMock
 
 sys.modules["networkx"] = MagicMock()
 sys.modules["pytesseract"] = MagicMock()

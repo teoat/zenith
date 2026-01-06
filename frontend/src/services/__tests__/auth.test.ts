@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, jest, beforeEach, afterEach } from '@jest/globals';
 import { authService } from '../auth';
 
 // Mock the request function from client.ts to bypass circuit breaker complexity

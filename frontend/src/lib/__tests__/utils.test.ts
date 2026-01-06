@@ -1,4 +1,4 @@
-import { describe, test, expect } from '@jest/globals';
+import { describe, test } from '@jest/globals';
 import { cn } from '../utils';
 
 describe('Utility Functions', () => {

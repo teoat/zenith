@@ -45,8 +45,8 @@ def create_admin_user():
             db.refresh(admin_user)
 
             print("✅ Admin user created successfully!")
-            print(f"   Username: admin")
-            print(f"   Password: admin123")
+            print("   Username: admin")
+            print("   Password: admin123")
             print(f"   Role: {admin_user.role}")
             print(f"   ID: {admin_user.id}")
 

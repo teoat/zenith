@@ -1,0 +1,162 @@
+{
+  "test_run_timestamp": "2025-12-11T03:15:51.827296",
+  "total_tests": 17,
+  "total_passed": 13,
+  "total_failed": 4,
+  "test_suites": [
+    {
+      "name": "Backend API Tests",
+      "results": {
+        "test_name": "backend_api_tests",
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "details": [
+          {
+            "test": "health",
+            "status": "passed",
+            "response_time": 0.01632213592529297
+          },
+          {
+            "test": "readiness",
+            "status": "passed",
+            "response_time": 0.010552167892456055
+          },
+          {
+            "test": "liveness",
+            "status": "passed",
+            "response_time": 0.009152889251708984
+          },
+          {
+            "test": "api_ai_analysis",
+            "status": "passed",
+            "response_time": 0.019466876983642578
+          },
+          {
+            "test": "api_fraud_rules",
+            "status": "passed",
+            "response_time": 0.008196115493774414
+          },
+          {
+            "test": "api_backup_status",
+            "status": "passed",
+            "response_time": 0.00609898567199707
+          },
+          {
+            "test": "api_collaboration_stats",
+            "status": "passed",
+            "response_time": 0.01139211654663086
+          }
+        ]
+      }
+    },
+    {
+      "name": "WebSocket Tests",
+      "results": {
+        "test_name": "websocket_collaboration_tests",
+        "passed": 0,
+        "failed": 1,
+        "total": 1,
+        "details": [
+          {
+            "test": "websocket_join_session",
+            "status": "failed",
+            "error": "Multiple exceptions: [Errno 61] Connect call failed ('::1', 8081, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8081)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Frontend Tests",
+      "results": {
+        "test_name": "frontend_component_tests",
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "details": [
+          {
+            "test": "frontend_build_exists",
+            "status": "passed"
+          },
+          {
+            "test": "frontend_static_serving",
+            "status": "passed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Security Tests",
+      "results": {
+        "test_name": "security_tests",
+        "passed": 0,
+        "failed": 3,
+        "total": 3,
+        "details": [
+          {
+            "test": "security_security_headers",
+            "status": "failed",
+            "error": "Missing headers: ['X-Content-Type-Options', 'X-Frame-Options', 'X-XSS-Protection', 'Content-Security-Policy']"
+          },
+          {
+            "test": "security_cors_policy",
+            "status": "failed",
+            "error": "Missing headers: ['X-Content-Type-Options', 'X-Frame-Options', 'X-XSS-Protection', 'Content-Security-Policy']"
+          },
+          {
+            "test": "security_rate_limiting",
+            "status": "failed",
+            "error": "Rate limiting not working"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Performance Tests",
+      "results": {
+        "test_name": "performance_tests",
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "details": [
+          {
+            "test": "performance_health",
+            "status": "passed",
+            "response_time": 0.004100799560546875
+          },
+          {
+            "test": "performance_api_stats",
+            "status": "passed",
+            "response_time": 0.009373903274536133
+          },
+          {
+            "test": "performance_metrics",
+            "status": "passed",
+            "response_time": 0.006947040557861328
+          },
+          {
+            "test": "performance_concurrent_requests",
+            "status": "passed",
+            "concurrent_requests": 10
+          }
+        ]
+      }
+    }
+  ],
+  "success_rate": 76.47,
+  "metadata": {
+    "filename": "e2e_test_results_20251211_031551.json",
+    "relative_path": "reports/archives/e2e_test_results_20251211_031551.json",
+    "file_size": 3908,
+    "file_extension": ".json",
+    "directory": "archives",
+    "category": "archived_report",
+    "timestamp": "2025-12-11T03:15:51",
+    "age_days": 11,
+    "added_timestamp": "2025-12-22T20:54:52.574667",
+    "version": "1.0",
+    "schema": "results_file_metadata_v1",
+    "organization": "Zenith Fraud Detection Platform",
+    "contact": "devops@zenith.com"
+  }
+}

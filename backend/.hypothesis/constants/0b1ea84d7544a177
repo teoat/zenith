@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/business/asset_service.py
+# hypothesis_version: 6.148.8
+
+[0.0, 'IDR', 'asset_name', 'asset_type', 'by_status', 'by_type', 'certificate_number', 'currency', 'description', 'estimated_value', 'location', 'metadata', 'metadata_json', 'owner_entity_id', 'pending', 'status', 'total_assets', 'total_value', 'valuation_date']

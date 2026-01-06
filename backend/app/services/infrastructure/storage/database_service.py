@@ -1,34 +1,33 @@
 # services/db.py
 import time
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from datetime import UTC, datetime
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from main import PaginationParams, FilterParams
+    from main import FilterParams, PaginationParams
 
-from sqlalchemy import and_, desc, or_, text
-from sqlalchemy.exc import SQLAlchemyError, OperationalError, DisconnectionError
-from sqlalchemy.orm import Session
-from sqlalchemy.pool import QueuePool
-
-from app.services.infrastructure.cache_service import cache_manager, cached, query_cache
-from app.services.infrastructure.circuit_breaker import circuit_breaker, CircuitBreakerConfig, get_circuit_breaker
-from app.services.infrastructure.error_handler import error_handler, service_operation_context, ErrorCategory, ServiceError
+from app.services.infrastructure.cache_service import cached, query_cache
+from app.services.infrastructure.circuit_breaker import (
+    CircuitBreakerConfig,
+    circuit_breaker,
+    get_circuit_breaker,
+)
 from app.services.infrastructure.storage.database_optimizer_service import db_optimizer
-from core.logging import logger
+from sqlalchemy import desc, or_, text
+from sqlalchemy.exc import DisconnectionError, OperationalError, SQLAlchemyError
+from sqlalchemy.orm import Session
+
 from core.database import (
     Case,
     CaseActivity,
     CaseNote,
     CaseStatus,
-    CaseType,
     Evidence,
-    ReconciliationType,
     SessionLocal,
-    Team,
     Transaction,
     User,
 )
+from core.logging import logger
 
 
 class DatabaseService:
@@ -47,7 +46,7 @@ class DatabaseService:
             recovery_timeout=15.0,  # Try again after 15 seconds (faster recovery)
             expected_exception=(SQLAlchemyError, OperationalError, DisconnectionError),
             success_threshold=2,  # Need 2 successes to close
-            timeout=5.0  # 5 second timeout for operations
+            timeout=5.0,  # 5 second timeout for operations
         )
 
         # Health monitoring
@@ -56,34 +55,39 @@ class DatabaseService:
         self._connection_failures = 0
         self._max_connection_failures = 5
 
-    def _get_connection_pool_status(self) -> Dict[str, Any]:
+    def _get_connection_pool_status(self) -> dict[str, Any]:
         """Get connection pool status for monitoring"""
         try:
-            pool = self.SessionLocal.kw.get('bind', {}).pool
-            if hasattr(pool, 'size'):
+            pool = self.SessionLocal.kw.get("bind", {}).pool
+            if hasattr(pool, "size"):
                 return {
                     "pool_size": pool.size(),
-                    "checked_out": getattr(pool, 'checkedout', lambda: 0)(),
-                    "overflow": getattr(pool, 'overflow', lambda: 0)(),
-                    "invalid": getattr(pool, 'invalid', lambda: 0)(),
+                    "checked_out": getattr(pool, "checkedout", lambda: 0)(),
+                    "overflow": getattr(pool, "overflow", lambda: 0)(),
+                    "invalid": getattr(pool, "invalid", lambda: 0)(),
                 }
         except Exception:
             pass
         return {"status": "unknown"}
 
-    @circuit_breaker("database_connection", CircuitBreakerConfig(
-        failure_threshold=2, recovery_timeout=10.0,
-        expected_exception=(OperationalError, DisconnectionError)
-    ))
+    @circuit_breaker(
+        "database_connection",
+        CircuitBreakerConfig(
+            failure_threshold=2,
+            recovery_timeout=10.0,
+            expected_exception=(OperationalError, DisconnectionError),
+        ),
+    )
     async def execute_cached_query(
         self,
         query_sql: str,
         parameters: tuple = (),
         ttl_seconds: int = 300,
         use_read_replica: bool = True,
-        table_names: list[str] = None
+        table_names: list[str] | None = None,
     ) -> Any:
         """Execute a database query with intelligent caching"""
+
         async def query_func():
             # Execute query using read replica if available and requested
             session = self.get_db()
@@ -99,7 +103,7 @@ class DatabaseService:
             parameters=parameters,
             ttl_seconds=ttl_seconds,
             use_read_replica=use_read_replica,
-            table_names=table_names
+            table_names=table_names,
         )
 
     def get_db(self) -> Session:
@@ -116,7 +120,7 @@ class DatabaseService:
             except (OperationalError, DisconnectionError) as e:
                 logger.warning(f"Database connection attempt {attempt + 1} failed: {e}")
                 if attempt < max_retries - 1:
-                    time.sleep(retry_delay * (2 ** attempt))  # Exponential backoff
+                    time.sleep(retry_delay * (2**attempt))  # Exponential backoff
                     continue
                 self._connection_failures += 1
                 raise e
@@ -124,14 +128,14 @@ class DatabaseService:
                 logger.error(f"Unexpected database error: {e}")
                 raise e
 
-    def health_check(self) -> Dict[str, Any]:
+    def health_check(self) -> dict[str, Any]:
         """Comprehensive database health check for 99.99% uptime monitoring"""
         health_status = {
             "service": "database",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "status": "healthy",
             "response_time_ms": 0,
-            "checks": {}
+            "checks": {},
         }
 
         start_time = time.time()
@@ -140,8 +144,10 @@ class DatabaseService:
             # Connection pool check
             pool_status = self._get_connection_pool_status()
             health_status["checks"]["connection_pool"] = {
-                "status": "healthy" if pool_status.get("pool_size", 0) > 0 else "degraded",
-                "details": pool_status
+                "status": "healthy"
+                if pool_status.get("pool_size", 0) > 0
+                else "degraded",
+                "details": pool_status,
             }
 
             # Basic connectivity check
@@ -149,7 +155,7 @@ class DatabaseService:
                 result = db.execute(text("SELECT 1 as test")).fetchone()
                 health_status["checks"]["connectivity"] = {
                     "status": "healthy" if result and result[0] == 1 else "unhealthy",
-                    "query_result": result[0] if result else None
+                    "query_result": result[0] if result else None,
                 }
 
             # Table accessibility check - optimized for performance
@@ -162,12 +168,12 @@ class DatabaseService:
                         db.execute(text(f"SELECT 1 FROM {table} LIMIT 1")).fetchone()
                         health_status["checks"][f"{table}_table"] = {
                             "status": "healthy",
-                            "accessible": True
+                            "accessible": True,
                         }
                     except Exception as e:
                         health_status["checks"][f"{table}_table"] = {
                             "status": "unhealthy",
-                            "error": str(e)
+                            "error": str(e),
                         }
 
             # Performance check - optimized
@@ -177,9 +183,11 @@ class DatabaseService:
                 db.execute(text("SELECT 1 FROM users LIMIT 1")).fetchone()
                 perf_time = (time.time() - perf_start) * 1000
                 health_status["checks"]["performance"] = {
-                    "status": "healthy" if perf_time < 50 else "degraded",  # Lower threshold for lightweight query
+                    "status": "healthy"
+                    if perf_time < 50
+                    else "degraded",  # Lower threshold for lightweight query
                     "query_time_ms": round(perf_time, 2),
-                    "threshold_ms": 50
+                    "threshold_ms": 50,
                 }
 
             # Circuit breaker status
@@ -187,7 +195,7 @@ class DatabaseService:
             cb_status = circuit_breaker.get_status()
             health_status["checks"]["circuit_breaker"] = {
                 "status": "healthy" if cb_status["state"] == "closed" else "degraded",
-                "details": cb_status
+                "details": cb_status,
             }
 
         except Exception as e:
@@ -198,20 +206,24 @@ class DatabaseService:
         health_status["response_time_ms"] = round((time.time() - start_time) * 1000, 2)
 
         # Overall status determination
-        if any(check.get("status") == "unhealthy" for check in health_status["checks"].values()):
+        if any(
+            check.get("status") == "unhealthy"
+            for check in health_status["checks"].values()
+        ):
             health_status["status"] = "unhealthy"
-        elif any(check.get("status") == "degraded" for check in health_status["checks"].values()):
+        elif any(
+            check.get("status") == "degraded"
+            for check in health_status["checks"].values()
+        ):
             health_status["status"] = "degraded"
 
         return health_status
 
     # ===== CASE MANAGEMENT =====
 
-    def get_cases_paginated(
-        self, *args, **kwargs
-    ) -> Dict[str, Any]:
+    def get_cases_paginated(self, *args, **kwargs) -> dict[str, Any]:
         """Get cases with optimized cursor-based pagination.
-        
+
         Supports:
         - get_cases_paginated(db_session, page=1, per_page=20, filters={})
         - get_cases_paginated(page=1, per_page=20, filters={})
@@ -222,29 +234,43 @@ class DatabaseService:
         filters = kwargs.get("filters", {})
 
         if args:
-            if hasattr(args[0], 'query'):
+            if hasattr(args[0], "query"):
                 db = args[0]
-                if len(args) > 1: page = args[1]
-                if len(args) > 2: per_page = args[2]
-                if len(args) > 3: filters = args[3]
+                if len(args) > 1:
+                    page = args[1]
+                if len(args) > 2:
+                    per_page = args[2]
+                if len(args) > 3:
+                    filters = args[3]
             else:
                 page = args[0]
-                if len(args) > 1: per_page = args[1]
-                if len(args) > 2: filters = args[2]
+                if len(args) > 1:
+                    per_page = args[1]
+                if len(args) > 2:
+                    filters = args[2]
 
         try:
             if db:
                 return self._get_cases_paginated_logic(db, page, per_page, filters)
             else:
                 with self.get_db() as session:
-                    return self._get_cases_paginated_logic(session, page, per_page, filters)
+                    return self._get_cases_paginated_logic(
+                        session, page, per_page, filters
+                    )
         except SQLAlchemyError as e:
             from app.core._errors import error_handler
+
             error_handler.log_and_raise_http_error(
                 error_handler.handle_database_error(e, "get_cases_paginated")
             )
         except Exception as e:
-            from app.core._errors import error_handler, ServiceError, ErrorCategory, ErrorSeverity
+            from app.core._errors import (
+                ErrorCategory,
+                ErrorSeverity,
+                ServiceError,
+                error_handler,
+            )
+
             error_handler.log_and_raise_http_error(
                 ServiceError(
                     message="Unexpected error in get_cases_paginated",
@@ -252,11 +278,13 @@ class DatabaseService:
                     severity=ErrorSeverity.HIGH,
                     original_error=e,
                     retryable=True,
-                    user_friendly_message="Unable to retrieve cases. Please try again."
+                    user_friendly_message="Unable to retrieve cases. Please try again.",
                 )
             )
 
-    def _get_cases_paginated_logic(self, db: Session, page: int, per_page: int, filters: dict) -> Dict[str, Any]:
+    def _get_cases_paginated_logic(
+        self, db: Session, page: int, per_page: int, filters: dict
+    ) -> dict[str, Any]:
         """Core logic for paginated case retrieval"""
         offset = (page - 1) * per_page
 
@@ -279,13 +307,13 @@ class DatabaseService:
 
         # Apply filters
         if filters:
-            if "status" in filters and filters["status"]:
+            if filters.get("status"):
                 query = query.filter(Case.status == filters["status"])
-            if "assignee_id" in filters and filters["assignee_id"]:
+            if filters.get("assignee_id"):
                 query = query.filter(Case.assignee_id == filters["assignee_id"])
-            if "risk_level" in filters and filters["risk_level"]:
+            if filters.get("risk_level"):
                 query = query.filter(Case.risk_level == filters["risk_level"])
-            if "search" in filters and filters["search"]:
+            if filters.get("search"):
                 search_term = f"%{filters['search']}%"
                 query = query.filter(
                     or_(
@@ -300,10 +328,7 @@ class DatabaseService:
 
         # Apply pagination and ordering
         cases = (
-            query.order_by(desc(Case.created_at))
-            .offset(offset)
-            .limit(per_page)
-            .all()
+            query.order_by(desc(Case.created_at)).offset(offset).limit(per_page).all()
         )
 
         total_pages = (total_count + per_page - 1) // per_page if per_page > 0 else 0
@@ -320,8 +345,8 @@ class DatabaseService:
         }
 
     def get_cases(
-        self, skip: int = 0, limit: int = 100, filters: Dict[str, Any] = None
-    ) -> List[Case]:
+        self, skip: int = 0, limit: int = 100, filters: dict[str, Any] | None = None
+    ) -> list[Case]:
         """Get cases with optional filtering (legacy method)"""
         # Convert to pagination format for backward compatibility
         page = (skip // limit) + 1
@@ -329,7 +354,7 @@ class DatabaseService:
         return result["cases"]
 
     @cached("case_details", ttl_seconds=300)  # Cache for 5 minutes
-    def get_case_with_details(self, case_id: str) -> Optional[Dict[str, Any]]:
+    def get_case_with_details(self, case_id: str) -> dict[str, Any] | None:
         """Get case with all related data"""
         result = db_optimizer.get_case_with_optimized_relationships(case_id)
         if not result:
@@ -343,12 +368,17 @@ class DatabaseService:
             "activities": result["case"].activities,
         }
 
-    @circuit_breaker("database_create_case", CircuitBreakerConfig(
-        failure_threshold=3, recovery_timeout=10.0, expected_exception=(SQLAlchemyError,)
-    ))
+    @circuit_breaker(
+        "database_create_case",
+        CircuitBreakerConfig(
+            failure_threshold=3,
+            recovery_timeout=10.0,
+            expected_exception=(SQLAlchemyError,),
+        ),
+    )
     def create_case(self, *args, **kwargs) -> Case:
         """Create a new case with audit trail.
-        
+
         Supports multiple signatures:
         - Modern (router): create_case(db_session, id=..., title=..., project_id=...)
         - Legacy (tests): create_case(case_data_dict, created_by=None)
@@ -360,17 +390,18 @@ class DatabaseService:
         if args:
             # Check if first arg is a Session (modern router call)
             # Use hasattr check for broader compatibility
-            if hasattr(args[0], 'add') and hasattr(args[0], 'commit'):
+            if hasattr(args[0], "add") and hasattr(args[0], "commit"):
                 db = args[0]
                 case_data = kwargs
-                created_by = kwargs.get("created_by") or kwargs.get("assigneeId") or kwargs.get("assignee_id")
+                created_by = (
+                    kwargs.get("created_by")
+                    or kwargs.get("assignee_id")
+                    or kwargs.get("assignee_id")
+                )
             # Check if first arg is a dict (legacy call)
             elif isinstance(args[0], dict):
                 case_data = args[0].copy()
-                if len(args) > 1:
-                    created_by = args[1]
-                else:
-                    created_by = kwargs.get("created_by")
+                created_by = args[1] if len(args) > 1 else kwargs.get("created_by")
             else:
                 # Fallback
                 case_data = kwargs
@@ -387,20 +418,22 @@ class DatabaseService:
             with self.get_db() as session:
                 return self._create_case_logic(session, case_data, created_by)
 
-    def _create_case_logic(self, db: Session, case_data: dict, created_by: str = None) -> Case:
+    def _create_case_logic(
+        self, db: Session, case_data: dict, created_by: str | None = None
+    ) -> Case:
         """Common logic for case creation"""
         # Ensure created_by is stored if provided
         if created_by and "created_by" not in case_data:
             case_data["created_by"] = created_by
-            
+
         # Clean up any non-model attributes from case_data before passing to Case constructor
         valid_columns = {c.key for c in Case.__table__.columns}
         filtered_data = {k: v for k, v in case_data.items() if k in valid_columns}
-        
+
         # Handle project_id if not present
         if "project_id" not in filtered_data:
             filtered_data["project_id"] = "default"
-            
+
         case = Case(**filtered_data)
         db.add(case)
         db.flush()
@@ -411,19 +444,17 @@ class DatabaseService:
             user_id=created_by,
             activity_type="created",
             description=f"Case created: {case.title}",
-            activity_metadata={"case_data": filtered_data}
+            activity_metadata={"case_data": filtered_data},
         )
         db.add(activity)
-        
+
         db.commit()
         db.refresh(case)
         return case
 
-    def update_case(
-        self, *args, **kwargs
-    ) -> Optional[Case]:
+    def update_case(self, *args, **kwargs) -> Case | None:
         """Update case with audit trail.
-        
+
         Supports:
         - update_case(db, case_id, update_data, updated_by=None)
         - update_case(case_id, update_data, updated_by=None)
@@ -436,27 +467,37 @@ class DatabaseService:
 
         # Parse args
         remaining_args = list(args)
-        if remaining_args and hasattr(remaining_args[0], 'query'):
+        if remaining_args and hasattr(remaining_args[0], "query"):
             db = remaining_args.pop(0)
-        
+
         if remaining_args:
             case_id = remaining_args.pop(0)
         elif "case_id" in kwargs:
             case_id = kwargs["case_id"]
-            
+
         if remaining_args:
             update_data = remaining_args.pop(0)
         else:
             # Use kwargs for update_data if not passed as dict
-            update_data = {k: v for k, v in kwargs.items() if k not in ["case_id", "updated_by"]}
+            update_data = {
+                k: v for k, v in kwargs.items() if k not in ["case_id", "updated_by"]
+            }
 
         if db:
             return self._update_case_logic(db, case_id, update_data, updated_by)
         else:
             with self.get_db() as session:
-                return self._update_case_logic(session, case_id, update_data, updated_by)
+                return self._update_case_logic(
+                    session, case_id, update_data, updated_by
+                )
 
-    def _update_case_logic(self, db: Session, case_id: str, update_data: dict, updated_by: str = None) -> Optional[Case]:
+    def _update_case_logic(
+        self,
+        db: Session,
+        case_id: str,
+        update_data: dict,
+        updated_by: str | None = None,
+    ) -> Case | None:
         """Core logic for updating a case"""
         case = db.query(Case).filter(Case.id == case_id).first()
         if not case:
@@ -468,7 +509,7 @@ class DatabaseService:
                 old_values[key] = getattr(case, key)
                 setattr(case, key, value)
 
-        case.updated_at = datetime.now(timezone.utc)
+        case.updated_at = datetime.now(UTC)
 
         # Create activity log
         if old_values:
@@ -487,10 +528,9 @@ class DatabaseService:
                 user_id=updated_by,
                 activity_type="updated",
                 description="Case updated",
-                activity_metadata=make_serializable({
-                    "changes": update_data,
-                    "old_values": old_values
-                }),
+                activity_metadata=make_serializable(
+                    {"changes": update_data, "old_values": old_values}
+                ),
             )
             db.add(activity)
 
@@ -510,21 +550,25 @@ class DatabaseService:
 
     def assign_case(
         self, case_id: str, assignee_id: str, assigned_by: str
-    ) -> Optional[Case]:
+    ) -> Case | None:
         """Assign case to user"""
         return self.update_case(
             case_id,
             {
                 "assignee_id": assignee_id,
                 "assigned_by": assigned_by,
-                "assigned_at": datetime.now(timezone.utc),
+                "assigned_at": datetime.now(UTC),
             },
             assigned_by,
         )
 
     def change_case_status(
-        self, case_id: str, new_status: CaseStatus, changed_by: str, reason: str = None
-    ) -> Optional[Case]:
+        self,
+        case_id: str,
+        new_status: CaseStatus,
+        changed_by: str,
+        reason: str | None = None,
+    ) -> Case | None:
         """Change case status with audit trail"""
         with self.get_db() as db:
             case = db.query(Case).filter(Case.id == case_id).first()
@@ -533,14 +577,14 @@ class DatabaseService:
 
             old_status = case.status
             case.status = new_status
-            case.updated_at = datetime.now(timezone.utc)
+            case.updated_at = datetime.now(UTC)
 
             if new_status in [
                 CaseStatus.CLOSED_APPROVED,
                 CaseStatus.CLOSED_DENIED,
                 CaseStatus.CLOSED_NO_ACTION,
             ]:
-                case.closed_at = datetime.now(timezone.utc)
+                case.closed_at = datetime.now(UTC)
                 case.closed_by = changed_by
 
             # Create activity
@@ -559,7 +603,7 @@ class DatabaseService:
             db.refresh(case)
             return case
 
-    def get_case_stats(self) -> Dict[str, Any]:
+    def get_case_stats(self) -> dict[str, Any]:
         """Get case statistics"""
         with self.get_db() as db:
             total_cases = db.query(Case).count()
@@ -590,15 +634,16 @@ class DatabaseService:
                 ),
             }
 
-    def get_case(self, *args, **kwargs) -> Optional[Case]:
+    def get_case(self, *args, **kwargs) -> Case | None:
         """Retrieve a specific case by ID"""
         db = None
         case_id = kwargs.get("case_id")
 
         if args:
-            if hasattr(args[0], 'query'):
+            if hasattr(args[0], "query"):
                 db = args[0]
-                if len(args) > 1: case_id = args[1]
+                if len(args) > 1:
+                    case_id = args[1]
             else:
                 case_id = args[0]
 
@@ -614,9 +659,10 @@ class DatabaseService:
         case_id = kwargs.get("case_id")
 
         if args:
-            if hasattr(args[0], 'query'):
+            if hasattr(args[0], "query"):
                 db = args[0]
-                if len(args) > 1: case_id = args[1]
+                if len(args) > 1:
+                    case_id = args[1]
             else:
                 case_id = args[0]
 
@@ -631,7 +677,7 @@ class DatabaseService:
         case = db.query(Case).filter(Case.id == case_id).first()
         if not case:
             return False
-            
+
         db.delete(case)
         db.commit()
         return True
@@ -639,8 +685,8 @@ class DatabaseService:
     # ===== TRANSACTION MANAGEMENT =====
 
     def get_transactions_by_case(
-        self, case_id: str, filters: Dict[str, Any] = None
-    ) -> List[Transaction]:
+        self, case_id: str, filters: dict[str, Any] | None = None
+    ) -> list[Transaction]:
         """Get transactions for a case with optional filtering"""
         with self.get_db() as db:
             query = db.query(Transaction).filter(Transaction.case_id == case_id)
@@ -670,7 +716,7 @@ class DatabaseService:
 
     def update_transaction_status(
         self, transaction_id: str, status: str, reviewed_by: str
-    ) -> Optional[Transaction]:
+    ) -> Transaction | None:
         """Update transaction status"""
         with self.get_db() as db:
             transaction = (
@@ -679,14 +725,14 @@ class DatabaseService:
             if transaction:
                 transaction.status = status
                 transaction.reviewed_by = reviewed_by
-                transaction.reviewed_at = datetime.now(timezone.utc)
+                transaction.reviewed_at = datetime.now(UTC)
                 db.commit()
                 db.refresh(transaction)
             return transaction
 
     # ===== EVIDENCE MANAGEMENT =====
 
-    def get_evidence_by_case(self, case_id: str) -> List[Evidence]:
+    def get_evidence_by_case(self, case_id: str) -> list[Evidence]:
         """Get evidence for a case"""
         with self.get_db() as db:
             return (
@@ -706,8 +752,8 @@ class DatabaseService:
             return evidence
 
     def update_evidence_admissibility(
-        self, evidence_id: str, is_admissible: bool, reason: str = None
-    ) -> Optional[Evidence]:
+        self, evidence_id: str, is_admissible: bool, reason: str | None = None
+    ) -> Evidence | None:
         """Update evidence admissibility"""
         with self.get_db() as db:
             evidence = db.query(Evidence).filter(Evidence.id == evidence_id).first()
@@ -731,7 +777,7 @@ class DatabaseService:
 
     def get_case_notes(
         self, case_id: str, include_internal: bool = True
-    ) -> List[CaseNote]:
+    ) -> list[CaseNote]:
         """Get notes for a case"""
         with self.get_db() as db:
             query = db.query(CaseNote).filter(CaseNote.case_id == case_id)
@@ -741,7 +787,7 @@ class DatabaseService:
 
     # ===== CASE ACTIVITIES =====
 
-    def get_case_activities(self, case_id: str, limit: int = 50) -> List[CaseActivity]:
+    def get_case_activities(self, case_id: str, limit: int = 50) -> list[CaseActivity]:
         """Get activity log for a case"""
         with self.get_db() as db:
             return (
@@ -754,7 +800,7 @@ class DatabaseService:
 
     # ===== USER MANAGEMENT =====
 
-    def get_users(self, filters: Dict[str, Any] = None) -> List[User]:
+    def get_users(self, filters: dict[str, Any] | None = None) -> list[User]:
         """Get users with optional filtering"""
         with self.get_db() as db:
             query = db.query(User).filter(User.is_active == True)
@@ -768,10 +814,8 @@ class DatabaseService:
             return query.all()
 
     def get_users_paginated(
-        self,
-        pagination: "PaginationParams",
-        filters: "FilterParams" = None
-    ) -> Dict[str, Any]:
+        self, pagination: "PaginationParams", filters: "FilterParams" = None
+    ) -> dict[str, Any]:
         """Get users with pagination and advanced filtering"""
         with self.get_db() as db:
             query = db.query(User).filter(User.is_active == True)
@@ -785,7 +829,7 @@ class DatabaseService:
                         db.or_(
                             User.username.ilike(search_term),
                             User.email.ilike(search_term),
-                            User.full_name.ilike(search_term)
+                            User.full_name.ilike(search_term),
                         )
                     )
                 if filters.role:
@@ -809,19 +853,11 @@ class DatabaseService:
             total = query.count()
 
             # Apply pagination
-            users = (
-                query
-                .offset(pagination.offset)
-                .limit(pagination.limit)
-                .all()
-            )
+            users = query.offset(pagination.offset).limit(pagination.limit).all()
 
-            return {
-                "users": users,
-                "total": total
-            }
+            return {"users": users, "total": total}
 
-    def get_user(self, user_id: str) -> Optional[User]:
+    def get_user(self, user_id: str) -> User | None:
         """Get user by ID"""
         with self.get_db() as db:
             return (
@@ -830,7 +866,7 @@ class DatabaseService:
                 .first()
             )
 
-    def get_user_by_username(self, username: str) -> Optional[User]:
+    def get_user_by_username(self, username: str) -> User | None:
         """Get user by username"""
         with self.get_db() as db:
             return (
@@ -839,7 +875,7 @@ class DatabaseService:
                 .first()
             )
 
-    def update_user(self, user_id: str, data: Dict[str, Any]) -> bool:
+    def update_user(self, user_id: str, data: dict[str, Any]) -> bool:
         """Update user by ID with data dict"""
         with self.get_db() as db:
             user = db.query(User).filter(User.id == user_id).first()
@@ -850,7 +886,7 @@ class DatabaseService:
                 if hasattr(user, key):
                     setattr(user, key, value)
 
-            user.updated_at = datetime.now(timezone.utc)
+            user.updated_at = datetime.now(UTC)
             db.commit()
             return True
 
@@ -862,7 +898,7 @@ class DatabaseService:
                 return False
 
             user.is_active = False
-            user.updated_at = datetime.now(timezone.utc)
+            user.updated_at = datetime.now(UTC)
             db.commit()
             return True
 
@@ -878,24 +914,27 @@ class DatabaseService:
 
     @cached("transaction_aggregates", ttl_seconds=180)  # Cache for 3 minutes
     def get_transaction_aggregates(
-        self, case_id: str = None, date_from: datetime = None, date_to: datetime = None
-    ) -> Dict[str, Any]:
+        self,
+        case_id: str | None = None,
+        date_from: datetime | None = None,
+        date_to: datetime | None = None,
+    ) -> dict[str, Any]:
         """Get optimized transaction aggregates"""
         return db_optimizer.get_optimized_transaction_aggregates(
             case_id, date_from, date_to
         )
 
-    def get_database_performance_metrics(self) -> Dict[str, Any]:
+    def get_database_performance_metrics(self) -> dict[str, Any]:
         """Get database performance metrics"""
         return db_optimizer.get_performance_metrics()
 
-    def get_database_stats(self) -> Dict[str, Any]:
+    def get_database_stats(self) -> dict[str, Any]:
         """Get comprehensive database statistics"""
         return db_optimizer.get_database_stats()
 
     def analyze_query_performance(
-        self, query: str, params: Dict[str, Any] = None
-    ) -> Dict[str, Any]:
+        self, query: str, params: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """Analyze query performance with EXPLAIN"""
         return db_optimizer.optimize_query_with_explain(query, params)
 
@@ -904,7 +943,7 @@ class DatabaseService:
         db_optimizer.create_performance_indexes()
 
     # Cache management methods
-    def get_cache_stats(self) -> Dict[str, Any]:
+    def get_cache_stats(self) -> dict[str, Any]:
         """Get cache performance statistics"""
         from app.services.cache_service import get_cache_stats
 
@@ -934,8 +973,8 @@ class DatabaseService:
 
     @cached("case_analytics", ttl_seconds=600)  # Cache for 10 minutes
     def get_case_analytics(
-        self, date_from: datetime = None, date_to: datetime = None
-    ) -> Dict[str, Any]:
+        self, date_from: datetime | None = None, date_to: datetime | None = None
+    ) -> dict[str, Any]:
         """Get case analytics with optimized queries"""
         with self.get_db() as db:
             # Use optimized aggregation queries
@@ -990,13 +1029,14 @@ class DatabaseService:
                 "cases_by_status": status_distribution,
             }
 
-
     # ===== COMPLIANCE & SAR =====
 
     def create_sar(self, sar_data: dict, created_by: str) -> "SAR":
         """Create a new SAR report"""
-        from core.database import SAR
         import uuid
+
+        from core.database import SAR
+
         with self.get_db() as db:
             sar_data["id"] = str(uuid.uuid4())
             sar_data["created_by"] = created_by
@@ -1006,9 +1046,10 @@ class DatabaseService:
             db.refresh(sar)
             return sar
 
-    def get_sars(self, case_id: str = None) -> List["SAR"]:
+    def get_sars(self, case_id: str | None = None) -> list["SAR"]:
         """Get SAR reports"""
         from core.database import SAR
+
         with self.get_db() as db:
             query = db.query(SAR)
             if case_id:
@@ -1017,20 +1058,21 @@ class DatabaseService:
 
     def submit_sar(self, sar_id: str) -> bool:
         """Submit a SAR report, marking it as immutable"""
+        from datetime import datetime
+
         from core.database import SAR
-        from datetime import datetime, timezone
+
         with self.get_db() as db:
             sar = db.query(SAR).filter(SAR.id == sar_id).first()
             if not sar:
                 return False
-            
+
             sar.status = "submitted"
-            sar.submitted_at = datetime.now(timezone.utc)
+            sar.submitted_at = datetime.now(UTC)
             db.commit()
             return True
 
-
-    def get_recent_activity(self, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_recent_activity(self, limit: int = 10) -> list[dict[str, Any]]:
         """Get recent case activities from the database"""
         with self.get_db() as db:
             activities = (
@@ -1041,7 +1083,7 @@ class DatabaseService:
                 .limit(limit)
                 .all()
             )
-            
+
             return [
                 {
                     "id": a.id,
@@ -1049,7 +1091,7 @@ class DatabaseService:
                     "details": a.description,
                     "user": a.user.full_name if a.user else (a.user_id or "System"),
                     "timestamp": a.timestamp.isoformat(),
-                    "case_title": a.case.title if a.case else "Unknown Case"
+                    "case_title": a.case.title if a.case else "Unknown Case",
                 }
                 for a in activities
             ]

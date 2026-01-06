@@ -8,7 +8,6 @@ Create Date: 2025-12-09
 
 import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects import sqlite
 
 # revision identifiers, used by Alembic.
 revision = "002_add_fraud_alerts"

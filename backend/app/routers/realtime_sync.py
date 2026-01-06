@@ -1,13 +1,14 @@
-import asyncio
 import json
 import logging
 from dataclasses import asdict
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
-
-from app.services.integration.collaboration.sync_service import CRDTDocument, sync_manager
+from app.services.integration.collaboration.sync_service import (
+    CRDTDocument,
+    sync_manager,
+)
+from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/sync", tags=["realtime-sync"])
@@ -25,84 +26,78 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
         token = query_params.get("token")
 
         if not token:
-            await websocket.send_json({
-                "type": "error",
-                "message": "Authentication token required"
-            })
+            await websocket.send_json(
+                {"type": "error", "message": "Authentication token required"}
+            )
             await websocket.close(code=1008, reason="Authentication required")
             return
 
         # Validate JWT token
         try:
             from app.services.infrastructure.auth_service import auth_service
+
             payload = auth_service.decode_token(token)
             token_user_id = payload.get("sub")
 
             # Verify token belongs to requested user
             if token_user_id != user_id:
-                await websocket.send_json({
-                    "type": "error",
-                    "message": "Token does not match user ID"
-                })
+                await websocket.send_json(
+                    {"type": "error", "message": "Token does not match user ID"}
+                )
                 await websocket.close(code=1008, reason="Authentication failed")
                 return
 
             # Check MFA if required
             mfa_verified = payload.get("mfa_verified", False)
             if not mfa_verified:
-                await websocket.send_json({
-                    "type": "error",
-                    "message": "MFA verification required"
-                })
+                await websocket.send_json(
+                    {"type": "error", "message": "MFA verification required"}
+                )
                 await websocket.close(code=1008, reason="MFA required")
                 return
 
         except Exception as e:
             logger.error(f"WebSocket authentication failed: {e}")
-            await websocket.send_json({
-                "type": "error",
-                "message": "Invalid authentication token"
-            })
+            await websocket.send_json(
+                {"type": "error", "message": "Invalid authentication token"}
+            )
             await websocket.close(code=1008, reason="Authentication failed")
             return
             try:
                 from app.services.infrastructure.auth_service import auth_service
+
                 payload = auth_service.decode_token(token)
                 token_user_id = payload.get("sub")
 
                 # Verify token belongs to requested user
                 if token_user_id != user_id:
-                    await websocket.send_json({
-                        "type": "error",
-                        "message": "Token does not match user ID"
-                    })
+                    await websocket.send_json(
+                        {"type": "error", "message": "Token does not match user ID"}
+                    )
                     await websocket.close(code=1008, reason="Authentication failed")
                     return
 
                 # Check MFA if required
                 mfa_verified = payload.get("mfa_verified", False)
                 if not mfa_verified:
-                    await websocket.send_json({
-                        "type": "error",
-                        "message": "MFA verification required"
-                    })
+                    await websocket.send_json(
+                        {"type": "error", "message": "MFA verification required"}
+                    )
                     await websocket.close(code=1008, reason="MFA required")
                     return
 
             except Exception as e:
                 logger.error(f"WebSocket authentication failed: {e}")
-                await websocket.send_json({
-                    "type": "error",
-                    "message": "Invalid authentication token"
-                })
+                await websocket.send_json(
+                    {"type": "error", "message": "Invalid authentication token"}
+                )
                 await websocket.close(code=1008, reason="Authentication failed")
                 return
         else:
             # No token provided - require authentication
-            await websocket.send_json({
-                "type": "error",
-                "message": "Authentication token required"
-            })
+            await websocket.send_json(
+                {"type": "error", "message": "Authentication token required"}
+            )
             await websocket.close(code=1008, reason="Authentication required")
             return
 
@@ -125,22 +120,22 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
                 logger.info(f"WebSocket disconnected for client {client_id}")
                 break
             except Exception as e:
-                logger.error(f"Error handling WebSocket message: {str(e)}")
+                logger.error(f"Error handling WebSocket message: {e!s}")
                 await sync_manager._send_to_client(
                     client_id,
-                    {"type": "error", "message": f"Error processing message: {str(e)}"},
+                    {"type": "error", "message": f"Error processing message: {e!s}"},
                 )
 
     except WebSocketDisconnect:
         logger.info(f"WebSocket disconnected for user {user_id}")
     except Exception as e:
-        logger.error(f"WebSocket connection error: {str(e)}")
+        logger.error(f"WebSocket connection error: {e!s}")
     finally:
         # Unregister client
         await sync_manager.unregister_client(client_id)
 
 
-async def handle_websocket_message(client_id: str, message: Dict[str, Any]):
+async def handle_websocket_message(client_id: str, message: dict[str, Any]):
     """Handle incoming WebSocket message"""
     message_type = message.get("type")
 
@@ -191,10 +186,10 @@ async def handle_websocket_message(client_id: str, message: Dict[str, Any]):
             )
 
     except Exception as e:
-        logger.error(f"Error handling message {message_type}: {str(e)}")
+        logger.error(f"Error handling message {message_type}: {e!s}")
         await sync_manager._send_to_client(
             client_id,
-            {"type": "error", "message": f"Error handling {message_type}: {str(e)}"},
+            {"type": "error", "message": f"Error handling {message_type}: {e!s}"},
         )
 
 
@@ -222,10 +217,8 @@ async def get_documents():
         }
 
     except Exception as e:
-        logger.error(f"Error getting documents: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get documents: {str(e)}"
-        )
+        logger.error(f"Error getting documents: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get documents: {e!s}")
 
 
 @router.get("/documents/{document_id}")
@@ -259,12 +252,12 @@ async def get_document(document_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error getting document {document_id}: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to get document: {str(e)}")
+        logger.error(f"Error getting document {document_id}: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get document: {e!s}")
 
 
 @router.post("/documents/{document_id}/operations")
-async def create_operation(document_id: str, operation_data: Dict[str, Any]):
+async def create_operation(document_id: str, operation_data: dict[str, Any]):
     """Create and apply an operation to a document (HTTP fallback)"""
     try:
         # Ensure document exists
@@ -310,9 +303,9 @@ async def create_operation(document_id: str, operation_data: Dict[str, Any]):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error creating operation: {str(e)}")
+        logger.error(f"Error creating operation: {e!s}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to create operation: {str(e)}"
+            status_code=500, detail=f"Failed to create operation: {e!s}"
         )
 
 
@@ -336,12 +329,12 @@ async def get_sync_stats():
         return stats
 
     except Exception as e:
-        logger.error(f"Error getting sync stats: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
+        logger.error(f"Error getting sync stats: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get stats: {e!s}")
 
 
 @router.post("/broadcast")
-async def broadcast_message(message_data: Dict[str, Any]):
+async def broadcast_message(message_data: dict[str, Any]):
     """Broadcast message to all connected clients"""
     try:
         message = {
@@ -362,8 +355,8 @@ async def broadcast_message(message_data: Dict[str, Any]):
         }
 
     except Exception as e:
-        logger.error(f"Error broadcasting message: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to broadcast: {str(e)}")
+        logger.error(f"Error broadcasting message: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to broadcast: {e!s}")
 
 
 @router.delete("/documents/{document_id}")
@@ -398,7 +391,5 @@ async def delete_document(document_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error deleting document {document_id}: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to delete document: {str(e)}"
-        )
+        logger.error(f"Error deleting document {document_id}: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete document: {e!s}")

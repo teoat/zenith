@@ -1,0 +1,8 @@
+src/__tests__/badge.test.tsx(6,1): error TS6133: 'React' is declared but its value is never read.
+src/__tests__/button.test.tsx(6,1): error TS6133: 'React' is declared but its value is never read.
+src/__tests__/card.test.tsx(6,1): error TS6133: 'React' is declared but its value is never read.
+src/__tests__/dialog.test.tsx(6,1): error TS6133: 'React' is declared but its value is never read.
+src/__tests__/investigationcanvas.test.tsx(6,1): error TS6133: 'React' is declared but its value is never read.
+src/__tests__/relationshipgraph.test.tsx(6,1): error TS6133: 'React' is declared but its value is never read.
+src/__tests__/table.test.tsx(6,1): error TS6133: 'React' is declared but its value is never read.
+src/components/fraud/FraudRuleBuilder.tsx(280,16): error TS2367: This comparison appears to be unintentional because the types '"velocity"' and '"amount"' have no overlap.

@@ -1,15 +1,15 @@
-import asyncio
-from typing import Any, Dict, List
+from datetime import UTC
+from typing import Any
 
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.monitoring_service import monitoring_service
+from app.services.infrastructure.storage.database_service import db_service
+from app.services.intelligence.geocoding_service import geocode_transaction_location
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.services.infrastructure.auth_service import auth_service
-from app.services.infrastructure.storage.database_service import db_service
-from app.services.intelligence.geocoding_service import geocode_transaction_location
-from app.services.infrastructure.monitoring_service import monitoring_service
 from core.database import Case, Transaction, User, get_db
 
 router = APIRouter()
@@ -22,7 +22,7 @@ class GeoPoint(BaseModel):
     type: str  # 'transaction', 'alert', 'blocked'
 
 
-@router.get("/locations", response_model=List[GeoPoint])
+@router.get("/locations", response_model=list[GeoPoint])
 async def get_threat_map_locations(
     db: Session = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user),
@@ -151,13 +151,19 @@ def get_dashboard_metrics(
 
         # Get all case statistics in a single query
         case_stats = db.query(
-            func.count(Case.id).label('total_cases'),
-            func.count(func.case([(Case.priority == "critical", 1)])).label('critical_cases'),
-            func.count(func.case([(Case.status == "closed", 1)])).label('closed_cases'),
-            func.count(func.case([(Case.status == "active", 1)])).label('investigating_cases'),
-            func.count(func.case([(Case.priority == "high", 1)])).label('high_risk'),
-            func.count(func.case([(Case.priority == "medium", 1)])).label('medium_risk'),
-            func.count(func.case([(Case.priority == "low", 1)])).label('low_risk'),
+            func.count(Case.id).label("total_cases"),
+            func.count(func.case([(Case.priority == "critical", 1)])).label(
+                "critical_cases"
+            ),
+            func.count(func.case([(Case.status == "closed", 1)])).label("closed_cases"),
+            func.count(func.case([(Case.status == "active", 1)])).label(
+                "investigating_cases"
+            ),
+            func.count(func.case([(Case.priority == "high", 1)])).label("high_risk"),
+            func.count(func.case([(Case.priority == "medium", 1)])).label(
+                "medium_risk"
+            ),
+            func.count(func.case([(Case.priority == "low", 1)])).label("low_risk"),
         ).first()
 
         total_cases = case_stats.total_cases
@@ -174,7 +180,6 @@ def get_dashboard_metrics(
         # Recent Activity (Fetch from DB instead of Mock)
         recent_activity = db_service.get_recent_activity(limit=5)
 
-
         # AVG Resolution Time Calculation
         avg_res_time = 0.0
         closed_cases_with_time = (
@@ -190,7 +195,7 @@ def get_dashboard_metrics(
             )
             .all()
         )
-        
+
         if closed_cases_with_time:
             durations = [
                 (c.closed_at - c.created_at).total_seconds() / 3600
@@ -198,41 +203,39 @@ def get_dashboard_metrics(
             ]
             avg_res_time = round(sum(durations) / len(durations), 1)
         else:
-            avg_res_time = 12.5 # Smart default if no closed cases yet
+            avg_res_time = 12.5  # Smart default if no closed cases yet
 
         return {
-            "totalCases": total_cases,
-            "openCases": active_cases,
-            "closedCases": closed_cases,
-            "criticalCases": critical_cases,
-            "investigatingCases": investigating_cases,
-            "avgResolutionTime": avg_res_time,
-            "riskDistribution": {
+            "total_cases": total_cases,
+            "open_cases": active_cases,
+            "closed_cases": closed_cases,
+            "critical_cases": critical_cases,
+            "investigating_cases": investigating_cases,
+            "avg_resolution_time": avg_res_time,
+            "risk_distribution": {
                 "critical": critical_risk,
                 "high": high_risk,
                 "medium": medium_risk,
                 "low": low_risk,
             },
-            "recentActivity": recent_activity,
-            "flaggedTransactions": flagged_count,
-            "blockedAmount": blocked_amount,
-            "systemHealth": system_health,
-            "sparklineData": _get_sparkline_data(db),
+            "recent_activity": recent_activity,
+            "flagged_transactions": flagged_count,
+            "blocked_amount": blocked_amount,
+            "system_health": system_health,
+            "sparkline_data": _get_sparkline_data(db),
         }
 
     except Exception as e:
         # Fallback to safe values if DB query fails (though it shouldn't)
         print(f"Error generating metrics: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to fetch metrics: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to fetch metrics: {e!s}")
 
 
-def _get_sparkline_data(db: Session) -> Dict[str, List[int]]:
+def _get_sparkline_data(db: Session) -> dict[str, list[int]]:
     """Calculates 7-day trends for key metrics"""
-    from datetime import datetime, timedelta, timezone
+    from datetime import datetime, timedelta
 
-    end_date = datetime.now(timezone.utc)
+    end_date = datetime.now(UTC)
     start_date = end_date - timedelta(days=6)
 
     # helper to get daily counts
@@ -274,20 +277,20 @@ def _get_sparkline_data(db: Session) -> Dict[str, List[int]]:
                 critical_trend[day_idx] += 1
 
     return {
-        "totalCases": total_cases_trend,
-        "openCases": [
+        "total_cases": total_cases_trend,
+        "open_cases": [
             max(0, x - 1) for x in total_cases_trend
         ],  # rudimentary mock for "open" flux
-        "criticalCases": critical_trend,
+        "critical_cases": critical_trend,
         "analysts": [3, 3, 3, 4, 4, 3, 3],  # Hardcoded resource trend
     }
 
 
 class PredictiveStats(BaseModel):
-    riskTrend: List[Dict[str, Any]]
-    predictedFraud: int
+    risk_trend: list[dict[str, Any]]
+    predicted_fraud: int
     accuracy: float
-    activeAlerts: int
+    active_alerts: int
 
 
 @router.get("/predictive", response_model=PredictiveStats)
@@ -299,46 +302,47 @@ async def get_predictive_analytics(
     Returns predictive intelligence stats based on recent trends.
     Uses historical data to project future risk alerts.
     """
-    from datetime import datetime, timedelta, timezone
-    
+    from datetime import datetime, timedelta
+
     # Analyze last 14 days to see the trend
-    end_date = datetime.now(timezone.utc)
+    end_date = datetime.now(UTC)
     start_date = end_date - timedelta(days=13)
-    
+
     # Get daily counts of cases
     daily_counts = (
         db.query(
-            func.date(Case.created_at).label("date"),
-            func.count(Case.id).label("count")
+            func.date(Case.created_at).label("date"), func.count(Case.id).label("count")
         )
         .filter(Case.created_at >= start_date)
         .group_by(func.date(Case.created_at))
         .all()
     )
-    
+
     # Map to list of dicts for frontend
     counts_map = {str(d.date): d.count for d in daily_counts}
-    
+
     risk_trend = []
     for i in range(14):
         curr_date = (start_date + timedelta(days=i)).date()
         date_str = str(curr_date)
-        risk_trend.append({
-            "date": date_str,
-            "value": counts_map.get(date_str, 0) * 10 + (hash(date_str) % 5) # Scale factor + noise
-        })
-        
+        risk_trend.append(
+            {
+                "date": date_str,
+                "value": counts_map.get(date_str, 0) * 10
+                + (hash(date_str) % 5),  # Scale factor + noise
+            }
+        )
+
     # Simple "Prediction": Take the average of the last 3 days
     recent_values = [d["value"] for d in risk_trend[-3:]]
     avg_recent = sum(recent_values) / len(recent_values) if recent_values else 0
-    
+
     # Projection for "next cycle"
     predicted_fraud = round(avg_recent / 5)
-    
-    return {
-        "riskTrend": risk_trend,
-        "predictedFraud": max(predicted_fraud, 1),
-        "accuracy": round(92.4 + (hash(str(end_date.date())) % 5), 1),
-        "activeAlerts": db.query(Case).filter(Case.status == "open").count(),
-    }
 
+    return {
+        "risk_trend": risk_trend,
+        "predicted_fraud": max(predicted_fraud, 1),
+        "accuracy": round(92.4 + (hash(str(end_date.date())) % 5), 1),
+        "active_alerts": db.query(Case).filter(Case.status == "open").count(),
+    }

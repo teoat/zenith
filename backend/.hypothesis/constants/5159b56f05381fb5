@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/csrf.py
+# hypothesis_version: 6.148.8
+
+[403, '.', '/auth/register', '/auth/token', '/health', '/metrics', 'CSRF token missing', 'GET', 'HEAD', 'Invalid CSRF token', 'OPTIONS', 'SECRET_KEY', 'TRACE', 'X-CSRF-Token', 'anonymous', 'dev-secret-key', 'session_id']

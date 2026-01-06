@@ -5,17 +5,14 @@ Compatible with both Electron (desktop) and web platforms.
 """
 
 import asyncio
-import hashlib
-import json
 import logging
 import os
 import uuid
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
-import aiohttp
 import jwt
 
 logger = logging.getLogger(__name__)
@@ -65,8 +62,8 @@ class APIEndpoint:
     authentication_required: bool
     rate_limit: int  # requests per minute
     owner_organization: str
-    tags: List[str]
-    documentation_url: Optional[str] = None
+    tags: list[str]
+    documentation_url: str | None = None
     created_at: datetime = None
     updated_at: datetime = None
 
@@ -101,7 +98,7 @@ class GraphQLService:
     name: str
     schema_sdl: str
     url: str
-    entities: List[str]  # Entity types this service owns
+    entities: list[str]  # Entity types this service owns
     status: str
     last_health_check: datetime
     version: str
@@ -113,9 +110,9 @@ class EventType:
 
     event_type: str
     description: str
-    schema: Dict[str, Any]
-    producers: List[str]
-    consumers: List[str]
+    schema: dict[str, Any]
+    producers: list[str]
+    consumers: list[str]
     version: str
     status: str
 
@@ -128,10 +125,10 @@ class MarketplaceListing:
     endpoint_id: str
     title: str
     description: str
-    pricing: Dict[str, float]  # tier -> price
-    features: List[str]
-    screenshots: List[str]
-    documentation_links: List[str]
+    pricing: dict[str, float]  # tier -> price
+    features: list[str]
+    screenshots: list[str]
+    documentation_links: list[str]
     support_email: str
     rating: float
     review_count: int
@@ -260,7 +257,7 @@ class EnterpriseIntegrationHub:
         return service_id
 
     async def publish_event(
-        self, event_type: str, event_data: Dict[str, Any], producer_id: str
+        self, event_type: str, event_data: dict[str, Any], producer_id: str
     ) -> None:
         """
         Publish an event to the event bus
@@ -291,7 +288,7 @@ class EnterpriseIntegrationHub:
         logger.info(f"Published event: {event_type} ({event['event_id']})")
 
     async def subscribe_to_events(
-        self, consumer_id: str, event_types: List[str]
+        self, consumer_id: str, event_types: list[str]
     ) -> str:
         """
         Subscribe to event types
@@ -320,8 +317,8 @@ class EnterpriseIntegrationHub:
         return subscription_id
 
     async def execute_federated_query(
-        self, query: str, variables: Dict[str, Any] = None
-    ) -> Dict[str, Any]:
+        self, query: str, variables: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         Execute a federated GraphQL query across multiple services
 
@@ -353,8 +350,8 @@ class EnterpriseIntegrationHub:
         return result
 
     async def get_marketplace_listings(
-        self, filters: Dict[str, Any] = None
-    ) -> List[MarketplaceListing]:
+        self, filters: dict[str, Any] | None = None
+    ) -> list[MarketplaceListing]:
         """
         Get API marketplace listings with optional filters
 
@@ -390,7 +387,7 @@ class EnterpriseIntegrationHub:
 
     async def validate_api_key(
         self, api_key: str, endpoint_id: str
-    ) -> Optional[APISubscription]:
+    ) -> APISubscription | None:
         """
         Validate API key for endpoint access
 
@@ -408,7 +405,6 @@ class EnterpriseIntegrationHub:
                 and subscription.status == "active"
                 and subscription.expires_at > datetime.now()
             ):
-
                 # Check rate limit
                 if subscription.rate_limit_remaining > 0:
                     subscription.rate_limit_remaining -= 1
@@ -424,7 +420,7 @@ class EnterpriseIntegrationHub:
 
     async def get_api_analytics(
         self, endpoint_id: str, period_days: int = 30
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Get analytics for an API endpoint
 
@@ -523,7 +519,7 @@ class EnterpriseIntegrationHub:
 
         logger.info("Updated federated GraphQL schema")
 
-    async def _notify_event_subscribers(self, event: Dict[str, Any]) -> None:
+    async def _notify_event_subscribers(self, event: dict[str, Any]) -> None:
         """Notify event subscribers"""
         event_type = event["event_type"]
 
@@ -543,11 +539,13 @@ class EnterpriseIntegrationHub:
         }
 
         # In real implementation, would use proper JWT signing
-        jwt_secret = os.getenv("JWT_SECRET_KEY", "development-jwt-key-replace-in-production")
+        jwt_secret = os.getenv(
+            "JWT_SECRET_KEY", "development-jwt-key-replace-in-production"
+        )
         token = jwt.encode(payload, jwt_secret, algorithm="HS256")
         return token
 
-    async def get_system_health(self) -> Dict[str, Any]:
+    async def get_system_health(self) -> dict[str, Any]:
         """Get overall system health for integration hub"""
         health = {
             "overall_status": "healthy",

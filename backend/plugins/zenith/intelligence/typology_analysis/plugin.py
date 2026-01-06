@@ -1,21 +1,24 @@
-from core.plugin_system import PluginInterface, PluginMetadata, PluginContext
-from typing import Dict, Any, List
 import logging
 from dataclasses import dataclass
+from typing import Any
+
+from core.plugin_system import PluginContext, PluginInterface, PluginMetadata
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class TypologyConfig:
     similarity_threshold: float
     limit: int
 
+
 class TypologyAnalysisPlugin(PluginInterface):
     """
     AI-powered typology analysis plugin.
     Uses semantic search to match case data against known fraud typologies.
     """
-    
+
     @property
     def metadata(self) -> PluginMetadata:
         return PluginMetadata(
@@ -27,40 +30,43 @@ class TypologyAnalysisPlugin(PluginInterface):
             dependencies={},
             capabilities=["intelligence", "case_analysis"],
             security_level="official",
-            api_version="v1"
+            api_version="v1",
         )
-    
+
     async def initialize(self, context: PluginContext) -> bool:
         self.context = context
-        config_dict = context.config if context.config else {
-            "similarity_threshold": 0.3,
-            "limit": 3
-        }
+        config_dict = (
+            context.config
+            if context.config
+            else {"similarity_threshold": 0.3, "limit": 3}
+        )
         self.config = TypologyConfig(**config_dict)
-        
+
         # Dependency injection
-        self.ai_service = context.get_service('ai_service')
+        self.ai_service = context.get_service("ai_service")
         if not self.ai_service:
-            logger.warning("AI Service not available in context. Typology analysis will fail.")
-            
+            logger.warning(
+                "AI Service not available in context. Typology analysis will fail."
+            )
+
         return True
-    
-    async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+
+    async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         """
         Expects {"case_data": {...}}
         """
         case_data = inputs.get("case_data")
         if not case_data:
             return {"error": "No case data provided"}
-            
+
         if not self.ai_service:
-             return {"error": "AI Service unavailable"}
+            return {"error": "AI Service unavailable"}
 
         return await self._analyze_typology_context(case_data)
 
     async def _analyze_typology_context(
-        self, case_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, case_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         RAG: Extract context from case and search Typology Knowledge Base.
         Copied and adapted from legacy AIService.
@@ -153,5 +159,5 @@ class TypologyAnalysisPlugin(PluginInterface):
     async def cleanup(self) -> None:
         self.ai_service = None
 
-    def validate_config(self, config: Dict[str, Any]) -> List[str]:
+    def validate_config(self, config: dict[str, Any]) -> list[str]:
         return []

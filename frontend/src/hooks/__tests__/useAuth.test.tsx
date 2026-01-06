@@ -1,5 +1,6 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import '@testing-library/jest-dom';
+import { describe, it, jest, beforeEach } from '@jest/globals';
 import { useAuth } from '../useAuth';
 
 // Mock authService

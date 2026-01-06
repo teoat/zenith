@@ -2,13 +2,14 @@
 Circuit Breaker implementation for backend services
 Provides fault tolerance for database operations and external API calls
 """
+
 import asyncio
 import logging
 import time
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class CircuitBreaker:
         self.state = CircuitBreakerState.CLOSED
         self.failure_count = 0
         self.success_count = 0
-        self.last_failure_time: Optional[float] = None
+        self.last_failure_time: float | None = None
 
         self._lock = asyncio.Lock()
 
@@ -66,7 +67,9 @@ class CircuitBreaker:
 
             if self.failure_count >= self.config.failure_threshold:
                 self.state = CircuitBreakerState.OPEN
-                logger.warning(f"Circuit breaker '{self.name}' opened after {self.failure_count} failures")
+                logger.warning(
+                    f"Circuit breaker '{self.name}' opened after {self.failure_count} failures"
+                )
 
     def _reset(self):
         """Reset circuit breaker to closed state"""
@@ -84,20 +87,20 @@ class CircuitBreaker:
             # For sync check, we use current time without awaiting
             if self.last_failure_time is None:
                 return False
-            if time.time() - self.last_failure_time >= self.config.recovery_timeout:
-                return True
-            return False
+            return time.time() - self.last_failure_time >= self.config.recovery_timeout
         else:  # HALF_OPEN
             return True
 
     def attempt_operation_sync(self):
         """Sync context manager for circuit breaker protected operations"""
         from contextlib import contextmanager
-        
+
         @contextmanager
         def sync_context():
             if not self._can_attempt():
-                raise CircuitBreakerOpenException(f"Circuit breaker '{self.name}' is open")
+                raise CircuitBreakerOpenException(
+                    f"Circuit breaker '{self.name}' is open"
+                )
 
             if self.state == CircuitBreakerState.OPEN:
                 self.state = CircuitBreakerState.HALF_OPEN
@@ -118,9 +121,11 @@ class CircuitBreaker:
                 self.last_failure_time = time.time()
                 if self.failure_count >= self.config.failure_threshold:
                     self.state = CircuitBreakerState.OPEN
-                    logger.warning(f"Circuit breaker '{self.name}' opened after {self.failure_count} failures")
+                    logger.warning(
+                        f"Circuit breaker '{self.name}' opened after {self.failure_count} failures"
+                    )
                 raise e
-        
+
         return sync_context()
 
     @asynccontextmanager
@@ -140,7 +145,7 @@ class CircuitBreaker:
             await self._record_failure()
             raise e
 
-    def get_status(self) -> Dict[str, Any]:
+    def get_status(self) -> dict[str, Any]:
         """Get circuit breaker status"""
         return {
             "name": self.name,
@@ -153,27 +158,28 @@ class CircuitBreaker:
                 "recovery_timeout": self.config.recovery_timeout,
                 "success_threshold": self.config.success_threshold,
                 "timeout": self.config.timeout,
-            }
+            },
         }
 
 
 class CircuitBreakerOpenException(Exception):
     """Exception raised when circuit breaker is open"""
-    pass
 
 
 # Global circuit breaker registry
-_circuit_breakers: Dict[str, CircuitBreaker] = {}
+_circuit_breakers: dict[str, CircuitBreaker] = {}
 
 
-def get_circuit_breaker(name: str, config: CircuitBreakerConfig = None) -> CircuitBreaker:
+def get_circuit_breaker(
+    name: str, config: CircuitBreakerConfig = None
+) -> CircuitBreaker:
     """Get or create a circuit breaker instance"""
     if name not in _circuit_breakers:
         _circuit_breakers[name] = CircuitBreaker(name, config)
     return _circuit_breakers[name]
 
 
-def get_all_circuit_breakers() -> Dict[str, Dict[str, Any]]:
+def get_all_circuit_breakers() -> dict[str, dict[str, Any]]:
     """Get status of all circuit breakers"""
     return {name: cb.get_status() for name, cb in _circuit_breakers.items()}
 
@@ -187,15 +193,20 @@ def circuit_breaker(name: str, config: CircuitBreakerConfig = None):
 
     def decorator(func):
         if inspect.iscoroutinefunction(func):
+
             @functools.wraps(func)
             async def async_wrapper(*args, **kwargs):
                 async with cb.attempt_operation():
                     return await func(*args, **kwargs)
+
             return async_wrapper
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args, **kwargs):
                 with cb.attempt_operation_sync():
                     return func(*args, **kwargs)
+
             return sync_wrapper
+
     return decorator

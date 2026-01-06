@@ -2,15 +2,13 @@
 Advanced AI/ML Service - Federated Learning, Explainable AI, and Automated Model Retraining
 """
 
-import asyncio
-import json
 import logging
 import os
 import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 import joblib
 import numpy as np
@@ -60,15 +58,15 @@ class ModelVersion:
     status: ModelStatus
     metrics: ModelMetrics
     created_at: datetime
-    deployed_at: Optional[datetime]
-    retired_at: Optional[datetime]
+    deployed_at: datetime | None
+    retired_at: datetime | None
     model_path: str
 
 
 @dataclass
 class FederatedUpdate:
     client_id: str
-    model_weights: Dict[str, Any]
+    model_weights: dict[str, Any]
     local_metrics: ModelMetrics
     sample_count: int
     timestamp: datetime
@@ -78,10 +76,10 @@ class FederatedUpdate:
 class ExplainabilityResult:
     prediction: Any
     confidence: float
-    feature_importance: Dict[str, float]
-    decision_path: List[str]
-    counterfactual_examples: List[Dict[str, Any]]
-    bias_analysis: Dict[str, Any]
+    feature_importance: dict[str, float]
+    decision_path: list[str]
+    counterfactual_examples: list[dict[str, Any]]
+    bias_analysis: dict[str, Any]
 
 
 class FederatedLearningCoordinator:
@@ -94,7 +92,7 @@ class FederatedLearningCoordinator:
         self.min_clients = min_clients
         self.aggregation_rounds = aggregation_rounds
         self.global_model = None
-        self.client_updates: List[FederatedUpdate] = []
+        self.client_updates: list[FederatedUpdate] = []
         self.current_round = 0
         self.status = FederatedLearningStatus.IDLE
         self.last_aggregation = None
@@ -146,7 +144,7 @@ class FederatedLearningCoordinator:
             # Initialize with first client's weights
             if self.client_updates:
                 base_weights = self.client_updates[0].model_weights.copy()
-                for key in base_weights.keys():
+                for key in base_weights:
                     if isinstance(base_weights[key], np.ndarray):
                         aggregated_weights[key] = np.zeros_like(base_weights[key])
                     else:
@@ -177,11 +175,11 @@ class FederatedLearningCoordinator:
         self.status = FederatedLearningStatus.IDLE
         self.client_updates = []
 
-    def get_global_model(self) -> Optional[Dict[str, Any]]:
+    def get_global_model(self) -> dict[str, Any] | None:
         """Get the current global model"""
         return self.global_model
 
-    def get_status(self) -> Dict[str, Any]:
+    def get_status(self) -> dict[str, Any]:
         """Get federated learning status"""
         return {
             "status": self.status.value,
@@ -210,7 +208,7 @@ class ExplainableAI:
         ]
 
     def explain_prediction(
-        self, model: Any, input_data: Dict[str, Any], prediction: Any
+        self, model: Any, input_data: dict[str, Any], prediction: Any
     ) -> ExplainabilityResult:
         """Generate comprehensive explanation for a prediction"""
         try:
@@ -250,8 +248,8 @@ class ExplainableAI:
             )
 
     def _calculate_feature_importance(
-        self, model: Any, input_data: Dict[str, Any]
-    ) -> Dict[str, float]:
+        self, model: Any, input_data: dict[str, Any]
+    ) -> dict[str, float]:
         """Calculate feature importance scores"""
         importance = {}
         try:
@@ -272,8 +270,8 @@ class ExplainableAI:
         return importance
 
     def _generate_decision_path(
-        self, model: Any, input_data: Dict[str, Any]
-    ) -> List[str]:
+        self, model: Any, input_data: dict[str, Any]
+    ) -> list[str]:
         """Generate human-readable decision path"""
         path = []
         try:
@@ -305,8 +303,8 @@ class ExplainableAI:
         return path
 
     def _generate_counterfactuals(
-        self, input_data: Dict[str, Any], prediction: Any
-    ) -> List[Dict[str, Any]]:
+        self, input_data: dict[str, Any], prediction: Any
+    ) -> list[dict[str, Any]]:
         """Generate counterfactual examples"""
         counterfactuals = []
 
@@ -350,7 +348,7 @@ class ExplainableAI:
 
         return counterfactuals
 
-    def _analyze_bias(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _analyze_bias(self, input_data: dict[str, Any]) -> dict[str, Any]:
         """Analyze potential bias in the prediction"""
         bias_analysis = {
             "detected_biases": [],
@@ -386,7 +384,7 @@ class ExplainableAI:
         return bias_analysis
 
     def _calculate_prediction_confidence(
-        self, model: Any, input_data: Dict[str, Any]
+        self, model: Any, input_data: dict[str, Any]
     ) -> float:
         """Calculate confidence score for the prediction"""
         try:
@@ -422,20 +420,20 @@ class AutomatedModelRetrainer:
 
     def __init__(self, model_dir: str = "models"):
         self.model_dir = model_dir
-        self.models: Dict[str, ModelVersion] = {}
+        self.models: dict[str, ModelVersion] = {}
         self.retraining_triggers = {
             "accuracy_drop": 0.05,  # Retrain if accuracy drops by 5%
             "new_data_threshold": 1000,  # Retrain after 1000 new samples
             "time_based": timedelta(days=7),  # Retrain weekly
             "performance_degradation": 0.1,  # Retrain if performance degrades by 10%
         }
-        self.active_models: Dict[ModelType, ModelVersion] = {}
+        self.active_models: dict[ModelType, ModelVersion] = {}
 
         # Ensure model directory exists
         os.makedirs(model_dir, exist_ok=True)
 
     async def train_new_model(
-        self, model_type: ModelType, training_data: Dict[str, Any]
+        self, model_type: ModelType, training_data: dict[str, Any]
     ) -> ModelVersion:
         """Train a new model version"""
         version = f"{model_type.value}_v{int(time.time())}"
@@ -527,7 +525,7 @@ class AutomatedModelRetrainer:
         logger.info(f"Successfully deployed model {version}")
         return True
 
-    def check_retraining_needed(self, model_type: ModelType) -> Dict[str, Any]:
+    def check_retraining_needed(self, model_type: ModelType) -> dict[str, Any]:
         """Check if retraining is needed for a model type"""
         if model_type not in self.active_models:
             return {"needed": True, "reason": "No active model"}
@@ -560,15 +558,15 @@ class AutomatedModelRetrainer:
         }
 
     def get_model_versions(
-        self, model_type: Optional[ModelType] = None
-    ) -> List[ModelVersion]:
+        self, model_type: ModelType | None = None
+    ) -> list[ModelVersion]:
         """Get all model versions, optionally filtered by type"""
         versions = list(self.models.values())
         if model_type:
             versions = [v for v in versions if v.model_type == model_type]
         return sorted(versions, key=lambda x: x.created_at, reverse=True)
 
-    def get_active_model(self, model_type: ModelType) -> Optional[ModelVersion]:
+    def get_active_model(self, model_type: ModelType) -> ModelVersion | None:
         """Get the currently active model for a type"""
         return self.active_models.get(model_type)
 
@@ -579,7 +577,7 @@ class AdvancedAIService:
     def __init__(self):
         self.explainable_ai = ExplainableAI()
         self.model_retrainer = AutomatedModelRetrainer()
-        self.federated_coordinators: Dict[ModelType, FederatedLearningCoordinator] = {}
+        self.federated_coordinators: dict[ModelType, FederatedLearningCoordinator] = {}
 
         # Initialize federated learning coordinators
         for model_type in ModelType:
@@ -588,7 +586,7 @@ class AdvancedAIService:
             )
 
     async def explain_prediction(
-        self, model_type: ModelType, input_data: Dict[str, Any], prediction: Any
+        self, model_type: ModelType, input_data: dict[str, Any], prediction: Any
     ) -> ExplainabilityResult:
         """Get explainable AI analysis for a prediction"""
         # Get active model for explanation
@@ -617,13 +615,13 @@ class AdvancedAIService:
         coordinator = self.federated_coordinators[model_type]
         return await coordinator.submit_client_update(update)
 
-    def get_federated_status(self, model_type: ModelType) -> Dict[str, Any]:
+    def get_federated_status(self, model_type: ModelType) -> dict[str, Any]:
         """Get federated learning status for a model type"""
         coordinator = self.federated_coordinators[model_type]
         return coordinator.get_status()
 
     async def retrain_model(
-        self, model_type: ModelType, training_data: Dict[str, Any]
+        self, model_type: ModelType, training_data: dict[str, Any]
     ) -> ModelVersion:
         """Retrain a model with new data"""
         logger.info(f"Starting retraining for {model_type.value}")
@@ -657,7 +655,7 @@ class AdvancedAIService:
 
         return new_version
 
-    def check_all_models_retraining(self) -> Dict[str, Any]:
+    def check_all_models_retraining(self) -> dict[str, Any]:
         """Check retraining status for all model types"""
         results = {}
         for model_type in ModelType:
@@ -666,7 +664,7 @@ class AdvancedAIService:
             )
         return results
 
-    async def run_automated_retraining_cycle(self) -> Dict[str, Any]:
+    async def run_automated_retraining_cycle(self) -> dict[str, Any]:
         """Run automated retraining for models that need it"""
         results = {
             "models_checked": 0,
@@ -709,7 +707,7 @@ class AdvancedAIService:
 
         return results
 
-    def get_ai_system_status(self) -> Dict[str, Any]:
+    def get_ai_system_status(self) -> dict[str, Any]:
         """Get comprehensive AI system status"""
         return {
             "active_models": {

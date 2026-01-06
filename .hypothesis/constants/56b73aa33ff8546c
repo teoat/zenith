@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/integration/collaboration/sync_service.py
+# hypothesis_version: 6.148.8
+
+['acquire', 'action', 'connection_id', 'content', 'crdt_operation', 'crdt_state', 'current_holder', 'delete', 'document_id', 'document_lock', 'file', 'id', 'insert', 'last_modified', 'last_updated', 'lock_acquired', 'lock_denied', 'lock_released', 'locked_documents', 'operation', 'operation_id', 'operations', 'operations_count', 'payload', 'ping', 'pong', 'reason', 'release', 'retain', 'subscribe', 'subscribed', 'sync_service.py', 'timestamp', 'total_connections', 'type', 'unique_users', 'unknown', 'user_connections', 'user_id', 'vector_clock', 'welcome']

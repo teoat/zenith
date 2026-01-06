@@ -1,0 +1,54 @@
+
+> frontend@0.0.0 build
+> vite build
+
+vite v7.3.0 building client environment for production...
+transforming...
+[plugin vite:esbuild] src/pages/Reconciliation.tsx: Duplicate "role" attribute in JSX element
+153 |              className="absolute inset-0 bg-black/50" 
+154 |               role="button" aria-label="Interactive element" onClick={() => setSelectedItem(null)}
+155 |              role="button"
+    |              ^
+156 |              tabIndex={0}
+157 |              onKeyDown={(e) => e.key === 'Escape' && setSelectedItem(null)}
+
+[plugin vite:esbuild] src/pages/Reconciliation.tsx: Duplicate "aria-label" attribute in JSX element
+156 |              tabIndex={0}
+157 |              onKeyDown={(e) => e.key === 'Escape' && setSelectedItem(null)}
+158 |              aria-label="Close modal"
+    |              ^
+159 |            />
+160 |            <div 
+
+✓ 4188 modules transformed.
+rendering chunks...
+[plugin vite:reporter] 
+(!) /Users/Arief/Desktop/378x492/frontend/src/services/client.ts is dynamically imported by /Users/Arief/Desktop/378x492/frontend/src/components/ai/CodeReviewDashboard.tsx, /Users/Arief/Desktop/378x492/frontend/src/services/complianceMonitoring.ts, /Users/Arief/Desktop/378x492/frontend/src/services/complianceMonitoring.ts but also statically imported by /Users/Arief/Desktop/378x492/frontend/src/components/common/EvidenceSpotlight.tsx, /Users/Arief/Desktop/378x492/frontend/src/services/ai.ts, /Users/Arief/Desktop/378x492/frontend/src/services/alerts.ts, /Users/Arief/Desktop/378x492/frontend/src/services/approvalService.ts, /Users/Arief/Desktop/378x492/frontend/src/services/auth.ts, /Users/Arief/Desktop/378x492/frontend/src/services/cases.ts, /Users/Arief/Desktop/378x492/frontend/src/services/costOptimization.ts, /Users/Arief/Desktop/378x492/frontend/src/services/evidence.ts, /Users/Arief/Desktop/378x492/frontend/src/services/graph.ts, /Users/Arief/Desktop/378x492/frontend/src/services/monitoring.ts, /Users/Arief/Desktop/378x492/frontend/src/services/notifications.ts, /Users/Arief/Desktop/378x492/frontend/src/services/reconciliation.ts, /Users/Arief/Desktop/378x492/frontend/src/services/reporting.ts, /Users/Arief/Desktop/378x492/frontend/src/services/settings.ts, /Users/Arief/Desktop/378x492/frontend/src/services/socket.ts, /Users/Arief/Desktop/378x492/frontend/src/services/sync.ts, /Users/Arief/Desktop/378x492/frontend/src/services/user.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /Users/Arief/Desktop/378x492/frontend/src/lib/api.ts is dynamically imported by /Users/Arief/Desktop/378x492/frontend/src/components/cases/CaseKanban.tsx, /Users/Arief/Desktop/378x492/frontend/src/components/cases/CaseKanban.tsx, /Users/Arief/Desktop/378x492/frontend/src/pages/PerformanceDashboard.tsx but also statically imported by /Users/Arief/Desktop/378x492/frontend/src/components/RelationshipGraph.tsx, /Users/Arief/Desktop/378x492/frontend/src/components/dashboard/AIWatchtower.tsx, /Users/Arief/Desktop/378x492/frontend/src/components/ingestion/IngestionStepper.tsx, /Users/Arief/Desktop/378x492/frontend/src/components/investigation/EntityRegistry.tsx, /Users/Arief/Desktop/378x492/frontend/src/hooks/useCases.ts, /Users/Arief/Desktop/378x492/frontend/src/hooks/useDashboardMetrics.ts, /Users/Arief/Desktop/378x492/frontend/src/hooks/useEvidence.ts, /Users/Arief/Desktop/378x492/frontend/src/hooks/useGraphData.ts, /Users/Arief/Desktop/378x492/frontend/src/hooks/useSettings.ts, /Users/Arief/Desktop/378x492/frontend/src/pages/AdjudicationQueue.tsx, /Users/Arief/Desktop/378x492/frontend/src/pages/Investigation.tsx, /Users/Arief/Desktop/378x492/frontend/src/pages/NetworkAnalysis.tsx, /Users/Arief/Desktop/378x492/frontend/src/providers/OfflineQueueContext.tsx, /Users/Arief/Desktop/378x492/frontend/src/services/fileProcessing.ts, /Users/Arief/Desktop/378x492/frontend/src/store/reconciliationStore.ts, /Users/Arief/Desktop/378x492/frontend/src/utils/errorHandler.ts, dynamic import will not move module into another chunk.
+
+computing gzip size...
+dist/index.html                               1.29 kB │ gzip:   0.47 kB
+dist/assets/components-BkXIt-Yb.css           0.59 kB │ gzip:   0.34 kB
+dist/assets/pages-DA_BKz32.css                0.59 kB │ gzip:   0.25 kB
+dist/assets/react-vendor-DULRuONn.css         3.75 kB │ gzip:   0.97 kB
+dist/assets/index-BVWjTJyp.css              163.89 kB │ gzip:  24.75 kB
+dist/assets/ui-vendor-2vXDUFnZ.js             1.78 kB │ gzip:   0.71 kB
+dist/assets/browser-ponyfill-DTWccUo7.js      9.99 kB │ gzip:   3.44 kB
+dist/assets/utils-vendor-Caj2lcPM.js         16.35 kB │ gzip:   6.25 kB
+dist/assets/services-ClUw4Ntw.js             42.49 kB │ gzip:  12.69 kB
+dist/assets/index-lriRV47U.js                52.92 kB │ gzip:  15.61 kB
+dist/assets/jszip.min-CVxopRLM.js            96.70 kB │ gzip:  28.58 kB
+dist/assets/pages-C_pZguxH.js               141.52 kB │ gzip:  34.13 kB
+dist/assets/pdf-vendor-C1To_j92.js          398.55 kB │ gzip: 115.17 kB
+dist/assets/chart-vendor-BOznlCE8.js        434.48 kB │ gzip: 123.28 kB
+dist/assets/map-vendor-byb_GHHO.js        1,003.68 kB │ gzip: 264.52 kB
+dist/assets/react-vendor-CrY6qfv5.js      1,323.59 kB │ gzip: 389.96 kB
+dist/assets/components-C3ZxLosM.js        1,767.98 kB │ gzip: 463.98 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1m 31s

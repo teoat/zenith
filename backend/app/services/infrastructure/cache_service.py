@@ -5,9 +5,10 @@ import json
 import logging
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, Awaitable, Callable, Dict, Optional
+from typing import Any
 
 try:
     import redis
@@ -25,14 +26,16 @@ class CacheEntry:
     key: str
     value: Any
     created_at: datetime
-    expires_at: Optional[datetime]
+    expires_at: datetime | None
     access_count: int = 0
-    last_accessed: Optional[datetime] = None
+    last_accessed: datetime | None = None
     size_bytes: int = 0
+
 
 @dataclass
 class QueryCacheEntry:
     """Specialized cache entry for database query results"""
+
     query_hash: str
     query_sql: str
     parameters: tuple
@@ -51,6 +54,7 @@ class QueryCacheEntry:
 
 class QueryCacheMetrics:
     """Metrics specific to query result caching"""
+
     def __init__(self):
         self.query_hits = 0
         self.query_misses = 0
@@ -63,7 +67,7 @@ class QueryCacheMetrics:
         total = self.query_hits + self.query_misses
         return self.query_hits / total if total > 0 else 0.0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "query_hits": self.query_hits,
             "query_misses": self.query_misses,
@@ -71,8 +75,9 @@ class QueryCacheMetrics:
             "read_replica_hits": self.read_replica_hits,
             "primary_db_hits": self.primary_db_hits,
             "avg_query_time_saved": self.avg_query_time_saved,
-            "hit_rate": self.hit_rate()
+            "hit_rate": self.hit_rate(),
         }
+
 
 class CacheMetrics:
     def __init__(self):
@@ -86,7 +91,7 @@ class CacheMetrics:
         total = self.hits + self.misses
         return self.hits / total if total > 0 else 0.0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "hits": self.hits,
             "misses": self.misses,
@@ -114,8 +119,8 @@ class MultiLayerCache:
         redis_port: int = 6379,
         redis_db: int = 0,
     ):
-        self.l1_cache: Dict[str, CacheEntry] = {}  # L1: Fast memory cache
-        self.l2_cache: Dict[str, CacheEntry] = {}  # L2: Larger memory cache
+        self.l1_cache: dict[str, CacheEntry] = {}  # L1: Fast memory cache
+        self.l2_cache: dict[str, CacheEntry] = {}  # L2: Larger memory cache
         self.max_l1_entries = max_memory_entries // 4  # 25% for L1
         self.max_l2_entries = max_memory_entries - self.max_l1_entries  # 75% for L2
         self.default_ttl = timedelta(seconds=default_ttl_seconds)
@@ -195,7 +200,7 @@ class MultiLayerCache:
         """Check if cache entry is expired"""
         return entry.expires_at and datetime.now() > entry.expires_at
 
-    def _evict_lru(self, cache: Dict[str, CacheEntry], max_entries: int):
+    def _evict_lru(self, cache: dict[str, CacheEntry], max_entries: int):
         """Evict least recently used entries"""
         if len(cache) <= max_entries:
             return
@@ -245,7 +250,7 @@ class MultiLayerCache:
         thread = threading.Thread(target=cleanup_worker, daemon=True)
         thread.start()
 
-    def get(self, namespace: str, key: Any) -> Optional[Any]:
+    def get(self, namespace: str, key: Any) -> Any | None:
         """Get value from cache"""
         cache_key = self._generate_key(namespace, key)
 
@@ -313,7 +318,7 @@ class MultiLayerCache:
             return None
 
     def set(
-        self, namespace: str, key: Any, value: Any, ttl_seconds: Optional[int] = None
+        self, namespace: str, key: Any, value: Any, ttl_seconds: int | None = None
     ) -> bool:
         """Set value in cache"""
         cache_key = self._generate_key(namespace, key)
@@ -388,17 +393,13 @@ class MultiLayerCache:
             cleared = 0
 
             # Clear from L1
-            to_remove_l1 = [
-                k for k in self.l1_cache.keys() if k.startswith(f"{namespace}:")
-            ]
+            to_remove_l1 = [k for k in self.l1_cache if k.startswith(f"{namespace}:")]
             for key in to_remove_l1:
                 del self.l1_cache[key]
                 cleared += 1
 
             # Clear from L2
-            to_remove_l2 = [
-                k for k in self.l2_cache.keys() if k.startswith(f"{namespace}:")
-            ]
+            to_remove_l2 = [k for k in self.l2_cache if k.startswith(f"{namespace}:")]
             for key in to_remove_l2:
                 del self.l2_cache[key]
                 cleared += 1
@@ -424,7 +425,7 @@ class MultiLayerCache:
             self.l2_cache.clear()
             return total_cleared
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get comprehensive cache statistics"""
         stats = {
             "l1_cache": {
@@ -493,9 +494,9 @@ class QueryResultCache:
         query_func: Callable,
         query_sql: str,
         parameters: tuple = (),
-        ttl_seconds: int = None,
+        ttl_seconds: int | None = None,
         use_read_replica: bool = True,
-        table_names: list[str] = None
+        table_names: list[str] | None = None,
     ) -> Any:
         """
         Execute a database query with intelligent caching
@@ -547,7 +548,7 @@ class QueryResultCache:
                 execution_time=execution_time,
                 ttl_seconds=ttl_seconds or self.query_cache_ttl,
                 is_read_replica=is_read_replica,
-                table_names=table_names or []
+                table_names=table_names or [],
             )
 
             return result
@@ -556,7 +557,7 @@ class QueryResultCache:
             logger.error(f"Query execution failed: {e}")
             raise
 
-    async def _get_cached_query_result(self, cache_key: str) -> Optional[QueryCacheEntry]:
+    async def _get_cached_query_result(self, cache_key: str) -> QueryCacheEntry | None:
         """Get cached query result"""
         return await self.cache.get("query_cache", cache_key)
 
@@ -569,7 +570,7 @@ class QueryResultCache:
         execution_time: float,
         ttl_seconds: int,
         is_read_replica: bool,
-        table_names: list[str]
+        table_names: list[str],
     ):
         """Cache query result with metadata"""
         cache_key = f"query:{query_hash}"
@@ -583,14 +584,14 @@ class QueryResultCache:
             created_at=datetime.now(),
             expires_at=datetime.now() + timedelta(seconds=ttl_seconds),
             table_names=table_names,
-            is_read_replica=is_read_replica
+            is_read_replica=is_read_replica,
         )
 
         await self.cache.set("query_cache", cache_key, entry, ttl_seconds)
 
     def _generate_query_hash(self, query_sql: str, parameters: tuple) -> str:
         """Generate unique hash for query + parameters"""
-        query_key = f"{query_sql}:{str(parameters)}"
+        query_key = f"{query_sql}:{parameters!s}"
         return hashlib.md5(query_key.encode()).hexdigest()[:16]
 
     async def invalidate_table_cache(self, table_name: str):
@@ -600,7 +601,7 @@ class QueryResultCache:
         self.query_metrics.cache_invalidations += 1
         logger.info(f"Cache invalidated for table: {table_name}")
 
-    async def get_cache_statistics(self) -> Dict[str, Any]:
+    async def get_cache_statistics(self) -> dict[str, Any]:
         """Get comprehensive cache statistics"""
         base_stats = await self.cache.get_statistics()
         query_stats = self.query_metrics.to_dict()
@@ -612,12 +613,9 @@ class QueryResultCache:
             "replica_count": len(self.replica_connection_strings),
             "cache_configuration": {
                 "default_ttl": self.query_cache_ttl,
-                "read_replica_preferred": self.read_replica_available
-            }
+                "read_replica_preferred": self.read_replica_available,
+            },
         }
-
-
-
 
 
 class CachedFunction:

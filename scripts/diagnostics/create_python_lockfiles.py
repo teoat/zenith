@@ -6,8 +6,6 @@ Generate reproducible dependency specifications with checksums
 
 import hashlib
 import json
-import os
-from typing import Any, Dict, List
 
 # Perfect dependency specifications with exact versions and checksums
 PERFECT_DEPENDENCIES = {

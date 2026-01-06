@@ -5,20 +5,18 @@ Compatible with both Electron (desktop) and web platforms.
 """
 
 import asyncio
-import hashlib
-import json
 import logging
-import re
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
-import requests
 import redis
+
+from core.config import settings
+
 from .sanctions_downloader import SanctionsListDownloader
 from .transaction_analyzer import TransactionPatternAnalyzer
-from core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -60,8 +58,8 @@ class ComplianceRule:
     check_frequency: str  # "real-time", "daily", "weekly", "monthly"
     automated_check: bool
     manual_review_required: bool
-    remediation_steps: List[str]
-    reference_links: List[str]
+    remediation_steps: list[str]
+    reference_links: list[str]
 
 
 @dataclass
@@ -74,12 +72,12 @@ class ComplianceCheck:
     entity_type: str
     status: ComplianceStatus
     risk_score: float
-    findings: List[str]
-    recommendations: List[str]
+    findings: list[str]
+    recommendations: list[str]
     checked_at: datetime
     next_check_due: datetime
-    reviewer_id: Optional[str] = None
-    review_notes: Optional[str] = None
+    reviewer_id: str | None = None
+    review_notes: str | None = None
 
 
 @dataclass
@@ -91,13 +89,13 @@ class RegulatoryAlert:
     severity: ComplianceRisk
     title: str
     description: str
-    affected_entities: List[str]
+    affected_entities: list[str]
     required_action: str
     deadline: datetime
     escalation_level: int
     created_at: datetime
-    acknowledged_at: Optional[datetime] = None
-    resolved_at: Optional[datetime] = None
+    acknowledged_at: datetime | None = None
+    resolved_at: datetime | None = None
 
 
 @dataclass
@@ -109,21 +107,20 @@ class ComplianceReport:
     period_start: datetime
     period_end: datetime
     overall_status: ComplianceStatus
-    risk_summary: Dict[str, int]  # risk_level -> count
-    critical_findings: List[str]
-    recommendations: List[str]
+    risk_summary: dict[str, int]  # risk_level -> count
+    critical_findings: list[str]
+    recommendations: list[str]
     generated_at: datetime
-    approved_by: Optional[str] = None
-
+    approved_by: str | None = None
 
 
 class AdvancedComplianceEngine:
     """
     Deterministic Rule-Based Compliance Engine.
-    
+
     Provides real-time regulatory monitoring and automated compliance checks
     using heuristics, pattern matching, and rule-based validation.
-    
+
     NOTE: This is a rule-based system, not a probabilistic AI model.
     It guarantees deterministic execution of compliance rules.
     """
@@ -134,13 +131,15 @@ class AdvancedComplianceEngine:
         self.regulatory_alerts = []
         self.compliance_checks = []
         self.monitoring_active = False
-        
+
         self.sanctions_downloader = SanctionsListDownloader()
         self.transaction_analyzer = TransactionPatternAnalyzer()
-        
+
         # Redis connection
         try:
-            pool = redis.ConnectionPool.from_url(settings.REDIS_URL, decode_responses=True)
+            pool = redis.ConnectionPool.from_url(
+                settings.REDIS_URL, decode_responses=True
+            )
             self.redis_client = redis.Redis(connection_pool=pool)
             logger.info("AdvancedComplianceEngine connected to Redis")
         except Exception as e:
@@ -148,7 +147,7 @@ class AdvancedComplianceEngine:
             self.redis_client = None
 
         # In-memory storage for sanctions data (fallback)
-        self.sanctions_db: Set[str] = set()
+        self.sanctions_db: set[str] = set()
         self._initialize_baseline_sanctions()
 
         # External regulatory data sources (Managed by Downloader now)
@@ -158,8 +157,11 @@ class AdvancedComplianceEngine:
         """Initialize with some known baseline sanctions for offline capability"""
         # In a real app, this would load from a local cached file
         baseline = {
-            "unknown entity", "prohibited limited", "blocked corporation", 
-            "sanctioned individual", "bad actor inc"
+            "unknown entity",
+            "prohibited limited",
+            "blocked corporation",
+            "sanctioned individual",
+            "bad actor inc",
         }
         self.sanctions_db.update(baseline)
 
@@ -172,34 +174,36 @@ class AdvancedComplianceEngine:
             # Naive line-based parser for demonstration
             new_entries = set()
             for line in data.splitlines():
-                if len(line) > 5 and "," in line: # Basic validity check
+                if len(line) > 5 and "," in line:  # Basic validity check
                     # storing lower case for case-insensitive matching
-                    new_entries.add(line.split(",")[0].strip().lower()) 
-            
+                    new_entries.add(line.split(",")[0].strip().lower())
+
             self.sanctions_db.update(new_entries)
-            logger.info(f"Updated sanctions database from {source}. Total entries: {len(self.sanctions_db)}")
+            logger.info(
+                f"Updated sanctions database from {source}. Total entries: {len(self.sanctions_db)}"
+            )
         except Exception as e:
             logger.error(f"Failed to parse sanctions data from {source}: {e}")
 
     async def _check_sanctions_compliance(
-        self, entity_data: Dict[str, Any]
-    ) -> Tuple[ComplianceStatus, float]:
+        self, entity_data: dict[str, Any]
+    ) -> tuple[ComplianceStatus, float]:
         """Check entity against sanctions lists"""
         name = entity_data.get("name", "").lower()
         if not name:
             return ComplianceStatus.COMPLIANT, 0.0
 
         risk_score = 0.0
-        
+
         # 1. Check Redis Cache first
         if self.redis_client:
             if self.redis_client.sismember("sanctions:names", name):
-                 return ComplianceStatus.NON_COMPLIANT, 1.0
+                return ComplianceStatus.NON_COMPLIANT, 1.0
 
         # 2. Direct Match against local memory (fallback)
         if name in self.sanctions_db:
-             risk_score = 1.0
-             return ComplianceStatus.NON_COMPLIANT, risk_score
+            risk_score = 1.0
+            return ComplianceStatus.NON_COMPLIANT, risk_score
 
         # 3. Fuzzy/Keyword Match
         sanctions_keywords = ["sanctioned", "blocked", "prohibited", "embargoed"]
@@ -207,7 +211,7 @@ class AdvancedComplianceEngine:
             if keyword in name:
                 risk_score = 0.9
                 break
-        
+
         status = (
             ComplianceStatus.NON_COMPLIANT
             if risk_score > 0.8
@@ -215,32 +219,31 @@ class AdvancedComplianceEngine:
         )
         return status, risk_score
 
-    async def _detect_suspicious_pattern(self, pattern: str) -> List[Dict[str, Any]]:
+    async def _detect_suspicious_pattern(self, pattern: str) -> list[dict[str, Any]]:
         """Detect suspicious transaction patterns using heuristic analysis"""
         # This mocks querying a transaction database
         # In a real system, this would query self.db.query(Transaction)...
-        
-        # We will simulate detection based on provided mock 'recent_transactions' 
-        # Since I can't access a real DB here easily without a session, we define logic 
+
+        # We will simulate detection based on provided mock 'recent_transactions'
+        # Since I can't access a real DB here easily without a session, we define logic
         # that *would* work given a list of transactions.
-        
+
         findings = []
-        
+
         # Logic implementations for specific patterns
         if pattern == "structuring":
-             # Logic: Detect multiple transactions just under $10,000 threshold
-             # Simulation:
-             pass 
+            # Logic: Detect multiple transactions just under $10,000 threshold
+            # Simulation:
+            pass
         elif pattern == "rapid_movement":
-             # Logic: In-and-out within short timeframe
-             pass
+            # Logic: In-and-out within short timeframe
+            pass
 
-        return findings 
+        return findings
 
     # ... [Rest of file] ...
 
-
-    def _load_compliance_rules(self) -> Dict[str, ComplianceRule]:
+    def _load_compliance_rules(self) -> dict[str, ComplianceRule]:
         """Load comprehensive compliance rules for all supported frameworks"""
         return {
             "kyc_verification": ComplianceRule(
@@ -375,7 +378,7 @@ class AdvancedComplianceEngine:
         rule_id: str,
         entity_id: str,
         entity_type: str,
-        entity_data: Dict[str, Any],
+        entity_data: dict[str, Any],
     ) -> ComplianceCheck:
         """
         Perform automated compliance check for a specific rule and entity
@@ -396,9 +399,12 @@ class AdvancedComplianceEngine:
         check_id = f"check_{rule_id}_{entity_id}_{int(datetime.now().timestamp())}"
 
         # Perform the actual compliance check
-        status, risk_score, findings, recommendations = (
-            await self._execute_compliance_check(rule, entity_data)
-        )
+        (
+            status,
+            risk_score,
+            findings,
+            recommendations,
+        ) = await self._execute_compliance_check(rule, entity_data)
 
         # Determine next check date based on frequency
         next_check_due = self._calculate_next_check_date(rule.check_frequency)
@@ -501,16 +507,20 @@ class AdvancedComplianceEngine:
             try:
                 # Use SanctionsListDownloader
                 sanctions_data = await self.sanctions_downloader.fetch_and_parse_all()
-                
+
                 # Update local memory
                 self.sanctions_db.update(sanctions_data)
-                
+
                 # Update Redis
                 if self.redis_client and sanctions_data:
                     self.redis_client.sadd("sanctions:names", *sanctions_data)
-                    logger.info(f"Updated Redis sanctions list with {len(sanctions_data)} entries")
+                    logger.info(
+                        f"Updated Redis sanctions list with {len(sanctions_data)} entries"
+                    )
 
-                logger.info(f"Sanctions lists updated. Total entries: {len(self.sanctions_db)}")
+                logger.info(
+                    f"Sanctions lists updated. Total entries: {len(self.sanctions_db)}"
+                )
 
                 # Check for sanctions matches in recent transactions
                 await self._check_recent_transactions_against_sanctions()
@@ -528,15 +538,19 @@ class AdvancedComplianceEngine:
                 # Use TransactionPatternAnalyzer
                 # We need a source of recent transactions. In this 'agent' role, we simulate fetching them.
                 # In a real app, we'd inject a transaction_service or similar.
-                recent_transactions = [] # Placeholder: await transaction_service.get_recent_transactions()
-                
-                findings = self.transaction_analyzer.analyze_velocity(recent_transactions)
-                structuring = self.transaction_analyzer.detect_structuring(recent_transactions)
-                
+                recent_transactions = []  # Placeholder: await transaction_service.get_recent_transactions()
+
+                findings = self.transaction_analyzer.analyze_velocity(
+                    recent_transactions
+                )
+                structuring = self.transaction_analyzer.detect_structuring(
+                    recent_transactions
+                )
+
                 all_findings = findings + structuring
 
                 if all_findings:
-                     for finding in all_findings:
+                    for finding in all_findings:
                         await self._generate_suspicious_activity_alert(
                             finding.get("pattern", "suspicious_pattern"), [finding]
                         )
@@ -604,8 +618,8 @@ class AdvancedComplianceEngine:
             await asyncio.sleep(30 * 24 * 3600)
 
     async def _execute_compliance_check(
-        self, rule: ComplianceRule, entity_data: Dict[str, Any]
-    ) -> Tuple[ComplianceStatus, float, List[str], List[str]]:
+        self, rule: ComplianceRule, entity_data: dict[str, Any]
+    ) -> tuple[ComplianceStatus, float, list[str], list[str]]:
         """Execute the actual compliance check logic"""
         findings = []
         recommendations = []
@@ -644,8 +658,8 @@ class AdvancedComplianceEngine:
         return status, risk_score, findings, recommendations
 
     async def _check_kyc_compliance(
-        self, customer_data: Dict[str, Any]
-    ) -> Tuple[ComplianceStatus, float]:
+        self, customer_data: dict[str, Any]
+    ) -> tuple[ComplianceStatus, float]:
         """Check KYC compliance for customer data"""
         required_fields = [
             "full_name",
@@ -673,8 +687,8 @@ class AdvancedComplianceEngine:
         return status, risk_score
 
     async def _check_transaction_compliance(
-        self, transaction_data: Dict[str, Any]
-    ) -> Tuple[ComplianceStatus, float]:
+        self, transaction_data: dict[str, Any]
+    ) -> tuple[ComplianceStatus, float]:
         """Check transaction for suspicious patterns"""
         risk_score = 0.0
 
@@ -699,8 +713,8 @@ class AdvancedComplianceEngine:
         return status, risk_score
 
     async def _check_sanctions_compliance(
-        self, entity_data: Dict[str, Any]
-    ) -> Tuple[ComplianceStatus, float]:
+        self, entity_data: dict[str, Any]
+    ) -> tuple[ComplianceStatus, float]:
         """Check entity against sanctions lists"""
         # In real implementation, would check against comprehensive sanctions databases
         name = entity_data.get("name", "").lower()
@@ -720,8 +734,8 @@ class AdvancedComplianceEngine:
         return status, risk_score
 
     async def _check_data_protection_compliance(
-        self, data_processing: Dict[str, Any]
-    ) -> Tuple[ComplianceStatus, float]:
+        self, data_processing: dict[str, Any]
+    ) -> tuple[ComplianceStatus, float]:
         """Check GDPR/data protection compliance"""
         risk_score = 0.0
 
@@ -790,18 +804,18 @@ class AdvancedComplianceEngine:
         # In real implementation, would query recent transactions and check against sanctions
         logger.info("Checked recent transactions against sanctions lists")
 
-    async def _detect_suspicious_pattern(self, pattern: str) -> List[Dict[str, Any]]:
+    async def _detect_suspicious_pattern(self, pattern: str) -> list[dict[str, Any]]:
         """Detect suspicious transaction patterns"""
         # In real implementation, would analyze transaction data for patterns
         return []  # Mock empty result
 
     async def _generate_suspicious_activity_alert(
-        self, pattern: str, findings: List[Dict[str, Any]]
+        self, pattern: str, findings: list[dict[str, Any]]
     ) -> None:
         """Generate alert for suspicious activity"""
         logger.warning(f"Suspicious activity detected: {pattern}")
 
-    async def _identify_high_risk_customers(self) -> List[str]:
+    async def _identify_high_risk_customers(self) -> list[str]:
         """Identify customers requiring enhanced due diligence"""
         # In real implementation, would analyze customer data for risk factors
         return []  # Mock empty result
@@ -810,24 +824,24 @@ class AdvancedComplianceEngine:
         """Perform enhanced due diligence on high-risk customer"""
         logger.info(f"Performing enhanced due diligence for customer: {customer_id}")
 
-    async def _check_regulatory_updates(self) -> List[Dict[str, Any]]:
+    async def _check_regulatory_updates(self) -> list[dict[str, Any]]:
         """Check for regulatory updates"""
         # In real implementation, would monitor regulatory news and updates
         return []  # Mock empty result
 
-    async def _assess_regulatory_impact(self, update: Dict[str, Any]) -> Dict[str, Any]:
+    async def _assess_regulatory_impact(self, update: dict[str, Any]) -> dict[str, Any]:
         """Assess impact of regulatory change"""
         return {"requires_action": False, "impact_level": "low"}
 
     async def _generate_regulatory_change_alert(
-        self, update: Dict[str, Any], impact: Dict[str, Any]
+        self, update: dict[str, Any], impact: dict[str, Any]
     ) -> None:
         """Generate alert for regulatory change"""
         logger.info("Regulatory change alert generated")
 
     def _generate_report_recommendations(
-        self, checks: List[ComplianceCheck], framework: RegulatoryFramework
-    ) -> List[str]:
+        self, checks: list[ComplianceCheck], framework: RegulatoryFramework
+    ) -> list[str]:
         """Generate recommendations for compliance report"""
         recommendations = []
 

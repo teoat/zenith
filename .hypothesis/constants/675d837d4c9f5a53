@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/core/cache/redis_cache.py
+# hypothesis_version: 6.148.8
+
+[100, 300, 600, 1800, 3600, 6379, '_', 'localhost', 'open']

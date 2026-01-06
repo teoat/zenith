@@ -285,7 +285,7 @@ def generate_comprehensive_bug_report():
         f.write("## 📁 FILES GENERATED\n\n")
         f.write(f"- `{report_path}` - Complete JSON diagnostic results\n")
         f.write(f"- `{summary_path}` - Human-readable summary (this file)\n")
-        f.write(f"- `security_audit_results.json` - Bandit security scan results\n")
+        f.write("- `security_audit_results.json` - Bandit security scan results\n")
 
         if assessment["overall_risk_level"] == "MEDIUM":
             f.write("\n## ⚠️ CONCLUSION: REQUIRES ATTENTION\n\n")

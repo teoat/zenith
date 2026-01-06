@@ -4,21 +4,21 @@ Load Test Results Analyzer
 Analyzes load test results and generates performance reports
 """
 
+import argparse
 import json
-import sys
 import statistics
 from pathlib import Path
-from typing import Dict, Any, List
-import argparse
+from typing import Any, Dict
 
-def analyze_load_test(results_file: str) -> Dict[str, Any]:
+
+def analyze_load_test(results_file: str) -> dict[str, Any]:
     """Analyze a single load test results file"""
 
-    with open(results_file, 'r') as f:
+    with open(results_file) as f:
         data = json.load(f)
 
-    summary = data['summary']
-    detailed = data['detailed_results']
+    summary = data["summary"]
+    detailed = data["detailed_results"]
 
     # Calculate additional metrics
     analysis = {
@@ -35,7 +35,7 @@ def analyze_load_test(results_file: str) -> Dict[str, Any]:
         "p95_response_time": None,
         "p99_response_time": None,
         "endpoint_analysis": {},
-        "performance_rating": "Unknown"
+        "performance_rating": "Unknown",
     }
 
     # Calculate percentiles
@@ -62,7 +62,7 @@ def analyze_load_test(results_file: str) -> Dict[str, Any]:
             "avg_response_time": statistics.mean(response_times),
             "median_response_time": statistics.median(response_times),
             "min_response_time": min(response_times),
-            "max_response_time": max(response_times)
+            "max_response_time": max(response_times),
         }
 
     # Performance rating
@@ -79,13 +79,16 @@ def analyze_load_test(results_file: str) -> Dict[str, Any]:
 
     return analysis
 
-def print_analysis(analysis: Dict[str, Any]):
+
+def print_analysis(analysis: dict[str, Any]):
     """Print a formatted analysis report"""
 
     print(f"\n📊 Load Test Analysis: {analysis['test_file']}")
     print("=" * 60)
     print(f"Total Requests: {analysis['total_requests']}")
-    print(f"Successful: {analysis['successful_requests']} ({analysis['success_rate']:.1f}%)")
+    print(
+        f"Successful: {analysis['successful_requests']} ({analysis['success_rate']:.1f}%)"
+    )
     print(f"Failed: {analysis['failed_requests']}")
     print(f"Requests/sec: {analysis['requests_per_second']:.2f}")
     print()
@@ -104,10 +107,11 @@ def print_analysis(analysis: Dict[str, Any]):
     print()
 
     print("Per-Endpoint Analysis:")
-    for endpoint, stats in analysis["endpoint_analysis"].items():
+    for endpoint in analysis["endpoint_analysis"]:
         print(f"  {endpoint}:")
         print(".1f")
         print(".3f")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Analyze load test results")
@@ -125,6 +129,7 @@ def main():
             print_analysis(analysis)
         except Exception as e:
             print(f"❌ Error analyzing {file_path}: {e}")
+
 
 if __name__ == "__main__":
     main()

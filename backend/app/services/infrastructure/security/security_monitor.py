@@ -6,7 +6,7 @@ Sets up monitoring for security events and failed authentication attempts
 import logging
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ class SecurityMonitor:
             )
 
     def log_admin_operation(
-        self, user_id: str, operation: str, details: Dict[str, Any]
+        self, user_id: str, operation: str, details: dict[str, Any]
     ):
         """Log admin operation for monitoring"""
         event = {
@@ -64,7 +64,7 @@ class SecurityMonitor:
         self.admin_operations.append(event)
         logger.warning(f"Admin operation: {operation} by {user_id}")
 
-    def log_critical_event(self, event_type: str, details: Dict[str, Any]):
+    def log_critical_event(self, event_type: str, details: dict[str, Any]):
         """Log critical security event"""
         event = {
             "timestamp": datetime.now().isoformat(),
@@ -79,7 +79,7 @@ class SecurityMonitor:
         # Always trigger alert for critical events
         self.trigger_alert(event_type, details)
 
-    def trigger_alert(self, alert_type: str, details: Dict[str, Any]):
+    def trigger_alert(self, alert_type: str, details: dict[str, Any]):
         """Trigger security alert"""
         alert = {
             "timestamp": datetime.now().isoformat(),
@@ -96,7 +96,7 @@ class SecurityMonitor:
         # - Create PagerDuty incident
         # - Write to SIEM system
 
-    def get_security_summary(self) -> Dict[str, Any]:
+    def get_security_summary(self) -> dict[str, Any]:
         """Get summary of recent security events"""
         now = datetime.now()
         last_24h = now - timedelta(hours=24)
@@ -138,7 +138,7 @@ class SecurityMonitor:
             "status": "healthy" if recent_critical == 0 else "alert",
         }
 
-    def _get_high_risk_ips(self) -> List[str]:
+    def _get_high_risk_ips(self) -> list[str]:
         """Get IPs with suspicious activity"""
         high_risk = []
         now = datetime.now()

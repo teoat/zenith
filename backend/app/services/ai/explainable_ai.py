@@ -6,9 +6,7 @@ Provides human-interpretable explanations for fraud detection predictions.
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
-
-import numpy as np
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -41,10 +39,10 @@ class PredictionExplanation:
     confidence_score: float
     risk_level: str
     primary_reason: str
-    feature_contributions: List[FeatureContribution]
-    similar_cases: List[Dict[str, Any]]
-    counterfactual_scenarios: List[Dict[str, Any]]
-    model_insights: Dict[str, Any]
+    feature_contributions: list[FeatureContribution]
+    similar_cases: list[dict[str, Any]]
+    counterfactual_scenarios: list[dict[str, Any]]
+    model_insights: dict[str, Any]
     explanation_confidence: float
     generated_at: str
 
@@ -53,11 +51,11 @@ class ExplainableFraudDetector:
     """AI system that provides interpretable fraud detection explanations"""
 
     def __init__(self):
-        self.feature_importance_cache: Dict[str, Dict[str, float]] = {}
-        self.case_history: List[Dict[str, Any]] = []
+        self.feature_importance_cache: dict[str, dict[str, float]] = {}
+        self.case_history: list[dict[str, Any]] = []
         self.explanation_templates = self._load_explanation_templates()
 
-    def _load_explanation_templates(self) -> Dict[str, str]:
+    def _load_explanation_templates(self) -> dict[str, str]:
         """Load human-readable explanation templates"""
         return {
             "high_amount": "Transaction amount (${amount}) is {percent_above:.0f}% above the account's typical range",
@@ -70,7 +68,7 @@ class ExplainableFraudDetector:
         }
 
     async def explain_prediction(
-        self, transaction_data: Dict[str, Any], prediction_result: Dict[str, Any]
+        self, transaction_data: dict[str, Any], prediction_result: dict[str, Any]
     ) -> PredictionExplanation:
         """
         Generate comprehensive explanation for a fraud prediction
@@ -124,8 +122,8 @@ class ExplainableFraudDetector:
         )
 
     async def _calculate_feature_contributions(
-        self, transaction_data: Dict[str, Any], prediction_result: Dict[str, Any]
-    ) -> List[FeatureContribution]:
+        self, transaction_data: dict[str, Any], prediction_result: dict[str, Any]
+    ) -> list[FeatureContribution]:
         """Calculate how each feature contributed to the prediction"""
         contributions = []
         feature_weights = prediction_result.get("feature_weights", {})
@@ -233,8 +231,8 @@ class ExplainableFraudDetector:
             return f"Feature '{feature_key}' shows {contribution:.2f} risk contribution"
 
     async def _find_similar_cases(
-        self, transaction_data: Dict[str, Any], prediction_result: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, transaction_data: dict[str, Any], prediction_result: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Find similar historical cases for comparison"""
         # This would typically query a case database
         # For now, return mock similar cases based on prediction confidence
@@ -289,8 +287,8 @@ class ExplainableFraudDetector:
         return similar_cases
 
     async def _generate_counterfactuals(
-        self, transaction_data: Dict[str, Any], prediction_result: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, transaction_data: dict[str, Any], prediction_result: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Generate counterfactual scenarios showing what would change the prediction"""
         counterfactuals = []
         fraud_probability = prediction_result.get("fraud_probability", 0.0)
@@ -325,7 +323,7 @@ class ExplainableFraudDetector:
             counterfactuals.append(
                 {
                     "scenario": "Normal Hours",
-                    "change": f"Change transaction time to account's typical hours",
+                    "change": "Change transaction time to account's typical hours",
                     "predicted_probability": fraud_probability * 0.8,
                     "explanation": "Transactions during normal account hours reduce suspicion",
                 }
@@ -335,9 +333,9 @@ class ExplainableFraudDetector:
 
     def _assess_risk_level(
         self,
-        contributions: List[FeatureContribution],
-        prediction_result: Dict[str, Any],
-    ) -> Tuple[str, str]:
+        contributions: list[FeatureContribution],
+        prediction_result: dict[str, Any],
+    ) -> tuple[str, str]:
         """Assess overall risk level and primary reason"""
         fraud_probability = prediction_result.get("fraud_probability", 0.0)
 
@@ -362,8 +360,8 @@ class ExplainableFraudDetector:
         return risk_level, primary_reason
 
     def _extract_model_insights(
-        self, prediction_result: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, prediction_result: dict[str, Any]
+    ) -> dict[str, Any]:
         """Extract model-level insights and metadata"""
         return {
             "model_version": prediction_result.get("model_version", "unknown"),
@@ -376,8 +374,8 @@ class ExplainableFraudDetector:
 
     def _calculate_explanation_confidence(
         self,
-        contributions: List[FeatureContribution],
-        similar_cases: List[Dict[str, Any]],
+        contributions: list[FeatureContribution],
+        similar_cases: list[dict[str, Any]],
     ) -> float:
         """Calculate confidence score for the explanation"""
         # Base confidence from feature contributions
@@ -411,7 +409,7 @@ class ExplainableFraudDetector:
 
     def get_explanation_summary(
         self, explanation: PredictionExplanation
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate a concise summary of the explanation"""
         return {
             "prediction_id": explanation.prediction_id,

@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/routers/ai.py
+# hypothesis_version: 6.148.8
+
+['/ai', '/analysis', '/embeddings', '/models', '/training', 'AI']

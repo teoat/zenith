@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/business/standardization_service.py
+# hypothesis_version: 6.148.8
+
+[0.0, ',', 'Unknown', '[^\\d.]', 'customer_name', 'detected_dates', 'file', 'fraud_amount', 'potential_ids']

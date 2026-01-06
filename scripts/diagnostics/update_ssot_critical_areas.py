@@ -20,7 +20,7 @@ def update_ssot_critical_areas():
 
     # Load existing SSOT
     ssot_path = Path("ssot_master.json")
-    with open(ssot_path, "r") as f:
+    with open(ssot_path) as f:
         ssot_data = json.load(f)
 
     # Critical areas configurations

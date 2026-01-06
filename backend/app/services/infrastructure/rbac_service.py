@@ -4,11 +4,10 @@ Provides role checking and permission management
 """
 
 import logging
-from typing import List
-
-from fastapi import Depends, HTTPException, status
 
 from app.services.infrastructure.auth_service import auth_service
+from fastapi import Depends, HTTPException, status
+
 from core.database import User
 
 logger = logging.getLogger(__name__)
@@ -58,7 +57,7 @@ class RBACService:
 
         return role_checker
 
-    def require_any_role(self, allowed_roles: List[str]):
+    def require_any_role(self, allowed_roles: list[str]):
         """Dependency that requires any of the specified roles"""
 
         async def role_checker(

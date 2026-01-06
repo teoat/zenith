@@ -7,24 +7,17 @@ Provides deep analysis across all areas, vectors, dimensions, and metrics
 import asyncio
 import json
 import os
-import subprocess
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict
 
 import psutil
 
 # Add backend to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
 
-from app.services.compliance_service import ComplianceService
 from core.database import (
-    AccessReview,
-    ComplianceAuditLog,
-    RegulatoryReport,
-    SecurityIncident,
-    TrainingRecord,
     create_tables,
 )
 
@@ -44,7 +37,7 @@ class ComprehensiveDiagnosticSuite:
             "recommendations": [],
         }
 
-    async def run_full_diagnosis(self) -> Dict[str, Any]:
+    async def run_full_diagnosis(self) -> dict[str, Any]:
         """Run complete diagnostic suite"""
         print("🔍 Starting Comprehensive Diagnostic Suite...")
         print("=" * 60)
@@ -108,7 +101,7 @@ class ComprehensiveDiagnosticSuite:
                 else:
                     backend_metrics["services_status"][service] = "healthy"
             except Exception as e:
-                backend_metrics["services_status"][service] = f"unhealthy: {str(e)}"
+                backend_metrics["services_status"][service] = f"unhealthy: {e!s}"
 
         # API endpoint testing (simplified)
         backend_metrics["api_endpoints"] = {
@@ -161,7 +154,7 @@ class ComprehensiveDiagnosticSuite:
                     frontend_metrics["component_count"] = len(tsx_files) + len(ts_files)
 
             except Exception as e:
-                frontend_metrics["build_status"] = f"error: {str(e)}"
+                frontend_metrics["build_status"] = f"error: {e!s}"
 
         self.results["areas"]["frontend"] = frontend_metrics
         print(
@@ -193,7 +186,7 @@ class ComprehensiveDiagnosticSuite:
             db_metrics["performance_score"] = 85
 
         except Exception as e:
-            db_metrics["connection_status"] = f"unhealthy: {str(e)}"
+            db_metrics["connection_status"] = f"unhealthy: {e!s}"
 
         self.results["areas"]["database"] = db_metrics
         print(
@@ -651,7 +644,7 @@ class ComprehensiveDiagnosticSuite:
                 area_scores[area] = 85  # Default
 
         scores["areas_overall"] = sum(
-            area_scores[area] * area_weights[area] for area in area_weights.keys()
+            area_scores[area] * area_weights[area] for area in area_weights
         )
 
         # Vector scores
@@ -771,7 +764,7 @@ class ComprehensiveDiagnosticSuite:
         self.results["recommendations"] = recommendations
         print(f"   ✅ {len(recommendations)} recommendations generated")
 
-    def save_results(self, filename: str = None):
+    def save_results(self, filename: str | None = None):
         """Save diagnostic results to file"""
         if not filename:
             timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
@@ -803,19 +796,19 @@ async def main():
             f"📊 Overall Platform Score: {results['scores']['platform_overall']:.1f}/100"
         )
 
-        print(f"\n🏗️  Areas Analysis:")
+        print("\n🏗️  Areas Analysis:")
         for area, metrics in results["areas"].items():
             score = results["scores"].get(f"{area}_score", "N/A")
             print(f"   {area.capitalize()}: {score}")
 
-        print(f"\n🎯 Vectors Analysis:")
+        print("\n🎯 Vectors Analysis:")
         for vector_type, vectors in results["vectors"].items():
             avg_score = sum(
                 v.get("score", v.get("efficiency", 0)) for v in vectors.values()
             ) / len(vectors)
             print(f"   {vector_type.replace('_', ' ').title()}: {avg_score:.1f}")
 
-        print(f"\n📏 Dimensions Analysis:")
+        print("\n📏 Dimensions Analysis:")
         for dimension, metrics in results["dimensions"].items():
             avg_score = sum(metrics.values()) / len(metrics) if metrics else 0
             print(f"   {dimension.capitalize()}: {avg_score:.1f}")
@@ -824,7 +817,7 @@ async def main():
         print(f"📄 Full results saved to: {filename}")
 
     except Exception as e:
-        print(f"❌ Diagnostic failed: {str(e)}")
+        print(f"❌ Diagnostic failed: {e!s}")
         return 1
 
     return 0

@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, jest, beforeEach } from '@jest/globals';
 import { notificationService } from '../notifications';
 
 global.fetch = jest.fn();
@@ -9,7 +9,7 @@ describe('NotificationService', () => {
     // Mock Notification API
     global.Notification = jest.fn() as any;
     (global.Notification as any).permission = 'default';
-    (global.Notification as any).requestPermission = jest.fn().mockResolvedValue('granted');
+    (global.Notification as any).requestPermission = jest.fn().mockResolvedValue('granted' as never);
   });
 
   describe('requestPermission', () => {

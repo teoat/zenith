@@ -1,0 +1,4 @@
+# file: /Users/Arief/Desktop/378x492/backend/app/services/infrastructure/compliance_scanner.py
+# hypothesis_version: 6.148.8
+
+[0.1, 100, 'AC-1', 'AU-2', 'Access Control', 'Audit Events', 'IA-2', 'Identification', 'NON-COMPLIANT', 'SC-8', 'System & Comm', 'category', 'control_id', 'failed', 'findings', 'id', 'name', 'passed', 'remediation', 'requires_attention', 'score', 'status', 'summary', 'timestamp', 'total_controls']

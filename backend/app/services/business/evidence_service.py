@@ -1,11 +1,11 @@
-
 import logging
-from typing import Dict, List, Optional, Any
+from typing import Any
+
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
+
 
 class EvidenceService:
     def get_evidence_paginated(
@@ -13,11 +13,11 @@ class EvidenceService:
         db: Session,
         page: int = 1,
         page_size: int = 20,
-        project_id: Optional[str] = None,
-        case_id: Optional[str] = None,
-        file_type: Optional[str] = None,
-        search_query: Optional[str] = None
-    ) -> Dict[str, Any]:
+        project_id: str | None = None,
+        case_id: str | None = None,
+        file_type: str | None = None,
+        search_query: str | None = None,
+    ) -> dict[str, Any]:
         """
         Get list of evidence items with pagination and search
         """
@@ -27,7 +27,9 @@ class EvidenceService:
             params = {}
 
             if project_id:
-                filters.append("e.case_id IN (SELECT id FROM cases WHERE project_id = :project_id)")
+                filters.append(
+                    "e.case_id IN (SELECT id FROM cases WHERE project_id = :project_id)"
+                )
                 params["project_id"] = project_id
 
             if case_id:
@@ -73,18 +75,18 @@ class EvidenceService:
                 evidence_list.append(
                     {
                         "id": row.id,
-                        "caseId": row.case_id,
-                        "fileName": row.filename,
-                        "fileType": row.file_type,
-                        "sizeBytes": row.size_bytes,
-                        "uploadedAt": (
+                        "case_id": row.case_id,
+                        "file_name": row.filename,
+                        "file_type": row.file_type,
+                        "size_bytes": row.size_bytes,
+                        "uploaded_at": (
                             str(row.uploaded_at) if row.uploaded_at else None
                         ),
-                        "filePath": row.file_path,
-                        "ocrText": row.extracted_text,
-                        "fraudAmount": row.fraud_amount,
-                        "customerName": row.customer_name,
-                        "processingStatus": row.processing_status
+                        "file_path": row.file_path,
+                        "ocr_text": row.extracted_text,
+                        "fraud_amount": row.fraud_amount,
+                        "customer_name": row.customer_name,
+                        "processing_status": row.processing_status,
                     }
                 )
 
@@ -93,37 +95,40 @@ class EvidenceService:
                 "total": total,
                 "page": page,
                 "page_size": page_size,
-                "total_pages": (total + page_size - 1) // page_size
+                "total_pages": (total + page_size - 1) // page_size,
             }
 
         except Exception as e:
-            logger.error(f"Failed to get evidence: {str(e)}")
+            logger.error(f"Failed to get evidence: {e!s}")
             raise e
 
-    def get_evidence_metadata(self, db: Session, evidence_id: str) -> Optional[Dict[str, Any]]:
+    def get_evidence_metadata(
+        self, db: Session, evidence_id: str
+    ) -> dict[str, Any] | None:
         """Get evidence metadata by ID"""
         query = "SELECT evidence_metadata FROM evidence WHERE id = :id"
         result = db.execute(text(query), {"id": evidence_id}).fetchone()
-        
+
         if not result:
             return None
-            
+
         return result.evidence_metadata
 
-    def delete_evidence(self, db: Session, evidence_ids: List[str]) -> int:
+    def delete_evidence(self, db: Session, evidence_ids: list[str]) -> int:
         """Bulk delete evidence records"""
         if not evidence_ids:
             return 0
-            
+
         # Count records first
         check_query = text("SELECT COUNT(*) FROM evidence WHERE id IN :ids")
         count = db.execute(check_query, {"ids": tuple(evidence_ids)}).scalar()
-        
+
         # Delete
         delete_query = text("DELETE FROM evidence WHERE id IN :ids")
         db.execute(delete_query, {"ids": tuple(evidence_ids)})
-        
+
         db.commit()
         return count
+
 
 evidence_service = EvidenceService()

@@ -8,10 +8,9 @@ import asyncio
 import json
 import logging
 import random
-import time
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +23,10 @@ class PolishInvestigationResult:
     issue_title: str
     category: str
     severity: str
-    findings: List[str]
+    findings: list[str]
     issues_found: int
     polish_opportunity: str
-    remediation_plan: List[str]
+    remediation_plan: list[str]
     estimated_effort: str
     refinement_value: str
     status: str
@@ -37,14 +36,14 @@ class Phase4Investigator:
     """Investigator for Phase 4 low-priority polish issues"""
 
     def __init__(self):
-        self.investigation_results: Dict[str, PolishInvestigationResult] = {}
+        self.investigation_results: dict[str, PolishInvestigationResult] = {}
         self.performance_polisher = PerformancePolisher()
         self.monitoring_enhancer = MonitoringEnhancer()
         self.documentation_auditor = DocumentationAuditor()
         self.user_experience_refiner = UXRefiner()
         self.maintainability_checker = MaintainabilityChecker()
 
-    async def investigate_all_low_priority_issues(self) -> Dict[str, Any]:
+    async def investigate_all_low_priority_issues(self) -> dict[str, Any]:
         """Investigate all Phase 4 low-priority polish issues"""
 
         print("🔬 PHASE 4 INVESTIGATION: Low Priority Polish")
@@ -608,7 +607,7 @@ class Phase4Investigator:
             status="investigated",
         )
 
-    async def _generate_phase4_report(self) -> Dict[str, Any]:
+    async def _generate_phase4_report(self) -> dict[str, Any]:
         """Generate comprehensive Phase 4 investigation report"""
         total_issues = sum(
             result.issues_found for result in self.investigation_results.values()
@@ -626,7 +625,9 @@ class Phase4Investigator:
             "overall_polish_potential": (
                 "MEDIUM"
                 if polish_opportunities >= 3
-                else "LOW" if polish_opportunities > 0 else "NONE"
+                else "LOW"
+                if polish_opportunities > 0
+                else "NONE"
             ),
             "estimated_total_effort": self._calculate_phase4_effort(),
             "category_breakdown": self._get_phase4_category_breakdown(),
@@ -677,7 +678,7 @@ class Phase4Investigator:
 
         return f"{total_min:.1f}-{total_max:.1f} weeks"
 
-    def _get_phase4_category_breakdown(self) -> Dict[str, int]:
+    def _get_phase4_category_breakdown(self) -> dict[str, int]:
         """Get breakdown of issues by category for Phase 4"""
         categories = {}
         for result in self.investigation_results.values():
@@ -686,7 +687,7 @@ class Phase4Investigator:
             )
         return categories
 
-    def _assess_refinement_value(self) -> Dict[str, Any]:
+    def _assess_refinement_value(self) -> dict[str, Any]:
         """Assess overall refinement value of Phase 4 improvements"""
         high_value = len(
             [
@@ -719,14 +720,14 @@ class Phase4Investigator:
             ),
         }
 
-    def _consolidate_phase4_findings(self) -> List[str]:
+    def _consolidate_phase4_findings(self) -> list[str]:
         """Consolidate all Phase 4 findings"""
         all_findings = []
         for result in self.investigation_results.values():
             all_findings.extend(result.findings)
         return all_findings
 
-    def _generate_phase4_recommendations(self) -> List[str]:
+    def _generate_phase4_recommendations(self) -> list[str]:
         """Generate consolidated Phase 4 polish recommendations"""
         recommendations = []
 
@@ -801,7 +802,7 @@ class Phase4Investigator:
 class PerformancePolisher:
     """Performance polishing capabilities"""
 
-    async def analyze_cache_invalidation(self) -> Dict[str, Any]:
+    async def analyze_cache_invalidation(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "stale_data_incidents": random.randint(0, 5),
@@ -809,14 +810,14 @@ class PerformancePolisher:
             "distributed_invalidation": random.random() > 0.5,
         }
 
-    async def check_cache_consistency(self) -> Dict[str, Any]:
+    async def check_cache_consistency(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "inconsistency_rate": random.uniform(0.01, 0.1),
             "race_conditions": random.randint(0, 3),
         }
 
-    async def measure_cache_performance(self) -> Dict[str, Any]:
+    async def measure_cache_performance(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {"average_invalidation_time": random.uniform(50, 200)}
 
@@ -824,28 +825,28 @@ class PerformancePolisher:
 class MonitoringEnhancer:
     """Monitoring enhancement capabilities"""
 
-    async def analyze_monitoring_coverage(self) -> Dict[str, Any]:
+    async def analyze_monitoring_coverage(self) -> dict[str, Any]:
         await asyncio.sleep(0.1)
         return {
             "unmonitored_components": random.randint(0, 8),
             "missing_metrics": random.randint(0, 15),
         }
 
-    async def assess_alert_quality(self) -> Dict[str, Any]:
+    async def assess_alert_quality(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "false_positives": random.uniform(0.05, 0.3),
             "alert_fatigue_score": random.uniform(3, 9),
         }
 
-    async def evaluate_dashboards(self) -> Dict[str, Any]:
+    async def evaluate_dashboards(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "usability_score": random.uniform(5, 9),
             "information_density": random.uniform(4, 9),
         }
 
-    async def analyze_log_quality(self) -> Dict[str, Any]:
+    async def analyze_log_quality(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "unstructured_logs": random.uniform(0.1, 0.5),
@@ -856,28 +857,28 @@ class MonitoringEnhancer:
 class DocumentationAuditor:
     """Documentation auditing capabilities"""
 
-    async def analyze_documentation_coverage(self) -> Dict[str, Any]:
+    async def analyze_documentation_coverage(self) -> dict[str, Any]:
         await asyncio.sleep(0.1)
         return {
             "undocumented_apis": random.randint(0, 12),
             "outdated_docs": random.randint(0, 25),
         }
 
-    async def assess_documentation_quality(self) -> Dict[str, Any]:
+    async def assess_documentation_quality(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "readability_score": random.uniform(4, 8),
             "completeness_score": random.uniform(5, 9),
         }
 
-    async def check_discoverability(self) -> Dict[str, Any]:
+    async def check_discoverability(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "search_functionality": random.random() > 0.4,
             "broken_links": random.randint(0, 8),
         }
 
-    async def check_maintenance(self) -> Dict[str, Any]:
+    async def check_maintenance(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "stale_reviews": random.randint(15, 60),
@@ -888,35 +889,35 @@ class DocumentationAuditor:
 class UXRefiner:
     """User experience refinement capabilities"""
 
-    async def analyze_ui_consistency(self) -> Dict[str, Any]:
+    async def analyze_ui_consistency(self) -> dict[str, Any]:
         await asyncio.sleep(0.1)
         return {
             "inconsistent_spacing": random.randint(0, 12),
             "color_inconsistencies": random.randint(0, 8),
         }
 
-    async def identify_performance_opportunities(self) -> Dict[str, Any]:
+    async def identify_performance_opportunities(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "unused_css": random.randint(50, 300),
             "unoptimized_images": random.randint(0, 15),
         }
 
-    async def analyze_interactions(self) -> Dict[str, Any]:
+    async def analyze_interactions(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "slow_animations": random.randint(0, 6),
             "accessibility_issues": random.randint(0, 4),
         }
 
-    async def assess_visual_polish(self) -> Dict[str, Any]:
+    async def assess_visual_polish(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "alignment_issues": random.randint(0, 10),
             "contrast_issues": random.randint(0, 5),
         }
 
-    async def check_mobile_responsiveness(self) -> Dict[str, Any]:
+    async def check_mobile_responsiveness(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {"responsiveness_issues": random.randint(0, 7)}
 
@@ -924,32 +925,32 @@ class UXRefiner:
 class MaintainabilityChecker:
     """Code maintainability checking capabilities"""
 
-    async def analyze_maintainability(self) -> Dict[str, Any]:
+    async def analyze_maintainability(self) -> dict[str, Any]:
         await asyncio.sleep(0.1)
         return {
             "cyclomatic_complexity_avg": random.uniform(10, 20),
             "duplicate_code_percentage": random.uniform(5, 15),
         }
 
-    async def check_code_organization(self) -> Dict[str, Any]:
+    async def check_code_organization(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "circular_dependencies": random.randint(0, 4),
             "large_files": random.randint(0, 8),
         }
 
-    async def check_style_consistency(self) -> Dict[str, Any]:
+    async def check_style_consistency(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "naming_inconsistencies": random.randint(10, 40),
             "formatting_inconsistencies": random.randint(5, 20),
         }
 
-    async def assess_technical_debt(self) -> Dict[str, Any]:
+    async def assess_technical_debt(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {"debt_to_equity_ratio": random.uniform(0.1, 0.4)}
 
-    async def evaluate_comments(self) -> Dict[str, Any]:
+    async def evaluate_comments(self) -> dict[str, Any]:
         await asyncio.sleep(0.05)
         return {
             "comment_coverage": random.uniform(0.4, 0.8),
@@ -964,7 +965,7 @@ async def main():
     report = await investigator.investigate_all_low_priority_issues()
 
     # Display results
-    print(f"\n🎯 PHASE 4 INVESTIGATION COMPLETE")
+    print("\n🎯 PHASE 4 INVESTIGATION COMPLETE")
     print(f"Total Issues Investigated: {report['total_issues_investigated']}")
     print(f"Total Issues Found: {report['total_issues_found']}")
     print(f"Polish Opportunities: {report['polish_opportunities']}")
@@ -996,14 +997,14 @@ async def main():
 
     print("\n💾 Detailed report saved to: phase4_investigation_report.json")
     # Summary of findings
-    print(f"\n📊 POLISH SUMMARY:")
-    for issue_id, result in investigator.investigation_results.items():
+    print("\n📊 POLISH SUMMARY:")
+    for result in investigator.investigation_results.values():
         status = (
             "🎨 POLISH OPPORTUNITY" if result.issues_found > 0 else "✅ WELL POLISHED"
         )
         print(f"   • {result.issue_title}: {status}")
 
-    print(f"\n🎯 LOW PRIORITY POLISH COMPLETE")
+    print("\n🎯 LOW PRIORITY POLISH COMPLETE")
     print("   System is now production-ready with professional polish")
 
 

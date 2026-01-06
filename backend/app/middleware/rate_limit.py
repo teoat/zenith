@@ -64,11 +64,12 @@ async def rate_limit_middleware(request: Request, call_next):
     """Rate limiting middleware"""
     # Skip rate limiting in development
     import os
+
     if os.getenv("ENVIRONMENT", "development").lower() == "development":
         return await call_next(request)
-    
+
     client_ip = request.client.host if request.client else "unknown"
-    
+
     # Exempt localhost/127.0.0.1 from rate limiting
     if client_ip in ["127.0.0.1", "localhost", "::1"]:
         return await call_next(request)
@@ -76,8 +77,7 @@ async def rate_limit_middleware(request: Request, call_next):
     if not rate_limiter.is_allowed(client_ip):
         logger.warning(f"Rate limit exceeded for IP: {client_ip}")
         raise HTTPException(
-            status_code=429,
-            detail="Too many requests. Please try again later."
+            status_code=429, detail="Too many requests. Please try again later."
         )
 
     response = await call_next(request)

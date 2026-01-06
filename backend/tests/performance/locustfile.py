@@ -3,7 +3,6 @@ Load testing for Simple378 Fraud Detection API
 Tests system performance under concurrent load
 """
 
-import json
 import random
 from datetime import datetime, timedelta
 

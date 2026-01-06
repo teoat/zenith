@@ -1,10 +1,7 @@
 # User Journey Analytics Service
-import json
-import threading
 from collections import defaultdict, deque
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class UserJourneyTracker:
@@ -24,7 +21,7 @@ class UserJourneyTracker:
         self.session_data = deque(maxlen=10000)  # Keep last 10k sessions
 
     def track_event(
-        self, user_id: str, event_type: str, metadata: Dict[str, Any] = None
+        self, user_id: str, event_type: str, metadata: dict[str, Any] | None = None
     ):
         """Track a user event"""
         event = {
@@ -41,11 +38,11 @@ class UserJourneyTracker:
         if event_type in self.funnel_steps:
             self.conversion_funnel[event_type] += 1
 
-    def get_user_journey(self, user_id: str) -> List[Dict[str, Any]]:
+    def get_user_journey(self, user_id: str) -> list[dict[str, Any]]:
         """Get journey for a specific user"""
         return self.journey_data.get(user_id, [])
 
-    def get_funnel_analysis(self) -> Dict[str, Any]:
+    def get_funnel_analysis(self) -> dict[str, Any]:
         """Analyze conversion funnel"""
         total_users = len(self.journey_data)
         funnel_analysis = {}
@@ -68,7 +65,7 @@ class UserJourneyTracker:
             "drop_off_points": self._calculate_drop_offs(funnel_analysis),
         }
 
-    def _calculate_drop_offs(self, funnel_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _calculate_drop_offs(self, funnel_data: dict[str, Any]) -> list[dict[str, Any]]:
         """Calculate drop-off points in the funnel"""
         drop_offs = []
         steps = list(self.funnel_steps.keys())
@@ -93,7 +90,7 @@ class UserJourneyTracker:
 
         return drop_offs
 
-    def get_session_analytics(self) -> Dict[str, Any]:
+    def get_session_analytics(self) -> dict[str, Any]:
         """Get session-based analytics"""
         if not self.session_data:
             return {"total_sessions": 0, "analytics": {}}

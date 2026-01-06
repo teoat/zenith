@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, jest, beforeEach } from '@jest/globals';
 import { graphService } from '../graph';
 
 global.fetch = jest.fn();
@@ -23,7 +23,7 @@ describe('GraphService', () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => mockGraph
-      });
+      } as any);
 
       const result = await graphService.getRelationships('case-123');
       expect(result.nodes).toHaveLength(2);
@@ -42,7 +42,7 @@ describe('GraphService', () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => mockPath
-      });
+      } as any);
 
       const result = await graphService.findShortestPath('entity-1', 'entity-3');
       expect(result.distance).toBe(2);
@@ -60,7 +60,7 @@ describe('GraphService', () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => mockCommunities
-      });
+      } as any);
 
       const result = await graphService.detectCommunities('case-123');
       expect(result).toHaveLength(2);

@@ -24,7 +24,7 @@ FIXES = [
 def fix_file(filepath: Path) -> bool:
     """Fix corruption in a single file"""
     try:
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             content = f.read()
 
         original = content

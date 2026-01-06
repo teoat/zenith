@@ -1,0 +1,55 @@
+{
+  "scan_timestamp": "2025-12-23T02:00:00Z",
+  "circular_imports": {
+    "count": 0,
+    "issues": []
+  },
+  "broken_links": {
+    "count": 372,
+    "issues": [
+      {
+        "file": "archive/documentation_2025_12_17/UNIMPLEMENTED_DIAGNOSIS_STATUS_SUMMARY_2025_12_11.md",
+        "link": "docs/reports/UNIMPLEMENTED_FEATURES_DIAGNOSIS_2025_12_11.md"
+      },
+      {
+        "file": "docs/PLUGIN_ARCHITECTURE_RECOMMENDATIONS.md",
+        "link": "./PLUGIN_ARCHITECTURE_MIGRATION_PLAN.md"
+      },
+      {
+        "file": "docs/TROUBLESHOOTING.md",
+        "link": "../faq.md"
+      },
+      {
+        "file": "docs/README.md",
+        "link": "API/api-documentation.md"
+      }
+    ]
+  },
+  "unused_imports": {
+    "count": 37,
+    "issues": [
+      {
+        "file": "fix_md.py",
+        "import": "os",
+        "line": 1
+      },
+      {
+        "file": "update_plugins.py",
+        "import": "glob",
+        "line": 7
+      },
+      {
+        "file": "backend/app/monitoring.py",
+        "import": "BusinessLogicError from app.core.exceptions"
+      },
+      {
+        "file": "backend/app/services/meta_agent.py",
+        "import": "Any from typing"
+      }
+    ]
+  },
+  "summary": {
+    "total_issues": 409,
+    "severity": "MEDIUM"
+  }
+}

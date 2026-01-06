@@ -1,0 +1,477 @@
+{
+  "timestamp": "2025-12-23T00:44:25.139Z",
+  "analysis": {
+    "corruptionPatterns": {
+      "JSDoc Comments": 186,
+      "Arrow Functions": 20,
+      "ES6 Exports": 2
+    },
+    "affectedFiles": {
+      "backend/app/domain/fraud_detection.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/middleware/advanced_security.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/ai/advanced_ai_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/ai/ai_code_reviewer.py": {
+        "JSDoc Comments": 1,
+        "Arrow Functions": 2
+      },
+      "backend/app/services/ai/ai_optimization.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/ai/ai_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/ai/privacy_preserving_ml_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/ai/training/ai_training_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/analytics/dashboard_analytics.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/business/investigations/comprehensive_risk_mitigation.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/core/performance_monitor.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/fraud/advanced_threat_detection_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/apm_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/architecture_planner.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/auth_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/cache_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/cost_optimization_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/health_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/logging_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/monitoring_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/notification_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/performance_monitor.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/redis_cluster.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/security/audit_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/security/audit_trail_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/service_mesh.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/ssot_lockfiles_system.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/storage/backup_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/infrastructure/storage/database_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/integration/api_integration_hub.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/integration/collaboration/collaboration_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/integration/collaboration/sync_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/integration/enterprise_integration.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/intelligence/evidence_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/intelligence/forensic_intelligence.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/intelligence/semantic_search_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/logging_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/reconciliation_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/regulatory/advanced_compliance.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/regulatory/regulatory_intelligence.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/regulatory/regulatory_reporter_legacy.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/scoring/advanced_risk_scoring.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/semantic_search_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/workflow/automated_resolution_engine.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/workflow/code_quality_improvement.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/workflow/compliance/compliance_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/workflow/comprehensive_diagnostic_orchestrator.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/workflow/innovation_framework_service.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/app/services/workflow/workflow_engine.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/core/clean_architecture.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/core/enterprise_scaling.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/core/microservices.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/core/perfection_engine.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/core/plugin_system/registry.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/scripts/generate_openapi.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/scripts/postgresql_migration.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/scripts/seed_demo.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/tests/performance/test_performance.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/tests/test_api_fraud_cases_comprehensive.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/tests/unit/test_core_services.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/_pytest/pathlib.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/celery/schedules.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/cffi/recompiler.py": {
+        "JSDoc Comments": 4
+      },
+      "backend/venv/lib/python3.11/site-packages/cffi/vengine_cpy.py": {
+        "JSDoc Comments": 5
+      },
+      "backend/venv/lib/python3.11/site-packages/cffi/vengine_gen.py": {
+        "JSDoc Comments": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/coverage/files.py": {
+        "JSDoc Comments": 3
+      },
+      "backend/venv/lib/python3.11/site-packages/croniter/croniter.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/marshmallow/fields.py": {
+        "Arrow Functions": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/marshmallow/schema.py": {
+        "Arrow Functions": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/networkx/classes/function.py": {
+        "Arrow Functions": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/nltk/cluster/em.py": {
+        "Arrow Functions": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/nltk/corpus/reader/nkjp.py": {
+        "JSDoc Comments": 4
+      },
+      "backend/venv/lib/python3.11/site-packages/nltk/data.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/nltk/featstruct.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/nltk/metrics/paice.py": {
+        "Arrow Functions": 3
+      },
+      "backend/venv/lib/python3.11/site-packages/nltk/probability.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/nltk/sem/evaluate.py": {
+        "Arrow Functions": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/nltk/test/unit/test_rte_classify.py": {
+        "Arrow Functions": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/numpy/_core/_add_newdocs.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/numpy/distutils/ccompiler_opt.py": {
+        "JSDoc Comments": 8
+      },
+      "backend/venv/lib/python3.11/site-packages/numpy/distutils/conv_template.py": {
+        "JSDoc Comments": 12
+      },
+      "backend/venv/lib/python3.11/site-packages/numpy/distutils/misc_util.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/numpy/distutils/system_info.py": {
+        "JSDoc Comments": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/numpy/distutils/tests/test_ccompiler_opt.py": {
+        "JSDoc Comments": 3
+      },
+      "backend/venv/lib/python3.11/site-packages/numpy/f2py/auxfuncs.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/numpy/f2py/cfuncs.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/numpy/f2py/crackfortran.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/numpy/lib/tests/test_io.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pandas/io/formats/style.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pandas/io/formats/style_render.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/passlib/crypto/scrypt/_builtin.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pathspec/patterns/gitwildmatch.py": {
+        "JSDoc Comments": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/pip/_vendor/rich/traceback.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pip/_vendor/urllib3/poolmanager.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pkg_resources/_vendor/pyparsing/core.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/psutil/_psaix.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/psutil/_pslinux.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/psutil/tests/test_linux.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pydantic/types.py": {
+        "JSDoc Comments": 3
+      },
+      "backend/venv/lib/python3.11/site-packages/pydantic_settings/sources/providers/nested_secrets.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/formatters/html.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/algebra.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/asm.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/business.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/data.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/dotnet.py": {
+        "JSDoc Comments": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/dsls.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/haskell.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/int_fiction.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/javascript.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/lisp.py": {
+        "JSDoc Comments": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/markup.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/matlab.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/monte.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/parsers.py": {
+        "JSDoc Comments": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/pawn.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/perl.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/phix.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/php.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/ruby.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/scripting.py": {
+        "JSDoc Comments": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/shell.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/sql.py": {
+        "JSDoc Comments": 3
+      },
+      "backend/venv/lib/python3.11/site-packages/pygments/lexers/templates.py": {
+        "JSDoc Comments": 4
+      },
+      "backend/venv/lib/python3.11/site-packages/pymupdf/__init__.py": {
+        "JSDoc Comments": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/pymupdf/_apply_pages.py": {
+        "Arrow Functions": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/pymupdf/mupdf.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/pyparsing/core.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/radon/tests/test_cli_tools.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/regex/tests/test_regex.py": {
+        "JSDoc Comments": 1,
+        "Arrow Functions": 3
+      },
+      "backend/venv/lib/python3.11/site-packages/reportlab/graphics/renderSVG.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/rich/traceback.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/ruamel/yaml/main.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/scipy/integrate/_lebedev.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/scipy/optimize/tests/test__differential_evolution.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/scipy/special/_precompute/gammainc_asy.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/scipy/special/_testutils.py": {
+        "Arrow Functions": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/setuptools/__init__.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/setuptools/_vendor/pyparsing/core.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/sklearn/tree/_export.py": {
+        "ES6 Exports": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/sklearn/tree/tests/test_export.py": {
+        "ES6 Exports": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/mysql/base.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/mysql/reflection.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/oracle/base.py": {
+        "JSDoc Comments": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/types.py": {
+        "Arrow Functions": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/sqlalchemy/sql/selectable.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/sqlalchemy/testing/fixtures/mypy.py": {
+        "JSDoc Comments": 1
+      },
+      "backend/venv/lib/python3.11/site-packages/strawberry/litestar/controller.py": {
+        "JSDoc Comments": 2
+      },
+      "backend/venv/lib/python3.11/site-packages/urllib3/poolmanager.py": {
+        "JSDoc Comments": 1
+      }
+    },
+    "timeline": [],
+    "potentialCauses": [
+      {
+        "severity": "HIGH",
+        "cause": "Code Generation Tool Contamination",
+        "evidence": "186 JSDoc comments found in Python files",
+        "explanation": "A code generation or documentation tool is inserting JavaScript/TypeScript syntax into Python files"
+      }
+    ]
+  },
+  "recommendations": [
+    "Audit all code generation and build tools",
+    "Implement file type validation in CI/CD",
+    "Add syntax checking for generated code",
+    "Review template processing pipelines",
+    "Implement backup and recovery procedures"
+  ]
+}

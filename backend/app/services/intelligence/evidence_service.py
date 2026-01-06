@@ -9,30 +9,37 @@ import tempfile
 import time
 from dataclasses import dataclass
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 try:
     from app.services.ai.ai_service import ai_service
-    from app.services.search_service import evidence_search_index
     from app.services.business.standardization_service import standardization_service
+    from app.services.search_service import evidence_search_index
 
     vector_store = ai_service.vector_store
 except ImportError:
-    from app.services.ai.ai_service import ai_service
-    from app.services.search_service import evidence_search_index
-
-    vector_store = ai_service.vector_store
+    try:
+        from app.services.ai.ai_service import ai_service
+        from app.services.search_service import evidence_search_index
+        vector_store = ai_service.vector_store
+    except ImportError:
+        # Fallback for when services are not available
+        ai_service = None
+        standardization_service = None
+        evidence_search_index = None
+        vector_store = None
+        logger.warning("AI and search services not available - running in degraded mode")
 
 logger = logging.getLogger(__name__)
 
 # Audio/Video processing libraries
 try:
-    from pydub import AudioSegment
-    import speech_recognition as sr
-    import ffmpeg
     import cv2
+    import ffmpeg
     import moviepy.editor as mp
+    import speech_recognition as sr
+    from pydub import AudioSegment
+
     AUDIO_VIDEO_AVAILABLE = True
 except ImportError as e:
     logger.warning(f"Audio/Video processing libraries not available: {e}")
@@ -47,13 +54,13 @@ class ProcessingResult:
     size_bytes: int
     processing_time: float
     extracted_text: str = ""
-    key_entities: List[Dict[str, Any]] = None
+    key_entities: list[dict[str, Any]] = None
     sentiment_score: float = 0.0
     quality_score: float = 0.0
     fraud_amount: float = 0.0
     customer_name: str = "Unknown"
     error: str = None
-    metadata: Dict[str, Any] = None
+    metadata: dict[str, Any] = None
 
     def __post_init__(self):
         if self.key_entities is None:
@@ -67,7 +74,7 @@ class EvidenceProcessor:
     Optimized evidence processing pipeline with parallel processing and memory management
     """
 
-    def __init__(self, max_workers: int = 4, temp_dir: str = None):
+    def __init__(self, max_workers: int = 4, temp_dir: str | None = None):
         self.max_workers = max_workers
         self.temp_dir = temp_dir or tempfile.gettempdir()
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
@@ -137,8 +144,8 @@ class EvidenceProcessor:
         }
 
     async def process_files_batch(
-        self, file_paths: List[str], options: Dict[str, Any] = None
-    ) -> List[ProcessingResult]:
+        self, file_paths: list[str], options: dict[str, Any] | None = None
+    ) -> list[ProcessingResult]:
         """
         Process multiple files in parallel with optimized resource usage
         """
@@ -190,7 +197,7 @@ class EvidenceProcessor:
         return results
 
     async def _process_single_file_async(
-        self, file_path: str, options: Dict[str, Any]
+        self, file_path: str, options: dict[str, Any]
     ) -> ProcessingResult:
         """
         Process a single file asynchronously
@@ -237,7 +244,7 @@ class EvidenceProcessor:
         return result
 
     def _process_single_file_sync(
-        self, file_path: str, options: Dict[str, Any]
+        self, file_path: str, options: dict[str, Any]
     ) -> ProcessingResult:
         """
         Process a single file synchronously (runs in thread pool)
@@ -255,6 +262,7 @@ class EvidenceProcessor:
 
             # Check file size limits using centralized settings
             from core.config import settings
+
             max_size = options.get("max_file_size", settings.DEFAULT_MAX_PROCESS_SIZE)
             if file_size > max_size:
                 raise ValueError(f"File too large: {file_size} bytes (max: {max_size})")
@@ -296,23 +304,29 @@ class EvidenceProcessor:
 
             # Standardize extracted data if text exists
             if result.extracted_text and not result.error:
-                standard_entities = standardization_service.extract_entities_from_text(result.extracted_text)
+                standard_entities = standardization_service.extract_entities_from_text(
+                    result.extracted_text
+                )
                 result.fraud_amount = standard_entities.get("fraud_amount", 0.0)
                 result.customer_name = standard_entities.get("customer_name", "Unknown")
-                
+
                 # Merge into key_entities if not already present
                 if result.fraud_amount > 0:
-                    result.key_entities.append({
-                        "type": "standardized_amount",
-                        "value": result.fraud_amount,
-                        "confidence": 0.95
-                    })
+                    result.key_entities.append(
+                        {
+                            "type": "standardized_amount",
+                            "value": result.fraud_amount,
+                            "confidence": 0.95,
+                        }
+                    )
                 if result.customer_name != "Unknown":
-                    result.key_entities.append({
-                        "type": "standardized_customer",
-                        "value": result.customer_name,
-                        "confidence": 0.90
-                    })
+                    result.key_entities.append(
+                        {
+                            "type": "standardized_customer",
+                            "value": result.customer_name,
+                            "confidence": 0.90,
+                        }
+                    )
 
             result.processing_time = time.time() - start_time
             return result
@@ -338,7 +352,9 @@ class EvidenceProcessor:
                 error=f"Runtime error: {e}",
             )
         except Exception as e:
-            logger.error(f"Unexpected error processing file {file_path}: {e}", exc_info=True)
+            logger.error(
+                f"Unexpected error processing file {file_path}: {e}", exc_info=True
+            )
             return ProcessingResult(
                 file_id=file_id,
                 file_path=file_path,
@@ -349,7 +365,7 @@ class EvidenceProcessor:
             )
 
     def _process_image(
-        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+        self, file_path: str, result: ProcessingResult, options: dict[str, Any]
     ):
         """Process image files with OCR and analysis"""
         try:
@@ -388,12 +404,42 @@ class EvidenceProcessor:
                         gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
                     )
 
-                    # OCR
-                    text = pytesseract.image_to_string(threshold, lang="eng")
-                    result.extracted_text = text.strip()
+                    # OCR with confidence scoring
+                    ocr_data = pytesseract.image_to_data(threshold, lang="eng", output_type=pytesseract.Output.DICT)
+
+                    # Extract text and calculate confidence
+                    text_lines = []
+                    confidence_scores = []
+
+                    for i, confidence in enumerate(ocr_data['conf']):
+                        if int(confidence) > 0:  # Filter out negative confidences
+                            text_lines.append(ocr_data['text'][i])
+                            confidence_scores.append(int(confidence))
+
+                    # Combine text
+                    extracted_text = ' '.join(text_lines).strip()
+                    result.extracted_text = extracted_text
+
+                    # Calculate overall OCR confidence
+                    if confidence_scores:
+                        avg_confidence = sum(confidence_scores) / len(confidence_scores)
+                        ocr_confidence = avg_confidence / 100.0  # Convert to 0-1 scale
+                    else:
+                        ocr_confidence = 0.0
+
+                    # Store OCR confidence in metadata
+                    if not result.metadata:
+                        result.metadata = {}
+                    result.metadata['ocr_confidence'] = ocr_confidence
+                    result.metadata['ocr_word_count'] = len(extracted_text.split())
+                    result.metadata['ocr_confidence_distribution'] = {
+                        'high': len([c for c in confidence_scores if c >= 80]),
+                        'medium': len([c for c in confidence_scores if 50 <= c < 80]),
+                        'low': len([c for c in confidence_scores if c < 50])
+                    }
 
                     # Extract key entities (simplified - could use NLP models)
-                    result.key_entities = self._extract_entities_from_text(text)
+                    result.key_entities = self._extract_entities_from_text(extracted_text)
 
                 except Exception as ocr_error:
                     logger.warning(
@@ -419,7 +465,7 @@ class EvidenceProcessor:
 
     def _analyze_image_forensics(
         self, opencv_image: "np.ndarray", pil_image: "Image"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Analyze image for forensic indicators with scoring"""
         forensics = {}
         manipulation_score = 0.0
@@ -427,10 +473,6 @@ class EvidenceProcessor:
         forensic_indicators = []
 
         try:
-            import cv2
-            import numpy as np
-            from PIL import Image
-
             # Error Level Analysis (ELA) - detects image manipulation
             ela_result = self._error_level_analysis(pil_image)
             forensics.update(ela_result)
@@ -458,15 +500,15 @@ class EvidenceProcessor:
                 manipulation_score += 15
                 authenticity_score -= 10
             if not metadata_result.get("date_consistency", True):
-                 forensic_indicators.append("Inconsistent dates in metadata")
-                 manipulation_score += 10
-                 authenticity_score -= 5
+                forensic_indicators.append("Inconsistent dates in metadata")
+                manipulation_score += 10
+                authenticity_score -= 5
 
             # Compression artifacts
             compression_result = self._detect_compression_artifacts(opencv_image)
             forensics.update(compression_result)
             if compression_result.get("likely_compressed"):
-                 forensic_indicators.append("Likely re-compressed")
+                forensic_indicators.append("Likely re-compressed")
 
             # Clone detection (basic)
             clone_result = self._detect_clone_regions(opencv_image)
@@ -480,21 +522,22 @@ class EvidenceProcessor:
             manipulation_score = min(manipulation_score, 100.0)
             authenticity_score = max(authenticity_score, 0.0)
 
-            forensics.update({
-                "manipulation_score": manipulation_score,
-                "authenticity_score": authenticity_score,
-                "forensic_indicators": forensic_indicators
-            })
+            forensics.update(
+                {
+                    "manipulation_score": manipulation_score,
+                    "authenticity_score": authenticity_score,
+                    "forensic_indicators": forensic_indicators,
+                }
+            )
 
         except Exception as e:
             forensics["forensics_error"] = str(e)
 
         return forensics
 
-    def _error_level_analysis(self, image: "Image") -> Dict[str, Any]:
+    def _error_level_analysis(self, image: "Image") -> dict[str, Any]:
         """Perform Error Level Analysis to detect manipulation"""
         try:
-            import cv2
             import numpy as np
 
             # Save image with high quality JPEG
@@ -529,7 +572,7 @@ class EvidenceProcessor:
         except Exception as e:
             return {"ela_error": str(e)}
 
-    def _analyze_image_noise(self, image: "np.ndarray") -> Dict[str, Any]:
+    def _analyze_image_noise(self, image: "np.ndarray") -> dict[str, Any]:
         """Analyze image noise patterns"""
         try:
             import cv2
@@ -554,7 +597,7 @@ class EvidenceProcessor:
         except Exception as e:
             return {"noise_analysis_error": str(e)}
 
-    def _analyze_image_metadata(self, image: "Image") -> Dict[str, Any]:
+    def _analyze_image_metadata(self, image: "Image") -> dict[str, Any]:
         """Analyze image metadata for forensic clues"""
         metadata = {}
 
@@ -585,7 +628,7 @@ class EvidenceProcessor:
 
         return metadata
 
-    def _detect_compression_artifacts(self, image: "np.ndarray") -> Dict[str, Any]:
+    def _detect_compression_artifacts(self, image: "np.ndarray") -> dict[str, Any]:
         """Detect JPEG compression artifacts"""
         try:
             import cv2
@@ -611,7 +654,7 @@ class EvidenceProcessor:
         except Exception as e:
             return {"compression_analysis_error": str(e)}
 
-    def _detect_clone_regions(self, image: "np.ndarray") -> Dict[str, Any]:
+    def _detect_clone_regions(self, image: "np.ndarray") -> dict[str, Any]:
         """Basic clone region detection"""
         try:
             import cv2
@@ -657,7 +700,7 @@ class EvidenceProcessor:
             return {"clone_detection_error": str(e)}
 
     def _process_document(
-        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+        self, file_path: str, result: ProcessingResult, options: dict[str, Any]
     ):
         """Process document files (PDF, DOCX, etc.)"""
         try:
@@ -677,7 +720,7 @@ class EvidenceProcessor:
             result.error = f"Document processing failed: {e}"
 
     def _process_pdf(
-        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+        self, file_path: str, result: ProcessingResult, options: dict[str, Any]
     ):
         """Process PDF files"""
         try:
@@ -720,7 +763,7 @@ class EvidenceProcessor:
             result.error = f"PDF processing failed: {e}"
 
     def _process_docx(
-        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+        self, file_path: str, result: ProcessingResult, options: dict[str, Any]
     ):
         """Process DOCX files"""
         try:
@@ -754,11 +797,11 @@ class EvidenceProcessor:
             result.error = f"DOCX processing failed: {e}"
 
     def _process_text(
-        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+        self, file_path: str, result: ProcessingResult, options: dict[str, Any]
     ):
         """Process text files"""
         try:
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            with open(file_path, encoding="utf-8", errors="ignore") as f:
                 text = f.read()
 
             result.extracted_text = text
@@ -792,7 +835,7 @@ class EvidenceProcessor:
         return sha256_hash.hexdigest()
 
     def _process_audio(
-        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+        self, file_path: str, result: ProcessingResult, options: dict[str, Any]
     ):
         """Process audio files for speech-to-text and forensic analysis"""
         try:
@@ -821,15 +864,17 @@ class EvidenceProcessor:
                 channels = audio.channels
                 bit_depth = audio.sample_width * 8
 
-                result.metadata.update({
-                    "duration_seconds": round(duration_seconds, 2),
-                    "sample_rate": sample_rate,
-                    "channels": channels,
-                    "bit_depth": bit_depth,
-                    "frame_count": len(audio),
-                    "dBFS": audio.dBFS,
-                    "max_dBFS": audio.max_dBFS,
-                })
+                result.metadata.update(
+                    {
+                        "duration_seconds": round(duration_seconds, 2),
+                        "sample_rate": sample_rate,
+                        "channels": channels,
+                        "bit_depth": bit_depth,
+                        "frame_count": len(audio),
+                        "d_bfs": audio.dBFS,
+                        "max_dBFS": audio.max_dBFS,
+                    }
+                )
 
                 # Quality score based on audio properties
                 quality = 0.5
@@ -845,7 +890,7 @@ class EvidenceProcessor:
 
             except Exception as e:
                 logger.warning(f"Audio metadata extraction failed: {e}")
-                result.metadata["note"] = f"Metadata extraction failed: {str(e)}"
+                result.metadata["note"] = f"Metadata extraction failed: {e!s}"
                 result.quality_score = 0.3
 
             # Speech-to-Text using SpeechRecognition
@@ -853,9 +898,9 @@ class EvidenceProcessor:
             try:
                 recognizer = sr.Recognizer()
                 # Convert to WAV if needed for recognition
-                if not file_path.lower().endswith('.wav'):
-                    temp_wav = tempfile.NamedTemporaryFile(suffix='.wav', delete=False)
-                    audio.export(temp_wav.name, format='wav')
+                if not file_path.lower().endswith(".wav"):
+                    temp_wav = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+                    audio.export(temp_wav.name, format="wav")
                     temp_wav.close()
                     audio_file_path = temp_wav.name
                 else:
@@ -869,23 +914,27 @@ class EvidenceProcessor:
                 if audio_file_path != file_path:
                     os.unlink(audio_file_path)
 
-                result.extracted_text = f"[Forensic Audio Log] File Hash: {file_hash}\nTranscription: {transcription}"
+                result.extracted_text = f"[Forensic Audio Log] File Hash: {file_hash}\n_transcription: {transcription}"
 
             except sr.UnknownValueError:
                 transcription = "[Speech recognition could not understand audio]"
-                result.extracted_text = f"[Forensic Audio Log] File Hash: {file_hash}\n{transcription}"
+                result.extracted_text = (
+                    f"[Forensic Audio Log] File Hash: {file_hash}\n{transcription}"
+                )
             except sr.RequestError as e:
                 transcription = f"[Speech recognition service unavailable: {e}]"
-                result.extracted_text = f"[Forensic Audio Log] File Hash: {file_hash}\n{transcription}"
+                result.extracted_text = (
+                    f"[Forensic Audio Log] File Hash: {file_hash}\n{transcription}"
+                )
             except Exception as e:
                 logger.warning(f"Speech recognition failed: {e}")
-                result.extracted_text = f"[Forensic Audio Log] File Hash: {file_hash}\n[Speech recognition failed: {str(e)}]"
+                result.extracted_text = f"[Forensic Audio Log] File Hash: {file_hash}\n[Speech recognition failed: {e!s}]"
 
         except Exception as e:
             result.error = f"Audio processing failed: {e}"
 
     def _process_video(
-        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+        self, file_path: str, result: ProcessingResult, options: dict[str, Any]
     ):
         """Process video files for forensic integrity and metadata"""
         try:
@@ -899,8 +948,14 @@ class EvidenceProcessor:
                     "media_type": "video",
                     "forensic_hash": file_hash,
                     "file_size_bytes": file_stats.st_size,
-                    "last_modified": datetime.fromtimestamp(file_stats.st_mtime).isoformat(),
-                    "processing_capabilities": ["forensic_hashing", "metadata", "frame_analysis"],
+                    "last_modified": datetime.fromtimestamp(
+                        file_stats.st_mtime
+                    ).isoformat(),
+                    "processing_capabilities": [
+                        "forensic_hashing",
+                        "metadata",
+                        "frame_analysis",
+                    ],
                 }
             )
 
@@ -914,7 +969,7 @@ class EvidenceProcessor:
                         "confidence": 1.0,
                         "text": f"SHA256:{file_hash}",
                         "start_offset": 0,
-                        "end_offset": 64
+                        "end_offset": 64,
                     }
                 ]
                 return
@@ -929,15 +984,19 @@ class EvidenceProcessor:
                     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
                     duration = frame_count / fps if fps > 0 else 0
 
-                    result.metadata.update({
-                        "fps": fps,
-                        "frame_count": frame_count,
-                        "width": width,
-                        "height": height,
-                        "duration_seconds": round(duration, 2),
-                        "resolution": f"{width}x{height}",
-                        "aspect_ratio": round(width / height, 2) if height > 0 else 0,
-                    })
+                    result.metadata.update(
+                        {
+                            "fps": fps,
+                            "frame_count": frame_count,
+                            "width": width,
+                            "height": height,
+                            "duration_seconds": round(duration, 2),
+                            "resolution": f"{width}x{height}",
+                            "aspect_ratio": round(width / height, 2)
+                            if height > 0
+                            else 0,
+                        }
+                    )
 
                     # Extract first frame for basic analysis
                     ret, frame = cap.read()
@@ -947,10 +1006,12 @@ class EvidenceProcessor:
                         brightness = gray.mean()
                         contrast = gray.std()
 
-                        result.metadata.update({
-                            "avg_brightness": round(brightness, 2),
-                            "contrast": round(contrast, 2),
-                        })
+                        result.metadata.update(
+                            {
+                                "avg_brightness": round(brightness, 2),
+                                "contrast": round(contrast, 2),
+                            }
+                        )
 
                     cap.release()
 
@@ -972,7 +1033,7 @@ class EvidenceProcessor:
 
             except Exception as e:
                 logger.warning(f"OpenCV video processing failed: {e}")
-                result.metadata["note"] = f"OpenCV processing failed: {str(e)}"
+                result.metadata["note"] = f"OpenCV processing failed: {e!s}"
                 result.quality_score = 0.4
 
             # Additional metadata with MoviePy if available
@@ -990,7 +1051,7 @@ class EvidenceProcessor:
                 logger.warning(f"MoviePy processing failed: {e}")
 
             # Extracted text and entities
-            result.extracted_text = f"[Forensic Video Log] File Hash: {file_hash}\nDuration: {result.metadata.get('duration_seconds', 'unknown')}s, Resolution: {result.metadata.get('resolution', 'unknown')}\nIntegrity verified. Visual content analyzed."
+            result.extracted_text = f"[Forensic Video Log] File Hash: {file_hash}\n_duration: {result.metadata.get('duration_seconds', 'unknown')}s, Resolution: {result.metadata.get('resolution', 'unknown')}\nIntegrity verified. Visual content analyzed."
 
             result.key_entities = [
                 {
@@ -998,22 +1059,22 @@ class EvidenceProcessor:
                     "confidence": 1.0,
                     "text": f"SHA256:{file_hash}",
                     "start_offset": 0,
-                    "end_offset": 64
+                    "end_offset": 64,
                 },
                 {
                     "type": "video_metadata",
                     "confidence": 0.9,
                     "text": f"Resolution: {result.metadata.get('resolution', 'unknown')}, Duration: {result.metadata.get('duration_seconds', 'unknown')}s",
                     "start_offset": 65,
-                    "end_offset": 120
-                }
+                    "end_offset": 120,
+                },
             ]
 
         except Exception as e:
             result.error = f"Video processing failed: {e}"
 
     def _process_spreadsheet(
-        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+        self, file_path: str, result: ProcessingResult, options: dict[str, Any]
     ):
         """Process Excel/CSV files"""
         try:
@@ -1056,7 +1117,7 @@ class EvidenceProcessor:
             result.error = f"Spreadsheet processing failed: {e}"
 
     def _process_presentation(
-        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+        self, file_path: str, result: ProcessingResult, options: dict[str, Any]
     ):
         """Process PowerPoint files"""
         try:
@@ -1088,7 +1149,7 @@ class EvidenceProcessor:
             result.error = f"Presentation processing failed: {e}"
 
     def _process_archive(
-        self, file_path: str, result: ProcessingResult, options: Dict[str, Any]
+        self, file_path: str, result: ProcessingResult, options: dict[str, Any]
     ):
         """Process archive files (ZIP, RAR, etc.)"""
         try:
@@ -1148,7 +1209,7 @@ class EvidenceProcessor:
         except Exception as e:
             result.error = f"Archive processing failed: {e}"
 
-    def _extract_financial_entities(self, text: str) -> List[Dict[str, Any]]:
+    def _extract_financial_entities(self, text: str) -> list[dict[str, Any]]:
         """Extract financial entities from text"""
         entities = []
         import re
@@ -1189,7 +1250,7 @@ class EvidenceProcessor:
         timestamp = str(int(time.time()))[-6:]  # Last 6 digits of timestamp
         return f"ev_{file_path_hash}_{timestamp}"
 
-    def _extract_entities_from_text(self, text: str) -> List[Dict[str, Any]]:
+    def _extract_entities_from_text(self, text: str) -> list[dict[str, Any]]:
         """Extract key entities from text (simplified implementation)"""
         entities = []
 
@@ -1276,7 +1337,7 @@ class EvidenceProcessor:
         sentiment = (positive_count - negative_count) / total_sentiment_words
         return max(-1.0, min(1.0, sentiment))
 
-    def _update_batch_metrics(self, results: List[ProcessingResult], batch_time: float):
+    def _update_batch_metrics(self, results: list[ProcessingResult], batch_time: float):
         """Update performance metrics"""
         self.metrics["total_processed"] += len(results)
         self.metrics["total_processing_time"] += batch_time
@@ -1294,7 +1355,7 @@ class EvidenceProcessor:
             self.metrics["by_type"][file_type]["count"] += 1
             self.metrics["by_type"][file_type]["total_time"] += result.processing_time
 
-    def get_performance_metrics(self) -> Dict[str, Any]:
+    def get_performance_metrics(self) -> dict[str, Any]:
         """Get processing performance metrics"""
         avg_time = self.metrics["total_processing_time"] / max(
             1,

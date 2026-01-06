@@ -7,10 +7,10 @@ Writes two files under ~/.zenith/:
 
 If PyNaCl is not available, a random HMAC key will be written as `auth_encryption.key` (base64).
 """
+
 import base64
 import os
 import secrets
-import stat
 from pathlib import Path
 
 KEY_DIR = Path.home() / ".Zenith"

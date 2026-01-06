@@ -3,7 +3,6 @@ Centralized Constants and Configuration
 Eliminates magic numbers and hardcoding throughout the codebase
 """
 
-from typing import Dict, Any
 
 # ============================================================================
 # SYSTEM CONSTANTS
@@ -24,8 +23,8 @@ FILE_PROCESSING_TIMEOUT = 60
 # Caching Configuration
 PLUGIN_CACHE_TTL = 3600  # 1 hour
 SESSION_CACHE_TTL = 1800  # 30 minutes
-DATA_CACHE_TTL = 300     # 5 minutes
-RESULT_CACHE_TTL = 600   # 10 minutes
+DATA_CACHE_TTL = 300  # 5 minutes
+RESULT_CACHE_TTL = 600  # 10 minutes
 
 # ============================================================================
 # FRAUD DETECTION CONSTANTS
@@ -49,7 +48,18 @@ VELOCITY_RISK_MULTIPLIER = 5
 
 # Geographic Risk
 HIGH_RISK_COUNTRIES = [
-    "IR", "KP", "CU", "SY", "VE", "AF", "IQ", "LY", "SD", "YE", "SO", "MM"
+    "IR",
+    "KP",
+    "CU",
+    "SY",
+    "VE",
+    "AF",
+    "IQ",
+    "LY",
+    "SD",
+    "YE",
+    "SO",
+    "MM",
 ]
 
 # ============================================================================
@@ -76,20 +86,20 @@ FACE_RECOGNITION_THRESHOLD = 0.8
 # ============================================================================
 
 # File Type Categories
-SUPPORTED_IMAGE_TYPES = ['jpg', 'jpeg', 'png', 'bmp', 'tiff', 'webp']
-SUPPORTED_VIDEO_TYPES = ['mp4', 'avi', 'mov', 'mkv', 'webm']
-SUPPORTED_DOCUMENT_TYPES = ['pdf', 'doc', 'docx', 'txt', 'rtf']
-SUPPORTED_AUDIO_TYPES = ['mp3', 'wav', 'flac', 'aac', 'ogg']
+SUPPORTED_IMAGE_TYPES = ["jpg", "jpeg", "png", "bmp", "tiff", "webp"]
+SUPPORTED_VIDEO_TYPES = ["mp4", "avi", "mov", "mkv", "webm"]
+SUPPORTED_DOCUMENT_TYPES = ["pdf", "doc", "docx", "txt", "rtf"]
+SUPPORTED_AUDIO_TYPES = ["mp3", "wav", "flac", "aac", "ogg"]
 
 # Processing Quality Thresholds
 MIN_IMAGE_RESOLUTION = 100  # pixels
-MIN_VIDEO_DURATION = 1      # second
+MIN_VIDEO_DURATION = 1  # second
 MAX_FILE_SIZE_FOR_OCR = 10 * 1024 * 1024  # 10MB
-MAX_TEXT_EXTRACTION_LENGTH = 100000       # characters
+MAX_TEXT_EXTRACTION_LENGTH = 100000  # characters
 
 # Forensic Analysis
-ELA_THRESHOLD = 15         # Error Level Analysis threshold
-MANIPULATION_THRESHOLD = 10 # Image manipulation detection
+ELA_THRESHOLD = 15  # Error Level Analysis threshold
+MANIPULATION_THRESHOLD = 10  # Image manipulation detection
 COMPRESSION_ARTIFACT_THRESHOLD = 50
 BLUR_DETECTION_THRESHOLD = 100
 
@@ -129,10 +139,10 @@ MIN_PAGE_SIZE = 10
 MIN_PASSWORD_LENGTH = 8
 MAX_PASSWORD_LENGTH = 128
 PASSWORD_COMPLEXITY_REQUIREMENTS = {
-    'uppercase': True,
-    'lowercase': True,
-    'digits': True,
-    'special_chars': True
+    "uppercase": True,
+    "lowercase": True,
+    "digits": True,
+    "special_chars": True,
 }
 
 # JWT Configuration
@@ -150,43 +160,38 @@ HASH_ROUNDS = 100000  # For password hashing
 # ============================================================================
 
 # Case Management
-CASE_PRIORITY_LEVELS = ['low', 'medium', 'high', 'critical']
+CASE_PRIORITY_LEVELS = ["low", "medium", "high", "critical"]
 CASE_STATUS_TRANSITIONS = {
-    'draft': ['open'],
-    'open': ['in_progress', 'closed', 'cancelled'],
-    'in_progress': ['open', 'closed', 'cancelled'],
-    'closed': ['reopened'],
-    'cancelled': ['reopened']
+    "draft": ["open"],
+    "open": ["in_progress", "closed", "cancelled"],
+    "in_progress": ["open", "closed", "cancelled"],
+    "closed": ["reopened"],
+    "cancelled": ["reopened"],
 }
 
 # Alert Management
-ALERT_SEVERITY_LEVELS = ['info', 'low', 'medium', 'high', 'critical']
+ALERT_SEVERITY_LEVELS = ["info", "low", "medium", "high", "critical"]
 ALERT_AUTO_RESOLVE_HOURS = 24
 ALERT_ESCALATION_THRESHOLDS = {
-    'high': 5,      # Escalate after 5 high alerts
-    'critical': 1   # Escalate immediately on critical
+    "high": 5,  # Escalate after 5 high alerts
+    "critical": 1,  # Escalate immediately on critical
 }
 
 # Compliance
 SAR_FILING_DEADLINE_DAYS = 30
 CTR_REPORTING_THRESHOLD = 10000  # $10,000 USD
-SAR_RISK_THRESHOLDS = {
-    'low': 25,
-    'medium': 50,
-    'high': 75,
-    'critical': 90
-}
+SAR_RISK_THRESHOLDS = {"low": 25, "medium": 50, "high": 75, "critical": 90}
 
 # ============================================================================
 # MONITORING AND LOGGING CONSTANTS
 # ============================================================================
 
 # Log Levels
-LOG_LEVEL_DEBUG = 'DEBUG'
-LOG_LEVEL_INFO = 'INFO'
-LOG_LEVEL_WARNING = 'WARNING'
-LOG_LEVEL_ERROR = 'ERROR'
-LOG_LEVEL_CRITICAL = 'CRITICAL'
+LOG_LEVEL_DEBUG = "DEBUG"
+LOG_LEVEL_INFO = "INFO"
+LOG_LEVEL_WARNING = "WARNING"
+LOG_LEVEL_ERROR = "ERROR"
+LOG_LEVEL_CRITICAL = "CRITICAL"
 
 # Metrics Collection
 METRICS_COLLECTION_INTERVAL = 60  # seconds
@@ -195,42 +200,47 @@ PERFORMANCE_ALERT_THRESHOLD = 2000  # ms for API responses
 
 # Health Checks
 HEALTH_CHECK_INTERVAL = 30  # seconds
-HEALTH_CHECK_TIMEOUT = 10   # seconds
+HEALTH_CHECK_TIMEOUT = 10  # seconds
 HEALTH_CHECK_RETRIES = 3
 
 # ============================================================================
 # UTILITY FUNCTIONS
 # ============================================================================
 
+
 def get_risk_level(score: float) -> str:
     """Convert risk score to risk level"""
     if score >= RISK_SCORE_CRITICAL:
-        return 'critical'
+        return "critical"
     elif score >= RISK_SCORE_HIGH:
-        return 'high'
+        return "high"
     elif score >= RISK_SCORE_MEDIUM:
-        return 'medium'
+        return "medium"
     else:
-        return 'low'
+        return "low"
+
 
 def get_priority_level(severity: str) -> str:
     """Convert severity to priority"""
     severity_map = {
-        'critical': 'high',
-        'high': 'high',
-        'medium': 'medium',
-        'low': 'medium',
-        'info': 'low'
+        "critical": "high",
+        "high": "high",
+        "medium": "medium",
+        "low": "medium",
+        "info": "low",
     }
-    return severity_map.get(severity, 'medium')
+    return severity_map.get(severity, "medium")
+
 
 def is_high_risk_country(country_code: str) -> bool:
     """Check if country is in high-risk list"""
     return country_code.upper() in HIGH_RISK_COUNTRIES
 
+
 def calculate_batch_size(total_items: int, max_batch_size: int = MAX_BATCH_SIZE) -> int:
     """Calculate optimal batch size for processing"""
     return min(max_batch_size, max(1, total_items // 10))
+
 
 # ============================================================================
 # CONFIGURATION OBJECTS
@@ -238,82 +248,139 @@ def calculate_batch_size(total_items: int, max_batch_size: int = MAX_BATCH_SIZE)
 
 # Database Configuration
 DATABASE_CONFIG = {
-    'pool_size': 10,
-    'max_overflow': 20,
-    'pool_timeout': DATABASE_CONNECTION_TIMEOUT,
-    'pool_recycle': 3600,  # 1 hour
-    'echo': False
+    "pool_size": 10,
+    "max_overflow": 20,
+    "pool_timeout": DATABASE_CONNECTION_TIMEOUT,
+    "pool_recycle": 3600,  # 1 hour
+    "echo": False,
 }
 
 # Redis Configuration
 REDIS_CONFIG = {
-    'max_connections': 20,
-    'retry_on_timeout': True,
-    'socket_timeout': 5,
-    'socket_connect_timeout': 5,
-    'socket_keepalive': True,
-    'socket_keepalive_options': {1: 60},  # TCP_KEEPIDLE: 60 seconds
-    'health_check_interval': 30
+    "max_connections": 20,
+    "retry_on_timeout": True,
+    "socket_timeout": 5,
+    "socket_connect_timeout": 5,
+    "socket_keepalive": True,
+    "socket_keepalive_options": {1: 60},  # TCP_KEEPIDLE: 60 seconds
+    "health_check_interval": 30,
 }
 
 # AI/ML Configuration
 AI_CONFIG = {
-    'max_concurrent_requests': MAX_CONCURRENT_AI_REQUESTS,
-    'request_timeout': API_REQUEST_TIMEOUT,
-    'batch_size': MAX_BATCH_SIZE,
-    'cache_ttl': RESULT_CACHE_TTL,
-    'retry_attempts': 3,
-    'retry_delay': 1.0
+    "max_concurrent_requests": MAX_CONCURRENT_AI_REQUESTS,
+    "request_timeout": API_REQUEST_TIMEOUT,
+    "batch_size": MAX_BATCH_SIZE,
+    "cache_ttl": RESULT_CACHE_TTL,
+    "retry_attempts": 3,
+    "retry_delay": 1.0,
 }
 
 # Export all constants
 __all__ = [
-    # System Constants
-    'MAX_UPLOAD_SIZE', 'DEFAULT_MAX_PROCESS_SIZE', 'MAX_FILE_NAME_LENGTH',
-    'DEFAULT_TIMEOUT_SECONDS', 'API_REQUEST_TIMEOUT', 'DATABASE_CONNECTION_TIMEOUT',
-    'PLUGIN_CACHE_TTL', 'SESSION_CACHE_TTL', 'DATA_CACHE_TTL', 'RESULT_CACHE_TTL',
-
-    # Fraud Detection
-    'RISK_SCORE_LOW', 'RISK_SCORE_MEDIUM', 'RISK_SCORE_HIGH', 'RISK_SCORE_CRITICAL',
-    'STRUCTURING_THRESHOLD', 'STRUCTURING_WINDOW_HOURS', 'STRUCTURING_MIN_TRANSACTIONS',
-    'VELOCITY_MAX_TRANSACTIONS', 'VELOCITY_WINDOW_MINUTES', 'VELOCITY_RISK_MULTIPLIER',
-    'HIGH_RISK_COUNTRIES',
-
-    # AI/ML
-    'MIN_CONFIDENCE_THRESHOLD', 'HIGH_CONFIDENCE_THRESHOLD', 'CRITICAL_CONFIDENCE_THRESHOLD',
-    'MAX_AI_PROCESSING_TIME', 'MAX_BATCH_SIZE', 'MAX_CONCURRENT_AI_REQUESTS',
-    'OCR_QUALITY_THRESHOLD', 'FORGERY_DETECTION_THRESHOLD', 'FACE_RECOGNITION_THRESHOLD',
-
-    # Evidence Processing
-    'SUPPORTED_IMAGE_TYPES', 'SUPPORTED_VIDEO_TYPES', 'SUPPORTED_DOCUMENT_TYPES', 'SUPPORTED_AUDIO_TYPES',
-    'MIN_IMAGE_RESOLUTION', 'MIN_VIDEO_DURATION', 'MAX_FILE_SIZE_FOR_OCR', 'MAX_TEXT_EXTRACTION_LENGTH',
-    'ELA_THRESHOLD', 'MANIPULATION_THRESHOLD', 'COMPRESSION_ARTIFACT_THRESHOLD', 'BLUR_DETECTION_THRESHOLD',
-
-    # API & Networking
-    'HTTP_OK', 'HTTP_CREATED', 'HTTP_BAD_REQUEST', 'HTTP_UNAUTHORIZED', 'HTTP_FORBIDDEN',
-    'HTTP_NOT_FOUND', 'HTTP_CONFLICT', 'HTTP_UNPROCESSABLE_ENTITY', 'HTTP_TOO_MANY_REQUESTS',
-    'HTTP_INTERNAL_SERVER_ERROR', 'HTTP_SERVICE_UNAVAILABLE',
-    'DEFAULT_RATE_LIMIT_REQUESTS', 'DEFAULT_RATE_LIMIT_WINDOW', 'API_RATE_LIMIT_REQUESTS', 'API_RATE_LIMIT_WINDOW',
-    'DEFAULT_PAGE_SIZE', 'MAX_PAGE_SIZE', 'MIN_PAGE_SIZE',
-
-    # Security
-    'MIN_PASSWORD_LENGTH', 'MAX_PASSWORD_LENGTH', 'PASSWORD_COMPLEXITY_REQUIREMENTS',
-    'JWT_ACCESS_TOKEN_EXPIRE_MINUTES', 'JWT_REFRESH_TOKEN_EXPIRE_DAYS', 'JWT_SECRET_KEY_MIN_LENGTH',
-    'AES_KEY_SIZE', 'RSA_KEY_SIZE', 'HASH_ROUNDS',
-
+    "AES_KEY_SIZE",
+    "AI_CONFIG",
+    "ALERT_AUTO_RESOLVE_HOURS",
+    "ALERT_ESCALATION_THRESHOLDS",
+    "ALERT_SEVERITY_LEVELS",
+    "API_RATE_LIMIT_REQUESTS",
+    "API_RATE_LIMIT_WINDOW",
+    "API_REQUEST_TIMEOUT",
+    "BLUR_DETECTION_THRESHOLD",
     # Business Logic
-    'CASE_PRIORITY_LEVELS', 'CASE_STATUS_TRANSITIONS',
-    'ALERT_SEVERITY_LEVELS', 'ALERT_AUTO_RESOLVE_HOURS', 'ALERT_ESCALATION_THRESHOLDS',
-    'SAR_FILING_DEADLINE_DAYS', 'CTR_REPORTING_THRESHOLD', 'SAR_RISK_THRESHOLDS',
-
-    # Monitoring
-    'LOG_LEVEL_DEBUG', 'LOG_LEVEL_INFO', 'LOG_LEVEL_WARNING', 'LOG_LEVEL_ERROR', 'LOG_LEVEL_CRITICAL',
-    'METRICS_COLLECTION_INTERVAL', 'METRICS_RETENTION_DAYS', 'PERFORMANCE_ALERT_THRESHOLD',
-    'HEALTH_CHECK_INTERVAL', 'HEALTH_CHECK_TIMEOUT', 'HEALTH_CHECK_RETRIES',
-
+    "CASE_PRIORITY_LEVELS",
+    "CASE_STATUS_TRANSITIONS",
+    "COMPRESSION_ARTIFACT_THRESHOLD",
+    "CRITICAL_CONFIDENCE_THRESHOLD",
+    "CTR_REPORTING_THRESHOLD",
     # Configuration Objects
-    'DATABASE_CONFIG', 'REDIS_CONFIG', 'AI_CONFIG',
-
+    "DATABASE_CONFIG",
+    "DATABASE_CONNECTION_TIMEOUT",
+    "DATA_CACHE_TTL",
+    "DEFAULT_MAX_PROCESS_SIZE",
+    "DEFAULT_PAGE_SIZE",
+    "DEFAULT_RATE_LIMIT_REQUESTS",
+    "DEFAULT_RATE_LIMIT_WINDOW",
+    "DEFAULT_TIMEOUT_SECONDS",
+    "ELA_THRESHOLD",
+    "FACE_RECOGNITION_THRESHOLD",
+    "FORGERY_DETECTION_THRESHOLD",
+    "HASH_ROUNDS",
+    "HEALTH_CHECK_INTERVAL",
+    "HEALTH_CHECK_RETRIES",
+    "HEALTH_CHECK_TIMEOUT",
+    "HIGH_CONFIDENCE_THRESHOLD",
+    "HIGH_RISK_COUNTRIES",
+    "HTTP_BAD_REQUEST",
+    "HTTP_CONFLICT",
+    "HTTP_CREATED",
+    "HTTP_FORBIDDEN",
+    "HTTP_INTERNAL_SERVER_ERROR",
+    "HTTP_NOT_FOUND",
+    # API & Networking
+    "HTTP_OK",
+    "HTTP_SERVICE_UNAVAILABLE",
+    "HTTP_TOO_MANY_REQUESTS",
+    "HTTP_UNAUTHORIZED",
+    "HTTP_UNPROCESSABLE_ENTITY",
+    "JWT_ACCESS_TOKEN_EXPIRE_MINUTES",
+    "JWT_REFRESH_TOKEN_EXPIRE_DAYS",
+    "JWT_SECRET_KEY_MIN_LENGTH",
+    "LOG_LEVEL_CRITICAL",
+    # Monitoring
+    "LOG_LEVEL_DEBUG",
+    "LOG_LEVEL_ERROR",
+    "LOG_LEVEL_INFO",
+    "LOG_LEVEL_WARNING",
+    "MANIPULATION_THRESHOLD",
+    "MAX_AI_PROCESSING_TIME",
+    "MAX_BATCH_SIZE",
+    "MAX_CONCURRENT_AI_REQUESTS",
+    "MAX_FILE_NAME_LENGTH",
+    "MAX_FILE_SIZE_FOR_OCR",
+    "MAX_PAGE_SIZE",
+    "MAX_PASSWORD_LENGTH",
+    "MAX_TEXT_EXTRACTION_LENGTH",
+    # System Constants
+    "MAX_UPLOAD_SIZE",
+    "METRICS_COLLECTION_INTERVAL",
+    "METRICS_RETENTION_DAYS",
+    # AI/ML
+    "MIN_CONFIDENCE_THRESHOLD",
+    "MIN_IMAGE_RESOLUTION",
+    "MIN_PAGE_SIZE",
+    # Security
+    "MIN_PASSWORD_LENGTH",
+    "MIN_VIDEO_DURATION",
+    "OCR_QUALITY_THRESHOLD",
+    "PASSWORD_COMPLEXITY_REQUIREMENTS",
+    "PERFORMANCE_ALERT_THRESHOLD",
+    "PLUGIN_CACHE_TTL",
+    "REDIS_CONFIG",
+    "RESULT_CACHE_TTL",
+    "RISK_SCORE_CRITICAL",
+    "RISK_SCORE_HIGH",
+    # Fraud Detection
+    "RISK_SCORE_LOW",
+    "RISK_SCORE_MEDIUM",
+    "RSA_KEY_SIZE",
+    "SAR_FILING_DEADLINE_DAYS",
+    "SAR_RISK_THRESHOLDS",
+    "SESSION_CACHE_TTL",
+    "STRUCTURING_MIN_TRANSACTIONS",
+    "STRUCTURING_THRESHOLD",
+    "STRUCTURING_WINDOW_HOURS",
+    "SUPPORTED_AUDIO_TYPES",
+    "SUPPORTED_DOCUMENT_TYPES",
+    # Evidence Processing
+    "SUPPORTED_IMAGE_TYPES",
+    "SUPPORTED_VIDEO_TYPES",
+    "VELOCITY_MAX_TRANSACTIONS",
+    "VELOCITY_RISK_MULTIPLIER",
+    "VELOCITY_WINDOW_MINUTES",
+    "calculate_batch_size",
+    "get_priority_level",
     # Utility Functions
-    'get_risk_level', 'get_priority_level', 'is_high_risk_country', 'calculate_batch_size'
+    "get_risk_level",
+    "is_high_risk_country",
 ]

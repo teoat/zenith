@@ -1,7 +1,5 @@
-
-from starlette.testclient import TestClient
 from fastapi import FastAPI
-import sys
+from starlette.testclient import TestClient
 
 app = FastAPI()
 
@@ -12,4 +10,5 @@ except TypeError as e:
     print(f"Error: {e}")
     # Inspect TestClient signature
     import inspect
+
     print(f"Signature: {inspect.signature(TestClient)}")

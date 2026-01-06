@@ -7,11 +7,9 @@ encrypted SQLite database.
 
 import os
 import shutil
-import sqlite3
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -69,7 +67,7 @@ class BackupManager:
             self._verify_backup(backup_path)
 
             logger.info(
-                f"Database backup created",
+                "Database backup created",
                 extra={
                     "backup_type": backup_type,
                     "backup_path": backup_path,
@@ -84,7 +82,7 @@ class BackupManager:
 
         except Exception as e:
             logger.error(
-                f"Backup failed", extra={"error": str(e), "backup_path": backup_path}
+                "Backup failed", extra={"error": str(e), "backup_path": backup_path}
             )
             # Clean up failed backup
             if os.path.exists(backup_path):
@@ -92,7 +90,7 @@ class BackupManager:
             raise
 
     def restore_backup(
-        self, backup_path: str, verify_password: Optional[str] = None
+        self, backup_path: str, verify_password: str | None = None
     ) -> bool:
         """
         Restore database from backup.
@@ -121,7 +119,7 @@ class BackupManager:
             shutil.copy2(backup_path, self.db_path)
 
             logger.info(
-                f"Database restored from backup",
+                "Database restored from backup",
                 extra={"backup_path": backup_path, "restored_to": self.db_path},
             )
 
@@ -129,7 +127,7 @@ class BackupManager:
 
         except Exception as e:
             logger.error(
-                f"Restore failed", extra={"error": str(e), "backup_path": backup_path}
+                "Restore failed", extra={"error": str(e), "backup_path": backup_path}
             )
             raise
 
@@ -181,7 +179,7 @@ class BackupManager:
             except Exception as e:
                 logger.warning(f"Failed to remove old backup {old_backup}: {e}")
 
-    def list_backups(self, backup_type: Optional[str] = None) -> list:
+    def list_backups(self, backup_type: str | None = None) -> list:
         """
         List available backups.
 
@@ -305,7 +303,7 @@ if __name__ == "__main__":
 
     elif args.action == "stats":
         stats = manager.get_backup_stats()
-        print(f"\n📊 Backup Statistics:\n")
+        print("\n📊 Backup Statistics:\n")
         print(f"  Total Backups: {stats['total_backups']}")
         print(f"  Total Size: {stats['total_size_mb']} MB")
         print(f"  Daily: {stats['daily_backups']}")

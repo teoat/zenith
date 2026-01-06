@@ -4,27 +4,28 @@ Update all plugin files to use zenith namespace and team
 """
 
 import os
-import glob
+
 
 def update_plugin_file(filepath):
     """Update a plugin file with zenith references"""
     try:
-        with open(filepath, 'r', encoding='utf-8', errors='ignore') as file:
+        with open(filepath, encoding="utf-8", errors="ignore") as file:
             content = file.read()
 
         # Replace namespace references
-        content = content.replace('Zenith/', 'zenith/')
+        content = content.replace("Zenith/", "zenith/")
         content = content.replace('"Zenith Team"', '"Zenith Team"')
         content = content.replace("'Zenith Team'", "'Zenith Team'")
-        content = content.replace('Zenith Team', 'Zenith Team')
+        content = content.replace("Zenith Team", "Zenith Team")
 
-        with open(filepath, 'w', encoding='utf-8') as file:
+        with open(filepath, "w", encoding="utf-8") as file:
             file.write(content)
 
         return True
     except Exception as e:
         print(f"Error updating {filepath}: {e}")
         return False
+
 
 def main():
     plugin_dir = "/Users/Arief/Desktop/Zenith/backend/plugins/zenith"
@@ -49,6 +50,7 @@ def main():
             print(f"✓ Updated: {os.path.relpath(plugin_file, plugin_dir)}")
 
     print(f"\nCompleted! Updated {updated_count} plugin files.")
+
 
 if __name__ == "__main__":
     main()

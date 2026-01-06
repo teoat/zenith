@@ -40,7 +40,7 @@ def ensure_auth_imports(filepath: Path) -> bool:
     if filepath.name not in NEEDS_AUTH:
         return False
 
-    with open(filepath, "r") as f:
+    with open(filepath) as f:
         content = f.read()
 
     original = content
@@ -54,7 +54,7 @@ def ensure_auth_imports(filepath: Path) -> bool:
 
     for i, line in enumerate(lines):
         # Track imports
-        if line.startswith("import ") or line.startswith("from "):
+        if line.startswith(("import ", "from ")):
             last_import_line = i
 
             # Add User to core.database import if missing

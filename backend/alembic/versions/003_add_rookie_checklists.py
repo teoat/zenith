@@ -8,7 +8,6 @@ Create Date: 2025-12-11
 
 import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects import sqlite
 
 # revision identifiers, used by Alembic.
 revision = "003_add_rookie_checklists"

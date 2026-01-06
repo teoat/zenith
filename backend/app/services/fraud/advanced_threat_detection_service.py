@@ -8,23 +8,18 @@ Implements sophisticated threat detection capabilities including:
 - Supply chain attack detection
 """
 
-import asyncio
-import hashlib
-import json
 import logging
-import re
 import time
-from collections import defaultdict, deque
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 import networkx as nx
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import IsolationForest, RandomForestClassifier
-from sklearn.metrics import silhouette_score
+from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
 
 logger = logging.getLogger(__name__)
@@ -65,11 +60,11 @@ class ThreatIndicator:
     level: ThreatLevel
     confidence: float
     description: str
-    affected_entities: List[str]
+    affected_entities: list[str]
     detection_method: DetectionMethod
     timestamp: datetime
-    metadata: Dict[str, Any]
-    recommended_actions: List[str]
+    metadata: dict[str, Any]
+    recommended_actions: list[str]
 
 
 @dataclass
@@ -78,10 +73,10 @@ class BehavioralProfile:
 
     entity_id: str
     entity_type: str  # user, device, ip, etc.
-    baseline_metrics: Dict[str, float]
-    anomaly_thresholds: Dict[str, float]
+    baseline_metrics: dict[str, float]
+    anomaly_thresholds: dict[str, float]
     last_updated: datetime
-    profile_history: List[Dict[str, Any]]
+    profile_history: list[dict[str, Any]]
 
 
 @dataclass
@@ -90,7 +85,7 @@ class ThreatIntelligence:
 
     intelligence_id: str
     source: str
-    indicators: List[Dict[str, Any]]
+    indicators: list[dict[str, Any]]
     confidence: float
     timestamp: datetime
     expires_at: datetime
@@ -100,10 +95,10 @@ class BehavioralAnomalyDetector:
     """Detects behavioral anomalies using statistical and ML methods"""
 
     def __init__(self):
-        self.profiles: Dict[str, BehavioralProfile] = {}
-        self.anomaly_detectors: Dict[str, IsolationForest] = {}
-        self.scalers: Dict[str, StandardScaler] = {}
-        self.anomaly_history: List[ThreatIndicator] = []
+        self.profiles: dict[str, BehavioralProfile] = {}
+        self.anomaly_detectors: dict[str, IsolationForest] = {}
+        self.scalers: dict[str, StandardScaler] = {}
+        self.anomaly_history: list[ThreatIndicator] = []
 
     def create_behavioral_profile(
         self, entity_id: str, entity_type: str, initial_data: pd.DataFrame
@@ -181,8 +176,8 @@ class BehavioralAnomalyDetector:
         return profile
 
     def detect_behavioral_anomaly(
-        self, entity_id: str, current_behavior: Dict[str, Any]
-    ) -> Optional[ThreatIndicator]:
+        self, entity_id: str, current_behavior: dict[str, Any]
+    ) -> ThreatIndicator | None:
         """Detect behavioral anomalies for an entity"""
         if entity_id not in self.profiles:
             return None
@@ -300,10 +295,10 @@ class APTDetectionEngine:
     def __init__(self):
         self.threat_patterns = self._load_threat_patterns()
         self.graph_analyzer = GraphAnalysisEngine()
-        self.persistence_indicators: Dict[str, List[Dict]] = defaultdict(list)
+        self.persistence_indicators: dict[str, list[dict]] = defaultdict(list)
         self.command_and_control_patterns = self._load_c2_patterns()
 
-    def _load_threat_patterns(self) -> Dict[str, Dict]:
+    def _load_threat_patterns(self) -> dict[str, dict]:
         """Load known APT threat patterns"""
         return {
             "lateral_movement": {
@@ -335,7 +330,7 @@ class APTDetectionEngine:
             },
         }
 
-    def _load_c2_patterns(self) -> List[Dict]:
+    def _load_c2_patterns(self) -> list[dict]:
         """Load command and control communication patterns"""
         return [
             {
@@ -357,8 +352,8 @@ class APTDetectionEngine:
         ]
 
     def analyze_apt_indicators(
-        self, entity_id: str, activity_log: List[Dict]
-    ) -> Optional[ThreatIndicator]:
+        self, entity_id: str, activity_log: list[dict]
+    ) -> ThreatIndicator | None:
         """Analyze activities for APT indicators"""
         recent_activities = [
             activity
@@ -391,7 +386,7 @@ class APTDetectionEngine:
         if exfil_volume > 100 * 1024 * 1024:  # 100MB
             apt_score += 0.3
             detected_patterns.append(
-                f"Large data exfiltration: {exfil_volume / (1024*1024):.1f}MB"
+                f"Large data exfiltration: {exfil_volume / (1024 * 1024):.1f}MB"
             )
 
         # Check for persistence
@@ -443,7 +438,7 @@ class InsiderThreatDetector:
     """Detects insider threats using behavioral and access pattern analysis"""
 
     def __init__(self):
-        self.access_patterns: Dict[str, List[Dict]] = defaultdict(list)
+        self.access_patterns: dict[str, list[dict]] = defaultdict(list)
         self.sensitivity_levels = {
             "public": 1,
             "internal": 2,
@@ -453,8 +448,8 @@ class InsiderThreatDetector:
         }
 
     def analyze_access_patterns(
-        self, user_id: str, access_log: List[Dict]
-    ) -> Optional[ThreatIndicator]:
+        self, user_id: str, access_log: list[dict]
+    ) -> ThreatIndicator | None:
         """Analyze access patterns for insider threat indicators"""
         recent_accesses = [
             access
@@ -517,7 +512,7 @@ class InsiderThreatDetector:
         if download_volume > 500 * 1024 * 1024:  # 500MB
             insider_score += 0.3
             suspicious_activities.append(
-                f"Large download volume: {download_volume / (1024*1024):.1f}MB"
+                f"Large download volume: {download_volume / (1024 * 1024):.1f}MB"
             )
 
         if insider_score > 0.4:
@@ -559,9 +554,9 @@ class GraphAnalysisEngine:
 
     def __init__(self):
         self.graph = nx.DiGraph()
-        self.anomaly_scores: Dict[str, float] = {}
+        self.anomaly_scores: dict[str, float] = {}
 
-    def build_entity_graph(self, activities: List[Dict]) -> None:
+    def build_entity_graph(self, activities: list[dict]) -> None:
         """Build a graph of entity relationships from activities"""
         for activity in activities:
             source = activity.get("source_entity")
@@ -583,7 +578,7 @@ class GraphAnalysisEngine:
                 else:
                     self.graph.add_edge(source, target, weight=1, action=action)
 
-    def detect_graph_anomalies(self) -> List[ThreatIndicator]:
+    def detect_graph_anomalies(self) -> list[ThreatIndicator]:
         """Detect anomalies in the entity relationship graph"""
         indicators = []
 
@@ -635,12 +630,12 @@ class AdvancedThreatDetectionService:
         self.apt_detector = APTDetectionEngine()
         self.insider_detector = InsiderThreatDetector()
         self.graph_analyzer = GraphAnalysisEngine()
-        self.threat_indicators: List[ThreatIndicator] = []
-        self.threat_intelligence: List[ThreatIntelligence] = []
+        self.threat_indicators: list[ThreatIndicator] = []
+        self.threat_intelligence: list[ThreatIntelligence] = []
 
     async def analyze_entity_behavior(
         self, entity_id: str, entity_type: str, behavior_data: pd.DataFrame
-    ) -> List[ThreatIndicator]:
+    ) -> list[ThreatIndicator]:
         """Comprehensive behavioral analysis for an entity"""
         indicators = []
 
@@ -664,8 +659,8 @@ class AdvancedThreatDetectionService:
         return indicators
 
     async def detect_advanced_threats(
-        self, entity_id: str, activity_log: List[Dict]
-    ) -> List[ThreatIndicator]:
+        self, entity_id: str, activity_log: list[dict]
+    ) -> list[ThreatIndicator]:
         """Detect advanced threats using multiple detection methods"""
         indicators = []
 
@@ -695,7 +690,7 @@ class AdvancedThreatDetectionService:
 
     async def perform_threat_hunting(
         self, time_window: timedelta = timedelta(hours=24)
-    ) -> List[ThreatIndicator]:
+    ) -> list[ThreatIndicator]:
         """Perform proactive threat hunting across all entities"""
         # This would integrate with data sources to perform hunting
         # For now, return recent indicators
@@ -722,8 +717,8 @@ class AdvancedThreatDetectionService:
         logger.info(f"Updated threat intelligence: {intelligence.intelligence_id}")
 
     def correlate_threats(
-        self, indicators: List[ThreatIndicator]
-    ) -> List[Dict[str, Any]]:
+        self, indicators: list[ThreatIndicator]
+    ) -> list[dict[str, Any]]:
         """Correlate related threat indicators"""
         correlations = []
 
@@ -744,7 +739,7 @@ class AdvancedThreatDetectionService:
                         "correlation_score": len(entity_indicators)
                         / 5.0,  # Simple scoring
                         "threat_categories": list(
-                            set(ind.category.value for ind in entity_indicators)
+                            {ind.category.value for ind in entity_indicators}
                         ),
                         "highest_level": max(
                             ind.level.value for ind in entity_indicators
@@ -755,7 +750,7 @@ class AdvancedThreatDetectionService:
 
         return correlations
 
-    def get_threat_dashboard(self) -> Dict[str, Any]:
+    def get_threat_dashboard(self) -> dict[str, Any]:
         """Get comprehensive threat detection dashboard"""
         current_time = datetime.now()
         last_24h = current_time - timedelta(hours=24)
@@ -792,7 +787,7 @@ class AdvancedThreatDetectionService:
             ),
         }
 
-    def _calculate_detection_effectiveness(self) -> Dict[str, Any]:
+    def _calculate_detection_effectiveness(self) -> dict[str, Any]:
         """Calculate effectiveness of different detection methods"""
         method_stats = defaultdict(
             lambda: {"total": 0, "high_confidence": 0, "true_positives": 0}
@@ -822,8 +817,8 @@ class AdvancedThreatDetectionService:
         return effectiveness
 
     def _generate_mitigation_recommendations(
-        self, recent_indicators: List[ThreatIndicator]
-    ) -> List[str]:
+        self, recent_indicators: list[ThreatIndicator]
+    ) -> list[str]:
         """Generate mitigation recommendations based on recent threats"""
         recommendations = []
 
@@ -858,7 +853,7 @@ class AdvancedThreatDetectionService:
 
         return recommendations
 
-    async def simulate_threat_scenario(self, scenario_type: str) -> Dict[str, Any]:
+    async def simulate_threat_scenario(self, scenario_type: str) -> dict[str, Any]:
         """Simulate threat scenarios for testing detection capabilities"""
         # This would be used for red team exercises and detection validation
         scenarios = {

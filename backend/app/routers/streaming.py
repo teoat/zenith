@@ -5,8 +5,8 @@ Enables token-by-token streaming of AI responses to frontend
 
 import asyncio
 import json
+from collections.abc import AsyncGenerator
 from datetime import datetime
-from typing import AsyncGenerator
 
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
@@ -65,7 +65,7 @@ async def stream_ai_response(request: Request):
     {
         "message": "User message",
         "context": {
-            "caseId": "optional",
+            "case_id": "optional",
             "persona": "frenly|skeptical|thorough"
         }
     }

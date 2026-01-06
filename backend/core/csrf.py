@@ -3,9 +3,8 @@
 import hashlib
 import hmac
 import secrets
-from typing import Optional
 
-from fastapi import Header, HTTPException, Request
+from fastapi import HTTPException, Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
 
