@@ -297,7 +297,8 @@ class UserCreateRequest(BaseModel):
     role: UserRole = Field(default=UserRole.ANALYST, description="User role")
 
     @field_validator("username")
-    def username_alphanumeric(self, v):
+    @classmethod
+    def username_alphanumeric(cls, v):
         if not re.match(r"^[a-zA-Z0-9_-]+$", v):
             raise ValueError(
                 "Username must be alphanumeric with underscores and hyphens only"
@@ -340,7 +341,8 @@ class EvidenceUploadRequest(BaseModel):
     )  # Max 100MB
 
     @field_validator("file_type")
-    def validate_file_type(self, v):
+    @classmethod
+    def validate_file_type(cls, v):
         allowed_types = [
             "application/pdf",
             "image/jpeg",

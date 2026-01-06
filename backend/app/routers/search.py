@@ -1,12 +1,13 @@
 from typing import Any
 
 from app.services.ai.ai_service import ai_service
+from app.services.infrastructure.auth_service import auth_service
 from app.services.search_service import evidence_search_index
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 vector_store = ai_service.vector_store
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(auth_service.get_current_user)])
 
 # ===== EVIDENCE SEARCH ENDPOINTS =====
 
