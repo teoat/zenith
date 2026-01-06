@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">12.19% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/42</span>
+                <span class='fraction'>5/41</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/27</span>
+                <span class='fraction'>0/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">12.19% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/42</span>
+                <span class='fraction'>5/41</span>
             </div>
         
             
@@ -169,21 +169,19 @@
 <a name='L104'></a><a href='#L104'>104</a>
 <a name='L105'></a><a href='#L105'>105</a>
 <a name='L106'></a><a href='#L106'>106</a>
-<a name='L107'></a><a href='#L107'>107</a>
-<a name='L108'></a><a href='#L108'>108</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L107'></a><a href='#L107'>107</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -276,25 +274,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import React, { useState, useEffect } from 'react';</span>
-<span class="cstat-no" title="statement not covered" >import { useNavigate } from 'react-router-dom';</span>
-<span class="cstat-no" title="statement not covered" >import { secureLogger } from '../../utils/secureLogger';</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { secureLogger } from '../../utils/secureLogger';
 &nbsp;
-const VoiceControl: React.FC = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
+const VoiceControl: React.FC = <span class="fstat-no" title="function not covered" >() =</span>&gt; {
   const [listening, setListening] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
   const [transcript, setTranscript] = <span class="cstat-no" title="statement not covered" >useState('');</span>
-  const [supported, setSupported] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
+  const [supported] = <span class="cstat-no" title="statement not covered" >useState(<span class="fstat-no" title="function not covered" >() =</span>&gt; </span>
+<span class="cstat-no" title="statement not covered" >    typeof window !== 'undefined' &amp;&amp; ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)</span>
+  );
   const navigate = <span class="cstat-no" title="statement not covered" >useNavigate();</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  useEffect(<span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-    const isSupported = <span class="cstat-no" title="statement not covered" >'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;</span>
-<span class="cstat-no" title="statement not covered" >    setSupported(isSupported);</span>
-    
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!isSupported) {</span>
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!supported) {</span>
 <span class="cstat-no" title="statement not covered" >      secureLogger.warn('VOICE_CONTROL', 'Web Speech API not supported in this browser. Enabling simulated mode.');</span>
     }
-  }, []);
+  }, [supported]);
 &nbsp;
   const handleCommand = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(c</span>ommand: string) =&gt; {</span>
     const lowerCmd = <span class="cstat-no" title="statement not covered" >command.toLowerCase();</span>
@@ -383,7 +380,7 @@ const VoiceControl: React.FC = <span class="cstat-no" title="statement not cover
   );
 };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >export default VoiceControl;</span>
+export default VoiceControl;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -391,7 +388,7 @@ const VoiceControl: React.FC = <span class="cstat-no" title="statement not cover
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T05:56:40.976Z
+                at 2026-01-06T18:11:57.128Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

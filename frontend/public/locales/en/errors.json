@@ -1,0 +1,7 @@
+{
+  "title": "Errors",
+  "unexpectedError": "An unexpected error occurred",
+  "notFound": "Page not found",
+  "serverError": "Server error",
+  "tryAgain": "Please try again"
+}

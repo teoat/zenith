@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">19.44% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/36</span>
+                <span class='fraction'>0/36</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">21.21% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/33</span>
+                <span class='fraction'>0/33</span>
             </div>
         
             
@@ -255,9 +255,9 @@
 <a name='L190'></a><a href='#L190'>190</a>
 <a name='L191'></a><a href='#L191'>191</a>
 <a name='L192'></a><a href='#L192'>192</a>
-<a name='L193'></a><a href='#L193'>193</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L193'></a><a href='#L193'>193</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -266,7 +266,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -275,7 +275,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -286,7 +286,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -446,10 +446,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState } from 'react';
-import { Plus, Trash2, Save, Play, AlertTriangle, Check, Layers } from 'lucide-react';
-import { secureRandom } from '../../utils/secureRandom';
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import React, { useState } from 'react';</span>
+<span class="cstat-no" title="statement not covered" >import { Plus, Trash2, Save, Play, AlertTriangle, Check, Layers } from 'lucide-react';</span>
+<span class="cstat-no" title="statement not covered" >import { secureRandom } from '../../utils/secureRandom';</span>
 &nbsp;
 interface Rule {
   id: string;
@@ -458,7 +458,7 @@ interface Rule {
   value: string;
 }
 &nbsp;
-const FIELDS = [
+const FIELDS = <span class="cstat-no" title="statement not covered" >[</span>
   { value: 'amount', label: 'Transaction Amount' },
   { value: 'frequency', label: 'Transaction Frequency' },
   { value: 'risk_score', label: 'Risk Score' },
@@ -467,7 +467,7 @@ const FIELDS = [
   { value: 'velocity', label: 'Velocity (txn/hour)' },
 ];
 &nbsp;
-const OPERATORS = [
+const OPERATORS = <span class="cstat-no" title="statement not covered" >[</span>
   { value: '&gt;', label: 'Greater than' },
   { value: '&lt;', label: 'Less than' },
   { value: '&gt;=', label: 'Greater or equal' },
@@ -478,7 +478,7 @@ const OPERATORS = [
   { value: 'not_in', label: 'Not in list' },
 ];
 &nbsp;
-const RuleBuilder: React.FC = <span class="fstat-no" title="function not covered" >() =</span>&gt; {
+const RuleBuilder: React.FC = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
   const [rules, setRules] = <span class="cstat-no" title="statement not covered" >useState&lt;Rule[]&gt;([</span>
     { id: '1', field: 'amount', operator: '&gt;', value: '10000' },
     { id: '2', field: 'risk_score', operator: '&gt;=', value: '75' },
@@ -638,7 +638,7 @@ const RuleBuilder: React.FC = <span class="fstat-no" title="function not covered
   );
 };
 &nbsp;
-export default RuleBuilder;
+<span class="cstat-no" title="statement not covered" >export default RuleBuilder;</span>
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -646,7 +646,7 @@ export default RuleBuilder;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T05:56:42.976Z
+                at 2026-01-06T18:11:59.007Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

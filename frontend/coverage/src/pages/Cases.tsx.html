@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">22.32% </span>
+                <span class="strong">23.47% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>25/112</span>
+                <span class='fraction'>27/115</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">11.42% </span>
+                <span class="strong">5.71% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/35</span>
+                <span class='fraction'>2/35</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">22.54% </span>
+                <span class="strong">25.71% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>23/102</span>
+                <span class='fraction'>27/105</span>
             </div>
         
             
@@ -388,24 +388,31 @@
 <a name='L323'></a><a href='#L323'>323</a>
 <a name='L324'></a><a href='#L324'>324</a>
 <a name='L325'></a><a href='#L325'>325</a>
-<a name='L326'></a><a href='#L326'>326</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L326'></a><a href='#L326'>326</a>
+<a name='L327'></a><a href='#L327'>327</a>
+<a name='L328'></a><a href='#L328'>328</a>
+<a name='L329'></a><a href='#L329'>329</a>
+<a name='L330'></a><a href='#L330'>330</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -414,7 +421,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -707,16 +715,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState, useCallback, useMemo } from 'react';
+<span class="cline-any cline-yes">2x</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Activity, LayoutList } from 'lucide-react';
 import { useCases } from '../hooks/useCases';
+import type { Case } from '../types/schema';
 import { approvalService } from '../services/approvalService';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { useTouchGestures } from '../hooks/useTouchGestures';
@@ -724,27 +733,30 @@ import { CaseList } from '../components/cases/CaseList';
 import CasePreviewDrawer from '../components/cases/CasePreviewDrawer';
 import CaseHeader from '../components/cases/CaseHeader';
 import { KeyboardShortcutsModal } from '../components/ui/KeyboardShortcutsModal';
+import { Badge } from '../components/ui/Badge';
 import { KEYBOARD_SHORTCUTS } from '../lib/keyboardShortcuts';
+import { useQueryClient } from '@tanstack/react-query';
 import { ApprovalQueue } from '../components/ApprovalQueue';
 import { SplitView } from '../components/ui/SplitView';
 import { secureLogger } from '../utils/secureLogger';
 import PageErrorBoundary from '../components/PageErrorBoundary';
 import LoadingState from '../components/LoadingState';
 import { useToast } from '../providers/ToastProvider';
-import { Alert } from '@/components/ui/Alert';
+&nbsp;
 &nbsp;
 // Lazy load heavy components
-const CaseKanban = React.lazy(() =&gt; import('../components/cases/CaseKanban'));
-const AdjudicationQueue = React.lazy(() =&gt; import('../pages/AdjudicationQueue'));
+const CaseKanban = React.lazy(<span class="fstat-no" title="function not covered" >() =</span>&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > import('</span>../components/cases/CaseKanban'))</span>;
+const AdjudicationQueue = React.lazy(<span class="fstat-no" title="function not covered" >() =</span>&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > import('</span>../pages/AdjudicationQueue'))</span>;
 &nbsp;
 interface CasesProps {}
 &nbsp;
-const Cases: React.FC&lt;CasesProps&gt; = <span class="fstat-no" title="function not covered" >() =</span>&gt; {
-  const { data, isLoading, error } = <span class="cstat-no" title="statement not covered" >useCases();</span>
-  const cases = <span class="cstat-no" title="statement not covered" >useMemo(<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >data?.cases || [],</span> [data?.cases]);</span>
+const Cases: React.FC&lt;CasesProps&gt; = () =&gt; {
+  const { data, isLoading, error } = useCases();
+  const cases = <span class="cstat-no" title="statement not covered" >useMemo(<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >data?.data?.items || [],</span> [data?.data?.items]);</span>
   const { caseId } = <span class="cstat-no" title="statement not covered" >useParams&lt;{ caseId: string }&gt;();</span>
   const navigate = <span class="cstat-no" title="statement not covered" >useNavigate();</span>
   const { addToast } = <span class="cstat-no" title="statement not covered" >useToast();</span>
+  const queryClient = <span class="cstat-no" title="statement not covered" >useQueryClient();</span>
 &nbsp;
   const [searchTerm, setSearchTerm] = <span class="cstat-no" title="statement not covered" >useState('');</span>
   const [showShortcuts, setShowShortcuts] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
@@ -755,7 +767,7 @@ const Cases: React.FC&lt;CasesProps&gt; = <span class="fstat-no" title="function
   const previewCaseId = <span class="cstat-no" title="statement not covered" >caseId || null;</span>
 &nbsp;
   const filteredCases = <span class="cstat-no" title="statement not covered" >useMemo(<span class="fstat-no" title="function not covered" >() =</span>&gt;</span>
-<span class="cstat-no" title="statement not covered" >    cases.filter(<span class="fstat-no" title="function not covered" >caseItem </span>=&gt;</span>
+<span class="cstat-no" title="statement not covered" >    cases.filter(<span class="fstat-no" title="function not covered" >(c</span>aseItem: Case) =&gt;</span>
 <span class="cstat-no" title="statement not covered" >      caseItem.title?.toLowerCase().includes(searchTerm.toLowerCase())</span>
     ), [cases, searchTerm]
   );
@@ -926,7 +938,7 @@ const Cases: React.FC&lt;CasesProps&gt; = <span class="fstat-no" title="function
           &lt;div className="text-center p-8"&gt;
             &lt;p className="text-red-500 mb-4"&gt;Error loading cases: {error.message}&lt;/p&gt;
             &lt;button
-              onClick={<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >window.location.reload()}</span>
+              onClick={<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >queryClient.invalidateQueries({ queryKey: ['cases'] })}</span>
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             &gt;
               Retry
@@ -999,7 +1011,7 @@ const Cases: React.FC&lt;CasesProps&gt; = <span class="fstat-no" title="function
                     &lt;div className="space-y-6"&gt;
                       &lt;div className="flex items-center justify-between"&gt;
                         &lt;h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]"&gt;Prioritized Approvals&lt;/h4&gt;
-                        &lt;badge className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold rounded-full"&gt;ACTION REQUIRED&lt;/badge&gt;
+                        &lt;Badge className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold rounded-full"&gt;ACTION REQUIRED&lt;/Badge&gt;
                       &lt;/div&gt;
                       &lt;ApprovalQueue maxHeight="450px" showHeader={false} className="border-none shadow-none bg-transparent" /&gt;
                     &lt;/div&gt;
@@ -1032,8 +1044,8 @@ const Cases: React.FC&lt;CasesProps&gt; = <span class="fstat-no" title="function
   );
 };
 &nbsp;
-const CasesWithErrorBoundary = <span class="fstat-no" title="function not covered" >() =</span>&gt; (
-<span class="cstat-no" title="statement not covered" >  &lt;PageErrorBoundary&gt;</span>
+const CasesWithErrorBoundary = () =&gt; (
+  &lt;PageErrorBoundary&gt;
     &lt;Cases /&gt;
   &lt;/PageErrorBoundary&gt;
 );
@@ -1045,7 +1057,7 @@ export default CasesWithErrorBoundary;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T04:40:27.290Z
+                at 2026-01-06T18:11:59.007Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

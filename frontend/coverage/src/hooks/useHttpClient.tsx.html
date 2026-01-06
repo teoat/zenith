@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/79</span>
+                <span class='fraction'>0/81</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/33</span>
+                <span class='fraction'>0/39</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/72</span>
+                <span class='fraction'>0/74</span>
             </div>
         
             
@@ -279,7 +279,14 @@
 <a name='L214'></a><a href='#L214'>214</a>
 <a name='L215'></a><a href='#L215'>215</a>
 <a name='L216'></a><a href='#L216'>216</a>
-<a name='L217'></a><a href='#L217'>217</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -296,6 +303,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -365,6 +377,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -481,6 +494,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -508,6 +522,11 @@ interface RequestConfig extends RequestInit {
   timeout?: number;
 }
 &nbsp;
+interface HttpError extends Error {
+  status?: number;
+  response?: Response;
+}
+&nbsp;
 /**
  * Hook for making HTTP requests with automatic retry logic
  * Implements exponential backoff and configurable retry strategies
@@ -523,7 +542,7 @@ interface RequestConfig extends RequestInit {
     };
   }, []);
 &nbsp;
-  const request = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >async </span>&lt;T = any&gt;(</span>
+  const request = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >async </span>&lt;T = unknown&gt;(</span>
     url: string,
     config: RequestConfig = <span class="branch-0 cbranch-no" title="branch not covered" >{},</span>
     retryOptions: RetryOptions = <span class="branch-0 cbranch-no" title="branch not covered" >{}</span>
@@ -546,7 +565,7 @@ interface RequestConfig extends RequestInit {
 &nbsp;
     const { timeout = <span class="branch-0 cbranch-no" title="branch not covered" >30000,</span> ...fetchConfig } = <span class="cstat-no" title="statement not covered" >config;</span>
 &nbsp;
-    let lastError: Error;
+  let lastError: Error | undefined;
     
 <span class="cstat-no" title="statement not covered" >    for (let attempt = <span class="cstat-no" title="statement not covered" >0;</span> attempt &lt;= maxRetries; attempt++) {</span>
       // Create abort controller for this request
@@ -567,7 +586,7 @@ interface RequestConfig extends RequestInit {
 <span class="cstat-no" title="statement not covered" >        abortControllersRef.current.delete(requestId);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (!response.ok) {</span>
-          const error: any = <span class="cstat-no" title="statement not covered" >new Error(`HTTP ${response.status}: ${response.statusText}`);</span>
+          const error: HttpError = <span class="cstat-no" title="statement not covered" >new Error(`HTTP ${response.status}: ${response.statusText}`);</span>
 <span class="cstat-no" title="statement not covered" >          error.status = response.status;</span>
 <span class="cstat-no" title="statement not covered" >          error.response = response;</span>
 <span class="cstat-no" title="statement not covered" >          throw error;</span>
@@ -576,19 +595,20 @@ interface RequestConfig extends RequestInit {
         const data = <span class="cstat-no" title="statement not covered" >await response.json();</span>
 <span class="cstat-no" title="statement not covered" >        return data as T;</span>
 &nbsp;
-      } catch (error: any) {
+      } catch (error: unknown) {
 <span class="cstat-no" title="statement not covered" >        clearTimeout(timeoutId);</span>
 <span class="cstat-no" title="statement not covered" >        abortControllersRef.current.delete(requestId);</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        lastError = error;</span>
+        const err = <span class="cstat-no" title="statement not covered" >error instanceof Error ? error : new Error(String(error));</span>
+<span class="cstat-no" title="statement not covered" >        lastError = err;</span>
 &nbsp;
         // Don't retry if request was aborted by user
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (error.name === 'AbortError' &amp;&amp; attempt === 0) {</span>
-<span class="cstat-no" title="statement not covered" >          throw error;</span>
+<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (err.name === 'AbortError' &amp;&amp; attempt === 0) {</span>
+<span class="cstat-no" title="statement not covered" >          throw err;</span>
         }
 &nbsp;
         // Check if we should retry
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (attempt &lt; maxRetries &amp;&amp; shouldRetry(error, attempt)) {</span>
+<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (attempt &lt; maxRetries &amp;&amp; shouldRetry(err, attempt)) {</span>
           const delay = <span class="cstat-no" title="statement not covered" >delayMs * Math.pow(backoffMultiplier, attempt);</span>
 <span class="cstat-no" title="statement not covered" >          await new Promise(<span class="fstat-no" title="function not covered" >resolve </span>=&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, delay))</span>;</span>
 <span class="cstat-no" title="statement not covered" >          continue;</span>
@@ -598,10 +618,10 @@ interface RequestConfig extends RequestInit {
       }
     }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    throw lastError!;</span>
+<span class="cstat-no" title="statement not covered" >  throw lastError || new Error('Retry failed after all attempts');</span>
   }, []);
 &nbsp;
-  const get = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >&lt;T = any&gt;(</span></span>
+  const get = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >&lt;T = unknown&gt;(</span></span>
     url: string,
     config?: RequestConfig,
     retryOptions?: RetryOptions
@@ -609,9 +629,9 @@ interface RequestConfig extends RequestInit {
 <span class="cstat-no" title="statement not covered" >    return request&lt;T&gt;(url, { ...config, method: 'GET' }, retryOptions);</span>
   }, [request]);
 &nbsp;
-  const post = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >&lt;T = any&gt;(</span></span>
+  const post = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >&lt;T = unknown&gt;(</span></span>
     url: string,
-    data?: any,
+    data?: unknown,
     config?: RequestConfig,
     retryOptions?: RetryOptions
   ) =&gt; {
@@ -626,9 +646,9 @@ interface RequestConfig extends RequestInit {
     }, retryOptions);
   }, [request]);
 &nbsp;
-  const put = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >&lt;T = any&gt;(</span></span>
+  const put = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >&lt;T = unknown&gt;(</span></span>
     url: string,
-    data?: any,
+    data?: unknown,
     config?: RequestConfig,
     retryOptions?: RetryOptions
   ) =&gt; {
@@ -696,10 +716,11 @@ interface RequestConfig extends RequestInit {
 <span class="cstat-no" title="statement not covered" >  for (let attempt = <span class="cstat-no" title="statement not covered" >0;</span> attempt &lt;= maxRetries; attempt++) {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
 <span class="cstat-no" title="statement not covered" >      return await fn();</span>
-    } catch (error: any) {
-<span class="cstat-no" title="statement not covered" >      lastError = error;</span>
+    } catch (error: unknown) {
+      const err = <span class="cstat-no" title="statement not covered" >error instanceof Error ? error : new Error(String(error));</span>
+<span class="cstat-no" title="statement not covered" >      lastError = err;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (attempt &lt; maxRetries &amp;&amp; shouldRetry(error, attempt)) {</span>
+<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (attempt &lt; maxRetries &amp;&amp; shouldRetry(err, attempt)) {</span>
         const delay = <span class="cstat-no" title="statement not covered" >delayMs * Math.pow(backoffMultiplier, attempt);</span>
 <span class="cstat-no" title="statement not covered" >        await new Promise(<span class="fstat-no" title="function not covered" >resolve </span>=&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, delay))</span>;</span>
 <span class="cstat-no" title="statement not covered" >        continue;</span>
@@ -718,7 +739,7 @@ interface RequestConfig extends RequestInit {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T05:56:42.976Z
+                at 2026-01-06T18:11:59.007Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

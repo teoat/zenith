@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">19.67% </span>
+                <span class="strong">27.86% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/61</span>
+                <span class='fraction'>17/61</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">18.18% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/22</span>
+                <span class='fraction'>4/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">23.07% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>3/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20% </span>
+                <span class="strong">28.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/60</span>
+                <span class='fraction'>17/60</span>
             </div>
         
             
@@ -205,7 +205,29 @@
 <a name='L140'></a><a href='#L140'>140</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -213,28 +235,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -261,7 +261,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -343,23 +343,23 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// Formatting utilities for consistent data display
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >formatCurrency(</span>amount: number, currency: string = <span class="branch-0 cbranch-no" title="branch not covered" >'USD')</span>: string {
-<span class="cstat-no" title="statement not covered" >  return new Intl.NumberFormat('en-US', {</span>
+export function formatCurrency(amount: number, currency: string = 'USD'): string {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
   }).format(amount);
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >formatDate(</span>date: Date | string, options?: Intl.DateTimeFormatOptions): string {
-  const dateObj = <span class="cstat-no" title="statement not covered" >typeof date === 'string' ? new Date(date) : date;</span>
+export function formatDate(date: Date | string, options?: Intl.DateTimeFormatOptions): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
 &nbsp;
-  const defaultOptions: Intl.DateTimeFormatOptions = <span class="cstat-no" title="statement not covered" >{</span>
+  const defaultOptions: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return new Intl.DateTimeFormat('en-US', { ...defaultOptions, ...options }).format(dateObj);</span>
+  return new Intl.DateTimeFormat('en-US', { ...defaultOptions, ...options }).format(dateObj);
 }
 &nbsp;
 export function <span class="fstat-no" title="function not covered" >formatDateTime(</span>date: Date | string): string {
@@ -399,8 +399,8 @@ export function <span class="fstat-no" title="function not covered" >formatRelat
 <span class="cstat-no" title="statement not covered" >  return formatDate(dateObj);</span>
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >formatPercentage(</span>value: number, decimals: number = <span class="branch-0 cbranch-no" title="branch not covered" >1)</span>: string {
-<span class="cstat-no" title="statement not covered" >  return `${(value * 100).toFixed(decimals)}%`;</span>
+export function formatPercentage(value: number, decimals: number = 1): string {
+  return `${(value * 100).toFixed(decimals)}%`;
 }
 &nbsp;
 export function <span class="fstat-no" title="function not covered" >formatNumber(</span>value: number, options?: Intl.NumberFormatOptions): string {
@@ -487,7 +487,7 @@ export function <span class="fstat-no" title="function not covered" >formatAddre
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T05:56:40.976Z
+                at 2026-01-06T18:11:57.128Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

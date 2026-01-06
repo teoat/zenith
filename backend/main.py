@@ -53,6 +53,7 @@ from app.routers.health import router as health_router
 from app.routers.logging import router as logging_router
 from app.routers.macros import router as macros_router
 from app.routers.metadata import router as metadata_router
+from app.routers.ml_feedback import router as ml_feedback_router
 from app.routers.multimodal import router as multimodal_router
 from app.routers.notifications import router as notifications_router
 from app.routers.onboarding import router as onboarding_router
@@ -1033,9 +1034,6 @@ app.include_router(
 )
 app.include_router(
     ai_voice_router, prefix=f"/api/{API_VERSION}/ai", tags=["AI Voice (Roadmap)"]
-)
-app.include_router(
-    macros_router, prefix=f"/api/{API_VERSION}/cases", tags=["Macros (Roadmap)"]
 )
 
 # New Roadmap Routers (Completed)

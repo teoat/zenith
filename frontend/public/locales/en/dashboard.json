@@ -1,0 +1,9 @@
+{
+  "title": "Dashboard",
+  "overview": "Overview",
+  "metrics": "Metrics",
+  "recentActivity": "Recent Activity",
+  "threatMap": "Threat Map",
+  "alerts": "Alerts",
+  "cases": "Cases"
+}

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20% </span>
+                <span class="strong">86.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/15</span>
+                <span class='fraction'>13/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">60% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>3/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">15.38% </span>
+                <span class="strong">84.61% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>2/13</span>
+                <span class='fraction'>11/13</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -93,40 +93,40 @@
 <a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useEffect, useState } from 'react';
 &nbsp;
-export const useResizeObserver = <span class="fstat-no" title="function not covered" >(r</span>ef: React.RefObject&lt;HTMLElement | null&gt;) =&gt; {
-  const [dimensions, setDimensions] = <span class="cstat-no" title="statement not covered" >useState({ width: 0, height: 0 });</span>
+export const useResizeObserver = (ref: React.RefObject&lt;HTMLElement | null&gt;) =&gt; {
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  useEffect(<span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!ref.current) <span class="cstat-no" title="statement not covered" >return;</span></span>
+  useEffect(() =&gt; {
+    if (!ref.current) return;
 &nbsp;
-    const observeTarget = <span class="cstat-no" title="statement not covered" >ref.current;</span>
-    const resizeObserver = <span class="cstat-no" title="statement not covered" >new ResizeObserver(<span class="fstat-no" title="function not covered" >(e</span>ntries) =&gt; {</span>
+    const observeTarget = ref.current;
+    const resizeObserver = new ResizeObserver(<span class="fstat-no" title="function not covered" >(e</span>ntries) =&gt; {
 <span class="cstat-no" title="statement not covered" >      entries.forEach(<span class="fstat-no" title="function not covered" >(e</span>ntry) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        setDimensions({</span>
           width: entry.contentRect.width,
@@ -135,14 +135,14 @@ export const useResizeObserver = <span class="fstat-no" title="function not cove
       });
     });
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    resizeObserver.observe(observeTarget);</span>
+    resizeObserver.observe(observeTarget);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return <span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      resizeObserver.unobserve(observeTarget);</span>
+    return () =&gt; {
+      resizeObserver.unobserve(observeTarget);
     };
   }, [ref]);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return dimensions;</span>
+  return dimensions;
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -151,7 +151,7 @@ export const useResizeObserver = <span class="fstat-no" title="function not cove
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T05:56:42.976Z
+                at 2026-01-06T18:11:59.007Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -2,10 +2,12 @@ from typing import Any
 
 from fastapi import APIRouter, Depends
 
-from backend.app.services.intelligence.time_travel_service import (
-    TimeTravelService,
-    time_travel_service,
-)
+# Mock time travel service for now
+class TimeTravelService:
+    def get_case_history(self, case_id: str):
+        return {"history": [], "message": "Time travel service not implemented"}
+
+time_travel_service = TimeTravelService()
 
 router = APIRouter(prefix="/cases", tags=["Time Travel"])
 

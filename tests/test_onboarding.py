@@ -3,19 +3,15 @@ import sys
 from dotenv import load_dotenv
 from test_config import setup_test_environment
 
-<<<<<<< HEAD
-=======
 # Ensure backend package path is importable when running tests from project root
 sys.path.insert(0, os.path.abspath('backend'))
 
->>>>>>> 070c7cf08 (chore(batch): clean backend core files only)
 load_dotenv()
 setup_test_environment()
 
 from fastapi.testclient import TestClient
 from fastapi import FastAPI
 
-<<<<<<< HEAD
 from backend.app.routers.onboarding import router as onboarding_router
 from backend.core.database import create_tables, RookieChecklist
 =======

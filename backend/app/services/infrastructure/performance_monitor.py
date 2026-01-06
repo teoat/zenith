@@ -247,8 +247,7 @@ class PerformanceMonitor:
                 "baseline_key": "cpu_percent",
             },
             "high_memory_usage": {
-                "condition": lambda m: m.get("memory_percent", 0)
-                > base_memory_threshold,
+                "condition": lambda m: m.get("memory_percent", 0) > base_memory_threshold,
                 "severity": "critical",
                 "message": f"Memory usage above {base_memory_threshold}%",
                 "adaptive": True,
@@ -261,15 +260,13 @@ class PerformanceMonitor:
                 "adaptive": False,
             },
             "slow_api_responses": {
-                "condition": lambda: self._calculate_avg_response_time()
-                > base_response_time_threshold,
+                "condition": lambda: self._calculate_avg_response_time() > base_response_time_threshold,
                 "severity": "warning",
                 "message": f"Average API response time above {base_response_time_threshold}ms",
                 "adaptive": True,
             },
             "high_error_rate": {
-                "condition": lambda: self._calculate_error_rate()
-                > base_error_rate_threshold,
+                "condition": lambda: self._calculate_error_rate() > base_error_rate_threshold,
                 "severity": "critical",
                 "message": f"API error rate above {base_error_rate_threshold * 100}%",
                 "adaptive": True,
@@ -281,8 +278,7 @@ class PerformanceMonitor:
                 "adaptive": False,
             },
             "low_disk_space": {
-                "condition": lambda m: m.get("disk_free_gb", float("inf"))
-                < 1.0,  # Less than 1GB free
+                "condition": lambda m: m.get("disk_free_gb", float("inf")) < 1.0,  # Less than 1GB free
                 "severity": "critical",
                 "message": "Critical disk space - less than 1GB free",
                 "adaptive": False,

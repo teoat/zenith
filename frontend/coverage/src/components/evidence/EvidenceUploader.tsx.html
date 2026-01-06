@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">4.91% </span>
+                <span class="strong">13.11% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/61</span>
+                <span class='fraction'>8/61</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">7.69% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/26</span>
+                <span class='fraction'>2/26</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">6.25% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/16</span>
+                <span class='fraction'>1/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">5.35% </span>
+                <span class="strong">14.28% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/56</span>
+                <span class='fraction'>8/56</span>
             </div>
         
             
@@ -263,8 +263,9 @@
 <a name='L198'></a><a href='#L198'>198</a>
 <a name='L199'></a><a href='#L199'>199</a>
 <a name='L200'></a><a href='#L200'>200</a>
-<a name='L201'></a><a href='#L201'>201</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -274,19 +275,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-yes">26x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">26x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -465,28 +467,29 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState, useCallback } from 'react';
 import { useEvidenceUpload } from '../../hooks/useEvidence';
+import type { EvidenceItem } from '../../types/api';
 &nbsp;
 interface EvidenceUploaderProps {
   caseId: string;
-  onUploadComplete?: (evidence: any) =&gt; void;
+  onUploadComplete?: (evidence: EvidenceItem) =&gt; void;
   onUploadError?: (error: Error) =&gt; void;
   acceptedTypes?: string[];
   maxFileSize?: number; // in bytes
 }
 &nbsp;
-export default function <span class="fstat-no" title="function not covered" >EvidenceUploader(</span>{
+export default function EvidenceUploader({
   caseId,
   onUploadComplete,
   onUploadError,
-  acceptedTypes = <span class="branch-0 cbranch-no" title="branch not covered" >['image/*', 'application/pdf', '.doc', '.docx', '.txt'],</span>
-  maxFileSize = <span class="branch-0 cbranch-no" title="branch not covered" >10 * 1024 * 1024 </span>// 10MB
+  acceptedTypes = ['image/*', 'application/pdf', '.doc', '.docx', '.txt'],
+  maxFileSize = 10 * 1024 * 1024 // 10MB
 }: EvidenceUploaderProps) {
-  const [files, setFiles] = <span class="cstat-no" title="statement not covered" >useState&lt;File[]&gt;([]);</span>
-  const [uploading, setUploading] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
-  const [progress, setProgress] = <span class="cstat-no" title="statement not covered" >useState&lt;Record&lt;string, number&gt;&gt;({});</span>
-  const [errors, setErrors] = <span class="cstat-no" title="statement not covered" >useState&lt;string[]&gt;([]);</span>
+  const [files, setFiles] = useState&lt;File[]&gt;([]);
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState&lt;Record&lt;string, number&gt;&gt;({});
+  const [errors, setErrors] = useState&lt;string[]&gt;([]);
 &nbsp;
-  const uploadMutation = <span class="cstat-no" title="statement not covered" >useEvidenceUpload();</span>
+  const uploadMutation = useEvidenceUpload();
 &nbsp;
   const validateFile = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >(f</span>ile: File): string | null =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (file.size &gt; maxFileSize) {</span>
@@ -670,7 +673,7 @@ export default function <span class="fstat-no" title="function not covered" >Evi
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T05:56:42.976Z
+                at 2026-01-06T18:11:59.007Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

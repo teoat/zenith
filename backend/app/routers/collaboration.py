@@ -91,3 +91,129 @@ async def websocket_endpoint(websocket: WebSocket, case_id: str):
         manager.disconnect(websocket, case_id)
         # Broadcast disconnect event
         await manager.broadcast({"type": "user_left", "case_id": case_id}, case_id)
+
+
+# ===== ADVANCED REAL-TIME COLLABORATION FEATURES =====
+
+import json
+from datetime import datetime, UTC
+from fastapi import HTTPException
+
+@router.websocket("/advanced/{resource_type}/{resource_id}")
+async def advanced_collaborative_session(
+    websocket: WebSocket,
+    resource_type: str,
+    resource_id: str,
+    token: str = None
+):
+    """Advanced WebSocket endpoint for real-time collaboration with presence and editing"""
+
+    # Mock authentication for demonstration
+    user = type('User', (), {'id': f'user_{hash(token or "anonymous") % 1000}', 'email': 'user@example.com'})()
+
+    await websocket.accept()
+
+    # Connect user using advanced connection manager
+    from app.services.collaboration.realtime_service import connection_manager
+
+    connection_id = await connection_manager.connect(user.id, websocket, user.email)
+
+    # Join collaborative session
+    session_id = await connection_manager.join_session(user.id, resource_type, resource_id)
+
+    # Send welcome message with full session info
+    await websocket.send_json({
+        "type": "session_joined",
+        "session_id": session_id,
+        "user_id": user.id,
+        "participants": connection_manager.get_session_participants(session_id),
+        "timestamp": datetime.now(UTC).isoformat()
+    })
+
+    try:
+        while True:
+            # Receive message
+            data = await websocket.receive_text()
+            message_data = json.loads(data)
+
+            # Handle collaboration event
+            await connection_manager.handle_collaboration_event(user.id, message_data)
+
+            # Send acknowledgment
+            await websocket.send_json({
+                "type": "ack",
+                "event_id": message_data.get("id"),
+                "timestamp": datetime.now(UTC).isoformat()
+            })
+
+    except WebSocketDisconnect:
+        logging.info(f"Advanced WebSocket disconnected for user {user.id}")
+    finally:
+        await connection_manager.disconnect(user.id)
+
+
+@router.websocket("/presence-updates")
+async def presence_updates(websocket: WebSocket, token: str = None):
+    """WebSocket endpoint for real-time presence updates"""
+
+    # Mock authentication
+    user = type('User', (), {'id': f'user_{hash(token or "anonymous") % 1000}', 'email': 'user@example.com'})()
+
+    await websocket.accept()
+
+    # Connect user
+    from app.services.collaboration.realtime_service import connection_manager
+    connection_id = await connection_manager.connect(user.id, websocket, user.email)
+
+    try:
+        while True:
+            # Send periodic presence updates
+            await asyncio.sleep(30)  # Update every 30 seconds
+
+            presence_data = {
+                "type": "presence_update",
+                "users": [
+                    {
+                        "user_id": uid,
+                        "username": info.username,
+                        "status": info.status,
+                        "last_seen": info.last_seen.isoformat(),
+                        "current_resource": info.current_resource
+                    }
+                    for uid, info in connection_manager.presence_info.items()
+                ],
+                "timestamp": datetime.now(UTC).isoformat()
+            }
+
+            await websocket.send_json(presence_data)
+
+    except WebSocketDisconnect:
+        logging.info(f"Presence WebSocket disconnected for user {user.id}")
+    finally:
+        await connection_manager.disconnect(user.id)
+
+
+# REST API endpoints for collaboration management
+
+@router.get("/collaboration/sessions/active")
+async def get_active_sessions():
+    """Get all active collaborative sessions"""
+    try:
+        from app.services.collaboration.realtime_service import connection_manager
+        sessions = connection_manager.get_active_sessions()
+        return {"sessions": sessions, "total": len(sessions)}
+    except Exception as e:
+        logging.error(f"Failed to get active sessions: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve sessions")
+
+
+@router.get("/collaboration/sessions/{session_id}/participants")
+async def get_session_participants(session_id: str):
+    """Get participants in a specific session"""
+    try:
+        from app.services.collaboration.realtime_service import connection_manager
+        participants = connection_manager.get_session_participants(session_id)
+        return {"participants": participants, "total": len(participants)}
+    except Exception as e:
+        logging.error(f"Failed to get session participants: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve participants")

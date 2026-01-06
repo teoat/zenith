@@ -847,7 +847,31 @@
 <a name='L782'></a><a href='#L782'>782</a>
 <a name='L783'></a><a href='#L783'>783</a>
 <a name='L784'></a><a href='#L784'>784</a>
-<a name='L785'></a><a href='#L785'>785</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L785'></a><a href='#L785'>785</a>
+<a name='L786'></a><a href='#L786'>786</a>
+<a name='L787'></a><a href='#L787'>787</a>
+<a name='L788'></a><a href='#L788'>788</a>
+<a name='L789'></a><a href='#L789'>789</a>
+<a name='L790'></a><a href='#L790'>790</a>
+<a name='L791'></a><a href='#L791'>791</a>
+<a name='L792'></a><a href='#L792'>792</a>
+<a name='L793'></a><a href='#L793'>793</a>
+<a name='L794'></a><a href='#L794'>794</a>
+<a name='L795'></a><a href='#L795'>795</a>
+<a name='L796'></a><a href='#L796'>796</a>
+<a name='L797'></a><a href='#L797'>797</a>
+<a name='L798'></a><a href='#L798'>798</a>
+<a name='L799'></a><a href='#L799'>799</a>
+<a name='L800'></a><a href='#L800'>800</a>
+<a name='L801'></a><a href='#L801'>801</a>
+<a name='L802'></a><a href='#L802'>802</a>
+<a name='L803'></a><a href='#L803'>803</a>
+<a name='L804'></a><a href='#L804'>804</a>
+<a name='L805'></a><a href='#L805'>805</a>
+<a name='L806'></a><a href='#L806'>806</a>
+<a name='L807'></a><a href='#L807'>807</a>
+<a name='L808'></a><a href='#L808'>808</a>
+<a name='L809'></a><a href='#L809'>809</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -920,7 +944,31 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1695,6 +1743,29 @@ interface CodeReviewResult {
   analysis_time_seconds: number;
 }
 &nbsp;
+interface AIIssue {
+  file_path: string;
+  line_number: number;
+  issue_type: string;
+  category: string;
+  severity: string;
+  title: string;
+  description: string;
+  code_snippet: string;
+  suggestion: string;
+  confidence_score: number;
+  cwe_id?: string;
+  owasp_id?: string;
+  references?: string[];
+}
+&nbsp;
+interface AIAnalysisResponse {
+  issues: AIIssue[];
+  quality_score: number;
+  analysis_time_seconds: number;
+  success?: boolean;
+}
+&nbsp;
 interface TestSuggestion {
   test_type: string;
   description: string;
@@ -1705,7 +1776,8 @@ interface TestSuggestion {
 }
 &nbsp;
 const CodeReviewDashboard: React.FC = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-  const [activeTab, setActiveTab] = <span class="cstat-no" title="statement not covered" >useState&lt;'overview' | 'issues' | 'metrics' | 'tests'&gt;('overview');</span>
+  type TabId = 'overview' | 'issues' | 'metrics' | 'tests';
+  const [activeTab, setActiveTab] = <span class="cstat-no" title="statement not covered" >useState&lt;TabId&gt;('overview');</span>
   const [reviewResult, setReviewResult] = <span class="cstat-no" title="statement not covered" >useState&lt;CodeReviewResult | null&gt;(null);</span>
   const [testSuggestions, setTestSuggestions] = <span class="cstat-no" title="statement not covered" >useState&lt;TestSuggestion[]&gt;([]);</span>
   const [loading, setLoading] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
@@ -1736,7 +1808,7 @@ def get_user_data(user_id):
       // Call the Real AI Endpoint via centralized client
       const { request } = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >await import('</span>../../services/client');</span>
       
-      const aiData = <span class="cstat-no" title="statement not covered" >await request&lt;any&gt;('/ai/code-review', {</span>
+      const aiData = <span class="cstat-no" title="statement not covered" >await request&lt;AIAnalysisResponse&gt;('/ai/code-review', {</span>
         method: 'POST',
         body: JSON.stringify({
           code: sampleCode,
@@ -1749,7 +1821,7 @@ def get_user_data(user_id):
       let realResult: CodeReviewResult;
 &nbsp;
       // Transform AI response to Dashboard format
-      const aiIssues: CodeIssue[] = <span class="cstat-no" title="statement not covered" >aiData.issues.map(<span class="fstat-no" title="function not covered" >(i</span>ssue: any) =&gt; {</span>
+      const aiIssues: CodeIssue[] = <span class="cstat-no" title="statement not covered" >aiData.issues.map(<span class="fstat-no" title="function not covered" >(i</span>ssue: AIIssue) =&gt; {</span>
             let codeSnippetLine = <span class="cstat-no" title="statement not covered" >'';</span>
             // Map line numbers from sampleCode to provide a relevant snippet
 <span class="cstat-no" title="statement not covered" >            if (issue.line_number === 4) { // Corresponds to 'query = f"SELECT * FROM users WHERE id = {user_id}"'</span>
@@ -1764,8 +1836,8 @@ def get_user_data(user_id):
                 file_path: issue.file_path,
                 line_number: issue.line_number,
                 issue_type: issue.issue_type,
-                category: issue.category as any,
-                severity: issue.severity as any,
+                category: issue.category as CodeIssue['category'],
+                severity: issue.severity as CodeIssue['severity'],
                 title: issue.title,
                 description: issue.description,
                 code_snippet: codeSnippetLine,
@@ -2078,7 +2150,7 @@ def get_user_data(user_id):
         ].map(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; (
 <span class="cstat-no" title="statement not covered" >          &lt;button</span>
             key={tab.id}
-            onClick={<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >setActiveTab(tab.id as any)}</span>
+            onClick={<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >setActiveTab(tab.id as TabId)}</span>
             className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
           &gt;
             &lt;tab.icon className="w-4 h-4 mr-2" /&gt;
@@ -2422,7 +2494,7 @@ def get_user_data(user_id):
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T05:56:42.976Z
+                at 2026-01-06T18:11:59.007Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

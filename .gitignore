@@ -62,3 +62,4 @@ secrets.toml
 *.tar.gz
 type-check-output*.txt
 error_analysis.txt
+.internal/reports/*.json

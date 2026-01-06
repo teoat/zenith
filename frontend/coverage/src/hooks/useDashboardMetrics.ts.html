@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">87.5% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>7/8</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>3/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>6/7</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -81,15 +81,13 @@
 <a name='L16'></a><a href='#L16'>16</a>
 <a name='L17'></a><a href='#L17'>17</a>
 <a name='L18'></a><a href='#L18'>18</a>
-<a name='L19'></a><a href='#L19'>19</a>
-<a name='L20'></a><a href='#L20'>20</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L19'></a><a href='#L19'>19</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -98,17 +96,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { useQuery } from '@tanstack/react-query';</span>
-import type { MetricsData } from '../lib/api';
-<span class="cstat-no" title="statement not covered" >import { api } from '../lib/api';</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useQuery } from '@tanstack/react-query';
+import { api, type MetricsData } from '../lib/api';
 &nbsp;
-export const <span class="cstat-no" title="statement not covered" >useDashboardMetrics = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>) =</span>&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  return useQuery&lt;MetricsData, Error&gt;({</span>
+export const useDashboardMetrics = () =&gt; {
+  return useQuery&lt;MetricsData, Error&gt;({
     queryKey: ['dashboard-metrics'],
-    queryFn: <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >api.getMetrics(),</span>
+    queryFn: () =&gt; api.getMetrics(),
     // Refetch every 2 minutes to keep dashboard fresh (reduced from 1 min for performance)
     refetchInterval: 2 * 60 * 1000,
     refetchIntervalInBackground: false, // Don't refetch when tab is not active
@@ -117,7 +114,7 @@ export const <span class="cstat-no" title="statement not covered" >useDashboardM
     retry: 3,
     retryDelay: <span class="fstat-no" title="function not covered" >(a</span>ttemptIndex) =&gt; <span class="cstat-no" title="statement not covered" >Math.min(1000 * 2 ** attemptIndex, 10000),</span>
     refetchOnWindowFocus: true, // Refetch when window regains focus
-    placeholderData: <span class="fstat-no" title="function not covered" >(p</span>reviousData) =&gt; <span class="cstat-no" title="statement not covered" >previousData,</span> // Keep previous data while loading
+    placeholderData: (previousData) =&gt; previousData, // Keep previous data while loading
   });
 };
 &nbsp;</pre></td></tr></table></pre>
@@ -127,7 +124,7 @@ export const <span class="cstat-no" title="statement not covered" >useDashboardM
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T05:56:42.976Z
+                at 2026-01-06T18:11:59.007Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

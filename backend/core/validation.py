@@ -7,12 +7,13 @@ from typing import Annotated, Any
 
 from fastapi import HTTPException, Request
 from pydantic import (
-    AfterValidator,
     BaseModel,
     Field,
+    AfterValidator,
     ValidationInfo,
     constr,
     field_validator,
+    model_validator,
 )
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -296,8 +297,9 @@ class UserCreateRequest(BaseModel):
     password: constr(min_length=8, max_length=128) = Field(..., description="Password")
     role: UserRole = Field(default=UserRole.ANALYST, description="User role")
 
-    @field_validator("username")
-    def username_alphanumeric(self, v):
+    @field_validator("username", mode="before")
+    @classmethod
+    def username_alphanumeric(cls, v):
         if not re.match(r"^[a-zA-Z0-9_-]+$", v):
             raise ValueError(
                 "Username must be alphanumeric with underscores and hyphens only"
@@ -339,8 +341,9 @@ class EvidenceUploadRequest(BaseModel):
         ..., ge=0, le=100 * 1024 * 1024, description="File size in bytes"
     )  # Max 100MB
 
-    @field_validator("file_type")
-    def validate_file_type(self, v):
+    @field_validator("file_type", mode="before")
+    @classmethod
+    def validate_file_type(cls, v):
         allowed_types = [
             "application/pdf",
             "image/jpeg",
@@ -373,7 +376,7 @@ class TransactionFilterRequest(BaseModel):
     max_amount: float | None = Field(None, ge=0, description="Maximum amount")
     flagged_only: bool = Field(default=False, description="Only flagged transactions")
 
-    @field_validator("end_date")
+    @field_validator("end_date", mode="before")
     @classmethod
     def validate_date_range(cls, v, info: ValidationInfo):
         if v and info.data.get("start_date") and v < info.data["start_date"]:

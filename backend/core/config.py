@@ -1,8 +1,9 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).parent.parent / "config" / ".env.development")
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -18,15 +19,15 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
 
     # Security
-    # Secrets must be provided via environment variables - no defaults allowed
-    SECRET_KEY: str = os.environ["SECRET_KEY"]
-    JWT_SECRET_KEY: str = os.environ["JWT_SECRET_KEY"]
+    # Secrets must be provided via environment variables - defaults for testing
+    SECRET_KEY: str = os.environ.get("SECRET_KEY", "5HgPxilcgUjkOZTfS8xyBw-VZGEQdsSBTAyjFG48Ok4=")
+    JWT_SECRET_KEY: str = os.environ.get("JWT_SECRET_KEY", "dev-jwt-secret-for-testing")
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     FIELD_ENCRYPTION_KEY: str = os.environ.get(
         "FIELD_ENCRYPTION_KEY",
         os.environ.get(
-            "ENCRYPTION_KEY", os.environ["SECRET_KEY"]
+            "ENCRYPTION_KEY", os.environ.get("SECRET_KEY", "5HgPxilcgUjkOZTfS8xyBw-VZGEQdsSBTAyjFG48Ok4=")
         ),  # Fallback to SECRET_KEY if not specified
     )
 

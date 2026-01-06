@@ -216,9 +216,13 @@
 <a name='L151'></a><a href='#L151'>151</a>
 <a name='L152'></a><a href='#L152'>152</a>
 <a name='L153'></a><a href='#L153'>153</a>
-<a name='L154'></a><a href='#L154'>154</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -373,6 +377,8 @@
 <span class="cstat-no" title="statement not covered" >import * as Slider from '@radix-ui/react-slider';</span>
 <span class="cstat-no" title="statement not covered" >import { Filter, Search } from 'lucide-react';</span>
 &nbsp;
+type FilterValue = string | number | string[];
+&nbsp;
 interface FilterOption {
   id: string;
   label: string;
@@ -380,23 +386,23 @@ interface FilterOption {
   options?: { value: string; label: string }[]; // For checkbox/select
   min?: number; // For slider
   max?: number; // For slider
-  defaultValue?: any; // For slider or select
+  defaultValue?: FilterValue; // For slider or select
 }
 &nbsp;
 interface FacetedFilterProps {
   filterOptions: FilterOption[];
-  selectedFilters: Record&lt;string, any&gt;;
-  onFilterChange: (filters: Record&lt;string, any&gt;) =&gt; void;
+  selectedFilters: Record&lt;string, FilterValue&gt;;
+  onFilterChange: (filters: Record&lt;string, FilterValue&gt;) =&gt; void;
 }
 &nbsp;
 const FacetedFilter: React.FC&lt;FacetedFilterProps&gt; = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >({</span> filterOptions, selectedFilters, onFilterChange }) =&gt; {</span>
-  const [internalFilters, setInternalFilters] = <span class="cstat-no" title="statement not covered" >useState&lt;Record&lt;string, any&gt;&gt;(selectedFilters);</span>
+  const [internalFilters, setInternalFilters] = <span class="cstat-no" title="statement not covered" >useState&lt;Record&lt;string, FilterValue&gt;&gt;(selectedFilters);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  useEffect(<span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    setInternalFilters(selectedFilters);</span>
   }, [selectedFilters]);
 &nbsp;
-  const handleFilterChange = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(f</span>ilterId: string, value: any) =&gt; {</span>
+  const handleFilterChange = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(f</span>ilterId: string, value: FilterValue) =&gt; {</span>
     const newFilters = <span class="cstat-no" title="statement not covered" >{</span>
       ...internalFilters,
       [filterId]: value,
@@ -426,7 +432,7 @@ const FacetedFilter: React.FC&lt;FacetedFilterProps&gt; = <span class="cstat-no"
   };
 &nbsp;
   const handleResetFilters = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-    const resetFilters: Record&lt;string, any&gt; = <span class="cstat-no" title="statement not covered" >{};</span>
+    const resetFilters: Record&lt;string, FilterValue&gt; = <span class="cstat-no" title="statement not covered" >{};</span>
 <span class="cstat-no" title="statement not covered" >    filterOptions.forEach(<span class="fstat-no" title="function not covered" >option </span>=&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      if (option.type === 'slider') <span class="cstat-no" title="statement not covered" >resetFilters[option.id] = option.defaultValue || option.min;</span></span>
       else <span class="cstat-no" title="statement not covered" >if (option.type === 'select') <span class="cstat-no" title="statement not covered" >resetFilters[option.id] = option.defaultValue || '';</span></span>
@@ -466,7 +472,7 @@ const FacetedFilter: React.FC&lt;FacetedFilterProps&gt; = <span class="cstat-no"
                   &lt;input 
                     type="checkbox" 
                     className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    checked={(internalFilters[option.id] || []).includes(opt.value)}
+                    checked={Array.isArray(internalFilters[option.id]) ? (internalFilters[option.id] as string[]).includes(opt.value) : false}
                     onChange={<span class="fstat-no" title="function not covered" >(e</span>) =&gt; <span class="cstat-no" title="statement not covered" >handleCheckboxChange(option.id, opt.value, e.target.checked)}</span>
                   /&gt;
                   &lt;span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-blue-600"&gt;{opt.label}&lt;/span&gt;
@@ -529,7 +535,7 @@ const FacetedFilter: React.FC&lt;FacetedFilterProps&gt; = <span class="cstat-no"
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-20T05:56:42.976Z
+                at 2026-01-06T18:11:59.007Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
