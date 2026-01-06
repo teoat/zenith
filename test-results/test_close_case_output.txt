@@ -1,0 +1,471 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- /Users/Arief/anaconda3/bin/python3
+cachedir: .pytest_cache
+metadata: {'Python': '3.11.5', 'Platform': 'macOS-10.16-x86_64-i386-64bit', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'anyio': '4.11.0', 'html': '4.1.1', 'xdist': '3.8.0', 'json-report': '1.5.0', 'httpx': '0.35.0', 'metadata': '3.1.1', 'asyncio': '1.3.0', 'mock': '3.14.1', 'benchmark': '5.1.0', 'base-url': '2.1.0', 'playwright': '0.7.1', 'cov': '7.0.0'}, 'Base URL': ''}
+benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: /Users/Arief/Desktop/378x492
+configfile: pytest.ini
+plugins: anyio-4.11.0, html-4.1.1, xdist-3.8.0, json-report-1.5.0, httpx-0.35.0, metadata-3.1.1, asyncio-1.3.0, mock-3.14.1, benchmark-5.1.0, base-url-2.1.0, playwright-0.7.1, cov-7.0.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 1 item
+
+backend/tests/test_api_fraud_cases_comprehensive.py::TestCaseManagement::test_close_case FAILED [100%]
+
+=================================== FAILURES ===================================
+______________________ TestCaseManagement.test_close_case ______________________
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1815: in _execute_context
+    context = constructor(
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/engine/default.py:1494: in _init_compiled
+    l_param: List[Any] = [
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/engine/default.py:1496: in <listcomp>
+    flattened_processors[key](compiled_params[key])
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/sql/sqltypes.py:2801: in process
+    return json_serializer(value)
+           ^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/json/__init__.py:231: in dumps
+    return _default_encoder.encode(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/json/encoder.py:200: in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/json/encoder.py:258: in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/json/encoder.py:180: in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+E   TypeError: Object of type datetime is not JSON serializable
+
+The above exception was the direct cause of the following exception:
+backend/tests/test_api_fraud_cases_comprehensive.py:202: in test_close_case
+    response = client.post(f"/api/v1/cases/{case_id}/close",
+../../anaconda3/lib/python3.11/site-packages/starlette/testclient.py:546: in post
+    return super().post(
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+../../anaconda3/lib/python3.11/site-packages/starlette/testclient.py:445: in request
+    return super().request(
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/testclient.py:348: in handle_request
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/anyio/from_thread.py:321: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+../../anaconda3/lib/python3.11/site-packages/anyio/from_thread.py:252: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/fastapi/applications.py:1139: in __call__
+    await super().__call__(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/applications.py:107: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/middleware/rate_limit.py:68: in rate_limit_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/services/infrastructure/monitoring_service.py:479: in middleware
+    resp = await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/main.py:709: in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/middleware/deprecated_monitor.py:95: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/middleware/request_id.py:15: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/core/csrf_protection.py:173: in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/middleware/security.py:116: in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/main.py:584: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/core/validation.py:194: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py:29: in __call__
+    await responder(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py:130: in __call__
+    await super().__call__(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/gzip.py:46: in __call__
+    await self.app(scope, receive, self.send_with_compression)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/main.py:584: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/core/performance.py:77: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+backend/app/services/infrastructure/apm_service.py:526: in __call__
+    await self.app(scope, receive, send_wrapper)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/slowapi/middleware.py:136: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+../../anaconda3/lib/python3.11/contextlib.py:155: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../anaconda3/lib/python3.11/site-packages/starlette/_utils.py:85: in collapse_excgroups
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/core/rate_limiting.py:213: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/cors.py:85: in __call__
+    await self.app(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/middleware/exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../../anaconda3/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/routing.py:716: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/routing.py:736: in app
+    await route.handle(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/routing.py:290: in handle
+    await self.app(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/fastapi/routing.py:120: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+../../anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../../anaconda3/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../../anaconda3/lib/python3.11/site-packages/fastapi/routing.py:106: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/fastapi/routing.py:430: in app
+    raw_response = await run_endpoint_function(
+../../anaconda3/lib/python3.11/site-packages/fastapi/routing.py:316: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/routers/cases.py:339: in close_case
+    case = db_service.update_case(db, case_id, status="closed", closed_at=datetime.now(timezone.utc))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/services/infrastructure/storage/database_service.py:454: in update_case
+    return self._update_case_logic(db, case_id, update_data, updated_by)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/services/infrastructure/storage/database_service.py:484: in _update_case_logic
+    db.commit()
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/session.py:2030: in commit
+    trans.commit(_to_root=True)
+<string>:2: in commit
+    ???
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/session.py:1311: in commit
+    self._prepare_impl()
+<string>:2: in _prepare_impl
+    ???
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/session.py:1286: in _prepare_impl
+    self.session.flush()
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/session.py:4331: in flush
+    self._flush(objects)
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/session.py:4466: in _flush
+    with util.safe_reraise():
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py:224: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/session.py:4427: in _flush
+    flush_context.execute()
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py:466: in execute
+    rec.execute(self)
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py:93: in save_obj
+    _emit_insert_statements(
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py:1233: in _emit_insert_statements
+    result = connection.execute(
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1821: in _execute_context
+    self._handle_dbapi_exception(
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1815: in _execute_context
+    context = constructor(
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/engine/default.py:1494: in _init_compiled
+    l_param: List[Any] = [
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/engine/default.py:1496: in <listcomp>
+    flattened_processors[key](compiled_params[key])
+../../anaconda3/lib/python3.11/site-packages/sqlalchemy/sql/sqltypes.py:2801: in process
+    return json_serializer(value)
+           ^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/json/__init__.py:231: in dumps
+    return _default_encoder.encode(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/json/encoder.py:200: in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/json/encoder.py:258: in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+../../anaconda3/lib/python3.11/json/encoder.py:180: in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+E   sqlalchemy.exc.StatementError: (builtins.TypeError) Object of type datetime is not JSON serializable
+E   [SQL: INSERT INTO case_activities (id, case_id, user_id, activity_type, description, activity_metadata, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+E   [parameters: [{'case_id': '01c2a4e7-1135-413a-b6b5-8752066f29df', 'activity_metadata': {'changes': {'status': 'closed', 'closed_at': datetime.datetime(2025, 12, 20, ... (30 characters truncated) ... time.timezone.utc)}, 'old_values': {'status': 'open', 'closed_at': None}}, 'activity_type': 'updated', 'description': 'Case updated', 'user_id': None}]]
+---------------------------- Captured stdout setup -----------------------------
+DEBUG: Lifespan called!
+DEBUG: Lifespan startup beginning
+2025-12-20 15:09:26 - 378x492 - INFO - main:193 - Starting 378x492 Fraud Detection API with 99.99% uptime target
+DEBUG: About to start phases
+2025-12-20 15:09:26 - 378x492 - INFO - main:200 - Phase 1: Database initialization
+2025-12-20 15:09:26 - 378x492 - INFO - main:206 - Database tables created successfully (Development Mode)
+2025-12-20 15:09:26 - 378x492 - INFO - main:225 - Database health check passed/degraded on attempt 1
+2025-12-20 15:09:26 - 378x492 - INFO - main:253 - Boot Integrity Verified. Audit Root Hash: 9c785e72b3e8c527627dcdf26487919c3974d538f007a511c997bb981f1b16c6
+2025-12-20 15:09:26 - 378x492 - INFO - main:263 - Phase 2: Service initialization with error handling
+2025-12-20 15:09:26 - 378x492 - INFO - proactive_monitoring:50 - Starting proactive monitoring for 99.99% uptime
+2025-12-20 15:09:26 - 378x492 - INFO - main:270 - ✅ Proactive monitoring started for 99.99% uptime
+2025-12-20 15:09:26 - 378x492 - INFO - monitoring_service:385 - Monitoring service background thread started
+2025-12-20 15:09:26 - 378x492 - INFO - main:275 - ℹ️ APM monitoring skipped (optional service)
+2025-12-20 15:09:26 - 378x492 - INFO - main:280 - Phase 3: Circuit breaker and resilience initialization
+2025-12-20 15:09:26 - 378x492 - INFO - main:288 - ✅ Circuit breaker 'database_connection' initialized
+2025-12-20 15:09:26 - 378x492 - INFO - main:288 - ✅ Circuit breaker 'external_api_calls' initialized
+2025-12-20 15:09:26 - 378x492 - INFO - main:293 - Phase 4: Final health verification
+2025-12-20 15:09:27 - 378x492 - WARNING - performance_monitor:107 - Failed to collect network_connections: (pid=66533)
+2025-12-20 15:09:27 - 378x492 - WARNING - performance_monitor:107 - Failed to collect network_connections: (pid=66533)
+2025-12-20 15:09:28 - 378x492 - WARNING - performance_monitor:107 - Failed to collect network_connections: (pid=66533)
+2025-12-20 15:09:28 - 378x492 - WARNING - performance_monitor:339 - Error checking alert rule high_cpu_usage: PerformanceMonitor._get_default_alert_rules.<locals>.<lambda>() missing 1 required positional argument: 'm'
+2025-12-20 15:09:28 - 378x492 - WARNING - performance_monitor:339 - Error checking alert rule high_memory_usage: PerformanceMonitor._get_default_alert_rules.<locals>.<lambda>() missing 1 required positional argument: 'm'
+2025-12-20 15:09:28 - 378x492 - WARNING - performance_monitor:339 - Error checking alert rule high_disk_usage: PerformanceMonitor._get_default_alert_rules.<locals>.<lambda>() missing 1 required positional argument: 'm'
+2025-12-20 15:09:28 - 378x492 - WARNING - performance_monitor:339 - Error checking alert rule low_disk_space: PerformanceMonitor._get_default_alert_rules.<locals>.<lambda>() missing 1 required positional argument: 'm'
+2025-12-20 15:09:28 - 378x492 - WARNING - performance_monitor:339 - Error checking alert rule high_process_count: PerformanceMonitor._get_default_alert_rules.<locals>.<lambda>() missing 1 required positional argument: 'm'
+2025-12-20 15:09:29 - 378x492 - INFO - main:303 - 🎉 Application startup completed successfully in 2.53s
+2025-12-20 15:09:29 - 378x492 - INFO - main:317 - Monitoring services initialized successfully
+DEBUG: About to check WebSocket startup
+DEBUG: ENABLE_COLLABORATION_WS=false, ws_enabled=False
+DEBUG: WebSocket server disabled
+2025-12-20 15:09:29 - 378x492 - INFO - main:341 - WebSocket server disabled (set ENABLE_COLLABORATION_WS=true to enable)
+2025-12-20 15:09:29 - 378x492 - INFO - main:345 - 378x492 API startup completed successfully
+------------------------------ Captured log setup ------------------------------
+WARNING  core.integrity_checker:integrity_checker.py:40 dependencies.lock not found. Skipping strict verification.
+----------------------------- Captured stdout call -----------------------------
+2025-12-20 15:09:29 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-20 15:09:29 - 378x492 - INFO - logging:136 - HTTP request
+2025-12-20 15:09:29 - 378x492 - DEBUG - rate_limiting:203 - Rate limit check passed
+2025-12-20 15:09:29 - 378x492 - ERROR - logging:167 - Request failed: (builtins.TypeError) Object of type datetime is not JSON serializable
+[SQL: INSERT INTO case_activities (id, case_id, user_id, activity_type, description, activity_metadata, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: [{'case_id': '01c2a4e7-1135-413a-b6b5-8752066f29df', 'activity_metadata': {'changes': {'status': 'closed', 'closed_at': datetime.datetime(2025, 12, 20, ... (30 characters truncated) ... time.timezone.utc)}, 'old_values': {'status': 'open', 'closed_at': None}}, 'activity_type': 'updated', 'description': 'Case updated', 'user_id': None}]]
+2025-12-20 15:09:29 - 378x492 - ERROR - monitoring_service:336 - Recorded error: unhandled_exception - (builtins.TypeError) Object of type datetime is not JSON serializable
+[SQL: INSERT INTO case_activities (id, case_id, user_id, activity_type, description, activity_metadata, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: [{'case_id': '01c2a4e7-1135-413a-b6b5-8752066f29df', 'activity_metadata': {'changes': {'status': 'closed', 'closed_at': datetime.datetime(2025, 12, 20, ... (30 characters truncated) ... time.timezone.utc)}, 'old_values': {'status': 'open', 'closed_at': None}}, 'activity_type': 'updated', 'description': 'Case updated', 'user_id': None}]]
+2025-12-20 15:09:29 - 378x492 - ERROR - logging:167 - Unexpected error: (builtins.TypeError) Object of type datetime is not JSON serializable
+[SQL: INSERT INTO case_activities (id, case_id, user_id, activity_type, description, activity_metadata, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: [{'case_id': '01c2a4e7-1135-413a-b6b5-8752066f29df', 'activity_metadata': {'changes': {'status': 'closed', 'closed_at': datetime.datetime(2025, 12, 20, ... (30 characters truncated) ... time.timezone.utc)}, 'old_values': {'status': 'open', 'closed_at': None}}, 'activity_type': 'updated', 'description': 'Case updated', 'user_id': None}]]
+--------------------------- Captured stdout teardown ---------------------------
+2025-12-20 15:09:31 - 378x492 - INFO - main:360 - Initiating graceful shutdown of 378x492 Fraud Detection API
+2025-12-20 15:09:31 - 378x492 - INFO - main:366 - Phase 1: Stopping new request acceptance
+2025-12-20 15:09:31 - 378x492 - INFO - main:369 - Phase 2: Draining existing connections
+2025-12-20 15:09:31 - 378x492 - INFO - main:372 - Waiting 30s for active requests to complete
+2025-12-20 15:09:41 - 378x492 - INFO - main:376 - Phase 3: Stopping monitoring services
+2025-12-20 15:09:41 - 378x492 - INFO - proactive_monitoring:60 - Stopping proactive monitoring
+2025-12-20 15:09:41 - 378x492 - INFO - main:382 - ✅ Proactive monitoring stopped
+2025-12-20 15:09:41 - 378x492 - INFO - main:388 - ✅ Monitoring service stopped
+2025-12-20 15:09:41 - 378x492 - INFO - main:394 - ✅ Performance monitoring stopped
+2025-12-20 15:09:41 - 378x492 - INFO - main:399 - Phase 4: Closing database connections
+2025-12-20 15:09:41 - 378x492 - INFO - main:403 - ✅ Database connections prepared for cleanup
+2025-12-20 15:09:41 - 378x492 - INFO - main:408 - Phase 5: Stopping WebSocket and collaboration services
+2025-12-20 15:09:41 - 378x492 - INFO - main:411 - ✅ Collaboration WebSocket server stopped
+2025-12-20 15:09:41 - 378x492 - INFO - main:416 - Phase 6: Final cleanup and verification
+2025-12-20 15:09:41 - 378x492 - INFO - main:423 - ✅ Logging system flushed
+2025-12-20 15:09:41 - 378x492 - INFO - main:429 - 🎉 Graceful shutdown completed in 10.00s
+=========================== short test summary info ============================
+FAILED backend/tests/test_api_fraud_cases_comprehensive.py::TestCaseManagement::test_close_case - sqlalchemy.exc.StatementError: (builtins.TypeError) Object of type datetime is not JSON serializable
+[SQL: INSERT INTO case_activities (id, case_id, user_id, activity_type, description, activity_metadata, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: [{'case_id': '01c2a4e7-1135-413a-b6b5-8752066f29df', 'activity_metadata': {'changes': {'status': 'closed', 'closed_at': datetime.datetime(2025, 12, 20, ... (30 characters truncated) ... time.timezone.utc)}, 'old_values': {'status': 'open', 'closed_at': None}}, 'activity_type': 'updated', 'description': 'Case updated', 'user_id': None}]]
+======================= 1 failed, 23 warnings in 14.50s ========================
