@@ -1,0 +1,112 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-12-17T00:00:00Z",
+  "approvedBy": "system",
+  "checksum": "ba538d6839c407ed20c80eab7eafb330c697ae88d0fe219a46e3762a4dcbbd32",
+  "description": "Single Source of Truth for React component interfaces and types",
+  "components": {
+    "MetricCard": {
+      "interface": "MetricCardProps",
+      "properties": {
+        "title": "string",
+        "value": "string | number",
+        "change": "number?",
+        "sparkData": "number[]?",
+        "icon": "LucideIcon",
+        "iconColor": "string?",
+        "isCritical": "boolean?"
+      }
+    },
+    "CaseTable": {
+      "interface": "CaseTableProps",
+      "properties": {
+        "cases": "Case[]",
+        "onOpenCase": "(id: string) => void",
+        "isLoading": "boolean?"
+      }
+    },
+    "TourSpotlight": {
+      "interface": "TourSpotlightProps",
+      "properties": {}
+    },
+    "DataGrid": {
+      "interface": "DataGridProps<T>",
+      "properties": {
+        "data": "T[]",
+        "columns": "Column<T>[]",
+        "isLoading": "boolean?",
+        "sortable": "boolean?"
+      }
+    }
+  },
+  "types": {
+    "Case": {
+      "id": "string",
+      "title": "string",
+      "status": "CaseStatus",
+      "priority": "CasePriority",
+      "assigneeId": "string?",
+      "createdAt": "string",
+      "updatedAt": "string",
+      "riskScore": "number",
+      "tags": "string[]",
+      "description": "string?",
+      "selectedPlugins": "string[]?",
+      "reconciliationType": "'project-based' | 'general'?",
+      "type": "CaseType?"
+    },
+    "Transaction": {
+      "id": "string",
+      "sourceId": "string",
+      "date": "string",
+      "amount": "number",
+      "currency": "string",
+      "description": "string",
+      "merchantName": "string?",
+      "category": "string",
+      "type": "TransactionType",
+      "metadata": "Record<string, unknown>?",
+      "riskScore": "number?",
+      "isFlagged": "boolean?"
+    },
+    "Evidence": {
+      "id": "string",
+      "caseId": "string",
+      "filename": "string",
+      "fileType": "string",
+      "sizeBytes": "number",
+      "uploadedAt": "string",
+      "hash": "string",
+      "isAdmissible": "boolean",
+      "status": "'pending' | 'processed' | 'analyzed'?",
+      "riskScore": "number?"
+    },
+    "Alert": {
+      "id": "string",
+      "caseId": "string",
+      "type": "string",
+      "severity": "AlertSeverity",
+      "status": "AlertStatus",
+      "score": "number",
+      "description": "string",
+      "relatedTransactionIds": "string[]",
+      "timestamp": "string?"
+    },
+    "User": {
+      "id": "string",
+      "email": "string",
+      "name": "string",
+      "role": "UserRole",
+      "preferences": "Record<string, unknown>?"
+    }
+  },
+  "enums": {
+    "CaseStatus": ["OPEN", "IN_PROGRESS", "INVESTIGATING", "ADJUDICATION", "CLOSED", "ARCHIVED"],
+    "CasePriority": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+    "CaseType": ["FRAUD", "AML", "COMPLIANCE", "OTHER"],
+    "TransactionType": ["DEBIT", "CREDIT"],
+    "AlertSeverity": ["LOW", "MEDIUM", "HIGH"],
+    "AlertStatus": ["NEW", "INVESTIGATING", "CONFIRMED_FRAUD", "FALSE_POSITIVE"],
+    "UserRole": ["ANALYST", "SENIOR_INVESTIGATOR", "ADMIN"]
+  }
+}

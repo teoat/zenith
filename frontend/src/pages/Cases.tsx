@@ -12,6 +12,7 @@ import CaseHeader from '../components/cases/CaseHeader';
 import { KeyboardShortcutsModal } from '../components/ui/KeyboardShortcutsModal';
 import { Badge } from '../components/ui/Badge';
 import { KEYBOARD_SHORTCUTS } from '../lib/keyboardShortcuts';
+import { useQueryClient } from '@tanstack/react-query';
 import { ApprovalQueue } from '../components/ApprovalQueue';
 import { SplitView } from '../components/ui/SplitView';
 import { secureLogger } from '../utils/secureLogger';
@@ -32,6 +33,7 @@ const Cases: React.FC<CasesProps> = () => {
   const { caseId } = useParams<{ caseId: string }>();
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const queryClient = useQueryClient();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showShortcuts, setShowShortcuts] = useState(false);
@@ -213,7 +215,7 @@ const Cases: React.FC<CasesProps> = () => {
           <div className="text-center p-8">
             <p className="text-red-500 mb-4">Error loading cases: {error.message}</p>
             <button
-              onClick={() => window.location.reload()}
+              onClick={() => queryClient.invalidateQueries({ queryKey: ['cases'] })}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
               Retry

@@ -1,0 +1,153 @@
+{
+  "test_run_timestamp": "2025-12-17T04:36:36.127449",
+  "total_tests": 17,
+  "total_passed": 6,
+  "total_failed": 11,
+  "test_suites": [
+    {
+      "name": "Backend API Tests",
+      "results": {
+        "test_name": "backend_api_tests",
+        "passed": 4,
+        "failed": 3,
+        "total": 7,
+        "details": [
+          {
+            "test": "health",
+            "status": "passed",
+            "response_time": 0.010046958923339844
+          },
+          {
+            "test": "readiness",
+            "status": "passed",
+            "response_time": 0.02079296112060547
+          },
+          {
+            "test": "liveness",
+            "status": "passed",
+            "response_time": 0.012599945068359375
+          },
+          {
+            "test": "api_ai_analysis",
+            "status": "failed",
+            "error": "Status 401",
+            "response_time": 0.011577129364013672
+          },
+          {
+            "test": "api_fraud_rules",
+            "status": "failed",
+            "error": "Status 404",
+            "response_time": 0.012830018997192383
+          },
+          {
+            "test": "api_backup_status",
+            "status": "failed",
+            "error": "Status 404",
+            "response_time": 0.019205093383789062
+          },
+          {
+            "test": "api_collaboration_stats",
+            "status": "passed",
+            "response_time": 0.011451005935668945
+          }
+        ]
+      }
+    },
+    {
+      "name": "WebSocket Tests",
+      "results": {
+        "test_name": "websocket_collaboration_tests",
+        "passed": 0,
+        "failed": 1,
+        "total": 1,
+        "details": [
+          {
+            "test": "websocket_join_session",
+            "status": "failed",
+            "error": "Multiple exceptions: [Errno 61] Connect call failed ('::1', 8080, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8080)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Frontend Tests",
+      "results": {
+        "test_name": "frontend_component_tests",
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "details": [
+          {
+            "test": "frontend_build_exists",
+            "status": "passed"
+          },
+          {
+            "test": "frontend_static_serving",
+            "status": "passed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Security Tests",
+      "results": {
+        "test_name": "security_tests",
+        "passed": 0,
+        "failed": 3,
+        "total": 3,
+        "details": [
+          {
+            "test": "security_security_headers",
+            "status": "failed",
+            "error": "Missing headers: ['X-Content-Type-Options', 'X-Frame-Options', 'X-XSS-Protection', 'Content-Security-Policy']"
+          },
+          {
+            "test": "security_cors_policy",
+            "status": "failed",
+            "error": "Missing headers: ['X-Content-Type-Options', 'X-Frame-Options', 'X-XSS-Protection', 'Content-Security-Policy']"
+          },
+          {
+            "test": "security_rate_limiting",
+            "status": "failed",
+            "error": "Rate limiting not working"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Performance Tests",
+      "results": {
+        "test_name": "performance_tests",
+        "passed": 0,
+        "failed": 4,
+        "total": 4,
+        "details": [
+          {
+            "test": "performance_health",
+            "status": "failed",
+            "error": "Response time 0.00s, status 500",
+            "response_time": 0.0033659934997558594
+          },
+          {
+            "test": "performance_api_stats",
+            "status": "failed",
+            "error": "Response time 0.00s, status 500",
+            "response_time": 0.0030579566955566406
+          },
+          {
+            "test": "performance_metrics",
+            "status": "failed",
+            "error": "Response time 0.00s, status 500",
+            "response_time": 0.0033028125762939453
+          },
+          {
+            "test": "performance_concurrent_requests",
+            "status": "failed",
+            "error": "Failed responses: [500, 500, 500, 500, 500, 500, 500, 500, 500, 500]"
+          }
+        ]
+      }
+    }
+  ],
+  "success_rate": 35.29
+}

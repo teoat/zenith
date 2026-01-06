@@ -98,8 +98,7 @@ class ComplianceService {
     const response = await fetch(`${this.baseUrl}/audit/log`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         action,
@@ -125,8 +124,7 @@ class ComplianceService {
     const response = await fetch(`${this.baseUrl}/regulatory-reports`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         report_type: reportType,
@@ -149,7 +147,7 @@ class ComplianceService {
 
     const response = await fetch(url, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        // Auth handled by client
       }
     });
 
@@ -173,8 +171,7 @@ class ComplianceService {
     const response = await fetch(`${this.baseUrl}/incidents`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(incidentData)
     });
@@ -194,8 +191,7 @@ class ComplianceService {
     const response = await fetch(`${this.baseUrl}/access-reviews`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         user_id: userId,
@@ -219,8 +215,7 @@ class ComplianceService {
     const response = await fetch(`${this.baseUrl}/training/complete`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         training_type: trainingType,
@@ -240,7 +235,7 @@ class ComplianceService {
   async getComplianceDashboard(): Promise<ComplianceMetrics> {
     const response = await fetch(`${this.baseUrl}/dashboard`, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        // Auth handled by client
       }
     });
 
@@ -259,7 +254,7 @@ class ComplianceService {
   }> {
     const response = await fetch(`${this.baseUrl}/audit/logs?limit=${limit}&offset=${offset}`, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        // Auth handled by client
       }
     });
 
@@ -297,7 +292,7 @@ class ComplianceService {
   async getRegionalCompliance(): Promise<{ regions: RegionalCompliance[] }> {
     const response = await fetch(`${this.baseUrl}/regional-compliance`, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        // Auth handled by client
       }
     });
 
@@ -311,7 +306,7 @@ class ComplianceService {
   async getDataResidencyRules(): Promise<{ rules: DataResidencyRule[] }> {
     const response = await fetch(`${this.baseUrl}/data-residency-rules`, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        // Auth handled by client
       }
     });
 
@@ -326,8 +321,7 @@ class ComplianceService {
     const response = await fetch(`${this.baseUrl}/regional-compliance/${region}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         framework,

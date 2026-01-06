@@ -8,16 +8,25 @@ import WelcomeMessage from '../components/common/WelcomeMessage';
 import MovableDashboard from '../components/dashboard/MovableDashboard';
 import FeatureDiscovery from '../components/dashboard/FeatureDiscovery';
 import PageErrorBoundary from '../components/PageErrorBoundary';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Wrapper component to handle localStorage check outside of render
 const RookieChecklistWrapper = memo(() => {
-  const isNewUser = React.useMemo(() => {
-    try {
-      const checklistProgress = localStorage.getItem('rookieChecklist');
-      return !checklistProgress || !JSON.parse(checklistProgress || '{}').run_analysis;
-    } catch {
-      return true;
-    }
+  const [isNewUser, setIsNewUser] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const { electronStore } = await import('../utils/electronStore');
+        const checklistProgress = await electronStore.get<Record<string, boolean>>('rookieChecklist');
+        if (!checklistProgress || !checklistProgress.run_analysis) {
+          setIsNewUser(true);
+        }
+      } catch {
+        setIsNewUser(true);
+      }
+    };
+    checkUser();
   }, []);
 
   if (!isNewUser) return null;
@@ -35,6 +44,7 @@ const Dashboard: React.FC = () => {
   const { t } = useTranslation('dashboard');
   const { isOnline } = useNetworkStatus();
   const { dataUpdatedAt } = useDashboardMetrics();
+  const queryClient = useQueryClient();
   const [showReconnected, setShowReconnected] = React.useState(false);
   const wasOffline = React.useRef(!isOnline);
   const [currentTime, setCurrentTime] = React.useState(0);
@@ -93,7 +103,7 @@ const Dashboard: React.FC = () => {
             {t('messages.staleData', 'Displaying cached data from {{time}}.', { time: new Date(dataUpdatedAt).toLocaleTimeString() })}
           </span>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => queryClient.invalidateQueries()}
             className="text-xs font-bold text-blue-600 hover:underline ml-auto"
           >
             {t('actions.refresh', 'Refresh Now')}

@@ -19,18 +19,11 @@ class AIServiceClient {
       },
     });
 
-    // Add auth interceptor
-    this.client.interceptors.request.use((config) => {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    });
+    // Auth is handled by cookies or HttpOnly tokens via client configuration
   }
 
   // Cognitive Automation
-  async makeCognitiveDecision(decisionType: string, data: any, context: any = {}) {
+  async makeCognitiveDecision(decisionType: string, data: Record<string, unknown>, context: Record<string, unknown> = {}) {
     try {
       const response = await this.client.post('/cognitive/decision', {
         decision_type: decisionType,
@@ -45,7 +38,7 @@ class AIServiceClient {
   }
 
   // Predictive Intelligence
-  async generatePredictiveInsights(forecastType: string, data: any) {
+  async generatePredictiveInsights(forecastType: string, data: Record<string, unknown>) {
     try {
       const response = await this.client.post('/predictive/insights', {
         forecast_type: forecastType,
@@ -59,7 +52,7 @@ class AIServiceClient {
   }
 
   // Human-AI Collaboration
-  async processInteraction(input: string, context: any = {}) {
+  async processInteraction(input: string, context: Record<string, unknown> = {}) {
     try {
       const response = await this.client.post('/collaboration/interact', {
         input,
@@ -90,20 +83,20 @@ class AIServiceClient {
     try {
       const response = await this.client.get('/health/ai');
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('AI health check failed:', error);
-      return { overall_status: 'unhealthy', error: error.message };
+      return { overall_status: 'unhealthy', error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
 
   // Real-time subscriptions (if WebSocket is implemented)
-  subscribeToAIUpdates(callback: (data: any) => void) {
+  subscribeToAIUpdates(_callback: (data: Record<string, unknown>) => void) {
     // Placeholder for WebSocket subscription
     console.log('AI update subscription not implemented yet');
   }
 
   // Error handling
-  handleError(error: any) {
+  handleError(error: unknown) {
     if (error.response) {
       // Server responded with error status
       const { status, data } = error.response;

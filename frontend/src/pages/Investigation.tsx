@@ -11,6 +11,7 @@ import { secureLogger } from '../utils/secureLogger';
 import PageErrorBoundary from '../components/PageErrorBoundary';
 import { useGraphData } from '../hooks/useGraphData';
 import { TourGuide, Step } from '../components/onboarding/TourGuide';
+import { useQueryClient } from '@tanstack/react-query';
 
 const GRAPH_TUTORIAL_STEPS: Step[] = [
   { title: 'Investigation Graph', description: 'Visualize complex relationships between entities in a 3D space.' },
@@ -23,12 +24,13 @@ const GRAPH_TUTORIAL_STEPS: Step[] = [
 const Investigation = () => {
   const { caseId } = useParams<{ caseId: string }>();
   const [showTutorial, setShowTutorial] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: graphData, isLoading: loading, error } = useGraphData(caseId);
 
   const handleReset = () => {
-    // Reset functionality - could invalidate React Query cache
-    window.location.reload();
+    // Reset by invalidating the graph data cache
+    queryClient.invalidateQueries({ queryKey: ['graph-data', caseId] });
   };
 
   // Toast integration

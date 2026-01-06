@@ -1,0 +1,12 @@
+api
+app
+backend
+backups
+core
+data
+htmlcov
+models
+services
+temp_analysis
+tests
+venv
