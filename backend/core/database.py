@@ -205,6 +205,10 @@ class Transaction(Base):
     # Relationships
     case = relationship("Case", back_populates="transactions")
 
+    __table_args__ = (
+        Index("idx_transactions_case_date_amount", "case_id", "date", "amount"),
+    )
+
 
 class Evidence(Base):
     __tablename__ = "evidence"
