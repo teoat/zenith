@@ -7,7 +7,7 @@ on:
 
 env:
   VERCEL_ORG_ID: teoat
-  VERCEL_PROJECT_NAME: frontend
+  VERCEL_PROJECT_NAME: zenith
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
 jobs:
