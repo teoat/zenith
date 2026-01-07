@@ -7,6 +7,8 @@ interface EnvVars {
   VITE_API_URL?: string;
   VITE_WS_URL?: string;
   VITE_BYPASS_AUTH?: string;
+  VITE_MAPBOX_TOKEN?: string;
+  VITE_ENABLE_THREAT_MAP?: string;
   MODE: string;
 }
 

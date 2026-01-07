@@ -46,7 +46,7 @@ const MetricSparkline: React.FC<MetricSparklineProps> = memo(({
             <Tooltip
               contentStyle={TOOLTIP_STYLE}
               labelFormatter={() => ''}
-              formatter={(value: number) => [value.toLocaleString(), ''] as any}
+              formatter={((value: number) => [value.toLocaleString(), '']) as any}
             />
           )}
           <Area

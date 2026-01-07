@@ -226,7 +226,7 @@ const FinancialHealth = () => {
                     <Tooltip 
                         contentStyle={{ backgroundColor: '#1e293b', border: 'none', color: '#f8fafc', borderRadius: '8px' }}
                         cursor={{ fill: 'rgba(51, 65, 85, 0.1)' }}
-                        formatter={(value: number) => [`$${value.toLocaleString()}`, 'Amount']}
+                        formatter={((value: number) => [`$${value.toLocaleString()}`, 'Amount']) as any}
                     />
                     <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
                         {data.waterfall.map((entry, index) => (

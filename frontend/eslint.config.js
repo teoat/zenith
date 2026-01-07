@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 
 // Define the configuration
 export default [
-  { ignores: ['dist', 'scripts', 'coverage', 'node_modules', 'e2e', '*.config.*', 'jest.config.*', 'playwright.config.*', 'postcss.config.*', 'public'] },
+  { ignores: ['dist', 'dist 2', 'dev-dist', 'build', 'scripts', 'coverage', 'coverage-e2e', 'coverage-e2e 2', 'node_modules', 'e2e', '*.config.*', 'jest.config.*', 'playwright.config.*', 'postcss.config.*', 'public', 'public 2'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

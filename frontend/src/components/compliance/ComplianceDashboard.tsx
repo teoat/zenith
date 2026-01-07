@@ -62,7 +62,7 @@ export default function ComplianceDashboard() {
           id: r.region,
           name: r.framework,
           version: '1.0',
-          status: r.status as any || 'compliant',
+          status: (r as any).status || 'compliant',
           lastAudit: r.last_audit_date,
           nextAudit: r.next_audit_date
         })));
