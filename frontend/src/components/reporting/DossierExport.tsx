@@ -1,10 +1,14 @@
 import React from 'react';
 
-export default function DossierExport() {
+// Digital Dossier Export Component
+export const DigitalDossierGenerator = () => {
   return (
     <div className="p-4">
-      <h1 className="text-xl font-semibold mb-4">Dossier Generator</h1>
-      <p>Digital dossier export component placeholder</p>
+      <h2 className="text-xl font-semibold mb-4">Digital Dossier Generator</h2>
+      <p className="text-sm text-muted-foreground">Generate comprehensive financial dossiers from case data</p>
+      <p className="text-xs text-muted-foreground">Create, download, and manage multiple dossiers</p>
     </div>
   );
-}
+};
+
+export default DigitalDossierGenerator;
