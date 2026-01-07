@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import CaseHeader from '@/CaseHeader';
+import CaseHeader from '../CaseHeader';
 
 const mockProps = {
   searchTerm: '',

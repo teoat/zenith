@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
-import CaseForm from '@/CaseForm';
+import CaseForm from '../CaseForm';
 import '@testing-library/jest-dom';
 
 jest.mock('../../../services/cases');

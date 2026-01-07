@@ -3,9 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { simulateDelay } from '@/utils/simulation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { secureLogger } from '@/utils/secureLogger';
-import { IssueCard } from './IssueCard';
-import { MetricsSummary } from './MetricsSummary';
-import { FilterControls } from './FilterControls';
 import {
   Code,
   AlertTriangle,
@@ -60,6 +57,7 @@ interface CodeReviewResult {
     files_analyzed: number;
     test_coverage_estimate: number;
     maintainability_index: number;
+    analysis_time_seconds: number;
   };
   generated_at: string;
   analysis_time_seconds: number;

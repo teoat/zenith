@@ -53,7 +53,8 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ caseId: _caseId }) => 
     if (!action.endpoint) return;
 
     try {
-      const result = await aiService.performAction(action.endpoint, action.method || 'POST', action.body);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await aiService.performAction(action.endpoint, action.method || 'POST', action.body) as any;
 
       const successMsg: Message = {
         id: Date.now().toString(),
@@ -126,7 +127,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ caseId: _caseId }) => 
             content: response.data?.response || '',
             timestamp: Date.now(),
             persona: response.data?.persona as AIPersona,
-            suggestions: response.data?.suggestions
+            suggestions: response.data?.suggestions as SuggestionAction[] | undefined
         };
 
         setMessages(prev => [...prev, aiMsg]);

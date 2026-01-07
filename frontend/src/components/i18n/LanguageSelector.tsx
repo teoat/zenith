@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { translations, Language, isRTL } from '@/services/i18n';
-import usePersistedState from '@/hooks/usePersistedState';
+import { usePersistedState } from '@/hooks/usePersistedState';
 
 const LanguageSelector: React.FC = () => {
   const [currentLang, setCurrentLang] = usePersistedState<Language>('app_language', 'en');

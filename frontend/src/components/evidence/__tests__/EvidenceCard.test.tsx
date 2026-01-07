@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { EvidenceCard } from '@/EvidenceCard';
+import { EvidenceCard } from '../EvidenceCard';
 
 const sample = {
   id: 'ev-1',

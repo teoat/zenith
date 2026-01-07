@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { api, type EvidenceItem } from '@/lib/api';
 import { Eye, Binary, FileJson, FileText } from 'lucide-react';
-import PdfViewer from '@/forensics/PdfViewer';
+import PdfViewer from '@/components/forensics/PdfViewer';
 import { secureLogger } from '@/utils/secureLogger';
 
 const EvidenceViewer = React.lazy(() => import('./EvidenceViewer'));

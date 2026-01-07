@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, CheckCircle, Info, XCircle } from 'lucide-react';
+import { AlertTriangle, Info, XCircle } from 'lucide-react';
 
 interface CodeIssue {
   file_path: string;

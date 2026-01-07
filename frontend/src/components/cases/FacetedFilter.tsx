@@ -37,7 +37,10 @@ const FacetedFilter: React.FC<FacetedFilterProps> = ({ filterOptions, selectedFi
   };
 
   const handleCheckboxChange = (filterId: string, optionValue: string, isChecked: boolean) => {
-    const currentValues = internalFilters[filterId] || [];
+    // Ensure currentValues is treated as an array of strings for checkbox logic
+    const currentVal = internalFilters[filterId];
+    const currentValues: string[] = Array.isArray(currentVal) ? currentVal : [];
+    
     const newValues = isChecked
       ? [...currentValues, optionValue]
       : currentValues.filter((val: string) => val !== optionValue);
