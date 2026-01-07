@@ -49,6 +49,7 @@ COMPREHENSIVE_DIAGNOSTIC_REPORT_*.md
 
 
 # Secrets
+config/.encryption_key
 .env
 .env.*
 !.env.example
