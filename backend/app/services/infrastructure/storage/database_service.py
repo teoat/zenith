@@ -793,7 +793,7 @@ class DatabaseService:
             return (
                 db.query(CaseActivity)
                 .filter(CaseActivity.case_id == case_id)
-                .order_by(desc(CaseActivity.timestamp))
+                .order_by(desc(CaseActivity.created_at))
                 .limit(limit)
                 .all()
             )
@@ -1079,7 +1079,7 @@ class DatabaseService:
                 db.query(CaseActivity)
                 .join(Case, CaseActivity.case_id == Case.id)
                 .outerjoin(User, CaseActivity.user_id == User.id)
-                .order_by(desc(CaseActivity.timestamp))
+                .order_by(desc(CaseActivity.created_at))
                 .limit(limit)
                 .all()
             )
@@ -1090,7 +1090,7 @@ class DatabaseService:
                     "action": a.activity_type.replace("_", " ").title(),
                     "details": a.description,
                     "user": a.user.full_name if a.user else (a.user_id or "System"),
-                    "timestamp": a.timestamp.isoformat(),
+                    "timestamp": a.created_at.isoformat(),
                     "case_title": a.case.title if a.case else "Unknown Case",
                 }
                 for a in activities

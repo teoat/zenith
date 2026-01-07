@@ -149,7 +149,8 @@ class TestDatabaseService:
         result = db_service.create_case(case_data, "test_user")
 
         assert result is not None
-        mock_session.add.assert_called_once()
+        # Should be called twice: once for case, once for activity log
+        assert mock_session.add.call_count == 2
         mock_session.commit.assert_called_once()
 
     @patch(
