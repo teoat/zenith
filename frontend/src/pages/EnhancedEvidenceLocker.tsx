@@ -24,7 +24,7 @@ import {
   Download,
   AlertTriangle
 } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx'';
 import { Separator } from '@/components/ui/Separator.tsx';
 
 import {
