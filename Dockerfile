@@ -47,14 +47,17 @@ WORKDIR /app
 COPY --from=backend-deps /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=backend-deps /usr/local/bin /usr/local/bin
 
-# Copy backend application
-COPY backend/ .
+# Copy entire context (excluding ignored files)
+COPY . .
 
 # Create data directories
 RUN mkdir -p /app/data && \
     mkdir -p /app/logs && \
     mkdir -p /app/uploads && \
     chown -R app:app /app
+
+# Switch to backend directory where main.py resides
+WORKDIR /app/backend
 
 # Switch to non-root user
 USER app

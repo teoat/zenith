@@ -20,8 +20,10 @@ uploads/
 backups/
 archive/
 
-# Keep frontend and config
-!frontend/
+# Config
 !vercel.json
 !package.json
-!pnpm-lock.yaml
+
+# Explicitly exclude all node_modules recursively
+**/node_modules
+node_modules

@@ -20,7 +20,7 @@ graph LR
 | **Frontend** | TBD (Deploy via Vercel Pending) | ⏳ Pending |
 | **Backend** | `https://zenith-fraud.up.railway.app` | � Re-Deploying |
 | **Docs** | `/docs` or `/redoc` | ⏳ Waiting |
-| **Health** | `/health` | ⏳ Waiting |
+| **Health** | `/health` or `/api/v1/health` | ⏳ Waiting |
 
 ## 3. Environment Variable Checklist
 
@@ -45,7 +45,10 @@ graph LR
 ./deploy_backend.sh
 
 # Frontend
-cd frontend && vercel --prod
+cd frontend
+npm install
+npm run build
+vercel --prod
 ```
 
 ### Logs
