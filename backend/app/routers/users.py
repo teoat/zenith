@@ -40,38 +40,21 @@ for _svc in ("db_service", "auth_service"):
 @router.put("/users/me/preferences")
 async def update_user_preferences(
     preferences: dict,
-    # In a real app, getting current user from token dependency.
-    # For now, we might assume a single user or mock it if strict auth isn't fully enforced in this router yet.
-    # But let's assume we can get user_id from a dependency or just update 'admin' for MVP if auth is loose.
-    # Adding db dependency.
-    db: Any | None = Depends(
-        db_service.get_db
-    ),  # Using db_service helper or standard get_db
+    current_user: dict = Depends(auth_service.get_current_user),
 ):
     """Update current user preferences"""
-    # Quick implementation: Update the 'admin' or default user for this desktop app context
-    # where mostly likely single user 'Arief' or 'admin'.
-
-    # We'll use the db_service directly if possible, but simpler to use SQLA directly if we had a user ID.
-    # Let's try to update the first user found or a specific hardcoded one for the Desktop MVP nature.
     try:
-        user = db_service.get_user_by_username("admin")  # Assuming admin exists
-        if not user:
-            # Fallback or create?
-            return {"status": "skipped", "message": "User context not found"}
+        user_id = current_user.get("id")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Could not determine user ID")
 
-        # Update logic (assuming db_service has update_user or we do it manually)
-        # db_service methods are high level.
-        # implementation detail: users table has preferences JSON column.
-
-        # Let's blindly return success for the MVP UI feedback loop if we can't easily fetch user without auth context.
-        # But wait, user wants persistence.
-
-        # Proper way:
-        # user.preferences = preferences
-        # db.commit()
+        success = db_service.update_user(user_id, {"preferences": preferences})
+        if not success:
+            raise HTTPException(status_code=400, detail="Failed to update preferences")
 
         return {"status": "success", "preferences": preferences}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -127,6 +110,7 @@ async def get_users(
     status: str | None = Query(
         None, description="Filter by active status", example="active"
     ),
+    current_user: dict = Depends(auth_service.get_current_user),
 ):
     """Get users with standardized pagination and filtering"""
     try:
@@ -313,7 +297,10 @@ async def get_current_user(current_user: dict = Depends(auth_service.get_current
 
 
 @router.get("/users/{user_id}")
-async def get_user(user_id: str):
+async def get_user(
+    user_id: str,
+    current_user: dict = Depends(auth_service.get_current_user),
+):
     """Get user by ID"""
     try:
         user = db_service.get_user(user_id)
