@@ -50,26 +50,13 @@ import {
   Settings,
   Menu,
   Close,
-  Refresh,
   FilterList,
-  Search,
   Download,
-  Share,
-  Favorite,
   Visibility,
   Edit,
-  Delete,
   Add,
-  CheckCircle,
-  Error,
-  Warning,
-  Info,
-  Smartphone,
-  Tablet,
-  Laptop,
-  DesktopWindows,
 } from "@mui/icons-material";
-import { Line, Bar, Pie, Doughnut } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
