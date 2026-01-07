@@ -1099,16 +1099,29 @@ railway add postgresql
 
 ## 🟢 **MEDIUM PRIORITIES (P2 - Fix This Month)**
 
-1. Implement automated backups
-2. Add load testing suite
-3. Enable dependency scanning (Dependabot)
-4. Create monitoring dashboards
-5. Split optional ML dependencies
-6. Add security testing
+1. **Deployment**: Automate CI/CD pipeline for Railway (currently manual)
+2. **Resilience**: Document and test Rollback Strategy
+3. **Data**: Implement automated backups
+4. **Testing**: Add load testing suite (Locust/k6)
+5. **Security**: Enable dependency scanning (Dependabot)
+6. **Observability**: Create monitoring dashboards (Grafana/Railway)
+7. **Optimization**: Split optional ML dependencies
+8. **Security**: Add security testing (OWASP ZAP)
 
 ---
 
-## 📈 **HEALTH TREND**
+## � **LOW PRIORITIES (P3 - Fix Next Quarter)**
+
+1. **API Documentation**: Auto-generate full docs from OpenAPI (currently 1.7% coverage)
+2. **Error Handling**: Standardize error responses across all unchecked endpoints
+3. **Resilience**: Implement Redis Dead Letter Queue (DLQ) for async tasks
+4. **Observability**: Fully implement OpenTelemetry distributed tracing
+5. **API Governance**: Document rate limits and V2 versioning strategy
+6. **CI/CD**: Add performance benchmarking (pytest-benchmark) to pipeline
+
+---
+
+## �📈 **HEALTH TREND**
 
 ```
 Current State:            Target State (6 months):

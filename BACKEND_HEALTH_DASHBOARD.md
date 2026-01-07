@@ -155,7 +155,7 @@
 ### Week 2 (Optional improvements)
 
 - [ ] Refactor main.py (1,416 → 500 lines)
-- [ ] Split AI/ML dependencies
+- [x] Split AI/ML dependencies
 - [ ] Add security scanning (Snyk/SAST)
 - [ ] Create Grafana dashboards
 

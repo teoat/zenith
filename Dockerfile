@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy Python requirements
-COPY backend/requirements*.txt ./
+COPY requirements.txt ./
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
@@ -54,6 +54,7 @@ FROM python:3.12-slim
 RUN apt-get update && apt-get install -y \
     sqlite3 \
     curl \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create application user
@@ -93,5 +94,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Expose port
 EXPOSE 8000
 
-# Start application
-CMD ["python", "main.py"]
+# Start application (Production)
+CMD ["gunicorn", "main:app", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
