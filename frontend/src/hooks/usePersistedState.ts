@@ -17,7 +17,7 @@ export function usePersistedState<T>(key: string, initialValue: T): [T, (value: 
     const loadPersistedState = async () => {
       try {
         const item = await electronStore.get<T>(key, initialValue);
-        setStoredValue(item);
+        setStoredValue(item ?? initialValue);
       } catch (error) {
         secureLogger.warn(`Error reading persisted key "${key}":`, error);
       }

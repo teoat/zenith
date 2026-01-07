@@ -62,10 +62,15 @@ const FacetedFilter: React.FC<FacetedFilterProps> = ({ filterOptions, selectedFi
   const handleResetFilters = () => {
     const resetFilters: Record<string, FilterValue> = {};
     filterOptions.forEach(option => {
-      if (option.type === 'slider') resetFilters[option.id] = option.defaultValue || option.min;
-      else if (option.type === 'select') resetFilters[option.id] = option.defaultValue || '';
-      else if (option.type === 'checkbox') resetFilters[option.id] = [];
-      else if (option.type === 'search') resetFilters[option.id] = '';
+      if (option.type === 'slider') {
+        resetFilters[option.id] = (option.defaultValue ?? option.min) as FilterValue;
+      } else if (option.type === 'select') {
+        resetFilters[option.id] = (option.defaultValue ?? '') as FilterValue;
+      } else if (option.type === 'checkbox') {
+        resetFilters[option.id] = [];
+      } else if (option.type === 'search') {
+        resetFilters[option.id] = '';
+      }
     });
     setInternalFilters(resetFilters);
     onFilterChange(resetFilters);
@@ -112,11 +117,11 @@ const FacetedFilter: React.FC<FacetedFilterProps> = ({ filterOptions, selectedFi
             <>
               <div className="flex justify-between items-center mb-3">
                 <span className="text-xs font-mono text-slate-500">{option.min}-{option.max}</span>
-                <span className="text-sm font-bold">{internalFilters[option.id] || option.defaultValue || option.min}</span>
+                <span className="text-sm font-bold">{String(internalFilters[option.id] ?? option.defaultValue ?? option.min)}</span>
               </div>
-              <Slider.Root 
-                className="relative flex items-center select-none touch-none w-full h-5" 
-                value={[internalFilters[option.id] || option.defaultValue || option.min]} 
+              <Slider.Root
+                className="relative flex items-center select-none touch-none w-full h-5"
+                value={[(internalFilters[option.id] ?? option.defaultValue ?? option.min) as number]}
                 max={option.max} 
                 step={1}
                 onValueChange={(value) => handleSliderChange(option.id, value)}

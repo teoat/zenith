@@ -194,15 +194,18 @@ export const createStandardizedError = (
 });
 
 // Predefined error creators
-export const createNetworkError = (action: string, details?: string) =>
+export const createNetworkError = (action: string, details?: string, onRetry?: () => void) =>
   createStandardizedError(
     'error',
     'Network Error',
     `Failed to ${action}. Please check your connection and try again.`,
     {
       details,
-      action: {
+      action: onRetry ? {
         label: 'Retry',
+        onClick: onRetry
+      } : {
+        label: 'Reload Page',
         onClick: () => window.location.reload()
       }
     }

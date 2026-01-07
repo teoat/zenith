@@ -19,9 +19,11 @@ interface RookieChecklistProps {
   onComplete?: () => void;
 }
 
-// Get initial items with saved progress (fallback to local if auth fails or offline)
+import { electronStore } from '@/utils/electronStore';
+
+// Get initial items (defaults only, Async load handles persistence)
 const getInitialItems = (): ChecklistItem[] => {
-  const defaultItems: ChecklistItem[] = [
+  return [
     {
       id: 'create-case',
       title: 'Create Your First Case',
@@ -47,38 +49,51 @@ const getInitialItems = (): ChecklistItem[] => {
       completed: false,
     },
   ];
-
-  try {
-    const saved = localStorage.getItem('rookieChecklist');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      return defaultItems.map(item => ({
-        ...item,
-        completed: parsed[item.id] || false
-      }));
-    }
-  } catch {
-    // Ignore parse errors
-  }
-  return defaultItems;
 };
 
-// Check if all items are complete (for initial badge state)
+// Check if all items are complete (for initial badge state - default to false until loaded)
 const getInitialBadgeState = (): boolean => {
-  const items = getInitialItems();
-  return items.every(item => item.completed);
+  return false;
 };
 
 const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
   const { user } = useAuth();
   const [items, setItems] = useState<ChecklistItem[]>(getInitialItems);
-  const [showBadge, setShowBadge] = useState(getInitialBadgeState);
+  const [showBadge, setShowBadge] = useState(false);
   const [synced, setSynced] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  // Sync with backend on mount
+  // Load from store on mount
+  useEffect(() => {
+    async function init() {
+        try {
+            const savedProgress = await electronStore.get<Record<string, boolean>>('rookieChecklist');
+            if (savedProgress) {
+                setItems(prev => prev.map(item => ({
+                    ...item,
+                    completed: savedProgress[item.id] || false
+                })));
+                
+                // Check badge state after load
+                const initialItems = getInitialItems().map(item => ({
+                    ...item, 
+                    completed: savedProgress[item.id] || false
+                }));
+                if(initialItems.every(i => i.completed)) setShowBadge(true);
+            }
+        } catch (e) {
+            secureLogger.warn("Failed to load checklist from store", e);
+        } finally {
+            setLoaded(true);
+        }
+    }
+    init();
+  }, []);
+
+  // Sync with backend on mount (after local load)
   useEffect(() => {
     async function loadFromBackend() {
-      if (user?.id) {
+      if (user?.id && loaded) {
         try {
           const data = await fetchRookieChecklist(user.id);
           if (data && data.items && Array.isArray(data.items)) {
@@ -93,18 +108,23 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
         }
       }
     }
-    if (!synced) {
+    if (!synced && loaded) {
       loadFromBackend();
     }
-  }, [user?.id, synced]);
+  }, [user?.id, synced, loaded]);
 
   useEffect(() => {
-    // Save progress to localStorage (always as backup)
+    if (!loaded) return;
+
+    // Save progress to electronStore
     const progress = items.reduce((acc, item) => {
       acc[item.id] = item.completed;
       return acc;
     }, {} as Record<string, boolean>);
-    localStorage.setItem('rookieChecklist', JSON.stringify(progress));
+    
+    electronStore.set('rookieChecklist', progress).catch(err => {
+        secureLogger.error("Failed to save checklist to electronStore", err);
+    });
 
     // Sync to backend if logged in
     const syncToBackend = async () => {
@@ -122,7 +142,7 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
         syncToBackend();
     }
 
-  }, [items, user?.id, synced]);
+  }, [items, user?.id, synced, loaded]);
 
   // Check completion and show badge
   useEffect(() => {

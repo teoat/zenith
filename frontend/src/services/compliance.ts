@@ -85,8 +85,11 @@ interface DataResidencyRule {
   retention_periods: Record<string, number>;
 }
 
+import { request } from './client';
+
 class ComplianceService {
-  private baseUrl = '/api/v1/compliance';
+  // Base path relative to API_BASE (assumed to be handled by request helper)
+  private basePath = '/compliance';
 
   // Audit Logging
   async logEvent(
@@ -95,11 +98,8 @@ class ComplianceService {
     resourceId: string,
     details: Record<string, unknown>
   ): Promise<{ log_id: string; status: string }> {
-    const response = await fetch(`${this.baseUrl}/audit/log`, {
+    return request<{ log_id: string; status: string }>(`${this.basePath}/audit/log`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify({
         action,
         resource_type: resourceType,
@@ -107,12 +107,6 @@ class ComplianceService {
         details
       })
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to log compliance event');
-    }
-
-    return response.json();
   }
 
   // Regulatory Reports
@@ -121,41 +115,19 @@ class ComplianceService {
     caseId: string,
     reportData: Record<string, any>
   ): Promise<{ report_id: string; filing_id: string; due_date: string; status: string }> {
-    const response = await fetch(`${this.baseUrl}/regulatory-reports`, {
+    return request(`${this.basePath}/regulatory-reports`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify({
         report_type: reportType,
         case_id: caseId,
         report_data: reportData
       })
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to create regulatory report');
-    }
-
-    return response.json();
   }
 
   async getRegulatoryReports(status?: string): Promise<{ reports: RegulatoryReport[]; total: number }> {
-    const url = status
-      ? `${this.baseUrl}/regulatory-reports?status=${status}`
-      : `${this.baseUrl}/regulatory-reports`;
-
-    const response = await fetch(url, {
-      headers: {
-        // Auth handled by client
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch regulatory reports');
-    }
-
-    return response.json();
+    const query = status ? `?status=${status}` : '';
+    return request(`${this.basePath}/regulatory-reports${query}`);
   }
 
   // Security Incidents
@@ -168,19 +140,10 @@ class ComplianceService {
     affected_users?: number;
     data_exposed?: Record<string, any>;
   }): Promise<{ incident_id: string; status: string; severity: string }> {
-    const response = await fetch(`${this.baseUrl}/incidents`, {
+    return request(`${this.basePath}/incidents`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify(incidentData)
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to submit security incident');
-    }
-
-    return response.json();
   }
 
   // Access Reviews
@@ -188,22 +151,13 @@ class ComplianceService {
     userId: string,
     reviewPeriodMonths: number = 12
   ): Promise<{ review_id: string; status: string; review_period: string }> {
-    const response = await fetch(`${this.baseUrl}/access-reviews`, {
+    return request(`${this.basePath}/access-reviews`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify({
         user_id: userId,
         review_period_months: reviewPeriodMonths
       })
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to initiate access review');
-    }
-
-    return response.json();
   }
 
   // Training
@@ -212,38 +166,19 @@ class ComplianceService {
     trainingModule: string,
     score?: number
   ): Promise<{ record_id: string; status: string; expiry_date: string; certificate_id?: string }> {
-    const response = await fetch(`${this.baseUrl}/training/complete`, {
+    return request(`${this.basePath}/training/complete`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify({
         training_type: trainingType,
         training_module: trainingModule,
         score
       })
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to record training completion');
-    }
-
-    return response.json();
   }
 
   // Dashboard Data
   async getComplianceDashboard(): Promise<ComplianceMetrics> {
-    const response = await fetch(`${this.baseUrl}/dashboard`, {
-      headers: {
-        // Auth handled by client
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch compliance dashboard data');
-    }
-
-    return response.json();
+    return request(`${this.basePath}/dashboard`);
   }
 
   async getAuditLogs(limit: number = 100, offset: number = 0): Promise<{
@@ -252,17 +187,7 @@ class ComplianceService {
     offset: number;
     limit: number;
   }> {
-    const response = await fetch(`${this.baseUrl}/audit/logs?limit=${limit}&offset=${offset}`, {
-      headers: {
-        // Auth handled by client
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch audit logs');
-    }
-
-    return response.json();
+    return request(`${this.basePath}/audit/logs?limit=${limit}&offset=${offset}`);
   }
 
   // Utility Methods
@@ -290,50 +215,21 @@ class ComplianceService {
 
   // Regional Compliance
   async getRegionalCompliance(): Promise<{ regions: RegionalCompliance[] }> {
-    const response = await fetch(`${this.baseUrl}/regional-compliance`, {
-      headers: {
-        // Auth handled by client
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch regional compliance data');
-    }
-
-    return response.json();
+    return request(`${this.basePath}/regional-compliance`);
   }
 
   async getDataResidencyRules(): Promise<{ rules: DataResidencyRule[] }> {
-    const response = await fetch(`${this.baseUrl}/data-residency-rules`, {
-      headers: {
-        // Auth handled by client
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch data residency rules');
-    }
-
-    return response.json();
+    return request(`${this.basePath}/data-residency-rules`);
   }
 
   async setRegionalCompliance(region: string, framework: string, complianceData: Record<string, any>): Promise<{ status: string }> {
-    const response = await fetch(`${this.baseUrl}/regional-compliance/${region}`, {
+    return request(`${this.basePath}/regional-compliance/${region}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify({
         framework,
         ...complianceData
       })
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to update regional compliance');
-    }
-
-    return response.json();
   }
 
   formatComplianceFlags(flags: string[]): string {

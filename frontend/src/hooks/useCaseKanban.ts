@@ -60,18 +60,19 @@ export const useCaseKanban = (externalCases?: ApiCase[], onCaseClick?: (caseId: 
     const loadCases = async () => {
       try {
         setError(null);
-        const { api } = await import('@/lib/api'); 
-        const cases: Case[] = await api.getCases();
-        
-        const incoming = cases.filter((c: ApiCase) => 
+        const { api } = await import('@/lib/api');
+        const response = await api.getCases();
+        const cases: Case[] = (response.cases || []).map(transformCase);
+
+        const incoming = cases.filter((c: Case) =>
           c.status === 'open' || c.status === 'OPEN'
-        ).map(transformCase);
-        
-        const review = cases.filter((c: ApiCase) => 
+        );
+
+        const review = cases.filter((c: Case) =>
           c.status === 'investigating' || c.status === 'pending_review' || c.status === 'escalated'
-        ).map(transformCase);
-        
-        const closed = cases.filter((c: ApiCase) => 
+        );
+
+        const closed = cases.filter((c: Case) =>
           c.status?.startsWith('closed') || c.status === 'resolved'
         ).map(transformCase);
         

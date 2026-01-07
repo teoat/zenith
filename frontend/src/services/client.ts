@@ -91,6 +91,7 @@ export const request = async <T>(
         for (let attempt = 0; attempt <= maxRetries; attempt++) {
           try {
             const response = await fetch(url, {
+              credentials: 'include', // Ensure HttpOnly cookies are sent
               ...options,
               headers: finalHeaders,
             });

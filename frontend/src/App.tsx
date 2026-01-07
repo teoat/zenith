@@ -20,7 +20,7 @@ const NetworkAnalysis = React.lazy(() => import(/* webpackChunkName: "network" *
 const RelationshipGraph = React.lazy(() => import(/* webpackChunkName: "graph" */ '@/components/visualizations/NetworkGraph.tsx'));
 const Investigation = React.lazy(() => import(/* webpackChunkName: "investigation" */ '@/pages/Investigation'));
 const Reporting = React.lazy(() => import(/* webpackChunkName: "reporting" */ '@/pages/Reporting'));
-const OnboardingWizard = React.lazy(() => import(/* webpackChunkName: "onboarding" */ '@/components/cases/InvestigationWizard'));
+const OnboardingWizard = React.lazy(() => import(/* webpackChunkName: "onboarding" */ '@/components/investigation/InvestigationWizard'));
 const ProofVisualizationRoute = React.lazy(() => import(/* webpackChunkName: "proof" */ '@/pages/ProofVisualizationRoute'));
 const TemporalPlayback = React.lazy(() => import(/* webpackChunkName: "temporal" */ '@/components/TemporalPlayback'));
 const CaseProgressBar = React.lazy(() => import(/* webpackChunkName: "progress" */ '@/components/CaseProgressBar'));
@@ -238,7 +238,15 @@ const App: React.FC = () => {
                                 <Route path="/reconciliation" element={<Reconciliation />} />
                                 <Route path="/settings" element={<Settings />} />
                                 <Route path="/design" element={<DesignSystemShowcase />} />
-                                <Route path="/onboarding" element={<OnboardingWizard isOpen={false} onClose={() => {}} onComplete={() => {}} />} />
+                                <Route path="/onboarding" element={
+                                  <OnboardingWizard 
+                                    onComplete={() => {
+                                      // console.log('Investigation created');
+                                      window.location.href = '/cases';
+                                    }} 
+                                    onCancel={() => window.history.back()} 
+                                  />
+                                } />
                                 <Route path="/proof/:caseId" element={<ProofVisualizationRoute />} />
                                 <Route path="/playback" element={<TemporalPlayback />} />
                                 <Route path="/case/progress" element={<CaseProgressBar />} />
