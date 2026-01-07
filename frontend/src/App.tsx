@@ -24,7 +24,7 @@ const OnboardingWizard = React.lazy(() => import(/* webpackChunkName: "onboardin
 const ProofVisualizationRoute = React.lazy(() => import(/* webpackChunkName: "proof" */ '@/pages/ProofVisualizationRoute'));
 const TemporalPlayback = React.lazy(() => import(/* webpackChunkName: "temporal" */ '@/components/TemporalPlayback'));
 const CaseProgressBar = React.lazy(() => import(/* webpackChunkName: "progress" */ '@/components/CaseProgressBar'));
-const InvestigationNotebook = React.lazy(() => import(/* webpackChunkName: "notebook" */ '@/components/investigation/InvestigationNotebook'));
+// const InvestigationNotebook = React.lazy(() => import(/* webpackChunkName: "notebook" */ '@/components/investigation/InvestigationNotebook'));
 const DigitalDossierGenerator = React.lazy(() => import(/* webpackChunkName: "dossier" */ '@/components/DigitalDossierGenerator'));
 const CodeReviewDashboard = React.lazy(() => import(/* webpackChunkName: "code-review" */ '@/components/ai/CodeReviewDashboard'));
 const PredictiveMaintenanceDashboard = React.lazy(() => import(/* webpackChunkName: "predictive-maintenance" */ '@/components/ai/PredictiveMaintenanceDashboard'));
