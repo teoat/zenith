@@ -1,6 +1,6 @@
 import React from 'react';
 import { User, Calendar, AlertTriangle, MoreHorizontal } from 'lucide-react';
-import { useFormatters } from '../../providers/LocaleProvider';
+import { useFormatters } from '@/providers/LocaleProvider';
 
 interface RichCaseCardProps {
   id: string;

@@ -1,7 +1,7 @@
 // frontend/src/components/ai/AIIntelligenceDashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import {
   Brain,
   Network,

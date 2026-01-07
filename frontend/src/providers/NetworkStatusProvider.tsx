@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NetworkStatusContext } from '../context/NetworkStatusContext';
+import { NetworkStatusContext } from '@/context/NetworkStatusContext';
 
 export const NetworkStatusProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);

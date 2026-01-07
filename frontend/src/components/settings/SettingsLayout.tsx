@@ -1,7 +1,7 @@
 import React, { useState, Suspense, memo } from 'react';
-import { useSettings } from '../../hooks/useSettings';
-import { usePerformanceMonitor } from '../../hooks/usePerformanceMonitor';
-import PageErrorBoundary from '../PageErrorBoundary';
+import { useSettings } from '@/hooks/useSettings';
+import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
+import PageErrorBoundary from '@/components/PageErrorBoundary';
 import SettingsSkeleton from './SettingsSkeleton';
 import SettingsErrorState from './SettingsErrorState';
 import SettingsNavigation from './SettingsNavigation';

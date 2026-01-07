@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/Badge.tsx';
 import { Input } from '@/components/ui/Input.tsx';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs.tsx';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import {
   FileText,
   Search,
@@ -24,20 +24,20 @@ import {
   Download,
   AlertTriangle
 } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Separator } from '@/components/ui/Separator.tsx';
 
 import {
   EvidenceMetadata
-} from '../types/evidence';
-import { EvidenceStats } from '../components/evidence/EvidenceStats';
-import { EvidenceDetailsSidebar } from '../components/evidence/EvidenceDetailsSidebar';
-import { EvidenceSearchFilters } from '../components/evidence/EvidenceSearchFilters';
-import { MOCK_EVIDENCE } from '../mocks/evidenceMocks';
-import { EvidenceCard } from '../components/evidence/EvidenceCard';
-import { ChainOfCustodyTimeline } from '../components/evidence/ChainOfCustodyTimeline';
-import { EvidenceCorrelationsList } from '../components/evidence/EvidenceCorrelationsList';
-import { MultimodalAnalysisResults } from '../components/evidence/MultimodalAnalysisResults';
+} from '@/types/evidence';
+import { EvidenceStats } from '@/components/evidence/EvidenceStats';
+import { EvidenceDetailsSidebar } from '@/components/evidence/EvidenceDetailsSidebar';
+import { EvidenceSearchFilters } from '@/components/evidence/EvidenceSearchFilters';
+import { MOCK_EVIDENCE } from '@/mocks/evidenceMocks';
+import { EvidenceCard } from '@/components/evidence/EvidenceCard';
+import { ChainOfCustodyTimeline } from '@/components/evidence/ChainOfCustodyTimeline';
+import { EvidenceCorrelationsList } from '@/components/evidence/EvidenceCorrelationsList';
+import { MultimodalAnalysisResults } from '@/components/evidence/MultimodalAnalysisResults';
 import VirtualizedEvidenceList from '@/components/VirtualizedEvidenceList';
 
 const EnhancedEvidenceLocker: React.FC = () => {

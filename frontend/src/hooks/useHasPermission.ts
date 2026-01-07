@@ -1,4 +1,4 @@
-import { UserRole } from '../types/auth';
+import { UserRole } from '@/types/auth';
 
 /**
  * Hook for checking if a user has the required permission level

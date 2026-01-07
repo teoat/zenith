@@ -334,8 +334,8 @@ class FocusTrap {
   }
 }
 
-import { secureLogger } from '../utils/secureLogger';
-import { secureRandom } from '../utils/secureRandom';
+import { secureLogger } from '@/utils/secureLogger';
+import { secureRandom } from '@/utils/secureRandom';
 
 // React hooks for accessibility
 export function useAccessibility() {

@@ -1,5 +1,5 @@
 import { request, isElectron } from './client';
-import type { AppSettings, AuditLogEntry, SecurityStats } from '../types/api';
+import type { AppSettings, AuditLogEntry, SecurityStats } from '@/types/api';
 import '../types/electron.d.ts'; // Ensure electron types are available
 
 export const settingsService = {

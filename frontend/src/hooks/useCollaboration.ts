@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 // Import the CollaborationClient from the backend service
 // Note: This would need to be compiled/bundled appropriately

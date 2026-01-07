@@ -4,8 +4,8 @@
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';
-import { secureLogger } from '../utils/secureLogger';
-import { secureRandom } from '../utils/secureRandom';
+import { secureLogger } from '@/utils/secureLogger';
+import { secureRandom } from '@/utils/secureRandom';
 
 // Types
 export interface SyncEvent {

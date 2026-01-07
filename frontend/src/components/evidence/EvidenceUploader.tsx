@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { useEvidenceUpload } from '../../hooks/useEvidence';
-import type { EvidenceItem } from '../../types/api';
+import { useEvidenceUpload } from '@/hooks/useEvidence';
+import type { EvidenceItem } from '@/types/api';
 
 interface EvidenceUploaderProps {
   caseId: string;

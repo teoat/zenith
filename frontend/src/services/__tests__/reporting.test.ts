@@ -1,5 +1,5 @@
 import { describe, it, jest, beforeEach } from '@jest/globals';
-import { reportingService } from '../reporting';
+import { reportingService } from '@/reporting';
 
 global.fetch = jest.fn();
 

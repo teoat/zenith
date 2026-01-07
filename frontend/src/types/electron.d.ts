@@ -78,5 +78,6 @@ export interface IPCResponse<T = unknown> {
 declare global {
   interface Window {
     electronAPI: ElectronAPI;
+    electron?: ElectronAPI;
   }
 }

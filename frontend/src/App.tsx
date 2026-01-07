@@ -238,7 +238,7 @@ const App: React.FC = () => {
                                 <Route path="/reconciliation" element={<Reconciliation />} />
                                 <Route path="/settings" element={<Settings />} />
                                 <Route path="/design" element={<DesignSystemShowcase />} />
-                                <Route path="/onboarding" element={<OnboardingWizard />} />
+                                <Route path="/onboarding" element={<OnboardingWizard isOpen={false} onClose={() => {}} onComplete={() => {}} />} />
                                 <Route path="/proof/:caseId" element={<ProofVisualizationRoute />} />
                                 <Route path="/playback" element={<TemporalPlayback />} />
                                 <Route path="/case/progress" element={<CaseProgressBar />} />

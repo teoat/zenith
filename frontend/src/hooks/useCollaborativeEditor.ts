@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface UserPresence {
   user_id: string;

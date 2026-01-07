@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 const VoiceControl: React.FC = () => {
   const [listening, setListening] = useState(false);

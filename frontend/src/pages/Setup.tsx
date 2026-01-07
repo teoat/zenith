@@ -7,7 +7,7 @@ import { useApiError } from '@/hooks/useApiError';
 import type { UserRole } from '@/types/schema';
 import FileDropZone from '@/components/ui/FileDropZone';
 import { fileProcessingService } from '@/services/fileProcessing';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 const Setup: React.FC = () => {
   const [step, setStep] = useState<'password' | 'role' | 'import'>('password');

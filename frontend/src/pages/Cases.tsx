@@ -1,24 +1,24 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Activity, LayoutList } from 'lucide-react';
-import { useCases } from '../hooks/useCases';
-import type { Case } from '../types/schema';
-import { approvalService } from '../services/approvalService';
-import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
-import { useTouchGestures } from '../hooks/useTouchGestures';
-import { CaseList } from '../components/cases/CaseList';
-import CasePreviewDrawer from '../components/cases/CasePreviewDrawer';
-import CaseHeader from '../components/cases/CaseHeader';
-import { KeyboardShortcutsModal } from '../components/ui/KeyboardShortcutsModal';
-import { Badge } from '../components/ui/Badge';
-import { KEYBOARD_SHORTCUTS } from '../lib/keyboardShortcuts';
+import { useCases } from '@/hooks/useCases';
+import type { Case } from '@/types/schema';
+import { approvalService } from '@/services/approvalService';
+import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+import { useTouchGestures } from '@/hooks/useTouchGestures';
+import { CaseList } from '@/components/cases/CaseList';
+import CasePreviewDrawer from '@/components/cases/CasePreviewDrawer';
+import CaseHeader from '@/components/cases/CaseHeader';
+import { KeyboardShortcutsModal } from '@/components/ui/KeyboardShortcutsModal';
+import { Badge } from '@/components/ui/Badge';
+import { KEYBOARD_SHORTCUTS } from '@/lib/keyboardShortcuts';
 import { useQueryClient } from '@tanstack/react-query';
-import { ApprovalQueue } from '../components/ApprovalQueue';
-import { SplitView } from '../components/ui/SplitView';
-import { secureLogger } from '../utils/secureLogger';
-import PageErrorBoundary from '../components/PageErrorBoundary';
-import LoadingState from '../components/LoadingState';
-import { useToast } from '../providers/ToastProvider';
+import { ApprovalQueue } from '@/components/ApprovalQueue';
+import { SplitView } from '@/components/ui/SplitView';
+import { secureLogger } from '@/utils/secureLogger';
+import PageErrorBoundary from '@/components/PageErrorBoundary';
+import LoadingState from '@/components/LoadingState';
+import { useToast } from '@/providers/ToastProvider';
 
 
 // Lazy load heavy components

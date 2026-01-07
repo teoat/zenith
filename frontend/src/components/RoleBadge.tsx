@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserRole, ROLE_PERMISSIONS } from '../types/auth';
+import { UserRole, ROLE_PERMISSIONS } from '@/types/auth';
 
 interface RoleBadgeProps {
   role: UserRole;

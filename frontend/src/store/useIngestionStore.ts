@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { TableData } from '../types/api';
+import type { TableData } from '@/types/api';
 
 export interface ProcessedFileData {
   fileType: string;

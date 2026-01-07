@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 // Advanced AI Features - Quantum-Resistant Cryptography & More
 // Note: This file contains placeholder implementations for advanced features

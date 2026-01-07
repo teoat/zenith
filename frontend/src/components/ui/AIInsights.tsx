@@ -2,8 +2,8 @@
 // React import removed
 import { useState, useEffect } from 'react';
 import { Brain, AlertTriangle, CheckCircle, TrendingUp, Activity } from 'lucide-react';
-import { aiFraudDetector } from '../../lib/AIFraudDetection';
-import { secureLogger } from '../../utils/secureLogger';
+import { aiFraudDetector } from '@/lib/AIFraudDetection';
+import { secureLogger } from '@/utils/secureLogger';
 // api import removed as unused
 
 interface TransactionData {

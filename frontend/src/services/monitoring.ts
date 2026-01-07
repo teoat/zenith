@@ -1,6 +1,6 @@
 import { request } from './client';
-import { secureLogger } from '../utils/secureLogger';
-import type { HealthMetrics, SystemMetrics, PerformanceData, ErrorSummary } from '../types/api';
+import { secureLogger } from '@/utils/secureLogger';
+import type { HealthMetrics, SystemMetrics, PerformanceData, ErrorSummary } from '@/types/api';
 
 export const monitoringService = {
   getHealthMetrics: async (): Promise<HealthMetrics> => {

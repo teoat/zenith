@@ -1,4 +1,4 @@
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 type EventType = 'DISCREPANCY_FLAGGED' | 'CASE_CREATED' | 'EVIDENCE_LINKED' | 'TRANSACTION_RECONCILED';
 

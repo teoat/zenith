@@ -293,7 +293,7 @@ describe('Modal/Dialog Component', () => {
 
 describe('Select Component', () => {
   it('renders options', async () => {
-    const { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } = await import('../components/ui/select');
+    const { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } = await import('../components/ui/Select');
     
     render(
       <Select>

@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { DollarSign, TrendingDown, AlertCircle, Activity, Wallet, CreditCard } from 'lucide-react';
-import { reportingService } from '../../services/reporting';
-import type { FinancialHealthData } from '../../types/api';
-import { useProjectStore } from '../../store/projectStore';
-import { secureLogger } from '../../utils/secureLogger';
+import { reportingService } from '@/services/reporting';
+import type { FinancialHealthData } from '@/types/api';
+import { useProjectStore } from '@/store/projectStore';
+import { secureLogger } from '@/utils/secureLogger';
 
 
 const FinancialHealth = () => {

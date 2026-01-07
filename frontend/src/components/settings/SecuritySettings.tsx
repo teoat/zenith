@@ -1,5 +1,5 @@
 import React from 'react';
-import type { AppSettings } from '../../types/api';
+import type { AppSettings } from '@/types/api';
 
 interface SecuritySettingsProps {
   settings: AppSettings;

@@ -1,6 +1,6 @@
 // frontend/src/components/monitoring/SystemOrchestrationDashboard.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import {
   Activity,
   AlertTriangle,

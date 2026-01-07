@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 /**
  * Comprehensive input validation utilities

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import GeneralSettings from '../GeneralSettings';
+import GeneralSettings from '@/GeneralSettings';
 
 // Mock i18next
 jest.mock('react-i18next', () => ({

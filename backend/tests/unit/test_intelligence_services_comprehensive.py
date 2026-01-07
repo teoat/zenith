@@ -7,6 +7,7 @@ Phase 2: Unit tests for all intelligence services to improve test coverage
 import pytest
 from unittest.mock import MagicMock
 from datetime import datetime, timedelta
+from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "backend"))

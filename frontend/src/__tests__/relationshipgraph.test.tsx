@@ -5,7 +5,7 @@
 
 
 import { render, screen } from '@testing-library/react';
-import RelationshipGraph from '../components/visualizations/NetworkGraph';
+import RelationshipGraph from '@/components/visualizations/NetworkGraph';
 
 // Mock force-graph components
 jest.mock('react-force-graph-2d', () => ({

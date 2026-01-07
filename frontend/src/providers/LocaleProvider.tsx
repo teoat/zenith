@@ -4,11 +4,11 @@
  */
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getBrowserTimezone } from '../lib/formatters';
+import { getBrowserTimezone } from '@/lib/formatters';
 import type {
   SupportedLocale,
   LocaleSettings
-} from '../types/locale';
+} from '@/types/locale';
 
 interface LocaleContextType {
   settings: LocaleSettings;

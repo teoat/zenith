@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import useRoleBasedLayout from '../hooks/useRoleBasedLayout';
-import { fetchRoles } from '../services/onboarding';
+import useRoleBasedLayout from '@/hooks/useRoleBasedLayout';
+import { fetchRoles } from '@/services/onboarding';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card.tsx';
 import { Badge } from '@/components/ui/Badge.tsx';
 import { Shield, Search, Eye, Settings, Check } from 'lucide-react';

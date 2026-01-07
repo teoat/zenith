@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle, ChevronRight, FileText, Shield, Eye, Send, ArrowLeft } from 'lucide-react';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 const STEPS = [
   { id: 1, name: 'Summary', icon: FileText },

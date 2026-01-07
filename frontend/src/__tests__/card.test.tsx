@@ -6,7 +6,7 @@
 
 
 import { render, screen } from '@testing-library/react';
-import { Card, CardContent } from '../components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 
 describe('Card Component', () => {
   it('renders correctly', () => {

@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react';
-import EvidenceViewer from '../evidence/EvidenceViewer';
-import { AccessibleModal } from '../ui/AccessibleModal';
+import EvidenceViewer from '@/components/evidence/EvidenceViewer';
+import { AccessibleModal } from '@/components/ui/AccessibleModal';
 
-import { API_BASE } from '../../services/client';
+import { API_BASE } from '@/services/client';
 
 interface EvidenceSpotlightProps {
   isOpen: boolean;

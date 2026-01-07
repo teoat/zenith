@@ -3,7 +3,7 @@
  * Frontend client for AI-powered services
  */
 
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosError } from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -92,14 +92,15 @@ class AIServiceClient {
   // Real-time subscriptions (if WebSocket is implemented)
   subscribeToAIUpdates(_callback: (data: Record<string, unknown>) => void) {
     // Placeholder for WebSocket subscription
-    console.log('AI update subscription not implemented yet');
+    // TODO: Implement AI update subscription
   }
 
   // Error handling
   handleError(error: unknown) {
-    if (error.response) {
+    const axiosError = error as AxiosError<{ detail?: string }>;
+    if (axiosError.response) {
       // Server responded with error status
-      const { status, data } = error.response;
+      const { status, data } = axiosError.response;
       switch (status) {
         case 401:
           // Redirect to login
@@ -110,14 +111,15 @@ class AIServiceClient {
         case 429:
           throw new Error('AI service rate limit exceeded');
         default:
-          throw new Error(data.detail || 'AI service error');
+          throw new Error(data?.detail || 'AI service error');
       }
-    } else if (error.request) {
+    } else if (axiosError.request) {
       // Network error
       throw new Error('Network error - unable to connect to AI services');
     } else {
       // Other error
-      throw new Error(error.message || 'Unknown AI service error');
+      const message = error instanceof Error ? error.message : 'Unknown AI service error';
+      throw new Error(message);
     }
   }
 }

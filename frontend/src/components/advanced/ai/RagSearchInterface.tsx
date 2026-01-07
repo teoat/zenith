@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button.tsx';
 import { Input } from '@/components/ui/Input.tsx';
 import { Badge } from '@/components/ui/Badge.tsx';
 import { Search, FileText, Brain } from 'lucide-react';
-import { secureLogger } from '../../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface SearchResult {
   id: string;

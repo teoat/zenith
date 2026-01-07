@@ -3,8 +3,8 @@ import '@testing-library/jest-dom';
 import { describe, it, jest, beforeEach } from '@jest/globals';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Dashboard from '../Dashboard';
-import { setupComponentTest } from '../../__tests__/component-mock-utils';
+import Dashboard from '@/Dashboard';
+import { setupComponentTest } from '@/__tests__/component-mock-utils';
 
 // Set up all component mocks
 setupComponentTest();

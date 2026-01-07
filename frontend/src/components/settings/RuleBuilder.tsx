@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Save, Play, AlertTriangle, Check, Layers } from 'lucide-react';
-import { secureRandom } from '../../utils/secureRandom';
+import { secureRandom } from '@/utils/secureRandom';
 
 interface Rule {
   id: string;

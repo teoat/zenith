@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from 'react-pdf';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import { Button } from "@/components/ui/Button";
 import { Save, X } from "lucide-react";
 import "./PdfViewer.css";

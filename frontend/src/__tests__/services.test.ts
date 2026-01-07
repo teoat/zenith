@@ -19,12 +19,12 @@ jest.mock('../services/client', () => ({
 global.fetch = jest.fn();
 
 import '@testing-library/jest-dom';
-import { request } from '../services/client';
-import { authService } from '../services/auth';
-import { caseService } from '../services/cases';
-import { graphService } from '../services/graph';
-import { evidenceService } from '../services/evidence';
-import { monitoringService } from '../services/monitoring';
+import { request } from '@/services/client';
+import { authService } from '@/services/auth';
+import { caseService } from '@/services/cases';
+import { graphService } from '@/services/graph';
+import { evidenceService } from '@/services/evidence';
+import { monitoringService } from '@/services/monitoring';
 
 // Mock localStorage
 const localStorageMock = {

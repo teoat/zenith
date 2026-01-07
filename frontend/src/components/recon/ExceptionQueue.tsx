@@ -1,8 +1,8 @@
 import React from 'react';
-import type { ReconciliationItem } from '../../lib/api';
+import type { ReconciliationItem } from '@/lib/api';
 import { AlertTriangle } from 'lucide-react';
-import { useFormatters } from '../../providers/LocaleProvider';
-import { VirtualizedList } from '../ui/VirtualizedList';
+import { useFormatters } from '@/providers/LocaleProvider';
+import { VirtualizedList } from '@/components/ui/VirtualizedList';
 
 interface ExceptionQueueProps {
   items: ReconciliationItem[];

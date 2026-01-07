@@ -1,6 +1,6 @@
 import React, { useState, memo } from 'react';
-import { useEvidence } from '../../hooks/useEvidence';
-import PageErrorBoundary from '../PageErrorBoundary';
+import { useEvidence } from '@/hooks/useEvidence';
+import PageErrorBoundary from '@/components/PageErrorBoundary';
 import ForensicsSkeleton from './ForensicsSkeleton';
 import ForensicsErrorState from './ForensicsErrorState';
 import ForensicsToolbar from './ForensicsToolbar';

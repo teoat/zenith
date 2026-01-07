@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import { useQueryClient } from '@tanstack/react-query';
 import { useWebSocket } from '@/providers/WebSocketProvider';
 

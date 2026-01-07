@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Home, FileText, ArrowLeft } from 'lucide-react';
-import { AccessibleButton } from '../components/ui/AccessibleButton';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();

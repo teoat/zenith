@@ -1,8 +1,8 @@
-import type { Note } from '../types/note';
+import type { Note } from '@/types/note';
 import { request } from './client';
-import type { Case } from '../types/schema';
-import type { PaginationInfo } from '../types/api';
-import type { ApiResponse, CollectionResponse } from '../types/api-responses';
+import type { Case } from '@/types/schema';
+import type { PaginationInfo } from '@/types/api';
+import type { ApiResponse, CollectionResponse } from '@/types/api-responses';
 
 export const caseService = {
   getCases: async (params?: Record<string, unknown>): Promise<CollectionResponse<Case> & { pagination: PaginationInfo }> => {

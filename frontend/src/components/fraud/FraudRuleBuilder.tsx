@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Power, PowerOff, Save, AlertTriangle } from 'lucide-react';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface Rule {
   rule_id: string;

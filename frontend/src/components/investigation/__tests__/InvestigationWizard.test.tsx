@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, jest, beforeEach } from '@jest/globals';
 import { BrowserRouter } from 'react-router-dom';
-import InvestigationWizard from '../InvestigationWizard';
+import InvestigationWizard from '@/InvestigationWizard';
 
 jest.mock('../../../services/cases');
 jest.mock('../../../services/ai');

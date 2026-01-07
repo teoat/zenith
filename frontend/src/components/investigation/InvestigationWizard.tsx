@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCaseStore } from '../../store/caseStore';
+import { useCaseStore } from '@/store/caseStore';
 
 interface InvestigationWizardProps {
   onComplete?: (investigation: any) => void;

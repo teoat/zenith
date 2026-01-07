@@ -55,6 +55,8 @@ export default [
       'no-new-func': 'error',
       'no-script-url': 'error',
       'no-alert': 'warn',
+      'max-lines': ['warn', { max: 200, skipBlankLines: true, skipComments: true }],
+      'max-lines-per-function': ['warn', { max: 50, skipBlankLines: true, skipComments: true }],
     },
   },
   // Override rules for test files

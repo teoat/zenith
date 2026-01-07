@@ -1,4 +1,4 @@
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import { API_BASE } from './client';
 
 type MessageHandler = (data: any) => void;

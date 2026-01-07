@@ -1,5 +1,5 @@
-import { setupGlobalErrorHandlers } from '../errorHandler';
-import { api } from '../../lib/api';
+import { setupGlobalErrorHandlers } from '@/errorHandler';
+import { api } from '@/lib/api';
 
 // Mock API
 jest.mock('../../lib/api', () => ({

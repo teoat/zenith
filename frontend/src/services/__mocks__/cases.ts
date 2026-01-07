@@ -1,5 +1,5 @@
 // Mock implementation for cases service
-import type { Case } from '../../types/schema';
+import type { Case } from '@/types/schema';
 
 export const caseService = {
   getCases: jest.fn().mockResolvedValue({

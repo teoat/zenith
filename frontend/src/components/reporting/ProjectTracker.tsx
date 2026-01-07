@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter, ZAxis, Cell } from 'recharts';
 import { Check, Building, Briefcase, Search } from 'lucide-react';
-import { reportingService } from '../../services/reporting';
-import type { ProjectTrackerData } from '../../types/api';
-import { useProjectStore } from '../../store/projectStore';
-import { secureLogger } from '../../utils/secureLogger';
+import { reportingService } from '@/services/reporting';
+import type { ProjectTrackerData } from '@/types/api';
+import { useProjectStore } from '@/store/projectStore';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface VendorOutlier {
     x: number;

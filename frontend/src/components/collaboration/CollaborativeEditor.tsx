@@ -1,11 +1,11 @@
 // frontend/src/components/collaboration/CollaborativeEditor.tsx
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Button } from '../ui/Button';
+import { Button } from '@/components/ui/Button';
 // Input import removed as unused
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Users, User, Edit3, Save, X } from 'lucide-react';
-import { secureLogger } from '../../utils/secureLogger';
-import { useCollaborativeEditor } from '../../hooks/useCollaborativeEditor';
+import { secureLogger } from '@/utils/secureLogger';
+import { useCollaborativeEditor } from '@/hooks/useCollaborativeEditor';
 
 interface UserPresence {
   user_id: string;

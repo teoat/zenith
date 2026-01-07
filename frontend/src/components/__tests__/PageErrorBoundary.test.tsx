@@ -1,7 +1,7 @@
 
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import PageErrorBoundary from '../PageErrorBoundary';
+import PageErrorBoundary from '@/components/PageErrorBoundary';
 
 describe('PageErrorBoundary', () => {
   const originalError = console.error;

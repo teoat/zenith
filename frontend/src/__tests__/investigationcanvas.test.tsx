@@ -5,7 +5,7 @@
 
 
 import { render, screen } from '@testing-library/react';
-import InvestigationCanvas from '../components/investigation/InvestigationCanvas';
+import InvestigationCanvas from '@/components/investigation/InvestigationCanvas';
 
 // Mock force-graph components
 jest.mock('react-force-graph-2d', () => ({

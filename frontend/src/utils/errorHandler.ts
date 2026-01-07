@@ -1,5 +1,5 @@
 import { secureLogger } from './secureLogger';
-import { api } from '../lib/api';
+import { api } from '@/lib/api';
 
 export const setupGlobalErrorHandlers = () => {
   // Handle unhandled promise rejections

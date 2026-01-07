@@ -15,7 +15,7 @@ import {
   BookmarkCheck
 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface RegulatoryAlert {
   id: string;

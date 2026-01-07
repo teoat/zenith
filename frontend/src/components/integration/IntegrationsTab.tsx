@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter, Webhook, Globe, Zap, Database, Server, CheckCircle, Clock, AlertCircle, Settings, ExternalLink } from 'lucide-react';
-import type { Integration } from '../../lib/api';
+import type { Integration } from '@/lib/api';
 
 interface IntegrationsTabProps {
   integrations: Integration[];

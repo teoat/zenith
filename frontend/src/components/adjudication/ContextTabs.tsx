@@ -1,5 +1,5 @@
 import React from 'react';
-import type { AlertItem } from '../../lib/api';
+import type { AlertItem } from '@/lib/api';
 import ContextTab from './tabs/ContextTab';
 import AIReasoningTab from './tabs/AIReasoningTab';
 import HistoryTab from './tabs/HistoryTab';

@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useToast } from '../providers/ToastProvider';
-import EntityRegistry from '../components/investigation/EntityRegistry';
+import { useToast } from '@/providers/ToastProvider';
+import EntityRegistry from '@/components/investigation/EntityRegistry';
 import { Share2, Save, RotateCcw, Network, HelpCircle, Clock, Map } from 'lucide-react';
-import { api } from '../lib/api';
-import InvestigationSkeleton from '../components/investigation/InvestigationSkeleton';
-import ThreeDGraph from '../components/investigation/ThreeDGraph';
-import { AccessibleButton } from '../components/ui/AccessibleButton';
-import { secureLogger } from '../utils/secureLogger';
-import PageErrorBoundary from '../components/PageErrorBoundary';
-import { useGraphData } from '../hooks/useGraphData';
-import { TourGuide, Step } from '../components/onboarding/TourGuide';
+import { api } from '@/lib/api';
+import InvestigationSkeleton from '@/components/investigation/InvestigationSkeleton';
+import ThreeDGraph from '@/components/investigation/ThreeDGraph';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
+import { secureLogger } from '@/utils/secureLogger';
+import PageErrorBoundary from '@/components/PageErrorBoundary';
+import { useGraphData } from '@/hooks/useGraphData';
+import { TourGuide, Step } from '@/components/onboarding/TourGuide';
 import { useQueryClient } from '@tanstack/react-query';
 
 const GRAPH_TUTORIAL_STEPS: Step[] = [

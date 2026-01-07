@@ -1,5 +1,5 @@
 import { describe, it, jest, beforeEach } from '@jest/globals';
-import { graphService } from '../graph';
+import { graphService } from '@/graph';
 
 global.fetch = jest.fn();
 

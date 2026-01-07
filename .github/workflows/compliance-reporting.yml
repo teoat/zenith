@@ -1,0 +1,61 @@
+name: Compliance Reporting
+
+on:
+  schedule:
+    - cron: '0 1 1 * *'  # Monthly on the 1st at 1 AM UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/app/services/compliance_reporting.py'
+
+jobs:
+  generate-compliance-reports:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate compliance reports
+        run: |
+          python backend/app/services/compliance_reporting.py \
+            --report-dir reports/compliance
+
+      - name: Upload compliance reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: compliance-reports-${{ github.run_number }}
+          path: |
+            reports/compliance/
+          retention-days: 90
+
+      - name: Create release for reports
+        if: github.event_name == 'schedule'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: compliance-${{ github.run_number }}
+          name: Compliance Report - ${{ github.run_number }}
+          files: |
+            reports/compliance/*.json
+            reports/compliance/*.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify on critical findings
+        if: github.event_name == 'schedule'
+        run: |
+          python scripts/maintenance/notify_compliance_issues.py \
+            --report-dir reports/compliance \
+            --threshold critical

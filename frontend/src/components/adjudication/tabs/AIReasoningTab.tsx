@@ -1,5 +1,5 @@
 import React from 'react';
-import type { AlertItem } from '../../../lib/api';
+import type { AlertItem } from '@/lib/api';
 import { ShieldAlert } from 'lucide-react';
 
 interface AIReasoningTabProps {

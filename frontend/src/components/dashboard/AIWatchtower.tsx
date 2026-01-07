@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Eye, ThumbsUp, ThumbsDown, X, Sparkles, ExternalLink } from 'lucide-react';
-import { api } from '../../lib/api';
-import { secureLogger } from '../../utils/secureLogger';
+import { api } from '@/lib/api';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface Insight {
   id: string;

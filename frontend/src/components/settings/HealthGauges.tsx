@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Cpu, HardDrive, Wifi, Clock, Activity, Database } from 'lucide-react';
-import { api } from '../../lib/api';
-import { secureLogger } from '../../utils/secureLogger';
+import { api } from '@/lib/api';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface Gauge {
   label: string;

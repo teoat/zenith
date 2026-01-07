@@ -1,9 +1,9 @@
-import { ApiError } from '../errors/ApiError';
-export { API_BASE } from '../config';
-import { secureLogger } from '../utils/secureLogger';
-import { createCircuitBreaker, DEFAULT_CIRCUIT_CONFIGS } from '../lib/circuitBreaker';
-import { addCsrfHeader } from '../utils/csrfProtection';
-import { API_BASE } from '../config';
+import { ApiError } from '@/errors/ApiError';
+export { API_BASE } from '@/config';
+import { secureLogger } from '@/utils/secureLogger';
+import { createCircuitBreaker, DEFAULT_CIRCUIT_CONFIGS } from '@/lib/circuitBreaker';
+import { addCsrfHeader } from '@/utils/csrfProtection';
+import { API_BASE } from '@/config';
 
 // Create circuit breaker for API calls
 const apiCircuitBreaker = createCircuitBreaker('api-service', DEFAULT_CIRCUIT_CONFIGS.api);

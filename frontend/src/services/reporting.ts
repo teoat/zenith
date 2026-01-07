@@ -5,8 +5,8 @@ import type {
   ReportResponse, CaseSummaryResponse, ReportTemplateInfo,
   ScheduledReport, ScheduledReportRequest, FinancialHealthData,
   ProjectTrackerData, TransactionFlow, BehavioralAnalyticsResponse, PredictiveStats
-} from '../types/api';
-import { API_BASE } from '../config';
+} from '@/types/api';
+import { API_BASE } from '@/config';
 
 export const reportingService = {
   // Stats

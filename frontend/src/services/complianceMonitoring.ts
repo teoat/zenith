@@ -1,4 +1,4 @@
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 // Compliance Monitoring Service - Real-time monitoring and alerting for compliance systems
 // Tracks system health, compliance metrics, and provides alerting capabilities

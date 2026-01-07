@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
-import { AccessibleButton } from '../ui/AccessibleButton';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
 interface DecisionPanelProps {
   onApprove: () => void;

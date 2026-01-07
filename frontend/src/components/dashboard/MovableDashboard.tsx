@@ -2,10 +2,10 @@ import React, { useState, Suspense } from 'react';
 import { ResponsiveGridLayout } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 // import 'react-resizable/css/styles.css';
-import { useDashboardMetrics } from '../../hooks/useDashboardMetrics';
+import { useDashboardMetrics } from '@/hooks/useDashboardMetrics';
 import { Activity, AlertTriangle, FolderOpen, Users, Lock, Unlock } from 'lucide-react';
 import MetricSparkline from './MetricSparkline';
-import { useProjectStore } from '../../store/projectStore';
+import { useProjectStore } from '@/store/projectStore';
 
 // Lazy load heavy components to reduce initial bundle size
 const ThreatMap = React.lazy(() => import(/* webpackChunkName: "threat-map" */ './ThreatMap'));

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { AlertTriangle, ShieldCheck, FileSignature } from 'lucide-react';
-import type { EvidenceItem } from '../../lib/api';
+import type { EvidenceItem } from '@/lib/api';
 
 interface TamperDetectorProps {
   evidence: EvidenceItem | null;

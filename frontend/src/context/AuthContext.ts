@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { User } from '../types/schema';
+import type { User } from '@/types/schema';
 
 export interface LoginCredentials {
   email: string;

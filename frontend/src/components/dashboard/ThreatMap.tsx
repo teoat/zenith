@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { ShieldAlert, MapPin, Loader } from 'lucide-react';
 import maplibregl from 'maplibre-gl';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 // Lazy load the map components to reduce bundle size
 const Map = React.lazy(() =>
@@ -48,7 +48,7 @@ interface RawThreatData {
   type: string;
 }
 
-import { env } from '../../utils/env';
+import { env } from '@/utils/env';
 
 const ThreatMap: React.FC = () => {
   // All hooks must be called before any conditional logic

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X, ShieldAlert, User, DollarSign, Calendar } from 'lucide-react';
-import { SanitizedHTML } from '../../hooks/useSanitizedHTML';
+import { SanitizedHTML } from '@/hooks/useSanitizedHTML';
 
 interface CasePreviewDrawerProps {
   caseId: string | null;

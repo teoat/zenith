@@ -1,6 +1,6 @@
 import React from 'react';
 import { LayoutGrid, List, Plus, Search, Gavel, HelpCircle, Zap } from 'lucide-react';
-import { AccessibleButton } from '../../components/ui/AccessibleButton';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
 interface CaseHeaderProps {
   searchTerm: string;

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
-import { Badge } from '../ui/Badge';
-import { Button } from '../ui/Button';
-import { Alert, AlertTitle, AlertDescription } from '../ui/Alert';
-import { secureLogger } from '../../utils/secureLogger';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/Alert';
+import { secureLogger } from '@/utils/secureLogger';
 import { 
   ShieldCheck, 
   Network, 

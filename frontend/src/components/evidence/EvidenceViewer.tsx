@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { usePersistedState } from '../../hooks/usePersistedState';
+import { usePersistedState } from '@/hooks/usePersistedState';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, FileText, Search, Type, AlertCircle, Copy, CheckCircle } from 'lucide-react';
 

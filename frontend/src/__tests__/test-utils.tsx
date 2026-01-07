@@ -2,11 +2,11 @@ import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter, MemoryRouterProps } from 'react-router-dom';
-import { AIProvider } from '../context/AIContext';
-import { LocaleProvider } from '../providers/LocaleProvider';
-import { ToastProvider } from '../providers/ToastProvider';
-import { AccessibilityProvider } from '../context/AccessibilityContext';
-import { NetworkStatusProvider } from '../providers/NetworkStatusProvider';
+import { AIProvider } from '@/context/AIContext';
+import { LocaleProvider } from '@/providers/LocaleProvider';
+import { ToastProvider } from '@/providers/ToastProvider';
+import { AccessibilityProvider } from '@/context/AccessibilityContext';
+import { NetworkStatusProvider } from '@/providers/NetworkStatusProvider';
 
 /**
  * Create a test QueryClient with disabled retries for faster tests

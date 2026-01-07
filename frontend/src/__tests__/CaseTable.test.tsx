@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import CaseTable from '../components/cases/CaseTable';
+import CaseTable from '@/components/cases/CaseTable';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import type { Case } from '../types/schema';
+import type { Case } from '@/types/schema';
 
 const mockCases: Case[] = [
   {

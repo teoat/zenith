@@ -1,6 +1,6 @@
 import React from 'react';
-import type { ReconciliationItem } from '../../lib/api';
-import { useFormatters } from '../../providers/LocaleProvider';
+import type { ReconciliationItem } from '@/lib/api';
+import { useFormatters } from '@/providers/LocaleProvider';
 import { GripVertical, AlertTriangle } from 'lucide-react';
 
 interface TransactionCardProps {

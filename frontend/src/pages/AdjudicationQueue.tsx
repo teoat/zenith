@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '../providers/ToastProvider';
-import { api, type AlertItem } from '../lib/api';
-import AdjudicationLayout from '../components/adjudication/AdjudicationLayout';
-import AlertList from '../components/adjudication/AlertList';
-import AlertDetail from '../components/adjudication/AlertDetail';
-import { socketService } from '../services/socket';
+import { useToast } from '@/providers/ToastProvider';
+import { api, type AlertItem } from '@/lib/api';
+import AdjudicationLayout from '@/components/adjudication/AdjudicationLayout';
+import AlertList from '@/components/adjudication/AlertList';
+import AlertDetail from '@/components/adjudication/AlertDetail';
+import { socketService } from '@/services/socket';
 import { motion } from 'framer-motion';
 import { Trophy, Sparkles } from 'lucide-react';
-import { secureLogger } from '../utils/secureLogger';
-import PageErrorBoundary from '../components/PageErrorBoundary';
+import { secureLogger } from '@/utils/secureLogger';
+import PageErrorBoundary from '@/components/PageErrorBoundary';
 
 const AdjudicationQueue = () => {
   const [alerts, setAlerts] = useState<AlertItem[]>([]);

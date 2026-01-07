@@ -1,5 +1,5 @@
 import { describe, it, jest, beforeEach } from '@jest/globals';
-import { notificationService } from '../notifications';
+import { notificationService } from '@/notifications';
 
 global.fetch = jest.fn();
 

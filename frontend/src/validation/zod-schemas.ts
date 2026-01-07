@@ -2,7 +2,7 @@
 // Zod schemas for runtime type checking and validation
 
 import { z } from 'zod';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 // ==========================================
 // BASE SCHEMAS

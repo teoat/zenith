@@ -1,7 +1,7 @@
 // frontend/src/components/ui/SyncStatus.tsx
 import { useState, useEffect } from 'react';
-import { api } from '../../lib/api';
-import { secureLogger } from '../../utils/secureLogger';
+import { api } from '@/lib/api';
+import { secureLogger } from '@/utils/secureLogger';
 import './SyncStatus.css';
 
 interface SyncStatus {

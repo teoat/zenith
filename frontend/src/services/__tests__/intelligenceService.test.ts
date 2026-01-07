@@ -2,8 +2,8 @@
  * Unit tests for Intelligence Service
  */
 
-import { intelligenceService } from '../intelligenceService';
-import { request } from '../client';
+import { intelligenceService } from '@/intelligenceService';
+import { request } from '@/client';
 
 // Mock the request function
 jest.mock('../client', () => ({

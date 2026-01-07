@@ -1,4 +1,4 @@
-import { EvidenceMetadata } from '../types/evidence';
+import { EvidenceMetadata } from '@/types/evidence';
 
 export const MOCK_EVIDENCE: EvidenceMetadata[] = [
   {

@@ -1,4 +1,4 @@
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import { request, isElectron } from './client';
 
 export const syncService = {

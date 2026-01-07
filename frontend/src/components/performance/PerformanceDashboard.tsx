@@ -1,5 +1,5 @@
 import React, { useEffect, memo } from 'react';
-import { performanceMonitor } from '../../hooks/usePerformanceMonitor';
+import { performanceMonitor } from '@/hooks/usePerformanceMonitor';
 
 interface PerformanceDashboardProps {
   showInDevelopment?: boolean;

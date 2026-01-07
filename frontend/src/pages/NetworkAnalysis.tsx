@@ -1,9 +1,9 @@
 import React, { useEffect, useState, Suspense } from 'react';
-import type { NetworkGraphData } from '../components/visualizations/NetworkGraph';
-import { api } from '../lib/api';
+import type { NetworkGraphData } from '@/components/visualizations/NetworkGraph';
+import { api } from '@/lib/api';
 import { Loader2, RefreshCw, Box, Layers } from 'lucide-react';
-import { AccessibleButton } from '../components/ui/AccessibleButton';
-import { secureLogger } from '../utils/secureLogger';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
+import { secureLogger } from '@/utils/secureLogger';
 
 // Lazy load heavy NetworkGraph component
 const NetworkGraph = React.lazy(() => import('../components/visualizations/NetworkGraph'));

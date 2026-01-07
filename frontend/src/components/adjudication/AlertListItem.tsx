@@ -1,6 +1,6 @@
 import React from 'react';
-import type { AlertItem } from '../../lib/api'; // Assuming type exists
-import { useFormatters } from '../../providers/LocaleProvider';
+import type { AlertItem } from '@/lib/api'; // Assuming type exists
+import { useFormatters } from '@/providers/LocaleProvider';
 import { AlertTriangle, Clock } from 'lucide-react';
 
 interface AlertListItemProps {

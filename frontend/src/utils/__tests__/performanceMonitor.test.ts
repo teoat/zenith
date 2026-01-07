@@ -1,4 +1,4 @@
-import PerformanceMonitor, { performanceMonitor } from '../performanceMonitor';
+import PerformanceMonitor, { performanceMonitor } from '@/performanceMonitor';
 
 describe('PerformanceMonitor', () => {
   beforeEach(() => {

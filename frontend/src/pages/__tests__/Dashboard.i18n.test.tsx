@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { LanguageSwitcher } from '../../components/i18n/LanguageSwitcher';
+import { LanguageSwitcher } from '@/components/i18n/LanguageSwitcher';
 
 // Mock i18next
 jest.mock('react-i18next', () => ({

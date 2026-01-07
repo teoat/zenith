@@ -38,7 +38,7 @@ jest.mock('../utils/secureLogger', () => ({
 }));
 
 // Import the actual client functions
-import { request } from '../services/client';
+import { request } from '@/services/client';
 
 // Test utilities
 const mockFetch = (response: unknown, status = 200) => {

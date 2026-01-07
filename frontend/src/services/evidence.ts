@@ -1,5 +1,5 @@
 import { request, isElectron, API_BASE } from './client';
-import type { EvidenceItem, ProcessedEvidence, FileSelectResult } from '../types/api';
+import type { EvidenceItem, ProcessedEvidence, FileSelectResult } from '@/types/api';
 import '../types/electron.d.ts'; // Ensure electron types are available
 
 export const evidenceService = {

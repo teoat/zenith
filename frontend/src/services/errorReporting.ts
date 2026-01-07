@@ -3,7 +3,7 @@
  * Provides centralized error logging, user feedback, and optional remote reporting.
  */
 
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface ErrorReport {
   message: string;

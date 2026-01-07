@@ -1,5 +1,5 @@
 import { describe, it, jest, beforeEach } from '@jest/globals';
-import { aiService } from '../ai';
+import { aiService } from '@/ai';
 
 global.fetch = jest.fn();
 

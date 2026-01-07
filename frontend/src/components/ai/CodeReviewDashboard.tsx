@@ -1,8 +1,11 @@
 // frontend/src/components/ai/CodeReviewDashboard.tsx
 import React, { useState, useEffect } from 'react';
-import { simulateDelay } from '../../utils/simulation';
+import { simulateDelay } from '@/utils/simulation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
+import { IssueCard } from './IssueCard';
+import { MetricsSummary } from './MetricsSummary';
+import { FilterControls } from './FilterControls';
 import {
   Code,
   AlertTriangle,
@@ -109,7 +112,7 @@ const CodeReviewDashboard: React.FC = () => {
     loadCodeReviewData();
   }, []);
 
-  /* import { request } from '../../services/client'; */ // We can't use import inside function, so assume it's imported at top.
+  /* import { request } from '@/services/client'; */ // We can't use import inside function, so assume it's imported at top.
   /* Note to tool: I will add the import at the top of the file in a separate block or manually via sed if needed, but here I just change the body */
   
   const loadCodeReviewData = async () => {

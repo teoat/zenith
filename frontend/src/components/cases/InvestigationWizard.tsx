@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X, ChevronRight, ChevronLeft, Check, AlertTriangle, User, FileText, Sparkles } from 'lucide-react';
-import type { CalendarFormat, CurrencyFormat, DecimalFormat } from '../../types/locale';
-import { ApprovalQueue } from '../ApprovalQueue';
-import { DraftPreview } from '../ui/DraftPreview';
-import { draftPreviewService, type DraftState } from '../../services/draftPreviewService';
+import type { CalendarFormat, CurrencyFormat, DecimalFormat } from '@/types/locale';
+// TODO: These modules need to be created or paths corrected
+// import { ApprovalQueue } from '@/ApprovalQueue';
+// import { DraftPreview } from '@/components/ui/DraftPreview';
+import { draftPreviewService, type DraftState } from '@/services/draftPreviewService';
 
 interface InvestigationWizardProps {
   isOpen: boolean;
@@ -229,11 +230,13 @@ const InvestigationWizard: React.FC<InvestigationWizardProps> = ({ isOpen, onClo
                   <label htmlFor="investigation-description" className="block text-sm font-medium mb-2">Description</label>
                   
                   {drafts.find(d => d.field === 'description') ? (
-                    <DraftPreview 
-                      draft={drafts.find(d => d.field === 'description')!}
-                      onAccept={() => acceptDraft('description')}
-                      onReject={() => rejectDraft('description')}
-                    />
+                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm">
+                      <span className="font-medium">AI Draft Available</span>
+                      <div className="flex gap-2 mt-2">
+                        <button onClick={() => acceptDraft('description')} className="px-3 py-1 bg-green-500 text-white rounded">Accept</button>
+                        <button onClick={() => rejectDraft('description')} className="px-3 py-1 bg-red-500 text-white rounded">Reject</button>
+                      </div>
+                    </div>
                   ) : (
                     <textarea 
                       id="investigation-description"
@@ -430,12 +433,13 @@ const InvestigationWizard: React.FC<InvestigationWizardProps> = ({ isOpen, onClo
                   <span className="block text-sm font-medium mb-3">Tags</span>
                   
                   {drafts.find(d => d.field === 'tags') && (
-                    <DraftPreview 
-                      draft={drafts.find(d => d.field === 'tags')!}
-                      onAccept={() => acceptDraft('tags')}
-                      onReject={() => rejectDraft('tags')}
-                      className="mb-4"
-                    />
+                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm mb-4">
+                      <span className="font-medium">AI Draft Available for Tags</span>
+                      <div className="flex gap-2 mt-2">
+                        <button onClick={() => acceptDraft('tags')} className="px-3 py-1 bg-green-500 text-white rounded">Accept</button>
+                        <button onClick={() => rejectDraft('tags')} className="px-3 py-1 bg-red-500 text-white rounded">Reject</button>
+                      </div>
+                    </div>
                   )}
 
                   <div className="flex flex-wrap gap-2">
@@ -541,9 +545,11 @@ const InvestigationWizard: React.FC<InvestigationWizardProps> = ({ isOpen, onClo
              )}
            </div>
 
-           {/* Approval Queue */}
+           {/* Approval Queue - Placeholder */}
            <div className="mt-6">
-             <ApprovalQueue showHeader={false} maxHeight="200px" />
+             <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg text-center text-sm text-slate-500">
+               Approval Queue Component
+             </div>
            </div>
 
            {/* Footer */}

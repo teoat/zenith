@@ -17,12 +17,12 @@ import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
-import { useCollaboration } from '../../hooks/useCollaboration';
-import type { Entity, Relationship, Evidence } from '../../types/investigation';
-import { secureLogger } from '../../utils/secureLogger';
+import { useCollaboration } from '@/hooks/useCollaboration';
+import type { Entity, Relationship, Evidence } from '@/types/investigation';
+import { secureLogger } from '@/utils/secureLogger';
 import {
   Plus,
   Search,

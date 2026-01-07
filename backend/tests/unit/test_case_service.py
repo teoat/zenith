@@ -78,6 +78,7 @@ class TestCaseService:
         mock_query.outerjoin.return_value = mock_query
         mock_query.outerjoin.return_value = mock_query  # Second outerjoin
         mock_query.filter.return_value = mock_query
+        mock_query.group_by.return_value = mock_query
         mock_query.first.return_value = mock_result
 
         mock_db.query.return_value = mock_query

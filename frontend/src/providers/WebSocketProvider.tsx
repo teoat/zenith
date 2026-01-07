@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { secureLogger } from '../utils/secureLogger';
-import { secureRandom } from '../utils/secureRandom';
+import { secureLogger } from '@/utils/secureLogger';
+import { secureRandom } from '@/utils/secureRandom';
 
 // Define a generic message type - expand as needed
 export interface WebSocketMessage {

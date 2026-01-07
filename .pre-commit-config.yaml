@@ -54,10 +54,25 @@ repos:
           - .github/license_header.txt
         exclude: ^(docs/|frontend/|tests/|venv/)
 
-  - repo: https://github.com/pre-commit-hooks/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-      - id: file-contents-sorter
-        files: ^\.gitignore$
-      - id: check-toml
-      - id: check-json
+   - repo: https://github.com/pre-commit-hooks/pre-commit-hooks
+     rev: v4.4.0
+     hooks:
+       - id: file-contents-sorter
+         files: ^\.gitignore$
+       - id: check-toml
+       - id: check-json
+
+   - repo: https://github.com/pre-commit/mirrors-eslint
+     rev: v8.48.0
+     hooks:
+       - id: eslint
+         files: \.(js|ts|jsx|tsx)$
+         types: [file]
+         additional_dependencies:
+           - eslint@^9.39.2
+           - "@eslint/js@^9.39.2"
+           - typescript-eslint@^8.50.1
+           - eslint-plugin-react-hooks@^7.0.1
+           - eslint-plugin-react-refresh@^0.4.26
+           - globals@^16.5.0
+         exclude: ^(backend/|scripts/)

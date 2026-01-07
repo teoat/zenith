@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.t
 import { Button } from '@/components/ui/Button.tsx';
 import { Badge } from '@/components/ui/Badge.tsx';
 import { Upload, Eye } from 'lucide-react';
-import { secureLogger } from '../../../utils/secureLogger';
-import { secureRandom } from '../../../utils/secureRandom';
-import { getFileIcon } from '../../../utils/fileUtils';
-import { formatFileSize } from '../../../utils/formatters';
+import { secureLogger } from '@/utils/secureLogger';
+import { secureRandom } from '@/utils/secureRandom';
+import { getFileIcon } from '@/utils/fileUtils';
+import { formatFileSize } from '@/utils/formatters';
 
 const MultimodalAnalyzer: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);

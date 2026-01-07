@@ -1,9 +1,9 @@
 // pages/Ingestion.tsx
 import React from 'react';
-import FacetedFilter from '../components/cases/FacetedFilter';
-import { useIngestionStore } from '../store/useIngestionStore';
-import { IngestionStepper } from '../components/ingestion/IngestionStepper';
-import PageErrorBoundary from '../components/PageErrorBoundary';
+import FacetedFilter from '@/components/cases/FacetedFilter';
+import { useIngestionStore } from '@/store/useIngestionStore';
+import { IngestionStepper } from '@/components/ingestion/IngestionStepper';
+import PageErrorBoundary from '@/components/PageErrorBoundary';
 
 interface FilterOption {
   id: string;

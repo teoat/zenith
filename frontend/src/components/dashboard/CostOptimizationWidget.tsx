@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { DollarSign, Target, Zap } from 'lucide-react';
 import { costOptimizationService } from '@/services/costOptimization';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface CostOptimizationData {
   current_spend: number;

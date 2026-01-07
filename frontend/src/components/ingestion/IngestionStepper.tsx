@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useIngestionStore } from '../../store/useIngestionStore';
-import { useProjectStore } from '../../store/projectStore';
-import FileDropZone from '../ui/FileDropZone';
+import { useIngestionStore } from '@/store/useIngestionStore';
+import { useProjectStore } from '@/store/projectStore';
+import FileDropZone from '@/components/ui/FileDropZone';
 import { DataMapping } from './DataMapping';
 import { CheckCircle, AlertCircle, FileText, ChevronRight, Upload } from 'lucide-react';
-import { api } from '../../lib/api';
-import { useToast } from '../../providers/ToastProvider';
-import { AccessibleButton } from '../ui/AccessibleButton';
-import ProgressBar from '../ui/ProgressBar';
-import { secureLogger } from '../../utils/secureLogger';
+import { api } from '@/lib/api';
+import { useToast } from '@/providers/ToastProvider';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
+import ProgressBar from '@/components/ui/ProgressBar';
+import { secureLogger } from '@/utils/secureLogger';
 
 const STEPS = [
     { id: 'upload', label: 'Upload Files' },

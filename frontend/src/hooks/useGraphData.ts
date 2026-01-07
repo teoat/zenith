@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { api } from '../lib/api';
+import { api } from '@/lib/api';
 
 interface GraphNode {
   id: string;

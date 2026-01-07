@@ -1,4 +1,4 @@
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 /**
  * Service for managing Client-Side AI Inference using ONNX (Mocked for now)

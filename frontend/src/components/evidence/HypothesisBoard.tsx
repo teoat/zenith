@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Lightbulb, Check, X, Plus, ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react';
-import { Card, CardContent } from '../ui/Card';
-import type { EvidenceItem } from '../../lib/api';
-import { AccessibleButton } from '../ui/AccessibleButton';
+import { Card, CardContent } from '@/components/ui/Card';
+import type { EvidenceItem } from '@/lib/api';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
 interface Hypothesis {
   id: string;

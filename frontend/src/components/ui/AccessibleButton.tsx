@@ -1,6 +1,6 @@
 // frontend/src/components/ui/AccessibleButton.tsx
 import React, { useRef, useEffect } from 'react';
-import { useAccessibility } from '../../lib/accessibility';
+import { useAccessibility } from '@/lib/accessibility';
 
 interface AccessibleButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'success';

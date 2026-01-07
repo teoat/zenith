@@ -1,0 +1,78 @@
+name: Documentation Generation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'backend/app/**'
+      - 'docs/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'backend/app/**'
+      - 'docs/**'
+  workflow_dispatch:
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs mkdocs-material
+          pip install -r requirements.txt
+
+      - name: Generate API documentation
+        run: |
+          python scripts/maintenance/generate_documentation.py \
+            --backend-path backend
+
+      - name: Build MkDocs site
+        run: |
+          mkdocs build
+
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-${{ github.run_number }}
+          path: |
+            backend/docs/
+            site/
+          retention-days: 30
+
+      - name: Comment PR with docs link
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = `## 📚 Documentation Updated\n\n`;
+            
+            if (context.payload.repository.owner.login !== 'github-actions[bot]') {
+              comment += `🔗 View updated documentation: https://${context.payload.repository.owner.login}.github.io/${context.payload.repository.name}/\n\n`;
+              comment += `✅ Documentation has been automatically generated and is available for review.\n`;
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

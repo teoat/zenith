@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, Circle, Award } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 // Import service with fallback in case of module resolution issues during refactor - assuming services exist based on diagnosis
-import { submitRookieChecklist, fetchRookieChecklist } from '../../services/onboarding';
-import { secureLogger } from '../../utils/secureLogger';
+import { submitRookieChecklist, fetchRookieChecklist } from '@/services/onboarding';
+import { secureLogger } from '@/utils/secureLogger';
 
 import './RookieChecklist.css';
 

@@ -2,8 +2,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, jest, beforeEach } from '@jest/globals';
 import { BrowserRouter } from 'react-router-dom';
-import ComplianceDashboard from '../ComplianceDashboard';
-import { complianceService } from '../../../services/compliance';
+import ComplianceDashboard from '@/ComplianceDashboard';
+import { complianceService } from '@/services/compliance';
 
 jest.mock('../../../services/compliance', () => ({
   complianceService: {

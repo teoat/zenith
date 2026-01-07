@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useAIContext } from '../context/AIContext';
+import { useAIContext } from '@/context/AIContext';
 
 export function useContextAwareAI(page: string, data?: any) {
   const { setContext } = useAIContext();

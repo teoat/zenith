@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { authService } from '../services/auth';
+import { authService } from '@/services/auth';
 
 interface User {
   id: string;

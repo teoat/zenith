@@ -1,4 +1,4 @@
-import { isImageFile, isVideoFile, isAudioFile, isDocumentFile, getFileTypeColor } from '../fileUtils';
+import { isImageFile, isVideoFile, isAudioFile, isDocumentFile, getFileTypeColor } from '@/fileUtils';
 
 describe('fileUtils', () => {
   describe('isImageFile', () => {

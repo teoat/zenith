@@ -8,7 +8,7 @@ import {
   truncateString, 
   formatDuration, 
   formatTime 
-} from '../formatters';
+} from '@/formatters';
 
 describe('formatters', () => {
   describe('formatFileSize', () => {

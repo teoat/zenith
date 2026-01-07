@@ -4,7 +4,7 @@
 
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { VirtualizedList } from '../VirtualizedList';
+import { VirtualizedList } from '@/components/ui/VirtualizedList';
 
 describe('VirtualizedList', () => {
   const mockItems = [

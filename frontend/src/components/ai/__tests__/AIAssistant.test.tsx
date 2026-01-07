@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { AIAssistant } from '../AIAssistant';
+import { AIAssistant } from '@/AIAssistant';
 
 jest.mock('../../../services/ai');
 

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { secureLogger } from '../utils/secureLogger';
-import { api } from '../lib/api';
-import type { User } from '../types/schema';
-import { isElectron } from '../utils/electron';
-import type { LoginCredentials } from '../context/AuthContext';
-import { AuthContext } from '../context/AuthContext';
-import { errorReporting } from '../services/errorReporting';
+import { secureLogger } from '@/utils/secureLogger';
+import { api } from '@/lib/api';
+import type { User } from '@/types/schema';
+import { isElectron } from '@/utils/electron';
+import type { LoginCredentials } from '@/context/AuthContext';
+import { AuthContext } from '@/context/AuthContext';
+import { errorReporting } from '@/services/errorReporting';
 
 // Set to true to bypass authentication for debugging purposes
 const isDebugging = false;

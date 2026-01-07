@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckSquare, Square } from 'lucide-react';
-import { AccessibleButton } from '../../components/ui/AccessibleButton';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
 interface CaseActionsProps {
   selectedCases: Set<string>;

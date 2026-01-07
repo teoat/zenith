@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useAuthStore } from '../useAuthStore';
+import { useAuthStore } from '@/useAuthStore';
 
 describe('useAuthStore', () => {
   it('initializes with default state', () => {

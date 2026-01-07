@@ -1,5 +1,5 @@
 import { describe, it } from '@jest/globals';
-import { formatCurrency, formatDate, formatPercentage } from '../formatting';
+import { formatCurrency, formatDate, formatPercentage } from '@/formatting';
 
 describe('Formatting Utils', () => {
   describe('formatCurrency', () => {

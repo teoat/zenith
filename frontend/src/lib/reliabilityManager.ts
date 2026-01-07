@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 export interface DataConsistencyCheck {
   id: string;

@@ -10,8 +10,8 @@ import { Badge } from '@/components/ui/Badge';
 import { Progress } from '@/components/ui/Progress';
 // Tabs available but not currently used
 // import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { secureRandom } from '../../utils/secureRandom'; // Module not found
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { secureRandom } from '@/utils/secureRandom'; // Module not found
 import {
   Brain,
   TrendingUp,

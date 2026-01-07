@@ -1,8 +1,8 @@
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
-import { Badge } from '../ui/Badge';
-import { EvidenceMetadata } from '../../types/evidence';
-import { formatPercentage } from '../../utils/formatters';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { EvidenceMetadata } from '@/types/evidence';
+import { formatPercentage } from '@/utils/formatters';
 
 interface MultimodalAnalysisResultsProps {
   evidence: EvidenceMetadata;

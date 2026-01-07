@@ -1,13 +1,13 @@
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetworkStatus } from '../hooks/useNetworkStatus';
-import { useDashboardMetrics } from '../hooks/useDashboardMetrics';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useDashboardMetrics } from '@/hooks/useDashboardMetrics';
 import { Shield, CloudOff, RefreshCw, AlertTriangle, CheckCircle } from 'lucide-react';
-import RookieChecklist from '../components/common/RookieChecklist';
-import WelcomeMessage from '../components/common/WelcomeMessage';
-import MovableDashboard from '../components/dashboard/MovableDashboard';
-import FeatureDiscovery from '../components/dashboard/FeatureDiscovery';
-import PageErrorBoundary from '../components/PageErrorBoundary';
+import RookieChecklist from '@/components/common/RookieChecklist';
+import WelcomeMessage from '@/components/common/WelcomeMessage';
+import MovableDashboard from '@/components/dashboard/MovableDashboard';
+import FeatureDiscovery from '@/components/dashboard/FeatureDiscovery';
+import PageErrorBoundary from '@/components/PageErrorBoundary';
 import { useQueryClient } from '@tanstack/react-query';
 
 // Wrapper component to handle localStorage check outside of render

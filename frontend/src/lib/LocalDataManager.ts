@@ -1,8 +1,8 @@
 // frontend/src/lib/LocalDataManager.ts
 // Local data management for offline-first functionality
 import React from 'react';
-import { secureLogger } from '../utils/secureLogger';
-import { secureRandom } from '../utils/secureRandom';
+import { secureLogger } from '@/utils/secureLogger';
+import { secureRandom } from '@/utils/secureRandom';
 
 interface StoredItem<T> {
   id: string;

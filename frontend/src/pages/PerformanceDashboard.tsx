@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 import { motion } from 'framer-motion';
-import { useWebSocket } from '../providers/WebSocketProvider';
-import { secureLogger } from '../utils/secureLogger';
+import { useWebSocket } from '@/providers/WebSocketProvider';
+import { secureLogger } from '@/utils/secureLogger';
 
 import {
   Activity,

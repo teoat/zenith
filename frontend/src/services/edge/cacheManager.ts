@@ -1,4 +1,4 @@
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 /**
  * Intelligent Edge Cache Manager

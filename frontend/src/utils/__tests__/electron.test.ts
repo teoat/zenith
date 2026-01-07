@@ -1,4 +1,4 @@
-import { isElectron, getElectronAPI, dbQuery, dbExecute } from '../electron';
+import { isElectron, getElectronAPI, dbQuery, dbExecute } from '@/electron';
 
 describe('Electron Utilities', () => {
   const mockElectronAPI = {

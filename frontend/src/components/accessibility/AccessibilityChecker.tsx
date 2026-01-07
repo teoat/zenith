@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import axe from 'axe-core';
 
 interface AccessibilityCheckerProps {

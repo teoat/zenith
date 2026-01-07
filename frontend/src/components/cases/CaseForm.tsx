@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { useCaseStore } from '../../store/caseStore';
+import { useCaseStore } from '@/store/caseStore';
 
 interface CaseFormData {
   id?: string;

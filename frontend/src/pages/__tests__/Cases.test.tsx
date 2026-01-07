@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, jest, beforeEach } from '@jest/globals';
 import { BrowserRouter } from 'react-router-dom';
-import Cases from '../Cases';
+import Cases from '@/Cases';
 
 // Mock services
 jest.mock('../../services/cases');

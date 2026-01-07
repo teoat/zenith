@@ -1,5 +1,5 @@
 import { describe, test } from '@jest/globals';
-import { cn } from '../utils';
+import { cn } from '@/utils';
 
 describe('Utility Functions', () => {
   describe('cn (className utility)', () => {

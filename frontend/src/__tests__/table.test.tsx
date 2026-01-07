@@ -4,7 +4,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/Table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 
 describe('Table Component', () => {
   it('renders correctly', () => {

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { secureRandom } from '../utils/secureRandom';
+import { secureRandom } from '@/utils/secureRandom';
 
 type Theme = 'light' | 'dark' | 'system';
 

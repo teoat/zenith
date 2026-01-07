@@ -2,8 +2,8 @@ import React from 'react';
 import { Sidebar } from './Sidebar.tsx';
 import { Header } from './Header.tsx';
 import { SecondaryNav } from './SecondaryNav.tsx';
-// import { NotificationContainer } from '../NotificationContainer';
-import PerformanceDashboard from '../performance/PerformanceDashboard';
+// import { NotificationContainer } from '@/NotificationContainer';
+import PerformanceDashboard from '@/pages/PerformanceDashboard';
 
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (

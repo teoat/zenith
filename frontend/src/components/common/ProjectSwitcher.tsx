@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import { useProjectStore } from '@/store/projectStore';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue
 } from '@/components/ui/Select';

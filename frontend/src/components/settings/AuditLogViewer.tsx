@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Shield, AlertTriangle, FileText, Loader } from 'lucide-react';
-import { useFormatters } from '../../providers/LocaleProvider';
-import { api, type AuditLogEntry as ApiAuditLogEntry } from '../../lib/api';
-import { VirtualList } from '../ui/VirtualList';
-import { secureLogger } from '../../utils/secureLogger';
+import { useFormatters } from '@/providers/LocaleProvider';
+import { api, type AuditLogEntry as ApiAuditLogEntry } from '@/lib/api';
+import { VirtualList } from '@/components/ui/VirtualList';
+import { secureLogger } from '@/utils/secureLogger';
 
 // UI Interface extending API interface or mapping to it
 interface UIAuditLogEntry extends ApiAuditLogEntry {

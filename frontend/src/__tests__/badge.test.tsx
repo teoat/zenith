@@ -6,7 +6,7 @@
 
 
 import { render, screen } from '@testing-library/react';
-import { Badge } from '../components/ui/Badge';
+import { Badge } from '@/components/ui/Badge';
 
 describe('Badge Component', () => {
   it('renders correctly', () => {

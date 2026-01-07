@@ -1,4 +1,4 @@
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 export enum CircuitState {
   CLOSED = 'CLOSED',     // Normal operation

@@ -2,8 +2,8 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import SettingsLayout from '../SettingsLayout';
-import { useSettings } from '../../../hooks/useSettings';
+import SettingsLayout from '@/SettingsLayout';
+import { useSettings } from '@/hooks/useSettings';
 
 // Mock the hooks
 jest.mock('../../../hooks/useSettings', () => ({

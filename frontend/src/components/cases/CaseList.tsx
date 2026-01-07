@@ -1,7 +1,7 @@
 import React from 'react';
 import { CheckSquare, Square } from 'lucide-react';
-import { VirtualizedList } from '../ui/VirtualizedList';
-import { Case } from '../../types/schema';
+import { VirtualizedList } from '@/components/ui/VirtualizedList';
+import { Case } from '@/types/schema';
 import CaseActions from './CaseActions';
 
 interface CaseListProps {

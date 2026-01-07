@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-import { useNetworkStatus } from '../hooks/useNetworkStatus';
-import { api } from '../lib/api';
-import { OfflineQueueContext, type QueuedRequest } from '../context/OfflineQueueContext';
-import { secureLogger } from '../utils/secureLogger'; // Import secureLogger
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { api } from '@/lib/api';
+import { OfflineQueueContext, type QueuedRequest } from '@/context/OfflineQueueContext';
+import { secureLogger } from '@/utils/secureLogger'; // Import secureLogger
 
 const QUEUE_STORAGE_KEY = 'offline_mutation_queue';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { EvidenceItem } from '../../lib/api';
+import type { EvidenceItem } from '@/lib/api';
 
 interface EvidenceListProps {
   evidence: EvidenceItem[];

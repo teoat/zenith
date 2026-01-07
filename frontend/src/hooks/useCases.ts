@@ -1,7 +1,7 @@
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../lib/api';
-import type { Case } from '../types/schema';
+import { api } from '@/lib/api';
+import type { Case } from '@/types/schema';
 
 export const useCases = (params?: Record<string, unknown>) => {
   return useQuery({

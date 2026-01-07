@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { usePerformanceMonitor, useFunctionPerformance } from '../usePerformanceMonitor';
+import { usePerformanceMonitor, useFunctionPerformance } from '@/usePerformanceMonitor';
 
 describe('usePerformanceMonitor', () => {
   it('returns performance monitoring interface', () => {

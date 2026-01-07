@@ -1,9 +1,9 @@
 import React from 'react';
 import { Network } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/Card';
-import { Badge } from '../ui/Badge';
-import { EvidenceMetadata } from '../../types/evidence';
-import { formatPercentage, formatDate } from '../../utils/formatters';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { EvidenceMetadata } from '@/types/evidence';
+import { formatPercentage, formatDate } from '@/utils/formatters';
 
 interface EvidenceCorrelationsListProps {
   evidence: EvidenceMetadata | null;

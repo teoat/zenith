@@ -1,0 +1,140 @@
+name: Performance Regression Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+
+jobs:
+  performance-regression:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test_zenith
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio httpx
+
+      - name: Setup environment
+        run: |
+          cp .env.example .env
+          echo "DATABASE_URL=postgresql://test:test@localhost:5432/test_zenith" >> .env
+          echo "REDIS_URL=redis://localhost:6379/0" >> .env
+          echo "ENVIRONMENT=test" >> .env
+
+      - name: Run database migrations
+        run: |
+          cd backend
+          alembic upgrade head
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test_zenith
+
+      - name: Start backend server
+        run: |
+          cd backend
+          uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+          sleep 10
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test_zenith
+          REDIS_URL: redis://localhost:6379/0
+
+      - name: Wait for backend to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -f http://localhost:8000/health; then
+              echo "Backend is ready"
+              break
+            fi
+            echo "Waiting for backend... ($i/30)"
+            sleep 2
+          done
+
+      - name: Run performance regression tests
+        run: |
+          python tests/performance/test_performance_regression.py \
+            --base-url http://localhost:8000
+
+      - name: Upload performance reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-reports-${{ github.run_number }}
+          path: |
+            tests/performance/
+          retention-days: 30
+
+      - name: Create performance trend report
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        run: |
+          if [ -f tests/performance/history.json ]; then
+            python scripts/maintenance/create_performance_trend_report.py \
+              --input tests/performance/history.json \
+              --output tests/performance/trend_report.md
+          fi
+
+      - name: Comment PR with performance results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            if (fs.existsSync('tests/performance/report.txt')) {
+              const report = fs.readFileSync('tests/performance/report.txt', 'utf8');
+              
+              const comment = `## 📊 Performance Regression Test Results\n\n\`\`\`\n${report}\n\`\`\`\n\n`;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+
+      - name: Check for performance regression
+        if: github.event_name == 'pull_request'
+        run: |
+          if grep -q "PERFORMANCE REGRESSION DETECTED" tests/performance/report.txt; then
+            echo "❌ Performance regression detected!"
+            echo "Please review the performance impact before merging."
+            exit 1
+          fi

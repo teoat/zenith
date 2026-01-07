@@ -64,7 +64,7 @@ const useRealTimeData = (endpoint, interval = 30000) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}${endpoint}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`);
         if (!response.ok) throw new Error('Network response error');
         const result = await response.json();
         setData(result);
@@ -387,9 +387,9 @@ const NavigationDrawer = ({ open, onClose, onNavigate }) => {
 // Floating action button with quick actions
 const QuickActionsFab = () => {
   const actions = [
-    { icon: <Add />, name: 'New Case', action: () => console.log('New case') },
-    { icon: <Assessment />, name: 'Quick Scan', action: () => console.log('Quick scan') },
-    { icon: <Download />, name: 'Export Report', action: () => console.log('Export') },
+    { icon: <Add />, name: 'New Case', action: () => {/* TODO: Implement new case action */} },
+    { icon: <Assessment />, name: 'Quick Scan', action: () => {/* TODO: Implement quick scan action */} },
+    { icon: <Download />, name: 'Export Report', action: () => {/* TODO: Implement export action */} },
   ];
 
   return (
@@ -494,7 +494,7 @@ const AdvancedDashboard = () => {
       <NavigationDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        onNavigate={(path) => console.log(`Navigate to ${path}`)}
+        onNavigate={(path) => {/* TODO: Implement navigation */}}
       />
 
       {/* Main Content */}

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import WelcomeMessage from '../WelcomeMessage';
+import WelcomeMessage from '@/WelcomeMessage';
 
 describe('WelcomeMessage', () => {
   beforeEach(() => {

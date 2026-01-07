@@ -19,8 +19,8 @@ interface ComplianceFramework {
   nextAudit: string;
 }
 
-import { complianceService } from '../../services/compliance';
-import type { ComplianceMetrics, RegionalCompliance } from '../../services/compliance';
+import { complianceService } from '@/services/compliance';
+import type { ComplianceMetrics, RegionalCompliance } from '@/services/compliance';
 
 export default function ComplianceDashboard() {
   const [metrics, setMetrics] = useState<ComplianceMetric[]>([]);

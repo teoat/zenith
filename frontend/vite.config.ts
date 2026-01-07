@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -26,29 +25,130 @@ export default defineConfig({
     },
   },
   build: {
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 500,
+    target: 'esnext',
+    minify: 'esbuild',
     rollupOptions: {
       output: {
-        manualChunks: {
-          // React core - keep together
-          'react-core': ['react', 'react-dom', 'react-router-dom'],
+        manualChunks: (id) => {
+          // React ecosystem - keep core small
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+            return 'react-core';
+          }
+          
+          // React Router - separate chunk
+          if (id.includes('node_modules/react-router')) {
+            return 'react-router';
+          }
           
           // State management
-          'state': ['zustand', '@tanstack/react-query'],
+          if (id.includes('node_modules/zustand') || id.includes('node_modules/@tanstack/react-query')) {
+            return 'state';
+          }
           
-          // UI frameworks - separate chunk
-          'ui-framework': ['framer-motion', 'lucide-react'],
+          // UI Framework - Radix, CVA, etc.
+          if (id.includes('node_modules/@radix-ui') || 
+              id.includes('node_modules/class-variance-authority') ||
+              id.includes('node_modules/clsx') ||
+              id.includes('node_modules/tailwind-merge')) {
+            return 'ui-vendor';
+          }
           
-          // Heavy visualization libs - lazy load these
-          'charts': ['recharts', 'chart.js', 'react-chartjs-2'],
-          'maps': ['leaflet', 'react-leaflet'],
-          'pdf': ['pdfjs-dist', 'react-pdf'],
-          '3d': ['three', '@react-three/fiber', '@react-three/drei'],
+          // Animation library
+          if (id.includes('node_modules/framer-motion')) {
+            return 'animation';
+          }
           
-          // Utilities
-          'utils': ['date-fns', 'lodash-es', 'uuid'],
+          // Icons
+          if (id.includes('node_modules/lucide-react')) {
+            return 'icons';
+          }
+          
+          // Charts - lazy load these
+          if (id.includes('node_modules/recharts') || 
+              id.includes('node_modules/d3')) {
+            return 'chart-vendor';
+          }
+          
+          // Maps - lazy load
+          if (id.includes('node_modules/maplibre') || 
+              id.includes('node_modules/react-map-gl') ||
+              id.includes('node_modules/mapbox')) {
+            return 'map-vendor';
+          }
+          
+          // PDF - lazy load
+          if (id.includes('node_modules/react-pdf') || 
+              id.includes('node_modules/pdfjs-dist')) {
+            return 'pdf-vendor';
+          }
+          
+          // 3D Graphics - lazy load
+          if (id.includes('node_modules/three') || 
+              id.includes('node_modules/@react-three')) {
+            return '3d-vendor';
+          }
+          
+          // Graph visualization
+          if (id.includes('node_modules/react-force-graph')) {
+            return 'graph-vendor';
+          }
+          
+          // Form utilities
+          if (id.includes('node_modules/zod') ||
+              id.includes('node_modules/react-hook-form')) {
+            return 'forms';
+          }
+          
+          // Data grid and tables
+          if (id.includes('node_modules/@tanstack/react-virtual') ||
+              id.includes('node_modules/react-window') ||
+              id.includes('node_modules/@dnd-kit')) {
+            return 'data-grid';
+          }
+          
+          // i18n
+          if (id.includes('node_modules/i18next')) {
+            return 'i18n';
+          }
+          
+          // HTTP client
+          if (id.includes('node_modules/axios')) {
+            return 'http';
+          }
+          
+          // Utility libraries
+          if (id.includes('node_modules/lodash') ||
+              id.includes('node_modules/date-fns') ||
+              id.includes('node_modules/uuid')) {
+            return 'utils-vendor';
+          }
+          
+          // Keep other node_modules in a separate chunk
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         },
       },
     },
+    // Enable source maps for debugging in production
+    sourcemap: false,
+    // Optimize CSS
+    cssCodeSplit: true,
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'zustand',
+      '@tanstack/react-query',
+    ],
+    exclude: [
+      // Exclude heavy deps that we want to lazy load
+      'pdfjs-dist',
+      'three',
+    ],
   },
 })

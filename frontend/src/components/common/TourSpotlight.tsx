@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useTour } from '../../context/TourContext';
+import { useTour } from '@/context/TourContext';
 
 const TourSpotlight: React.FC = () => {
   const { currentStep, steps, nextStep, prevStep, endTour, isActive } = useTour();

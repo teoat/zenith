@@ -1,6 +1,6 @@
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import { monitoringService } from './monitoring';
-import type { HealthMetrics } from '../types/api';
+import type { HealthMetrics } from '@/types/api';
 
 export interface HealthStatus {
   status: 'healthy' | 'degraded' | 'critical' | 'error';

@@ -6,7 +6,7 @@
 
 import { useState, useCallback } from 'react';
 import type { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface ErrorDetails {
   code?: string;

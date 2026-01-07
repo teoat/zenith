@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Activity, Database, Globe, ShieldCheck } from 'lucide-react';
-// import { secureRandom } from '../../utils/secureRandom'; // Module not found
+// import { secureRandom } from '@/utils/secureRandom'; // Module not found
 
 interface AgentStatus {
   id: string;

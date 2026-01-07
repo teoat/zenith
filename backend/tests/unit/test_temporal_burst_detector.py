@@ -7,6 +7,7 @@ Tests temporal burst detection service functionality
 import pytest
 from unittest.mock import MagicMock, patch
 from datetime import datetime, timedelta
+from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "backend"))

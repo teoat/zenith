@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Download, CheckCircle, AlertTriangle } from 'lucide-react';
-import { MatchCanvas } from '../components/recon/MatchCanvas';
-import { ExceptionQueue } from '../components/recon/ExceptionQueue';
-import type { ReconciliationItem } from '../lib/api';
-import { EvidenceSpotlight } from '../components/common/EvidenceSpotlight';
-import { useReconciliationStore } from '../store/reconciliationStore';
-import { useFormatters } from '../providers/LocaleProvider';
+import { MatchCanvas } from '@/components/recon/MatchCanvas';
+import { ExceptionQueue } from '@/components/recon/ExceptionQueue';
+import type { ReconciliationItem } from '@/lib/api';
+import { EvidenceSpotlight } from '@/components/common/EvidenceSpotlight';
+import { useReconciliationStore } from '@/store/reconciliationStore';
+import { useFormatters } from '@/providers/LocaleProvider';
 
 const Reconciliation = () => {
   const [selectedItem, setSelectedItem] = useState<ReconciliationItem | null>(null);

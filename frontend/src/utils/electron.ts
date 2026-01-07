@@ -5,7 +5,7 @@
  * The app is now web-only; these stubs ensure graceful fallbacks.
  */
 
-import type { ElectronAPI } from '../types/electron';
+import type { ElectronAPI } from '@/types/electron';
 
 /**
  * Check if running in Electron environment

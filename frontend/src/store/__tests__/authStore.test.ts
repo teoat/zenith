@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, afterEach } from '@jest/globals';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useAuthStore } from '../authStore';
+import { useAuthStore } from '@/authStore';
 
 // Mock authService
 jest.mock('../../services/auth', () => ({
@@ -12,7 +12,7 @@ jest.mock('../../services/auth', () => ({
   }
 }));
 
-import { authService } from '../../services/auth';
+import { authService } from '@/services/auth';
 
 describe('authStore (Cookie-based)', () => {
   beforeEach(() => {

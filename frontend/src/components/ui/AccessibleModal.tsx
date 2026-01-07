@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { AccessibleButton } from './AccessibleButton';
-import { accessibilityManager, focus } from '../../lib/accessibility';
+import { accessibilityManager, focus } from '@/lib/accessibility';
 
 interface AccessibleModalProps {
   isOpen: boolean;

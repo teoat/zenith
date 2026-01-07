@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3, Activity, Clock } from 'lucide-react';
-import type { Integration } from '../../lib/api';
+import type { Integration } from '@/lib/api';
 
 interface AnalyticsTabProps {
   integrations: Integration[];

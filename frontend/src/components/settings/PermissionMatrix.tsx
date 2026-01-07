@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Shield, Lock, AlertTriangle, Check } from 'lucide-react';
-import { AccessibleButton } from '../ui/AccessibleButton';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
 interface Permission {
   id: string;

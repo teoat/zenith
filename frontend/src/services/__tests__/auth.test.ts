@@ -1,12 +1,12 @@
 import { describe, it, jest, beforeEach, afterEach } from '@jest/globals';
-import { authService } from '../auth';
+import { authService } from '@/auth';
 
 // Mock the request function from client.ts to bypass circuit breaker complexity
 jest.mock('../client', () => ({
   request: jest.fn(),
 }));
 
-import { request } from '../client';
+import { request } from '@/client';
 const mockRequest = request as jest.MockedFunction<typeof request>;
 
 /**

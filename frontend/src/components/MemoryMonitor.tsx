@@ -1,6 +1,6 @@
 import React from 'react';
 import { Activity, AlertTriangle, Zap } from 'lucide-react';
-import { useMemoryMonitor } from '../hooks/useMemoryCleanup';
+import { useMemoryMonitor } from '@/hooks/useMemoryCleanup';
 
 interface MemoryMonitorProps {
   className?: string;

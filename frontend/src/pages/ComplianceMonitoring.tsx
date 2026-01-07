@@ -18,10 +18,10 @@ import {
 } from 'lucide-react';
 import { complianceMonitoringService, type MonitoringDashboard } from '@/services/complianceMonitoring';
 import { complianceService } from '@/services/compliance';
-import { secureLogger } from '../utils/secureLogger';
-import { ComplianceAlerts } from '../components/compliance/ComplianceAlerts';
-import { ComplianceFrameworks } from '../components/compliance/ComplianceFrameworks';
-import { ComplianceTrends } from '../components/compliance/ComplianceTrends';
+import { secureLogger } from '@/utils/secureLogger';
+import { ComplianceAlerts } from '@/components/compliance/ComplianceAlerts';
+import { ComplianceFrameworks } from '@/components/compliance/ComplianceFrameworks';
+import { ComplianceTrends } from '@/components/compliance/ComplianceTrends';
 
 interface HealthCheck {
   name: string;

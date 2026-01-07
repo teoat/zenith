@@ -1,8 +1,8 @@
 import React from 'react';
-import type { AlertItem } from '../../lib/api';
+import type { AlertItem } from '@/lib/api';
 import AlertListItem from './AlertListItem';
 import { Search } from 'lucide-react';
-import { VirtualizedList } from '../ui/VirtualizedList';
+import { VirtualizedList } from '@/components/ui/VirtualizedList';
 
 interface AlertListProps {
   alerts: AlertItem[];

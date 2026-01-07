@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../lib/api';
-import { secureLogger } from '../utils/secureLogger';
-import type { AppSettings } from '../types/api';
+import { api } from '@/lib/api';
+import { secureLogger } from '@/utils/secureLogger';
+import type { AppSettings } from '@/types/api';
 
 export type UserSettings = AppSettings;
 

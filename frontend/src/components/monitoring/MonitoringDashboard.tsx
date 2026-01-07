@@ -13,8 +13,8 @@ import {
   HardDrive,
   BarChart3
 } from 'lucide-react';
-import { api } from '../../lib/api';
-import { secureLogger } from '../../utils/secureLogger';
+import { api } from '@/lib/api';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface SystemMetrics {
   status: 'healthy' | 'warning' | 'critical';

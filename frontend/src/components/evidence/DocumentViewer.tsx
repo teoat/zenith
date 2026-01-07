@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Upload, File, CheckCircle, AlertCircle, Loader } from 'lucide-react';
-import { secureLogger } from '../../utils/secureLogger';
-import { getFileIcon as getFileIconUtil } from '../../utils/fileUtils';
-import { formatFileSize, formatPercentage } from '../../utils/formatters';
+import { secureLogger } from '@/utils/secureLogger';
+import { getFileIcon as getFileIconUtil } from '@/utils/fileUtils';
+import { formatFileSize, formatPercentage } from '@/utils/formatters';
 
 interface ProcessedDocument {
   success: boolean;

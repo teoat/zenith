@@ -1,8 +1,8 @@
 // frontend/src/components/ai/PredictiveMaintenanceDashboard.tsx
 import React, { useState, useEffect } from 'react';
-import { simulateDelay } from '../../utils/simulation';
+import { simulateDelay } from '@/utils/simulation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { secureLogger } from '../../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 import {
   Activity,
   AlertTriangle,

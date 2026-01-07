@@ -3,9 +3,9 @@
  * Supports CSV, JSON, and other structured data formats for bulk case creation.
  */
 
-import { api } from '../lib/api';
+import { api } from '@/lib/api';
 import { errorReporting } from './errorReporting';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 export interface ProcessedCase {
   title: string;

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { secureLogger } from '../utils/secureLogger';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface PerformanceMetrics {
   componentName: string;

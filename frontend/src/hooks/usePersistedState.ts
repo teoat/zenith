@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { electronStore } from '../utils/electronStore';
-import { secureLogger } from '../utils/secureLogger';
+import { electronStore } from '@/utils/electronStore';
+import { secureLogger } from '@/utils/secureLogger';
 
 /**
  * A custom hook to persist state to localStorage (and Electron store if available).

@@ -1,5 +1,5 @@
 import { describe, it, jest, beforeEach } from '@jest/globals';
-import { evidenceService } from '../evidence';
+import { evidenceService } from '@/evidence';
 
 describe('Evidence Service', () => {
   beforeEach(() => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useToast } from '../../providers/ToastProvider';
+import { useToast } from '@/providers/ToastProvider';
 import { FileText, CheckCircle, Download, FileCheck, Scale } from 'lucide-react';
-import { AccessibleButton } from '../ui/AccessibleButton';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
 interface AutoReportGeneratorProps {
   caseId: string;

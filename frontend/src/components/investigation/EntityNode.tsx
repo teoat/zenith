@@ -16,7 +16,7 @@ import {
   EyeOff,
   Trash2
 } from 'lucide-react';
-import type { Entity } from '../../types/investigation';
+import type { Entity } from '@/types/investigation';
 
 interface EntityNodeProps {
   entity: Entity;

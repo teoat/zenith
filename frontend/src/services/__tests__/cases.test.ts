@@ -1,5 +1,5 @@
 import { describe, it, jest, beforeEach } from '@jest/globals';
-import { caseService } from '../cases';
+import { caseService } from '@/cases';
 
 global.fetch = jest.fn();
 

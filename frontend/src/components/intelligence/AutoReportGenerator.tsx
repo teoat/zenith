@@ -14,7 +14,7 @@ import { Checkbox } from '@/components/ui/Checkbox';
 import { Label } from '@/components/ui/Label';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
-import { secureRandom } from '../../utils/secureRandom'; // Module not found
+import { secureRandom } from '@/utils/secureRandom'; // Module not found
 import {
   FileText,
   Wand2,

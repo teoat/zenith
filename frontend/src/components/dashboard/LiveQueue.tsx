@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Activity, CheckCircle, Clock, AlertTriangle, ArrowRight, Wifi, WifiOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useWebSocketQueue, type QueueItem } from '../../hooks/useWebSocketQueue';
+import { useWebSocketQueue, type QueueItem } from '@/hooks/useWebSocketQueue';
 
 const LiveQueue: React.FC = memo(() => {
   const { queue, isConnected, reconnect } = useWebSocketQueue({

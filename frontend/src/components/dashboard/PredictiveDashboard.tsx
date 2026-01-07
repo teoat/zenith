@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useToast } from '../../providers/ToastProvider';
+import { useToast } from '@/providers/ToastProvider';
 import { AlertCircle, TrendingUp, Shield, Activity, RefreshCw } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { api } from '../../lib/api';
-import type { PredictiveStats } from '../../types/api';
+import { api } from '@/lib/api';
+import type { PredictiveStats } from '@/types/api';
 
 const PredictiveDashboard: React.FC = () => {
     const [stats, setStats] = useState<PredictiveStats | null>(null);

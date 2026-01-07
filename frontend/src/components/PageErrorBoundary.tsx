@@ -1,8 +1,8 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { AccessibleButton } from './ui/AccessibleButton';
-import { errorReporting } from '../services/errorReporting';
-import { secureLogger } from '../utils/secureLogger';
+import { errorReporting } from '@/services/errorReporting';
+import { secureLogger } from '@/utils/secureLogger';
 
 interface Props {
   children: ReactNode;

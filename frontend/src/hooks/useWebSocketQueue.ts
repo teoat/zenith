@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useWebSocket } from '../providers/WebSocketProvider';
-import { secureLogger } from '../utils/secureLogger';
-import { secureRandom } from '../utils/secureRandom';
+import { useWebSocket } from '@/providers/WebSocketProvider';
+import { secureLogger } from '@/utils/secureLogger';
+import { secureRandom } from '@/utils/secureRandom';
 
 export interface QueueItem {
   id: string;

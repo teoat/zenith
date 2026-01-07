@@ -7,7 +7,7 @@ import {
   Mail,
   Phone
 } from 'lucide-react';
-import type { Evidence } from '../../types/investigation';
+import type { Evidence } from '@/types/investigation';
 
 interface EvidenceItemProps {
   evidence: Evidence;

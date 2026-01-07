@@ -4,7 +4,7 @@ import type {
   CashFloatAnalysisResult, 
   BatchMatchResult, 
   TemporalAnalysisResult 
-} from '../types/api';
+} from '@/types/api';
 
 export const reconciliationService = {
   reconcileTransaction: async (transactionId: string, notes?: string): Promise<{ success: boolean }> => {

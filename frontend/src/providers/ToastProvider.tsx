@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { X, CheckCircle, AlertTriangle, Info } from 'lucide-react';
-import { secureRandom } from '../utils/secureRandom';
+import { secureRandom } from '@/utils/secureRandom';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/Card';
-import { Button } from '../ui/Button';
-import { Badge } from '../ui/Badge';
-import { secureLogger } from '../../utils/secureLogger';
+import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { secureLogger } from '@/utils/secureLogger';
 import {
   Activity,
   Cpu,

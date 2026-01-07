@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Upload, FileText, Shield, Hash, CheckCircle, X } from 'lucide-react';
-import { AccessibleButton } from '../ui/AccessibleButton';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
 interface ProcessedFile {
   name: string;

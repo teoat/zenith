@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { useCaseStore } from '../caseStore';
+import { useCaseStore } from '@/caseStore';
 
 // Mock the persist middleware
 jest.mock('zustand/middleware', () => ({

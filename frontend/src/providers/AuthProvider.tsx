@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { secureLogger } from '../utils/secureLogger';
-import { api } from '../lib/api';
-import type { User } from '../types/schema';
-import { getElectronAPI, isElectron } from '../utils/electron';
-import type { LoginCredentials } from '../context/AuthContext';
-import { AuthContext } from '../context/AuthContext';
-import { errorReporting } from '../services/errorReporting';
+import { secureLogger } from '@/utils/secureLogger';
+import { api } from '@/lib/api';
+import type { User } from '@/types/schema';
+import { getElectronAPI, isElectron } from '@/utils/electron';
+import type { LoginCredentials } from '@/context/AuthContext';
+import { AuthContext } from '@/context/AuthContext';
+import { errorReporting } from '@/services/errorReporting';
 
-import { isDev, env } from '../utils/env';
+import { isDev, env } from '@/utils/env';
 
 // Use environment variable for development mode - NEVER bypass auth in production
 const isDevelopment = isDev;

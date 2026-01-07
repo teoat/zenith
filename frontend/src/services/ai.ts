@@ -1,6 +1,6 @@
 import { request } from './client';
-import type { AIPersona } from '../context/AIContext';
-import type { ApiResponse } from '../types/api-responses';
+import type { AIPersona } from '@/context/AIContext';
+import type { ApiResponse } from '@/types/api-responses';
 
 interface AIChatResponse {
   response: string;

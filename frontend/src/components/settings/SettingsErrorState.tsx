@@ -1,6 +1,6 @@
 import React from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
-import { AccessibleButton } from '../ui/AccessibleButton';
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
 interface SettingsErrorStateProps {
   error: Error;
