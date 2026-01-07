@@ -1,0 +1,27 @@
+# Exclude backend and heavy folders from Vercel upload
+backend/
+node_modules/
+.git/
+.venv/
+venv/
+env/
+*.db
+*.sqlite
+*.log
+*.pyc
+__pycache__/
+coverage/
+htmlcov/
+test_results/
+playwright-report/
+recordings/
+downloads/
+uploads/
+backups/
+archive/
+
+# Keep frontend and config
+!frontend/
+!vercel.json
+!package.json
+!pnpm-lock.yaml
