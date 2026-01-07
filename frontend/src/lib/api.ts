@@ -25,6 +25,7 @@ export * from '../types/api';
 class DualModeAPIFacade {
   // Auth
   login = authService.login;
+  logout = authService.logout;
 
   // Cases
   getCases = caseService.getCases;

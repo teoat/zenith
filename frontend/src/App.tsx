@@ -17,10 +17,10 @@ const DesignSystemShowcase = React.lazy(() => import(/* webpackChunkName: "desig
 const Login = React.lazy(() => import(/* webpackChunkName: "auth" */ '@/pages/Login'));
 const Setup = React.lazy(() => import(/* webpackChunkName: "setup" */ '@/pages/Setup'));
 const NetworkAnalysis = React.lazy(() => import(/* webpackChunkName: "network" */ '@/pages/NetworkAnalysis'));
-const RelationshipGraph = React.lazy(() => import(/* webpackChunkName: "graph" */ '@/components/RelationshipGraph.tsx'));
+const RelationshipGraph = React.lazy(() => import(/* webpackChunkName: "graph" */ '@/components/visualizations/NetworkGraph.tsx'));
 const Investigation = React.lazy(() => import(/* webpackChunkName: "investigation" */ '@/pages/Investigation'));
 const Reporting = React.lazy(() => import(/* webpackChunkName: "reporting" */ '@/pages/Reporting'));
-const OnboardingWizard = React.lazy(() => import(/* webpackChunkName: "onboarding" */ '@/components/OnboardingWizard'));
+const OnboardingWizard = React.lazy(() => import(/* webpackChunkName: "onboarding" */ '@/components/cases/InvestigationWizard'));
 const ProofVisualizationRoute = React.lazy(() => import(/* webpackChunkName: "proof" */ '@/pages/ProofVisualizationRoute'));
 const TemporalPlayback = React.lazy(() => import(/* webpackChunkName: "temporal" */ '@/components/TemporalPlayback'));
 const CaseProgressBar = React.lazy(() => import(/* webpackChunkName: "progress" */ '@/components/CaseProgressBar'));
