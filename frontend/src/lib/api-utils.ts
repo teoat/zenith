@@ -6,7 +6,7 @@ import { z } from "zod";
 export type ApiSuccessResponse<T> = {
   success: true;
   data: T;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 };
 
 export type ApiErrorResponse = {
@@ -14,7 +14,7 @@ export type ApiErrorResponse = {
   error: {
     code: string;
     message: string;
-    details?: Record<string, any>;
+    details?: Record<string, unknown>;
   };
 };
 
@@ -24,7 +24,7 @@ export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
  * Utility to validate API responses using Zod
  */
 export async function validateResponse<T>(
-  response: any,
+  response: unknown,
   schema: z.ZodType<T>,
 ): Promise<ApiResponse<T>> {
   if (!response.success) {

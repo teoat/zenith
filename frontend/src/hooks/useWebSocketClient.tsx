@@ -9,16 +9,16 @@ export interface WebSocketConfig {
   onOpen?: (event: Event) => void;
   onClose?: (event: CloseEvent) => void;
   onError?: (event: Event) => void;
-  onMessage?: (data: any) => void;
+  onMessage?: (data: unknown) => void;
 }
 
 export interface WebSocketHookReturn {
   isConnected: boolean;
-  send: (data: any) => void;
+  send: (data: unknown) => void;
   close: () => void;
   reconnect: () => void;
   error: Error | null;
-  lastMessage: any;
+  lastMessage: unknown;
 }
 
 /**
@@ -41,7 +41,7 @@ export function useWebSocketClient(
 
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [lastMessage, setLastMessage] = useState<any>(null);
+  const [lastMessage, setLastMessage] = useState<unknown>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttempts = useRef(0);
@@ -51,7 +51,7 @@ export function useWebSocketClient(
   const heartbeatIntervalRef = useRef<
     ReturnType<typeof setInterval> | undefined
   >(undefined);
-  const messageQueueRef = useRef<any[]>([]);
+  const messageQueueRef = useRef<unknown[]>([]);
   const shouldReconnectRef = useRef(true);
 
   const clearTimers = useCallback(() => {
@@ -174,11 +174,11 @@ export function useWebSocketClient(
           });
         }
       };
-    } catch (err: any) {
+    } catch (err) {
       secureLogger.error("WEBSOCKET", "Connection failed", {
         error: err instanceof Error ? err.message : String(err),
       });
-      setError(err);
+      setError(err instanceof Error ? err : new Error(String(err)));
     }
   }, [
     url,
@@ -193,7 +193,7 @@ export function useWebSocketClient(
     clearTimers,
   ]);
 
-  const send = useCallback((data: any) => {
+  const send = useCallback((data: unknown) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data));
     } else {

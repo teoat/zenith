@@ -79,8 +79,8 @@ export class FederatedLearning {
 }
 
 export class VoiceController {
-  private recognition: any = null;
-  private commands: Map<string, (params?: any) => void> = new Map();
+  private recognition: SpeechRecognition | null = null;
+  private commands: Map<string, (params?: Record<string, unknown>) => void> = new Map();
 
   constructor() {
     this.initializeSpeechRecognition();
@@ -88,30 +88,31 @@ export class VoiceController {
 
   private initializeSpeechRecognition(): void {
     if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition ||
-        (window as any).webkitSpeechRecognition;
-      this.recognition = new SpeechRecognition();
-      this.recognition.continuous = false;
-      this.recognition.interimResults = false;
-      this.recognition.lang = "en-US";
+      const SpeechRecognitionClass =
+        window.SpeechRecognition ||
+        (window as { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition;
+      if (SpeechRecognitionClass) {
+        this.recognition = new SpeechRecognitionClass();
+        this.recognition.continuous = false;
+        this.recognition.interimResults = false;
+        this.recognition.lang = "en-US";
 
-      this.recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript.toLowerCase();
-        this.processCommand(transcript);
-      };
+        this.recognition.onresult = (event: SpeechRecognitionEvent) => {
+          const transcript = event.results[0][0].transcript.toLowerCase();
+          this.processCommand(transcript);
+        };
 
-      this.recognition.onend = () => {
-        // Listening ended
-      };
+        this.recognition.onend = () => {
+        };
 
-      this.recognition.onerror = (event: any) => {
-        secureLogger.error("Speech recognition error:", event.error);
-      };
+        this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+          secureLogger.error("Speech recognition error:", event.error);
+        };
+      }
     }
   }
 
-  registerCommand(command: string, handler: (params?: any) => void): void {
+  registerCommand(command: string, handler: (params?: Record<string, unknown>) => void): void {
     this.commands.set(command.toLowerCase(), handler);
   }
 

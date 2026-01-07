@@ -151,7 +151,7 @@ class ChaosEngine {
   private injectMemoryFailure(scenario: FailureScenario): boolean {
     // Simulate memory leak
     if (scenario.id === "memory-leak") {
-      const leak: any[] = [];
+      const leak: unknown[] = [];
       const leakInterval = setInterval(() => {
         for (let i = 0; i < 1000; i++) {
           leak.push(new Array(1000).fill("memory-leak-data"));
