@@ -54,19 +54,32 @@ export const ApiResponseSchema = z.object({
 // Analysis result schema for CodeReviewDashboard
 export const AnalysisResultSchema = z.object({
   total_issues: z.number(),
-  issues_by_category: z.record(z.number()),
-  issues_by_severity: z.record(z.number()),
+  issues_by_category: z.object({
+    critical: z.number().optional(),
+    high: z.number().optional(),
+    medium: z.number().optional(),
+    low: z.number().optional(),
+    info: z.number().optional(),
+  }).optional(),
+  issues_by_severity: z.object({
+    blocking: z.number().optional(),
+    major: z.number().optional(),
+    minor: z.number().optional(),
+    info: z.number().optional(),
+  }).optional(),
   avg_issues_per_file: z.number(),
   issues_per_1000_lines: z.number(),
   lines_of_code: z.number(),
   files_analyzed: z.number(),
   test_coverage_estimate: z.number(),
   maintainability_index: z.number(),
-  analysis_time_seconds: z.number().min(0), // ADD THIS FIELD
+  analysis_time_seconds: z.number(),
 });
 
 // Export types
 export type User = z.infer<typeof UserSchema>;
 export type Case = z.infer<typeof CaseSchema>;
+export type AnalysisResult = z.infer<typeof AnalysisResultSchema>;
+export type AnalysisResultData = z.infer<typeof AnalysisResultSchema>;
 export type ApiResponse<T> = z.infer<typeof ApiResponseSchema>;
 export type AnalysisResult = z.infer<typeof AnalysisResultSchema>;
