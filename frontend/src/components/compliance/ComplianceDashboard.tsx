@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, CheckCircle, XCircle, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface ComplianceMetric {
@@ -20,7 +20,7 @@ interface ComplianceFramework {
 }
 
 import { complianceService } from '@/services/compliance';
-import type { ComplianceMetrics, RegionalCompliance } from '@/services/compliance';
+
 
 export default function ComplianceDashboard() {
   const [metrics, setMetrics] = useState<ComplianceMetric[]>([]);

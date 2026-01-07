@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Document, Page, pdfjs } from 'react-pdf';
 import { secureLogger } from '@/utils/secureLogger';
-import { Button } from "@/components/ui/Button";
+
 import { Save, X } from "lucide-react";
 import "./PdfViewer.css";
 
@@ -40,7 +40,7 @@ interface PdfViewerProps {
 
 const PdfViewer: React.FC<PdfViewerProps> = ({ url, onHighlight }) => {
   const [numPages, setNumPages] = useState<number | null>(null);
-  const [scale, setScale] = useState(1.0);
+  const [scale] = useState(1.0);
   
   // Highlighting State
   const [highlights, setHighlights] = useState<IHighlight[]>([]);

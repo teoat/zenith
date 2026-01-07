@@ -240,8 +240,8 @@ const App: React.FC = () => {
                                 <Route path="/design" element={<DesignSystemShowcase />} />
                                 <Route path="/onboarding" element={
                                   <OnboardingWizard 
-                                    onComplete={() => {
-                                      // console.log('Investigation created');
+                                    onComplete={(data: any) => {
+                                      // console.log('Investigation created:', data);
                                       window.location.href = '/cases';
                                     }} 
                                     onCancel={() => window.history.back()} 

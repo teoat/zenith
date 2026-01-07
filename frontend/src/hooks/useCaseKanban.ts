@@ -62,18 +62,27 @@ export const useCaseKanban = (externalCases?: ApiCase[], onCaseClick?: (caseId: 
         setError(null);
         const { api } = await import('@/lib/api');
         const response = await api.getCases();
-        const cases: Case[] = (response.cases || []).map(transformCase);
+
+        // Handle different response structures
+        const rawCases = Array.isArray(response) ? response :
+                         (response as any).data ? (response as any).data :
+                         [];
+
+        const cases: Case[] = rawCases.map(transformCase);
 
         const incoming = cases.filter((c: Case) =>
-          c.status === 'open' || c.status === 'OPEN'
+          c.status === 'open' || c.status === 'OPEN' || c.status === 'OPEN'
         );
 
         const review = cases.filter((c: Case) =>
-          c.status === 'investigating' || c.status === 'pending_review' || c.status === 'escalated'
+          c.status === 'investigating' || c.status === 'INVESTIGATING' ||
+          c.status === 'pending_review' || c.status === 'IN_PROGRESS' ||
+          c.status === 'escalated' || c.status === 'ADJUDICATION'
         );
 
         const closed = cases.filter((c: Case) =>
-          c.status?.startsWith('closed') || c.status === 'resolved'
+          c.status?.includes('closed') || c.status?.includes('CLOSED') ||
+          c.status === 'resolved' || c.status === 'RESOLVED'
         ).map(transformCase);
         
         setItems({ incoming, review, closed });

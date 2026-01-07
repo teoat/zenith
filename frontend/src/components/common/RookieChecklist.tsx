@@ -51,10 +51,7 @@ const getInitialItems = (): ChecklistItem[] => {
   ];
 };
 
-// Check if all items are complete (for initial badge state - default to false until loaded)
-const getInitialBadgeState = (): boolean => {
-  return false;
-};
+
 
 const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
   const { user } = useAuth();

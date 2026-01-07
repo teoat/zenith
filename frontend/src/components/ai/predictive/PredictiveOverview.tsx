@@ -23,12 +23,6 @@ export const PredictiveOverview: React.FC<PredictiveOverviewProps> = ({
   currentMetrics,
   predictions,
 }) => {
-  const getProbabilityColor = (probability: number) => {
-    if (probability >= 0.8) return 'text-red-600';
-    if (probability >= 0.5) return 'text-orange-600';
-    return 'text-yellow-600';
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
