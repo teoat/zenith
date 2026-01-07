@@ -64,3 +64,5 @@ type-check-output*.txt
 error_analysis.txt
 .internal/reports/*.json
 generate_secrets.py
+.vercel
+.env*.local
