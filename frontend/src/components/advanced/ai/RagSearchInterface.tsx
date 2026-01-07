@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Badge } from '@/components/ui/Badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
+import { Button } from '@/components/ui/Button.tsx';
+import { Input } from '@/components/ui/Input.tsx';
+import { Badge } from '@/components/ui/Badge.tsx';
 import { Search, FileText, Brain } from 'lucide-react';
 import { secureLogger } from '../../../utils/secureLogger';
 

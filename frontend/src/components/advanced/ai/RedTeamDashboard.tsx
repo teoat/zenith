@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button.tsx';
+import { Badge } from '@/components/ui/Badge.tsx';
 import { Shield, Play, RotateCcw, CheckCircle } from 'lucide-react';
 
 // Use imports to avoid unused warnings

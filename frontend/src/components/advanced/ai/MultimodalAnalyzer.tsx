@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
+import { Button } from '@/components/ui/Button.tsx';
+import { Badge } from '@/components/ui/Badge.tsx';
 import { Upload, Eye } from 'lucide-react';
 import { secureLogger } from '../../../utils/secureLogger';
 import { secureRandom } from '../../../utils/secureRandom';

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Input } from '@/components/ui/Input';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
+import { Button } from '@/components/ui/Button.tsx';
+import { Badge } from '@/components/ui/Badge.tsx';
+import { Input } from '@/components/ui/Input.tsx';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert.tsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs.tsx';
 import { secureLogger } from '../utils/secureLogger';
 import {
   FileText,
@@ -25,7 +25,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/Separator';
+import { Separator } from '@/components/ui/Separator.tsx';
 
 import {
   EvidenceMetadata
