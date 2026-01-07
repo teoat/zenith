@@ -25,7 +25,7 @@ const ProofVisualizationRoute = React.lazy(() => import(/* webpackChunkName: "pr
 const TemporalPlayback = React.lazy(() => import(/* webpackChunkName: "temporal" */ '@/components/TemporalPlayback'));
 const CaseProgressBar = React.lazy(() => import(/* webpackChunkName: "progress" */ '@/components/CaseProgressBar'));
 // const InvestigationNotebook = React.lazy(() => import(/* webpackChunkName: "notebook" */ '@/components/investigation/InvestigationNotebook'));
-const DigitalDossierGenerator = React.lazy(() => import(/* webpackChunkName: "dossier" */ '@/components/DigitalDossierGenerator'));
+// const DigitalDossierGenerator = React.lazy(() => import(/* webpackChunkName: "dossier" */ '@/components/DigitalDossierGenerator'));
 const CodeReviewDashboard = React.lazy(() => import(/* webpackChunkName: "code-review" */ '@/components/ai/CodeReviewDashboard'));
 const PredictiveMaintenanceDashboard = React.lazy(() => import(/* webpackChunkName: "predictive-maintenance" */ '@/components/ai/PredictiveMaintenanceDashboard'));
 const AdvancedComplianceDashboard = React.lazy(() => import(/* webpackChunkName: "advanced-compliance" */ '@/components/ai/AdvancedComplianceDashboard'));
@@ -242,8 +242,8 @@ const App: React.FC = () => {
                                 <Route path="/proof/:caseId" element={<ProofVisualizationRoute />} />
                                 <Route path="/playback" element={<TemporalPlayback />} />
                                 <Route path="/case/progress" element={<CaseProgressBar />} />
-                                <Route path="/notebook" element={<InvestigationNotebook />} />
-                                <Route path="/dossier/:caseId" element={<DigitalDossierGenerator />} />
+                                {/* <Route path="/notebook" element={<InvestigationNotebook />} /> */}
+                                {/* <Route path="/dossier/:caseId" element={<DigitalDossierGenerator />} /> */}
                                 <Route path="/performance" element={<PerformanceDashboard />} />
                                 <Route path="/network" element={<NetworkAnalysis />} />
                                 <Route path="/graph" element={<RelationshipGraph />} />
