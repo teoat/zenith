@@ -1,0 +1,27 @@
+{
+  "$schema": "https://railway.app/schema.json",
+  "name": "api-gateway",
+  "description": "Zenith Platform API Gateway - Request routing and middleware",
+  "buildCommand": "pip install -r requirements-api-gateway.txt",
+  "startCommand": "uvicorn app.main:app --host 0.0.0.0 --port 8000",
+  "healthcheckPath": "/health",
+  "healthcheckTimeout": 10,
+  "restartPolicyType": "always",
+  "envVars": [
+    {"name": "ENVIRONMENT", "value": "production"},
+    {"name": "LOG_LEVEL", "value": "info"}
+  ],
+  "domains": [
+    {"name": "api.zenith-platform.com"}
+  ],
+  "services": [
+    {
+      "name": "postgresql",
+      "destination": "${{PostgresService.URL}}"
+    },
+    {
+      "name": "redis",
+      "destination": "${{RedisService.URL}}"
+    }
+  ]
+}
