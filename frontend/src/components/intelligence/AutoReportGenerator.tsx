@@ -352,6 +352,7 @@ export const AutoReportGenerator: React.FC<AutoReportGeneratorProps> = ({
                   onChange={(e) => setCustomInstructions(e.target.value)}
                   placeholder="Add any specific instructions for the AI generator..."
                   rows={3}
+                  autoResize
                 />
               </div>
 
