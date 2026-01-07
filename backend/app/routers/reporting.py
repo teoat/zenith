@@ -1,18 +1,21 @@
 import asyncio
 import datetime
 import json
+import logging
 import os
 import uuid
 from enum import Enum
 
-from app.services.infrastructure.auth_service import auth_service
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.services.infrastructure.auth_service import auth_service
 from core.database import User, get_db
 
 router = APIRouter()
+
+logger = logging.getLogger(__name__)
 
 # --- Models ---
 
@@ -211,9 +214,7 @@ async def generate_report(
         )
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to start report generation: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to start report generation: {e!s}")
 
 
 async def generate_report_background(
@@ -245,9 +246,7 @@ async def generate_report_background(
         update_job_status(report_id, "failed", 0, str(e))
 
 
-async def generate_case_summary_report(
-    report_id: str, request: ReportRequest, db: Session
-):
+async def generate_case_summary_report(report_id: str, request: ReportRequest, db: Session):
     """Generate case summary report"""
     update_job_status(report_id, "processing", 30)
 
@@ -273,9 +272,7 @@ async def generate_case_summary_report(
     update_job_status(report_id, "processing", 80)
 
 
-async def generate_financial_analysis_report(
-    report_id: str, request: ReportRequest, db: Session
-):
+async def generate_financial_analysis_report(report_id: str, request: ReportRequest, db: Session):
     """Generate financial analysis report"""
     update_job_status(report_id, "processing", 25)
 
@@ -294,9 +291,7 @@ async def generate_financial_analysis_report(
     update_job_status(report_id, "processing", 75)
 
 
-async def generate_compliance_audit_report(
-    report_id: str, request: ReportRequest, db: Session
-):
+async def generate_compliance_audit_report(report_id: str, request: ReportRequest, db: Session):
     """Generate compliance audit report"""
     update_job_status(report_id, "processing", 20)
 
@@ -332,9 +327,7 @@ async def generate_generic_report(report_id: str, request: ReportRequest, db: Se
     update_job_status(report_id, "processing", 60)
 
 
-def update_job_status(
-    report_id: str, status: str, progress: int, error: str | None = None
-):
+def update_job_status(report_id: str, status: str, progress: int, error: str | None = None):
     """Update job status"""
     jobs_dir = "reports/jobs"
     job_file = os.path.join(jobs_dir, f"{report_id}.json")
@@ -345,9 +338,7 @@ def update_job_status(
 
         job_data["status"] = status
         job_data["progress"] = progress
-        job_data["updated_at"] = datetime.datetime.now(
-            datetime.UTC
-        ).isoformat()
+        job_data["updated_at"] = datetime.datetime.now(datetime.UTC).isoformat()
 
         if error:
             job_data["error"] = error
@@ -360,9 +351,7 @@ def update_job_status(
 
 
 @router.get("/job/{job_id}", response_model=ReportJobStatus, tags=["reporting"])
-async def get_report_job_status(
-    job_id: str, current_user: User = Depends(auth_service.get_current_user)
-):
+async def get_report_job_status(job_id: str, current_user: User = Depends(auth_service.get_current_user)):
     """Get the status of a report generation job"""
     try:
         jobs_dir = "reports/jobs"
@@ -383,9 +372,7 @@ async def get_report_job_status(
 
 
 @router.get("/download/{report_id}", tags=["reporting"])
-async def download_report(
-    report_id: str, current_user: User = Depends(auth_service.get_current_user)
-):
+async def download_report(report_id: str, current_user: User = Depends(auth_service.get_current_user)):
     """Download a completed report"""
     try:
         reports_dir = "reports/generated"
@@ -403,9 +390,7 @@ async def download_report(
                 job_data = json.load(f)
 
             if job_data.get("status") != "completed":
-                raise HTTPException(
-                    status_code=409, detail="Report is not yet completed"
-                )
+                raise HTTPException(status_code=409, detail="Report is not yet completed")
 
         from fastapi.responses import FileResponse
 
@@ -575,9 +560,7 @@ async def get_scheduled_reports():
             "frequency": "monthly",
             "template": "compliance",
             "recipients": ["compliance@example.com"],
-            "next_run_at": (now.replace(day=1) + datetime.timedelta(days=32)).replace(
-                day=1
-            ),
+            "next_run_at": (now.replace(day=1) + datetime.timedelta(days=32)).replace(day=1),
             "last_run_at": now.replace(day=1) - datetime.timedelta(days=1),
             "enabled": True,
         },
@@ -638,18 +621,14 @@ async def get_financial_health(case_id: str, db: Session = Depends(get_db)):
         # Get transaction aggregates
         inflows = (
             db.query(func.sum(Transaction.amount))
-            .filter(
-                Transaction.case_id == case_id, Transaction.transaction_type == "CREDIT"
-            )
+            .filter(Transaction.case_id == case_id, Transaction.transaction_type == "CREDIT")
             .scalar()
             or 0.0
         )
 
         outflows = (
             db.query(func.sum(Transaction.amount))
-            .filter(
-                Transaction.case_id == case_id, Transaction.transaction_type == "DEBIT"
-            )
+            .filter(Transaction.case_id == case_id, Transaction.transaction_type == "DEBIT")
             .scalar()
             or 0.0
         )

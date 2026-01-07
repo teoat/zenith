@@ -89,7 +89,7 @@ class FraudDetectionEngine:
                 from core.database import FraudRule
 
                 rules = (
-                    self.db.query(FraudRule).filter(FraudRule.is_active == True).all()
+                    self.db.query(FraudRule).filter(FraudRule.is_active).all()
                 )
                 for rule in rules:
                     if rule.rule_id in self.config:

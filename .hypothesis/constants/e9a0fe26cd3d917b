@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/immutable_audit_chain.py
-# hypothesis_version: 6.148.8
-
-[0.0, 100.0, 100, '...', 'AUDIT_HMAC_KEY', 'HMAC-SHA256', 'action', 'actual_prev', 'algorithm', 'broken_links', 'chain_length', 'compromised', 'current_root_hash', 'data', 'details', 'end_sequence', 'entity_id', 'entity_type', 'entity_types', 'entries', 'entry_id', 'error', 'expected_prev', 'file', 'filter_applied', 'generated_at', 'hash', 'integrity_percentage', 'last_verified', 'newest_entry', 'oldest_entry', 'previous_hash', 'proof_id', 'r', 'root_hash', 'sequence', 'signature', 'start_sequence', 'status', 'timestamp', 'total_blocks', 'total_entries', 'unknown', 'user_id', 'valid', 'verification_url', 'verified_at', 'verified_entries', 'w']

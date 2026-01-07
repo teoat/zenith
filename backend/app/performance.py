@@ -260,7 +260,7 @@ class PerformanceBenchmark:
 
         for count in node_counts:
             # Simulate graph with N nodes
-            nodes = [{"id": str(i), "label": f"Node {i}"} for i in range(count)]
+            [{"id": str(i), "label": f"Node {i}"} for i in range(count)]
             links = [
                 {"source": str(i), "target": str((i + 1) % count)} for i in range(count)
             ]

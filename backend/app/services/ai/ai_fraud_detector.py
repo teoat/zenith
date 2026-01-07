@@ -64,7 +64,8 @@ class AIFraudDetector:
         if isinstance(timestamp, str):
             try:
                 timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
-            except:
+            except Exception as e:
+                logger.warning(f"Failed to parse timestamp: {e}")
                 timestamp = datetime.now()
         elif not isinstance(timestamp, datetime):
             timestamp = datetime.now()
@@ -92,19 +93,14 @@ class AIFraudDetector:
             recent_count = sum(
                 1
                 for tx in historical_data
-                if self._parse_timestamp(tx.get("timestamp") or tx.get("date"))
-                >= recent_cutoff
+                if self._parse_timestamp(tx.get("timestamp") or tx.get("date")) >= recent_cutoff
             )
             velocity_ratio = recent_count / max(1, len(historical_data))
 
             # Merchant frequency
             merchant = transaction.get("merchant_name", "")
             if merchant:
-                merchant_count = sum(
-                    1
-                    for tx in historical_data
-                    if tx.get("merchant_name", "") == merchant
-                )
+                merchant_count = sum(1 for tx in historical_data if tx.get("merchant_name", "") == merchant)
                 merchant_frequency = merchant_count / max(1, len(historical_data))
 
         # Category risk (simplified)
@@ -162,13 +158,12 @@ class AIFraudDetector:
         if isinstance(timestamp, str):
             try:
                 return datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
-            except:
+            except Exception as e:
+                logger.warning(f"Failed to parse timestamp in _parse_timestamp: {e}")
                 pass
         return datetime.now()
 
-    def train_model(
-        self, training_data: list[dict[str, Any]], contamination: float = 0.1
-    ) -> dict[str, Any]:
+    def train_model(self, training_data: list[dict[str, Any]], contamination: float = 0.1) -> dict[str, Any]:
         """Train the Isolation Forest model"""
         logger.info(f"Training AI model with {len(training_data)} transactions")
 
@@ -188,9 +183,7 @@ class AIFraudDetector:
         X_scaled = self.scaler.fit_transform(X)
 
         # Train Isolation Forest
-        self.model = IsolationForest(
-            n_estimators=100, contamination=contamination, random_state=42, n_jobs=-1
-        )
+        self.model = IsolationForest(n_estimators=100, contamination=contamination, random_state=42, n_jobs=-1)
 
         # Fit the model
         self.model.fit(X_scaled)
@@ -285,14 +278,10 @@ class AIFraudDetector:
 
         # Feature-specific explanations
         if feature_values["amount_zscore"] > 2:
-            explanations.append(
-                "Transaction amount significantly deviates from historical pattern"
-            )
+            explanations.append("Transaction amount significantly deviates from historical pattern")
 
         if feature_values["velocity_ratio"] > 0.5:
-            explanations.append(
-                "High transaction velocity compared to historical activity"
-            )
+            explanations.append("High transaction velocity compared to historical activity")
 
         if feature_values["merchant_frequency"] < 0.1:
             explanations.append("First-time merchant interaction")

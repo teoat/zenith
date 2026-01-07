@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/ai/ai_fraud_detector.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.1, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1000, 5000, 9000, 10000, 50000, 100000, 'Monitor closely', 'account_age_days', 'action', 'ai_service', 'amount', 'cash', 'confidence', 'contamination', 'data', 'description', 'error', 'explanation', 'flags', 'high', 'history', 'isolation_forest', 'large', 'low', 'medium', 'merchant', 'ml_model', 'model', 'overall_risk', 'pattern_detected', 'pattern_type', 'predict', 'previous_flags', 'recommendations', 'results', 'risk_level', 'risk_score', 'round_numbers', 'score', 'status', 'structuring', 'thresholds', 'train', 'trained', 'transaction', 'transactions', 'unknown', 'unknown_merchant', 'unusual_amount']

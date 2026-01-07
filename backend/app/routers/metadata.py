@@ -6,13 +6,14 @@ Exposes EXIF-like metadata extraction for documents.
 
 from pathlib import Path
 
+from fastapi import APIRouter, File, HTTPException, UploadFile
+from pydantic import BaseModel
+
 from app.services.metadata_extraction_service import (
     DocumentMetadata,
     ForensicFlags,
     metadata_service,
 )
-from fastapi import APIRouter, File, HTTPException, UploadFile
-from pydantic import BaseModel
 
 router = APIRouter(prefix="/metadata", tags=["metadata"])
 

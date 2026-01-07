@@ -16,7 +16,6 @@ interface Experiment {
 }
 
 const AILab: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('experiments');
   const [experiments, setExperiments] = useState<Experiment[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -92,7 +91,7 @@ const AILab: React.FC = () => {
         </Card>
       </div>
 
-      <Tabs defaultValue="experiments" className="w-full" onValueChange={setActiveTab}>
+      <Tabs defaultValue="experiments" className="w-full">
         <TabsList className="grid w-full grid-cols-3 lg:w-[400px] mb-4">
           <TabsTrigger value="experiments">Experiments</TabsTrigger>
           <TabsTrigger value="models">Model Registry</TabsTrigger>

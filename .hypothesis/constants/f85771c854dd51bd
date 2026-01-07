@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/api_models.py
-# hypothesis_version: 6.148.8
-
-[500, 'An error occurred', 'PaginationResponse', 'api_error', 'asc', 'detail', 'details', 'error', 'method', 'path', 'request_id', 'status_code', 'timestamp', 'type']

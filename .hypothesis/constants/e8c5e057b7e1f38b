@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/webhooks.py
-# hypothesis_version: 6.148.8
-
-[100, 200, 400, 404, 500, '/paypal', '/simulation', '/stripe', '/test/{provider}', '/webhooks', '/webhooks/paypal', '/webhooks/simulation', '/webhooks/stripe', 'Invalid event', 'Invalid signature', 'PAYMENT.REFUNDED', 'Payment Webhooks', 'action', 'all', 'amount', 'charge.refunded', 'config_required', 'currency', 'current_setting', 'data', 'description', 'endpoint', 'error', 'event', 'event_type', 'file', 'handle_webhook', 'id', 'info', 'message', 'payment', 'payment_id', 'paypal', 'paypal-auth-algo', 'paypal-cert-id', 'provider', 'result', 'signature_header', 'signature_headers', 'simulation', 'status', 'stripe', 'stripe-signature', 'success', 'supported_events', 'test', 'unknown', 'usd', 'utf-8', 'webhook_secret', 'webhooks.py', 'whsec_...']

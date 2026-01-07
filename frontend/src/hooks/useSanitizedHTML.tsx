@@ -24,14 +24,15 @@ const defaultConfig = {
     'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
     'a', 'span', 'div', 'table', 'thead', 'tbody', 'tr', 'th', 'td'
   ],
-} as unknown as DOMPurify.Config;
+};
 
+// Bypass missing Config type from namespace
 export function useSanitizedHTML(
   dirtyHTML: string | TrustedHTML,
   options: UseSanitizedHTMLOptions = {}
 ): string {
   return useMemo(() => {
-    const config: DOMPurify.Config = {
+    const config: any = {
       ...defaultConfig,
       ...(options.allowedTags ? { ALLOWED_TAGS: options.allowedTags } : {}),
       ...(options.allowedAttributes ? { ALLOWED_ATTR: options.allowedAttributes } : {}),
@@ -47,7 +48,7 @@ export function useSanitizedHTML(
  */
 export function sanitizeHTML(
   dirtyHTML: string,
-  config: DOMPurify.Config = {}
+  config: any = {}
 ): string {
   return DOMPurify.sanitize(dirtyHTML, { ...defaultConfig, ...config } as any) as unknown as string;
 }

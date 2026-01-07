@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/plugin_system/shadow_executor.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.99, 1.0, 1000, 'actual', 'diffs', 'expected', 'file', 'plugin_id', 'shadow.match_rate', 'shadow_error', 'shadow_executor.py', 'shadow_mismatch', 'shadow_timeout']

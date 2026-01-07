@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/models/__init__.py
-# hypothesis_version: 6.148.8
-
-['ABACPolicy', 'ABACPolicyEvaluation', 'ABACPolicyRule', 'ABACPolicySet', 'AccessReview', 'AgentApproval', 'AuditLog', 'Base', 'Case', 'CaseActivity', 'CaseNote', 'ComplianceAuditLog', 'CryptoTransaction', 'Entity', 'Evidence', 'EvidenceChain', 'FraudAlert', 'FraudRuleModel', 'FrozenEntity', 'GraphSnapshot', 'IdentityNode', 'IdentityRelationship', 'Milestone', 'ModelFeedback', 'ModelRegistry', 'Project', 'RegulatoryReport', 'Relationship', 'RookieChecklist', 'SAR', 'SecurityIncident', 'SecurityPolicy', 'Team', 'TradeTransaction', 'TrainingRecord', 'Transaction', 'User', 'UserDevice', 'UserSession', 'WebAuthnCredential', 'generate_uuid', 'utc_now']

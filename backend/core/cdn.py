@@ -26,7 +26,7 @@ class CDNManager:
         enable_signing: bool = False,
         provider: str = "generic",
         private_key_path: str | None = None,
-        key_pair_id: str | None = None
+        key_pair_id: str | None = None,
     ):
         self.cdn_url = cdn_url or os.getenv("CDN_BASE_URL")
         self.enable_signing = enable_signing
@@ -44,15 +44,15 @@ class CDNManager:
         try:
             if self.provider in ["cloudfront", "aws"]:
                 # CloudFront uses PEM format
-                with open(self.private_key_path, 'rb') as f:
+                with open(self.private_key_path, "rb") as f:
                     self.private_key = rsa.PrivateKey.load_pkcs1(f.read())
             elif self.provider == "cloudflare":
                 # Cloudflare might use different format
-                with open(self.private_key_path, 'rb') as f:
+                with open(self.private_key_path, "rb") as f:
                     self.private_key = f.read()
             else:
                 # Generic RSA key
-                with open(self.private_key_path, 'rb') as f:
+                with open(self.private_key_path, "rb") as f:
                     self.private_key = rsa.PrivateKey.load_pkcs1(f.read())
 
             print(f"✅ Loaded private key for {self.provider} signing")
@@ -103,35 +103,18 @@ class CDNManager:
             # Create the policy
             expires = int(time.time()) + expiry_seconds
 
-            policy = {
-                "Statement": [
-                    {
-                        "Resource": url,
-                        "Condition": {
-                            "DateLessThan": {"AWS:EpochTime": expires}
-                        }
-                    }
-                ]
-            }
+            policy = {"Statement": [{"Resource": url, "Condition": {"DateLessThan": {"AWS:EpochTime": expires}}}]}
 
             # Convert policy to JSON and base64
-            policy_json = json.dumps(policy, separators=(',', ':'))
-            policy_b64 = base64.b64encode(policy_json.encode('utf-8')).decode('utf-8')
+            policy_json = json.dumps(policy, separators=(",", ":"))
+            policy_b64 = base64.b64encode(policy_json.encode("utf-8")).decode("utf-8")
 
             # Create signature
-            signature = rsa.sign(
-                policy_b64.encode('utf-8'),
-                self.private_key,
-                'SHA-1'
-            )
-            signature_b64 = base64.b64encode(signature).decode('utf-8')
+            signature = rsa.sign(policy_b64.encode("utf-8"), self.private_key, "SHA-1")
+            signature_b64 = base64.b64encode(signature).decode("utf-8")
 
             # Construct signed URL
-            params = {
-                'Policy': policy_b64,
-                'Signature': signature_b64,
-                'Key-Pair-Id': self.key_pair_id
-            }
+            params = {"Policy": policy_b64, "Signature": signature_b64, "Key-Pair-Id": self.key_pair_id}
 
             signed_url = f"{base_url}?{urlencode(params)}"
             return signed_url
@@ -149,11 +132,7 @@ class CDNManager:
             token_data = f"{url}{expires}"
 
             # Create HMAC signature
-            signature = hmac.new(
-                self.private_key,
-                token_data.encode('utf-8'),
-                hashlib.sha256
-            ).hexdigest()
+            signature = hmac.new(self.private_key, token_data.encode("utf-8"), hashlib.sha256).hexdigest()
 
             # Construct signed URL
             signed_url = f"{url}?expires={expires}&signature={signature}"
@@ -174,8 +153,8 @@ class CDNManager:
             # Create HMAC signature
             signature = hmac.new(
                 self.private_key if isinstance(self.private_key, bytes) else str(self.private_key).encode(),
-                message.encode('utf-8'),
-                hashlib.sha256
+                message.encode("utf-8"),
+                hashlib.sha256,
             ).hexdigest()
 
             # Construct signed URL
@@ -190,24 +169,24 @@ class CDNManager:
         """Validate that a signed URL is properly signed and not expired"""
         try:
             parsed = urlparse(signed_url)
-            query_params = dict(param.split('=') for param in parsed.query.split('&') if '=' in param)
+            query_params = dict(param.split("=") for param in parsed.query.split("&") if "=" in param)
 
-            expires = int(query_params.get('expires', 0))
-            signature = query_params.get('signature', '')
+            expires = int(query_params.get("expires", 0))
+            signature = query_params.get("signature", "")
 
             # Check if URL has expired
             if time.time() > expires:
                 return False
 
             # Reconstruct the URL without signature for verification
-            base_url = signed_url.split('?')[0]
+            base_url = signed_url.split("?")[0]
             message = f"{base_url}{expires}"
 
             # Verify signature
             expected_signature = hmac.new(
                 self.private_key if isinstance(self.private_key, bytes) else str(self.private_key).encode(),
-                message.encode('utf-8'),
-                hashlib.sha256
+                message.encode("utf-8"),
+                hashlib.sha256,
             ).hexdigest()
 
             return hmac.compare_digest(signature, expected_signature)
@@ -222,7 +201,7 @@ class CDNManager:
             "provider": self.provider,
             "private_key_loaded": self.private_key is not None,
             "key_pair_id": self.key_pair_id is not None if self.provider == "cloudfront" else None,
-            "cdn_url": self.cdn_url
+            "cdn_url": self.cdn_url,
         }
 
 
@@ -239,8 +218,9 @@ def create_cdn_manager() -> CDNManager:
         enable_signing=enable_signing,
         provider=provider,
         private_key_path=private_key_path,
-        key_pair_id=key_pair_id
+        key_pair_id=key_pair_id,
     )
+
 
 # Global CDN service instance
 cdn_service = create_cdn_manager()
@@ -260,10 +240,7 @@ def validate_asset_access(signed_url: str) -> bool:
 def get_cdn_health_status() -> dict[str, Any]:
     """Get comprehensive CDN health and configuration status"""
     status = cdn_service.get_signing_status()
-    status.update({
-        "cdn_reachable": _test_cdn_connectivity(),
-        "signing_functional": _test_signing_functionality()
-    })
+    status.update({"cdn_reachable": _test_cdn_connectivity(), "signing_functional": _test_signing_functionality()})
     return status
 
 
@@ -274,9 +251,11 @@ def _test_cdn_connectivity() -> bool:
 
     try:
         import requests
+
         response = requests.head(cdn_service.cdn_url, timeout=5)
         return response.status_code < 400
-    except:
+    except Exception as e:
+        logger.warning(f"CDN connectivity test failed: {e}")
         return False
 
 
@@ -288,5 +267,6 @@ def _test_signing_functionality() -> bool:
     try:
         test_url = cdn_service.get_asset_url("test.txt", signed=True, expiry_seconds=60)
         return cdn_service.validate_signed_url(test_url)
-    except:
+    except Exception as e:
+        logger.warning(f"CDN signing test failed: {e}")
         return False

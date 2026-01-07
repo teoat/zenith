@@ -1,13 +1,13 @@
 import os
+
 import uvicorn
+
 from app.factory import create_app
 
 # Create the application instance using the factory
 app = create_app()
 
 if __name__ == "__main__":
-    import asyncio
-    from core.logging import logger
 
     # Security: Only enable reload in development
     reload_enabled = os.getenv("ENVIRONMENT", "production").lower() == "development"

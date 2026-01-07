@@ -2,14 +2,14 @@
 Delegates to backend implementation when available.
 """
 from datetime import UTC
-from sqlalchemy import func, case
+
+from sqlalchemy import case, func
 
 try:
     # Prefer canonical implementation (backend detector)
     from app.services.fraud import (
         temporal_burst_detector as _backend_detector,  # type: ignore
     )
-
     from backend.core.database import Transaction  # type: ignore
 except Exception:  # pragma: no cover - fallback
     _backend_detector = None

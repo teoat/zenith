@@ -6,6 +6,10 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from main import FilterParams, PaginationParams
 
+from sqlalchemy import desc, or_, text
+from sqlalchemy.exc import DisconnectionError, OperationalError, SQLAlchemyError
+from sqlalchemy.orm import Session
+
 from app.services.infrastructure.cache_service import cached, query_cache
 from app.services.infrastructure.circuit_breaker import (
     CircuitBreakerConfig,
@@ -13,10 +17,6 @@ from app.services.infrastructure.circuit_breaker import (
     get_circuit_breaker,
 )
 from app.services.infrastructure.storage.database_optimizer_service import db_optimizer
-from sqlalchemy import desc, or_, text
-from sqlalchemy.exc import DisconnectionError, OperationalError, SQLAlchemyError
-from sqlalchemy.orm import Session
-
 from core.database import (
     Case,
     CaseActivity,
@@ -782,7 +782,7 @@ class DatabaseService:
         with self.get_db() as db:
             query = db.query(CaseNote).filter(CaseNote.case_id == case_id)
             if not include_internal:
-                query = query.filter(CaseNote.is_internal == False)
+                query = query.filter(not CaseNote.is_internal)
             return query.order_by(desc(CaseNote.created_at)).all()
 
     # ===== CASE ACTIVITIES =====
@@ -803,7 +803,7 @@ class DatabaseService:
     def get_users(self, filters: dict[str, Any] | None = None) -> list[User]:
         """Get users with optional filtering"""
         with self.get_db() as db:
-            query = db.query(User).filter(User.is_active == True)
+            query = db.query(User).filter(User.is_active)
 
             if filters:
                 if "role" in filters:
@@ -818,7 +818,7 @@ class DatabaseService:
     ) -> dict[str, Any]:
         """Get users with pagination and advanced filtering"""
         with self.get_db() as db:
-            query = db.query(User).filter(User.is_active == True)
+            query = db.query(User).filter(User.is_active)
 
             # Apply filters
             if filters:
@@ -862,7 +862,7 @@ class DatabaseService:
         with self.get_db() as db:
             return (
                 db.query(User)
-                .filter(User.id == user_id, User.is_active == True)
+                .filter(User.id == user_id, User.is_active)
                 .first()
             )
 
@@ -871,7 +871,7 @@ class DatabaseService:
         with self.get_db() as db:
             return (
                 db.query(User)
-                .filter(User.username == username, User.is_active == True)
+                .filter(User.username == username, User.is_active)
                 .first()
             )
 

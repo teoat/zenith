@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/report_templates.py
-# hypothesis_version: 6.148.8
-
-[404, 500, '/templates', '15-25 pages', '2-3 pages', '3-5 pages', '5-10 pages', '6-12 pages', '8-15 pages', 'Action Items', 'Analysis', 'Appendices', 'Audit Scope', 'Case Overview', 'Case Summary', 'Compliance Audit', 'Compliance Findings', 'Conclusions', 'Data Tables', 'Detailed Analysis', 'Evidence Review', 'Evidence Summary', 'Executive Summary', 'Financial Analysis', 'Financial Overview', 'Findings', 'Introduction', 'Key Metrics', 'Methodology', 'Recommendations', 'Risk Assessment', 'Risk Overview', 'Standard Report', 'Technical Findings', 'Transaction Analysis', 'case-summary', 'compliance', 'description', 'detailed', 'estimatedPages', 'executive', 'financial', 'id', 'name', 'reporting', 'sections', 'standard', 'test-user-id', 'test@test.com', 'testuser', 'user']

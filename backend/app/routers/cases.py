@@ -3,13 +3,13 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from app.dependencies import get_current_project_id
-from app.services.infrastructure.auth_service import auth_service
-from app.services.infrastructure.storage.database_service import db_service
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from app.dependencies import get_current_project_id
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.storage.database_service import db_service
 from core.database import get_db
 
 logger = logging.getLogger(__name__)

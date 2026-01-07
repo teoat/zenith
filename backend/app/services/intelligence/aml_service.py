@@ -319,12 +319,12 @@ class AMLVelocityService:
     async def _trace_ownership(self, entity_name: str, max_layers: int) -> list[dict]:
         """
         Trace ownership structure using graph database queries.
-        
+
         Implements Ultimate Beneficial Owner (UBO) discovery through:
         1. Direct database Entity lookups
         2. Corporate registry API integration (when available)
         3. Graph traversal for ownership chains
-        
+
         Returns ownership chain up to max_layers deep.
         """
         from core.database import Entity
@@ -364,7 +364,7 @@ class AMLVelocityService:
     async def _query_corporate_registry(self, entity_name: str, max_layers: int) -> list[dict]:
         """
         Query external corporate registry for ownership information.
-        
+
         This is a placeholder for integration with services like:
         - OpenCorporates
         - Orbis

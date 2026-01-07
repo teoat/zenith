@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/plugins/fraud_detection/velocity_checks.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.3, 0.4, 0.5, 1.0, 50000, 'account_takeover', 'amount', 'fast_flux', 'findings', 'mule_activity', 'transactions', 'velocity_count']

@@ -109,8 +109,8 @@ class AdvancedAnalyticsEngine:
         # This would integrate with actual data sources
         # Mock data for demonstration
 
-        base_date = datetime.now()
-        periods = self._get_time_periods(timeframe)
+        datetime.now()
+        self._get_time_periods(timeframe)
 
         metrics = {
             "fraud_detection": {

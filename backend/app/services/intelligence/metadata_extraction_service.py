@@ -272,14 +272,14 @@ class MetadataExtractionService:
                         page = reader.pages[0]
                         if hasattr(page, 'extract_text'):
                             permissions.append("read")
-                    except:
+                    except Exception:
                         pass
 
                     # Check if we can access page objects
                     try:
                         _ = reader.pages[0]
                         permissions.append("print")  # Basic print permission
-                    except:
+                    except Exception:
                         pass
 
                 # Extract additional metadata
@@ -369,7 +369,7 @@ class MetadataExtractionService:
                         # Convert EXIF datetime format to datetime object
                         from datetime import datetime
                         datetime_original = datetime.strptime(datetime_original, '%Y:%m:%d %H:%M:%S')
-                    except:
+                    except Exception:
                         datetime_original = None
 
                 # Extract GPS data
@@ -502,7 +502,7 @@ class MetadataExtractionService:
                     if hasattr(rel, 'target_ref') and rel.target_ref:
                         if any(ext in rel.target_ref.lower() for ext in ['.png', '.jpg', '.jpeg', '.gif', '.bmp']):
                             image_count += 1
-            except:
+            except Exception:
                 pass
 
             # Extract custom properties if available
@@ -512,7 +512,7 @@ class MetadataExtractionService:
                 if hasattr(doc, 'custom_properties'):
                     for prop in doc.custom_properties:
                         custom_props[prop.name] = str(prop.value)
-            except:
+            except Exception:
                 pass
 
             # Determine document language (basic heuristic)

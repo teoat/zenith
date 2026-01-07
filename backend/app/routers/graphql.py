@@ -7,7 +7,6 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from app.services.infrastructure.auth_service import auth_service
 from fastapi import APIRouter, Depends, HTTPException
 from graphql import (
     GraphQLBoolean,
@@ -25,6 +24,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from starlette.graphql import GraphQLApp
 
+from app.services.infrastructure.auth_service import auth_service
 from core.database import User, get_db
 
 logger = logging.getLogger(__name__)

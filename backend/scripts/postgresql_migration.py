@@ -225,7 +225,7 @@ class PostgreSQLMigrationManager:
 
         # Get column information
         columns = await sqlite_conn.execute_fetchall(f"PRAGMA table_info({table_name})")
-        column_names = [
+        [
             col[1] for col in columns if col[1] != "id"
         ]  # Exclude id for auto-generation
 

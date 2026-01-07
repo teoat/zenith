@@ -18,4 +18,4 @@ export type RegisterRequest = components['schemas']['RegisterRequest'];
 /**
  * SSOT-compliant Health Check Response.
  */
-export type HealthStatus = components['schemas']['HealthCheck'];
+export type HealthStatus = any;

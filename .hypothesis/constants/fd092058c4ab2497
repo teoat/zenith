@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/plugins/fraud_detection/money_mule_detector.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.1, 0.6, 0.8, 0.9, 1.0, 1.05, 5000, 'amount', 'credit', 'debit', 'direction', 'fan_out', 'findings', 'flow_ratio', 'fraud-money-mule', 'money_mule', 'smurfing', 'total_in', 'total_out', 'transactions']

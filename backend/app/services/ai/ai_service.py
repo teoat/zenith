@@ -86,12 +86,7 @@ class AIService:
 
     async def initialize(self):
         """Initialize the AI service and load existing data"""
-        global \
-            HAS_SEMANTIC, \
-            SentenceTransformer, \
-            faiss, \
-            TfidfVectorizer, \
-            cosine_similarity
+        global HAS_SEMANTIC, SentenceTransformer, faiss, TfidfVectorizer, cosine_similarity
 
         try:
             try:
@@ -107,9 +102,7 @@ class AIService:
                 self.model = SentenceTransformer("all-MiniLM-L6-v2")
                 logger.info("SentenceTransformer model loaded successfully")
             except ImportError as ie:
-                logger.warning(
-                    f"Semantic AI dependencies missing: {ie}. Attempting Fallback."
-                )
+                logger.warning(f"Semantic AI dependencies missing: {ie}. Attempting Fallback.")
                 HAS_SEMANTIC = False
 
                 # Lazy load fallback dependencies
@@ -120,9 +113,7 @@ class AIService:
                 cosine_similarity = cs_mod
                 logger.info("Initialized TF-IDF Fallback.")
 
-            logger.info(
-                f"HAS_SEMANTIC={HAS_SEMANTIC}, model loaded={self.model is not None}"
-            )
+            logger.info(f"HAS_SEMANTIC={HAS_SEMANTIC}, model loaded={self.model is not None}")
             await self._load_vector_store()
             await self._rebuild_index()
             self.initialized = True
@@ -203,11 +194,7 @@ class AIService:
                     for row in cursor.fetchall():
                         doc_id, content, metadata_json, vector_blob, created_at = row
                         metadata = json.loads(metadata_json) if metadata_json else {}
-                        vector = (
-                            safe_deserialize_vector(vector_blob)
-                            if vector_blob
-                            else None
-                        )
+                        vector = safe_deserialize_vector(vector_blob) if vector_blob else None
 
                         self.vector_store[doc_id] = {
                             "content": content,
@@ -216,9 +203,7 @@ class AIService:
                             "created_at": created_at,
                         }
 
-                logger.info(
-                    f"Loaded {len(self.vector_store)} documents from vector store"
-                )
+                logger.info(f"Loaded {len(self.vector_store)} documents from vector store")
         except Exception as e:
             logger.error(f"Failed to load vector store: {e}")
 
@@ -252,14 +237,10 @@ class AIService:
                 self.faiss_index = faiss.IndexFlatL2(dim)
                 self.faiss_index.add(vectors_np)
                 self.doc_ids = doc_ids
-                logger.info(
-                    f"Rebuilt FAISS index with {len(documents)} documents (dim={dim})"
-                )
+                logger.info(f"Rebuilt FAISS index with {len(documents)} documents (dim={dim})")
             else:
                 # Fallback to TF-IDF
-                self.tfidf_vectorizer = TfidfVectorizer(
-                    max_features=5000, stop_words="english", ngram_range=(1, 2)
-                )
+                self.tfidf_vectorizer = TfidfVectorizer(max_features=5000, stop_words="english", ngram_range=(1, 2))
                 self.tfidf_matrix = self.tfidf_vectorizer.fit_transform(documents)
                 self.document_index = dict(zip(doc_ids, range(len(documents))))
                 self.doc_ids = doc_ids
@@ -285,15 +266,11 @@ class AIService:
             logger.error(f"Failed to embed text: {e}")
             return [0.0] * 384
 
-    async def add_document(
-        self, doc_id: str, content: str, metadata: dict[str, Any] | None = None
-    ):
+    async def add_document(self, doc_id: str, content: str, metadata: dict[str, Any] | None = None):
         """Add a document to the vector store"""
         try:
             # Create vector using appropriate method
-            logger.info(
-                f"Adding document {doc_id}, HAS_SEMANTIC={HAS_SEMANTIC}, model={self.model is not None}"
-            )
+            logger.info(f"Adding document {doc_id}, HAS_SEMANTIC={HAS_SEMANTIC}, model={self.model is not None}")
             if HAS_SEMANTIC and self.model:
                 # Use SentenceTransformer for semantic embeddings
                 logger.info("Using SentenceTransformer for embeddings")
@@ -301,43 +278,27 @@ class AIService:
             else:
                 logger.info("Using TF-IDF fallback")
                 # Fallback: Initialize TF-IDF vectorizer if needed
-                if (
-                    not hasattr(self, "tfidf_vectorizer")
-                    or self.tfidf_vectorizer is None
-                ):
-                    self.tfidf_vectorizer = TfidfVectorizer(
-                        max_features=5000, stop_words="english", ngram_range=(1, 2)
-                    )
+                if not hasattr(self, "tfidf_vectorizer") or self.tfidf_vectorizer is None:
+                    self.tfidf_vectorizer = TfidfVectorizer(max_features=5000, stop_words="english", ngram_range=(1, 2))
                     # Fit on existing documents if any
                     if self.vector_store:
                         docs = [data["content"] for data in self.vector_store.values()]
                         self.tfidf_vectorizer.fit(docs)
 
                 # Create TF-IDF vector
-                if (
-                    hasattr(self, "tfidf_vectorizer")
-                    and self.tfidf_vectorizer is not None
-                ):
+                if hasattr(self, "tfidf_vectorizer") and self.tfidf_vectorizer is not None:
                     try:
                         vector = self.tfidf_vectorizer.transform([content]).toarray()[0]
                     except Exception as e:
-                        logger.warning(
-                            f"TF-IDF transform failed, using hash fallback: {e}"
-                        )
+                        logger.warning(f"TF-IDF transform failed, using hash fallback: {e}")
                         # Hash-based fallback
                         vector = np.array(
-                            [
-                                hash(content + str(k) + str(v)) % 1000 / 1000.0
-                                for k, v in (metadata or {}).items()
-                            ]
+                            [hash(content + str(k) + str(v)) % 1000 / 1000.0 for k, v in (metadata or {}).items()]
                         )
                 else:
                     # Hash-based fallback
                     vector = np.array(
-                        [
-                            hash(content + str(k) + str(v)) % 1000 / 1000.0
-                            for k, v in (metadata or {}).items()
-                        ]
+                        [hash(content + str(k) + str(v)) % 1000 / 1000.0 for k, v in (metadata or {}).items()]
                     )
 
             # Store in memory
@@ -419,9 +380,7 @@ class AIService:
 
                 # Search FAISS index (return more than limit to allow for filtering)
                 search_limit = limit * 2 if filters else limit
-                distances, indices = self.faiss_index.search(
-                    query_vector, min(search_limit, len(self.doc_ids))
-                )
+                distances, indices = self.faiss_index.search(query_vector, min(search_limit, len(self.doc_ids)))
 
                 results = []
                 for i, idx in enumerate(indices[0]):
@@ -432,9 +391,7 @@ class AIService:
                     doc_data = self.vector_store[doc_id]
 
                     # Apply filters
-                    if filters and not self._matches_filters(
-                        doc_data["metadata"], filters
-                    ):
+                    if filters and not self._matches_filters(doc_data["metadata"], filters):
                         continue
 
                     # L2 distance to similarity (approximate)
@@ -460,13 +417,9 @@ class AIService:
                     results = []
                     for doc_id, doc_data in self.vector_store.items():
                         if doc_data["vector"] is not None:
-                            similarity = cosine_similarity(
-                                [query_vector], [doc_data["vector"]]
-                            )[0][0]
+                            similarity = cosine_similarity([query_vector], [doc_data["vector"]])[0][0]
 
-                            if filters and not self._matches_filters(
-                                doc_data["metadata"], filters
-                            ):
+                            if filters and not self._matches_filters(doc_data["metadata"], filters):
                                 continue
 
                             results.append(
@@ -529,9 +482,7 @@ class AIService:
         results.sort(key=lambda x: x["similarity"], reverse=True)
         return results[:limit]
 
-    def _matches_filters(
-        self, metadata: dict[str, Any], filters: dict[str, Any]
-    ) -> bool:
+    def _matches_filters(self, metadata: dict[str, Any], filters: dict[str, Any]) -> bool:
         """Check if document metadata matches filters"""
         for key, value in filters.items():
             if key not in metadata:
@@ -549,9 +500,7 @@ class AIService:
 
         return True
 
-    async def analyze_case(
-        self, case_data: dict[str, Any], analysis_type: str
-    ) -> dict[str, Any]:
+    async def analyze_case(self, case_data: dict[str, Any], analysis_type: str) -> dict[str, Any]:
         """Perform AI analysis on case data"""
         try:
             analysis_result = {
@@ -586,9 +535,7 @@ class AIService:
                 "timestamp": datetime.now().isoformat(),
             }
 
-    async def _analyze_typology_context(
-        self, case_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _analyze_typology_context(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """
         RAG: Extract context from case and search Typology Knowledge Base.
         """
@@ -647,28 +594,16 @@ class AIService:
             # Take top match
             top_match = matches[0]
             typology_name = (
-                top_match["metadata"]
-                .get("filename", "Unknown")
-                .replace(".md", "")
-                .replace("_", " ")
-                .title()
+                top_match["metadata"].get("filename", "Unknown").replace(".md", "").replace("_", " ").title()
             )
 
-            insights.append(
-                f"Activity matches '{typology_name}' typology patterns (Confidence: {confidence:.2f})"
-            )
+            insights.append(f"Activity matches '{typology_name}' typology patterns (Confidence: {confidence:.2f})")
 
             # Extract indicators from content (simple heuristic: lines starting with -)
             content_lines = top_match["content"].split("\n")
-            indicators = [
-                line.strip("- ")
-                for line in content_lines
-                if line.strip().startswith("-")
-            ][:3]
+            indicators = [line.strip("- ") for line in content_lines if line.strip().startswith("-")][:3]
             if indicators:
-                recommendations.append(
-                    f"Check for {typology_name} indicators: {', '.join(indicators)}"
-                )
+                recommendations.append(f"Check for {typology_name} indicators: {', '.join(indicators)}")
 
         return {
             "insights": insights,
@@ -678,9 +613,7 @@ class AIService:
             "typology_matches": matches,
         }
 
-    async def _analyze_fraud_patterns(
-        self, case_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _analyze_fraud_patterns(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Analyze fraud patterns in case data"""
         insights = []
         recommendations = []
@@ -696,9 +629,7 @@ class AIService:
 
             structuring_count = sum(1 for amt in amounts if 9000 <= amt < threshold)
             if structuring_count >= 3:
-                insights.append(
-                    f"Detected {structuring_count} transactions just below $10k threshold"
-                )
+                insights.append(f"Detected {structuring_count} transactions just below $10k threshold")
                 recommendations.append("Investigate for money laundering structuring")
                 confidence += 0.8
                 risk_score += 70
@@ -706,9 +637,7 @@ class AIService:
             # Check for round numbers
             round_numbers = sum(1 for amt in amounts if amt % 1000 == 0 and amt > 5000)
             if round_numbers >= 2:
-                insights.append(
-                    f"Found {round_numbers} large round-number transactions"
-                )
+                insights.append(f"Found {round_numbers} large round-number transactions")
                 recommendations.append("Verify transaction legitimacy")
                 confidence += 0.6
                 risk_score += 40
@@ -717,11 +646,7 @@ class AIService:
             if len(transactions) >= 3:
                 dates = sorted([t.get("date") for t in transactions if t.get("date")])
                 if dates:
-                    time_span = (
-                        (max(dates) - min(dates)).days
-                        if hasattr(max(dates), "days")
-                        else 1
-                    )
+                    time_span = (max(dates) - min(dates)).days if hasattr(max(dates), "days") else 1
                     velocity = len(transactions) / max(time_span, 1)
                     if velocity > 2:  # More than 2 transactions per day
                         insights.append(".1f")
@@ -736,9 +661,7 @@ class AIService:
             "risk_score": min(risk_score, 100),
         }
 
-    async def _analyze_entity_linkage(
-        self, case_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _analyze_entity_linkage(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Analyze entity relationships and linkages"""
         insights = []
         recommendations = []
@@ -767,12 +690,8 @@ class AIService:
             # Find highly connected entities
             for entity, connections in entity_connections.items():
                 if len(connections) >= 3:
-                    insights.append(
-                        f"Entity '{entity}' connected to {len(connections)} other entities"
-                    )
-                    recommendations.append(
-                        f"Investigate entity '{entity}' for central role in network"
-                    )
+                    insights.append(f"Entity '{entity}' connected to {len(connections)} other entities")
+                    recommendations.append(f"Investigate entity '{entity}' for central role in network")
                     confidence += 0.5
 
             # Find isolated clusters
@@ -787,9 +706,7 @@ class AIService:
 
             if len(clusters) > 1:
                 insights.append(f"Found {len(clusters)} separate entity clusters")
-                recommendations.append(
-                    "Analyze each cluster for independent fraud schemes"
-                )
+                recommendations.append("Analyze each cluster for independent fraud schemes")
                 confidence += 0.4
 
         return {
@@ -799,9 +716,7 @@ class AIService:
             "risk_score": 50 if confidence > 0.5 else 20,
         }
 
-    def _dfs(
-        self, entity: str, connections: dict[str, set], visited: set, cluster: set
-    ):
+    def _dfs(self, entity: str, connections: dict[str, set], visited: set, cluster: set):
         """Depth-first search for connected components"""
         visited.add(entity)
         cluster.add(entity)
@@ -810,9 +725,7 @@ class AIService:
             if neighbor not in visited:
                 self._dfs(neighbor, connections, visited, cluster)
 
-    async def _analyze_risk_assessment(
-        self, case_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _analyze_risk_assessment(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Perform comprehensive risk assessment"""
         risk_factors = []
         risk_score = 0
@@ -842,11 +755,7 @@ class AIService:
         # Time pattern analysis
         if len(transactions) >= 5:
             # Check for unusual timing
-            hours = [
-                self._extract_hour(t.get("timestamp"))
-                for t in transactions
-                if t.get("timestamp")
-            ]
+            hours = [self._extract_hour(t.get("timestamp")) for t in transactions if t.get("timestamp")]
             if hours:
                 avg_hour = sum(hours) / len(hours)
                 if avg_hour < 6 or avg_hour > 22:  # Unusual hours
@@ -870,11 +779,7 @@ class AIService:
                 (
                     "Monitor for additional suspicious activity"
                     if risk_score > 60
-                    else (
-                        "Continue standard monitoring"
-                        if risk_score > 30
-                        else "Low risk - standard procedures apply"
-                    )
+                    else ("Continue standard monitoring" if risk_score > 30 else "Low risk - standard procedures apply")
                 )
             ],
             "confidence": 0.8,
@@ -889,7 +794,8 @@ class AIService:
                 time_part = timestamp_str.split("T")[1][:2]
                 return int(time_part)
             return 12  # Default
-        except:
+        except Exception as e:
+            logger.warning(f"Failed to extract hour from timestamp: {e}")
             return 12
 
     async def _analyze_evidence(self, case_data: dict[str, Any]) -> dict[str, Any]:
@@ -917,12 +823,8 @@ class AIService:
 
             found_keywords = [kw for kw in fraud_keywords if kw in content]
             if found_keywords:
-                insights.append(
-                    f"Evidence '{filename}' contains suspicious keywords: {', '.join(found_keywords)}"
-                )
-                recommendations.append(
-                    f"Review evidence '{filename}' for fraud indicators"
-                )
+                insights.append(f"Evidence '{filename}' contains suspicious keywords: {', '.join(found_keywords)}")
+                recommendations.append(f"Review evidence '{filename}' for fraud indicators")
                 confidence += 0.3
 
             # Check file metadata
@@ -932,9 +834,7 @@ class AIService:
                 created = metadata["created_date"]
                 modified = metadata["modified_date"]
                 if modified < created:
-                    insights.append(
-                        f"Evidence '{filename}' has suspicious modification date"
-                    )
+                    insights.append(f"Evidence '{filename}' has suspicious modification date")
                     recommendations.append("Verify evidence chain of custody")
                     confidence += 0.4
 
@@ -961,45 +861,29 @@ class AIService:
             data = context.get("active_data", {})
 
             if page == "dashboard":
-                insights["suggestions"].append(
-                    "Review high-risk cases in the alerts panel"
-                )
-                insights["opportunities"].append(
-                    "Consider running a bulk risk assessment"
-                )
+                insights["suggestions"].append("Review high-risk cases in the alerts panel")
+                insights["opportunities"].append("Consider running a bulk risk assessment")
 
             elif page == "cases":
                 case_count = len(data.get("cases", []))
                 if case_count > 10:
-                    insights["suggestions"].append(
-                        "Consider applying filters to manage case volume"
-                    )
+                    insights["suggestions"].append("Consider applying filters to manage case volume")
                 if case_count == 0:
-                    insights["opportunities"].append(
-                        "Import case data to begin investigation"
-                    )
+                    insights["opportunities"].append("Import case data to begin investigation")
 
             elif page == "investigation":
                 if "selected_node" in data:
-                    insights["suggestions"].append(
-                        "Analyze connections for this entity"
-                    )
+                    insights["suggestions"].append("Analyze connections for this entity")
                     insights["opportunities"].append("Check for related transactions")
 
             elif page == "evidence":
                 evidence_count = len(data.get("evidence", []))
                 if evidence_count == 0:
-                    insights["opportunities"].append(
-                        "Upload evidence to enable AI analysis"
-                    )
+                    insights["opportunities"].append("Upload evidence to enable AI analysis")
 
             # Add general insights
-            insights["suggestions"].append(
-                "Use semantic search to find related information"
-            )
-            insights["opportunities"].append(
-                "Enable real-time collaboration for team investigations"
-            )
+            insights["suggestions"].append("Use semantic search to find related information")
+            insights["opportunities"].append("Enable real-time collaboration for team investigations")
 
             return insights
 
@@ -1007,16 +891,12 @@ class AIService:
             logger.error(f"Failed to generate insights: {e}")
             return {"timestamp": datetime.now().isoformat(), "error": str(e)}
 
-    async def analyze_multi_persona(
-        self, case_id: str, personas: list[str]
-    ) -> dict[str, str]:
+    async def analyze_multi_persona(self, case_id: str, personas: list[str]) -> dict[str, str]:
         """Perform analysis from multiple persona perspectives"""
         results = {}
         for persona in personas:
             if persona == "frenly":
-                results[persona] = (
-                    "As your AI companion, I see a few standard anomalies in the transaction patterns."
-                )
+                results[persona] = "As your AI companion, I see a few standard anomalies in the transaction patterns."
             elif persona == "legal":
                 results[persona] = (
                     "From a regulatory perspective, the transaction structuring falls within the definition of suspicious activity reportable under AML directives."
@@ -1030,9 +910,7 @@ class AIService:
                     "I recommend interviewing the beneficiary. Their social graph links to known high-risk entities."
                 )
             else:
-                results[persona] = (
-                    f"Perspective for {persona} is not currently configured."
-                )
+                results[persona] = f"Perspective for {persona} is not currently configured."
         return results
 
     async def investigate_subject(self, subject_id: str) -> dict[str, Any]:
@@ -1049,9 +927,7 @@ class AIService:
             "summary": "Subject serves as a nexus for high-value transfers to offshore jurisdictions.",
         }
 
-    async def get_proactive_suggestions(
-        self, alert_id: str, context: str
-    ) -> dict[str, Any]:
+    async def get_proactive_suggestions(self, alert_id: str, context: str) -> dict[str, Any]:
         """Generate proactive suggestions based on alert context"""
         return {
             "suggestions": [
@@ -1093,9 +969,7 @@ class AIService:
             # Persist changes
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                cursor.execute(
-                    "DELETE FROM documents WHERE created_at < ?", (cutoff_iso,)
-                )
+                cursor.execute("DELETE FROM documents WHERE created_at < ?", (cutoff_iso,))
                 conn.commit()
 
             logger.info(f"Cleaned up {removed_count} old documents")

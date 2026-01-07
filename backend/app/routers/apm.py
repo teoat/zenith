@@ -3,6 +3,9 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
+from sqlalchemy.orm import Session
+
 from app.services.infrastructure.apm_service import (
     create_alert,
     finish_span,
@@ -17,9 +20,6 @@ from app.services.infrastructure.health_service import (
     graceful_degradation_service,
     health_check_service,
 )
-from fastapi import APIRouter, Body, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
-
 from core.database import User, get_db
 
 logger = logging.getLogger(__name__)
@@ -588,7 +588,6 @@ async def get_dashboard_data():
         from app.services.apm_service import (
             get_apm_summary,
         )
-        from app.services.infrastructure.auth_service import auth_service
         from fastapi import APIRouter, Depends, HTTPException, Query
         from sqlalchemy.orm import Session
 
@@ -599,7 +598,6 @@ async def get_dashboard_data():
         router = APIRouter(prefix="/apm", tags=["apm-monitoring"])
 
         # Placeholders so tests can patch `auth_service` and `User`
-        auth_service = None
         User = Any
 
         @router.get("/summary")
@@ -728,11 +726,11 @@ async def deep_health_check(
 
         # Return appropriate HTTP status based on health
         if result.status == HealthStatus.HEALTHY:
-            status_code = 200
+            pass
         elif result.status == HealthStatus.DEGRADED:
-            status_code = 207  # Multi-status
+            pass  # Multi-status
         else:
-            status_code = 503  # Service unavailable
+            pass  # Service unavailable
 
         return result.to_dict()
 

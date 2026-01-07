@@ -1,8 +1,8 @@
 # Basic SQLAlchemy models for Zenith
-from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, DECIMAL
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 from datetime import datetime
+
+from sqlalchemy import DECIMAL, Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 

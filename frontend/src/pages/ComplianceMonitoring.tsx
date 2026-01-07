@@ -12,9 +12,7 @@ import {
   Shield,
   Settings,
   Sparkles,
-  CheckCircle,
-  TrendingUp,
-  Bell
+  CheckCircle
 } from 'lucide-react';
 import { complianceMonitoringService, type MonitoringDashboard } from '@/services/complianceMonitoring';
 import { complianceService } from '@/services/compliance';
@@ -62,7 +60,7 @@ const ComplianceMonitoring: React.FC = () => {
       setDashboard(dashboardData);
 
       // Convert compliance data to health check format
-      const healthChecksData = [
+      const healthChecksData: HealthCheck[] = [
         {
           name: 'API Connectivity',
           status: 'healthy',

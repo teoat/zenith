@@ -7,11 +7,12 @@ integrate with existing fraud detection services.
 # backend/app/services/ai_integration_hub.py
 from typing import Any
 
-from app.services.ai.ai_service import AIService
 from app.services.federated_learning import FederatedLearningCoordinator
-from app.services.fraud.fraud_service import FraudDetectionService
 from app.services.multimodal_learning_integrator import MultiModalLearningIntegrator
 from app.services.realtime_model_adapter import RealTimeModelAdapter
+
+from app.services.ai.ai_service import AIService
+from app.services.fraud.fraud_service import FraudDetectionService
 
 
 class AIIntegrationHub:
@@ -69,7 +70,7 @@ class AIIntegrationHub:
     ) -> dict[str, Any]:
         """Handle real-time adaptation requests"""
         transaction_data = request_data.get("transaction_data", {})
-        context_data = request_data.get("context_data", {})
+        request_data.get("context_data", {})
 
         # Get current prediction
         current_prediction = await self.ai_service.analyze_transaction(transaction_data)

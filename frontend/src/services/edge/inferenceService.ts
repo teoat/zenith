@@ -14,7 +14,7 @@ export interface InferenceResult {
 
 class EdgeInferenceService {
   private modelLoaded: boolean = false;
-  private modelPath: string = '/models/fraud_detection_v1.onnx';
+  // private modelPath: string = '/models/fraud_detection_v1.onnx';
 
   constructor() {
     this.initialize();

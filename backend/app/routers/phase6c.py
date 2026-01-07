@@ -18,12 +18,12 @@ async def rag_add(request: Request):
 @router.post("/phase6c/local-rag")
 async def local_rag(request: Request):
     try:
-        payload = await request.json()
+        await request.json()
     except Exception:
         try:
-            payload = dict(await request.form())
+            dict(await request.form())
         except Exception:
-            payload = {}
+            pass
     return {"results": []}
 
 

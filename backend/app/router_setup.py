@@ -1,6 +1,8 @@
 from datetime import datetime
+
+from app.routers.backup import router as backup_router
 from fastapi import FastAPI
-from core.logging import logger
+
 from app.constants import API_VERSION
 from app.routers import advanced_ai
 from app.routers.admin import router as admin_router
@@ -10,14 +12,15 @@ from app.routers.analytics import router as analytics_router
 from app.routers.apm import router as apm_router
 from app.routers.audit import router as audit_router
 from app.routers.auth import router as auth_router
-from app.routers.backup import router as backup_router
+from app.routers.auth_biometric import router as auth_biometric_router
+from app.routers.auth_social import router as auth_social_router
 from app.routers.cases import router as cases_router
 from app.routers.collaboration import router as collaboration_router
 from app.routers.compliance import router as compliance_router
 from app.routers.cost_optimization import router as cost_optimization_router
 from app.routers.csrf import router as csrf_router
-from app.routers.entities import router as entities_router
 from app.routers.entities import relationships_router as relationships_router_from_entities
+from app.routers.entities import router as entities_router
 from app.routers.evidence import router as evidence_router
 from app.routers.forensic_intelligence import router as forensic_intel_router
 from app.routers.fraud import router as fraud_router
@@ -25,34 +28,32 @@ from app.routers.fraud_rules import router as fraud_rules_router
 from app.routers.graph import router as graph_router
 from app.routers.health import router as health_router
 from app.routers.logging import router as logging_router
-from app.routers.macros import router as macros_router
 from app.routers.metadata import router as metadata_router
-from app.routers.ml_feedback import router as ml_feedback_router
 from app.routers.multimodal import router as multimodal_router
 from app.routers.notifications import router as notifications_router
 from app.routers.onboarding import router as onboarding_router
 from app.routers.proof import router as proof_router
 from app.routers.realtime_sync import router as realtime_sync_router
 from app.routers.reconciliation import router as reconciliation_router
+from app.routers.regulatory_rag import router as regulatory_rag_router
 from app.routers.reporting import router as reporting_router
 from app.routers.search import router as search_router
+from app.routers.self_healing import router as self_healing_router
 from app.routers.semantic_search import router as semantic_search_router
 from app.routers.stats import router as stats_router
-from app.routers.time_travel import router as time_travel_router
-from app.routers.users import router as users_router
-from app.routers.auth_biometric import router as auth_biometric_router
-from app.routers.auth_social import router as auth_social_router
-from app.routers.regulatory_rag import router as regulatory_rag_router
-from app.routers.self_healing import router as self_healing_router
-from app.routers.xai import router as xai_router
 
 # System specific router
 from app.routers.system_routes import router as system_router
+from app.routers.time_travel import router as time_travel_router
+from app.routers.users import router as users_router
+from app.routers.xai import router as xai_router
+from core.logging import logger
+
 
 def setup_routers(app: FastAPI):
     # Health Check Endpoints (Moved to app.routers.health)
     app.include_router(health_router)
-    
+
     # System routes (metrics, dashboard, index)
     app.include_router(system_router)
 

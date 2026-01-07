@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/distributed_tracing.py
-# hypothesis_version: 6.148.8
-
-[100, 404, 500, '/services', '/spans', '/spans/start', '/spans/{span_id}', '/traces', 'Span not found', 'error_message', 'file', 'operation', 'parent_span_id', 'service', 'service_dependencies', 'span', 'span_id', 'spans', 'status', 'success', 'tags', 'test-user-id', 'test@test.com', 'testuser', 'timestamp', 'total', 'trace_id', 'traces', 'unknown_operation', 'unknown_service', 'user']

@@ -1,12 +1,12 @@
 from datetime import UTC, datetime
 from typing import Any
 
-from app.dependencies import get_current_project_id
-from app.services.infrastructure.auth_service import auth_service
 from fastapi import APIRouter, Body, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.dependencies import get_current_project_id
+from app.services.infrastructure.auth_service import auth_service
 from core.database import Case, FraudAlert, get_db
 
 router = APIRouter()
@@ -111,7 +111,7 @@ async def update_alert(
         raise HTTPException(status_code=404, detail="Alert not found")
 
     status = update_data.get("status")
-    note = update_data.get("note")
+    update_data.get("note")
 
     # Update status
     if status:

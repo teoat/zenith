@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/scheduled_reports.py
-# hypothesis_version: 6.148.8
-
-[404, 500, '.json', '/scheduled', 'caseIds', 'compliance', 'created_at', 'created_by', 'daily', 'detailed', 'enabled', 'executive', 'frequency', 'id', 'lastRunAt', 'message', 'monthly', 'name', 'nextRunAt', 'quarterly', 'r', 'recipients', 'reporting', 'reports/scheduled', 'standard', 'template', 'test-user-id', 'test@test.com', 'testuser', 'user', 'w', 'weekly']

@@ -2,15 +2,16 @@ import logging
 from typing import Any
 
 from app.services.core.auth_service import auth_service
+from app.services.diagnostics.diagnostic_service import DiagnosticService
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.services.core.implementation_pipeline_service import pipeline_service
 from app.services.core.investigation_workflow_service import investigation_service
 from app.services.core.orchestration_notification_service import (
     orchestration_notification_service,
 )
 from app.services.core.sync_protocol_service import sync_protocol_service
-from app.services.diagnostics.diagnostic_service import DiagnosticService
 from app.services.scoring.automated_scoring_system import scoring_system
-from fastapi import APIRouter, Depends, HTTPException
 
 logger = logging.getLogger(__name__)
 

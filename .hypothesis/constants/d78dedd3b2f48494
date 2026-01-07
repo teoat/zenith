@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/metrics.py
-# hypothesis_version: 6.148.8
-
-[200, 500, '/', 'GET', 'HTTP request latency', 'Total HTTP requests', 'active_cases_total', 'detection_type', 'endpoint', 'http', 'http.response.start', 'http_requests_total', 'method', 'name', 'path', 'status', 'status_code', 'text/plain', 'type', 'url']

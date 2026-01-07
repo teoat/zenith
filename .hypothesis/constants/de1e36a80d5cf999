@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/database_connection.py
-# hypothesis_version: 6.148.8
-
-[0.85, 3600, 'DATABASE_REPLICA_URL', 'DATABASE_URL', 'TESTING', 'active_connections', 'cache_hit_ratio', 'check_same_thread', 'deadlocks', 'echo', 'long_running_queries', 'max_overflow', 'pool_pre_ping', 'pool_recycle', 'pool_size', 'postgresql', 'sqlite', 'true']

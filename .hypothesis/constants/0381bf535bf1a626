@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/models/identity.py
-# hypothesis_version: 6.148.8
-
-[100, 255, 'Team', 'User', 'UserDevice', 'UserSession', 'devices', 'extend_existing', 'fido-u2f', 'parent_team', 'sessions', 'teams', 'teams.id', 'user', 'user_devices', 'user_sessions', 'users', 'users.id', 'webauthn_credentials']

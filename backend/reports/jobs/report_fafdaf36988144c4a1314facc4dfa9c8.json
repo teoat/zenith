@@ -1,0 +1,23 @@
+{
+  "id": "report_fafdaf36988144c4a1314facc4dfa9c8",
+  "type": "standard",
+  "format": "pdf",
+  "parameters": {
+    "report_type": "standard",
+    "case_id": null,
+    "case_ids": null,
+    "date_range": {
+      "start": "2025-12-08T20:28:08.664305",
+      "end": "2026-01-07T20:28:08.664325"
+    },
+    "format": "pdf",
+    "template": "standard",
+    "include_sensitive_data": false
+  },
+  "status": "completed",
+  "created_at": "2026-01-07T11:28:08.697005+00:00",
+  "created_by": "test_user_id",
+  "progress": 100,
+  "estimated_completion": null,
+  "updated_at": "2026-01-07T11:28:09.707894+00:00"
+}

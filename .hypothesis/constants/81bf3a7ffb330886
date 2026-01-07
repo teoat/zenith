@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/frenly_event_bus.py
-# hypothesis_version: 6.148.8
-
-['REDIS_URL', 'backend', 'data', 'message', 'source', 'timestamp', 'type', 'user_id', 'utf-8']

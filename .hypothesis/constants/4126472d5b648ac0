@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/ai/ai_case_assignment.py
-# hypothesis_version: 6.148.8
-
-[0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.88, 0.9, 0.92, 0.95, 1.0, 1.5, 4.0, 3600, 'CRITICAL', 'Emily Rodriguez', 'HIGH', 'LOW', 'MEDIUM', 'Mike Chen', 'Sarah Johnson', 'aml_compliance', 'analyst_001', 'analyst_002', 'analyst_003', 'analyst_id', 'bank_fraud', 'case_id', 'confidence', 'cyber_crime', 'cyber_fraud', 'deadline', 'deadline_bonus', 'digital_forensics', 'expertise', 'expertise_match', 'expertise_weights', 'fraud_investigation', 'money_laundering', 'scores', 'specialization', 'specialization_bonus', 'timestamp', 'total', 'wire_transfers', 'workload', 'workload_balance', 'workload_penalty']

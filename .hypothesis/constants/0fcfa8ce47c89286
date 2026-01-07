@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/regulatory/__init__.py
-# hypothesis_version: 6.148.8
-
-['AML_REPORT', 'CTR', 'EU_STR', 'SAR', 'Validation failed', 'accepted', 'amount', 'case_id', 'case_id is required', 'customer_info', 'draft', 'error', 'errors', 'rejected', 'report_id', 'status', 'submission_reference', 'submitted', 'submitted_at', 'success', 'suspect_info', 'suspicious_activity', 'transaction_amount', 'transaction_date', 'validated']

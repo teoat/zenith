@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/plugin_system/registry.py
-# hypothesis_version: 6.148.8
-
-[0.0, 1000, 3600, '.', '../../..', '.plugin', '/', '0.0.1', 'Plugin', 'PluginInterface', '__dict__', 'active', 'ai_service', 'auto_detected', 'average_load_time_ms', 'cache_hit_rate', 'db_service', 'expired_plugins', 'expiry', 'file', 'instance', 'load_time', 'loaded_at', 'monitoring_service', 'namespace', 'official', 'plugin.py', 'plugins.', 'registered', 'registry.py', 'success', 'total_accesses', 'total_cached_plugins', 'updated', 'version']

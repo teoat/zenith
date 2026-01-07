@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/database_monitor.py
-# hypothesis_version: 6.148.8
-
-[0.0, 1.0, 5.0, 200, 500, 'ALTER', 'CREATE', 'DELETE', 'DROP', 'INSERT', 'OTHER', 'SELECT', 'UPDATE', 'after_cursor_execute', 'average_query_time', 'close', 'connect', 'connection_count', 'critical_performance', 'execution_time', 'parameters', 'query', 'query_execution_time', 'query_parameters', 'query_start_time', 'query_statement', 'query_type', 'query_type_breakdown', 'slow_queries_count', 'slow_query', 'timestamp', 'total_queries', 'total_query_time']

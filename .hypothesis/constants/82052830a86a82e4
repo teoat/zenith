@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/intelligence/behavior_engine.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.1, 0.15, 0.5, 1000.0, 1250.0, 'CINEMA', 'CREDIT', 'CRITICAL_DEPENDENCY', 'GEO_ANOMALY', 'GROCERY', 'HEALTHY', 'HIGH', 'HIGH_CO_MINGLING', 'INVOICE', 'MEDIUM', 'PAYROLL', 'PHARMACY', 'RENT', 'REST', 'SUPPLY', 'TECHNOLOGY', 'UK', 'USA', 'UTILITIES', 'VALUE_SPIKE', 'VENDOR', 'account_id', 'amount', 'behavior_engine.py', 'buffer', 'comingling_ratio', 'date', 'dependency_ratio', 'description', 'file', 'geographic_footprint', 'heatmap_data', 'id', 'last_calculated', 'libr_verdict', 'location', 'merchant_categories', 'peak_activity_hours', 'reason', 'severity', 'status', 'timestamp', 'transaction_id', 'transaction_type', 'type', 'volatility_index']

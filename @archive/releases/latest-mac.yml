@@ -1,0 +1,17 @@
+version: 1.0.0
+files:
+  - url: 378x492-Fraud-Detection-1.0.0-arm64-mac.zip
+    sha512: 51fpF96KgopzEF9+i0fT4EXxMAJPJulVRPNwLdDSv2/D20jiWh1jP1P7WCWQtkHxww5JunLHHaXvYDkHpjgYOQ==
+    size: 260132150
+  - url: 378x492-Fraud-Detection-1.0.0-mac.zip
+    sha512: zx6exh6zFXjNvRrD2E5MDyn6rh9Zqmiw7pNz210jwgIjWMTYkEoUdavXNnexuhOOkIunMQM69t4z0PM05aDq5w==
+    size: 265268601
+  - url: 378x492-Fraud-Detection-1.0.0-arm64.dmg
+    sha512: 3v4HzNsPrIVG/t26o4yi7Ns1fBshCOIUxQ16HuidxZUbyjLzlDzJuP6FchtIocM7FO5BG9WUfVWVpyvOBDqcJw==
+    size: 267161805
+  - url: 378x492-Fraud-Detection-1.0.0.dmg
+    sha512: +m+csRPhnRE9/mFhUIi8KrAqE5eBHRgWhnCbSH8nTFZB7BoS1lIv4BhL1TmxMHm2XxJcnRTSmihR2mEWd4p6Lg==
+    size: 272187597
+path: 378x492-Fraud-Detection-1.0.0-arm64-mac.zip
+sha512: 51fpF96KgopzEF9+i0fT4EXxMAJPJulVRPNwLdDSv2/D20jiWh1jP1P7WCWQtkHxww5JunLHHaXvYDkHpjgYOQ==
+releaseDate: '2025-12-12T20:09:20.006Z'

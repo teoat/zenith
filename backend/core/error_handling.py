@@ -242,21 +242,16 @@ def handle_exception(exc: Exception, request_id: str | None = None) -> dict[str,
         dict: Structured error response
     """
     error_code = "unknown_error"
-    status_code = 500
 
     # Map common exceptions to error codes
     if isinstance(exc, ValueError):
         error_code = "invalid_input"
-        status_code = 400
     elif isinstance(exc, PermissionError):
         error_code = "insufficient_permissions"
-        status_code = 403
     elif isinstance(exc, FileNotFoundError):
         error_code = "not_found"
-        status_code = 404
     elif isinstance(exc, TimeoutError):
         error_code = "request_timeout"
-        status_code = 504
 
     error = get_error_message(
         error_code,

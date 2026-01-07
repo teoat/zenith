@@ -1,13 +1,12 @@
 # Alert Feedback Loop and Model Retraining Service
 import asyncio
-import logging
-from datetime import datetime, timedelta, UTC
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass, asdict
-import json
 import uuid
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime, timedelta
+from typing import Any, Dict, List, Optional
 
 from core.logging import logger
+
 
 @dataclass
 class AlertFeedback:

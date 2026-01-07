@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/fraud/temporal_burst_detector.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.1, 0.15, 0.2, 0.25, 0.5, 0.6, 0.7, 0.75, 0.85, 0.9, 0.95, 1.0, 3.0, 100.0, 100, 3600, 10000, 20000, 50000, 100000, '%Y-%m-%d', '%Y/%m/%d', '%d-%m-%Y', '%m/%d/%Y', '+00:00', 'T', 'Z', 'account_id', 'alerts', 'amount', 'analyzed_at', 'burst', 'burst_patterns', 'case_id', 'critical', 'customer_id', 'customer_name', 'date', 'entity_id', 'high', 'highest_severity', 'low', 'medium', 'none', 'overall_risk_score', 'structuring', 'structuring_patterns', 'summary', 'transaction_count', 'unknown', 'velocity', 'velocity_anomalies']

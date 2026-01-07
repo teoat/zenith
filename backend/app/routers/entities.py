@@ -3,10 +3,10 @@ import logging
 import uuid
 from typing import Any
 
-from app.services.infrastructure.auth_service import auth_service
 from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.services.infrastructure.auth_service import auth_service
 from core.database import Entity, Relationship, get_db
 
 logger = logging.getLogger(__name__)

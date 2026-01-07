@@ -1,9 +1,8 @@
-from typing import Any
+
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
 from app.services.infrastructure.auth_service import auth_service
 from app.services.infrastructure.storage.database_service import db_service
-from fastapi import APIRouter, Body, Depends, HTTPException, Query
-
 from core.api_models import (
     BulkOperationRequest,
     BulkOperationResponse,

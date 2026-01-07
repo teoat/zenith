@@ -43,7 +43,7 @@ def detect_structuring(
         if cust:
             customer_txs[cust].append(tx)
 
-    lower_bound = reporting_limit * (
+    reporting_limit * (
         1.0 - structuring_threshold
     )  # e.g. 10% below = 9000
     # Actually usually it means just below, e.g. 9000-9999.
@@ -70,7 +70,7 @@ def detect_structuring(
                     try:
                         d = datetime.fromisoformat(d.replace("Z", "+00:00"))
                         dates.append(d)
-                    except:
+                    except Exception:
                         pass
 
             if dates:

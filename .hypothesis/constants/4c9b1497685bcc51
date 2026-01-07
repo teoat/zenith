@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/schemas/case.py
-# hypothesis_version: 6.148.8
-
-[0.0, 100, 200, 2000, 'Medium', 'USD', 'Unknown', 'archived', 'assigned_to', 'closed', 'created_at', 'customer_name', 'due_date', 'fraud_amount', 'general', 'gregory', 'id', 'in_progress', 'low', 'open', 'risk_level', 'risk_score', 'standard', 'updated_at']

@@ -5,9 +5,10 @@ from datetime import datetime
 from typing import Any
 
 from app.core.exceptions import ZenithError
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+
 from app.services.infrastructure.auth_service import AuthService
 from app.services.integration.collaboration.sync_service import sync_manager
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -228,7 +229,7 @@ async def frenly_websocket(websocket: WebSocket, user_id: str):
         return
     try:
         # Validate token
-        payload = auth_service.decode_token(token)
+        auth_service.decode_token(token)
         # Note: In production, check payload['sub'] == user_id or admin
     except Exception:
         await websocket.close(code=1008, reason="Invalid token")

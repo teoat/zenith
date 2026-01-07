@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/sentry_config.py
-# hypothesis_version: 6.148.8
-
-[200, 404, '/health', '0.1', 'COMMIT_SHA', 'ENVIRONMENT', 'HTTPException', 'RateLimitExceeded', 'SENTRY_DSN', 'args', 'contexts', 'development', 'email', 'endpoint', 'error.type', 'exception', 'file', 'id', 'info', 'request', 'response', 'sentry_config.py', 'status_code', 'tags', 'type', 'url', 'username', 'values']

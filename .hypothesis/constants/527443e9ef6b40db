@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/plugins/zenith/integration/payment/simulation/plugin.py
-# hypothesis_version: 6.148.8
-
-[0.05, 0.1, '1.0.0', 'Unknown action', 'action', 'amount', 'client_secret', 'currency', 'error', 'event_type', 'handle_webhook', 'message', 'official', 'payment_id', 'payment_intent_id', 'payment_processing', 'process_payment', 'processed', 'provider', 'refund_id', 'refund_payment', 'simulation', 'simulation_payment', 'status', 'succeeded', 'success', 'unknown', 'usd', 'v1', 'webhook_handler']

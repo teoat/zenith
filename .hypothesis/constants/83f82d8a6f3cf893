@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/middleware/error_middleware.py
-# hypothesis_version: 6.148.8
-
-[400, 401, 403, 404, 409, 422, 429, 500, 503, '.', 'X-Request-ID', 'error_message', 'error_type', 'exception_type', 'loc', 'method', 'msg', 'path', 'request_id', 'timestamp', 'user-agent', 'user_agent', 'validation_error']

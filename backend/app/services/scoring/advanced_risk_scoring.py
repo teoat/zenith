@@ -519,7 +519,7 @@ class AdvancedRiskScoringEngine:
         normal_hours = self.risk_factors[RiskFactor.TIME_PATTERN]["normal_hours"]
         high_risk_hours = self.risk_factors[RiskFactor.TIME_PATTERN]["high_risk_hours"]
 
-        normal_count = sum(1 for hour in hours if hour in normal_hours)
+        sum(1 for hour in hours if hour in normal_hours)
         high_risk_count = sum(1 for hour in hours if hour in high_risk_hours)
 
         total_transactions = len(hours)
@@ -765,7 +765,7 @@ class AdvancedRiskScoringEngine:
     ) -> RiskFactorScore:
         """Score risk based on historical patterns"""
         historical_data = self.historical_data.get(entity_id, [])
-        lookback_days = self.risk_factors[RiskFactor.HISTORICAL_PATTERN][
+        self.risk_factors[RiskFactor.HISTORICAL_PATTERN][
             "lookback_days"
         ]
 

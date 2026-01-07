@@ -2,14 +2,14 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+
 from app.services.infrastructure.auth_service import auth_service
 from app.services.infrastructure.notification_service import (
     NotificationChannel,
     NotificationType,
     notification_system,
 )
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
-
 from core.database import User
 
 logger = logging.getLogger(__name__)

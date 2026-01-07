@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from app.core.exceptions import ZenithError
-from app.services.infrastructure.redis_cluster import redis_cluster_manager
+from core.zlogging import logger
 from fastapi import APIRouter, HTTPException, Request
 
-from core.zlogging import logger
+from app.services.infrastructure.redis_cluster import redis_cluster_manager
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

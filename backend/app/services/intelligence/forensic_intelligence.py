@@ -538,7 +538,7 @@ class MensReaEngine:
         if not markers:
             return "Insufficient evidence markers for conclusive intent determination."
 
-        categories = [m["category"] for m in markers]
+        [m["category"] for m in markers]
 
         if intent == "KNOWLEDGE":
             return "Evidence shows explicit awareness of regulatory requirements and potential violations."

@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/intelligence/metadata_correlation_service.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.65, 0.7, 0.8, 0.85, 0.95, 1.0, 1.5, 'address', 'addresses', 'amount', 'confidence', 'correlation_score', 'edges', 'email', 'emails', 'entity_a', 'entity_b', 'entity_index', 'from', 'ip', 'ip_address', 'ip_addresses', 'location', 'matched_fields', 'metadata_type', 'metadata_value', 'name', 'name_similarity', 'nodes', 'phone', 'phones', 'reasoning', 'receiver', 'sender', 'similarity_score', 'ssn', 'to', 'user_agent']

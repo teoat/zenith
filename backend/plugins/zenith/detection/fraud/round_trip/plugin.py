@@ -62,7 +62,7 @@ def detect_round_trip_transactions(
                 if isinstance(date_str, str)
                 else None
             )
-        except:
+        except Exception:
             dt = None
 
         if src and dst and dt:
@@ -101,7 +101,7 @@ def detect_round_trip_transactions(
                     prev_date = datetime.fromisoformat(
                         prev_date_str.replace("Z", "+00:00")
                     )
-                except:
+                except Exception:
                     prev_date = tx_date  # Should not happen if filtered
 
                 if tx_date < prev_date:

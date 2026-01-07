@@ -8,7 +8,6 @@ sys.path.append(os.path.join(os.getcwd(), "backend"))
 import uuid
 
 from app.services.infrastructure.auth_service import auth_service
-
 from core.database import User, UserRole, create_engine_and_session
 
 

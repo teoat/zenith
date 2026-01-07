@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/security_enhanced.py
-# hypothesis_version: 6.148.8
-
-[400, 403, '/approvals/decide', '/approvals/pending', '/approvals/request', '/compliance/scan', '/crypto/decrypt', '/crypto/encrypt', '/integrity/verify', '/lineage/trace', '/lineage/{entity_id}', '/remediation/analyze', '/remediation/apply', 'admin', 'approve', 'auditor', 'decrypted_data', 'destination', 'encrypted_data', 'entity_id', 'filename', 'lineage', 'pending', 'request_id', 'sha256', 'source', 'status', 'success', 'tracked']

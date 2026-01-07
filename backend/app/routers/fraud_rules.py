@@ -7,9 +7,10 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from app.services.fraud.engine import RuleEngine
 from fastapi import APIRouter, Body, HTTPException
 from pydantic import BaseModel, Field
+
+from app.services.fraud.engine import RuleEngine
 
 logger = logging.getLogger(__name__)
 

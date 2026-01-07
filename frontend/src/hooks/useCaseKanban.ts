@@ -64,25 +64,24 @@ export const useCaseKanban = (externalCases?: ApiCase[], onCaseClick?: (caseId: 
         const response = await api.getCases();
 
         // Handle different response structures
-        const rawCases = Array.isArray(response) ? response :
+        const rawCases: ApiCase[] = Array.isArray(response) ? response :
+                         (response as any).data?.items ? (response as any).data.items :
                          (response as any).data ? (response as any).data :
                          [];
 
-        const cases: Case[] = rawCases.map(transformCase);
+        const incoming = rawCases.filter((c: ApiCase) =>
+          (c.status === 'open' || c.status === 'OPEN')
+        ).map(transformCase);
 
-        const incoming = cases.filter((c: Case) =>
-          c.status === 'open' || c.status === 'OPEN' || c.status === 'OPEN'
-        );
-
-        const review = cases.filter((c: Case) =>
-          c.status === 'investigating' || c.status === 'INVESTIGATING' ||
+        const review = rawCases.filter((c: ApiCase) =>
+          (c.status === 'investigating' || c.status === 'INVESTIGATING' ||
           c.status === 'pending_review' || c.status === 'IN_PROGRESS' ||
-          c.status === 'escalated' || c.status === 'ADJUDICATION'
-        );
+          c.status === 'escalated' || c.status === 'ADJUDICATION')
+        ).map(transformCase);
 
-        const closed = cases.filter((c: Case) =>
-          c.status?.includes('closed') || c.status?.includes('CLOSED') ||
-          c.status === 'resolved' || c.status === 'RESOLVED'
+        const closed = rawCases.filter((c: ApiCase) =>
+          (c.status?.includes('closed') || c.status?.includes('CLOSED') ||
+          c.status === 'resolved' || c.status === 'RESOLVED')
         ).map(transformCase);
         
         setItems({ incoming, review, closed });

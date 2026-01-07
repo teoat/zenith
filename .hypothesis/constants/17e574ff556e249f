@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/repositories/fraud.py
-# hypothesis_version: 6.148.8
-
-[80.0, 100, 300, 3600, 'alert_metadata', 'case_alerts', 'fraud_alert', 'id', 'metadata_json', 'rule_name', 'title']

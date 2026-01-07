@@ -12,10 +12,9 @@ from app.services.infrastructure.business_alerting_service import (
 from app.services.infrastructure.business_metrics_service import (
     business_metrics_service,
 )
+from core.database_connection import SessionLocal
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
-
-from core.database_connection import SessionLocal
 
 
 def get_db():
@@ -28,7 +27,6 @@ def get_db():
 
 
 from app.core.exceptions import ZenithError
-
 from core.zlogging import logger
 
 router = APIRouter(

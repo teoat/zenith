@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/system_metrics.py
-# hypothesis_version: 6.148.8
-
-[300, 500, 1000, 3600, 86400, '/aggregated-metrics', '/dashboard', '/export', '/metrics', '/metrics/types', '/system-metrics', '1d', '1h', '1m', '24h', '30d', '5m', '7d', 'aggregated_metrics', 'aggregation', 'avg', 'cleanup_result', 'csv', 'dashboard', 'end', 'end_time', 'export', 'file', 'format', 'gauge', 'include_tags', 'interval', 'metric', 'metric_types', 'metrics', 'name', 'overview', 'retention_days', 'start', 'start_time', 'success', 'system_metrics.py', 'tags', 'test-user-id', 'test@test.com', 'testuser', 'time_range', 'timestamp', 'total', 'type', 'unknown_metric', 'user', 'value']

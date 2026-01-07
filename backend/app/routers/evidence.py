@@ -8,10 +8,6 @@ from datetime import datetime
 from typing import Any
 
 import aiofiles
-from app.dependencies import get_current_project_id
-from app.services.business.evidence_service import evidence_service
-from app.services.infrastructure.auth_service import auth_service
-from app.services.intelligence.evidence_service import evidence_processor
 from fastapi import (
     APIRouter,
     BackgroundTasks,
@@ -29,7 +25,12 @@ from pydantic import BaseModel, Field
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.dependencies import get_current_project_id
+from app.services.business.evidence_service import evidence_service
+from app.services.infrastructure.auth_service import auth_service
+from app.services.intelligence.evidence_service import evidence_processor
 from core.database import Case, User, get_db
+from core.models import Evidence
 
 
 # Streaming upload models
@@ -236,9 +237,7 @@ async def upload_file_chunk(
         )
 
     except Exception as e:
-        logger.error(
-            f"Failed to upload chunk {request.chunk_index} for file {request.file_id}: {e}"
-        )
+        logger.error(f"Failed to upload chunk {request.chunk_index} for file {request.file_id}: {e}")
         raise HTTPException(status_code=500, detail=f"Chunk upload failed: {e!s}")
 
 
@@ -266,9 +265,7 @@ async def complete_file_upload(
             metadata = json.loads(await f.read())
 
         # Assemble file from chunks
-        final_file_path = os.path.join(
-            "uploads", f"{request.file_id}_{metadata['file_name']}"
-        )
+        final_file_path = os.path.join("uploads", f"{request.file_id}_{metadata['file_name']}")
 
         async with aiofiles.open(final_file_path, "wb") as final_file:
             for i in range(metadata["total_chunks"]):
@@ -340,9 +337,7 @@ async def process_evidence_file_background(
             project_id=project_id,
         )
 
-        logger.info(
-            f"Successfully processed evidence file: {file_name}, evidence_id: {result.get('evidence_id')}"
-        )
+        logger.info(f"Successfully processed evidence file: {file_name}, evidence_id: {result.get('evidence_id')}")
 
     except Exception as e:
         logger.error(f"Background processing failed for file {file_name}: {e}")
@@ -420,9 +415,7 @@ async def upload_evidence(
             if scan_result:
                 # File is infected
                 os.remove(saved_file_path)  # Delete infected file
-                logger.warning(
-                    f"Virus detected in uploaded file {file.filename}: {scan_result}"
-                )
+                logger.warning(f"Virus detected in uploaded file {file.filename}: {scan_result}")
                 raise HTTPException(
                     status_code=400,
                     detail="File contains malicious content and has been rejected",
@@ -465,15 +458,9 @@ async def upload_evidence(
 
             # Extract forensic result if available from metadata
             forensic_result = {
-                "manipulation_score": processing_result.metadata.get(
-                    "manipulation_score"
-                ),
-                "authenticity_score": processing_result.metadata.get(
-                    "authenticity_score"
-                ),
-                "forensic_indicators": processing_result.metadata.get(
-                    "forensic_indicators", []
-                ),
+                "manipulation_score": processing_result.metadata.get("manipulation_score"),
+                "authenticity_score": processing_result.metadata.get("authenticity_score"),
+                "forensic_indicators": processing_result.metadata.get("forensic_indicators", []),
                 # Include raw forensic data
                 "raw_analysis": {
                     k: v
@@ -494,9 +481,7 @@ async def upload_evidence(
                 "original_filename": file.filename,
                 "file_path": temp_file_path,  # Will be moved to secure storage
                 "file_type": processing_result.file_type,
-                "file_category": _determine_file_category(
-                    file.filename, processing_result.file_type
-                ),
+                "file_category": _determine_file_category(file.filename, processing_result.file_type),
                 "size_bytes": len(content),
                 "uploaded_at": datetime.now(),
                 "uploaded_by": getattr(request.state, "user_id", None) or "system",
@@ -547,9 +532,7 @@ async def upload_evidence(
                     "quality_score": evidence_record["quality_score"],
                     "fraud_amount": evidence_record["fraud_amount"],
                     "customer_name": evidence_record["customer_name"],
-                    "evidence_metadata": json.dumps(
-                        evidence_record["evidence_metadata"], default=str
-                    ),
+                    "evidence_metadata": json.dumps(evidence_record["evidence_metadata"], default=str),
                     "evidence_tags": json.dumps(evidence_record["tags"], default=str),
                 },
             )
@@ -719,11 +702,7 @@ async def save_evidence_highlight(
     responses={
         200: {
             "description": "Bulk delete operation completed successfully",
-            "content": {
-                "application/json": {
-                    "example": {"deleted_count": 3, "status": "success"}
-                }
-            },
+            "content": {"application/json": {"example": {"deleted_count": 3, "status": "success"}}},
         },
         400: {
             "description": "Invalid request data",
@@ -747,9 +726,7 @@ async def save_evidence_highlight(
     },
 )
 async def bulk_delete_evidence(
-    payload: dict[str, Any] = Body(
-        ..., example={"ids": ["ev_123456", "ev_789012", "ev_345678"]}
-    ),
+    payload: dict[str, Any] = Body(..., example={"ids": ["ev_123456", "ev_789012", "ev_345678"]}),
     db: Session = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user),
 ):
@@ -781,11 +758,7 @@ def _determine_file_category(filename: str, mime_type: str) -> str:
         return "video"
     elif mime_type.startswith("audio/") or ext in ["mp3", "wav", "flac", "aac"]:
         return "audio"
-    elif (
-        mime_type == "application/pdf"
-        or ext == "pdf"
-        or ext in ["doc", "docx", "txt", "rtf", "odt"]
-    ):
+    elif mime_type == "application/pdf" or ext == "pdf" or ext in ["doc", "docx", "txt", "rtf", "odt"]:
         return "document"
     elif ext in ["xls", "xlsx", "csv", "ods"]:
         return "spreadsheet"

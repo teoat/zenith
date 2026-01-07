@@ -76,8 +76,8 @@ class EvidenceAnalysisPlugin(PluginInterface):
             metadata = item.get("metadata", {})
             if metadata.get("modified_date") and metadata.get("created_date"):
                 # Check for backdating
-                created = metadata["created_date"]
-                modified = metadata["modified_date"]
+                metadata["created_date"]
+                metadata["modified_date"]
                 # Logic simplified for plugin example
 
         return {

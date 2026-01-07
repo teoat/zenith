@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/models/abac.py
-# hypothesis_version: 6.148.8
-
-[255, 500, 'ABACPolicy', 'ABACPolicyRule', 'User', 'abac_policies', 'abac_policies.id', 'abac_policy_rules', 'abac_policy_sets', 'all, delete-orphan', 'allow', 'deny_overrides', 'extend_existing', 'policy', 'rules', 'users.id']

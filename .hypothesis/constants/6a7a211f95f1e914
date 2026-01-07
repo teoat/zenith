@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/plugin_management.py
-# hypothesis_version: 6.148.8
-
-['/plugins', '/plugins/discover', '/plugins/install', '/plugins/{plugin_id}', 'Plugin not found', 'author', 'capabilities', 'changelog', 'config_schema', 'darwin', 'dependencies', 'description', 'display_name', 'duration_ms', 'entry_point', 'execution_id', 'id', 'linux', 'message', 'name', 'permissions', 'platforms', 'result', 'status', 'type', 'version', 'win32']

@@ -4,8 +4,9 @@ import sys
 sys.path.insert(0, os.path.abspath("backend"))
 import sys
 
-from core.database import AuditLog, create_engine_and_session, utc_now
 from services.audit_verifier import _verify_hmac, verify_entry
+
+from core.database import AuditLog, create_engine_and_session, utc_now
 
 sys.path.insert(0, os.path.abspath("../tests"))
 from test_config import setup_test_environment

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class VectorStore:
     """
     Vector store with ChromaDB support and TF-IDF fallback.
-    
+
     When CHROMA_DB_URL is configured, uses ChromaDB for production-grade
     semantic search. Falls back to TF-IDF for local development.
     """

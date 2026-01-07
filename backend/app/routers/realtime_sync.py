@@ -4,11 +4,12 @@ from dataclasses import asdict
 from datetime import datetime
 from typing import Any
 
+from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
+
 from app.services.integration.collaboration.sync_service import (
     CRDTDocument,
     sync_manager,
 )
-from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/sync", tags=["realtime-sync"])

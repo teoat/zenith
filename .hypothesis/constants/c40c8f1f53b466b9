@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/plugins/zenith/integration/email/simulation/plugin.py
-# hypothesis_version: 6.148.8
-
-['1.0.0', 'email_service', 'message_id', 'metadata', 'official', 'provider', 'recipient', 'simulated', 'simulation', 'simulation_email', 'success', 'to', 'v1']

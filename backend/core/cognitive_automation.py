@@ -439,7 +439,7 @@ class CognitiveAutomationEngine:
     ) -> tuple:
         """Respond to security threats using AI-driven analysis"""
         threat_level = data.get("threat_level", "unknown")
-        threat_type = data.get("threat_type", "unknown")
+        data.get("threat_type", "unknown")
 
         # Analyze threat patterns and recommend response
         if threat_level == "critical":

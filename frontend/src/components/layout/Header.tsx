@@ -12,7 +12,7 @@ import { ProjectSwitcher } from '@/components/common/ProjectSwitcher';
 import { Switch } from '@/components/ui/Switch';
 import { Label } from '@/components/ui/Label';
 import { Badge } from '@/components/ui/Badge';
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export const Header = () => {
   const { collapsed, setCollapsed } = useSidebar();

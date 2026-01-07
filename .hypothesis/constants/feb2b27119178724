@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/config.py
-# hypothesis_version: 6.148.8
-
-[50.0, 75.0, 90.0, 1000, 1024, 3600, '.env', '/api/v1', 'ENVIRONMENT', 'RS', 'RS256', 'TLSv1.2', 'change', 'dev', 'development', 'dummy', 'hardcoded', 'ignore', 'local_minilm', 'placeholder', 'prod', 'production', 'secret', 'simulation', 'utf-8']

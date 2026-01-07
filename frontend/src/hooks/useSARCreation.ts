@@ -10,7 +10,8 @@ export const useSARCreation = () => {
   const [loading, setLoading] = useState(false);
   
   const { data: casesData, isLoading: casesLoading, error: casesError } = useCases();
-  const cases = casesData?.cases || [];
+  const cases = Array.isArray(casesData) ? casesData :
+                (casesData as any)?.data?.items || (casesData as any)?.items || [];
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);

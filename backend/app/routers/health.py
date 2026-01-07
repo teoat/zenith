@@ -17,9 +17,10 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from app.services.infrastructure.circuit_breaker import get_all_circuit_breakers
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
+
+from app.services.infrastructure.circuit_breaker import get_all_circuit_breakers
 
 logger = logging.getLogger(__name__)
 

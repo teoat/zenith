@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/ai_embeddings.py
-# hypothesis_version: 6.148.8
-
-[0.0, 1.0, 100, 400, 403, 500, 3600, '/ai/embeddings', '/cache', '/embed', '/embed/batch', '/search', 'AI Embeddings', 'Document metadata', 'Search filters', 'Search query', 'Similarity threshold', 'Text to embed', 'action', 'admin', 'ai_embedding_created', 'ai_similarity_search', 'batch_size', 'cache_cleared', 'create_embedding', 'embedding:*', 'embedding_dimension', 'embeddings', 'endpoint', 'error', 'limit', 'message', 'metadata_keys', 'processing_time', 'query_length', 'results_count', 'search_time', 'similarity_search', 'text_length', 'user_id']

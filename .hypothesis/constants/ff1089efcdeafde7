@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/middleware/rate_limit.py
-# hypothesis_version: 6.148.8
-
-[100, 300, 429, 1000, 5000, '0', '1', '127.0.0.1', '60', '::1', 'Authorization', 'Bearer ', 'ENVIRONMENT', 'Retry-After', 'X-RateLimit-Limit', 'X-RateLimit-Reset', 'admin', 'development', 'file', 'localhost', 'premium', 'rate_limit.py', 'role', 'sub', 'unknown', 'user']

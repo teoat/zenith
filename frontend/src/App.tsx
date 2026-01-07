@@ -240,7 +240,7 @@ const App: React.FC = () => {
                                 <Route path="/design" element={<DesignSystemShowcase />} />
                                 <Route path="/onboarding" element={
                                   <OnboardingWizard 
-                                    onComplete={(data: any) => {
+                                    onComplete={(_data: Record<string, unknown>) => {
                                       // console.log('Investigation created:', data);
                                       window.location.href = '/cases';
                                     }} 

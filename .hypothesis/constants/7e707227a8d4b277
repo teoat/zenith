@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/ai/intelligence_methods/real_time_learning.py
-# hypothesis_version: 6.148.8
-
-[0.3, 0.7, 1.0, 3600, 'IR', 'KP', 'SY', 'amount', 'amount_variance', 'avg_amount', 'behavior', 'behavior_matches', 'confidence_score', 'confirmed_fraud', 'country', 'date', 'entities', 'entity', 'entity_count', 'entity_matches', 'high_risk', 'high_risk_countries', 'is_pep', 'max_amount', 'pattern', 'pattern_matches', 'pep_count', 'rapid_transactions', 'recommendation', 'review', 'similarity', 'status', 'structuring_detected', 'structuring_flag', 'time_span', 'total_similar_cases', 'transaction', 'transaction_count', 'transaction_matches', 'transactions', 'unusual_hours', 'unusual_hours_flag']

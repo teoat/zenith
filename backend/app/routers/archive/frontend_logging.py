@@ -9,10 +9,9 @@ from datetime import datetime
 from typing import Any
 
 from app.core.exceptions import ZenithError
+from core.zlogging import logger
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
-
-from core.zlogging import logger
 
 router = APIRouter(prefix="/logging", tags=["Logging"])
 

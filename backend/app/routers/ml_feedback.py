@@ -13,7 +13,7 @@ router = APIRouter()
 async def get_ml_system_status():
     """
     Get overall ML feedback loop system status
-    
+
     Returns:
         System metrics and health status
     """
@@ -30,7 +30,7 @@ async def get_ml_system_status():
 async def get_ab_test_results():
     """
     Get A/B test results from feedback loop
-    
+
     Returns:
         Results from A/B testing iterations
     """

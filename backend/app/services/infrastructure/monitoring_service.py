@@ -165,7 +165,7 @@ class MonitoringService:
                                 item["timestamp"]
                             )
                         self.performance_history.append(PerformanceSnapshot(**item))
-                    except:
+                    except Exception:
                         pass
 
             if "error_events" in data:
@@ -176,7 +176,7 @@ class MonitoringService:
                                 item["timestamp"]
                             )
                         self.error_events.append(ErrorEvent(**item))
-                    except:
+                    except Exception:
                         pass
 
             logger.info("Restored monitoring state from disk")

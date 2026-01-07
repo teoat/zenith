@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/infrastructure/error_handler.py
-# hypothesis_version: 6.148.8
-
-['429', 'API_GENERIC_ERROR', 'API_RATE_LIMIT', 'API_TIMEOUT', 'AUTHZ_FAILED', 'AUTH_FAILED', 'DB_CONNECTION_ERROR', 'DB_CONSTRAINT_ERROR', 'DB_GENERIC_ERROR', 'Service error', 'VALIDATION_ERROR', 'authentication', 'authorization', 'business_logic', 'category', 'connection', 'constraint', 'critical', 'database', 'details', 'error_code', 'external_api', 'high', 'infrastructure', 'integrity', 'low', 'medium', 'message', 'original_error', 'rate limit', 'retryable', 'severity', 'timeout', 'unknown', 'validation']

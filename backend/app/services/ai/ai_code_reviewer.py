@@ -127,9 +127,9 @@ class AIPoweredCodeReviewer:
     ) -> str:
         """
         Generate a fix for a code issue using an LLM.
-        
+
         Supports Ollama, OpenAI, and Anthropic providers.
-        
+
         Args:
             issue: The CodeIssue to fix
             llm_provider: LLM provider to use ('ollama', 'openai', 'anthropic')
@@ -854,7 +854,7 @@ Format your response as JSON:
 
         for change in code_changes:
             file_path = change.get("file_path", "")
-            change_type = change.get("change_type", "modified")
+            change.get("change_type", "modified")
             code_diff = change.get("diff", "")
 
             # Analyze the change to determine test needs

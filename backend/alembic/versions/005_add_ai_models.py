@@ -7,6 +7,7 @@ Create Date: 2026-01-06
 """
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision = "005_add_ai_models"

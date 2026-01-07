@@ -203,7 +203,7 @@ class EnterpriseIntegrationHub:
         if endpoint_id not in self.api_endpoints:
             raise ValueError(f"API endpoint not found: {endpoint_id}")
 
-        endpoint = self.api_endpoints[endpoint_id]
+        self.api_endpoints[endpoint_id]
 
         # Generate API key
         api_key = self._generate_api_key(consumer_id, endpoint_id)

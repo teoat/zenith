@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/cqrs/investigation_handlers.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.3, 0.4, 0.5, 0.7, 10000, 'Case not found', 'HIGH', 'LOW', 'MEDIUM', 'Suspicious merchant', 'account_id', 'amount', 'analysis_id', 'analyzed_at', 'assigned_to', 'case_id', 'case_type', 'created_at', 'created_by', 'description', 'evidence_id', 'filename', 'id', 'indicators', 'merchant', 'priority', 'queued', 'recommendations', 'risk_level', 'risk_score', 'status', 'timestamp', 'title', 'transaction_id', 'updated_at', 'updated_by', 'uploaded_at']

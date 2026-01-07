@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/models/fraud_security.py
-# hypothesis_version: 6.148.8
-
-[100, 255, 500, 'Case', 'User', 'access_reviews', 'alerts', 'cases.id', 'extend_existing', 'fraud_alerts', 'frozen', 'frozen_entities', 'medium', 'open', 'pending', 'security_incidents', 'security_policies', 'users.id']

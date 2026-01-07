@@ -3,10 +3,10 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from app.services.logging_service import LogCategory, LogLevel, get_logger
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from app.services.logging_service import LogCategory, LogLevel, get_logger
 from core.database import get_db
 
 logger = logging.getLogger(__name__)

@@ -47,15 +47,6 @@ class ChainOfCustodyService:
         event_data["anchor_hash"] = event_hash
 
         # Update the database record
-        update_query = """
-            UPDATE evidence
-            SET evidence_metadata = json_set(
-                ifnull(evidence_metadata, '{}'),
-                '$.chain_of_custody[' || json_array_length(ifnull(json_extract(evidence_metadata, '$.chain_of_custody'), '[]')) || ']',
-                json(:event_data)
-            )
-            WHERE id = :evidence_id
-        """
         # Note: SQLite json_set/json_array_length syntax
 
         try:

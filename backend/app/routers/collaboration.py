@@ -1,8 +1,10 @@
+import asyncio
 import logging
 from typing import Any
 
-from app.services.infrastructure.auth_service import auth_service
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status
+
+from app.services.infrastructure.auth_service import auth_service
 
 router = APIRouter(tags=["Collaboration"])
 
@@ -28,9 +30,7 @@ class ConnectionManager:
             if not self.active_connections[case_id]:
                 del self.active_connections[case_id]
 
-    async def broadcast(
-        self, message: dict[str, Any], case_id: str, sender: WebSocket = None
-    ):
+    async def broadcast(self, message: dict[str, Any], case_id: str, sender: WebSocket = None):
         if case_id in self.active_connections:
             # Conflict Resolution: Simple Version Check
             if message.get("type") == "node_update":
@@ -38,9 +38,7 @@ class ConnectionManager:
                 # In a real app, we'd check against DB version.
                 # Here we simulate accepting only if version > 0
                 if version <= 0:
-                    logger.warning(
-                        f"Conflict detected: Outdated version {version} for case {case_id}"
-                    )
+                    logger.warning(f"Conflict detected: Outdated version {version} for case {case_id}")
                     return
 
             for connection in self.active_connections[case_id]:
@@ -61,9 +59,7 @@ async def websocket_endpoint(websocket: WebSocket, case_id: str):
     #     token = websocket.query_params.get("token")
 
     if not token:
-        logger.warning(
-            f"WebSocket connection rejected: No token. Cookies: {websocket.cookies.keys()}"
-        )
+        logger.warning(f"WebSocket connection rejected: No token. Cookies: {websocket.cookies.keys()}")
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
 
@@ -96,39 +92,38 @@ async def websocket_endpoint(websocket: WebSocket, case_id: str):
 # ===== ADVANCED REAL-TIME COLLABORATION FEATURES =====
 
 import json
-from datetime import datetime, UTC
+from datetime import UTC, datetime
+
 from fastapi import HTTPException
 
+
 @router.websocket("/advanced/{resource_type}/{resource_id}")
-async def advanced_collaborative_session(
-    websocket: WebSocket,
-    resource_type: str,
-    resource_id: str,
-    token: str = None
-):
+async def advanced_collaborative_session(websocket: WebSocket, resource_type: str, resource_id: str, token: str = None):
     """Advanced WebSocket endpoint for real-time collaboration with presence and editing"""
 
     # Mock authentication for demonstration
-    user = type('User', (), {'id': f'user_{hash(token or "anonymous") % 1000}', 'email': 'user@example.com'})()
+    user = type("User", (), {"id": f"user_{hash(token or 'anonymous') % 1000}", "email": "user@example.com"})()
 
     await websocket.accept()
 
     # Connect user using advanced connection manager
     from app.services.collaboration.realtime_service import connection_manager
 
-    connection_id = await connection_manager.connect(user.id, websocket, user.email)
+    await connection_manager.connect(user.id, websocket, user.email)
 
     # Join collaborative session
     session_id = await connection_manager.join_session(user.id, resource_type, resource_id)
 
     # Send welcome message with full session info
-    await websocket.send_json({
-        "type": "session_joined",
-        "session_id": session_id,
-        "user_id": user.id,
-        "participants": connection_manager.get_session_participants(session_id),
-        "timestamp": datetime.now(UTC).isoformat()
-    })
+    await websocket.send_json(
+        {
+            "type": "session_joined",
+            "session_id": session_id,
+            "user_id": user.id,
+            "participants": connection_manager.get_session_participants(session_id),
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    )
 
     try:
         while True:
@@ -140,11 +135,9 @@ async def advanced_collaborative_session(
             await connection_manager.handle_collaboration_event(user.id, message_data)
 
             # Send acknowledgment
-            await websocket.send_json({
-                "type": "ack",
-                "event_id": message_data.get("id"),
-                "timestamp": datetime.now(UTC).isoformat()
-            })
+            await websocket.send_json(
+                {"type": "ack", "event_id": message_data.get("id"), "timestamp": datetime.now(UTC).isoformat()}
+            )
 
     except WebSocketDisconnect:
         logging.info(f"Advanced WebSocket disconnected for user {user.id}")
@@ -157,13 +150,14 @@ async def presence_updates(websocket: WebSocket, token: str = None):
     """WebSocket endpoint for real-time presence updates"""
 
     # Mock authentication
-    user = type('User', (), {'id': f'user_{hash(token or "anonymous") % 1000}', 'email': 'user@example.com'})()
+    user = type("User", (), {"id": f"user_{hash(token or 'anonymous') % 1000}", "email": "user@example.com"})()
 
     await websocket.accept()
 
     # Connect user
     from app.services.collaboration.realtime_service import connection_manager
-    connection_id = await connection_manager.connect(user.id, websocket, user.email)
+
+    await connection_manager.connect(user.id, websocket, user.email)
 
     try:
         while True:
@@ -178,11 +172,11 @@ async def presence_updates(websocket: WebSocket, token: str = None):
                         "username": info.username,
                         "status": info.status,
                         "last_seen": info.last_seen.isoformat(),
-                        "current_resource": info.current_resource
+                        "current_resource": info.current_resource,
                     }
                     for uid, info in connection_manager.presence_info.items()
                 ],
-                "timestamp": datetime.now(UTC).isoformat()
+                "timestamp": datetime.now(UTC).isoformat(),
             }
 
             await websocket.send_json(presence_data)
@@ -195,11 +189,13 @@ async def presence_updates(websocket: WebSocket, token: str = None):
 
 # REST API endpoints for collaboration management
 
+
 @router.get("/collaboration/sessions/active")
 async def get_active_sessions():
     """Get all active collaborative sessions"""
     try:
         from app.services.collaboration.realtime_service import connection_manager
+
         sessions = connection_manager.get_active_sessions()
         return {"sessions": sessions, "total": len(sessions)}
     except Exception as e:
@@ -212,6 +208,7 @@ async def get_session_participants(session_id: str):
     """Get participants in a specific session"""
     try:
         from app.services.collaboration.realtime_service import connection_manager
+
         participants = connection_manager.get_session_participants(session_id)
         return {"participants": participants, "total": len(participants)}
     except Exception as e:

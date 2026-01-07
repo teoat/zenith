@@ -85,7 +85,7 @@ def reconcile_dataframes(df_a, df_b, date_tolerance_days=3):
 
         # Filter B for candidates (Amount match)
         candidates = df_b[
-            (df_b["_matched"] == False)
+            (not df_b["_matched"])
             & (np.isclose(df_b[col_amt_b], row_a[col_amt_a], atol=0.01))
         ]
 
@@ -143,7 +143,7 @@ def reconcile_dataframes(df_a, df_b, date_tolerance_days=3):
 
             # Find candidates with same amount but no date match
             candidates = df_b[
-                (df_b["_matched"] == False)
+                (not df_b["_matched"])
                 & (np.isclose(df_b[col_amt_b], row_a[col_amt_a], atol=0.01))
             ]
 
@@ -174,13 +174,13 @@ def reconcile_dataframes(df_a, df_b, date_tolerance_days=3):
 
     # 4. Result Compilation
     unmatched_a = (
-        df_a[df_a["_matched"] == False]
+        df_a[not df_a["_matched"]]
         .drop(columns=["_recon_id", "_matched"])
         .fillna("")
         .to_dict("records")
     )
     unmatched_b = (
-        df_b[df_b["_matched"] == False]
+        df_b[not df_b["_matched"]]
         .drop(columns=["_recon_id", "_matched"])
         .fillna("")
         .to_dict("records")

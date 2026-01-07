@@ -762,7 +762,7 @@ class HumanAICollaborationEngine:
         )
 
         # Analyze current workflow
-        current_efficiency = workflow_data.get("efficiency", 0.7)
+        workflow_data.get("efficiency", 0.7)
         pain_points = workflow_data.get("pain_points", [])
 
         # Generate AI suggestions

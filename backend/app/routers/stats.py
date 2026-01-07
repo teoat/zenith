@@ -1,18 +1,22 @@
+import logging
 from datetime import UTC
 from typing import Any
 
-from app.services.infrastructure.auth_service import auth_service
-from app.services.infrastructure.monitoring_service import monitoring_service
-from app.services.infrastructure.storage.database_service import db_service
-from app.services.intelligence.geocoding_service import geocode_transaction_location
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.monitoring_service import monitoring_service
+from app.services.infrastructure.storage.database_service import db_service
+from app.services.intelligence.geocoding_service import geocode_transaction_location
 from core.database import Case, Transaction, User, get_db
+from core.models import CaseStatus
 
 router = APIRouter()
+
+logger = logging.getLogger(__name__)
 
 
 class GeoPoint(BaseModel):
@@ -37,7 +41,7 @@ async def get_threat_map_locations(
         # Get flagged and blocked transactions with location data
         transactions = (
             db.query(Transaction)
-            .filter(Transaction.is_flagged == True)
+            .filter(Transaction.is_flagged)
             .filter(Transaction.city.isnot(None), Transaction.country.isnot(None))
             .limit(100)
             .all()
@@ -83,15 +87,9 @@ async def get_threat_map_locations(
         if not locations:
             # Fallback to major financial hubs
             locations = [
-                GeoPoint(
-                    lat=40.7128, lng=-74.0060, intensity=0.3, type="transaction"
-                ),  # NYC
-                GeoPoint(
-                    lat=51.5074, lng=-0.1278, intensity=0.2, type="transaction"
-                ),  # London
-                GeoPoint(
-                    lat=35.6762, lng=139.6503, intensity=0.4, type="blocked"
-                ),  # Tokyo
+                GeoPoint(lat=40.7128, lng=-74.0060, intensity=0.3, type="transaction"),  # NYC
+                GeoPoint(lat=51.5074, lng=-0.1278, intensity=0.2, type="transaction"),  # London
+                GeoPoint(lat=35.6762, lng=139.6503, intensity=0.4, type="blocked"),  # Tokyo
             ]
 
         return locations
@@ -119,23 +117,19 @@ def get_dashboard_metrics(
         # Get Transaction Stats
         # active_cases is explicitly open cases.
         # flagged_transactions: specific query
-        flagged_count = (
-            db.query(Transaction).filter(Transaction.is_flagged == True).count()
-        )
+        flagged_count = db.query(Transaction).filter(Transaction.is_flagged).count()
 
         # Blocked Amount (Transactions with status 'denied' or 'blocked')
         # Assuming 'denied' is the status for blocked.
         blocked_amount_result = (
-            db.query(func.sum(Transaction.amount))
-            .filter(Transaction.status.in_(["denied", "blocked"]))
-            .scalar()
+            db.query(func.sum(Transaction.amount)).filter(Transaction.status.in_(["denied", "blocked"])).scalar()
         )
         blocked_amount = float(blocked_amount_result) if blocked_amount_result else 0.0
 
         # System Health
         # Use monitoring service if available, else default to 100
         try:
-            health_metrics = monitoring_service.get_system_metrics()
+            monitoring_service.get_system_metrics()
             # aggregated health score?
             # monitoring_service.get_system_metrics() return detailed metrics.
             # Let's assume a simple calculation or mock for now as 'health' isn't a single number in standard Prometheus.
@@ -143,7 +137,8 @@ def get_dashboard_metrics(
             # User previous code had "100".
             # Let's assume 98.5 for now or calculate from error rate if available.
             system_health = 99.0  # Placeholder for calculated health
-        except:
+        except Exception as e:
+            logger.warning(f"Failed to get system health metrics: {e}")
             system_health = 95.0
 
         # Optimized single query for multiple counts
@@ -152,17 +147,11 @@ def get_dashboard_metrics(
         # Get all case statistics in a single query
         case_stats = db.query(
             func.count(Case.id).label("total_cases"),
-            func.count(func.case([(Case.priority == "critical", 1)])).label(
-                "critical_cases"
-            ),
+            func.count(func.case([(Case.priority == "critical", 1)])).label("critical_cases"),
             func.count(func.case([(Case.status == "closed", 1)])).label("closed_cases"),
-            func.count(func.case([(Case.status == "active", 1)])).label(
-                "investigating_cases"
-            ),
+            func.count(func.case([(Case.status == "active", 1)])).label("investigating_cases"),
             func.count(func.case([(Case.priority == "high", 1)])).label("high_risk"),
-            func.count(func.case([(Case.priority == "medium", 1)])).label(
-                "medium_risk"
-            ),
+            func.count(func.case([(Case.priority == "medium", 1)])).label("medium_risk"),
             func.count(func.case([(Case.priority == "low", 1)])).label("low_risk"),
         ).first()
 
@@ -197,10 +186,7 @@ def get_dashboard_metrics(
         )
 
         if closed_cases_with_time:
-            durations = [
-                (c.closed_at - c.created_at).total_seconds() / 3600
-                for c in closed_cases_with_time
-            ]
+            durations = [(c.closed_at - c.created_at).total_seconds() / 3600 for c in closed_cases_with_time]
             avg_res_time = round(sum(durations) / len(durations), 1)
         else:
             avg_res_time = 12.5  # Smart default if no closed cases yet
@@ -241,11 +227,7 @@ def _get_sparkline_data(db: Session) -> dict[str, list[int]]:
     # helper to get daily counts
     def get_daily_counts(model, date_col):
         # Fetch all records in range (efficient enough for <10k records)
-        records = (
-            db.query(getattr(model, date_col))
-            .filter(getattr(model, date_col) >= start_date)
-            .all()
-        )
+        records = db.query(getattr(model, date_col)).filter(getattr(model, date_col) >= start_date).all()
 
         counts = [0] * 7
         for r in records:
@@ -264,9 +246,7 @@ def _get_sparkline_data(db: Session) -> dict[str, list[int]]:
     # based on the total trend or do a specific query if strictly required.
     # For now, let's do a specific query for critical cases.
     critical_records = (
-        db.query(Case.created_at)
-        .filter(Case.created_at >= start_date, Case.priority == "critical")
-        .all()
+        db.query(Case.created_at).filter(Case.created_at >= start_date, Case.priority == "critical").all()
     )
 
     critical_trend = [0] * 7
@@ -278,9 +258,7 @@ def _get_sparkline_data(db: Session) -> dict[str, list[int]]:
 
     return {
         "total_cases": total_cases_trend,
-        "open_cases": [
-            max(0, x - 1) for x in total_cases_trend
-        ],  # rudimentary mock for "open" flux
+        "open_cases": [max(0, x - 1) for x in total_cases_trend],  # rudimentary mock for "open" flux
         "critical_cases": critical_trend,
         "analysts": [3, 3, 3, 4, 4, 3, 3],  # Hardcoded resource trend
     }
@@ -310,9 +288,7 @@ async def get_predictive_analytics(
 
     # Get daily counts of cases
     daily_counts = (
-        db.query(
-            func.date(Case.created_at).label("date"), func.count(Case.id).label("count")
-        )
+        db.query(func.date(Case.created_at).label("date"), func.count(Case.id).label("count"))
         .filter(Case.created_at >= start_date)
         .group_by(func.date(Case.created_at))
         .all()
@@ -328,8 +304,7 @@ async def get_predictive_analytics(
         risk_trend.append(
             {
                 "date": date_str,
-                "value": counts_map.get(date_str, 0) * 10
-                + (hash(date_str) % 5),  # Scale factor + noise
+                "value": counts_map.get(date_str, 0) * 10 + (hash(date_str) % 5),  # Scale factor + noise
             }
         )
 

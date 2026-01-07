@@ -252,7 +252,7 @@ class WorkflowEngine:
 
         # Analyze alert risk level
         risk_score = alert_data.get("risk_score", 0.5)
-        alert_type = alert_data.get("alert_type", "unknown")
+        alert_data.get("alert_type", "unknown")
 
         # Generate actions based on template and AI insights
         for i, standard_action in enumerate(template.standard_actions):
@@ -427,7 +427,7 @@ class WorkflowEngine:
         total_duration = 0
         for action in actions:
             start_time = alert_timestamp + timedelta(minutes=total_duration)
-            end_time = start_time + timedelta(minutes=action.estimated_duration)
+            start_time + timedelta(minutes=action.estimated_duration)
 
             timeline_events.append(
                 {

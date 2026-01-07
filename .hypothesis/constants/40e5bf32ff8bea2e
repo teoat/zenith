@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/bulk_operations_service.py
-# hypothesis_version: 6.148.8
-
-['ARCHIVED', 'Assignee not found', 'User not found', 'archive', 'archived_count', 'assign', 'assigned_count', 'assignee_id', 'case_count', 'completed', 'delete', 'deleted_count', 'errors', 'export', 'export_data', 'exported_at', 'failed', 'format', 'processed', 'reason', 'status', 'success', 'updated_at']

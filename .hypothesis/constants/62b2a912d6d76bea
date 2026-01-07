@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/infrastructure/circuit_breaker.py
-# hypothesis_version: 6.148.8
-
-[0.0, 30.0, 60.0, 3600, 'circuit_breaker.py', 'closed', 'config', 'failure_count', 'failure_rate', 'failure_threshold', 'file', 'half_open', 'healthy', 'last_failure_ago', 'last_failure_time', 'name', 'open', 'recovery_timeout', 'state', 'success_count', 'success_threshold', 'timeout']

@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/middleware/input_sanitization.py
-# hypothesis_version: 6.148.8
-
-[100, 128, 255, 400, 413, 1000, 1024, '"', '&', '&#x27;', '&#x2F;', '&amp;', '&gt;', '&lt;', '&quot;', "'", '--\\s*$', '/', '/\\*.*?\\*/', '<', '>', 'HEAD', 'OPTIONS', 'active', 'additionalProperties', 'amount', 'application/json', 'completed', 'content-length', 'content-type', 'created_at', 'data_keys', 'date-time', 'description', 'email', 'enum', 'error', 'exec\\s*\\(', 'format', 'id', 'inactive', 'integer', 'javascript:', 'maxLength', 'minLength', 'minimum', 'multipart/form-data', 'name', 'number', 'object', 'on\\w+\\s*=', 'password', 'pending', 'properties', 'quantity', 'status', 'string', 'type', 'union\\s+select', 'updated_at', 'username', 'utf-8', 'vbscript:', 'xp_cmdshell']

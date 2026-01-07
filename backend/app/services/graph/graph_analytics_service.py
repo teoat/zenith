@@ -1,12 +1,12 @@
 # Advanced Graph Analytics Service with Neo4j Integration
 import asyncio
-import logging
-from datetime import datetime, timedelta, UTC
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass
 import json
-import networkx as nx
 from collections import defaultdict
+from dataclasses import dataclass
+from datetime import UTC, datetime
+from typing import Any, Dict, List
+
+import networkx as nx
 
 from core.logging import logger
 
@@ -118,18 +118,6 @@ class Neo4jGraphService:
     async def run_community_detection(self) -> List[Community]:
         """Run Louvain community detection algorithm"""
         def _community_detection(tx):
-            query = """
-            CALL gds.graph.project(
-                'fraudGraph',
-                ['Entity', 'Transaction', 'Alert'],
-                {
-                    'RELATED_TO': {orientation: 'UNDIRECTED'},
-                    'TRANSFERRED_TO': {orientation: 'UNDIRECTED'},
-                    'TRIGGERED_BY': {orientation: 'UNDIRECTED'}
-                }
-            )
-            YIELD graphName, nodeCount, relationshipCount
-            """
 
             # Run Louvain algorithm
             louvain_query = """

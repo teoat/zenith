@@ -1,11 +1,11 @@
 from datetime import datetime
 
 import pyotp
-from app.services.infrastructure.auth_service import auth_service
-from app.services.infrastructure.storage.database_service import db_service
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from pydantic import BaseModel, Field
 
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.storage.database_service import db_service
 from core.database import User
 from core.logging import logger
 

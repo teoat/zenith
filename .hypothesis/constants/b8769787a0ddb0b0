@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/middleware/authentication.py
-# hypothesis_version: 6.148.8
-
-['/auth/login', '/auth/refresh', '/auth/register', '/docs', '/health', '/openapi.json', '/redoc', '1; mode=block', 'Access forbidden', 'ApiKey', 'Bearer', 'DENY', 'WWW-Authenticate', 'X-API-Key', 'X-Auth-Time', 'X-Frame-Options', 'X-User-ID', 'X-XSS-Protection', 'access_forbidden', 'action', 'auth_service_error', 'error', 'https', 'ip', 'is_active', 'message', 'method', 'nosniff', 'path', 'session_token', 'timestamp', 'url', 'user-agent', 'user_agent', 'user_id', 'username']

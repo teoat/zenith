@@ -1371,7 +1371,7 @@ class DiagnosticOrchestrator:
             perfect_system = self.diagnostic_modules[
                 "perfect_innovation_readiness_system"
             ]
-            perfect_score = await perfect_system.get_perfect_innovation_score()
+            await perfect_system.get_perfect_innovation_score()
             return {
                 "status": "pass",
                 "score": 100.0,
@@ -1645,7 +1645,7 @@ class DiagnosticOrchestrator:
             perfect_system = self.diagnostic_modules[
                 "perfect_competitive_positioning_system"
             ]
-            perfect_score = await perfect_system.get_perfect_competitive_score()
+            await perfect_system.get_perfect_competitive_score()
             return {
                 "status": "pass",
                 "score": 100.0,
@@ -1707,7 +1707,7 @@ class DiagnosticOrchestrator:
         # Check if perfect risk management system is available
         if "perfect_risk_management_system" in self.diagnostic_modules:
             perfect_system = self.diagnostic_modules["perfect_risk_management_system"]
-            perfect_score = await perfect_system.get_perfect_risk_score()
+            await perfect_system.get_perfect_risk_score()
             return {
                 "status": "pass",
                 "score": 100.0,

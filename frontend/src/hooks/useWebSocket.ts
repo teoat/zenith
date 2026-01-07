@@ -50,7 +50,7 @@ export function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn {
   const [lastMessage, setLastMessage] = useState<WebSocketMessage | null>(null);
   const [reconnectCount, setReconnectCount] = useState(0);
 
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectAttemptsRef = useRef(0);
 
   const connect = useCallback(() => {

@@ -344,8 +344,8 @@ class RegulatoryIntelligenceHub:
         """Check compliance against individual rule"""
         rule_id = rule.get("id", "unknown")
         threshold = rule.get("threshold", 0)
-        description = rule.get("description", "")
-        priority = rule.get("priority", "medium")
+        rule.get("description", "")
+        rule.get("priority", "medium")
 
         # Rule-specific compliance logic
         if rule_id == "sar_filing":
@@ -374,7 +374,7 @@ class RegulatoryIntelligenceHub:
         self, case_data: dict[str, Any], threshold: float
     ) -> dict[str, Any]:
         """Check SAR filing compliance"""
-        transactions = case_data.get("transactions", [])
+        case_data.get("transactions", [])
         alert_date = case_data.get("alert_date", datetime.now())
         filing_deadline = alert_date + timedelta(days=30)
 

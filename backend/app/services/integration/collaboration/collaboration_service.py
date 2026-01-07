@@ -188,7 +188,7 @@ class CollaborationManager:
             logger.error(f"Connection handler error: {e}", exc_info=True)
             try:
                 await websocket.close(1011, f"Internal error: {e!s}")
-            except:
+            except Exception:
                 pass  # Connection might already be closed
         finally:
             # Cleanup connection
@@ -463,7 +463,7 @@ class CollaborationManager:
             try:
                 # Process any queued messages (for future use)
                 while not self.message_queue.empty():
-                    message = self.message_queue.get_nowait()
+                    self.message_queue.get_nowait()
                     # Process message
 
                 await asyncio.sleep(0.1)  # Small delay to prevent busy waiting

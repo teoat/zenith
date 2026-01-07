@@ -7,13 +7,14 @@ and migration warnings.
 
 from datetime import datetime
 
+from fastapi import APIRouter, HTTPException
+
 from app.middleware.deprecated_monitor import (
     DEPRECATED_ENDPOINTS,
     get_deprecated_usage_stats,
     get_deprecation_warnings,
     reset_usage_stats,
 )
-from fastapi import APIRouter, HTTPException
 
 router = APIRouter(prefix="/deprecation", tags=["Deprecation Monitoring"])
 

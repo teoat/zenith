@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/app_factory.py
-# hypothesis_version: 6.148.8
-
-[429, 500, 1000, '*', '/docs', '/openapi.json', '/redoc', '1.0.0', 'CREATE_TABLES', 'Rate limit exceeded', 'Unhandled exception', 'detail', 'error', 'false', 'true']

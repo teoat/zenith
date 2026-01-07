@@ -7,7 +7,6 @@ from datetime import datetime
 from typing import Any
 
 from app.services.infrastructure.monitoring_service import monitoring_service
-
 from core.plugin_system.registry import plugin_registry_service
 
 logger = logging.getLogger(__name__)
@@ -64,7 +63,7 @@ class ShadowExecutor:
 
         # Execute shadow plugin (non-blocking, fire-and-forget)
         # This is intentionally a fire-and-forget task for shadow execution
-        shadow_task = asyncio.create_task(
+        asyncio.create_task(
             self._execute_shadow(
                 plugin_id=plugin_id,
                 input_data=input_data,

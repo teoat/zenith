@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import Any
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -15,16 +16,12 @@ class ConnectionManager:
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
-        logger.info(
-            f"WebSocket client connected. Total: {len(self.active_connections)}"
-        )
+        logger.info(f"WebSocket client connected. Total: {len(self.active_connections)}")
 
     def disconnect(self, websocket: WebSocket):
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
-            logger.info(
-                f"WebSocket client disconnected. Total: {len(self.active_connections)}"
-            )
+            logger.info(f"WebSocket client disconnected. Total: {len(self.active_connections)}")
 
     async def broadcast(self, message: Any):
         for connection in self.active_connections:
@@ -45,7 +42,7 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             # Keep connection alive and listen for any client messages (optional)
             # For now, we mainly broadcast TO clients.
-            data = await websocket.receive_text()
+            await websocket.receive_text()
             # Echo back or process commands if needed
             # await websocket.send_text(f"Message received: {data}")
     except WebSocketDisconnect:

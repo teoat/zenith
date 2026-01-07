@@ -4,7 +4,6 @@ from typing import Any
 from app.services.infrastructure.cost_optimization_service import (
     CostOptimizationService,
 )
-
 from core.plugin_system import PluginContext, PluginInterface, PluginMetadata
 
 logger = logging.getLogger(__name__)

@@ -27,9 +27,8 @@ sys.modules["pandas"] = (
 # So mocking pandas is safe for GET /items check.
 
 
-from main import app
-
 from core.database import get_db
+from main import app
 
 
 # Mock DB Session

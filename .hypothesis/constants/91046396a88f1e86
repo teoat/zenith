@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/dependencies.py
-# hypothesis_version: 6.148.8
-
-[400, 'X-Project-ID', 'default']

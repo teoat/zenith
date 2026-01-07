@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/sentry.py
-# hypothesis_version: 6.148.8
-
-[0.1, 1.0, 'Authorization', 'Cookie', 'ENVIRONMENT', 'SENTRY_DSN', '[Filtered]', 'headers', 'info', 'production', 'query_string', 'request']

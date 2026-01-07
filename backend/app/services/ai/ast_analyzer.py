@@ -112,5 +112,5 @@ class ASTComplexityAnalyzer:
                 - 16.2 * math.log(max(1, loc))
             )
             return max(0, min(100, mi))
-        except:
+        except Exception:
             return 0.0

@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/core/log_sanitizer.py
-# hypothesis_version: 6.148.8
-
-['.', '[JWT_MASKED]', '[MASKED]', 'api_key', 'auth', 'cookie', 'credit_card', 'jwt', 'key', 'password', 'secret', 'session', 'ssn', 'token']

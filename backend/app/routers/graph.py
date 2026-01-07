@@ -3,16 +3,16 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Any
 
-from app.services.graph_service import relationship_graph
-from app.services.infrastructure.auth_service import auth_service
-from app.services.intelligence.metadata_correlation_service import (
-    MetadataCorrelationEngine,
-)
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.services.graph_service import relationship_graph
+from app.services.infrastructure.auth_service import auth_service
+from app.services.intelligence.metadata_correlation_service import (
+    MetadataCorrelationEngine,
+)
 from core.database import GraphSnapshot, Relationship, User, get_db
 
 logger = logging.getLogger(__name__)
@@ -188,7 +188,7 @@ async def build_relationship_graph(
             }
 
         # Build the graph
-        graph = relationship_graph.build_graph_from_transactions(transactions)
+        relationship_graph.build_graph_from_transactions(transactions)
 
         # Export graph data for visualization
         graph_data = relationship_graph.export_graph_data("json")

@@ -7,13 +7,13 @@ import tempfile
 from datetime import UTC, datetime
 from typing import Any
 
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from sqlalchemy.orm import Session
+
 from app.services.intelligence.evidence_service import (
     EvidenceProcessor,
     ProcessingResult,
 )
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
-from sqlalchemy.orm import Session
-
 from core.database import get_db
 
 logger = logging.getLogger(__name__)

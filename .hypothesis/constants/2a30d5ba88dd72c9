@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/middleware/input_sanitization.py
-# hypothesis_version: 6.148.8
-
-[400, '"', '&', '&#x27;', '&#x2F;', '&amp;', '&gt;', '&lt;', '&quot;', "'", '--\\s*$', '/', '/\\*.*?\\*/', '<', '>', 'HEAD', 'OPTIONS', 'application/json', 'content-type', 'error', 'exec\\s*\\(', 'javascript:', 'multipart/form-data', 'on\\w+\\s*=', 'union\\s+select', 'vbscript:', 'xp_cmdshell']

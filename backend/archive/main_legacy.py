@@ -13,30 +13,30 @@ import uvicorn
 from app.core.exceptions import ZenithError
 from app.middleware.audit_middleware import SecurityAuditMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.services.business.user_journey_tracker import user_journey_tracker
-from app.services.infrastructure.monitoring_service import monitoring_service
-from app.services.infrastructure.performance_monitor import performance_monitor
-from app.services.integration.collaboration.collaboration_service import (
-    collaboration_manager,
-)
+from core.router_registry import register_routers
+from core.zlogging import log_error, logger
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import FileResponse, JSONResponse
-from i18n import ErrorMessages
-from locale_utils import get_locale_from_request
 from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.services.business.user_journey_tracker import user_journey_tracker
+from app.services.infrastructure.monitoring_service import monitoring_service
+from app.services.infrastructure.performance_monitor import performance_monitor
+from app.services.integration.collaboration.collaboration_service import (
+    collaboration_manager,
+)
 from core.api_documentation import setup_api_documentation
 from core.api_models import create_error_response
 from core.rate_limiting import RateLimitExceeded
-from core.router_registry import register_routers
 from core.sentry import init_sentry
-from core.zlogging import log_error, logger
+from i18n import ErrorMessages
+from locale_utils import get_locale_from_request
 
 # Load environment variables early
 load_dotenv()
@@ -93,7 +93,6 @@ def safe_call(func, default=None, log_errors=True):
 async def lifespan(app: FastAPI):
     """Application lifespan - startup and shutdown events"""
     from app.services.infrastructure.storage.database_service import db_service
-
     from core.database import create_tables
 
     logger.info("Starting Zenith Fraud Detection API", extra={"event": "startup"})

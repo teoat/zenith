@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/cache/multilayer.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.5, 2.0, 300, 1000, 2000, 3600, 6379, '_instance', 'deletes', 'entries', 'error', 'evictions', 'hit_rate', 'hits', 'l1', 'l2', 'localhost', 'max', 'metrics', 'misses', 'serialization_failed', 'sets', 'total_requests', 'utf-8']

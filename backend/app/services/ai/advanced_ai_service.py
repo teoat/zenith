@@ -85,9 +85,7 @@ class ExplainabilityResult:
 class FederatedLearningCoordinator:
     """Coordinates federated learning across distributed clients"""
 
-    def __init__(
-        self, model_type: ModelType, min_clients: int = 3, aggregation_rounds: int = 5
-    ):
+    def __init__(self, model_type: ModelType, min_clients: int = 3, aggregation_rounds: int = 5):
         self.model_type = model_type
         self.min_clients = min_clients
         self.aggregation_rounds = aggregation_rounds
@@ -107,23 +105,17 @@ class FederatedLearningCoordinator:
         self.client_updates = []
         self.current_round += 1
 
-        logger.info(
-            f"Started federated learning round {self.current_round} for {self.model_type.value}"
-        )
+        logger.info(f"Started federated learning round {self.current_round} for {self.model_type.value}")
         return True
 
     async def submit_client_update(self, update: FederatedUpdate) -> bool:
         """Submit a client model update"""
         if self.status != FederatedLearningStatus.COLLECTING:
-            logger.warning(
-                f"Cannot accept update: current status is {self.status.value}"
-            )
+            logger.warning(f"Cannot accept update: current status is {self.status.value}")
             return False
 
         self.client_updates.append(update)
-        logger.info(
-            f"Received update from client {update.client_id} ({len(self.client_updates)}/{self.min_clients})"
-        )
+        logger.info(f"Received update from client {update.client_id} ({len(self.client_updates)}/{self.min_clients})")
 
         # Check if we have enough updates to aggregate
         if len(self.client_updates) >= self.min_clients:
@@ -186,9 +178,7 @@ class FederatedLearningCoordinator:
             "current_round": self.current_round,
             "clients_submitted": len(self.client_updates),
             "min_clients_required": self.min_clients,
-            "last_aggregation": (
-                self.last_aggregation.isoformat() if self.last_aggregation else None
-            ),
+            "last_aggregation": (self.last_aggregation.isoformat() if self.last_aggregation else None),
         }
 
 
@@ -207,9 +197,7 @@ class ExplainableAI:
             "previous_fraud_count",
         ]
 
-    def explain_prediction(
-        self, model: Any, input_data: dict[str, Any], prediction: Any
-    ) -> ExplainabilityResult:
+    def explain_prediction(self, model: Any, input_data: dict[str, Any], prediction: Any) -> ExplainabilityResult:
         """Generate comprehensive explanation for a prediction"""
         try:
             # Calculate feature importance
@@ -247,9 +235,7 @@ class ExplainableAI:
                 bias_analysis={"error": str(e)},
             )
 
-    def _calculate_feature_importance(
-        self, model: Any, input_data: dict[str, Any]
-    ) -> dict[str, float]:
+    def _calculate_feature_importance(self, model: Any, input_data: dict[str, Any]) -> dict[str, float]:
         """Calculate feature importance scores"""
         importance = {}
         try:
@@ -262,16 +248,15 @@ class ExplainableAI:
                 # Fallback: equal importance
                 for name in self.feature_names:
                     importance[name] = 1.0 / len(self.feature_names)
-        except:
+        except Exception as e:
+            logger.warning(f"Failed to calculate feature importance: {e}")
             # Fallback importance
             for name in self.feature_names:
                 importance[name] = 0.1
 
         return importance
 
-    def _generate_decision_path(
-        self, model: Any, input_data: dict[str, Any]
-    ) -> list[str]:
+    def _generate_decision_path(self, model: Any, input_data: dict[str, Any]) -> list[str]:
         """Generate human-readable decision path"""
         path = []
         try:
@@ -302,9 +287,7 @@ class ExplainableAI:
 
         return path
 
-    def _generate_counterfactuals(
-        self, input_data: dict[str, Any], prediction: Any
-    ) -> list[dict[str, Any]]:
+    def _generate_counterfactuals(self, input_data: dict[str, Any], prediction: Any) -> list[dict[str, Any]]:
         """Generate counterfactual examples"""
         counterfactuals = []
 
@@ -362,17 +345,13 @@ class ExplainableAI:
             location_risk = input_data.get("location_risk", 0)
             if location_risk > 0.9:
                 bias_analysis["detected_biases"].append("Potential geographic bias")
-                bias_analysis["recommendations"].append(
-                    "Review location-based risk scoring"
-                )
+                bias_analysis["recommendations"].append("Review location-based risk scoring")
 
             # Check for amount-based bias
             amount = input_data.get("transaction_amount", 0)
             if amount > 5000:
                 bias_analysis["detected_biases"].append("High-value transaction bias")
-                bias_analysis["recommendations"].append(
-                    "Ensure consistent risk assessment across transaction values"
-                )
+                bias_analysis["recommendations"].append("Ensure consistent risk assessment across transaction values")
 
             # Overall fairness assessment
             if not bias_analysis["detected_biases"]:
@@ -383,9 +362,7 @@ class ExplainableAI:
 
         return bias_analysis
 
-    def _calculate_prediction_confidence(
-        self, model: Any, input_data: dict[str, Any]
-    ) -> float:
+    def _calculate_prediction_confidence(self, model: Any, input_data: dict[str, Any]) -> float:
         """Calculate confidence score for the prediction"""
         try:
             # Simplified confidence calculation
@@ -411,7 +388,8 @@ class ExplainableAI:
             # Average confidence
             return sum(confidence_factors) / len(confidence_factors)
 
-        except:
+        except Exception as e:
+            logger.warning(f"Failed to calculate confidence: {e}")
             return 0.5
 
 
@@ -432,9 +410,7 @@ class AutomatedModelRetrainer:
         # Ensure model directory exists
         os.makedirs(model_dir, exist_ok=True)
 
-    async def train_new_model(
-        self, model_type: ModelType, training_data: dict[str, Any]
-    ) -> ModelVersion:
+    async def train_new_model(self, model_type: ModelType, training_data: dict[str, Any]) -> ModelVersion:
         """Train a new model version"""
         version = f"{model_type.value}_v{int(time.time())}"
 
@@ -536,10 +512,7 @@ class AutomatedModelRetrainer:
         reasons = []
 
         # Time-based retraining
-        if (
-            current_time - active_model.created_at
-            > self.retraining_triggers["time_based"]
-        ):
+        if current_time - active_model.created_at > self.retraining_triggers["time_based"]:
             reasons.append("Scheduled retraining due")
 
         # Performance degradation (mock check)
@@ -557,9 +530,7 @@ class AutomatedModelRetrainer:
             "model_age_days": (current_time - active_model.created_at).days,
         }
 
-    def get_model_versions(
-        self, model_type: ModelType | None = None
-    ) -> list[ModelVersion]:
+    def get_model_versions(self, model_type: ModelType | None = None) -> list[ModelVersion]:
         """Get all model versions, optionally filtered by type"""
         versions = list(self.models.values())
         if model_type:
@@ -581,9 +552,7 @@ class AdvancedAIService:
 
         # Initialize federated learning coordinators
         for model_type in ModelType:
-            self.federated_coordinators[model_type] = FederatedLearningCoordinator(
-                model_type
-            )
+            self.federated_coordinators[model_type] = FederatedLearningCoordinator(model_type)
 
     async def explain_prediction(
         self, model_type: ModelType, input_data: dict[str, Any], prediction: Any
@@ -608,9 +577,7 @@ class AdvancedAIService:
         coordinator = self.federated_coordinators[model_type]
         return await coordinator.start_federated_round()
 
-    async def submit_federated_update(
-        self, model_type: ModelType, update: FederatedUpdate
-    ) -> bool:
+    async def submit_federated_update(self, model_type: ModelType, update: FederatedUpdate) -> bool:
         """Submit a federated learning update"""
         coordinator = self.federated_coordinators[model_type]
         return await coordinator.submit_client_update(update)
@@ -620,24 +587,18 @@ class AdvancedAIService:
         coordinator = self.federated_coordinators[model_type]
         return coordinator.get_status()
 
-    async def retrain_model(
-        self, model_type: ModelType, training_data: dict[str, Any]
-    ) -> ModelVersion:
+    async def retrain_model(self, model_type: ModelType, training_data: dict[str, Any]) -> ModelVersion:
         """Retrain a model with new data"""
         logger.info(f"Starting retraining for {model_type.value}")
 
         # Train new model
-        new_version = await self.model_retrainer.train_new_model(
-            model_type, training_data
-        )
+        new_version = await self.model_retrainer.train_new_model(model_type, training_data)
 
         if new_version.status == ModelStatus.READY:
             # Compare with current model
             current_model = self.model_retrainer.get_active_model(model_type)
             if current_model:
-                improvement = (
-                    new_version.metrics.accuracy - current_model.metrics.accuracy
-                )
+                improvement = new_version.metrics.accuracy - current_model.metrics.accuracy
                 logger.info(f"Model improvement: {improvement:.3f}")
 
                 # Auto-deploy if significant improvement
@@ -645,9 +606,7 @@ class AdvancedAIService:
                     await self.model_retrainer.deploy_model(new_version.version)
                     logger.info(f"Auto-deployed improved model {new_version.version}")
                 else:
-                    logger.info(
-                        f"New model {new_version.version} ready but not deployed (insufficient improvement)"
-                    )
+                    logger.info(f"New model {new_version.version} ready but not deployed (insufficient improvement)")
             else:
                 # Deploy first model
                 await self.model_retrainer.deploy_model(new_version.version)
@@ -659,9 +618,7 @@ class AdvancedAIService:
         """Check retraining status for all model types"""
         results = {}
         for model_type in ModelType:
-            results[model_type.value] = self.model_retrainer.check_retraining_needed(
-                model_type
-            )
+            results[model_type.value] = self.model_retrainer.check_retraining_needed(model_type)
         return results
 
     async def run_automated_retraining_cycle(self) -> dict[str, Any]:
@@ -677,14 +634,10 @@ class AdvancedAIService:
             results["models_checked"] += 1
 
             try:
-                retraining_check = self.model_retrainer.check_retraining_needed(
-                    model_type
-                )
+                retraining_check = self.model_retrainer.check_retraining_needed(model_type)
 
                 if retraining_check["needed"]:
-                    logger.info(
-                        f"Retraining needed for {model_type.value}: {retraining_check['reasons']}"
-                    )
+                    logger.info(f"Retraining needed for {model_type.value}: {retraining_check['reasons']}")
 
                     # Mock training data - in real implementation, this would fetch actual data
                     training_data = {
@@ -713,11 +666,7 @@ class AdvancedAIService:
             "active_models": {
                 model_type.value: {
                     "version": model.version if model else None,
-                    "deployed_at": (
-                        model.deployed_at.isoformat()
-                        if model and model.deployed_at
-                        else None
-                    ),
+                    "deployed_at": (model.deployed_at.isoformat() if model and model.deployed_at else None),
                     "accuracy": model.metrics.accuracy if model else None,
                 }
                 for model_type, model in self.model_retrainer.active_models.items()

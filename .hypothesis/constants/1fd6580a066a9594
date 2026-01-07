@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/data_lineage_tracker.py
-# hypothesis_version: 6.148.8
-
-['entity_id', 'history', 'id', 'links', 'metadata', 'nodes', 'r', 'source', 'sources', 'target', 'timestamp', 'transformation', 'type', 'w']

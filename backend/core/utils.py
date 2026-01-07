@@ -1,7 +1,10 @@
 import json
+
 from fastapi import Request
-from core.logging import logger
+
 from app.services.infrastructure.security.audit_service import audit_service
+from core.logging import logger
+
 
 # Utility function for safe service calls with graceful degradation
 def safe_call(func, default=None, log_errors=True):

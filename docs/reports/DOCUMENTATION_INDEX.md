@@ -69,6 +69,8 @@ Maintainers: update this file when index files change.
 
 This index provides a comprehensive guide to all documentation for the Zenith Fraud Detection platform. Documentation is now organized by **audience** for easier navigation and better user experience.
 
+**🎯 Quick Access:** [Component Reference Cards](../COMPONENT_REFERENCE_CARDS.md) - Instant component usage guides
+
 ---
 
 ## 🎯 **New Audience-Centric Organization**
@@ -113,9 +115,9 @@ This index provides a comprehensive guide to all documentation for the Zenith Fr
 | Section | Description | Key Documents |
 |---------|-------------|---------------|
 | **Setup & Architecture** | Development environment and system design | [Setup](operate/security/GITHUB_SECRETS_SETUP.md), [Architecture](current/technical/architecture.md) |
-| **Frontend Development** | UI components and page implementations | [UI Components](developers/ui-components.md) |
-| **API Integration** | API usage and integration patterns | |
-| **Testing & Quality** | Testing strategies and code quality | |
+| **Frontend Development** | UI components and page implementations | [**🎯 Component Reference Cards**](../COMPONENT_REFERENCE_CARDS.md), [UI Components](developers/ui-components.md) |
+| **API Integration** | API usage and integration patterns | [API Examples](../api/examples/) |
+| **Testing & Quality** | Testing strategies and code quality | [Testing Framework](internal/archives/TESTING_FRAMEWORK.md) |
 
 ## ⚙️ **Administrators** - System Administration
 

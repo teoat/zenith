@@ -1,9 +1,9 @@
-from app.services.business.project_service import project_service
-from app.services.infrastructure.auth_service import auth_service
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.services.business.project_service import project_service
+from app.services.infrastructure.auth_service import auth_service
 from core.database import get_db
 
 router = APIRouter()

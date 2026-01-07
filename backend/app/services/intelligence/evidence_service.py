@@ -1196,7 +1196,7 @@ class EvidenceProcessor:
                             extracted_texts.append(
                                 f"=== {text_file} ===\n{content[:1000]}..."
                             )
-                    except:
+                    except Exception:
                         continue
 
                 result.extracted_text = "\n\n".join(extracted_texts)

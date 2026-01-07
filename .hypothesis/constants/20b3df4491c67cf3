@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/plugins/zenith/integration/ai/simulation/plugin.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.1, 0.3, 0.5, 2.0, 255.0, 1536, '1.0.0', 'No messages provided', 'Unknown action', 'action', 'assistant', 'chat', 'completion_tokens', 'compliance', 'content', 'context', 'data', 'default', 'dimensions', 'embed', 'embedding', 'entity', 'error', 'finish_reason', 'forensic', 'fraud', 'frenly', 'generate', 'index', 'legal', 'list', 'llm', 'message', 'messages', 'model', 'object', 'official', 'persona', 'prompt', 'prompt_tokens', 'provider', 'regulatory', 'risk', 'role', 'sar', 'simulation', 'simulation-heuristic', 'simulation_llm', 'stop', 'suspicious', 'text', 'text_generation', 'total_tokens', 'transaction', 'usage', 'v1']

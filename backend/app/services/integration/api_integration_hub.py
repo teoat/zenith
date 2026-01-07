@@ -15,6 +15,7 @@ from enum import Enum
 from typing import Any
 
 import aiohttp
+
 from app.services.infrastructure.circuit_breaker import (
     CircuitBreakerConfig,
     circuit_breaker,
@@ -307,7 +308,7 @@ class APIIntegrationHub:
                     if db_int:
                         db_int.last_used = config.last_used
                         self.db.commit()
-                except:
+                except Exception:
                     pass
 
             # Keep only recent history

@@ -3,10 +3,10 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from app.services.semantic_search_service import SemanticSearchEngine
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from app.services.semantic_search_service import SemanticSearchEngine
 from core.database import get_db
 
 logger = logging.getLogger(__name__)
@@ -232,7 +232,6 @@ async def get_available_backends():
                 if backend_name == "sqlite":
                     from app.services.ai.ai_service import AIService
 
-                    VectorStore = AIService
                     availability[backend_name] = True
                 elif backend_name == "chroma":
                     import chromadb

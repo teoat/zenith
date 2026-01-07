@@ -460,7 +460,7 @@ class UltimatePerformanceEngine:
         }
 
         # Clear expired cache entries
-        original_cache_size = len(self.response_optimizer.response_cache)
+        len(self.response_optimizer.response_cache)
         current_time = time.time()
         expired_keys = [
             k

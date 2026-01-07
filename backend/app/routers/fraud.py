@@ -3,12 +3,12 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from app.services.fraud.fraud_service import FraudDetectionService
-from app.services.infrastructure.auth_service import auth_service
 from fastapi import APIRouter, Body, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.services.fraud.fraud_service import FraudDetectionService
+from app.services.infrastructure.auth_service import auth_service
 from core.database import get_db
 
 logger = logging.getLogger(__name__)

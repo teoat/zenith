@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/env_validator.py
-# hypothesis_version: 6.148.8
-
-['FIELD_ENCRYPTION_KEY', 'JWT_SECRET_KEY', 'SECRET_KEY', '__main__', 'change', 'development', 'dummy', 'env_validator']

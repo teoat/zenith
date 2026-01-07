@@ -1,14 +1,14 @@
 import logging
 from typing import Any
 
-from app.services.infrastructure.auth_service import auth_service
-from app.services.infrastructure.cost_optimization_service import (
-    CostOptimizationService,
-)
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.services.infrastructure.auth_service import auth_service
+from app.services.infrastructure.cost_optimization_service import (
+    CostOptimizationService,
+)
 from core.database import get_db
 
 logger = logging.getLogger(__name__)

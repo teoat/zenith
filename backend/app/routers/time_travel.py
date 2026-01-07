@@ -2,6 +2,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends
 
+
 # Mock time travel service for now
 class TimeTravelService:
     def get_case_history(self, case_id: str):

@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/infrastructure/ml_cache_warmer.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.1, 0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 1.0, 2.718, 24.0, 100, 300, 3600, ':', 'activity', 'activity:', 'activity_', 'analysis_timestamp', 'analytics', 'analytics:', 'business_hour_bonus', 'cache_key', 'case', 'case:', 'case:{case_id}', 'case_', 'combined_score', 'confidence', 'configuration', 'diff_hour_same_day', 'entity_id', 'entity_type', 'evidence', 'evidence:', 'evidence_', 'frequency', 'frequency_patterns', 'frequency_score', 'is_running', 'patterns_analyzed', 'peak_hour_bonus', 'predicted_at', 'queue_size', 'recency', 'recency_score', 'same_hour_diff_day', 'same_hour_same_day', 'score_breakdown', 'simulated_warmup', 'status', 'temporal', 'temporal_score', 'timestamp', 'user', 'user:', 'user:{user_id}', 'user_', 'warmed_at', 'warmup_batch_size']

@@ -1,6 +1,11 @@
 from datetime import datetime
 from typing import Any
 
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
 from app.services.infrastructure.auth_service import auth_service
 from app.services.intelligence.aml_service import get_aml_service
 from app.services.intelligence.behavior_engine import get_behavior_service
@@ -9,11 +14,6 @@ from app.services.intelligence.forensic_intelligence import get_forensic_intelli
 from app.services.intelligence.juridical_anchor import get_juridical_anchor
 from app.services.intelligence.zenith_horizon import get_zenith_horizon
 from app.services.intelligence.zenith_scoring import get_zenith_scoring
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from sqlalchemy import text
-from sqlalchemy.orm import Session
-
 from core.database import get_db
 
 router = APIRouter(

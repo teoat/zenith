@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/fraud_rules.py
-# hypothesis_version: 6.148.8
-
-[404, 500, 501, '/', '/config/status', '/evaluate', '/{rule_id}', '/{rule_name}', 'Fraud Rules Engine', 'Not found', 'Rule not found', 'Transaction data', 'description', 'file', 'fraud_rules.py', 'id', 'risk_score', 'rule_name', 'severity', 'timestamp', 'transaction_id', 'triggered_rules']

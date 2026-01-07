@@ -1,13 +1,11 @@
 # Real-time Collaboration Service with WebSocket Support
-import asyncio
-import json
-import logging
-from datetime import datetime, UTC
-from typing import Dict, List, Optional, Any, Set
-from dataclasses import dataclass, asdict
 import uuid
+from dataclasses import dataclass
+from datetime import UTC, datetime
+from typing import Any, Dict, List, Optional, Set
 
 from core.logging import logger
+
 
 @dataclass
 class CollaborativeSession:
@@ -305,7 +303,7 @@ class ConflictResolutionService:
     def detect_conflict(self, session_id: str, user_changes: Dict[str, Any], existing_state: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Detect if there are conflicting changes"""
         # Simple conflict detection - check if same fields modified
-        modified_fields = set(user_changes.get("modified_fields", []))
+        set(user_changes.get("modified_fields", []))
 
         # In a real implementation, this would be more sophisticated
         # For now, assume no conflicts for simplicity

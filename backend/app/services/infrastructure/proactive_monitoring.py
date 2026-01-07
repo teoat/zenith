@@ -208,7 +208,7 @@ class ProactiveMonitoringService:
         """Calculate current uptime metrics"""
         try:
             # Calculate uptime based on health checks over last 24 hours
-            current_time = datetime.now(UTC)
+            datetime.now(UTC)
 
             # In a real implementation, this would track actual downtime events
             # For now, we'll use health check results as a proxy

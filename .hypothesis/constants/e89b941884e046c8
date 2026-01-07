@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/plugins.py
-# hypothesis_version: 6.148.8
-
-['-', '/available', '/categories', '/execute', '/install', '/installed', '/plugins', '/{plugin_id}', '/{plugin_id}/status', '/{plugin_id}/toggle', 'Configuration failed', 'Installation failed', 'Toggle failed', 'activated', 'category', 'configure_plugins', 'context', 'custom', 'deactivated', 'fraud-', 'install_plugins', 'plugin_id', 'plugins', 'providers']

@@ -1,20 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from sqlalchemy import func, case as sql_case
-from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
-from pydantic import BaseModel
+from typing import Any, Dict, List, Optional
 
-from core.database import (
-    get_db, 
-    ComplianceAuditLog, 
-    RegulatoryReport, 
-    SecurityIncident,
-    AccessReview,
-    TrainingRecord,
-    FraudAlert
-)
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
 from app.services.infrastructure.auth_service import auth_service
+from core.database import (
+    AccessReview,
+    ComplianceAuditLog,
+    FraudAlert,
+    RegulatoryReport,
+    SecurityIncident,
+    TrainingRecord,
+    get_db,
+)
 
 router = APIRouter()
 
@@ -61,7 +61,7 @@ async def get_compliance_dashboard(
     current_user: Any = Depends(auth_service.get_current_user)
 ):
     """Get high-level compliance metrics backed by real DB data"""
-    
+
     # 1. Recent Audit Events (Last 24h)
     last_24h = datetime.utcnow() - timedelta(hours=24)
     recent_audit_events = db.query(ComplianceAuditLog).filter(
@@ -96,7 +96,7 @@ async def get_compliance_dashboard(
     last_100_logs = db.query(ComplianceAuditLog.risk_score).order_by(
         ComplianceAuditLog.timestamp.desc()
     ).limit(100).all()
-    
+
     high_risk_events = sum(1 for log in last_100_logs if (log.risk_score or 0) > 75.0)
 
     # 7. Calculate Overall Score
@@ -106,7 +106,7 @@ async def get_compliance_dashboard(
     score -= (overdue_access_reviews * 2.0)
     score -= (pending_regulatory_reports * 1.0)
     score -= (high_risk_events * 0.5)
-    
+
     return {
         "recent_audit_events": recent_audit_events,
         "pending_regulatory_reports": pending_regulatory_reports,
@@ -123,7 +123,7 @@ async def get_monitoring_dashboard(
     current_user: Any = Depends(auth_service.get_current_user)
 ):
     """Get real-time monitoring dashboard data linked to DB"""
-    
+
     # Calculate score again (reuse logic ideally, but replicating for independence)
     open_incidents = db.query(SecurityIncident).filter(
         SecurityIncident.status.in_(["open", "investigating"])
@@ -132,7 +132,7 @@ async def get_monitoring_dashboard(
 
     # Active Alerts from FraudAlerts table
     active_alerts_db = db.query(FraudAlert).filter(
-        FraudAlert.is_acknowledged == False
+        not FraudAlert.is_acknowledged
     ).order_by(FraudAlert.created_at.desc()).limit(10).all()
 
     active_alerts = [
@@ -178,9 +178,9 @@ async def get_regulatory_reports(
     query = db.query(RegulatoryReport)
     if status:
         query = query.filter(RegulatoryReport.filing_status == status)
-    
+
     reports = query.order_by(RegulatoryReport.created_at.desc()).limit(50).all()
-    
+
     return {
         "reports": [
             {

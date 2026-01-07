@@ -5,12 +5,11 @@ Generates compliance reports for regulatory frameworks (FATF, AMLD5, etc.)
 
 import json
 import logging
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, asdict
-
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -473,7 +472,7 @@ def main():
     reporter = AutomatedComplianceReporter(Path(args.report_dir))
     report_path = reporter.generate_and_save_report()
 
-    print(f"\n🎉 Compliance report generated successfully!")
+    print("\n🎉 Compliance report generated successfully!")
     print(f"📁 Report location: {report_path}")
 
 

@@ -8,7 +8,7 @@
 export const API_BASE = 'http://localhost:8000/api/v1';
 
 // Mock request function for tests
-export const request = jest.fn().mockImplementation(async (endpoint: string, options?: RequestInit) => {
+export const request = jest.fn().mockImplementation(async (endpoint: string, _options?: RequestInit) => {
   // Return mock data based on endpoint
   if (endpoint.includes('/auth/me')) {
     return { id: '1', email: 'test@example.com', role: 'ANALYST' };

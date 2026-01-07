@@ -4,7 +4,7 @@
  * Provides no-op implementations for Electron window controls.
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export interface SystemInfo {
   platform: string;

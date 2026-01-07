@@ -359,7 +359,7 @@ class PerformanceMonitor:
             if rule.get("adaptive", False) and "baseline_key" in rule:
                 baseline_key = rule["baseline_key"]
                 if baseline_key in self.baselines:
-                    baseline = self.baselines[baseline_key]
+                    self.baselines[baseline_key]
 
                     # Calculate standard deviation from recent history
                     recent_values = [

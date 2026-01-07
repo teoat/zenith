@@ -641,7 +641,7 @@ class AdvancedThreatDetectionService:
 
         # Create/update behavioral profile
         if entity_id not in self.behavioral_detector.profiles:
-            profile = self.behavioral_detector.create_behavioral_profile(
+            self.behavioral_detector.create_behavioral_profile(
                 entity_id, entity_type, behavior_data
             )
         else:

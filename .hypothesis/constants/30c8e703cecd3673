@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/jobs/background_processor.py
-# hypothesis_version: 6.148.8
-
-[0.3, '4', 'BACKGROUND_WORKERS', 'active_jobs', 'analysis_complete', 'cancelled', 'case_id', 'completed', 'completed_jobs', 'enable_forensics', 'enable_ocr', 'evidence_id', 'failed', 'failed_jobs', 'file_path', 'filename', 'metadata', 'pending', 'pending_jobs', 'processed_at', 'processing_status', 'queue', 'retrying', 'risk_score', 'running', 'total_jobs', 'transaction_id', 'workers']

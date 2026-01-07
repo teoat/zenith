@@ -82,7 +82,7 @@ class InvestigationService:
         # For now, return flagged transactions as a placeholder
         return (
             db.query(Transaction)
-            .filter(Transaction.is_flagged == True)
+            .filter(Transaction.is_flagged)
             .limit(limit)
             .all()
         )

@@ -1,0 +1,936 @@
+{
+  "timestamp": "2025-12-19T05:21:35.817Z",
+  "summary": {
+    "critical": 107,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "warnings": 3,
+    "passed": 5
+  },
+  "issues": [
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/electron/secure-config.js",
+      "line": 118,
+      "timestamp": "2025-12-19T05:21:35.332Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/electron/secure-config.js",
+      "line": 119,
+      "timestamp": "2025-12-19T05:21:35.336Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/electron/secure-config.js",
+      "line": 120,
+      "timestamp": "2025-12-19T05:21:35.336Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/electron/secure-config.js",
+      "line": 121,
+      "timestamp": "2025-12-19T05:21:35.336Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/electron/secure-config.js",
+      "line": 122,
+      "timestamp": "2025-12-19T05:21:35.336Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/electron/secure-config.js",
+      "line": 123,
+      "timestamp": "2025-12-19T05:21:35.336Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/electron/secure-config.js",
+      "line": 124,
+      "timestamp": "2025-12-19T05:21:35.336Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY'",
+      "file": "/Users/Arief/Desktop/378x492/electron/secure-config.js",
+      "line": 125,
+      "timestamp": "2025-12-19T05:21:35.336Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/scripts/setup-production.js",
+      "line": 62,
+      "timestamp": "2025-12-19T05:21:35.785Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/scripts/setup-production.js",
+      "line": 63,
+      "timestamp": "2025-12-19T05:21:35.785Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/scripts/setup-production.js",
+      "line": 64,
+      "timestamp": "2025-12-19T05:21:35.785Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/scripts/setup-production.js",
+      "line": 65,
+      "timestamp": "2025-12-19T05:21:35.785Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/scripts/setup-production.js",
+      "line": 66,
+      "timestamp": "2025-12-19T05:21:35.785Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/scripts/setup-production.js",
+      "line": 67,
+      "timestamp": "2025-12-19T05:21:35.785Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',",
+      "file": "/Users/Arief/Desktop/378x492/scripts/setup-production.js",
+      "line": 68,
+      "timestamp": "2025-12-19T05:21:35.785Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY'",
+      "file": "/Users/Arief/Desktop/378x492/scripts/setup-production.js",
+      "line": 69,
+      "timestamp": "2025-12-19T05:21:35.785Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default IPC secret: { regex: /378x492-ipc-secret-v1/, type: 'default IPC secret' },",
+      "file": "/Users/Arief/Desktop/378x492/scripts/validate-security.js",
+      "line": 60,
+      "timestamp": "2025-12-19T05:21:35.790Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default password: { regex: /dev-password-123/, type: 'default password' },",
+      "file": "/Users/Arief/Desktop/378x492/scripts/validate-security.js",
+      "line": 61,
+      "timestamp": "2025-12-19T05:21:35.790Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default encryption key: { regex: /dev-encryption-key-change-in-production/, type: 'default encryption key' },",
+      "file": "/Users/Arief/Desktop/378x492/scripts/validate-security.js",
+      "line": 62,
+      "timestamp": "2025-12-19T05:21:35.790Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default auth key: { regex: /378x492-auth-key/, type: 'default auth key' },",
+      "file": "/Users/Arief/Desktop/378x492/scripts/validate-security.js",
+      "line": 63,
+      "timestamp": "2025-12-19T05:21:35.790Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: { regex: /PRODUCTION_USE_ENV_VARS_ONLY/, type: 'secure placeholder' }",
+      "file": "/Users/Arief/Desktop/378x492/scripts/validate-security.js",
+      "line": 64,
+      "timestamp": "2025-12-19T05:21:35.790Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default password: if ((trimmed.includes('dev-password-123') ||",
+      "file": "/Users/Arief/Desktop/378x492/scripts/validate-security.js",
+      "line": 156,
+      "timestamp": "2025-12-19T05:21:35.790Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default encryption key: trimmed.includes('dev-encryption-key-change-in-production') ||",
+      "file": "/Users/Arief/Desktop/378x492/scripts/validate-security.js",
+      "line": 157,
+      "timestamp": "2025-12-19T05:21:35.790Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default IPC secret: trimmed.includes('378x492-ipc-secret-v1') ||",
+      "file": "/Users/Arief/Desktop/378x492/scripts/validate-security.js",
+      "line": 158,
+      "timestamp": "2025-12-19T05:21:35.790Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: !trimmed.includes('PRODUCTION_USE_ENV_VARS_ONLY')) {",
+      "file": "/Users/Arief/Desktop/378x492/scripts/validate-security.js",
+      "line": 160,
+      "timestamp": "2025-12-19T05:21:35.790Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 47,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 55,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 63,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 71,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 79,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 87,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 95,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY'\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 103,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded password: \"message\": \"Found hardcoded password: const password = 'test-password';\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 111,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 119,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 127,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 135,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 143,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 151,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 159,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 167,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY'\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 175,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default IPC secret: \"message\": \"Found hardcoded default IPC secret: { regex: /378x492-ipc-secret-v1/, type: 'default IPC secret' },\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 183,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default password: \"message\": \"Found hardcoded default password: { regex: /dev-password-123/, type: 'default password' },\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 191,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default encryption key: \"message\": \"Found hardcoded default encryption key: { regex: /dev-encryption-key-change-in-production/, type: 'default encryption key' },\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 199,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default auth key: \"message\": \"Found hardcoded default auth key: { regex: /378x492-auth-key/, type: 'default auth key' },\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 207,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: { regex: /PRODUCTION_USE_ENV_VARS_ONLY/, type: 'secure placeholder' }\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 215,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default password: \"message\": \"Found hardcoded default password: if ((trimmed.includes('dev-password-123') ||\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 223,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default encryption key: \"message\": \"Found hardcoded default encryption key: trimmed.includes('dev-encryption-key-change-in-production') ||\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 231,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default IPC secret: \"message\": \"Found hardcoded default IPC secret: trimmed.includes('378x492-ipc-secret-v1') ||\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 239,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: !trimmed.includes('PRODUCTION_USE_ENV_VARS_ONLY')) {\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-54-27.json",
+      "line": 247,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 47,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 55,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 63,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 71,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 79,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 87,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 95,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY'\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 103,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded password: \"message\": \"Found hardcoded password: const password = 'test-password';\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 111,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 119,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 127,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 135,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 143,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 151,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 159,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 167,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY'\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 175,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default IPC secret: \"message\": \"Found hardcoded default IPC secret: { regex: /378x492-ipc-secret-v1/, type: 'default IPC secret' },\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 183,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default password: \"message\": \"Found hardcoded default password: { regex: /dev-password-123/, type: 'default password' },\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 191,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default encryption key: \"message\": \"Found hardcoded default encryption key: { regex: /dev-encryption-key-change-in-production/, type: 'default encryption key' },\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 199,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default auth key: \"message\": \"Found hardcoded default auth key: { regex: /378x492-auth-key/, type: 'default auth key' },\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 207,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: { regex: /PRODUCTION_USE_ENV_VARS_ONLY/, type: 'secure placeholder' }\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 215,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default password: \"message\": \"Found hardcoded default password: if ((trimmed.includes('dev-password-123') ||\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 223,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default encryption key: \"message\": \"Found hardcoded default encryption key: trimmed.includes('dev-encryption-key-change-in-production') ||\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 231,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default IPC secret: \"message\": \"Found hardcoded default IPC secret: trimmed.includes('378x492-ipc-secret-v1') ||\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 239,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: !trimmed.includes('PRODUCTION_USE_ENV_VARS_ONLY')) {\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 247,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 255,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 263,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 271,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 279,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 287,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 295,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 303,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY'\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 311,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded password: \"message\": \"Found hardcoded password: \\\"message\\\": \\\"Found hardcoded password: const password = 'test-password';\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 319,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 327,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 335,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 343,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 351,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 359,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 367,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY',\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 375,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: 'PRODUCTION_USE_ENV_VARS_ONLY'\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 383,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default IPC secret: \"message\": \"Found hardcoded default IPC secret: \\\"message\\\": \\\"Found hardcoded default IPC secret: { regex: /378x492-ipc-secret-v1/, type: 'default IPC secret' },\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 391,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default password: \"message\": \"Found hardcoded default password: \\\"message\\\": \\\"Found hardcoded default password: { regex: /dev-password-123/, type: 'default password' },\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 399,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default encryption key: \"message\": \"Found hardcoded default encryption key: \\\"message\\\": \\\"Found hardcoded default encryption key: { regex: /dev-encryption-key-change-in-production/, type: 'default encryption key' },\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 407,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default auth key: \"message\": \"Found hardcoded default auth key: \\\"message\\\": \\\"Found hardcoded default auth key: { regex: /378x492-auth-key/, type: 'default auth key' },\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 415,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: { regex: /PRODUCTION_USE_ENV_VARS_ONLY/, type: 'secure placeholder' }\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 423,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default password: \"message\": \"Found hardcoded default password: \\\"message\\\": \\\"Found hardcoded default password: if ((trimmed.includes('dev-password-123') ||\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 431,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default encryption key: \"message\": \"Found hardcoded default encryption key: \\\"message\\\": \\\"Found hardcoded default encryption key: trimmed.includes('dev-encryption-key-change-in-production') ||\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 439,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded default IPC secret: \"message\": \"Found hardcoded default IPC secret: \\\"message\\\": \\\"Found hardcoded default IPC secret: trimmed.includes('378x492-ipc-secret-v1') ||\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 447,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Hardcoded Secret",
+      "message": "Found hardcoded secure placeholder: \"message\": \"Found hardcoded secure placeholder: \\\"message\\\": \\\"Found hardcoded secure placeholder: !trimmed.includes('PRODUCTION_USE_ENV_VARS_ONLY')) {\\\",\",",
+      "file": "/Users/Arief/Desktop/378x492/security-report-2025-12-19T04-56-30.json",
+      "line": 455,
+      "timestamp": "2025-12-19T05:21:35.793Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Missing Configuration",
+      "message": "SQLCIPHER_KEY not found in .env",
+      "file": null,
+      "line": null,
+      "timestamp": "2025-12-19T05:21:35.815Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Missing Configuration",
+      "message": "MASTER_PASSWORD not found in .env",
+      "file": null,
+      "line": null,
+      "timestamp": "2025-12-19T05:21:35.815Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Missing Configuration",
+      "message": "IPC_SECRET not found in .env",
+      "file": null,
+      "line": null,
+      "timestamp": "2025-12-19T05:21:35.815Z"
+    },
+    {
+      "severity": "critical",
+      "category": "Missing Configuration",
+      "message": "AUTH_ENCRYPTION_KEY not found in .env",
+      "file": null,
+      "line": null,
+      "timestamp": "2025-12-19T05:21:35.815Z"
+    }
+  ],
+  "warnings": [
+    {
+      "severity": "medium",
+      "category": "File Permissions",
+      "message": "package.json is readable by others (security risk)",
+      "file": "package.json",
+      "line": null,
+      "timestamp": "2025-12-19T05:21:35.815Z"
+    },
+    {
+      "severity": "medium",
+      "category": "File Permissions",
+      "message": "electron/main.js is readable by others (security risk)",
+      "file": "electron/main.js",
+      "line": null,
+      "timestamp": "2025-12-19T05:21:35.815Z"
+    },
+    {
+      "severity": "medium",
+      "category": "File Permissions",
+      "message": "backend/main.py is readable by others (security risk)",
+      "file": "backend/main.py",
+      "line": null,
+      "timestamp": "2025-12-19T05:21:35.815Z"
+    }
+  ],
+  "passed": [
+    {
+      "category": "File Permissions",
+      "message": "Critical file permissions checked",
+      "timestamp": "2025-12-19T05:21:35.815Z"
+    },
+    {
+      "category": "Dependency Security",
+      "message": "Dependency security check completed",
+      "timestamp": "2025-12-19T05:21:35.816Z"
+    },
+    {
+      "category": "SSL/TLS",
+      "message": "Content Security Policy configured",
+      "timestamp": "2025-12-19T05:21:35.817Z"
+    },
+    {
+      "category": "SSL/TLS",
+      "message": "Node integration disabled in renderer",
+      "timestamp": "2025-12-19T05:21:35.817Z"
+    },
+    {
+      "category": "SSL/TLS",
+      "message": "Context isolation enabled",
+      "timestamp": "2025-12-19T05:21:35.817Z"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "critical",
+      "title": "Remove Hardcoded Secrets",
+      "description": "Replace all hardcoded secrets with environment variables",
+      "action": "Use the secure-config.js module and .env file for all secrets"
+    },
+    {
+      "priority": "critical",
+      "title": "Complete Configuration",
+      "description": "Add all required security configuration variables",
+      "action": "Copy .env.template to .env and fill in values"
+    }
+  ]
+}

@@ -133,7 +133,7 @@ class AuditTrailService:
                 if isinstance(details_str, str):
                     try:
                         details = json.loads(details_str)
-                    except:
+                    except json.JSONDecodeError:
                         details = {"raw_details": details_str}
                 else:
                     details = details_str or {}

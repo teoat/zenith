@@ -1,10 +1,13 @@
 import os
+
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
+
 from app.services.infrastructure.monitoring_service import monitoring_service
 from app.services.infrastructure.performance_monitor import performance_monitor
 from app.services.integration.collaboration.collaboration_service import collaboration_manager
 from core.metrics import get_metrics
+
 try:
     from app.services.business.user_journey_tracker import user_journey_tracker
 except ImportError:
@@ -18,7 +21,7 @@ def get_journey_analytics():
     try:
         if not user_journey_tracker:
              return {"status": "error", "error": "User Journey Tracker not available"}
-             
+
         # Check if analytics is disabled (test mode)
         if not hasattr(user_journey_tracker, "get_funnel_analysis"):
             # Return mock data for testing
@@ -175,7 +178,7 @@ async def serve_index():
     current_dir = os.path.dirname(__file__)
     # current_dir: backend/app/routers
     frontend_dist = os.path.join(current_dir, "../../../frontend/dist")
-    
+
     if os.path.exists(frontend_dist):
         return FileResponse(os.path.join(frontend_dist, "index.html"))
     else:

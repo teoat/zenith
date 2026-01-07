@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/agent_approvals.py
-# hypothesis_version: 6.148.8
-
-['/approvals', 'approve', 'approved', 'id', 'message', 'reject', 'rejected']

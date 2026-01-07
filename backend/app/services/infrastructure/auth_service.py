@@ -5,12 +5,12 @@ import sys
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
-from app.services.infrastructure.storage.database_service import db_service
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
+from app.services.infrastructure.storage.database_service import db_service
 from core.config import settings
 from core.database import User, UserRole
 from core.logging import log_security_event, logger

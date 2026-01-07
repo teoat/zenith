@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/core/plugin_system/models.py
-# hypothesis_version: 6.148.8
-
-[0.0, 'AgentPluginExecution', 'PluginDependency', 'PluginExecution', 'PluginPermission', 'PluginRegistry', 'agent_executions', 'all, delete-orphan', 'dependencies', 'executions', 'inactive', 'official', 'permissions', 'plugin', 'plugin_dependencies', 'plugin_executions', 'plugin_permissions', 'plugin_registry', 'plugin_registry.id', 'running', 'users.id']

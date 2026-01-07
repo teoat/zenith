@@ -315,7 +315,7 @@ class ServiceMesh:
                                 instance.health = ServiceHealth.DEGRADED
                             else:
                                 instance.health = ServiceHealth.UNHEALTHY
-                        except:
+                        except Exception:
                             # If we can't parse JSON, assume healthy if status is 200
                             instance.health = ServiceHealth.HEALTHY
                     else:

@@ -349,7 +349,7 @@ class HomomorphicEncryption:
         data = ciphertext
         try:
             return float(data.decode())
-        except:
+        except Exception:
             return 0.0
 
     def add_encrypted(self, ct1: bytes, ct2: bytes) -> bytes:

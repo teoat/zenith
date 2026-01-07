@@ -8,12 +8,12 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from app.models.ai_models import AIDecision, AIInteraction
-from app.services.infrastructure.auth_service import auth_service
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 
+from app.models.ai_models import AIDecision, AIInteraction
+from app.services.infrastructure.auth_service import auth_service
 from core.autonomous_scaling import scaling_engine
 from core.cognitive_automation import DecisionType, cognitive_engine
 from core.database import SessionLocal
@@ -39,7 +39,7 @@ PREMIUM_SERVICES = ["make_cognitive_decision"]
 async def validate_ai_access(user_id: int, service_type: str) -> dict[str, Any]:
     """
     Validate user has access to AI services.
-    
+
     Returns dict with 'allowed' (bool), 'reason' (str), and optionally 'upgrade_required' (bool).
     """
     # Simplified access check - uses auth_service
@@ -328,7 +328,7 @@ async def store_cognitive_decision(
 ):
     """
     Store cognitive decision in database.
-    
+
     Persists AI-generated decisions for audit trail and future reference.
     """
     db = SessionLocal()

@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/infrastructure/rbac_service.py
-# hypothesis_version: 6.148.8
-
-[100, 'admin', 'admin:backup', 'admin:system', 'admin:users', 'analyst', 'close:cases', 'delete:transactions', 'investigator', 'read:analytics', 'read:cases', 'read:transactions', 'role', 'superadmin', 'user', 'write:cases', 'write:transactions']

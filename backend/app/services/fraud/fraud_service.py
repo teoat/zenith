@@ -3,9 +3,9 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from app.services.fraud.engine import rule_engine
 from sqlalchemy.orm import Session
 
+from app.services.fraud.engine import rule_engine
 from core.database import Case, Transaction
 from core.database import FraudAlert as FraudAlertModel
 

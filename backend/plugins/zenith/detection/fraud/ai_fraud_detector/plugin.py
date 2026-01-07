@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from typing import Any
 
 from app.services.ai.ai_fraud_detector import AIFraudDetector
-
 from core.plugin_system import PluginContext, PluginInterface, PluginMetadata
 
 logger = logging.getLogger(__name__)

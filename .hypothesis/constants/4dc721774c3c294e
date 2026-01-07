@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/services/fraud/rule_engine.py
-# hypothesis_version: 6.148.8
-
-[1000000.0, 100, 111, 500, 3600, 'LEGACY_AMT_001', 'USD', '_', 'account', 'account_id', 'amount', 'context', 'critical', 'currency', 'details', 'distance_km', 'evaluation_timestamp', 'excess_percentage', 'fraud_rule', 'from_location', 'geographic', 'high', 'inf', 'is_fraud', 'last_transaction', 'lat', 'location', 'lon', 'low', 'max_transactions', 'medium', 'overall_risk_score', 'pattern', 'plugin', 'plugin-defined', 'reason', 'recent_transactions', 'recommendations', 'required_speed_kmh', 'risk_level', 'risk_score', 'rule_id', 'rule_name', 'rule_type', 'threshold', 'time', 'time_hours', 'time_window_minutes', 'timestamp', 'to_location', 'transaction', 'transaction_count', 'triggered', 'triggered_rules', 'velocity', 'window']

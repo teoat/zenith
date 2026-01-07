@@ -3,6 +3,7 @@ DEPRECATED: This module is deprecated. The functionality has been consolidated i
 Please use the onboarding endpoints provided in backend/app/routers/identity.py instead.
 """
 
+import json
 import uuid
 from datetime import UTC, datetime
 from typing import Any
@@ -31,11 +32,7 @@ def get_roles():
 @router.get("/rookie-checklist/{user_id}")
 def get_rookie_checklist(user_id: str, db: Session = Depends(get_db)):
     """Fetch the current checklist state for a user."""
-    state = (
-        db.query(UserOnboardingState)
-        .filter(UserOnboardingState.user_id == user_id)
-        .first()
-    )
+    state = db.query(UserOnboardingState).filter(UserOnboardingState.user_id == user_id).first()
     if not state:
         return {"items": [], "metadata": {}}
     return {
@@ -45,18 +42,14 @@ def get_rookie_checklist(user_id: str, db: Session = Depends(get_db)):
 
 
 @router.post("/rookie-checklist")
-def submit_rookie_checklist(
-    payload: RookieChecklistIn = Body(...), db: Session = Depends(get_db)
-):
+def submit_rookie_checklist(payload: RookieChecklistIn = Body(...), db: Session = Depends(get_db)):
     """Validate and persist the rookie checklist submission to the DB."""
     try:
         # 1. Store in historical log
         entry = RookieChecklist(
             id=str(uuid.uuid4()),
             user_id=payload.user_id,
-            items=json.dumps(
-                payload.items
-            ),  # EncryptedString expects string or it handles json?
+            items=json.dumps(payload.items),  # EncryptedString expects string or it handles json?
             # Actually RookieChecklist.items is EncryptedString in database.py
             extra_metadata=json.dumps(payload.metadata or {}),
             created_at=datetime.now(UTC),
@@ -64,11 +57,7 @@ def submit_rookie_checklist(
         db.add(entry)
 
         # 2. Update persistent state
-        state = (
-            db.query(UserOnboardingState)
-            .filter(UserOnboardingState.user_id == payload.user_id)
-            .first()
-        )
+        state = db.query(UserOnboardingState).filter(UserOnboardingState.user_id == payload.user_id).first()
         if not state:
             state = UserOnboardingState(
                 user_id=payload.user_id,

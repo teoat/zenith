@@ -15,6 +15,7 @@ from core.autonomous_scaling import scaling_engine
 # Import our existing systems
 try:
     from core.autonomous_operations import alert_manager
+
     from core.autonomous_scaling import scaling_engine
     from core.cognitive_automation import (
         CognitiveDecision,
@@ -777,7 +778,7 @@ class HumanAICollaborationEngine:
         )
 
         # Analyze current workflow
-        current_efficiency = workflow_data.get("efficiency", 0.7)
+        workflow_data.get("efficiency", 0.7)
         pain_points = workflow_data.get("pain_points", [])
 
         # Generate AI suggestions

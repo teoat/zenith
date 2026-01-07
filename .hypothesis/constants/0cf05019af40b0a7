@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/middleware/rate_limiting.py
-# hypothesis_version: 6.148.8
-
-[100, 300, 600, 1000, 1200, '/admin/', '/api/', '/auth/login', '/auth/register', '/docs', '/health', '/openapi.json', '/redoc', '60', 'ENVIRONMENT', 'Retry-After', 'X-RateLimit-Category', 'X-RateLimit-Limit', 'X-RateLimit-Reset', 'admin', 'anonymous', 'api', 'authenticated', 'burst_used', 'category', 'client_id', 'current_requests', 'development', 'error', 'limit', 'login', 'message', 'method', 'path', 'production', 'rate_limit_exceeded', 'register', 'requests', 'response_time', 'retry_after', 'role', 'timestamp', 'unknown', 'user', 'user-agent', 'user_agent']

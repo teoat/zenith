@@ -6,13 +6,13 @@ Refactored for maintainability and scalability.
 import os
 
 import uvicorn
+from core.app_factory import create_app, lifespan_context, setup_error_handlers
+from core.middleware_config import configure_middleware
+from core.router_registry import register_routers
 from dotenv import load_dotenv
 
 from core.api_documentation import setup_api_documentation
-from core.app_factory import create_app, lifespan_context, setup_error_handlers
 from core.logging import zenith_logger
-from core.middleware_config import configure_middleware
-from core.router_registry import register_routers
 
 # Load environment variables
 load_dotenv()

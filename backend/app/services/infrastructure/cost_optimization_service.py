@@ -131,7 +131,7 @@ class InfrastructureOptimizer:
         """Analyze current infrastructure costs and identify optimization opportunities"""
         current_spend = self.current_infrastructure["monthly_cost"]
         optimization_potential = 0.25  # 25% optimization potential
-        estimated_savings = current_spend * optimization_potential
+        current_spend * optimization_potential
 
         optimizations = [
             {
@@ -740,7 +740,6 @@ class CostOptimizationService:
         )
 
         milestones = []
-        current_month = 1
 
         for opt in sorted_opts[:5]:  # Top 5 milestones
             milestones.append(

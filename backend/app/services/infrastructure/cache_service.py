@@ -193,7 +193,7 @@ class MultiLayerCache:
         """Calculate approximate memory size of value"""
         try:
             return len(json.dumps(value, default=str).encode("utf-8"))
-        except:
+        except Exception:
             return len(str(value).encode("utf-8"))
 
     def _is_expired(self, entry: CacheEntry) -> bool:
@@ -218,7 +218,7 @@ class MultiLayerCache:
     def _cleanup_expired(self):
         """Clean up expired entries from both cache layers"""
         with self.lock:
-            current_time = datetime.now()
+            datetime.now()
 
             # Clean L1 cache
             expired_l1 = [k for k, v in self.l1_cache.items() if self._is_expired(v)]

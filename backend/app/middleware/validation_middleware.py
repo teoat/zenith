@@ -158,10 +158,6 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
     async def _sanitize_headers(self, request: Request) -> None:
         """Sanitize and validate request headers"""
         # Remove any headers that could cause issues
-        headers_to_remove = [
-            "x-forwarded-for",  # Will be set by reverse proxy
-            "x-real-ip",  # Will be set by reverse proxy
-        ]
 
         # Log headers that might indicate proxy misuse
         suspicious_headers = ["x-forwarded-for", "x-real-ip", "x-client-ip"]

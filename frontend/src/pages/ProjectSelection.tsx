@@ -2,17 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProjectStore } from '@/store/projectStore';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
 import { projectService } from '@/services/projectService';
 import { 
   FolderPlus, 
   Folder, 
   ArrowRight, 
   Shield, 
-  Activity, 
-  Globe, 
   Lock, 
-  Search, 
   Clock, 
   Cpu,
   Plus,

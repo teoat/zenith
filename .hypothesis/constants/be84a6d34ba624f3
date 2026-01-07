@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/identity.py
-# hypothesis_version: 6.148.8
-
-[400, 401, 409, 1800, '/api/v1/auth/refresh', '/auth/login', '/auth/logout', '/auth/me', '/auth/mfa/setup', '/auth/mfa/verify', '/auth/refresh', '/auth/register', '/auth/reset-password', '/auth/validate', '/onboarding/complete', '/users/me', '/users/preferences', 'Invalid MFA code', 'MFA code required', 'MFA not setup', 'Onboarding completed', 'Password too weak', 'User not found', 'X-MFA-Required', 'access_token', 'analyst', 'bearer', 'code', 'email', 'full_name', 'id', 'issues', 'lax', 'message', 'mfa_enabled', 'mfa_secret', 'onboarding_completed', 'onboarding_metadata', 'otpauth_url', 'password_hash', 'preferences', 'qr_code_base64', 'qr_code_uri', 'refresh_token', 'role', 'secret', 'status', 'strict', 'sub', 'success', 'token_type', 'true', 'user', 'user_id', 'username', 'valid']

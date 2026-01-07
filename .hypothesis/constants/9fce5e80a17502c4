@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/routers/fraud.py
-# hypothesis_version: 6.148.8
-
-[0.0, 0.3, 0.6, 0.8, 1.0, 201, 400, 404, 500, '/accounts/freeze', '/alerts', '/alerts/{case_id}', '/analyze', '/analyze/batch', '/analyze/{case_id}', '/rules', '/stats', 'Alert not found', 'CRITICAL', 'HIGH', 'Invalid status', 'LOW', 'MEDIUM', 'OPEN', '_initialized', 'account', 'account_id', 'action', 'alert_id', 'alerts', 'already_frozen', 'count', 'created_at', 'desc', 'email', 'enabled', 'false_positive', 'file', 'fraud.py', 'fraud_score', 'frozen', 'id', 'investigating', 'is_active', 'message', 'metadata', 'name', 'open', 'reason', 'resolved', 'results', 'risk_level', 'role', 'rule', 'rule_id', 'severity', 'status', 'success', 'test-user-id', 'test@test.com', 'testuser', 'timestamp', 'transaction_id', 'transactions', 'unknown', 'user', 'username']

@@ -1,4 +1,0 @@
-# file: /Users/Arief/Desktop/378x492/backend/app/middleware/audit_middleware.py
-# hypothesis_version: 6.148.8
-
-[400, '/docs', '/health', '/metrics', '/openapi.json', '/redoc', 'GET', 'HEAD', 'OPTIONS', 'client_host', 'query_params', 'user', 'user-agent']

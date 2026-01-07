@@ -441,7 +441,7 @@ class LockfileManager:
         if name not in self.dependency_locks:
             return False
 
-        lock = self.dependency_locks[name]
+        self.dependency_locks[name]
 
         # In a real system, this would check the actual installed dependency
         # For now, assume perfect dependencies are always valid

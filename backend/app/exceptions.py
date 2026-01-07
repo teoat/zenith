@@ -1,13 +1,15 @@
 import os
 import traceback
-from fastapi import FastAPI, Request
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
-from fastapi import HTTPException
-from i18n import ErrorMessages
-from locale_utils import get_locale_from_request
+
 from core.api_models import create_error_response
 from core.logging import log_error
+from i18n import ErrorMessages
+from locale_utils import get_locale_from_request
+
 
 def setup_exception_handlers(app: FastAPI):
     environment = os.getenv("ENVIRONMENT", "development").lower()

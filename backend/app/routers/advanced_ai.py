@@ -1,11 +1,12 @@
 from typing import Any
 
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from pydantic import BaseModel
+
 # Consolidated Service Layer Imports
 from app.services.ai.ai_service import ai_service
 from app.services.intelligence.evidence_service import evidence_processor
 from app.services.workflow.red_team_persona import red_team_service
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
-from pydantic import BaseModel
 
 router = APIRouter()
 

@@ -231,7 +231,7 @@ class AICaseAssignmentEngine:
             return 0.7  # Neutral if no deadline
 
         # Estimate completion time
-        estimated_completion = self._estimate_completion(case, profile)
+        self._estimate_completion(case, profile)
 
         # Calculate time pressure
         time_available = (

@@ -3,6 +3,7 @@ import io
 import logging
 
 import aiohttp
+
 from app.services.infrastructure.circuit_breaker import (
     CircuitBreakerConfig,
     circuit_breaker,

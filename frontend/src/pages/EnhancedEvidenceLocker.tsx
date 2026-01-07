@@ -1,31 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
 import { Button } from '@/components/ui/Button.tsx';
-import { Badge } from '@/components/ui/Badge.tsx';
-import { Input } from '@/components/ui/Input.tsx';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs.tsx';
 import { secureLogger } from '@/utils/secureLogger';
 import {
   FileText,
-  Search,
   Shield,
   CheckCircle,
-  Network,
-  Zap,
-  Filter,
   History,
-  Database,
   Lock,
   Clock,
   Hash,
-  File,
-  Pointer,
-  Download,
-  AlertTriangle
+  AlertTriangle,
+  Zap
 } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { Separator } from '@/components/ui/Separator.tsx';
+
 
 import {
   EvidenceMetadata
@@ -84,7 +74,7 @@ const EnhancedEvidenceLocker: React.FC = () => {
     return matchesSearch && matchesFilter;
   });
 
-  const fileTypes = ['all', ...Array.from(new Set(evidence.map(ev => ev.fileType)))];
+
 
   if (loading) {
     return (
@@ -173,7 +163,7 @@ const EnhancedEvidenceLocker: React.FC = () => {
                           key={ev.id}
                           evidence={ev}
                           isSelected={selectedEvidence?.id === ev.id}
-                          onSelect={(selected) => setSelectedEvidence(selected)}
+                          onSelect={(selected) => setSelectedEvidence(selected as EvidenceMetadata)}
                         />
                       </div>
                     )}
@@ -185,7 +175,7 @@ const EnhancedEvidenceLocker: React.FC = () => {
                         key={ev.id}
                         evidence={ev}
                         isSelected={selectedEvidence?.id === ev.id}
-                        onSelect={(selected) => setSelectedEvidence(selected)}
+                        onSelect={(selected) => setSelectedEvidence(selected as EvidenceMetadata)}
                       />
                     ))}
                   </div>

@@ -5,9 +5,9 @@ Provides role checking and permission management
 
 import logging
 
-from app.services.infrastructure.auth_service import auth_service
 from fastapi import Depends, HTTPException, status
 
+from app.services.infrastructure.auth_service import auth_service
 from core.database import User
 
 logger = logging.getLogger(__name__)

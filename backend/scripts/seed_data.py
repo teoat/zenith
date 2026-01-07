@@ -13,9 +13,9 @@ from datetime import datetime, timedelta
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.services.infrastructure.auth_service import auth_service
 from sqlalchemy.orm import Session
 
+from app.services.infrastructure.auth_service import auth_service
 from core.database import (
     Base,
     Case,

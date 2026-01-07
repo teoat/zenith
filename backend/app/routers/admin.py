@@ -1,5 +1,7 @@
 import logging
 
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.services.infrastructure.auth_service import auth_service
 from app.services.infrastructure.cache_service import (
     clear_all_cache,
@@ -8,9 +10,8 @@ from app.services.infrastructure.cache_service import (
 )
 from app.services.infrastructure.security.audit_service import audit_service
 from app.services.infrastructure.storage.database_service import db_service
-from fastapi import APIRouter, Depends, HTTPException
-
-from core.database import User
+from core.database import SessionLocal, User
+from core.plugin_system.models import PluginRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -133,9 +134,7 @@ async def optimize_database(admin: User = Depends(require_admin)):
 
 
 @router.post("/database/analyze-query")
-async def analyze_query(
-    query: str, params: dict | None = None, admin: User = Depends(require_admin)
-):
+async def analyze_query(query: str, params: dict | None = None, admin: User = Depends(require_admin)):
     """Analyze query performance with EXPLAIN (Admin only)"""
     try:
         # Audit log - potentially sensitive query analysis
@@ -165,9 +164,7 @@ async def analyze_query(
 async def get_cache_statistics(admin: User = Depends(require_admin)):
     """Get comprehensive cache statistics (Admin only)"""
     try:
-        logger.info(
-            f"Admin {admin.id} accessing cache statistics", extra={"admin_id": admin.id}
-        )
+        logger.info(f"Admin {admin.id} accessing cache statistics", extra={"admin_id": admin.id})
         stats = get_cache_stats()
         return {"cache_stats": stats}
     except Exception as e:
@@ -176,9 +173,7 @@ async def get_cache_statistics(admin: User = Depends(require_admin)):
 
 
 @router.delete("/cache/namespace/{namespace}")
-async def clear_cache_by_namespace(
-    namespace: str, admin: User = Depends(require_admin)
-):
+async def clear_cache_by_namespace(namespace: str, admin: User = Depends(require_admin)):
     """Clear all cache entries in a specific namespace (Admin only)"""
     try:
         # Audit log cache clearing
@@ -263,8 +258,6 @@ async def get_current_system_metrics(admin: User = Depends(require_admin)):
 
 
 # ===== PLUGIN MANAGEMENT ENDPOINTS (PHASE 3) =====
-from core.database import SessionLocal
-from core.plugin_system.models import PluginRegistry
 
 
 @router.get("/plugins")
@@ -301,18 +294,10 @@ async def toggle_plugin_status(plugin_id: str, admin: User = Depends(require_adm
     """Toggle plugin active/inactive status (Admin only)"""
     db = SessionLocal()
     try:
-        plugin = (
-            db.query(PluginRegistry)
-            .filter(PluginRegistry.plugin_id == plugin_id)
-            .first()
-        )
+        plugin = db.query(PluginRegistry).filter(PluginRegistry.plugin_id == plugin_id).first()
         if not plugin:
             # Try searching by namespace if UUID fail
-            plugin = (
-                db.query(PluginRegistry)
-                .filter(PluginRegistry.namespace == plugin_id)
-                .first()
-            )
+            plugin = db.query(PluginRegistry).filter(PluginRegistry.namespace == plugin_id).first()
 
         if not plugin:
             raise HTTPException(status_code=404, detail="Plugin not found")

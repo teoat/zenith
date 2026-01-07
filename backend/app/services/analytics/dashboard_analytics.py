@@ -101,7 +101,7 @@ class AnalyticsDashboard:
             ai_assist_rate = 0.0 + (i * 1.2)  # Increasing AI usage
             resolution_time = 72.0 - (i * 0.5)  # Improving resolution time
             fraud_detection_rate = 85.0 + (i * 0.3)  # Improving detection
-            false_positive_rate = 15.0 - (i * 0.2)  # Reducing false positives
+            15.0 - (i * 0.2)  # Reducing false positives
 
             self.metrics_history.append(
                 PerformanceTrend(

@@ -1,14 +1,14 @@
 # FinCEN BSA E-Filing Integration Service
 import asyncio
-import logging
 import uuid
-from datetime import datetime, UTC
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass
 import xml.etree.ElementTree as ET
+from dataclasses import dataclass
+from datetime import UTC, datetime
+from typing import Any, Dict, List, Optional
 from xml.dom import minidom
 
 from core.logging import logger
+
 
 @dataclass
 class SARFiling:
@@ -91,7 +91,7 @@ class BSAEfilingService:
 
         try:
             # Generate XML
-            xml_content = self.generate_sar_xml(filing)
+            self.generate_sar_xml(filing)
 
             # In a real implementation, this would make HTTP requests to FinCEN API
             # For now, simulate the submission process

@@ -11,10 +11,14 @@ Provides endpoints for fraud proof mechanisms that generate court-admissible evi
 import logging
 from datetime import UTC, datetime
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.orm import Session
+
 from app.services.graph_service import relationship_graph
 from app.services.immutable_audit_chain import (
     immutable_audit_chain,
 )
+from app.services.infrastructure.auth_service import auth_service
 from app.services.intelligence.metadata_correlation_service import (
     MetadataCorrelationEngine,
 )
@@ -22,9 +26,6 @@ from app.services.temporal_burst_detector import (
     TemporalBurstDetector,
     temporal_burst_detector,
 )
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
-
 from core.database import get_db
 
 logger = logging.getLogger(__name__)
@@ -87,18 +88,10 @@ def get_metadata_correlations(case_id: str, db: Session = Depends(get_db)):
             "correlation_count": len(correlations),
             "correlations": correlations,
             "summary": {
-                "phone_correlations": len(
-                    [c for c in correlations if c.get("metadata_type") == "phone"]
-                ),
-                "email_correlations": len(
-                    [c for c in correlations if c.get("metadata_type") == "email"]
-                ),
-                "address_correlations": len(
-                    [c for c in correlations if c.get("metadata_type") == "address"]
-                ),
-                "ip_correlations": len(
-                    [c for c in correlations if c.get("metadata_type") == "ip_address"]
-                ),
+                "phone_correlations": len([c for c in correlations if c.get("metadata_type") == "phone"]),
+                "email_correlations": len([c for c in correlations if c.get("metadata_type") == "email"]),
+                "address_correlations": len([c for c in correlations if c.get("metadata_type") == "address"]),
+                "ip_correlations": len([c for c in correlations if c.get("metadata_type") == "ip_address"]),
             },
         }
     except Exception as e:
@@ -112,13 +105,9 @@ def get_metadata_correlations(case_id: str, db: Session = Depends(get_db)):
 @router.get("/temporal-bursts/{case_id}")
 def detect_temporal_bursts(
     case_id: str,
-    burst_threshold: int = Query(
-        10, description="Minimum transactions for burst detection"
-    ),
+    burst_threshold: int = Query(10, description="Minimum transactions for burst detection"),
     burst_window_hours: int = Query(48, description="Time window in hours"),
-    structuring_threshold: float = Query(
-        10000, description="Reporting threshold amount"
-    ),
+    structuring_threshold: float = Query(10000, description="Reporting threshold amount"),
     db: Session = Depends(get_db),
 ):
     """
@@ -136,9 +125,7 @@ def detect_temporal_bursts(
         # Get transactions for case
         from core.database import Transaction
 
-        transactions = (
-            db.query(Transaction).filter(Transaction.case_id == case_id).all()
-        )
+        transactions = db.query(Transaction).filter(Transaction.case_id == case_id).all()
 
         # Convert to dictionaries
         txn_dicts = []
@@ -172,9 +159,7 @@ def detect_temporal_bursts(
 @router.post("/temporal-bursts/analyze")
 def analyze_transactions_for_bursts(
     transactions: list[dict],
-    burst_threshold: int = Query(
-        10, description="Minimum transactions for burst detection"
-    ),
+    burst_threshold: int = Query(10, description="Minimum transactions for burst detection"),
     burst_window_hours: int = Query(48, description="Time window in hours"),
 ):
     """
@@ -189,9 +174,7 @@ def analyze_transactions_for_bursts(
         Burst analysis results
     """
     try:
-        detector = TemporalBurstDetector(
-            burst_threshold=burst_threshold, burst_window_hours=burst_window_hours
-        )
+        detector = TemporalBurstDetector(burst_threshold=burst_threshold, burst_window_hours=burst_window_hours)
 
         results = detector.analyze_transactions(transactions)
 
@@ -333,9 +316,7 @@ def detect_shell_networks(
         # Get transactions for case to build graph
         from core.database import Transaction
 
-        transactions = (
-            db.query(Transaction).filter(Transaction.case_id == case_id).all()
-        )
+        transactions = db.query(Transaction).filter(Transaction.case_id == case_id).all()
 
         # Convert to dictionaries for graph building
         txn_dicts = []
@@ -347,8 +328,7 @@ def detect_shell_networks(
                     "account_id": txn.account_id,
                     "amount": float(txn.amount) if txn.amount else 0,
                     "date": txn.date.isoformat() if txn.date else None,
-                    "merchant_name": getattr(txn, "counterparty", None)
-                    or getattr(txn, "description", "Unknown"),
+                    "merchant_name": getattr(txn, "counterparty", None) or getattr(txn, "description", "Unknown"),
                 }
             )
 
@@ -381,9 +361,7 @@ def detect_shell_networks(
             "summary": {
                 "total_communities": len(relationship_graph.detect_communities()),
                 "suspicious_networks": len(shell_networks),
-                "highest_risk_score": max(
-                    [n["risk_score"] for n in shell_networks], default=0
-                ),
+                "highest_risk_score": max([n["risk_score"] for n in shell_networks], default=0),
             },
         }
 
@@ -417,22 +395,10 @@ def get_proof_summary(case_id: str, db: Session = Depends(get_db)):
             metadata_summary = {
                 "total_correlations": len(correlations),
                 "types": {
-                    "phone": len(
-                        [c for c in correlations if c.get("metadata_type") == "phone"]
-                    ),
-                    "email": len(
-                        [c for c in correlations if c.get("metadata_type") == "email"]
-                    ),
-                    "address": len(
-                        [c for c in correlations if c.get("metadata_type") == "address"]
-                    ),
-                    "ip": len(
-                        [
-                            c
-                            for c in correlations
-                            if c.get("metadata_type") == "ip_address"
-                        ]
-                    ),
+                    "phone": len([c for c in correlations if c.get("metadata_type") == "phone"]),
+                    "email": len([c for c in correlations if c.get("metadata_type") == "email"]),
+                    "address": len([c for c in correlations if c.get("metadata_type") == "address"]),
+                    "ip": len([c for c in correlations if c.get("metadata_type") == "ip_address"]),
                 },
                 "confidence": min(1.0, len(correlations) * 0.15) if correlations else 0,
             }
@@ -449,9 +415,7 @@ def get_proof_summary(case_id: str, db: Session = Depends(get_db)):
         try:
             from core.database import Transaction
 
-            transactions = (
-                db.query(Transaction).filter(Transaction.case_id == case_id).all()
-            )
+            transactions = db.query(Transaction).filter(Transaction.case_id == case_id).all()
 
             txn_dicts = [
                 {
@@ -463,22 +427,14 @@ def get_proof_summary(case_id: str, db: Session = Depends(get_db)):
                 for txn in transactions
             ]
 
-            burst_results = temporal_burst_detector.analyze_transactions(
-                txn_dicts, case_id
-            )
+            burst_results = temporal_burst_detector.analyze_transactions(txn_dicts, case_id)
             burst_summary = {
                 "alerts": len(burst_results.get("alerts", [])),
-                "risk_score": burst_results.get("summary", {}).get(
-                    "overall_risk_score", 0
-                ),
+                "risk_score": burst_results.get("summary", {}).get("overall_risk_score", 0),
                 "patterns": {
                     "burst": burst_results.get("summary", {}).get("burst_patterns", 0),
-                    "structuring": burst_results.get("summary", {}).get(
-                        "structuring_patterns", 0
-                    ),
-                    "velocity": burst_results.get("summary", {}).get(
-                        "velocity_anomalies", 0
-                    ),
+                    "structuring": burst_results.get("summary", {}).get("structuring_patterns", 0),
+                    "velocity": burst_results.get("summary", {}).get("velocity_anomalies", 0),
                 },
                 "confidence": min(
                     1.0,
@@ -501,9 +457,7 @@ def get_proof_summary(case_id: str, db: Session = Depends(get_db)):
             audit_summary = {
                 "status": chain_verification.get("status", "unknown"),
                 "total_entries": chain_verification.get("total_entries", 0),
-                "integrity_percentage": chain_verification.get(
-                    "integrity_percentage", 0
-                ),
+                "integrity_percentage": chain_verification.get("integrity_percentage", 0),
                 "confidence": chain_verification.get("integrity_percentage", 0) / 100,
             }
         except Exception as e:
@@ -521,12 +475,8 @@ def get_proof_summary(case_id: str, db: Session = Depends(get_db)):
             shell_networks = relationship_graph.detect_shell_networks()
             shell_summary = {
                 "networks_detected": len(shell_networks),
-                "highest_risk_score": max(
-                    [n["risk_score"] for n in shell_networks], default=0
-                ),
-                "confidence": (
-                    min(1.0, len(shell_networks) * 0.2) if shell_networks else 0
-                ),
+                "highest_risk_score": max([n["risk_score"] for n in shell_networks], default=0),
+                "confidence": (min(1.0, len(shell_networks) * 0.2) if shell_networks else 0),
             }
         except Exception as e:
             logger.warning(f"Shell network detection failed: {e}")
@@ -556,11 +506,7 @@ def get_proof_summary(case_id: str, db: Session = Depends(get_db)):
                 "shell_networks": shell_summary,
                 "overall_confidence": round(overall_confidence, 2),
                 "court_readiness": (
-                    "high"
-                    if overall_confidence >= 0.7
-                    else "medium"
-                    if overall_confidence >= 0.4
-                    else "low"
+                    "high" if overall_confidence >= 0.7 else "medium" if overall_confidence >= 0.4 else "low"
                 ),
             },
         }

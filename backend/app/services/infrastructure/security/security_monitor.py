@@ -81,7 +81,7 @@ class SecurityMonitor:
 
     def trigger_alert(self, alert_type: str, details: dict[str, Any]):
         """Trigger security alert"""
-        alert = {
+        {
             "timestamp": datetime.now().isoformat(),
             "alert_type": alert_type,
             "details": details,

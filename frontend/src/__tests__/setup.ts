@@ -110,7 +110,7 @@ if (typeof global.Headers === 'undefined') {
 }
 
 // Crypto polyfill for UUID generation
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 Object.defineProperty(global, 'crypto', {
   value: {

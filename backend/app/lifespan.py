@@ -1,20 +1,21 @@
 import asyncio
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from core.logging import logger
-from core.database import create_tables
-from app.constants import VERSION
 
+from fastapi import FastAPI
+
+from app.constants import VERSION
+from app.routers.health import health_check
+from app.services.infrastructure.circuit_breaker import get_circuit_breaker
 from app.services.infrastructure.monitoring_service import monitoring_service
 from app.services.infrastructure.performance_monitor import performance_monitor
-from app.services.integration.collaboration.collaboration_service import collaboration_manager
 from app.services.infrastructure.proactive_monitoring import proactive_monitoring
-from app.services.infrastructure.circuit_breaker import get_circuit_breaker
 from app.services.infrastructure.storage.database_service import db_service
-from app.routers.health import health_check
+from app.services.integration.collaboration.collaboration_service import collaboration_manager
+from core.database import create_tables
 from core.immutable_audit import immutable_audit
 from core.integrity_checker import integrity_checker
+from core.logging import logger
 
 # Global background tasks reference to prevent GC
 _background_tasks = []
@@ -141,7 +142,7 @@ async def lifespan(app: FastAPI):
         critical_breakers = ["database_connection", "external_api_calls"]
         for breaker_name in critical_breakers:
             try:
-                breaker = get_circuit_breaker(breaker_name)
+                get_circuit_breaker(breaker_name)
                 logger.info(
                     f"✅ Circuit breaker '{breaker_name}' initialized",
                     extra={"circuit_breaker": breaker_name},
@@ -154,7 +155,7 @@ async def lifespan(app: FastAPI):
 
         # Phase 4: Final health verification
         logger.info("Phase 4: Final health verification", extra={"startup_phase": 4})
-        
+
         try:
             # Import and run comprehensive health check
             health_result = await health_check()
