@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx'';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { DollarSign, MapPin, Activity, AlertTriangle } from 'lucide-react';
 import { SARFormData, SUSPICIOUS_ACTIVITY_TYPES, REGULATORY_BASES } from '@/types/sar';
 import { Case } from '@/types/schema';

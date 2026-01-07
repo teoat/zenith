@@ -4,15 +4,13 @@
  */
 
 import React, { useState, useCallback, useRef, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
-// ScrollArea removed - not currently used
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog.tsx'';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select.tsx'';
-import { secureRandom } from '../../utils/secureRandom'; // Module not found
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
+import { Button } from '@/components/ui/Button.tsx';
+import { Badge } from '@/components/ui/Badge.tsx';
+import { Input } from '@/components/ui/Input.tsx';
+import { Textarea } from '@/components/ui/Textarea.tsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/Dialog.tsx';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select.tsx';
 import {
   LayoutGrid,
   Plus,
