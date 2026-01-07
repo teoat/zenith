@@ -44,9 +44,7 @@ class StorageMonitor:
                 "current_usage": current_usage,
                 "growth_analysis": growth_analysis,
                 "alerts": alerts,
-                "recommendations": self._generate_storage_recommendations(
-                    current_usage, growth_analysis
-                ),
+                "recommendations": self._generate_storage_recommendations(current_usage, growth_analysis),
             }
 
         except Exception as e:
@@ -75,15 +73,11 @@ class StorageMonitor:
 
         # Predict when storage will be full
         current_free = recent_metrics[-1]["free_gb"]
-        days_until_full = (
-            current_free / avg_daily_growth if avg_daily_growth > 0 else 999
-        )
+        days_until_full = current_free / avg_daily_growth if avg_daily_growth > 0 else 999
 
         predicted_full_date = None
         if days_until_full < 365:  # Only predict if within a year
-            predicted_full_date = (
-                datetime.utcnow() + timedelta(days=days_until_full)
-            ).isoformat()
+            predicted_full_date = (datetime.utcnow() + timedelta(days=days_until_full)).isoformat()
 
         # Determine trend
         if avg_daily_growth > 1:  # More than 1GB daily growth
@@ -100,9 +94,7 @@ class StorageMonitor:
             "daily_growth_rate_gb": avg_daily_growth,
             "predicted_full_date": predicted_full_date,
             "days_until_full": days_until_full,
-            "confidence": min(
-                len(recent_metrics) / 30, 1.0
-            ),  # Confidence based on data points
+            "confidence": min(len(recent_metrics) / 30, 1.0),  # Confidence based on data points
         }
 
     def _check_storage_thresholds(self, current_usage: dict[str, Any]) -> list[str]:
@@ -113,26 +105,18 @@ class StorageMonitor:
         free_gb = current_usage["free_gb"]
 
         if usage_percent > 95:
-            alerts.append(
-                f"Critical: Storage usage at {usage_percent:.1f}% - immediate action required"
-            )
+            alerts.append(f"Critical: Storage usage at {usage_percent:.1f}% - immediate action required")
         elif usage_percent > 90:
-            alerts.append(
-                f"Warning: Storage usage at {usage_percent:.1f}% - plan for expansion"
-            )
+            alerts.append(f"Warning: Storage usage at {usage_percent:.1f}% - plan for expansion")
         elif usage_percent > 80:
-            alerts.append(
-                f"Notice: Storage usage at {usage_percent:.1f}% - monitor closely"
-            )
+            alerts.append(f"Notice: Storage usage at {usage_percent:.1f}% - monitor closely")
 
         if free_gb < 10:  # Less than 10GB free
             alerts.append(f"Critical: Only {free_gb:.1f}GB free space remaining")
 
         return alerts
 
-    def _generate_storage_recommendations(
-        self, current_usage: dict[str, Any], growth_analysis: dict[str, Any]
-    ) -> list[str]:
+    def _generate_storage_recommendations(self, current_usage: dict[str, Any], growth_analysis: dict[str, Any]) -> list[str]:
         """Generate storage management recommendations"""
         recommendations = []
 
@@ -142,22 +126,16 @@ class StorageMonitor:
 
         # Usage-based recommendations
         if usage_percent > 90:
-            recommendations.append(
-                "Immediate: Implement data archiving and cleanup procedures"
-            )
+            recommendations.append("Immediate: Implement data archiving and cleanup procedures")
             recommendations.append("Urgent: Plan for storage capacity expansion")
 
         elif usage_percent > 80:
-            recommendations.append(
-                "Implement automated log rotation and temporary file cleanup"
-            )
+            recommendations.append("Implement automated log rotation and temporary file cleanup")
             recommendations.append("Review data retention policies")
 
         # Growth-based recommendations
         if trend == "rapid_growth":
-            recommendations.append(
-                "Investigate source of rapid data growth and implement controls"
-            )
+            recommendations.append("Investigate source of rapid data growth and implement controls")
             recommendations.append("Consider implementing data compression")
 
         if days_until_full < 90:  # Less than 3 months
@@ -214,9 +192,7 @@ class StorageMonitor:
         return {
             "weekly_averages": weekly_usage,
             "trend_direction": trend_direction,
-            "total_growth_percent": (
-                weekly_usage[-1] - weekly_usage[0] if len(weekly_usage) >= 2 else 0
-            ),
+            "total_growth_percent": (weekly_usage[-1] - weekly_usage[0] if len(weekly_usage) >= 2 else 0),
         }
 
     def _get_capacity_planning(self) -> dict[str, Any]:
@@ -255,15 +231,9 @@ class StorageMonitor:
             usage_percent = current["usage_percent"]
 
             if usage_percent > 85:
-                opportunities.append(
-                    "Implement data deduplication to reduce storage footprint"
-                )
-                opportunities.append(
-                    "Set up automated archiving for old logs and temporary files"
-                )
-                opportunities.append(
-                    "Review backup retention policies for cleanup opportunities"
-                )
+                opportunities.append("Implement data deduplication to reduce storage footprint")
+                opportunities.append("Set up automated archiving for old logs and temporary files")
+                opportunities.append("Review backup retention policies for cleanup opportunities")
 
             opportunities.extend(
                 [

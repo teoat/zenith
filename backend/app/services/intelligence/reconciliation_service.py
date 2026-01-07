@@ -14,9 +14,7 @@ class ReconciliationService:
     def __init__(self, db: Session):
         self.db = db
 
-    def reconcile_cash_float(
-        self, entity_name: str, start_date: datetime, end_date: datetime
-    ) -> dict[str, Any]:
+    def reconcile_cash_float(self, entity_name: str, start_date: datetime, end_date: datetime) -> dict[str, Any]:
         """
         Reconciles cash float for a specific entity (e.g., 'Petty Cash', 'Site Manager').
         Compares 'TRANSFER' to the entity vs. 'EXPENSE' reported by the entity.
@@ -45,9 +43,7 @@ class ReconciliationService:
             self.db.query(func.sum(Transaction.amount))
             .filter(
                 Transaction.transaction_type == "DEBIT",
-                Transaction.description.ilike(
-                    f"%{entity_name}%"
-                ),  # Broad match for MVP
+                Transaction.description.ilike(f"%{entity_name}%"),  # Broad match for MVP
                 Transaction.date >= start_date,
                 Transaction.date <= end_date,
             )
@@ -66,16 +62,12 @@ class ReconciliationService:
             "status": "BALANCED" if abs(variance) < 0.01 else "VARIANCE",
         }
 
-    def find_batch_matches(
-        self, withdrawal_id: str, tolerance: float = 0.05
-    ) -> dict[str, Any]:
+    def find_batch_matches(self, withdrawal_id: str, tolerance: float = 0.05) -> dict[str, Any]:
         """
         Attempts to find a set of expenses that sum up to a specific withdrawal amount.
         Useful for reconciling a 'Cash Withdrawal' against a batch of receipts.
         """
-        withdrawal = (
-            self.db.query(Transaction).filter(Transaction.id == withdrawal_id).first()
-        )
+        withdrawal = self.db.query(Transaction).filter(Transaction.id == withdrawal_id).first()
         if not withdrawal:
             return {"error": "Withdrawal transaction not found"}
 
@@ -122,14 +114,10 @@ class ReconciliationService:
             "matched_expenses_sum": current_sum,
             "variance": variance,
             "is_fully_reconciled": abs(variance) <= tolerance,
-            "matches": [
-                {"id": m.id, "amount": m.amount, "desc": m.description} for m in matches
-            ],
+            "matches": [{"id": m.id, "amount": m.amount, "desc": m.description} for m in matches],
         }
 
-    def save_batch_match(
-        self, withdrawal_id: str, expense_ids: list[str]
-    ) -> dict[str, Any]:
+    def save_batch_match(self, withdrawal_id: str, expense_ids: list[str]) -> dict[str, Any]:
         """
         Link a withdrawal to multiple expenses by assigning them a common batch_id.
         """
@@ -138,9 +126,7 @@ class ReconciliationService:
         batch_id = str(uuid.uuid4())
 
         # 1. Update Withdrawal
-        withdrawal = (
-            self.db.query(Transaction).filter(Transaction.id == withdrawal_id).first()
-        )
+        withdrawal = self.db.query(Transaction).filter(Transaction.id == withdrawal_id).first()
         if not withdrawal:
             return {"error": "Withdrawal transaction not found"}
 
@@ -151,9 +137,7 @@ class ReconciliationService:
         withdrawal.transaction_metadata = meta
 
         # 2. Update Expenses
-        expenses = (
-            self.db.query(Transaction).filter(Transaction.id.in_(expense_ids)).all()
-        )
+        expenses = self.db.query(Transaction).filter(Transaction.id.in_(expense_ids)).all()
 
         for expense in expenses:
             ex_meta = dict(expense.transaction_metadata or {})
@@ -171,9 +155,7 @@ class ReconciliationService:
             "status": "success",
         }
 
-    def detect_mirror_transfers(
-        self, case_id: str, window_hours: int = 48
-    ) -> list[dict[str, Any]]:
+    def detect_mirror_transfers(self, case_id: str, window_hours: int = 48) -> list[dict[str, Any]]:
         """
         Implementation of the Temporal Pair Matcher (Mirror Detection).
         Scans for $X outflow from Account A -> $X inflow to Account B within 48 hours.
@@ -182,12 +164,7 @@ class ReconciliationService:
         logger.info(f"Scanning for mirror transfers in case {case_id}")
 
         # 1. Get all transactions for the case
-        transactions = (
-            self.db.query(Transaction)
-            .filter(Transaction.case_id == case_id)
-            .order_by(Transaction.date.asc())
-            .all()
-        )
+        transactions = self.db.query(Transaction).filter(Transaction.case_id == case_id).order_by(Transaction.date.asc()).all()
 
         if not transactions:
             return []
@@ -232,13 +209,9 @@ class ReconciliationService:
                 out_meta = tx_out.transaction_metadata or {}
                 in_meta = tx_in.transaction_metadata or {}
 
-                if out_meta.get("owner_id") == in_meta.get("owner_id") and out_meta.get(
-                    "owner_id"
-                ):
+                if out_meta.get("owner_id") == in_meta.get("owner_id") and out_meta.get("owner_id"):
                     wash_score = 1.0
-                elif (
-                    tx_out.merchant_name == tx_in.merchant_name
-                ):  # Simple string match fallback
+                elif tx_out.merchant_name == tx_in.merchant_name:  # Simple string match fallback
                     wash_score = 0.8
 
                 if wash_score >= 0.5:

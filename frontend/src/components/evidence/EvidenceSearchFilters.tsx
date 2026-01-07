@@ -1,7 +1,13 @@
-import React from 'react';
-import { Input } from '@/components/ui/Input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { Search, Filter } from 'lucide-react';
+import React from "react";
+import { Input } from "@/components/ui/Input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
+import { Search, Filter } from "lucide-react";
 
 interface EvidenceSearchFiltersProps {
   searchQuery: string;
@@ -14,7 +20,7 @@ export const EvidenceSearchFilters: React.FC<EvidenceSearchFiltersProps> = ({
   searchQuery,
   setSearchQuery,
   filterType,
-  setFilterType
+  setFilterType,
 }) => {
   return (
     <div className="flex items-center space-x-2 px-2">
@@ -24,7 +30,9 @@ export const EvidenceSearchFilters: React.FC<EvidenceSearchFiltersProps> = ({
           placeholder="Search filename or ID..."
           className="pl-8 w-64 bg-slate-50 dark:bg-slate-900 border-none focus-visible:ring-1 focus-visible:ring-blue-500"
           value={searchQuery}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSearchQuery(e.target.value)
+          }
         />
       </div>
       <Select value={filterType} onValueChange={setFilterType}>

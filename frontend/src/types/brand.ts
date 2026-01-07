@@ -6,12 +6,12 @@
 
 export type Brand<K, T> = K & { readonly __brand: T };
 
-export type CaseId = Brand<string, 'CaseId'>;
-export type UserId = Brand<string, 'UserId'>;
-export type ProjectId = Brand<string, 'ProjectId'>;
-export type TransactionId = Brand<string, 'TransactionId'>;
-export type EvidenceId = Brand<string, 'EvidenceId'>;
-export type AlertId = Brand<string, 'AlertId'>;
+export type CaseId = Brand<string, "CaseId">;
+export type UserId = Brand<string, "UserId">;
+export type ProjectId = Brand<string, "ProjectId">;
+export type TransactionId = Brand<string, "TransactionId">;
+export type EvidenceId = Brand<string, "EvidenceId">;
+export type AlertId = Brand<string, "AlertId">;
 
 // Helper to cast strings to branded types where safe/necessary
 export const asCaseId = (id: string) => id as CaseId;

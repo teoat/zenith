@@ -27,9 +27,7 @@ class EvidenceService:
             params = {}
 
             if project_id:
-                filters.append(
-                    "e.case_id IN (SELECT id FROM cases WHERE project_id = :project_id)"
-                )
+                filters.append("e.case_id IN (SELECT id FROM cases WHERE project_id = :project_id)")
                 params["project_id"] = project_id
 
             if case_id:
@@ -79,9 +77,7 @@ class EvidenceService:
                         "file_name": row.filename,
                         "file_type": row.file_type,
                         "size_bytes": row.size_bytes,
-                        "uploaded_at": (
-                            str(row.uploaded_at) if row.uploaded_at else None
-                        ),
+                        "uploaded_at": (str(row.uploaded_at) if row.uploaded_at else None),
                         "file_path": row.file_path,
                         "ocr_text": row.extracted_text,
                         "fraud_amount": row.fraud_amount,
@@ -102,9 +98,7 @@ class EvidenceService:
             logger.error(f"Failed to get evidence: {e!s}")
             raise e
 
-    def get_evidence_metadata(
-        self, db: Session, evidence_id: str
-    ) -> dict[str, Any] | None:
+    def get_evidence_metadata(self, db: Session, evidence_id: str) -> dict[str, Any] | None:
         """Get evidence metadata by ID"""
         query = "SELECT evidence_metadata FROM evidence WHERE id = :id"
         result = db.execute(text(query), {"id": evidence_id}).fetchone()

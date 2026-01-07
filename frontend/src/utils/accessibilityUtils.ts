@@ -1,5 +1,5 @@
-import axe from 'axe-core';
-import { secureLogger } from './secureLogger';
+import axe from "axe-core";
+import { secureLogger } from "./secureLogger";
 
 /**
  * Utility function for manual accessibility testing
@@ -11,11 +11,11 @@ export const runAccessibilityAudit = async (context?: Element) => {
       violations: results.violations,
       passes: results.passes,
       incomplete: results.incomplete,
-      inapplicable: results.inapplicable
+      inapplicable: results.inapplicable,
     };
   } catch (error) {
-    secureLogger.error('ACCESSIBILITY', 'Accessibility audit failed', { 
-      error: error instanceof Error ? error.message : String(error) 
+    secureLogger.error("ACCESSIBILITY", "Accessibility audit failed", {
+      error: error instanceof Error ? error.message : String(error),
     });
     return null;
   }

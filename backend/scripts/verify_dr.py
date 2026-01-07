@@ -67,9 +67,7 @@ async def verify_disaster_recovery():
     # 5. Restore from backup
     print("\n🏥 Restoring from Backup...")
     restore_target = os.path.join(os.getcwd(), "data/restore_verify")
-    restore_result = await backup_manager.restore_backup(
-        backup_info["id"], target_dir=restore_target
-    )
+    restore_result = await backup_manager.restore_backup(backup_info["id"], target_dir=restore_target)
 
     if restore_result["success"]:
         print("✅ Restore operation reported success!")

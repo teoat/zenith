@@ -1,8 +1,8 @@
 // frontend/src/lib/LocalDataManager.ts
 // Local data management for offline-first functionality
-import React from 'react';
-import { secureLogger } from '@/utils/secureLogger';
-import { secureRandom } from '@/utils/secureRandom';
+import React from "react";
+import { secureLogger } from "@/utils/secureLogger";
+import { secureRandom } from "@/utils/secureRandom";
 
 interface StoredItem<T> {
   id: string;
@@ -16,7 +16,7 @@ interface StoredItem<T> {
 
 interface SyncOperation<T> {
   id: string;
-  type: 'create' | 'update' | 'delete';
+  type: "create" | "update" | "delete";
   collection: string;
   data: T;
   timestamp: number;
@@ -27,7 +27,7 @@ interface SyncOperation<T> {
 
 export class LocalDataManager {
   private db: IDBDatabase | null = null;
-  private dbName = 'zenithLocalDB';
+  private dbName = "zenithLocalDB";
   private dbVersion = 1;
 
   constructor() {
@@ -39,7 +39,7 @@ export class LocalDataManager {
       const request = indexedDB.open(this.dbName, this.dbVersion);
 
       request.onerror = () => {
-        secureLogger.error('Failed to open local database');
+        secureLogger.error("Failed to open local database");
         reject(request.error);
       };
 
@@ -52,24 +52,32 @@ export class LocalDataManager {
         const db = (event.target as IDBOpenDBRequest).result;
 
         // Collections store
-        if (!db.objectStoreNames.contains('collections')) {
-          const collectionsStore = db.createObjectStore('collections', { keyPath: 'id' });
-          collectionsStore.createIndex('collection', 'collection', { unique: false });
-          collectionsStore.createIndex('synced', 'synced', { unique: false });
-          collectionsStore.createIndex('timestamp', 'timestamp', { unique: false });
+        if (!db.objectStoreNames.contains("collections")) {
+          const collectionsStore = db.createObjectStore("collections", {
+            keyPath: "id",
+          });
+          collectionsStore.createIndex("collection", "collection", {
+            unique: false,
+          });
+          collectionsStore.createIndex("synced", "synced", { unique: false });
+          collectionsStore.createIndex("timestamp", "timestamp", {
+            unique: false,
+          });
         }
 
         // Sync operations store
-        if (!db.objectStoreNames.contains('syncOperations')) {
-          const syncStore = db.createObjectStore('syncOperations', { keyPath: 'id' });
-          syncStore.createIndex('synced', 'synced', { unique: false });
-          syncStore.createIndex('timestamp', 'timestamp', { unique: false });
-          syncStore.createIndex('type', 'type', { unique: false });
+        if (!db.objectStoreNames.contains("syncOperations")) {
+          const syncStore = db.createObjectStore("syncOperations", {
+            keyPath: "id",
+          });
+          syncStore.createIndex("synced", "synced", { unique: false });
+          syncStore.createIndex("timestamp", "timestamp", { unique: false });
+          syncStore.createIndex("type", "type", { unique: false });
         }
 
         // Metadata store
-        if (!db.objectStoreNames.contains('metadata')) {
-          db.createObjectStore('metadata', { keyPath: 'key' });
+        if (!db.objectStoreNames.contains("metadata")) {
+          db.createObjectStore("metadata", { keyPath: "key" });
         }
       };
     });
@@ -84,10 +92,10 @@ export class LocalDataManager {
   // Collection operations
   async store<T>(collection: string, id: string, data: T): Promise<void> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['collections'], 'readwrite');
-    const store = transaction.objectStore('collections');
+    const transaction = this.db.transaction(["collections"], "readwrite");
+    const store = transaction.objectStore("collections");
 
     const item: StoredItem<T> = {
       id: `${collection}:${id}`,
@@ -95,7 +103,7 @@ export class LocalDataManager {
       timestamp: Date.now(),
       version: 1,
       synced: false,
-      syncAttempts: 0
+      syncAttempts: 0,
     };
 
     // Check if item exists and update version
@@ -113,10 +121,10 @@ export class LocalDataManager {
 
   async get<T>(collection: string, id: string): Promise<StoredItem<T> | null> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['collections'], 'readonly');
-    const store = transaction.objectStore('collections');
+    const transaction = this.db.transaction(["collections"], "readonly");
+    const store = transaction.objectStore("collections");
 
     return new Promise((resolve, reject) => {
       const request = store.get(`${collection}:${id}`);
@@ -127,11 +135,11 @@ export class LocalDataManager {
 
   async getAll<T>(collection: string): Promise<StoredItem<T>[]> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['collections'], 'readonly');
-    const store = transaction.objectStore('collections');
-    const index = store.index('collection');
+    const transaction = this.db.transaction(["collections"], "readonly");
+    const store = transaction.objectStore("collections");
+    const index = store.index("collection");
 
     return new Promise((resolve, reject) => {
       const request = index.getAll(collection);
@@ -142,10 +150,10 @@ export class LocalDataManager {
 
   async delete(collection: string, id: string): Promise<void> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['collections'], 'readwrite');
-    const store = transaction.objectStore('collections');
+    const transaction = this.db.transaction(["collections"], "readwrite");
+    const store = transaction.objectStore("collections");
 
     return new Promise((resolve, reject) => {
       const request = store.delete(`${collection}:${id}`);
@@ -156,11 +164,11 @@ export class LocalDataManager {
 
   async clearCollection(collection: string): Promise<void> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['collections'], 'readwrite');
-    const store = transaction.objectStore('collections');
-    const index = store.index('collection');
+    const transaction = this.db.transaction(["collections"], "readwrite");
+    const store = transaction.objectStore("collections");
+    const index = store.index("collection");
 
     return new Promise((resolve, reject) => {
       const request = index.openCursor(IDBKeyRange.only(collection));
@@ -178,19 +186,24 @@ export class LocalDataManager {
   }
 
   // Sync operations
-  async queueSyncOperation<T>(operation: Omit<SyncOperation<T>, 'id' | 'timestamp' | 'synced' | 'lastSyncError' | 'syncAttempts'>): Promise<string> {
+  async queueSyncOperation<T>(
+    operation: Omit<
+      SyncOperation<T>,
+      "id" | "timestamp" | "synced" | "lastSyncError" | "syncAttempts"
+    >,
+  ): Promise<string> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['syncOperations'], 'readwrite');
-    const store = transaction.objectStore('syncOperations');
+    const transaction = this.db.transaction(["syncOperations"], "readwrite");
+    const store = transaction.objectStore("syncOperations");
 
     const syncOp: SyncOperation<T> = {
       ...operation,
       id: `sync-${Date.now()}-${secureRandom.random().toString(36).substr(2, 9)}`,
       timestamp: Date.now(),
       synced: false,
-      syncAttempts: 0 // Initialize syncAttempts
+      syncAttempts: 0, // Initialize syncAttempts
     };
 
     return new Promise((resolve, reject) => {
@@ -202,11 +215,11 @@ export class LocalDataManager {
 
   async getPendingSyncOperations<T>(): Promise<SyncOperation<T>[]> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['syncOperations'], 'readonly');
-    const store = transaction.objectStore('syncOperations');
-    const index = store.index('synced');
+    const transaction = this.db.transaction(["syncOperations"], "readonly");
+    const store = transaction.objectStore("syncOperations");
+    const index = store.index("synced");
 
     return new Promise((resolve, reject) => {
       const request = index.openCursor(IDBKeyRange.only(false));
@@ -226,10 +239,10 @@ export class LocalDataManager {
 
   async markSyncOperationComplete(operationId: string): Promise<void> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['syncOperations'], 'readwrite');
-    const store = transaction.objectStore('syncOperations');
+    const transaction = this.db.transaction(["syncOperations"], "readwrite");
+    const store = transaction.objectStore("syncOperations");
 
     return new Promise((resolve, reject) => {
       const getRequest = store.get(operationId);
@@ -248,12 +261,15 @@ export class LocalDataManager {
     });
   }
 
-  async markSyncOperationFailed(operationId: string, error: string): Promise<void> {
+  async markSyncOperationFailed(
+    operationId: string,
+    error: string,
+  ): Promise<void> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['syncOperations'], 'readwrite');
-    const store = transaction.objectStore('syncOperations');
+    const transaction = this.db.transaction(["syncOperations"], "readwrite");
+    const store = transaction.objectStore("syncOperations");
 
     return new Promise((resolve, reject) => {
       const getRequest = store.get(operationId);
@@ -276,10 +292,10 @@ export class LocalDataManager {
   // Metadata operations
   async setMetadata<T>(key: string, value: T): Promise<void> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['metadata'], 'readwrite');
-    const store = transaction.objectStore('metadata');
+    const transaction = this.db.transaction(["metadata"], "readwrite");
+    const store = transaction.objectStore("metadata");
 
     return new Promise((resolve, reject) => {
       const request = store.put({ key, value, timestamp: Date.now() });
@@ -290,10 +306,10 @@ export class LocalDataManager {
 
   async getMetadata<T>(key: string): Promise<T | undefined> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['metadata'], 'readonly');
-    const store = transaction.objectStore('metadata');
+    const transaction = this.db.transaction(["metadata"], "readonly");
+    const store = transaction.objectStore("metadata");
 
     return new Promise((resolve, reject) => {
       const request = store.get(key);
@@ -303,12 +319,15 @@ export class LocalDataManager {
   }
 
   // Bulk operations
-  async bulkStore<T>(collection: string, items: Array<{ id: string; data: T }>): Promise<void> {
+  async bulkStore<T>(
+    collection: string,
+    items: Array<{ id: string; data: T }>,
+  ): Promise<void> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['collections'], 'readwrite');
-    const store = transaction.objectStore('collections');
+    const transaction = this.db.transaction(["collections"], "readwrite");
+    const store = transaction.objectStore("collections");
 
     const promises = items.map(({ id, data }) => {
       const item: StoredItem<T> = {
@@ -317,7 +336,7 @@ export class LocalDataManager {
         timestamp: Date.now(),
         version: 1,
         synced: false,
-        syncAttempts: 0
+        syncAttempts: 0,
       };
 
       return new Promise<void>((resolve, reject) => {
@@ -338,15 +357,15 @@ export class LocalDataManager {
     storageSize: number;
   }> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     const collections: { [key: string]: number } = {};
     let totalItems = 0;
     let pendingSync = 0;
 
     // Count collections
-    const transaction = this.db.transaction(['collections'], 'readonly');
-    const store = transaction.objectStore('collections');
+    const transaction = this.db.transaction(["collections"], "readonly");
+    const store = transaction.objectStore("collections");
 
     return new Promise((resolve, reject) => {
       const request = store.openCursor();
@@ -355,7 +374,7 @@ export class LocalDataManager {
         if (cursor) {
           totalItems++;
           const key = cursor.key as string;
-          const collection = key.split(':')[0];
+          const collection = key.split(":")[0];
 
           collections[collection] = (collections[collection] || 0) + 1;
 
@@ -366,9 +385,12 @@ export class LocalDataManager {
           cursor.continue();
         } else {
           // Get sync operations count
-          const syncTransaction = this.db!.transaction(['syncOperations'], 'readonly');
-          const syncStore = syncTransaction.objectStore('syncOperations');
-          const syncIndex = syncStore.index('synced');
+          const syncTransaction = this.db!.transaction(
+            ["syncOperations"],
+            "readonly",
+          );
+          const syncStore = syncTransaction.objectStore("syncOperations");
+          const syncIndex = syncStore.index("synced");
 
           const syncRequest = syncIndex.openCursor();
           let syncCount = 0;
@@ -387,7 +409,7 @@ export class LocalDataManager {
                 collections,
                 totalItems,
                 pendingSync,
-                storageSize: estimatedSize
+                storageSize: estimatedSize,
               });
             }
           };
@@ -399,15 +421,17 @@ export class LocalDataManager {
   }
 
   // Cleanup operations
-  async cleanupOldData(maxAge: number = 30 * 24 * 60 * 60 * 1000): Promise<number> {
+  async cleanupOldData(
+    maxAge: number = 30 * 24 * 60 * 60 * 1000,
+  ): Promise<number> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     const cutoff = Date.now() - maxAge;
     let deletedCount = 0;
 
-    const transaction = this.db.transaction(['collections'], 'readwrite');
-    const store = transaction.objectStore('collections');
+    const transaction = this.db.transaction(["collections"], "readwrite");
+    const store = transaction.objectStore("collections");
 
     return new Promise((resolve, reject) => {
       const request = store.openCursor();
@@ -429,26 +453,29 @@ export class LocalDataManager {
 
   async clearAllData(): Promise<void> {
     await this.ensureDB();
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
-    const transaction = this.db.transaction(['collections', 'syncOperations', 'metadata'], 'readwrite');
+    const transaction = this.db.transaction(
+      ["collections", "syncOperations", "metadata"],
+      "readwrite",
+    );
 
     const promises = [
       new Promise<void>((resolve, reject) => {
-        const request = transaction.objectStore('collections').clear();
+        const request = transaction.objectStore("collections").clear();
         request.onsuccess = () => resolve();
         request.onerror = () => reject(request.error);
       }),
       new Promise<void>((resolve, reject) => {
-        const request = transaction.objectStore('syncOperations').clear();
+        const request = transaction.objectStore("syncOperations").clear();
         request.onsuccess = () => resolve();
         request.onerror = () => reject(request.error);
       }),
       new Promise<void>((resolve, reject) => {
-        const request = transaction.objectStore('metadata').clear();
+        const request = transaction.objectStore("metadata").clear();
         request.onsuccess = () => resolve();
         request.onerror = () => reject(request.error);
-      })
+      }),
     ];
 
     await Promise.all(promises);
@@ -468,33 +495,39 @@ export function useLocalData<T>(collection: string) {
       setLoading(true);
       setError(null);
       const items = await manager.getAll<T>(collection);
-      setData(items.map(item => item.data));
+      setData(items.map((item) => item.data));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load data');
+      setError(err instanceof Error ? err.message : "Failed to load data");
     } finally {
       setLoading(false);
     }
   }, [collection, manager]);
 
-  const saveItem = React.useCallback(async (id: string, itemData: T) => {
-    try {
-      await manager.store<T>(collection, id, itemData);
-      await loadData(); // Refresh data
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save item');
-      throw err;
-    }
-  }, [collection, manager, loadData]);
+  const saveItem = React.useCallback(
+    async (id: string, itemData: T) => {
+      try {
+        await manager.store<T>(collection, id, itemData);
+        await loadData(); // Refresh data
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to save item");
+        throw err;
+      }
+    },
+    [collection, manager, loadData],
+  );
 
-  const deleteItem = React.useCallback(async (id: string) => {
-    try {
-      await manager.delete(collection, id);
-      await loadData(); // Refresh data
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete item');
-      throw err;
-    }
-  }, [collection, manager, loadData]);
+  const deleteItem = React.useCallback(
+    async (id: string) => {
+      try {
+        await manager.delete(collection, id);
+        await loadData(); // Refresh data
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to delete item");
+        throw err;
+      }
+    },
+    [collection, manager, loadData],
+  );
 
   React.useEffect(() => {
     loadData();
@@ -506,7 +539,7 @@ export function useLocalData<T>(collection: string) {
     error,
     saveItem,
     deleteItem,
-    refresh: loadData
+    refresh: loadData,
   };
 }
 

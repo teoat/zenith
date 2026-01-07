@@ -56,9 +56,7 @@ async def get_case_analytics(date_from: str | None = None, date_to: str | None =
 
 
 @router.get("/transactions")
-async def get_transaction_analytics(
-    case_id: str | None = None, date_from: str | None = None, date_to: str | None = None
-):
+async def get_transaction_analytics(case_id: str | None = None, date_from: str | None = None, date_to: str | None = None):
     """Get transaction analytics with optimized aggregates"""
     try:
         from datetime import datetime
@@ -66,9 +64,7 @@ async def get_transaction_analytics(
         date_from_parsed = datetime.fromisoformat(date_from) if date_from else None
         date_to_parsed = datetime.fromisoformat(date_to) if date_to else None
 
-        analytics = db_service.get_transaction_aggregates(
-            case_id, date_from_parsed, date_to_parsed
-        )
+        analytics = db_service.get_transaction_aggregates(case_id, date_from_parsed, date_to_parsed)
         return analytics
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -92,9 +88,7 @@ async def get_system_overview(
                     "id": case.id,
                     "title": case.title,
                     "status": case.status.value if case.status else None,
-                    "created_at": (
-                        case.created_at.isoformat() if case.created_at else None
-                    ),
+                    "created_at": (case.created_at.isoformat() if case.created_at else None),
                 }
                 for case in recent_cases
             ],
@@ -177,9 +171,7 @@ async def get_behavioral_analytics(
         )
 
         # Risk heatmaps
-        risk_heatmaps = await advanced_analytics.generate_risk_heatmaps(
-            AnalyticsTimeframe.MONTH
-        )
+        risk_heatmaps = await advanced_analytics.generate_risk_heatmaps(AnalyticsTimeframe.MONTH)
         return risk_heatmaps
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

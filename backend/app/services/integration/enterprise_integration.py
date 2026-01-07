@@ -186,9 +186,7 @@ class EnterpriseIntegrationHub:
         logger.info(f"Registered API endpoint: {endpoint.name} ({endpoint_id})")
         return endpoint_id
 
-    async def subscribe_to_api(
-        self, consumer_id: str, endpoint_id: str, tier: SubscriptionTier
-    ) -> APISubscription:
+    async def subscribe_to_api(self, consumer_id: str, endpoint_id: str, tier: SubscriptionTier) -> APISubscription:
         """
         Subscribe a consumer to an API endpoint
 
@@ -256,9 +254,7 @@ class EnterpriseIntegrationHub:
         logger.info(f"Registered GraphQL service: {service.name} ({service_id})")
         return service_id
 
-    async def publish_event(
-        self, event_type: str, event_data: dict[str, Any], producer_id: str
-    ) -> None:
+    async def publish_event(self, event_type: str, event_data: dict[str, Any], producer_id: str) -> None:
         """
         Publish an event to the event bus
 
@@ -287,9 +283,7 @@ class EnterpriseIntegrationHub:
 
         logger.info(f"Published event: {event_type} ({event['event_id']})")
 
-    async def subscribe_to_events(
-        self, consumer_id: str, event_types: list[str]
-    ) -> str:
+    async def subscribe_to_events(self, consumer_id: str, event_types: list[str]) -> str:
         """
         Subscribe to event types
 
@@ -316,9 +310,7 @@ class EnterpriseIntegrationHub:
         logger.info(f"Created event subscription: {subscription_id}")
         return subscription_id
 
-    async def execute_federated_query(
-        self, query: str, variables: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    async def execute_federated_query(self, query: str, variables: dict[str, Any] | None = None) -> dict[str, Any]:
         """
         Execute a federated GraphQL query across multiple services
 
@@ -344,14 +336,10 @@ class EnterpriseIntegrationHub:
             }
         }
 
-        logger.info(
-            f"Executed federated query involving {len(self.graphql_services)} services"
-        )
+        logger.info(f"Executed federated query involving {len(self.graphql_services)} services")
         return result
 
-    async def get_marketplace_listings(
-        self, filters: dict[str, Any] | None = None
-    ) -> list[MarketplaceListing]:
+    async def get_marketplace_listings(self, filters: dict[str, Any] | None = None) -> list[MarketplaceListing]:
         """
         Get API marketplace listings with optional filters
 
@@ -365,29 +353,17 @@ class EnterpriseIntegrationHub:
 
         if filters:
             if "tags" in filters:
-                listings = [
-                    l
-                    for l in listings
-                    if any(tag in l.features for tag in filters["tags"])
-                ]
+                listings = [listing for listing in listings if any(tag in listing.features for tag in filters["tags"])]
 
             if "min_rating" in filters:
-                listings = [l for l in listings if l.rating >= filters["min_rating"]]
+                listings = [listing for listing in listings if listing.rating >= filters["min_rating"]]
 
             if "max_price" in filters:
-                listings = [
-                    l
-                    for l in listings
-                    if all(
-                        price <= filters["max_price"] for price in l.pricing.values()
-                    )
-                ]
+                listings = [listing for listing in listings if all(price <= filters["max_price"] for price in listing.pricing.values())]
 
         return sorted(listings, key=lambda x: x.rating, reverse=True)
 
-    async def validate_api_key(
-        self, api_key: str, endpoint_id: str
-    ) -> APISubscription | None:
+    async def validate_api_key(self, api_key: str, endpoint_id: str) -> APISubscription | None:
         """
         Validate API key for endpoint access
 
@@ -411,16 +387,12 @@ class EnterpriseIntegrationHub:
                     subscription.usage_this_month += 1
                     return subscription
                 else:
-                    logger.warning(
-                        f"Rate limit exceeded for subscription: {subscription.subscription_id}"
-                    )
+                    logger.warning(f"Rate limit exceeded for subscription: {subscription.subscription_id}")
                     return None
 
         return None
 
-    async def get_api_analytics(
-        self, endpoint_id: str, period_days: int = 30
-    ) -> dict[str, Any]:
+    async def get_api_analytics(self, endpoint_id: str, period_days: int = 30) -> dict[str, Any]:
         """
         Get analytics for an API endpoint
 
@@ -470,9 +442,7 @@ class EnterpriseIntegrationHub:
             },
             features=endpoint.tags,
             screenshots=[],
-            documentation_links=(
-                [endpoint.documentation_url] if endpoint.documentation_url else []
-            ),
+            documentation_links=([endpoint.documentation_url] if endpoint.documentation_url else []),
             support_email=f"support@{endpoint.owner_organization}.com",
             rating=4.5,
             review_count=23,
@@ -526,9 +496,7 @@ class EnterpriseIntegrationHub:
         if event_type in self.event_subscriptions:
             for subscription in self.event_subscriptions[event_type]:
                 # In real implementation, would send to message queue, webhook, etc.
-                logger.info(
-                    f"Notified subscriber {subscription['consumer_id']} of event {event['event_id']}"
-                )
+                logger.info(f"Notified subscriber {subscription['consumer_id']} of event {event['event_id']}")
 
     def _generate_api_key(self, consumer_id: str, endpoint_id: str) -> str:
         """Generate unique API key"""
@@ -539,9 +507,7 @@ class EnterpriseIntegrationHub:
         }
 
         # In real implementation, would use proper JWT signing
-        jwt_secret = os.getenv(
-            "JWT_SECRET_KEY", "development-jwt-key-replace-in-production"
-        )
+        jwt_secret = os.getenv("JWT_SECRET_KEY", "development-jwt-key-replace-in-production")
         token = jwt.encode(payload, jwt_secret, algorithm="HS256")
         return token
 
@@ -550,15 +516,11 @@ class EnterpriseIntegrationHub:
         health = {
             "overall_status": "healthy",
             "api_endpoints": len(self.api_endpoints),
-            "active_subscriptions": len(
-                [s for s in self.api_subscriptions.values() if s.status == "active"]
-            ),
+            "active_subscriptions": len([s for s in self.api_subscriptions.values() if s.status == "active"]),
             "graphql_services": len(self.graphql_services),
             "event_types": len(self.event_types),
             "marketplace_listings": len(self.marketplace_listings),
-            "federation_status": (
-                "operational" if self.federation_schema else "initializing"
-            ),
+            "federation_status": ("operational" if self.federation_schema else "initializing"),
             "event_queue_size": self.event_queue.qsize(),
             "last_updated": datetime.now().isoformat(),
         }

@@ -43,9 +43,7 @@ class RoundRobinAssignerPlugin(PluginInterface):
         assigned_agent = agents[self.counter % len(agents)]
         self.counter += 1
 
-        logger.info(
-            f"🔄 [AssignmentPlugin] Assigned case {inputs.get('case_id')} to {assigned_agent}"
-        )
+        logger.info(f"🔄 [AssignmentPlugin] Assigned case {inputs.get('case_id')} to {assigned_agent}")
 
         return {"assigned_agent": assigned_agent, "strategy": "round_robin"}
 

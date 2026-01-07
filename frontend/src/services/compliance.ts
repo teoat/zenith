@@ -85,48 +85,58 @@ interface DataResidencyRule {
   retention_periods: Record<string, number>;
 }
 
-import { request } from './client';
+import { request } from "./client";
 
 class ComplianceService {
   // Base path relative to API_BASE (assumed to be handled by request helper)
-  private basePath = '/compliance';
+  private basePath = "/compliance";
 
   // Audit Logging
   async logEvent(
     action: string,
     resourceType: string,
     resourceId: string,
-    details: Record<string, unknown>
+    details: Record<string, unknown>,
   ): Promise<{ log_id: string; status: string }> {
-    return request<{ log_id: string; status: string }>(`${this.basePath}/audit/log`, {
-      method: 'POST',
-      body: JSON.stringify({
-        action,
-        resource_type: resourceType,
-        resource_id: resourceId,
-        details
-      })
-    });
+    return request<{ log_id: string; status: string }>(
+      `${this.basePath}/audit/log`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          action,
+          resource_type: resourceType,
+          resource_id: resourceId,
+          details,
+        }),
+      },
+    );
   }
 
   // Regulatory Reports
   async createRegulatoryReport(
     reportType: string,
     caseId: string,
-    reportData: Record<string, any>
-  ): Promise<{ report_id: string; filing_id: string; due_date: string; status: string }> {
+    reportData: Record<string, any>,
+  ): Promise<{
+    report_id: string;
+    filing_id: string;
+    due_date: string;
+    status: string;
+  }> {
     return request(`${this.basePath}/regulatory-reports`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
         report_type: reportType,
         case_id: caseId,
-        report_data: reportData
-      })
+        report_data: reportData,
+      }),
     });
   }
 
-  async getRegulatoryReports(status?: string): Promise<{ reports: RegulatoryReport[]; total: number }> {
-    const query = status ? `?status=${status}` : '';
+  async getRegulatoryReports(
+    status?: string,
+  ): Promise<{ reports: RegulatoryReport[]; total: number }> {
+    const query = status ? `?status=${status}` : "";
     return request(`${this.basePath}/regulatory-reports${query}`);
   }
 
@@ -141,22 +151,22 @@ class ComplianceService {
     data_exposed?: Record<string, any>;
   }): Promise<{ incident_id: string; status: string; severity: string }> {
     return request(`${this.basePath}/incidents`, {
-      method: 'POST',
-      body: JSON.stringify(incidentData)
+      method: "POST",
+      body: JSON.stringify(incidentData),
     });
   }
 
   // Access Reviews
   async initiateAccessReview(
     userId: string,
-    reviewPeriodMonths: number = 12
+    reviewPeriodMonths: number = 12,
   ): Promise<{ review_id: string; status: string; review_period: string }> {
     return request(`${this.basePath}/access-reviews`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
         user_id: userId,
-        review_period_months: reviewPeriodMonths
-      })
+        review_period_months: reviewPeriodMonths,
+      }),
     });
   }
 
@@ -164,15 +174,20 @@ class ComplianceService {
   async recordTrainingCompletion(
     trainingType: string,
     trainingModule: string,
-    score?: number
-  ): Promise<{ record_id: string; status: string; expiry_date: string; certificate_id?: string }> {
+    score?: number,
+  ): Promise<{
+    record_id: string;
+    status: string;
+    expiry_date: string;
+    certificate_id?: string;
+  }> {
     return request(`${this.basePath}/training/complete`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
         training_type: trainingType,
         training_module: trainingModule,
-        score
-      })
+        score,
+      }),
     });
   }
 
@@ -181,35 +196,45 @@ class ComplianceService {
     return request(`${this.basePath}/dashboard`);
   }
 
-  async getAuditLogs(limit: number = 100, offset: number = 0): Promise<{
+  async getAuditLogs(
+    limit: number = 100,
+    offset: number = 0,
+  ): Promise<{
     logs: AuditLog[];
     total: number;
     offset: number;
     limit: number;
   }> {
-    return request(`${this.basePath}/audit/logs?limit=${limit}&offset=${offset}`);
+    return request(
+      `${this.basePath}/audit/logs?limit=${limit}&offset=${offset}`,
+    );
   }
 
   // Utility Methods
   getComplianceScoreColor(score: number): string {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 90) return "text-green-600";
+    if (score >= 70) return "text-yellow-600";
+    return "text-red-600";
   }
 
   getComplianceScoreBgColor(score: number): string {
-    if (score >= 90) return 'bg-green-100';
-    if (score >= 70) return 'bg-yellow-100';
-    return 'bg-red-100';
+    if (score >= 90) return "bg-green-100";
+    if (score >= 70) return "bg-yellow-100";
+    return "bg-red-100";
   }
 
   getSeverityColor(severity: string): string {
     switch (severity.toLowerCase()) {
-      case 'critical': return 'text-red-700 bg-red-100';
-      case 'high': return 'text-orange-700 bg-orange-100';
-      case 'medium': return 'text-yellow-700 bg-yellow-100';
-      case 'low': return 'text-green-700 bg-green-100';
-      default: return 'text-gray-700 bg-gray-100';
+      case "critical":
+        return "text-red-700 bg-red-100";
+      case "high":
+        return "text-orange-700 bg-orange-100";
+      case "medium":
+        return "text-yellow-700 bg-yellow-100";
+      case "low":
+        return "text-green-700 bg-green-100";
+      default:
+        return "text-gray-700 bg-gray-100";
     }
   }
 
@@ -222,30 +247,34 @@ class ComplianceService {
     return request(`${this.basePath}/data-residency-rules`);
   }
 
-  async setRegionalCompliance(region: string, framework: string, complianceData: Record<string, any>): Promise<{ status: string }> {
+  async setRegionalCompliance(
+    region: string,
+    framework: string,
+    complianceData: Record<string, any>,
+  ): Promise<{ status: string }> {
     return request(`${this.basePath}/regional-compliance/${region}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({
         framework,
-        ...complianceData
-      })
+        ...complianceData,
+      }),
     });
   }
 
   formatComplianceFlags(flags: string[]): string {
     const flagLabels: Record<string, string> = {
-      'FATF-CDD': 'FATF Customer Due Diligence',
-      'GDPR-Data-Processing': 'GDPR Data Processing',
-      'GDPR-Data-Protection': 'GDPR Data Protection',
-      'CCPA-Data-Privacy': 'CCPA Data Privacy',
-      'CCPA-Data-Security': 'CCPA Data Security',
-      'SOX-Financial-Reporting': 'SOX Financial Reporting',
-      'SOX-Internal-Controls': 'SOX Internal Controls',
-      'PCI-DSS-Payment-Security': 'PCI DSS Payment Security',
-      'HIPAA-Health-Data': 'HIPAA Health Data Protection'
+      "FATF-CDD": "FATF Customer Due Diligence",
+      "GDPR-Data-Processing": "GDPR Data Processing",
+      "GDPR-Data-Protection": "GDPR Data Protection",
+      "CCPA-Data-Privacy": "CCPA Data Privacy",
+      "CCPA-Data-Security": "CCPA Data Security",
+      "SOX-Financial-Reporting": "SOX Financial Reporting",
+      "SOX-Internal-Controls": "SOX Internal Controls",
+      "PCI-DSS-Payment-Security": "PCI DSS Payment Security",
+      "HIPAA-Health-Data": "HIPAA Health Data Protection",
     };
 
-    return flags.map(flag => flagLabels[flag] || flag).join(', ');
+    return flags.map((flag) => flagLabels[flag] || flag).join(", ");
   }
 
   isReportOverdue(dueDate: string): boolean {
@@ -262,4 +291,13 @@ class ComplianceService {
 
 // Export singleton instance
 export const complianceService = new ComplianceService();
-export type { ComplianceMetrics, AuditLog, RegulatoryReport, SecurityIncident, AccessReview, TrainingRecord, RegionalCompliance, DataResidencyRule };
+export type {
+  ComplianceMetrics,
+  AuditLog,
+  RegulatoryReport,
+  SecurityIncident,
+  AccessReview,
+  TrainingRecord,
+  RegionalCompliance,
+  DataResidencyRule,
+};

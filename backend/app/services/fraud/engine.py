@@ -6,6 +6,10 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
+import asyncio
+
+from core.plugin_system.registry import plugin_registry_service
+
 # Imports for deleted rules removed
 
 
@@ -32,9 +36,7 @@ class FraudAlert:
     detected_at: datetime
     case_id: str | None = None
     transaction_ids: list[str] = field(default_factory=list)
-    entities: list[str] = field(
-        default_factory=list
-    )  # customer IDs, merchant names, etc.
+    entities: list[str] = field(default_factory=list)  # customer IDs, merchant names, etc.
     metadata: dict[str, Any] = field(default_factory=dict)
     recommendations: list[str] = field(default_factory=list)
 
@@ -49,19 +51,12 @@ class FraudRule(ABC):
         self.last_run = None
 
     @abstractmethod
-    async def execute(
-        self, transactions: list[dict[str, Any]], context: dict[str, Any] | None = None
-    ) -> list[FraudAlert]:
+    async def execute(self, transactions: list[dict[str, Any]], context: dict[str, Any] | None = None) -> list[FraudAlert]:
         """Execute the rule and return alerts"""
 
     @abstractmethod
     def get_config_schema(self) -> dict[str, Any]:
         """Return configuration schema for this rule"""
-
-
-import asyncio
-
-from core.plugin_system.registry import plugin_registry_service
 
 
 class PluginAdapterRule(FraudRule):
@@ -73,9 +68,7 @@ class PluginAdapterRule(FraudRule):
         self.plugin = plugin_instance
         self.namespace = metadata.namespace
 
-    async def execute(
-        self, transactions: list[dict[str, Any]], context: dict[str, Any] | None = None
-    ) -> list[FraudAlert]:
+    async def execute(self, transactions: list[dict[str, Any]], context: dict[str, Any] | None = None) -> list[FraudAlert]:
         # Plugins usually take a specific input format
         # We need to bridge the gap. Most of our plugins expect {"transactions": [...]}
         input_data = {"transactions": transactions, "context": context}
@@ -120,11 +113,7 @@ class PluginAdapterRule(FraudRule):
             return []
 
     def get_config_schema(self) -> dict[str, Any]:
-        return (
-            self.plugin.metadata.config_schema
-            if hasattr(self.plugin.metadata, "config_schema")
-            else {}
-        )
+        return self.plugin.metadata.config_schema if hasattr(self.plugin.metadata, "config_schema") else {}
 
 
 class RuleEngine:
@@ -164,18 +153,12 @@ class RuleEngine:
             plugin_instances = []
             try:
                 # Fetch all active plugins
-                db_plugins = (
-                    db.query(PluginRegistryModel)
-                    .filter(PluginRegistryModel.status == "active")
-                    .all()
-                )
+                db_plugins = db.query(PluginRegistryModel).filter(PluginRegistryModel.status == "active").all()
 
                 for p in db_plugins:
                     if "fraud_detection" in p.metadata_json.get("capabilities", []):
                         # Load instance
-                        instance = await plugin_registry_service.get_plugin(
-                            p.plugin_id, db
-                        )
+                        instance = await plugin_registry_service.get_plugin(p.plugin_id, db)
                         plugin_instances.append(instance)
             except Exception as e:
                 logger.error(f"Failed to load plugins from DB: {e}")
@@ -212,9 +195,7 @@ class RuleEngine:
             self.rules[rule_name].enabled = False
             logger.info(f"Disabled fraud rule: {rule_name}")
 
-    async def execute_rules(
-        self, transactions: list[dict[str, Any]], context: dict[str, Any] | None = None
-    ) -> list[FraudAlert]:
+    async def execute_rules(self, transactions: list[dict[str, Any]], context: dict[str, Any] | None = None) -> list[FraudAlert]:
         """Execute all enabled rules and return combined alerts"""
         # Ensure initialized
         if not hasattr(self, "_initialized") or not self._initialized:
@@ -227,9 +208,7 @@ class RuleEngine:
         all_alerts = []
         execution_start = datetime.now(UTC)
 
-        logger.info(
-            f"Executing {len([r for r in self.rules.values() if r.enabled])} rules on {len(transactions)} transactions"
-        )
+        logger.info(f"Executing {len([r for r in self.rules.values() if r.enabled])} rules on {len(transactions)} transactions")
 
         for rule in self.rules.values():
             if not rule.enabled:
@@ -258,9 +237,7 @@ class RuleEngine:
                     }
                 )
 
-                logger.debug(
-                    f"Rule {rule.name} generated {len(rule_alerts)} alerts in {(rule_end - rule_start).total_seconds():.3f}s"
-                )
+                logger.debug(f"Rule {rule.name} generated {len(rule_alerts)} alerts in {(rule_end - rule_start).total_seconds():.3f}s")
 
             except Exception as e:
                 logger.error(f"Error executing rule {rule.name}: {e!s}")

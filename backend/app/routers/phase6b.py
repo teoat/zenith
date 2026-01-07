@@ -36,9 +36,7 @@ async def temporal_burst(request: Request):
 
     ip = payload.get("entity_id") or payload.get("ip")
     # detect_burst gracefully handles missing session; tests call without app DB
-    burst, z, count_now, mean_hist, std_hist = detect_burst(
-        None, ip, window_minutes=payload.get("window_minutes", 60)
-    )
+    burst, z, count_now, mean_hist, std_hist = detect_burst(None, ip, window_minutes=payload.get("window_minutes", 60))
 
     return {
         "burst_detected": bool(burst),

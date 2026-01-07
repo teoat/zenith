@@ -10,7 +10,7 @@ from typing import Any
 from fastapi import APIRouter, Body, HTTPException
 from pydantic import BaseModel, Field
 
-from app.services.fraud.engine import RuleEngine
+from app.services.fraud.engine import RuleEngine, rule_engine
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +19,6 @@ router = APIRouter(
     tags=["Fraud Rules Engine"],
     responses={404: {"description": "Not found"}},
 )
-
-from app.services.fraud.engine import rule_engine
 
 
 def get_fraud_engine() -> RuleEngine:
@@ -72,9 +70,7 @@ async def get_rule(rule_name: str):
 
 
 @router.post("/evaluate")
-async def evaluate_transaction(
-    request: EvaluateTransactionRequest, context: dict[str, Any] = Body(None)
-):
+async def evaluate_transaction(request: EvaluateTransactionRequest, context: dict[str, Any] = Body(None)):
     """Evaluate a transaction against all active rules"""
     try:
         engine = get_fraud_engine()
@@ -119,13 +115,9 @@ async def get_engine_status():
 # Stubbed endpoints for frontend compatibility (if needed)
 @router.post("/")
 async def create_rule():
-    raise HTTPException(
-        status_code=501, detail="Rule creation is managed via Plugins registry"
-    )
+    raise HTTPException(status_code=501, detail="Rule creation is managed via Plugins registry")
 
 
 @router.delete("/{rule_id}")
 async def delete_rule(rule_id: str):
-    raise HTTPException(
-        status_code=501, detail="Rule deletion is managed via Plugins registry"
-    )
+    raise HTTPException(status_code=501, detail="Rule deletion is managed via Plugins registry")

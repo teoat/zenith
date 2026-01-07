@@ -113,9 +113,7 @@ def is_rate_limited(client_id: str, path: str) -> tuple[bool, int]:
     client_requests = rate_limit_store[client_id]
 
     # Remove requests outside the current window
-    client_requests[:] = [
-        req_time for req_time in client_requests if req_time > window_start
-    ]
+    client_requests[:] = [req_time for req_time in client_requests if req_time > window_start]
 
     # Check if limit exceeded
     if len(client_requests) >= max_requests:
@@ -145,9 +143,7 @@ def _cleanup_old_entries():
         client_requests = rate_limit_store[client_id]
         # Remove requests older than the largest window
         cutoff_time = current_time - max_window
-        client_requests[:] = [
-            req_time for req_time in client_requests if req_time > cutoff_time
-        ]
+        client_requests[:] = [req_time for req_time in client_requests if req_time > cutoff_time]
 
         # Remove empty client entries
         if not client_requests:
@@ -227,9 +223,7 @@ def get_rate_limit_status(client_id: str, path: str) -> dict:
     window_start = current_time - limits["window"]
 
     # Count requests in current window
-    active_requests = [
-        req_time for req_time in client_requests if req_time > window_start
-    ]
+    active_requests = [req_time for req_time in client_requests if req_time > window_start]
 
     return {
         "client_id": client_id,
@@ -237,9 +231,7 @@ def get_rate_limit_status(client_id: str, path: str) -> dict:
         "limits": limits,
         "current_requests": len(active_requests),
         "remaining_requests": max(0, limits["requests"] - len(active_requests)),
-        "window_remaining_seconds": int(
-            limits["window"] - (current_time - window_start)
-        ),
+        "window_remaining_seconds": int(limits["window"] - (current_time - window_start)),
     }
 
 

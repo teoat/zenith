@@ -14,17 +14,13 @@ class IngestionStatus(BaseModel):
 
 
 @router.post("/ingest", response_model=IngestionStatus)
-async def ingest_document(
-    background_tasks: BackgroundTasks, file: UploadFile = File(...)
-):
+async def ingest_document(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     """
     Ingest a regulatory PDF for RAG indexing.
     """
     # Mock ingestion process
     background_tasks.add_task(process_pdf, file.filename)
-    return IngestionStatus(
-        file_name=file.filename, status="processing", chunks_indexed=0
-    )
+    return IngestionStatus(file_name=file.filename, status="processing", chunks_indexed=0)
 
 
 async def process_pdf(filename: str):

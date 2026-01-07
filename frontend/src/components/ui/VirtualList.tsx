@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, Fragment } from 'react';
+import React, { useState, useRef, useCallback, Fragment } from "react";
 
 interface VirtualListProps<T> {
   items: T[];
@@ -15,7 +15,7 @@ export function VirtualList<T>({
   containerHeight,
   renderItem,
   getItemKey,
-  className = ''
+  className = "",
 }: VirtualListProps<T>) {
   const [scrollTop, setScrollTop] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,14 +41,14 @@ export function VirtualList<T>({
       style={{ height: containerHeight }}
       onScroll={handleScroll}
     >
-      <div style={{ height: totalHeight, position: 'relative' }}>
+      <div style={{ height: totalHeight, position: "relative" }}>
         <div
           style={{
             transform: `translateY(${offsetY}px)`,
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
-            right: 0
+            right: 0,
           }}
         >
           {visibleItemsData.map((item, index) => {

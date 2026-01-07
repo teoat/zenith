@@ -39,13 +39,9 @@ class TemporalBurstDetector:
         self.burst_window_hours = burst_window_hours
         self.structuring_threshold = structuring_threshold
         self.structuring_tolerance = structuring_tolerance
-        self.structuring_lower_bound = structuring_threshold * (
-            1 - structuring_tolerance
-        )
+        self.structuring_lower_bound = structuring_threshold * (1 - structuring_tolerance)
 
-    def analyze_transactions(
-        self, transactions: list[dict[str, Any]], case_id: str | None = None
-    ) -> dict[str, Any]:
+    def analyze_transactions(self, transactions: list[dict[str, Any]], case_id: str | None = None) -> dict[str, Any]:
         """
         Analyze a list of transactions for temporal patterns.
 
@@ -59,9 +55,7 @@ class TemporalBurstDetector:
         if not transactions:
             return self._empty_result()
 
-        logger.info(
-            f"Analyzing {len(transactions)} transactions for case {case_id or 'unknown'}"
-        )
+        logger.info(f"Analyzing {len(transactions)} transactions for case {case_id or 'unknown'}")
 
         alerts = []
 
@@ -98,16 +92,12 @@ class TemporalBurstDetector:
             "case_id": case_id,
         }
 
-    def _parse_transactions(
-        self, transactions: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
+    def _parse_transactions(self, transactions: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Parse and validate transaction data."""
         parsed = []
         for txn in transactions:
             try:
-                date_value = (
-                    txn.get("date") or txn.get("timestamp") or txn.get("created_at")
-                )
+                date_value = txn.get("date") or txn.get("timestamp") or txn.get("created_at")
                 if isinstance(date_value, str):
                     # Try multiple date formats
                     for fmt in [
@@ -145,9 +135,7 @@ class TemporalBurstDetector:
 
         return sorted(parsed, key=lambda x: x["date"])
 
-    def _detect_bursts(
-        self, transactions: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
+    def _detect_bursts(self, transactions: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Detect burst patterns using sliding window analysis."""
         alerts = []
         window = timedelta(hours=self.burst_window_hours)
@@ -171,27 +159,21 @@ class TemporalBurstDetector:
                     alerts.append(
                         {
                             "type": "BURST_PATTERN",
-                            "severity": "HIGH"
-                            if len(window_txns) >= self.burst_threshold * 1.5
-                            else "MEDIUM",
+                            "severity": "HIGH" if len(window_txns) >= self.burst_threshold * 1.5 else "MEDIUM",
                             "customer_id": customer_id,
                             "transaction_count": len(window_txns),
                             "total_amount": round(total_amount, 2),
                             "window_start": txn["date"].isoformat(),
                             "window_end": window_end.isoformat(),
                             "description": f"{len(window_txns)} transactions within {self.burst_window_hours}h window",
-                            "transaction_ids": [
-                                t["id"] for t in window_txns[:10]
-                            ],  # First 10
+                            "transaction_ids": [t["id"] for t in window_txns[:10]],  # First 10
                         }
                     )
                     break  # One alert per customer per burst
 
         return alerts
 
-    def _detect_structuring(
-        self, transactions: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
+    def _detect_structuring(self, transactions: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Detect potential structuring (smurfing) patterns."""
         alerts = []
 
@@ -202,24 +184,14 @@ class TemporalBurstDetector:
 
         for customer_id, customer_txns in by_customer.items():
             # Find transactions just below threshold
-            suspicious = [
-                t
-                for t in customer_txns
-                if self.structuring_lower_bound
-                <= t["amount"]
-                < self.structuring_threshold
-            ]
+            suspicious = [t for t in customer_txns if self.structuring_lower_bound <= t["amount"] < self.structuring_threshold]
 
             if len(suspicious) >= 3:  # At least 3 suspicious transactions
                 total = sum(t["amount"] for t in suspicious)
                 avg_amount = mean(t["amount"] for t in suspicious)
 
                 # Calculate how close to threshold on average
-                avg_distance = mean(
-                    (self.structuring_threshold - t["amount"])
-                    / self.structuring_threshold
-                    for t in suspicious
-                )
+                avg_distance = mean((self.structuring_threshold - t["amount"]) / self.structuring_threshold for t in suspicious)
 
                 severity = "HIGH" if avg_distance < 0.05 else "MEDIUM"
 
@@ -240,9 +212,7 @@ class TemporalBurstDetector:
 
         return alerts
 
-    def _detect_velocity_anomalies(
-        self, transactions: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
+    def _detect_velocity_anomalies(self, transactions: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Detect unusual transaction velocity using statistical analysis."""
         alerts = []
 
@@ -279,9 +249,7 @@ class TemporalBurstDetector:
 
             # Find days with anomalous velocity
             threshold = avg_count + (VELOCITY_ANOMALY_STDEV_MULTIPLIER * std_count)
-            anomalous_days = [
-                (day, count) for day, count in daily_counts.items() if count > threshold
-            ]
+            anomalous_days = [(day, count) for day, count in daily_counts.items() if count > threshold]
 
             if anomalous_days:
                 alerts.append(
@@ -292,28 +260,21 @@ class TemporalBurstDetector:
                         "average_daily_txns": round(avg_count, 1),
                         "std_deviation": round(std_count, 1),
                         "anomaly_threshold": round(threshold, 1),
-                        "anomalous_days": [
-                            {"date": str(day), "count": count}
-                            for day, count in anomalous_days
-                        ],
+                        "anomalous_days": [{"date": str(day), "count": count} for day, count in anomalous_days],
                         "description": f"Transaction velocity exceeded {VELOCITY_ANOMALY_STDEV_MULTIPLIER}σ on {len(anomalous_days)} day(s)",
                     }
                 )
 
         return alerts
 
-    def _calculate_risk_score(
-        self, alerts: list[dict], total_transactions: int
-    ) -> float:
+    def _calculate_risk_score(self, alerts: list[dict], total_transactions: int) -> float:
         """Calculate overall risk score from 0-100."""
         if not alerts:
             return 0.0
 
         # Weight by severity
         severity_weights = {"HIGH": 30, "MEDIUM": 15, "LOW": 5}
-        total_weight = sum(
-            severity_weights.get(a.get("severity", "LOW"), 5) for a in alerts
-        )
+        total_weight = sum(severity_weights.get(a.get("severity", "LOW"), 5) for a in alerts)
 
         # Normalize by transaction count
         normalized = min(total_weight / max(total_transactions, 1) * 10, 100)

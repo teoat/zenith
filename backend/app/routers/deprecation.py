@@ -58,9 +58,7 @@ async def get_deprecation_warning_list():
             "success": True,
             "timestamp": datetime.utcnow().isoformat(),
             "warnings": warnings,
-            "critical_warnings": len(
-                [w for w in warnings if w["severity"] == "critical"]
-            ),
+            "critical_warnings": len([w for w in warnings if w["severity"] == "critical"]),
             "high_warnings": len([w for w in warnings if w["severity"] == "high"]),
             "action_required": len(warnings) > 0,
         }
@@ -87,18 +85,14 @@ async def list_deprecated_endpoints():
                     "removal_date": info["removal_date"],
                     "replacement": info["replacement"],
                     "status": "deprecated",
-                    "days_until_removal": (
-                        datetime.fromisoformat(info["removal_date"]) - datetime.utcnow()
-                    ).days,
+                    "days_until_removal": (datetime.fromisoformat(info["removal_date"]) - datetime.utcnow()).days,
                 }
             )
 
         return {
             "success": True,
             "timestamp": datetime.utcnow().isoformat(),
-            "deprecated_endpoints": sorted(
-                endpoints, key=lambda x: x["days_until_removal"]
-            ),
+            "deprecated_endpoints": sorted(endpoints, key=lambda x: x["days_until_removal"]),
             "total_count": len(endpoints),
         }
     except Exception as e:
@@ -155,9 +149,7 @@ async def get_migration_guide():
             "support_contact": "See /docs for support information",
         }
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get migration guide: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get migration guide: {e!s}")
 
 
 @router.get("/health")

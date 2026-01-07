@@ -6,6 +6,7 @@ and regulatory requirements.
 """
 
 import json
+import uuid
 
 from sqlalchemy import JSON, Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship

@@ -1,4 +1,4 @@
-import { FileText, Image, Video, AudioWaveform, Database } from 'lucide-react';
+import { FileText, Image, Video, AudioWaveform, Database } from "lucide-react";
 
 /**
  * Returns the appropriate file icon based on file type
@@ -6,30 +6,41 @@ import { FileText, Image, Video, AudioWaveform, Database } from 'lucide-react';
  * @param className - Optional CSS classes for the icon
  * @returns React component for the file icon
  */
-export const getFileIcon = (fileType?: string, className = "h-4 w-4"): React.ReactElement => {
+export const getFileIcon = (
+  fileType?: string,
+  className = "h-4 w-4",
+): React.ReactElement => {
   const iconProps = { className };
-  const type = fileType?.toLowerCase() || '';
-  
+  const type = fileType?.toLowerCase() || "";
+
   // Image files
-  if (type.includes('image') || type.match(/\.(png|jpg|jpeg|gif|webp|svg|bmp)$/)) {
+  if (
+    type.includes("image") ||
+    type.match(/\.(png|jpg|jpeg|gif|webp|svg|bmp)$/)
+  ) {
     return <Image {...iconProps} />;
   }
-  
+
   // Video files
-  if (type.includes('video') || type.match(/\.(mp4|avi|mov|wmv|flv|mkv)$/)) {
+  if (type.includes("video") || type.match(/\.(mp4|avi|mov|wmv|flv|mkv)$/)) {
     return <Video {...iconProps} />;
   }
-  
+
   // Audio files
-  if (type.includes('audio') || type.match(/\.(mp3|wav|ogg|flac|aac|m4a)$/)) {
+  if (type.includes("audio") || type.match(/\.(mp3|wav|ogg|flac|aac|m4a)$/)) {
     return <AudioWaveform {...iconProps} />;
   }
-  
+
   // Document files
-  if (type.includes('document') || type.includes('pdf') || type.includes('text') || type.match(/\.(pdf|doc|docx|txt|rtf|odt)$/)) {
+  if (
+    type.includes("document") ||
+    type.includes("pdf") ||
+    type.includes("text") ||
+    type.match(/\.(pdf|doc|docx|txt|rtf|odt)$/)
+  ) {
     return <FileText {...iconProps} />;
   }
-  
+
   // Default to database/generic icon
   return <Database {...iconProps} />;
 };
@@ -40,25 +51,30 @@ export const getFileIcon = (fileType?: string, className = "h-4 w-4"): React.Rea
  * @returns Tailwind CSS color class
  */
 export const getFileTypeColor = (fileType?: string): string => {
-  const type = fileType?.toLowerCase() || '';
-  
-  if (type.includes('image') || type.match(/\.(png|jpg|jpeg|gif|webp)$/)) {
-    return 'text-blue-600';
+  const type = fileType?.toLowerCase() || "";
+
+  if (type.includes("image") || type.match(/\.(png|jpg|jpeg|gif|webp)$/)) {
+    return "text-blue-600";
   }
-  
-  if (type.includes('video') || type.match(/\.(mp4|avi|mov|wmv)$/)) {
-    return 'text-purple-600';
+
+  if (type.includes("video") || type.match(/\.(mp4|avi|mov|wmv)$/)) {
+    return "text-purple-600";
   }
-  
-  if (type.includes('audio') || type.match(/\.(mp3|wav|ogg|flac)$/)) {
-    return 'text-green-600';
+
+  if (type.includes("audio") || type.match(/\.(mp3|wav|ogg|flac)$/)) {
+    return "text-green-600";
   }
-  
-  if (type.includes('document') || type.includes('pdf') || type.includes('text') || type.match(/\.(pdf|doc|docx|txt)$/)) {
-    return 'text-orange-600';
+
+  if (
+    type.includes("document") ||
+    type.includes("pdf") ||
+    type.includes("text") ||
+    type.match(/\.(pdf|doc|docx|txt)$/)
+  ) {
+    return "text-orange-600";
   }
-  
-  return 'text-gray-600';
+
+  return "text-gray-600";
 };
 
 /**

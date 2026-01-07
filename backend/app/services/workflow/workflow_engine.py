@@ -210,9 +210,7 @@ class WorkflowEngine:
             case_id = f"case_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
             # Auto-generate investigation actions
-            actions = await self._generate_automated_actions(
-                alert_data, template, ai_insights
-            )
+            actions = await self._generate_automated_actions(alert_data, template, ai_insights)
 
             # Generate evidence collection plan
             evidence_plan = await self._generate_evidence_plan(alert_data, template)
@@ -221,9 +219,7 @@ class WorkflowEngine:
             timeline = await self._generate_investigation_timeline(alert_data, actions)
 
             # Calculate investigation parameters
-            investigation_params = await self._calculate_investigation_parameters(
-                alert_data, template, actions
-            )
+            investigation_params = await self._calculate_investigation_parameters(alert_data, template, actions)
 
             return {
                 "case_id": case_id,
@@ -258,9 +254,7 @@ class WorkflowEngine:
         for i, standard_action in enumerate(template.standard_actions):
             priority = self._calculate_action_priority(standard_action, risk_score, i)
             confidence = self._calculate_action_confidence(standard_action, ai_insights)
-            estimated_duration = self._estimate_action_duration(
-                standard_action, alert_data
-            )
+            estimated_duration = self._estimate_action_duration(standard_action, alert_data)
 
             action = AutomatedAction(
                 id=f"action_{i + 1}",
@@ -268,9 +262,7 @@ class WorkflowEngine:
                 title=standard_action.replace("_", " ").title(),
                 description=f"AI-generated {standard_action} for {template.title}",
                 priority=priority,
-                evidence_required=self._get_required_evidence(
-                    standard_action, template
-                ),
+                evidence_required=self._get_required_evidence(standard_action, template),
                 estimated_duration=estimated_duration,
                 ai_persona=self._get_best_persona_for_action(standard_action),
                 confidence_score=confidence,
@@ -279,9 +271,7 @@ class WorkflowEngine:
 
         return actions
 
-    def _calculate_action_priority(
-        self, action: str, risk_score: float, sequence: int
-    ) -> str:
+    def _calculate_action_priority(self, action: str, risk_score: float, sequence: int) -> str:
         """Calculate priority based on action sequence and risk level"""
         if risk_score >= 0.8:
             return "critical"
@@ -292,25 +282,17 @@ class WorkflowEngine:
         else:
             return "low"
 
-    def _calculate_action_confidence(
-        self, action: str, ai_insights: list[dict[str, Any]]
-    ) -> float:
+    def _calculate_action_confidence(self, action: str, ai_insights: list[dict[str, Any]]) -> float:
         """Calculate confidence score for action based on AI insights"""
         if not ai_insights:
             return 0.7  # Default confidence
 
         # Find matching insights for this action
-        matching_insights = [
-            insight
-            for insight in ai_insights
-            if action.lower() in insight.get("description", "").lower()
-        ]
+        matching_insights = [insight for insight in ai_insights if action.lower() in insight.get("description", "").lower()]
 
         if matching_insights:
             # Average confidence from matching insights
-            return sum(
-                insight.get("confidence", 0.7) for insight in matching_insights
-            ) / len(matching_insights)
+            return sum(insight.get("confidence", 0.7) for insight in matching_insights) / len(matching_insights)
 
         return 0.7
 
@@ -340,9 +322,7 @@ class WorkflowEngine:
         action_duration = base_durations.get(action, 60)
         return int(action_duration * complexity_factor)
 
-    def _get_required_evidence(
-        self, action: str, template: InvestigationTemplate
-    ) -> list[str]:
+    def _get_required_evidence(self, action: str, template: InvestigationTemplate) -> list[str]:
         """Get required evidence for a specific action"""
         action_evidence_mapping = {
             "Initial risk assessment": ["Transaction records", "Customer profile"],
@@ -373,9 +353,7 @@ class WorkflowEngine:
         }
         return persona_mapping.get(action, "aml_analyst")
 
-    async def _generate_evidence_plan(
-        self, alert_data: dict[str, Any], template: InvestigationTemplate
-    ) -> dict[str, Any]:
+    async def _generate_evidence_plan(self, alert_data: dict[str, Any], template: InvestigationTemplate) -> dict[str, Any]:
         """Generate automated evidence collection plan"""
         return {
             "required_evidence": template.required_evidence,
@@ -383,8 +361,7 @@ class WorkflowEngine:
             "evidence_priority_scoring": True,
             "duplicate_detection": True,
             "metadata_extraction": True,
-            "estimated_collection_time": len(template.required_evidence)
-            * 30,  # 30 minutes per evidence item
+            "estimated_collection_time": len(template.required_evidence) * 30,  # 30 minutes per evidence item
         }
 
     def _get_collection_methods(self, alert_data: dict[str, Any]) -> list[str]:
@@ -405,9 +382,7 @@ class WorkflowEngine:
 
         return methods if methods else ["Manual evidence collection"]
 
-    async def _generate_investigation_timeline(
-        self, alert_data: dict[str, Any], actions: list[AutomatedAction]
-    ) -> dict[str, Any]:
+    async def _generate_investigation_timeline(self, alert_data: dict[str, Any], actions: list[AutomatedAction]) -> dict[str, Any]:
         """Generate investigation timeline with automated actions"""
         timeline_events = []
 
@@ -473,9 +448,7 @@ class WorkflowEngine:
             "complexity_score": self._calculate_complexity_score(alert_data),
             "resource_requirements": self._estimate_resources(actions),
             "critical_path_analysis": self._identify_critical_path(actions),
-            "success_probability": self._calculate_success_probability(
-                alert_data, actions
-            ),
+            "success_probability": self._calculate_success_probability(alert_data, actions),
             "regulatory_risk_level": self._assess_regulatory_risk(alert_data),
             "automation_potential": len(actions) / len(template.standard_actions) * 100,
         }
@@ -516,21 +489,14 @@ class WorkflowEngine:
 
         return {
             "total_estimated_hours": investigator_hours,
-            "required_skills": list(
-                {self._get_required_skills(action.action_type) for action in actions}
-            ),
+            "required_skills": list({self._get_required_skills(action.action_type) for action in actions}),
             "system_requirements": [
                 "Investigation Platform",
                 "AI Assistant",
                 "Data Analysis Tools",
             ],
             "estimated_cost": investigator_hours * 150,  # $150/hour average
-            "critical_path_hours": sum(
-                action.estimated_duration
-                for action in actions
-                if action.priority in ["critical", "high"]
-            )
-            / 60,
+            "critical_path_hours": sum(action.estimated_duration for action in actions if action.priority in ["critical", "high"]) / 60,
         }
 
     def _get_required_skills(self, action_type: str) -> list[str]:
@@ -566,17 +532,12 @@ class WorkflowEngine:
         critical_actions = []
 
         for action in actions:
-            if (
-                action.priority in ["critical", "high"]
-                and action.confidence_score >= 0.8
-            ):
+            if action.priority in ["critical", "high"] and action.confidence_score >= 0.8:
                 critical_actions.append(action.id)
 
         return critical_actions
 
-    def _calculate_success_probability(
-        self, alert_data: dict[str, Any], actions: list[AutomatedAction]
-    ) -> float:
+    def _calculate_success_probability(self, alert_data: dict[str, Any], actions: list[AutomatedAction]) -> float:
         """Calculate probability of investigation success"""
         base_probability = 0.75
 

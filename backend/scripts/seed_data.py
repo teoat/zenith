@@ -177,9 +177,7 @@ def generate_sample_evidence(db: Session, cases: list):
         for i in range(random.randint(1, 4)):
             import json
 
-            tags_json = json.dumps(
-                random.sample(FRAUD_INDICATORS, k=random.randint(1, 3))
-            )
+            tags_json = json.dumps(random.sample(FRAUD_INDICATORS, k=random.randint(1, 3)))
             metadata_json = json.dumps(
                 {
                     "description": f"Evidence item {i + 1} - {random.choice(['Original invoice', 'Bank statement', 'Email correspondence', 'Photo evidence'])}"
@@ -218,9 +216,7 @@ def generate_sample_notes(db: Session, cases: list, users: list):
         # Since we moved company_name to metadata, access it from there
         company = case.case_metadata.get("company_name", "Unknown Company")
         for i in range(random.randint(2, 6)):
-            note_content = random.choice(note_templates).format(
-                indicator=random.choice(FRAUD_INDICATORS), company=company
-            )
+            note_content = random.choice(note_templates).format(indicator=random.choice(FRAUD_INDICATORS), company=company)
 
             note = CaseNote(
                 case_id=case.id,
@@ -310,9 +306,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.clear:
-        confirm = input(
-            "⚠️  This will DELETE all existing data. Are you sure? (yes/no): "
-        )
+        confirm = input("⚠️  This will DELETE all existing data. Are you sure? (yes/no): ")
         if confirm.lower() != "yes":
             print("Cancelled.")
             exit(0)

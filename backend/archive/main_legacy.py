@@ -82,9 +82,7 @@ def safe_call(func, default=None, log_errors=True):
         return func()
     except (ZenithError, Exception) as e:
         if log_errors:
-            logger.debug(
-                f"Safe call failed for {func.__name__ if hasattr(func, '__name__') else 'function'}: {e}"
-            )
+            logger.debug(f"Safe call failed for {func.__name__ if hasattr(func, '__name__') else 'function'}: {e}")
         return default
 
 
@@ -136,17 +134,13 @@ async def lifespan(app: FastAPI):
                 )
                 break
             else:
-                raise RuntimeError(
-                    f"Database health check failed: {db_health.get('details')}"
-                )
+                raise RuntimeError(f"Database health check failed: {db_health.get('details')}")
         except (ZenithError, Exception) as e:
             logger.error(f"Database health check error on attempt {attempt + 1}: {e}")
             if attempt < max_db_retries - 1:
                 await asyncio.sleep(db_retry_delay)
             else:
-                raise RuntimeError(
-                    f"Database initialization failed after {max_db_retries} attempts: {e}"
-                )
+                raise RuntimeError(f"Database initialization failed after {max_db_retries} attempts: {e}")
 
         # Phase 1.5: Redis Connection
         from app.services.infrastructure.redis_cluster import redis_cluster_manager
@@ -167,9 +161,7 @@ async def lifespan(app: FastAPI):
             logger.warning(f"Failed to initialize Redis: {e}")
 
         # Phase 1.6: Redis Cache Initialization
-        logger.info(
-            "Phase 1.6: Redis Cache Initialization", extra={"startup_phase": 1.6}
-        )
+        logger.info("Phase 1.6: Redis Cache Initialization", extra={"startup_phase": 1.6})
         try:
             from core.cache.redis_cache import initialize_cache
 
@@ -219,9 +211,7 @@ async def lifespan(app: FastAPI):
 
             # Register job handlers
             bg_processor.register_handler("fraud_analysis", example_fraud_analysis_job)
-            bg_processor.register_handler(
-                "evidence_processing", example_evidence_processing_job
-            )
+            bg_processor.register_handler("evidence_processing", example_evidence_processing_job)
 
             await bg_processor.start()
             logger.info(
@@ -234,9 +224,7 @@ async def lifespan(app: FastAPI):
         # Phase 21: Boot Integrity Check
         from core.immutable_audit import immutable_audit
 
-        immutable_audit.add_entry(
-            {"event": "system_boot", "status": "initiated", "version": VERSION}
-        )
+        immutable_audit.add_entry({"event": "system_boot", "status": "initiated", "version": VERSION})
 
         # Integrity Checker
         from core.integrity_checker import integrity_checker
@@ -252,14 +240,10 @@ async def lifespan(app: FastAPI):
 
         # Initialize Sentry
         if init_sentry():
-            logger.info(
-                "✅ Sentry error monitoring enabled", extra={"event": "sentry_init"}
-            )
+            logger.info("✅ Sentry error monitoring enabled", extra={"event": "sentry_init"})
 
     # Phase 2: Background Service Registration & Startup
-    logger.info(
-        "Phase 2: Background Service Registration & Startup", extra={"startup_phase": 2}
-    )
+    logger.info("Phase 2: Background Service Registration & Startup", extra={"startup_phase": 2})
     from core.services import register_all_services, start_services
 
     register_all_services()
@@ -270,9 +254,7 @@ async def lifespan(app: FastAPI):
         from prometheus_fastapi_instrumentator import Instrumentator
 
         Instrumentator().instrument(app).expose(app, include_in_schema=False)
-        logger.info(
-            "✅ Prometheus metrics exposed at /metrics", extra={"service": "prometheus"}
-        )
+        logger.info("✅ Prometheus metrics exposed at /metrics", extra={"service": "prometheus"})
     except (ZenithError, Exception) as e:
         logger.warning(f"Failed to initialize Prometheus instrumentation: {e}")
 
@@ -304,36 +286,26 @@ async def lifespan(app: FastAPI):
 
     try:
         # Phase 1: Stop accepting new requests
-        logger.info(
-            "Phase 1: Stopping new request acceptance", extra={"shutdown_phase": 1}
-        )
+        logger.info("Phase 1: Stopping new request acceptance", extra={"shutdown_phase": 1})
 
         # Phase 2: Drain existing connections gracefully
-        logger.info(
-            "Phase 2: Draining existing connections", extra={"shutdown_phase": 2}
-        )
+        logger.info("Phase 2: Draining existing connections", extra={"shutdown_phase": 2})
         # Give active requests time to complete (configurable grace period)
         grace_period = int(os.getenv("SHUTDOWN_GRACE_PERIOD", "30"))
         logger.info(
             f"Waiting {grace_period}s for active requests to complete",
             extra={"grace_period": grace_period},
         )
-        await asyncio.sleep(
-            min(grace_period, 10)
-        )  # Don't wait more than 10s in testing
+        await asyncio.sleep(min(grace_period, 10))  # Don't wait more than 10s in testing
 
         # Phase 3: Stop all background services via Registry
-        logger.info(
-            "Phase 3: Stopping background services", extra={"shutdown_phase": 3}
-        )
+        logger.info("Phase 3: Stopping background services", extra={"shutdown_phase": 3})
         from core.services import stop_services
 
         await stop_services()
 
         # Phase 6: Final cleanup and verification
-        logger.info(
-            "Phase 6: Final cleanup and verification", extra={"shutdown_phase": 6}
-        )
+        logger.info("Phase 6: Final cleanup and verification", extra={"shutdown_phase": 6})
 
         # Close async database manager
         try:
@@ -341,9 +313,7 @@ async def lifespan(app: FastAPI):
 
             async_db_manager = get_async_db_manager()
             await async_db_manager.close()
-            logger.info(
-                "✅ Async Database Manager closed", extra={"service": "async_db"}
-            )
+            logger.info("✅ Async Database Manager closed", extra={"service": "async_db"})
         except (ZenithError, Exception) as e:
             logger.warning(f"Error closing Async Database Manager: {e}")
 
@@ -353,9 +323,7 @@ async def lifespan(app: FastAPI):
 
             bg_processor = get_background_processor()
             await bg_processor.stop()
-            logger.info(
-                "✅ Background Processor stopped", extra={"service": "background_jobs"}
-            )
+            logger.info("✅ Background Processor stopped", extra={"service": "background_jobs"})
         except (ZenithError, Exception) as e:
             logger.warning(f"Error stopping Background Processor: {e}")
 
@@ -631,9 +599,7 @@ def get_journey_analytics():
 
 
 @app.post("/analytics/track")
-def track_user_event(
-    event_type: str, user_id: str | None = None, metadata: dict | None = None
-):
+def track_user_event(event_type: str, user_id: str | None = None, metadata: dict | None = None):
     """Track user events for journey analysis"""
     try:
         user_journey_tracker.track_event(user_id or "anonymous", event_type, metadata)
@@ -686,26 +652,10 @@ def get_diagnostics_dashboard():
             },
             "user_analytics": {"journey": journey_data, "sessions": session_data},
             "recommendations": [
-                (
-                    "Monitor CPU usage if > 90%"
-                    if any("cpu" in alert.lower() for alert in alerts)
-                    else None
-                ),
-                (
-                    "Check memory usage if > 85%"
-                    if any("memory" in alert.lower() for alert in alerts)
-                    else None
-                ),
-                (
-                    "Review user drop-off in funnel"
-                    if journey_data.get("drop_off_points")
-                    else None
-                ),
-                (
-                    "Scale infrastructure if needed"
-                    if system_status == "critical"
-                    else None
-                ),
+                ("Monitor CPU usage if > 90%" if any("cpu" in alert.lower() for alert in alerts) else None),
+                ("Check memory usage if > 85%" if any("memory" in alert.lower() for alert in alerts) else None),
+                ("Review user drop-off in funnel" if journey_data.get("drop_off_points") else None),
+                ("Scale infrastructure if needed" if system_status == "critical" else None),
             ],
         }
     except (ZenithError, Exception) as e:
@@ -744,9 +694,7 @@ async def readiness_check():
                 content={"status": "not_ready", "checks": {"database": "unhealthy"}},
             )
     except (ZenithError, Exception) as e:
-        return JSONResponse(
-            status_code=503, content={"status": "not_ready", "error": str(e)}
-        )
+        return JSONResponse(status_code=503, content={"status": "not_ready", "error": str(e)})
 
 
 @app.get("/health/live")
@@ -776,21 +724,15 @@ async def test_redis_endpoint():
         if not redis_cluster_manager.is_connected:
             connected = await redis_cluster_manager.connect()
             if not connected:
-                return JSONResponse(
-                    content={"error": "Failed to connect to Redis"}, status_code=500
-                )
+                return JSONResponse(content={"error": "Failed to connect to Redis"}, status_code=500)
 
         # Fetch data
         result = await redis_cluster_manager.get("item")
 
         # Return as JSON
-        return JSONResponse(
-            content={"result": result, "status": "success"}, status_code=200
-        )
+        return JSONResponse(content={"result": result, "status": "success"}, status_code=200)
     except (ZenithError, Exception) as e:
-        return JSONResponse(
-            content={"error": str(e), "type": type(e).__name__}, status_code=500
-        )
+        return JSONResponse(content={"error": str(e), "type": type(e).__name__}, status_code=500)
 
 
 @app.get("/api/debug-env")
@@ -816,9 +758,7 @@ async def serve_index():
     if os.path.exists(frontend_dist):
         return FileResponse(os.path.join(frontend_dist, "index.html"))
     else:
-        return {
-            "message": "Frontend not built. Run 'npm run build:frontend' to build the frontend."
-        }
+        return {"message": "Frontend not built. Run 'npm run build:frontend' to build the frontend."}
 
 
 # Manual WebSocket startup endpoint for debugging

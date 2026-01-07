@@ -59,9 +59,7 @@ class StandardizedErrorMiddleware(BaseHTTPMiddleware):
         else:
             return self._handle_generic_error(exc, request_id, request.url.path)
 
-    def _handle_http_exception(
-        self, exc: HTTPException, request_id: str, path: str
-    ) -> JSONResponse:
+    def _handle_http_exception(self, exc: HTTPException, request_id: str, path: str) -> JSONResponse:
         """Handle FastAPI HTTPException"""
 
         # Map HTTP status codes to error codes
@@ -77,9 +75,7 @@ class StandardizedErrorMiddleware(BaseHTTPMiddleware):
             503: ErrorCodes.SERVICE_UNAVAILABLE,
         }
 
-        error_code = error_code_map.get(
-            exc.status_code, ErrorCodes.INTERNAL_SERVER_ERROR
-        )
+        error_code = error_code_map.get(exc.status_code, ErrorCodes.INTERNAL_SERVER_ERROR)
 
         error_detail = ErrorDetail(
             message=str(exc.detail),
@@ -98,9 +94,7 @@ class StandardizedErrorMiddleware(BaseHTTPMiddleware):
             content=error_response.dict(),
         )
 
-    def _handle_validation_error(
-        self, exc: ValidationError, request_id: str, path: str
-    ) -> JSONResponse:
+    def _handle_validation_error(self, exc: ValidationError, request_id: str, path: str) -> JSONResponse:
         """Handle Pydantic validation errors"""
 
         error_details = []
@@ -127,9 +121,7 @@ class StandardizedErrorMiddleware(BaseHTTPMiddleware):
             content=error_response.dict(),
         )
 
-    def _handle_generic_error(
-        self, exc: Exception, request_id: str, path: str
-    ) -> JSONResponse:
+    def _handle_generic_error(self, exc: Exception, request_id: str, path: str) -> JSONResponse:
         """Handle unexpected errors"""
 
         # Don't expose internal error details in production

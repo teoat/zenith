@@ -35,9 +35,7 @@ class MonitoringMetrics:
         self.errors: list = []
         self.max_errors_stored = 100
 
-    def record_request(
-        self, endpoint: str, method: str, duration: float, status_code: int
-    ):
+    def record_request(self, endpoint: str, method: str, duration: float, status_code: int):
         """Record request metrics"""
         self.request_count += 1
         self.total_response_time += duration
@@ -61,9 +59,7 @@ class MonitoringMetrics:
 
         # Track status codes
         status_key = str(status_code)
-        metrics["status_codes"][status_key] = (
-            metrics["status_codes"].get(status_key, 0) + 1
-        )
+        metrics["status_codes"][status_key] = metrics["status_codes"].get(status_key, 0) + 1
 
         if status_code >= 400:
             metrics["errors"] += 1
@@ -88,19 +84,13 @@ class MonitoringMetrics:
 
     def get_stats(self) -> dict[str, Any]:
         """Get aggregated statistics"""
-        avg_response_time = (
-            self.total_response_time / self.request_count
-            if self.request_count > 0
-            else 0
-        )
+        avg_response_time = self.total_response_time / self.request_count if self.request_count > 0 else 0
 
         # Calculate endpoint statistics
         endpoint_stats = []
         for endpoint, metrics in self.endpoint_metrics.items():
             avg_time = metrics["total_time"] / metrics["count"]
-            error_rate = (
-                metrics["errors"] / metrics["count"] if metrics["count"] > 0 else 0
-            )
+            error_rate = metrics["errors"] / metrics["count"] if metrics["count"] > 0 else 0
 
             endpoint_stats.append(
                 {
@@ -120,11 +110,7 @@ class MonitoringMetrics:
         return {
             "total_requests": self.request_count,
             "total_errors": self.error_count,
-            "error_rate": (
-                round(self.error_count / self.request_count * 100, 2)
-                if self.request_count > 0
-                else 0
-            ),
+            "error_rate": (round(self.error_count / self.request_count * 100, 2) if self.request_count > 0 else 0),
             "avg_response_time_ms": round(avg_response_time * 1000, 2),
             "endpoints": endpoint_stats[:20],  # Top 20 endpoints
             "recent_errors": self.errors[-10:],  # Last 10 errors
@@ -175,9 +161,7 @@ class PerformanceMonitoringMiddleware(BaseHTTPMiddleware):
             )
 
             # Log error
-            logger.error(
-                f"Error in {request.method} {request.url.path}: {error}", exc_info=True
-            )
+            logger.error(f"Error in {request.method} {request.url.path}: {error}", exc_info=True)
 
             raise
 
@@ -199,9 +183,7 @@ class HealthCheck:
 
         for name, check_func in self.checks.items():
             try:
-                is_healthy = (
-                    await check_func() if callable(check_func) else check_func()
-                )
+                is_healthy = await check_func() if callable(check_func) else check_func()
                 results[name] = {
                     "status": "healthy" if is_healthy else "unhealthy",
                     "timestamp": datetime.now().isoformat(),
@@ -258,7 +240,10 @@ class AlertManager:
                 {
                     "type": "response_time",
                     "severity": "medium",
-                    "message": f"Average response time {stats['avg_response_time_ms']}ms exceeds threshold {self.thresholds['avg_response_time']}ms",
+                    "message": (
+                        f"Average response time {stats['avg_response_time_ms']}ms exceeds "
+                        f"threshold {self.thresholds['avg_response_time']}ms"
+                    ),
                     "value": stats["avg_response_time_ms"],
                     "threshold": self.thresholds["avg_response_time"],
                 }
@@ -270,7 +255,7 @@ class AlertManager:
                 {
                     "type": "error_count",
                     "severity": "high",
-                    "message": f"Total errors {stats['total_errors']} exceeds threshold {self.thresholds['error_count']}",
+                    "message": (f"Total errors {stats['total_errors']} exceeds threshold {self.thresholds['error_count']}"),
                     "value": stats["total_errors"],
                     "threshold": self.thresholds["error_count"],
                 }

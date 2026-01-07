@@ -11,12 +11,13 @@ The Ingestion page (`/ingestion`) features a 3-step wizard for uploading and nor
 3.  **Review & Submit**: Verify the mapping results and submit the data for reconciliation.
 
 ### Supported System Fields
-*   **Transaction Date** (Required)
-*   **Amount** (Required)
-*   **Description** (Required)
-*   Merchant / Payee
-*   Category
-*   Currency
+
+- **Transaction Date** (Required)
+- **Amount** (Required)
+- **Description** (Required)
+- Merchant / Payee
+- Category
+- Currency
 
 ## Getting Started
 

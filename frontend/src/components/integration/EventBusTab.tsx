@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Activity, Users, Shield } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { Activity, Users, Shield } from "lucide-react";
 
 const EventBusTab: React.FC = () => {
   return (
@@ -13,7 +13,8 @@ const EventBusTab: React.FC = () => {
       <div className="event-bus">
         <h3 className="section-title">Event-Driven Architecture</h3>
         <p className="section-description">
-          Asynchronous event processing with pub/sub messaging for real-time integrations
+          Asynchronous event processing with pub/sub messaging for real-time
+          integrations
         </p>
 
         {/* Event Bus Status */}
@@ -24,7 +25,9 @@ const EventBusTab: React.FC = () => {
             </div>
             <div className="status-content">
               <h3 className="status-title">Event Bus</h3>
-              <p className="status-description">Active - Processing 1.2M events/hour</p>
+              <p className="status-description">
+                Active - Processing 1.2M events/hour
+              </p>
             </div>
           </div>
         </div>
@@ -38,7 +41,9 @@ const EventBusTab: React.FC = () => {
                 <h5 className="event-name">Transaction.Created</h5>
                 <span className="event-version">v2.0</span>
               </div>
-              <p className="event-description">Triggered when a new transaction is processed</p>
+              <p className="event-description">
+                Triggered when a new transaction is processed
+              </p>
               <div className="event-meta">
                 <span className="producer-count">3 producers</span>
                 <span className="consumer-count">8 consumers</span>
@@ -46,7 +51,7 @@ const EventBusTab: React.FC = () => {
               <div className="event-schema">
                 <h6 className="schema-title">Schema:</h6>
                 <pre className="schema-code">
-{`{
+                  {`{
   "transactionId": "string",
   "amount": "number",
   "currency": "string",
@@ -61,7 +66,9 @@ const EventBusTab: React.FC = () => {
                 <h5 className="event-name">Compliance.Alert</h5>
                 <span className="event-version">v1.5</span>
               </div>
-              <p className="event-description">Triggered when compliance violations are detected</p>
+              <p className="event-description">
+                Triggered when compliance violations are detected
+              </p>
               <div className="event-meta">
                 <span className="producer-count">1 producer</span>
                 <span className="consumer-count">5 consumers</span>
@@ -69,7 +76,7 @@ const EventBusTab: React.FC = () => {
               <div className="event-schema">
                 <h6 className="schema-title">Schema:</h6>
                 <pre className="schema-code">
-{`{
+                  {`{
   "alertId": "string",
   "severity": "string",
   "description": "string",
@@ -84,7 +91,9 @@ const EventBusTab: React.FC = () => {
                 <h5 className="event-name">User.RiskUpdated</h5>
                 <span className="event-version">v1.2</span>
               </div>
-              <p className="event-description">Triggered when user risk profile is updated</p>
+              <p className="event-description">
+                Triggered when user risk profile is updated
+              </p>
               <div className="event-meta">
                 <span className="producer-count">2 producers</span>
                 <span className="consumer-count">3 consumers</span>
@@ -92,7 +101,7 @@ const EventBusTab: React.FC = () => {
               <div className="event-schema">
                 <h6 className="schema-title">Schema:</h6>
                 <pre className="schema-code">
-{`{
+                  {`{
   "userId": "string",
   "riskScore": "number",
   "riskFactors": "array",
@@ -113,7 +122,9 @@ const EventBusTab: React.FC = () => {
                 <Activity className="w-4 h-4 text-blue-500" />
               </div>
               <div className="event-content">
-                <p className="event-message">Transaction.Created - ID: txn_789</p>
+                <p className="event-message">
+                  Transaction.Created - ID: txn_789
+                </p>
                 <p className="event-time">2 seconds ago</p>
               </div>
             </div>
@@ -123,7 +134,9 @@ const EventBusTab: React.FC = () => {
                 <Shield className="w-4 h-4 text-green-500" />
               </div>
               <div className="event-content">
-                <p className="event-message">Compliance.CheckCompleted - Status: PASSED</p>
+                <p className="event-message">
+                  Compliance.CheckCompleted - Status: PASSED
+                </p>
                 <p className="event-time">5 seconds ago</p>
               </div>
             </div>
@@ -133,7 +146,9 @@ const EventBusTab: React.FC = () => {
                 <Users className="w-4 h-4 text-purple-500" />
               </div>
               <div className="event-content">
-                <p className="event-message">User.RiskUpdated - User: usr_456</p>
+                <p className="event-message">
+                  User.RiskUpdated - User: usr_456
+                </p>
                 <p className="event-time">12 seconds ago</p>
               </div>
             </div>

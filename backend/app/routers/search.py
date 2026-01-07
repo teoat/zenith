@@ -1,6 +1,7 @@
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 
 from app.services.ai.ai_service import ai_service
 from app.services.infrastructure.auth_service import auth_service
@@ -14,9 +15,7 @@ router = APIRouter(dependencies=[Depends(auth_service.get_current_user)])
 
 
 @router.post("")
-async def search_evidence(
-    query: str, limit: int = 20, filters: dict[str, Any] | None = None
-):
+async def search_evidence(query: str, limit: int = 20, filters: dict[str, Any] | None = None):
     """Search processed evidence content"""
     try:
         results = await evidence_search_index.search_evidence(query, limit, filters)
@@ -33,9 +32,6 @@ async def get_evidence_search_stats():
         return {"evidence_index_stats": stats}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-from pydantic import BaseModel
 
 
 class SemanticSearchRequest(BaseModel):

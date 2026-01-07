@@ -128,9 +128,7 @@ class EnhancedExperimentationPlatform:
             "system_stability": self._collect_stability_metrics,
         }
 
-    async def create_experiment_from_template(
-        self, template_name: str, title: str, hypothesis: str, owner: str
-    ) -> Experiment:
+    async def create_experiment_from_template(self, template_name: str, title: str, hypothesis: str, owner: str) -> Experiment:
         """Rapid experiment creation from template"""
         if template_name not in self.experiment_templates:
             raise ValueError(f"Template {template_name} not found")
@@ -198,28 +196,20 @@ class EnhancedExperimentationPlatform:
                 for metric_name in self.metrics_collectors:
                     if metric_name in experiment.results.get("target_metrics", []):
                         try:
-                            value = await self.metrics_collectors[metric_name](
-                                variant.variant_id
-                            )
+                            value = await self.metrics_collectors[metric_name](variant.variant_id)
                             variant.metrics[metric_name] = value
                         except Exception as e:
-                            logger.error(
-                                f"Failed to collect {metric_name} for {variant.variant_id}: {e}"
-                            )
+                            logger.error(f"Failed to collect {metric_name} for {variant.variant_id}: {e}")
 
             # Check for statistical significance
             if self._check_statistical_significance(experiment):
-                await self._complete_experiment(
-                    experiment_id, "Statistical significance achieved"
-                )
+                await self._complete_experiment(experiment_id, "Statistical significance achieved")
                 break
 
             # Check auto-rollback conditions for canary deployments
             if experiment.type == ExperimentType.CANARY_DEPLOYMENT:
                 if self._should_rollback(experiment):
-                    await self._rollback_experiment(
-                        experiment_id, "Auto-rollback triggered"
-                    )
+                    await self._rollback_experiment(experiment_id, "Auto-rollback triggered")
                     break
 
     def _check_statistical_significance(self, experiment: Experiment) -> bool:
@@ -233,9 +223,7 @@ class EnhancedExperimentationPlatform:
             (v for v in experiment.variants if v.name == "control"),
             experiment.variants[0],
         )
-        treatment_variant = next(
-            (v for v in experiment.variants if v.name != control_variant.name), None
-        )
+        treatment_variant = next((v for v in experiment.variants if v.name != control_variant.name), None)
 
         if not treatment_variant:
             return False
@@ -246,19 +234,14 @@ class EnhancedExperimentationPlatform:
 
         # Calculate effect size and confidence
         # This is a simplified implementation
-        effect_size = abs(
-            treatment_variant.metrics.get("conversion_rate", 0)
-            - control_variant.metrics.get("conversion_rate", 0)
-        )
+        effect_size = abs(treatment_variant.metrics.get("conversion_rate", 0) - control_variant.metrics.get("conversion_rate", 0))
 
         # Assume significance if effect size > 5% and confidence > threshold
         return effect_size > 0.05 and random.random() > (1 - self.confidence_threshold)
 
     def _should_rollback(self, experiment: Experiment) -> bool:
         """Check if canary deployment should be rolled back"""
-        canary_variant = next(
-            (v for v in experiment.variants if v.name == "canary"), None
-        )
+        canary_variant = next((v for v in experiment.variants if v.name == "canary"), None)
         if not canary_variant:
             return False
 
@@ -302,9 +285,7 @@ class EnhancedExperimentationPlatform:
 
         if len(experiment.variants) >= 2:
             # Find best performing variant
-            best_variant = max(
-                experiment.variants, key=lambda v: v.metrics.get("conversion_rate", 0)
-            )
+            best_variant = max(experiment.variants, key=lambda v: v.metrics.get("conversion_rate", 0))
             analysis["winner"] = best_variant.name
 
             # Calculate effect size (simplified)
@@ -312,10 +293,7 @@ class EnhancedExperimentationPlatform:
                 (v for v in experiment.variants if v.name == "control"),
                 experiment.variants[0],
             )
-            analysis["effect_size"] = abs(
-                best_variant.metrics.get("conversion_rate", 0)
-                - control.metrics.get("conversion_rate", 0)
-            )
+            analysis["effect_size"] = abs(best_variant.metrics.get("conversion_rate", 0) - control.metrics.get("conversion_rate", 0))
 
             # Generate insights
             if analysis["effect_size"] > 0.1:
@@ -326,9 +304,7 @@ class EnhancedExperimentationPlatform:
                 analysis["recommendations"].append("Consider gradual rollout")
             else:
                 analysis["insights"].append("No significant effect detected")
-                analysis["recommendations"].append(
-                    "Reconsider hypothesis or test different variants"
-                )
+                analysis["recommendations"].append("Reconsider hypothesis or test different variants")
 
         return analysis
 

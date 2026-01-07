@@ -16,9 +16,7 @@ def safe_call(func, default=None, log_errors=True):
         return func()
     except Exception as e:
         if log_errors:
-            logger.debug(
-                f"Safe call failed for {func.__name__ if hasattr(func, '__name__') else 'function'}: {e}"
-            )
+            logger.debug(f"Safe call failed for {func.__name__ if hasattr(func, '__name__') else 'function'}: {e}")
         return default
 
 
@@ -57,9 +55,7 @@ def log_security_event(
         )
 
         # Also log to application log
-        logger.warning(
-            f"Security Event: {event_type} - User: {user_id} - Details: {details}"
-        )
+        logger.warning(f"Security Event: {event_type} - User: {user_id} - Details: {details}")
 
     except Exception as e:
         logger.error(f"Failed to log security event: {e}")
@@ -75,9 +71,7 @@ def log_auth_failure(user_id: str, reason: str, request: Request = None):
     )
 
 
-def log_suspicious_activity(
-    activity_type: str, user_id: str, details: dict, request: Request = None
-):
+def log_suspicious_activity(activity_type: str, user_id: str, details: dict, request: Request = None):
     """Log suspicious activities"""
     log_security_event(
         f"SUSPICIOUS_{activity_type.upper()}",

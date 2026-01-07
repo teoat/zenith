@@ -48,21 +48,13 @@ http_request_duration_seconds = get_or_create_metric(
 )
 
 # Business Metrics
-fraud_cases_detected_total = get_or_create_metric(
-    Counter, "fraud_cases_detected_total", "Total fraud cases detected", ["severity"]
-)
+fraud_cases_detected_total = get_or_create_metric(Counter, "fraud_cases_detected_total", "Total fraud cases detected", ["severity"])
 
-ai_prediction_confidence = get_or_create_metric(
-    Histogram, "ai_prediction_confidence", "AI prediction confidence scores"
-)
+ai_prediction_confidence = get_or_create_metric(Histogram, "ai_prediction_confidence", "AI prediction confidence scores")
 
-pending_cases_total = get_or_create_metric(
-    Gauge, "pending_cases_total", "Number of pending cases"
-)
+pending_cases_total = get_or_create_metric(Gauge, "pending_cases_total", "Number of pending cases")
 
-approval_queue_size = get_or_create_metric(
-    Gauge, "approval_queue_size", "Number of items in approval queue"
-)
+approval_queue_size = get_or_create_metric(Gauge, "approval_queue_size", "Number of items in approval queue")
 
 # System Metrics
 db_query_duration_seconds = get_or_create_metric(
@@ -79,14 +71,10 @@ cache_requests_total = get_or_create_metric(
     ["result"],  # hit or miss
 )
 
-websocket_connections = get_or_create_metric(
-    Gauge, "websocket_connections", "Number of active WebSocket connections"
-)
+websocket_connections = get_or_create_metric(Gauge, "websocket_connections", "Number of active WebSocket connections")
 
 # Application startup time
-app_start_time = get_or_create_metric(
-    Gauge, "app_start_time_seconds", "Application start time in seconds since epoch"
-)
+app_start_time = get_or_create_metric(Gauge, "app_start_time_seconds", "Application start time in seconds since epoch")
 app_start_time.set(time.time())
 
 
@@ -136,23 +124,15 @@ async def detailed_health():
             "disk_percent": disk.percent,
             "disk_free_gb": round(disk.free / (1024**3), 2),
         },
-        "application": {
-            "uptime_seconds": int(time.time() - app_start_time._value._value)
-        },
+        "application": {"uptime_seconds": int(time.time() - app_start_time._value._value)},
     }
 
 
 # Helper function to record HTTP metrics
-def record_request_metrics(
-    method: str, endpoint: str, status_code: int, duration: float
-):
+def record_request_metrics(method: str, endpoint: str, status_code: int, duration: float):
     """Record metrics for an HTTP request"""
-    http_requests_total.labels(
-        method=method, endpoint=endpoint, status=status_code
-    ).inc()
-    http_request_duration_seconds.labels(method=method, endpoint=endpoint).observe(
-        duration
-    )
+    http_requests_total.labels(method=method, endpoint=endpoint, status=status_code).inc()
+    http_request_duration_seconds.labels(method=method, endpoint=endpoint).observe(duration)
 
 
 # Helper function to record fraud detection

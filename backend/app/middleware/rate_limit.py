@@ -23,17 +23,13 @@ class RateLimiter:
         window_start = current_time - 60  # 1 minute window
 
         # Clean old requests
-        self.requests[client_ip] = [
-            req_time for req_time in self.requests[client_ip] if req_time > window_start
-        ]
+        self.requests[client_ip] = [req_time for req_time in self.requests[client_ip] if req_time > window_start]
 
         request_count = len(self.requests[client_ip])
 
         # Check burst limit (requests in last 10 seconds)
         burst_window = current_time - 10
-        burst_count = sum(
-            1 for req_time in self.requests[client_ip] if req_time > burst_window
-        )
+        burst_count = sum(1 for req_time in self.requests[client_ip] if req_time > burst_window)
 
         if burst_count >= self.burst_limit:
             # Temporary block for burst abuse
@@ -76,9 +72,7 @@ async def rate_limit_middleware(request: Request, call_next):
 
     if not rate_limiter.is_allowed(client_ip):
         logger.warning(f"Rate limit exceeded for IP: {client_ip}")
-        raise HTTPException(
-            status_code=429, detail="Too many requests. Please try again later."
-        )
+        raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
 
     response = await call_next(request)
     return response

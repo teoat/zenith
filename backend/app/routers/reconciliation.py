@@ -2,8 +2,6 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-logger = logging.getLogger(__name__)
-
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -13,6 +11,8 @@ from app.services.infrastructure.auth_service import auth_service
 from app.services.reconciliation_service import ReconciliationService
 from app.services.temporal_burst_detector import temporal_burst_detector
 from core.database import Case, Transaction, User, get_db
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     tags=["reconciliation"],
@@ -101,9 +101,7 @@ async def analyze_cash_float(
     current_user: User = Depends(get_current_user),
 ):
     service = ReconciliationService(db)
-    return service.reconcile_cash_float(
-        request.entity_name, request.start_date, request.end_date
-    )
+    return service.reconcile_cash_float(request.entity_name, request.start_date, request.end_date)
 
 
 @router.post("/batch-match", response_model=dict[str, Any])
@@ -122,9 +120,7 @@ async def analyze_temporal_anomalies(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    transactions = (
-        db.query(Transaction).filter(Transaction.id.in_(request.transaction_ids)).all()
-    )
+    transactions = db.query(Transaction).filter(Transaction.id.in_(request.transaction_ids)).all()
     txn_dicts = []
     for t in transactions:
         txn_dicts.append(
@@ -243,9 +239,7 @@ async def ingest_mapped_data(
             # NOTE: Excel/PDF support requires a conversion service or extracting text first
             # If no extracted_text is available, we can't process non-CSV yet.
             if not file_path.lower().endswith(".csv"):
-                logger.warning(
-                    f"Unsupported file type for direct ingestion: {file_path}"
-                )
+                logger.warning(f"Unsupported file type for direct ingestion: {file_path}")
                 # Proceeding with empty rows - or could raise error
 
         for row in rows:
@@ -259,9 +253,7 @@ async def ingest_mapped_data(
             # 4. Create Transaction
             # Basic validation/cleaning
             try:
-                amount_str = (
-                    txn_data.get("amount", "0").replace(",", "").replace("$", "")
-                )
+                amount_str = txn_data.get("amount", "0").replace(",", "").replace("$", "")
                 amount = float(amount_str) if amount_str else 0.0
 
                 # Date parsing (simplified)
@@ -281,8 +273,7 @@ async def ingest_mapped_data(
                     date=date_obj,
                     amount=amount,
                     currency=txn_data.get("currency", "USD"),
-                    merchant_name=txn_data.get("merchant")
-                    or txn_data.get("description"),
+                    merchant_name=txn_data.get("merchant") or txn_data.get("description"),
                     description=txn_data.get("description"),
                     category=txn_data.get("category"),
                     transaction_metadata={

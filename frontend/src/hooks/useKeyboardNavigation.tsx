@@ -1,11 +1,11 @@
 /**
  * useKeyboardNavigation - Hook for complex widget keyboard navigation
- * 
+ *
  * Provides keyboard shortcuts for graphs, kanbans, and other complex widgets.
  * Standard: Tab enters widget, Arrow keys navigate, Esc exits.
  */
 
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef } from "react";
 
 export interface KeyboardNavigationConfig {
   onArrowUp?: () => void;
@@ -29,35 +29,35 @@ export function useKeyboardNavigation(config: KeyboardNavigationConfig) {
       if (!enabled) return;
 
       switch (e.key) {
-        case 'ArrowUp':
+        case "ArrowUp":
           e.preventDefault();
           config.onArrowUp?.();
           break;
-        case 'ArrowDown':
+        case "ArrowDown":
           e.preventDefault();
           config.onArrowDown?.();
           break;
-        case 'ArrowLeft':
+        case "ArrowLeft":
           e.preventDefault();
           config.onArrowLeft?.();
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           e.preventDefault();
           config.onArrowRight?.();
           break;
-        case 'Enter':
+        case "Enter":
           e.preventDefault();
           config.onEnter?.();
           break;
-        case 'Escape':
+        case "Escape":
           e.preventDefault();
           config.onEscape?.();
           break;
-        case ' ':
+        case " ":
           e.preventDefault();
           config.onSpace?.();
           break;
-        case 'Tab':
+        case "Tab":
           if (captureTab) {
             e.preventDefault();
             config.onTab?.(e.shiftKey);
@@ -65,7 +65,7 @@ export function useKeyboardNavigation(config: KeyboardNavigationConfig) {
           break;
       }
     },
-    [config, enabled, captureTab]
+    [config, enabled, captureTab],
   );
 
   useEffect(() => {
@@ -73,9 +73,9 @@ export function useKeyboardNavigation(config: KeyboardNavigationConfig) {
     if (!container || !enabled) return;
 
     const handleKeyDownTyped = handleKeyDown as (e: Event) => void;
-    container.addEventListener('keydown', handleKeyDownTyped);
+    container.addEventListener("keydown", handleKeyDownTyped);
     return () => {
-      container.removeEventListener('keydown', handleKeyDownTyped);
+      container.removeEventListener("keydown", handleKeyDownTyped);
     };
   }, [handleKeyDown, enabled]);
 
@@ -83,4 +83,3 @@ export function useKeyboardNavigation(config: KeyboardNavigationConfig) {
 }
 
 export default useKeyboardNavigation;
-

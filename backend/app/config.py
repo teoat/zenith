@@ -87,9 +87,7 @@ OPTIONAL_ROUTERS = {
 # Middleware configuration
 MIDDLEWARE_CONFIG = {
     "security": {
-        "HTTPSRedirectMiddleware": {
-            "condition": lambda: os.getenv("ENVIRONMENT", "development").lower() != "development"
-        },
+        "HTTPSRedirectMiddleware": {"condition": lambda: os.getenv("ENVIRONMENT", "development").lower() != "development"},
         "TrustedHostMiddleware": {
             "condition": lambda: os.getenv("ENVIRONMENT", "development").lower() != "development",
             "kwargs": {
@@ -180,9 +178,7 @@ def setup_routers(app: FastAPI):
 
     # Roadmap routers
     for name, (module_path, router_attr) in ROADMAP_ROUTERS.items():
-        prefix = (
-            f"/api/{API_VERSION}/{name}" if name != "collaboration_roadmap" else f"/api/{API_VERSION}/collaboration"
-        )
+        prefix = f"/api/{API_VERSION}/{name}" if name != "collaboration_roadmap" else f"/api/{API_VERSION}/collaboration"
         tags = ["Roadmap"] if name != "collaboration_roadmap" else ["Collaboration (Roadmap)"]
         _import_and_include_router(app, module_path, router_attr, name, prefix, tags)
 

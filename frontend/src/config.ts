@@ -7,19 +7,21 @@ interface EnvValidation {
 }
 
 const ENV_VALIDATION: EnvValidation = {
-  required: ['VITE_API_URL'], // These must be set
-  optional: ['VITE_WS_URL', 'VITE_ENVIRONMENT'], // These have defaults
+  required: ["VITE_API_URL"], // These must be set
+  optional: ["VITE_WS_URL", "VITE_ENVIRONMENT"], // These have defaults
   defaults: {
-    'VITE_API_URL': 'http://localhost:8001/api/v1',
-    'VITE_WS_URL': 'ws://localhost:8001',
-    'VITE_ENVIRONMENT': 'development'
-  }
+    VITE_API_URL: "http://localhost:8001/api/v1",
+    VITE_WS_URL: "ws://localhost:8001",
+    VITE_ENVIRONMENT: "development",
+  },
 };
 
 export const getEnvVariable = (name: string, defaultValue?: string): string => {
   // Check Vite environment first
   try {
-    const getMeta = new Function('try { return import.meta; } catch { return undefined; }');
+    const getMeta = new Function(
+      "try { return import.meta; } catch { return undefined; }",
+    );
     const meta = getMeta();
     if (meta && meta.env && meta.env[name]) {
       return meta.env[name];
@@ -30,7 +32,7 @@ export const getEnvVariable = (name: string, defaultValue?: string): string => {
 
   // Check Node.js process environment
   try {
-    if (typeof process !== 'undefined' && process.env && process.env[name]) {
+    if (typeof process !== "undefined" && process.env && process.env[name]) {
       return process.env[name];
     }
   } catch (e) {
@@ -38,7 +40,7 @@ export const getEnvVariable = (name: string, defaultValue?: string): string => {
   }
 
   // Return provided default or configured default
-  return defaultValue || ENV_VALIDATION.defaults[name] || '';
+  return defaultValue || ENV_VALIDATION.defaults[name] || "";
 };
 
 /**
@@ -52,7 +54,7 @@ export const validateEnvironment = (): void => {
     const value = getEnvVariable(envVar);
     if (!value || value === ENV_VALIDATION.defaults[envVar]) {
       // In production, required variables must be explicitly set
-      const isProduction = getEnvVariable('VITE_ENVIRONMENT') === 'production';
+      const isProduction = getEnvVariable("VITE_ENVIRONMENT") === "production";
       if (isProduction || !ENV_VALIDATION.defaults[envVar]) {
         missingRequired.push(envVar);
       }
@@ -60,8 +62,9 @@ export const validateEnvironment = (): void => {
   }
 
   if (missingRequired.length > 0) {
-    const errorMessage = `Missing required environment variables: ${missingRequired.join(', ')}\n` +
-      'Please set these variables in your environment or .env file.';
+    const errorMessage =
+      `Missing required environment variables: ${missingRequired.join(", ")}\n` +
+      "Please set these variables in your environment or .env file.";
     throw new Error(errorMessage);
   }
 };
@@ -69,6 +72,6 @@ export const validateEnvironment = (): void => {
 // Validate environment on module load
 validateEnvironment();
 
-export const API_BASE = getEnvVariable('VITE_API_URL');
-export const WS_URL = getEnvVariable('VITE_WS_URL');
-export const ENVIRONMENT = getEnvVariable('VITE_ENVIRONMENT');
+export const API_BASE = getEnvVariable("VITE_API_URL");
+export const WS_URL = getEnvVariable("VITE_WS_URL");
+export const ENVIRONMENT = getEnvVariable("VITE_ENVIRONMENT");

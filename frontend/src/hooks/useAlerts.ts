@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 export const useAlerts = () => {
   return useQuery({
-    queryKey: ['alerts'],
+    queryKey: ["alerts"],
     queryFn: () => api.getAlerts(),
     refetchInterval: 45 * 1000, // Slightly longer interval for performance (45 seconds)
     refetchIntervalInBackground: false, // Don't refetch when tab is not active

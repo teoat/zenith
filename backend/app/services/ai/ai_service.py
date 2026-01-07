@@ -2,37 +2,34 @@
 for tests and to satisfy `master_plan` implementation items.
 """
 
-import logging
-from typing import Any
-
-logger = logging.getLogger(__name__)
-
-
-"""
-AI Integration Layer for Zenith Fraud Detection
-Provides semantic search, AI analysis, and intelligent insights
-"""
-
 import json
 import logging
 import os
 import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 import numpy as np
-
-HAS_SEMANTIC = False
-SentenceTransformer = None
-faiss = None
-TfidfVectorizer = None
-cosine_similarity = None
 
 from app.services.infrastructure.error_handler import (
     ErrorCategory,
     ErrorSeverity,
     error_handler,
 )
+
+"""
+AI Integration Layer for Zenith Fraud Detection
+Provides semantic search, AI analysis, and intelligent insights
+"""
+
+logger = logging.getLogger(__name__)
+
+HAS_SEMANTIC = False
+SentenceTransformer = None
+faiss = None
+TfidfVectorizer = None
+cosine_similarity = None
 
 logger = logging.getLogger(__name__)
 
@@ -292,14 +289,10 @@ class AIService:
                     except Exception as e:
                         logger.warning(f"TF-IDF transform failed, using hash fallback: {e}")
                         # Hash-based fallback
-                        vector = np.array(
-                            [hash(content + str(k) + str(v)) % 1000 / 1000.0 for k, v in (metadata or {}).items()]
-                        )
+                        vector = np.array([hash(content + str(k) + str(v)) % 1000 / 1000.0 for k, v in (metadata or {}).items()])
                 else:
                     # Hash-based fallback
-                    vector = np.array(
-                        [hash(content + str(k) + str(v)) % 1000 / 1000.0 for k, v in (metadata or {}).items()]
-                    )
+                    vector = np.array([hash(content + str(k) + str(v)) % 1000 / 1000.0 for k, v in (metadata or {}).items()])
 
             # Store in memory
             self.vector_store[doc_id] = {
@@ -366,9 +359,7 @@ class AIService:
         except Exception as e:
             logger.error(f"Failed to persist document {doc_id}: {e}")
 
-    async def semantic_search(
-        self, query: str, limit: int = 10, filters: dict[str, Any] | None = None
-    ) -> list[dict[str, Any]]:
+    async def semantic_search(self, query: str, limit: int = 10, filters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """Perform semantic search across documents using FAISS or TF-IDF"""
         try:
             if not self.initialized or not self.vector_store:
@@ -450,9 +441,7 @@ class AIService:
             # Return empty results instead of raising - let router decide how to handle
             return []
 
-    async def _keyword_search(
-        self, query: str, limit: int, filters: dict[str, Any] | None = None
-    ) -> list[dict[str, Any]]:
+    async def _keyword_search(self, query: str, limit: int, filters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """Fallback keyword-based search"""
         query_lower = query.lower()
         results = []
@@ -593,9 +582,7 @@ class AIService:
             confidence = max(m["similarity"] for m in matches)
             # Take top match
             top_match = matches[0]
-            typology_name = (
-                top_match["metadata"].get("filename", "Unknown").replace(".md", "").replace("_", " ").title()
-            )
+            typology_name = top_match["metadata"].get("filename", "Unknown").replace(".md", "").replace("_", " ").title()
 
             insights.append(f"Activity matches '{typology_name}' typology patterns (Confidence: {confidence:.2f})")
 
@@ -906,9 +893,7 @@ class AIService:
                     "Forensic analysis indicates a 98.5% probability of automated layering. The timestamps match bot-like behavior."
                 )
             elif persona == "investigator":
-                results[persona] = (
-                    "I recommend interviewing the beneficiary. Their social graph links to known high-risk entities."
-                )
+                results[persona] = "I recommend interviewing the beneficiary. Their social graph links to known high-risk entities."
             else:
                 results[persona] = f"Perspective for {persona} is not currently configured."
         return results

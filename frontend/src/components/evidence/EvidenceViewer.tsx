@@ -1,7 +1,18 @@
-import React, { useState, useMemo } from 'react';
-import { usePersistedState } from '@/hooks/usePersistedState';
-import { Document, Page, pdfjs } from 'react-pdf';
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, FileText, Search, Type, AlertCircle, Copy, CheckCircle } from 'lucide-react';
+import React, { useState, useMemo } from "react";
+import { usePersistedState } from "@/hooks/usePersistedState";
+import { Document, Page, pdfjs } from "react-pdf";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  FileText,
+  Search,
+  Type,
+  AlertCircle,
+  Copy,
+  CheckCircle,
+} from "lucide-react";
 
 // Worker configuration (Critical for Vite)
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -12,17 +23,53 @@ export interface OCRRegion {
   text: string;
   confidence: number;
   bbox: { x: number; y: number; width: number; height: number };
-  type: 'amount' | 'date' | 'entity' | 'text';
+  type: "amount" | "date" | "entity" | "text";
 }
 
 // Mock OCR data - would come from backend in production
 const MOCK_OCR_REGIONS: OCRRegion[] = [
-  { id: '1', text: '$45,000.00', confidence: 0.98, bbox: { x: 120, y: 85, width: 100, height: 24 }, type: 'amount' },
-  { id: '2', text: 'John Doe', confidence: 0.95, bbox: { x: 50, y: 140, width: 80, height: 20 }, type: 'entity' },
-  { id: '3', text: '2024-12-01', confidence: 0.99, bbox: { x: 200, y: 140, width: 90, height: 20 }, type: 'date' },
-  { id: '4', text: 'Wire Transfer', confidence: 0.92, bbox: { x: 50, y: 200, width: 100, height: 18 }, type: 'text' },
-  { id: '5', text: 'Acme Corp LLC', confidence: 0.88, bbox: { x: 50, y: 250, width: 110, height: 20 }, type: 'entity' },
-  { id: '6', text: '$12,500.00', confidence: 0.97, bbox: { x: 200, y: 250, width: 90, height: 22 }, type: 'amount' },
+  {
+    id: "1",
+    text: "$45,000.00",
+    confidence: 0.98,
+    bbox: { x: 120, y: 85, width: 100, height: 24 },
+    type: "amount",
+  },
+  {
+    id: "2",
+    text: "John Doe",
+    confidence: 0.95,
+    bbox: { x: 50, y: 140, width: 80, height: 20 },
+    type: "entity",
+  },
+  {
+    id: "3",
+    text: "2024-12-01",
+    confidence: 0.99,
+    bbox: { x: 200, y: 140, width: 90, height: 20 },
+    type: "date",
+  },
+  {
+    id: "4",
+    text: "Wire Transfer",
+    confidence: 0.92,
+    bbox: { x: 50, y: 200, width: 100, height: 18 },
+    type: "text",
+  },
+  {
+    id: "5",
+    text: "Acme Corp LLC",
+    confidence: 0.88,
+    bbox: { x: 50, y: 250, width: 110, height: 20 },
+    type: "entity",
+  },
+  {
+    id: "6",
+    text: "$12,500.00",
+    confidence: 0.97,
+    bbox: { x: 200, y: 250, width: 90, height: 22 },
+    type: "amount",
+  },
 ];
 
 interface EvidenceViewerProps {
@@ -31,14 +78,27 @@ interface EvidenceViewerProps {
   initialRegionId?: string;
 }
 
-const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initialRegionId }) => {
+const EvidenceViewer: React.FC<EvidenceViewerProps> = ({
+  fileUrl,
+  ocrData,
+  initialRegionId,
+}) => {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState(1); // Page number usually resets per document
-  const [scale, setScale] = usePersistedState<number>('evidence_viewer_scale', 1.0);
-  const [showOCR, setShowOCR] = usePersistedState<boolean>('evidence_viewer_show_ocr', !!initialRegionId);
+  const [scale, setScale] = usePersistedState<number>(
+    "evidence_viewer_scale",
+    1.0,
+  );
+  const [showOCR, setShowOCR] = usePersistedState<boolean>(
+    "evidence_viewer_show_ocr",
+    !!initialRegionId,
+  );
   const [selectedRegion, setSelectedRegion] = useState<OCRRegion | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [filterType, setFilterType] = usePersistedState<string>('evidence_viewer_ocr_filter', 'all');
+  const [filterType, setFilterType] = usePersistedState<string>(
+    "evidence_viewer_ocr_filter",
+    "all",
+  );
 
   // Use provided OCR data or fall back to mock
   const regions = ocrData || MOCK_OCR_REGIONS;
@@ -46,18 +106,18 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
   // Set initial region if provided
   React.useEffect(() => {
     if (initialRegionId) {
-      const region = regions.find(r => r.id === initialRegionId);
+      const region = regions.find((r) => r.id === initialRegionId);
       if (region) {
         setSelectedRegion(region);
         setShowOCR(true);
       }
     }
   }, [initialRegionId, regions, setShowOCR]);
-  
+
   // Filter regions by type
   const filteredRegions = useMemo(() => {
-    if (filterType === 'all') return regions;
-    return regions.filter(r => r.type === filterType);
+    if (filterType === "all") return regions;
+    return regions.filter((r) => r.type === filterType);
   }, [regions, filterType]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
@@ -66,10 +126,30 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'amount': return { border: 'border-green-400', bg: 'bg-green-400/20', text: 'text-green-400' };
-      case 'date': return { border: 'border-blue-400', bg: 'bg-blue-400/20', text: 'text-blue-400' };
-      case 'entity': return { border: 'border-purple-400', bg: 'bg-purple-400/20', text: 'text-purple-400' };
-      default: return { border: 'border-yellow-400', bg: 'bg-yellow-400/20', text: 'text-yellow-400' };
+      case "amount":
+        return {
+          border: "border-green-400",
+          bg: "bg-green-400/20",
+          text: "text-green-400",
+        };
+      case "date":
+        return {
+          border: "border-blue-400",
+          bg: "bg-blue-400/20",
+          text: "text-blue-400",
+        };
+      case "entity":
+        return {
+          border: "border-purple-400",
+          bg: "bg-purple-400/20",
+          text: "text-purple-400",
+        };
+      default:
+        return {
+          border: "border-yellow-400",
+          bg: "bg-yellow-400/20",
+          text: "text-yellow-400",
+        };
     }
   };
 
@@ -100,8 +180,8 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
       {/* Toolbar */}
       <div className="h-12 bg-slate-800 border-b border-slate-700 flex justify-between items-center px-4 shrink-0">
         <div className="flex items-center gap-2">
-          <button 
-            onClick={() => setPageNumber(p => Math.max(1, p - 1))}
+          <button
+            onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
             disabled={pageNumber <= 1}
             className="p-1.5 hover:bg-slate-700 rounded text-slate-200 disabled:opacity-50"
             aria-label="Previous page"
@@ -109,10 +189,10 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
             <ChevronLeft size={18} />
           </button>
           <span className="text-sm text-slate-300 font-mono">
-           Page {pageNumber} of {numPages || '--'}
+            Page {pageNumber} of {numPages || "--"}
           </span>
-          <button 
-            onClick={() => setPageNumber(p => Math.min(numPages || 1, p + 1))}
+          <button
+            onClick={() => setPageNumber((p) => Math.min(numPages || 1, p + 1))}
             disabled={pageNumber >= (numPages || 1)}
             className="p-1.5 hover:bg-slate-700 rounded text-slate-200 disabled:opacity-50"
             aria-label="Next page"
@@ -123,11 +203,21 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
 
         <div className="flex items-center gap-2">
           <div className="h-4 w-[1px] bg-slate-700 mx-2"></div>
-          <button onClick={() => setScale(s => Math.max(0.5, s - 0.1))} className="p-1.5 hover:bg-slate-700 rounded text-slate-200" aria-label="Zoom out">
+          <button
+            onClick={() => setScale((s) => Math.max(0.5, s - 0.1))}
+            className="p-1.5 hover:bg-slate-700 rounded text-slate-200"
+            aria-label="Zoom out"
+          >
             <ZoomOut size={18} />
           </button>
-          <span className="text-xs text-slate-400 w-12 text-center">{(scale * 100).toFixed(0)}%</span>
-          <button onClick={() => setScale(s => Math.min(2, s + 0.1))} className="p-1.5 hover:bg-slate-700 rounded text-slate-200" aria-label="Zoom in">
+          <span className="text-xs text-slate-400 w-12 text-center">
+            {(scale * 100).toFixed(0)}%
+          </span>
+          <button
+            onClick={() => setScale((s) => Math.min(2, s + 0.1))}
+            className="p-1.5 hover:bg-slate-700 rounded text-slate-200"
+            aria-label="Zoom in"
+          >
             <ZoomIn size={18} />
           </button>
         </div>
@@ -147,16 +237,21 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
               <option value="text">Text</option>
             </select>
           )}
-          <button 
+          <button
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-bold transition-colors ${
-              showOCR ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              showOCR
+                ? "bg-blue-600 text-white"
+                : "bg-slate-700 text-slate-300 hover:bg-slate-600"
             }`}
             onClick={() => setShowOCR(!showOCR)}
           >
             <Type size={14} />
             OCR ({regions.length})
           </button>
-          <button className="p-1.5 hover:bg-slate-700 rounded text-slate-200" aria-label="Search document">
+          <button
+            className="p-1.5 hover:bg-slate-700 rounded text-slate-200"
+            aria-label="Search document"
+          >
             <Search size={18} />
           </button>
         </div>
@@ -165,7 +260,7 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
       {/* Document Canvas */}
       <div className="flex-1 overflow-auto bg-slate-950 flex justify-center p-8 relative">
         <div className="relative shadow-xl">
-           <Document
+          <Document
             file={fileUrl}
             onLoadSuccess={onDocumentLoadSuccess}
             loading={
@@ -181,46 +276,52 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
               </div>
             }
           >
-            <Page 
-              pageNumber={pageNumber} 
-              scale={scale} 
-              renderTextLayer={true} 
+            <Page
+              pageNumber={pageNumber}
+              scale={scale}
+              renderTextLayer={true}
               renderAnnotationLayer={true}
               className="border border-white/10"
             />
           </Document>
 
           {/* OCR Overlay Regions */}
-          {showOCR && filteredRegions.map((region) => {
-            const colors = getTypeColor(region.type);
-            const isSelected = selectedRegion?.id === region.id;
-            
-            return (
-              <div
-                key={region.id}
-                className={`absolute border-2 ${colors.border} ${colors.bg} cursor-pointer transition-all
-                  ${isSelected ? 'ring-2 ring-white shadow-lg z-20' : 'hover:ring-1 hover:ring-white/50 z-10'}`}
-                style={{
-                  left: region.bbox.x * scale,
-                  top: region.bbox.y * scale,
-                  width: region.bbox.width * scale,
-                  height: region.bbox.height * scale,
-                }}
-                onClick={() => setSelectedRegion(isSelected ? null : region)}
-                role="button"
-                aria-label={`OCR region: ${region.text}`}
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && setSelectedRegion(isSelected ? null : region)}
-              >
-                {/* Confidence tooltip */}
-                <div className={`absolute -top-7 left-0 ${colors.bg} ${colors.text} text-xs font-bold px-2 py-0.5 rounded 
+          {showOCR &&
+            filteredRegions.map((region) => {
+              const colors = getTypeColor(region.type);
+              const isSelected = selectedRegion?.id === region.id;
+
+              return (
+                <div
+                  key={region.id}
+                  className={`absolute border-2 ${colors.border} ${colors.bg} cursor-pointer transition-all
+                  ${isSelected ? "ring-2 ring-white shadow-lg z-20" : "hover:ring-1 hover:ring-white/50 z-10"}`}
+                  style={{
+                    left: region.bbox.x * scale,
+                    top: region.bbox.y * scale,
+                    width: region.bbox.width * scale,
+                    height: region.bbox.height * scale,
+                  }}
+                  onClick={() => setSelectedRegion(isSelected ? null : region)}
+                  role="button"
+                  aria-label={`OCR region: ${region.text}`}
+                  tabIndex={0}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" &&
+                    setSelectedRegion(isSelected ? null : region)
+                  }
+                >
+                  {/* Confidence tooltip */}
+                  <div
+                    className={`absolute -top-7 left-0 ${colors.bg} ${colors.text} text-xs font-bold px-2 py-0.5 rounded 
                   opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none
-                  ${isSelected ? 'opacity-100' : ''}`}>
-                  {(region.confidence * 100).toFixed(0)}% | {region.type}
+                  ${isSelected ? "opacity-100" : ""}`}
+                  >
+                    {(region.confidence * 100).toFixed(0)}% | {region.type}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
 
@@ -230,14 +331,18 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <span className={`text-xs font-bold px-2 py-0.5 rounded ${getTypeColor(selectedRegion.type).bg} ${getTypeColor(selectedRegion.type).text}`}>
+                <span
+                  className={`text-xs font-bold px-2 py-0.5 rounded ${getTypeColor(selectedRegion.type).bg} ${getTypeColor(selectedRegion.type).text}`}
+                >
                   {selectedRegion.type.toUpperCase()}
                 </span>
                 <span className="text-xs text-slate-400">
                   Confidence: {(selectedRegion.confidence * 100).toFixed(1)}%
                 </span>
               </div>
-              <p className="text-lg font-mono text-white">{selectedRegion.text}</p>
+              <p className="text-lg font-mono text-white">
+                {selectedRegion.text}
+              </p>
             </div>
             <button
               onClick={() => copyText(selectedRegion)}
@@ -245,9 +350,13 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
               aria-label="Copy text"
             >
               {copiedId === selectedRegion.id ? (
-                <><CheckCircle size={14} /> Copied!</>
+                <>
+                  <CheckCircle size={14} /> Copied!
+                </>
               ) : (
-                <><Copy size={14} /> Copy</>
+                <>
+                  <Copy size={14} /> Copy
+                </>
               )}
             </button>
           </div>
@@ -258,11 +367,17 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
       {showOCR && (
         <div className="h-8 bg-slate-800 border-t border-slate-700 flex items-center justify-between px-4 text-xs text-slate-400">
           <span>
-            {filteredRegions.length} regions detected 
-            {filterType !== 'all' && ` (filtered: ${filterType})`}
+            {filteredRegions.length} regions detected
+            {filterType !== "all" && ` (filtered: ${filterType})`}
           </span>
           <span>
-            Avg confidence: {(filteredRegions.reduce((sum, r) => sum + r.confidence, 0) / filteredRegions.length * 100).toFixed(1)}%
+            Avg confidence:{" "}
+            {(
+              (filteredRegions.reduce((sum, r) => sum + r.confidence, 0) /
+                filteredRegions.length) *
+              100
+            ).toFixed(1)}
+            %
           </span>
         </div>
       )}
@@ -271,4 +386,3 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({ fileUrl, ocrData, initi
 };
 
 export default EvidenceViewer;
-

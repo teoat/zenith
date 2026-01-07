@@ -18,9 +18,7 @@ class CDNManager:
     """Manages CDN integration for global content delivery"""
 
     def __init__(self):
-        self.cdn_provider = os.getenv(
-            "CDN_PROVIDER", "cloudflare"
-        )  # cloudflare, cloudfront, fastly
+        self.cdn_provider = os.getenv("CDN_PROVIDER", "cloudflare")  # cloudflare, cloudfront, fastly
         self.cdn_endpoint = os.getenv("CDN_ENDPOINT", "")
         self.api_key = os.getenv("CDN_API_KEY", "")
         self.cache_config = {
@@ -80,9 +78,7 @@ class CDNManager:
                 "ap-northeast-1",
                 "sa-east-1",
             ],
-            "fastly": [
-                "Global Network"  # Fastly has 75+ POPs worldwide
-            ],
+            "fastly": ["Global Network"],  # Fastly has 75+ POPs worldwide
         }
 
         return regions.get(self.cdn_provider, ["Global"])
@@ -113,23 +109,17 @@ class CDNManager:
                 {
                     "pattern": "/static/*",
                     "ttl": self.cache_config["static_assets"]["ttl"],
-                    "cache_control": self.cache_config["static_assets"][
-                        "cache_control"
-                    ],
+                    "cache_control": self.cache_config["static_assets"]["cache_control"],
                 },
                 {
                     "pattern": "/api/v1/reports/*",
                     "ttl": self.cache_config["api_responses"]["ttl"],
-                    "cache_control": self.cache_config["api_responses"][
-                        "cache_control"
-                    ],
+                    "cache_control": self.cache_config["api_responses"]["cache_control"],
                 },
                 {
                     "pattern": "/api/v1/cases/*",
                     "ttl": self.cache_config["dynamic_content"]["ttl"],
-                    "cache_control": self.cache_config["dynamic_content"][
-                        "cache_control"
-                    ],
+                    "cache_control": self.cache_config["dynamic_content"]["cache_control"],
                 },
             ],
             "edge_computing": {
@@ -260,9 +250,7 @@ class CDNManager:
 
         return stats
 
-    async def optimize_content_delivery(
-        self, content_type: str, content: bytes
-    ) -> dict[str, Any]:
+    async def optimize_content_delivery(self, content_type: str, content: bytes) -> dict[str, Any]:
         """Optimize content for delivery"""
         optimization_result = {
             "original_size": len(content),
@@ -280,9 +268,7 @@ class CDNManager:
 
         elif content_type.startswith("image/"):
             # Image optimization
-            optimization_result["optimizations_applied"].extend(
-                ["format_conversion", "quality_optimization", "responsive_sizing"]
-            )
+            optimization_result["optimizations_applied"].extend(["format_conversion", "quality_optimization", "responsive_sizing"])
             optimization_result["optimized_size"] = int(len(content) * 0.6)  # Estimate
 
         elif content_type in ["application/javascript", "text/javascript"]:
@@ -290,9 +276,7 @@ class CDNManager:
             optimization_result["optimizations_applied"].append("minification")
             optimization_result["optimized_size"] = int(len(content) * 0.8)  # Estimate
 
-        optimization_result["compression_ratio"] = (
-            optimization_result["optimized_size"] / optimization_result["original_size"]
-        )
+        optimization_result["compression_ratio"] = optimization_result["optimized_size"] / optimization_result["original_size"]
 
         return optimization_result
 
@@ -301,9 +285,7 @@ class MessageQueueManager:
     """Manages message queue architecture for async processing"""
 
     def __init__(self):
-        self.queue_provider = os.getenv(
-            "QUEUE_PROVIDER", "rabbitmq"
-        )  # rabbitmq, redis, sqs
+        self.queue_provider = os.getenv("QUEUE_PROVIDER", "rabbitmq")  # rabbitmq, redis, sqs
         self.connection_url = os.getenv("QUEUE_URL", "amqp://localhost:5672")
         self.queues = {
             "fraud_detection": "fraud_analysis_queue",
@@ -362,9 +344,7 @@ class MessageQueueManager:
 
         return queue_config
 
-    async def publish_message(
-        self, queue: str, message: dict[str, Any], priority: int = 0
-    ) -> dict[str, Any]:
+    async def publish_message(self, queue: str, message: dict[str, Any], priority: int = 0) -> dict[str, Any]:
         """Publish message to queue"""
         logger.info(f"Publishing message to queue: {queue}")
 
@@ -386,13 +366,9 @@ class MessageQueueManager:
 
         return publish_result
 
-    async def consume_messages(
-        self, queue: str, handler: callable, concurrency: int = 1
-    ) -> None:
+    async def consume_messages(self, queue: str, handler: callable, concurrency: int = 1) -> None:
         """Consume messages from queue with specified handler"""
-        logger.info(
-            f"Starting consumer for queue: {queue} with concurrency: {concurrency}"
-        )
+        logger.info(f"Starting consumer for queue: {queue} with concurrency: {concurrency}")
 
         consumer_id = f"{queue}_consumer_{len(self.consumers)}"
         self.consumers[consumer_id] = {
@@ -425,9 +401,7 @@ class MessageQueueManager:
                 for message in mock_messages:
                     try:
                         await handler(message)
-                        logger.info(
-                            f"Processed message from {queue}: {message['type']}"
-                        )
+                        logger.info(f"Processed message from {queue}: {message['type']}")
                     except Exception as e:
                         logger.error(f"Message processing failed: {e}")
 

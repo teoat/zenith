@@ -91,9 +91,7 @@ async def create_relationship(
         logger.error(f"Error creating relationship: {e}")
         # Identify if FK failure
         if "foreign key" in str(e).lower():
-            raise HTTPException(
-                status_code=404, detail="One or more entities not found"
-            )
+            raise HTTPException(status_code=404, detail="One or more entities not found")
         raise HTTPException(status_code=500, detail=str(e))
 
 

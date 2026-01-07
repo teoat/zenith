@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { api, type MetricsData } from '@/lib/api';
+import { useQuery } from "@tanstack/react-query";
+import { api, type MetricsData } from "@/lib/api";
 
 export const useDashboardMetrics = () => {
   return useQuery<MetricsData, Error>({
-    queryKey: ['dashboard-metrics'],
+    queryKey: ["dashboard-metrics"],
     queryFn: () => api.getMetrics(),
     // Refetch every 2 minutes to keep dashboard fresh (reduced from 1 min for performance)
     refetchInterval: 2 * 60 * 1000,

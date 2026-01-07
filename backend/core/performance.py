@@ -16,27 +16,17 @@ from starlette.middleware.base import BaseHTTPMiddleware
 logger = logging.getLogger(__name__)
 
 # Prometheus Metrics
-http_requests_total = Counter(
-    "http_requests_total", "Total HTTP requests", ["method", "endpoint", "status"]
-)
+http_requests_total = Counter("http_requests_total", "Total HTTP requests", ["method", "endpoint", "status"])
 
-http_request_duration_seconds = Histogram(
-    "http_request_duration_seconds", "HTTP request latency", ["method", "endpoint"]
-)
+http_request_duration_seconds = Histogram("http_request_duration_seconds", "HTTP request latency", ["method", "endpoint"])
 
-fraud_detections_total = Counter(
-    "fraud_detections_total", "Total fraud detections", ["risk_level"]
-)
+fraud_detections_total = Counter("fraud_detections_total", "Total fraud detections", ["risk_level"])
 
-ai_predictions_total = Counter(
-    "ai_predictions_total", "Total AI predictions made", ["model_type"]
-)
+ai_predictions_total = Counter("ai_predictions_total", "Total AI predictions made", ["model_type"])
 
 pending_cases = Gauge("pending_cases", "Number of pending fraud cases")
 
-database_query_duration = Histogram(
-    "database_query_duration_seconds", "Database query execution time", ["query_type"]
-)
+database_query_duration = Histogram("database_query_duration_seconds", "Database query execution time", ["query_type"])
 
 cache_hits_total = Counter("cache_hits_total", "Total cache hits", ["cache_type"])
 
@@ -64,13 +54,9 @@ class PerformanceMonitoringMiddleware(BaseHTTPMiddleware):
         status = response.status_code
 
         # Record metrics
-        http_requests_total.labels(
-            method=method, endpoint=endpoint, status=status
-        ).inc()
+        http_requests_total.labels(method=method, endpoint=endpoint, status=status).inc()
 
-        http_request_duration_seconds.labels(method=method, endpoint=endpoint).observe(
-            duration
-        )
+        http_request_duration_seconds.labels(method=method, endpoint=endpoint).observe(duration)
 
         # Add performance headers
         response.headers["X-Response-Time"] = f"{duration:.4f}s"

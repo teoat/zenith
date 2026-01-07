@@ -258,9 +258,7 @@ class StructuredLogger:
                         return True
                 return False
 
-        return CompressedRotatingHandler(
-            filename=log_file, max_bytes=self.max_file_size_bytes, backup_count=5
-        )
+        return CompressedRotatingHandler(filename=log_file, max_bytes=self.max_file_size_bytes, backup_count=5)
 
     def _create_console_formatter(self) -> logging.Formatter:
         """Create console log formatter"""
@@ -276,9 +274,7 @@ class StructuredLogger:
             def format(self, record):
                 # Extract structured data from record
                 log_data = {
-                    "timestamp": datetime.fromtimestamp(
-                        record.created, UTC
-                    ).isoformat(),
+                    "timestamp": datetime.fromtimestamp(record.created, UTC).isoformat(),
                     "level": record.levelname,
                     "logger": record.name,
                     "message": record.getMessage(),
@@ -324,19 +320,11 @@ class StructuredLogger:
         for field in pii_fields_to_scrub:
             if field in scrubbed_metadata:
                 if isinstance(scrubbed_metadata[field], str):
-                    scrubbed_metadata[field] = PIIScrubber.scrub_pii(
-                        scrubbed_metadata[field]
-                    )
+                    scrubbed_metadata[field] = PIIScrubber.scrub_pii(scrubbed_metadata[field])
 
         # Scrub user agent and IP
-        scrubbed_user_agent = (
-            PIIScrubber.scrub_pii(log_entry.user_agent)
-            if log_entry.user_agent
-            else None
-        )
-        scrubbed_ip = (
-            PIIScrubber.hash_pii(log_entry.ip_address) if log_entry.ip_address else None
-        )
+        scrubbed_user_agent = PIIScrubber.scrub_pii(log_entry.user_agent) if log_entry.user_agent else None
+        scrubbed_ip = PIIScrubber.hash_pii(log_entry.ip_address) if log_entry.ip_address else None
 
         return LogEntry(
             timestamp=log_entry.timestamp,
@@ -401,9 +389,7 @@ class StructuredLogger:
         """Log info message"""
         self.log(LogLevel.INFO, category, message, **kwargs)
 
-    def warning(
-        self, message: str, category: LogCategory = LogCategory.SYSTEM, **kwargs
-    ):
+    def warning(self, message: str, category: LogCategory = LogCategory.SYSTEM, **kwargs):
         """Log warning message"""
         self.log(LogLevel.WARNING, category, message, **kwargs)
 
@@ -411,9 +397,7 @@ class StructuredLogger:
         """Log error message"""
         self.log(LogLevel.ERROR, category, message, **kwargs)
 
-    def critical(
-        self, message: str, category: LogCategory = LogCategory.ERROR, **kwargs
-    ):
+    def critical(self, message: str, category: LogCategory = LogCategory.ERROR, **kwargs):
         """Log critical message"""
         self.log(LogLevel.CRITICAL, category, message, **kwargs)
 
@@ -454,9 +438,7 @@ class StructuredLogger:
             },
         )
 
-    def log_security_event(
-        self, event_type: str, severity: str, user_id: str | None = None, **kwargs
-    ):
+    def log_security_event(self, event_type: str, severity: str, user_id: str | None = None, **kwargs):
         """Log security event"""
         self.warning(
             f"Security event: {event_type}",
@@ -470,9 +452,7 @@ class StructuredLogger:
             },
         )
 
-    def log_performance_metric(
-        self, metric_name: str, value: float, unit: str | None = None, **kwargs
-    ):
+    def log_performance_metric(self, metric_name: str, value: float, unit: str | None = None, **kwargs):
         """Log performance metric"""
         self.info(
             f"Performance metric: {metric_name} = {value}",
@@ -495,18 +475,14 @@ class StructuredLogger:
             # Update error counts
             if log_entry.level in [LogLevel.ERROR, LogLevel.CRITICAL]:
                 error_key = log_entry.error_code or "unknown"
-                self.telemetry_data["error_counts"][error_key] = (
-                    self.telemetry_data["error_counts"].get(error_key, 0) + 1
-                )
+                self.telemetry_data["error_counts"][error_key] = self.telemetry_data["error_counts"].get(error_key, 0) + 1
 
             # Update performance metrics
             if log_entry.category == LogCategory.PERFORMANCE and log_entry.duration_ms:
                 self.telemetry_data["performance_metrics"].append(
                     {
                         "timestamp": log_entry.timestamp,
-                        "metric": log_entry.metadata.get(
-                            "metric_name", "response_time"
-                        ),
+                        "metric": log_entry.metadata.get("metric_name", "response_time"),
                         "value": log_entry.duration_ms,
                         "unit": "ms",
                     }
@@ -540,11 +516,7 @@ class StructuredLogger:
             return {
                 **self.telemetry_data,
                 "current_time": datetime.now(UTC).isoformat(),
-                "uptime_hours": (
-                    datetime.now(UTC)
-                    - datetime.fromisoformat(self.telemetry_data["start_time"])
-                ).total_seconds()
-                / 3600,
+                "uptime_hours": (datetime.now(UTC) - datetime.fromisoformat(self.telemetry_data["start_time"])).total_seconds() / 3600,
             }
 
     def reset_telemetry(self):
@@ -620,20 +592,14 @@ def log_api_request(
     **kwargs,
 ):
     """Log API request"""
-    structured_logger.log_api_request(
-        method, endpoint, status_code, duration_ms, user_id, **kwargs
-    )
+    structured_logger.log_api_request(method, endpoint, status_code, duration_ms, user_id, **kwargs)
 
 
-def log_security_event(
-    event_type: str, severity: str, user_id: str | None = None, **kwargs
-):
+def log_security_event(event_type: str, severity: str, user_id: str | None = None, **kwargs):
     """Log security event"""
     structured_logger.log_security_event(event_type, severity, user_id, **kwargs)
 
 
-def log_performance_metric(
-    metric_name: str, value: float, unit: str | None = None, **kwargs
-):
+def log_performance_metric(metric_name: str, value: float, unit: str | None = None, **kwargs):
     """Log performance metric"""
     structured_logger.log_performance_metric(metric_name, value, unit, **kwargs)

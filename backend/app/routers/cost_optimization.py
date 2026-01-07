@@ -35,9 +35,7 @@ async def get_infrastructure_costs(
 ):
     """Get comprehensive infrastructure cost analysis and optimization recommendations"""
     try:
-        logger.info(
-            f"Cost analysis requested by user: {current_user.id if current_user else 'anonymous'}"
-        )
+        logger.info(f"Cost analysis requested by user: {current_user.id if current_user else 'anonymous'}")
 
         cost_service = CostOptimizationService()
         analysis = await cost_service.analyze_infrastructure_costs()
@@ -56,9 +54,7 @@ async def get_infrastructure_costs(
                 }
                 for i, opt in enumerate(analysis.optimizations or [])
             ],
-            roi_percentage=analysis.roi_percentage
-            if hasattr(analysis, "roi_percentage")
-            else 1200,
+            roi_percentage=analysis.roi_percentage if hasattr(analysis, "roi_percentage") else 1200,
         )
 
     except Exception as e:
@@ -75,9 +71,7 @@ async def apply_cost_optimization(
 ):
     """Apply a specific cost optimization strategy"""
     try:
-        logger.info(
-            f"Applying optimization {optimization_id} for user: {current_user.id if current_user else 'anonymous'}"
-        )
+        logger.info(f"Applying optimization {optimization_id} for user: {current_user.id if current_user else 'anonymous'}")
 
         cost_service = CostOptimizationService()
         result = await cost_service.apply_optimization(optimization_id)
@@ -92,9 +86,7 @@ async def apply_cost_optimization(
 
     except Exception as e:
         logger.error(f"Failed to apply optimization {optimization_id}: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Optimization application failed: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Optimization application failed: {e!s}")
 
 
 @router.get("/savings/projection")
@@ -119,10 +111,7 @@ async def get_savings_projection(
                     "month": month,
                     "monthly_savings": monthly_savings,
                     "cumulative_savings": cumulative_savings,
-                    "roi_percentage": (
-                        cumulative_savings / (analysis.current_spend * 0.25)
-                    )
-                    * 100,
+                    "roi_percentage": (cumulative_savings / (analysis.current_spend * 0.25)) * 100,
                 }
             )
 

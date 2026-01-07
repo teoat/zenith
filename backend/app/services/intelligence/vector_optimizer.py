@@ -126,16 +126,12 @@ class VectorOptimizer:
         validation_results = []
         for test_case in test_cases:
             # Simulate validation
-            result = (
-                "passed" if test_case["input"] != test_case["expected"] else "failed"
-            )
+            result = "passed" if test_case["input"] != test_case["expected"] else "failed"
             validation_results.append(result)
 
         return {
             "validation_rules": validation_rules,
-            "test_coverage": len([r for r in validation_results if r == "passed"])
-            / len(test_cases)
-            * 100,
+            "test_coverage": len([r for r in validation_results if r == "passed"]) / len(test_cases) * 100,
             "false_positive_rate": 0.1,  # 0.1% false positives
             "performance_impact": 2,  # 2% performance overhead
         }
@@ -271,9 +267,7 @@ class VectorOptimizer:
             {"trigger": "memory_high", "action": "scale_up", "success": True},
         ]
 
-        success_rate = sum(1 for event in scaling_events if event["success"]) / len(
-            scaling_events
-        )
+        success_rate = sum(1 for event in scaling_events if event["success"]) / len(scaling_events)
 
         return {
             "scaling_config": scaling_config,

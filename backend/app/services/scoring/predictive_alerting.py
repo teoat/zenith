@@ -119,9 +119,7 @@ class PredictiveAlertingEngine:
 
         return alerts
 
-    async def _analyze_metric(
-        self, metric_name: str, current_value: float
-    ) -> Alert | None:
+    async def _analyze_metric(self, metric_name: str, current_value: float) -> Alert | None:
         """Analyze individual metric for anomalies"""
         if metric_name not in self.anomaly_thresholds:
             return None
@@ -189,8 +187,7 @@ class PredictiveAlertingEngine:
 
         # Resource exhaustion prediction
         elif metric_name in ["disk_usage", "memory_usage"] and (
-            trend > thresholds["trend_threshold"]
-            and current_value > thresholds["warning"]
+            trend > thresholds["trend_threshold"] and current_value > thresholds["warning"]
         ):
             severity = AlertSeverity.MEDIUM
             predicted_impact = f"{metric_name} trending toward exhaustion"
@@ -236,14 +233,10 @@ class PredictiveAlertingEngine:
         # Memory leak detection
         if "memory_usage" in metrics and "response_time" in metrics:
             memory_trend = self._calculate_trend(
-                self.metrics_history.get(
-                    "memory_usage", MetricData("memory_usage", [], [], {})
-                ).values[-10:]
+                self.metrics_history.get("memory_usage", MetricData("memory_usage", [], [], {})).values[-10:]
             )
             response_trend = self._calculate_trend(
-                self.metrics_history.get(
-                    "response_time", MetricData("response_time", [], [], {})
-                ).values[-10:]
+                self.metrics_history.get("response_time", MetricData("response_time", [], [], {})).values[-10:]
             )
 
             if memory_trend > 2.0 and response_trend > 50.0:
@@ -309,18 +302,14 @@ class PredictiveAlertingEngine:
         slope, _ = np.polyfit(x, values, 1)
         return slope
 
-    def _calculate_correlation(
-        self, series1: list[float], series2: list[float]
-    ) -> float:
+    def _calculate_correlation(self, series1: list[float], series2: list[float]) -> float:
         """Calculate Pearson correlation coefficient"""
         if len(series1) != len(series2) or len(series1) < 2:
             return 0.0
 
         return np.corrcoef(series1, series2)[0, 1]
 
-    def _classify_alert_type(
-        self, metric_name: str, severity: AlertSeverity
-    ) -> AlertType:
+    def _classify_alert_type(self, metric_name: str, severity: AlertSeverity) -> AlertType:
         """Classify alert type based on metric and severity"""
         if metric_name in ["cpu_usage", "memory_usage", "response_time"]:
             return AlertType.PERFORMANCE_DEGRADATION
@@ -354,9 +343,7 @@ class PredictiveAlertingEngine:
         for metric_name, value in metrics.items():
             if isinstance(value, (int, float)):
                 if metric_name not in self.metrics_history:
-                    self.metrics_history[metric_name] = MetricData(
-                        name=metric_name, values=[], timestamps=[], metadata={}
-                    )
+                    self.metrics_history[metric_name] = MetricData(name=metric_name, values=[], timestamps=[], metadata={})
 
                 history = self.metrics_history[metric_name]
                 history.values.append(float(value))
@@ -391,18 +378,12 @@ class PredictiveAlertingEngine:
         severity_counts = {}
 
         for alert in active_alerts:
-            severity_counts[alert.severity.value] = (
-                severity_counts.get(alert.severity.value, 0) + 1
-            )
+            severity_counts[alert.severity.value] = severity_counts.get(alert.severity.value, 0) + 1
 
         return {
             "total_active": len(active_alerts),
             "by_severity": severity_counts,
-            "most_critical": (
-                max(active_alerts, key=lambda x: x.severity.value)
-                if active_alerts
-                else None
-            ),
+            "most_critical": (max(active_alerts, key=lambda x: x.severity.value) if active_alerts else None),
         }
 
 

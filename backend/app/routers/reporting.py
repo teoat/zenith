@@ -620,16 +620,12 @@ async def get_financial_health(case_id: str, db: Session = Depends(get_db)):
     try:
         # Get transaction aggregates
         inflows = (
-            db.query(func.sum(Transaction.amount))
-            .filter(Transaction.case_id == case_id, Transaction.transaction_type == "CREDIT")
-            .scalar()
+            db.query(func.sum(Transaction.amount)).filter(Transaction.case_id == case_id, Transaction.transaction_type == "CREDIT").scalar()
             or 0.0
         )
 
         outflows = (
-            db.query(func.sum(Transaction.amount))
-            .filter(Transaction.case_id == case_id, Transaction.transaction_type == "DEBIT")
-            .scalar()
+            db.query(func.sum(Transaction.amount)).filter(Transaction.case_id == case_id, Transaction.transaction_type == "DEBIT").scalar()
             or 0.0
         )
 

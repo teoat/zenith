@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { CheckCircle, Zap, Database, Shield } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { CheckCircle, Zap, Database, Shield } from "lucide-react";
 
 const GraphQLTab: React.FC = () => {
   return (
@@ -13,7 +13,8 @@ const GraphQLTab: React.FC = () => {
       <div className="graphql-federation">
         <h3 className="section-title">GraphQL Federation</h3>
         <p className="section-description">
-          Unified API layer with federated GraphQL services for seamless data access
+          Unified API layer with federated GraphQL services for seamless data
+          access
         </p>
 
         {/* Federation Status */}
@@ -24,7 +25,9 @@ const GraphQLTab: React.FC = () => {
             </div>
             <div className="status-content">
               <h3 className="status-title">Federation Gateway</h3>
-              <p className="status-description">Operational - Composing 8 GraphQL services</p>
+              <p className="status-description">
+                Operational - Composing 8 GraphQL services
+              </p>
             </div>
           </div>
         </div>
@@ -38,7 +41,9 @@ const GraphQLTab: React.FC = () => {
                 <Zap className="w-5 h-5 text-blue-500" />
                 <h5 className="service-name">User Service</h5>
               </div>
-              <p className="service-description">User management and authentication</p>
+              <p className="service-description">
+                User management and authentication
+              </p>
               <div className="service-meta">
                 <span className="version">v2.1.0</span>
                 <span className="status healthy">Healthy</span>
@@ -54,7 +59,9 @@ const GraphQLTab: React.FC = () => {
                 <Database className="w-5 h-5 text-green-500" />
                 <h5 className="service-name">Transaction Service</h5>
               </div>
-              <p className="service-description">Transaction processing and history</p>
+              <p className="service-description">
+                Transaction processing and history
+              </p>
               <div className="service-meta">
                 <span className="version">v1.8.3</span>
                 <span className="status healthy">Healthy</span>
@@ -70,7 +77,9 @@ const GraphQLTab: React.FC = () => {
                 <Shield className="w-5 h-5 text-purple-500" />
                 <h5 className="service-name">Compliance Service</h5>
               </div>
-              <p className="service-description">Regulatory compliance and reporting</p>
+              <p className="service-description">
+                Regulatory compliance and reporting
+              </p>
               <div className="service-meta">
                 <span className="version">v3.2.1</span>
                 <span className="status healthy">Healthy</span>
@@ -85,11 +94,13 @@ const GraphQLTab: React.FC = () => {
 
         {/* Federation Query Interface */}
         <div className="federation-query">
-          <h4 className="text-md font-semibold mb-4">Federated Query Playground</h4>
+          <h4 className="text-md font-semibold mb-4">
+            Federated Query Playground
+          </h4>
           <div className="query-interface">
             <div className="query-editor">
               <pre className="query-code">
-{`query GetUserTransactions($userId: ID!) {
+                {`query GetUserTransactions($userId: ID!) {
   user(id: $userId) {
     id
     name
@@ -110,7 +121,7 @@ const GraphQLTab: React.FC = () => {
             <div className="query-result">
               <h5 className="result-title">Query Result:</h5>
               <pre className="result-json">
-{`{
+                {`{
   "data": {
     "user": {
       "id": "123",

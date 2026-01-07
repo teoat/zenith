@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BarChart3, Activity, Clock } from 'lucide-react';
-import type { Integration } from '@/lib/api';
+import React from "react";
+import { motion } from "framer-motion";
+import { BarChart3, Activity, Clock } from "lucide-react";
+import type { Integration } from "@/lib/api";
 
 interface AnalyticsTabProps {
   integrations: Integration[];
@@ -23,7 +23,9 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ integrations }) => {
             <h4 className="chart-title">Request Volume by Integration</h4>
             <div className="chart-placeholder">
               <BarChart3 className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-              <p className="text-slate-500 text-center">Request volume chart would be displayed here</p>
+              <p className="text-slate-500 text-center">
+                Request volume chart would be displayed here
+              </p>
             </div>
           </div>
 
@@ -31,7 +33,9 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ integrations }) => {
             <h4 className="chart-title">Success Rate Trends</h4>
             <div className="chart-placeholder">
               <Activity className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-              <p className="text-slate-500 text-center">Success rate trends would be displayed here</p>
+              <p className="text-slate-500 text-center">
+                Success rate trends would be displayed here
+              </p>
             </div>
           </div>
 
@@ -39,13 +43,17 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ integrations }) => {
             <h4 className="chart-title">Latency Distribution</h4>
             <div className="chart-placeholder">
               <Clock className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-              <p className="text-slate-500 text-center">Latency distribution would be displayed here</p>
+              <p className="text-slate-500 text-center">
+                Latency distribution would be displayed here
+              </p>
             </div>
           </div>
         </div>
 
         <div className="analytics-table">
-          <h4 className="text-md font-semibold mb-4">Integration Performance</h4>
+          <h4 className="text-md font-semibold mb-4">
+            Integration Performance
+          </h4>
           <div className="table-container">
             <table className="performance-table">
               <thead>
@@ -63,13 +71,17 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ integrations }) => {
                     <td className="font-medium">{integration.name}</td>
                     <td>{integration.requestCount.toLocaleString()}</td>
                     <td>
-                      <span className={`success-rate ${(integration.successRate * 100) >= 95 ? 'high' : (integration.successRate * 100) >= 90 ? 'medium' : 'low'}`}>
+                      <span
+                        className={`success-rate ${integration.successRate * 100 >= 95 ? "high" : integration.successRate * 100 >= 90 ? "medium" : "low"}`}
+                      >
                         {(integration.successRate * 100).toFixed(1)}%
                       </span>
                     </td>
                     <td>245ms</td>
                     <td>
-                      <span className={`status-badge status-${integration.status}`}>
+                      <span
+                        className={`status-badge status-${integration.status}`}
+                      >
                         {integration.status}
                       </span>
                     </td>

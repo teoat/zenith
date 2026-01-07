@@ -19,10 +19,8 @@ from core.logging import log_security_event, logger
 
 # SSOT Integration
 try:
-    sys.path.append(
-        os.path.join(os.path.dirname(__file__), "..", "..", "..", "backend")
-    )
-    from app.services.ssot_lockfiles_system import ssot_manager
+    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "..", "backend"))
+    from app.services.ssot_lockfiles_system import ssot_manager  # noqa: F401 - Conditional import for availability
 
     SSOT_ENABLED = True
 except ImportError:
@@ -63,17 +61,13 @@ class AuthService:
         """Verify a password against its hash"""
         return self.pwd_context.verify(plain_password, hashed_password)
 
-    def create_access_token(
-        self, data: dict[str, Any], expires_delta: timedelta | None = None
-    ) -> str:
+    def create_access_token(self, data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
         """Create JWT access token"""
         to_encode = data.copy()
         if expires_delta:
             expire = datetime.now(UTC) + expires_delta
         else:
-            expire = datetime.now(UTC) + timedelta(
-                minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-            )
+            expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
         to_encode.update(
             {
@@ -162,9 +156,7 @@ class AuthService:
                 # If no password provided (e.g. admin creating user), generate a secure temp one
                 # But really, we should require it.
                 # For now, let's just log a warning and generate a random one if missing
-                logger.warning(
-                    f"User created without password: {user_data.username}. Generating random."
-                )
+                logger.warning(f"User created without password: {user_data.username}. Generating random.")
                 password = secrets.token_urlsafe(16)
 
             new_user = User(
@@ -250,9 +242,7 @@ class AuthService:
         if not self.verify_password(password, user.password_hash):
             # Record failed attempt
             self._record_failed_attempt(user, chosen_db)
-            log_security_event(
-                "login_failed", user.id, details={"reason": "invalid_password"}
-            )
+            log_security_event("login_failed", user.id, details={"reason": "invalid_password"})
             log_security_event(
                 "security_alert",
                 user.id,
@@ -276,9 +266,7 @@ class AuthService:
             # to module-level db_service if available.
             if globals().get("db_service"):
                 try:
-                    globals().get("db_service").update_user(
-                        user.id, {"last_login": user.last_login}
-                    )
+                    globals().get("db_service").update_user(user.id, {"last_login": user.last_login})
                 except Exception:
                     # If that also fails, try the legacy method
                     globals().get("db_service").update_user_legacy(user)
@@ -311,16 +299,11 @@ class AuthService:
     def _record_failed_attempt(self, user: User, db_service):
         """Record a failed login attempt and potentially lock account"""
         # Skip account lockout for mock objects (used in tests)
-        if hasattr(user, "_mock_name") or str(type(user)).startswith(
-            "<class 'unittest.mock"
-        ):
+        if hasattr(user, "_mock_name") or str(type(user)).startswith("<class 'unittest.mock"):
             return
 
         # Initialize fields if they don't exist
-        if (
-            not hasattr(user, "failed_login_attempts")
-            or user.failed_login_attempts is None
-        ):
+        if not hasattr(user, "failed_login_attempts") or user.failed_login_attempts is None:
             user.failed_login_attempts = 0
         if not hasattr(user, "lockout_until"):
             user.lockout_until = None
@@ -360,9 +343,7 @@ class AuthService:
             }
             db_service.update_user(user.id, update_data)
         except Exception as e:
-            logger.error(
-                f"Failed to update failed login attempts for user {user.id}: {e}"
-            )
+            logger.error(f"Failed to update failed login attempts for user {user.id}: {e}")
 
     def _reset_failed_attempts(self, user: User, db_service):
         """Reset failed login attempts after successful login"""
@@ -377,9 +358,7 @@ class AuthService:
             }
             db_service.update_user(user.id, update_data)
         except Exception as e:
-            logger.error(
-                f"Failed to reset failed login attempts for user {user.id}: {e}"
-            )
+            logger.error(f"Failed to reset failed login attempts for user {user.id}: {e}")
 
     def get_account_lockout_status(self, user_id: str) -> dict[str, Any]:
         """Get account lockout status for a user"""
@@ -394,14 +373,8 @@ class AuthService:
             "locked": is_locked,
             "failed_attempts": getattr(user, "failed_login_attempts", 0),
             "max_attempts": MAX_LOGIN_ATTEMPTS,
-            "lockout_until": user.lockout_until.isoformat()
-            if user.lockout_until
-            else None,
-            "lockout_remaining_minutes": int(
-                (user.lockout_until - now).total_seconds() / 60
-            )
-            if is_locked
-            else 0,
+            "lockout_until": user.lockout_until.isoformat() if user.lockout_until else None,
+            "lockout_remaining_minutes": int((user.lockout_until - now).total_seconds() / 60) if is_locked else 0,
         }
 
     def unlock_account(self, user_id: str) -> bool:
@@ -429,9 +402,7 @@ class AuthService:
             logger.error(f"Failed to unlock account for user {user.id}: {e}")
             return False
 
-    def get_current_user_optional(
-        self, credentials: HTTPAuthorizationCredentials | None = Depends(security)
-    ) -> dict | None:
+    def get_current_user_optional(self, credentials: HTTPAuthorizationCredentials | None = Depends(security)) -> dict | None:
         """Get current user if authenticated, otherwise return None"""
         try:
             user = self.get_current_user(credentials)
@@ -460,18 +431,14 @@ class AuthService:
             token = request.cookies.get("access_token")
 
         if not token:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
 
         # token = credentials.credentials # Removed as we set it above
         payload = self.decode_token(token)
 
         user_id = payload.get("sub")
         if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload"
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
 
         # Support test mock tokens without a DB-backed user
         # SECURITY: Only allow this in non-production environments
@@ -552,9 +519,7 @@ class AuthService:
         errors = []
 
         if len(password) < PASSWORD_MIN_LENGTH:
-            errors.append(
-                f"Password must be at least {PASSWORD_MIN_LENGTH} characters long"
-            )
+            errors.append(f"Password must be at least {PASSWORD_MIN_LENGTH} characters long")
 
         if not any(c.isupper() for c in password):
             errors.append("Password must contain at least one uppercase letter")

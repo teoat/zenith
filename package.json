@@ -33,10 +33,10 @@
     "test:e2e:playwright:webkit": "playwright test --project=webkit",
     "docs:api": "cd backend && python -m pydoc -w services/",
     "docs:build": "cd frontend && npm run docs:build",
-    "diagnostics": "node diagnostic-orchestrator.js",
-    "diagnostics:security": "node diagnostic-orchestrator.js --security",
-    "diagnostics:system": "node diagnostic-orchestrator.js --system",
-    "diagnostics:deps": "node diagnostic-orchestrator.js --deps",
+    "diagnostics": "node scripts/diagnostics/diagnostic-orchestrator.js",
+    "diagnostics:security": "node scripts/diagnostics/diagnostic-orchestrator.js --security",
+    "diagnostics:system": "node scripts/diagnostics/diagnostic-orchestrator.js --system",
+    "diagnostics:deps": "node scripts/diagnostics/diagnostic-orchestrator.js --deps",
     "setup:production": "node scripts/setup-production.js",
     "validate:security": "node scripts/validate-security.js",
     "security:check": "node scripts/validate-security.js --quick",
@@ -51,25 +51,27 @@
     "ci:full": "npm run ci:security && npm run ci:lint && npm run ci:test && npm run ci:build && npm run verify:build"
   },
   "devDependencies": {
-    "@electron/notarize": "^2.1.0",
+    "@electron/notarize": "^3.0.0",
     "@playwright/test": "^1.57.0",
     "@semantic-release/changelog": "^6.0.0",
     "@semantic-release/git": "^10.0.0",
-    "@semantic-release/github": "^9.0.0",
-    "concurrently": "^8.2.2",
+    "@semantic-release/github": "^11.0.0",
+    "@types/node": "^25.0.3",
+    "concurrently": "^9.0.0",
     "cross-env": "^10.1.0",
-    "electron": "^28.3.3",
-    "electron-builder": "^24.13.3",
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.0",
     "electron-window-state": "^5.0.3",
     "playwright": "^1.57.0",
-    "semantic-release": "^21.0.0",
-    "wait-on": "^7.2.0"
+    "redis": "^5.10.0",
+    "semantic-release": "^24.0.0",
+    "wait-on": "^8.0.0"
   },
   "dependencies": {
     "better-sqlite3": "^12.5.0",
-    "keytar": "^7.9.0",
     "electron-log": "^5.4.3",
-    "electron-updater": "^6.6.2"
+    "electron-updater": "^6.6.2",
+    "keytar": "^7.9.0"
   },
   "build": {
     "appId": "com.zenith.app",
@@ -99,33 +101,23 @@
     ],
     "afterSign": "scripts/notarize.js",
     "afterAllArtifactBuild": "scripts/after-build.js",
-    "mac": {
-      "category": "public.app-category.finance",
-      "icon": "build/icon.icns",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "zip",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        }
-      ],
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist",
-      "notarize": {
-        "teamId": "${APPLE_TEAM_ID}"
-      }
-    },
+     "mac": {
+       "category": "public.app-category.finance",
+       "icon": "build/icon.icns",
+       "target": [
+         {
+           "target": "zip",
+           "arch": [
+             "x64"
+           ]
+         }
+       ],
+       "hardenedRuntime": false,
+       "gatekeeperAssess": false,
+       "entitlements": "build/entitlements.mac.plist",
+       "entitlementsInherit": "build/entitlements.mac.plist",
+       "notarize": false
+     },
     "afterPack": "./scripts/optimize-bundle.js",
     "dmg": {
       "title": "${productName} ${version}",
@@ -164,7 +156,6 @@
         }
       ],
       "icon": "build/icon.ico",
-      "publisherName": "Zenith",
       "verifyUpdateCodeSignature": true
     },
     "nsis": {

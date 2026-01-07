@@ -111,11 +111,7 @@ class MirrorTransactionPlugin(PluginInterface):
 
     async def initialize(self, context: PluginContext) -> bool:
         self.context = context
-        config_dict = (
-            context.config
-            if context.config
-            else {"time_window_minutes": 60, "amount_tolerance": 0.01}
-        )
+        config_dict = context.config if context.config else {"time_window_minutes": 60, "amount_tolerance": 0.01}
         self.config = MirrorConfig(**config_dict)
         return True
 

@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
-import { api } from '@/lib/api';
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { api } from "@/lib/api";
 
 interface GraphNode {
   id: string;
@@ -22,7 +22,7 @@ interface GraphData {
 
 export const useGraphData = (caseId?: string) => {
   const query = useQuery<GraphData>({
-    queryKey: ['graphData', caseId],
+    queryKey: ["graphData", caseId],
     queryFn: async () => {
       const apiData = await api.getGraphData();
 
@@ -31,13 +31,13 @@ export const useGraphData = (caseId?: string) => {
           id: n.id,
           group: n.type,
           label: n.name || n.id,
-          val: (n.properties?.val as number) || 5
+          val: (n.properties?.val as number) || 5,
         })),
         links: apiData.links.map((l: any) => ({
           source: l.source,
           target: l.target,
-          type: l.type
-        }))
+          type: l.type,
+        })),
       };
 
       return mappedData;
@@ -57,8 +57,8 @@ export const useGraphData = (caseId?: string) => {
     if (!query.data) return null;
 
     // Additional processing that might be expensive
-    const nodeMap = new Map(query.data.nodes.map(node => [node.id, node]));
-    const processedLinks = query.data.links.map(link => ({
+    const nodeMap = new Map(query.data.nodes.map((node) => [node.id, node]));
+    const processedLinks = query.data.links.map((link) => ({
       ...link,
       sourceNode: nodeMap.get(link.source),
       targetNode: nodeMap.get(link.target),

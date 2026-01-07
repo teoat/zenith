@@ -1,14 +1,14 @@
-import '@testing-library/jest-dom';
-import { cleanup } from '@testing-library/react';
-import { afterEach } from '@jest/globals';
-import React from 'react';
+import "@testing-library/jest-dom";
+import { cleanup } from "@testing-library/react";
+import { afterEach } from "@jest/globals";
+import React from "react";
 
 // Export React globally for JSX
 global.React = React;
 
 // Mock React before any imports
-jest.mock('react', () => {
-  const React = jest.requireActual('react');
+jest.mock("react", () => {
+  const React = jest.requireActual("react");
   return {
     ...React,
     Suspense: ({ children }: any) => children,
@@ -33,19 +33,21 @@ global.IntersectionObserver = class IntersectionObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
-  takeRecords() { return []; }
+  takeRecords() {
+    return [];
+  }
 } as any;
 
 // TextEncoder/Decoder polyfill
-import { TextEncoder, TextDecoder } from 'util';
+import { TextEncoder, TextDecoder } from "util";
 
 global.TextEncoder = TextEncoder as unknown as typeof global.TextEncoder;
 // @ts-expect-error - TextDecoder type mismatch
 global.TextDecoder = TextDecoder;
 
 // TransformStream polyfill
-if (typeof global.TransformStream === 'undefined') {
-  Object.defineProperty(global, 'TransformStream', {
+if (typeof global.TransformStream === "undefined") {
+  Object.defineProperty(global, "TransformStream", {
     value: class TransformStream {},
     writable: true,
   });
@@ -56,34 +58,38 @@ global.fetch = jest.fn((_url: string, _options?: any) => {
   return Promise.resolve({
     ok: true,
     status: 200,
-    statusText: 'OK',
+    statusText: "OK",
     headers: new Headers(),
     json: async () => ({}),
-    text: async () => '',
+    text: async () => "",
     blob: async () => new Blob(),
     arrayBuffer: async () => new ArrayBuffer(0),
-    clone: function() { return this; },
+    clone: function () {
+      return this;
+    },
   });
 }) as jest.Mock;
 
 // Basic Web API polyfills
-if (typeof global.Request === 'undefined') {
-  Object.defineProperty(global, 'Request', {
-    value: function(_url: string, _options?: any) {
+if (typeof global.Request === "undefined") {
+  Object.defineProperty(global, "Request", {
+    value: function (_url: string, _options?: any) {
       this.url = _url;
-      this.method = _options?.method || 'GET';
+      this.method = _options?.method || "GET";
       this.headers = _options?.headers || {};
     },
     writable: true,
   });
 }
 
-if (typeof global.Response === 'undefined') {
-  Object.defineProperty(global, 'Response', {
-    value: function(body?: any, options?: any) {
-      this.ok = options?.status ? options.status >= 200 && options.status < 300 : true;
+if (typeof global.Response === "undefined") {
+  Object.defineProperty(global, "Response", {
+    value: function (body?: any, options?: any) {
+      this.ok = options?.status
+        ? options.status >= 200 && options.status < 300
+        : true;
       this.status = options?.status || 200;
-      this.statusText = options?.statusText || 'OK';
+      this.statusText = options?.statusText || "OK";
       this.headers = options?.headers || {};
       this.body = body;
       this.json = () => Promise.resolve(body);
@@ -93,9 +99,9 @@ if (typeof global.Response === 'undefined') {
   });
 }
 
-if (typeof global.Headers === 'undefined') {
-  Object.defineProperty(global, 'Headers', {
-    value: function(init?: any) {
+if (typeof global.Headers === "undefined") {
+  Object.defineProperty(global, "Headers", {
+    value: function (init?: any) {
       this._headers = new Map();
       if (init) {
         Object.entries(init).forEach(([key, value]: [string, any]) => {
@@ -103,24 +109,25 @@ if (typeof global.Headers === 'undefined') {
         });
       }
       this.get = (name: string) => this._headers.get(name.toLowerCase());
-      this.set = (name: string, value: any) => this._headers.set(name.toLowerCase(), value);
+      this.set = (name: string, value: any) =>
+        this._headers.set(name.toLowerCase(), value);
     },
     writable: true,
   });
 }
 
 // Crypto polyfill for UUID generation
-import crypto from 'crypto';
+import crypto from "crypto";
 
-Object.defineProperty(global, 'crypto', {
+Object.defineProperty(global, "crypto", {
   value: {
     getRandomValues: (arr: Uint8Array) => {
       const bytes = crypto.randomBytes(arr.length);
       arr.set(bytes);
       return arr;
     },
-    randomUUID: () => crypto.randomUUID()
-  }
+    randomUUID: () => crypto.randomUUID(),
+  },
 });
 
 // UUID v4 mock for secureLogger and other utilities
@@ -141,9 +148,9 @@ global.localStorage = localStorageMock as any;
 global.sessionStorage = localStorageMock as any;
 
 // matchMedia mock
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -159,9 +166,10 @@ Object.defineProperty(window, 'matchMedia', {
 // and dynamic Function call during runtime to avoid parser errors.
 
 // Mock components that use import.meta.env
-jest.mock('../components/dashboard/ThreatMap', () => ({
+jest.mock("../components/dashboard/ThreatMap", () => ({
   __esModule: true,
-  default: () => React.createElement('div', { 'data-testid': 'threat-map' }, 'Threat Map')
+  default: () =>
+    React.createElement("div", { "data-testid": "threat-map" }, "Threat Map"),
 }));
 
 // Suppress console errors in tests

@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { Textarea } from '@/components/ui/Textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import type { Relationship } from '@/types/investigation';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Textarea } from "@/components/ui/Textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
+import type { Relationship } from "@/types/investigation";
 
 interface RelationshipFormProps {
   relationship: Relationship;
   onSubmit: (relationship: Relationship) => void;
 }
 
-const RelationshipForm: React.FC<RelationshipFormProps> = ({ relationship, onSubmit }) => {
+const RelationshipForm: React.FC<RelationshipFormProps> = ({
+  relationship,
+  onSubmit,
+}) => {
   const [formData, setFormData] = useState(relationship);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,7 +34,12 @@ const RelationshipForm: React.FC<RelationshipFormProps> = ({ relationship, onSub
         <Label htmlFor="rel-type">Relationship Type</Label>
         <Select
           value={formData.type}
-          onValueChange={(value) => setFormData(prev => ({ ...prev, type: value as Relationship['type'] }))}
+          onValueChange={(value) =>
+            setFormData((prev) => ({
+              ...prev,
+              type: value as Relationship["type"],
+            }))
+          }
         >
           <SelectTrigger id="rel-type">
             <SelectValue />
@@ -49,7 +63,12 @@ const RelationshipForm: React.FC<RelationshipFormProps> = ({ relationship, onSub
           min="1"
           max="100"
           value={formData.strength}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, strength: parseInt(e.target.value) || 1 }))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFormData((prev) => ({
+              ...prev,
+              strength: parseInt(e.target.value) || 1,
+            }))
+          }
         />
       </div>
 
@@ -57,11 +76,13 @@ const RelationshipForm: React.FC<RelationshipFormProps> = ({ relationship, onSub
         <Label htmlFor="rel-notes">Evidence/Notes</Label>
         <Textarea
           id="rel-notes"
-          value={(formData.properties.notes as string) || ''}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData(prev => ({
-            ...prev,
-            properties: { ...prev.properties, notes: e.target.value }
-          }))}
+          value={(formData.properties.notes as string) || ""}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+            setFormData((prev) => ({
+              ...prev,
+              properties: { ...prev.properties, notes: e.target.value },
+            }))
+          }
           placeholder="Add evidence or notes about this relationship"
           rows={3}
         />

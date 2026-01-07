@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
 from app.services.infrastructure.auth_service import auth_service
@@ -101,22 +100,16 @@ async def get_users(
         example="john",
     ),
     role: str | None = Query(None, description="Filter by role", example="ANALYST"),
-    department: str | None = Query(
-        None, description="Filter by department", example="Fraud Detection"
-    ),
+    department: str | None = Query(None, description="Filter by department", example="Fraud Detection"),
     sort_by: str | None = Query(None, description="Sort field", example="username"),
     sort_order: str = Query("asc", description="Sort order (asc/desc)", example="asc"),
-    status: str | None = Query(
-        None, description="Filter by active status", example="active"
-    ),
+    status: str | None = Query(None, description="Filter by active status", example="active"),
     current_user: dict = Depends(auth_service.get_current_user),
 ):
     """Get users with standardized pagination and filtering"""
     try:
         # Build filters
-        filters = FilterParams(
-            q=q, sort_by=sort_by, sort_order=sort_order, status=status
-        )
+        filters = FilterParams(q=q, sort_by=sort_by, sort_order=sort_order, status=status)
         if role:
             filters.role = role
         if department:
@@ -141,9 +134,7 @@ async def get_users(
             for user in result["users"]
         ]
 
-        pagination_response = PaginationResponse.create(
-            page=page, page_size=page_size, total_items=result["total"]
-        )
+        pagination_response = PaginationResponse.create(page=page, page_size=page_size, total_items=result["total"])
 
         return {"users": users_data, "pagination": pagination_response.dict()}
     except Exception as e:
@@ -250,9 +241,7 @@ async def bulk_user_operations(
                     errors.append({"user_id": user_id, "error": str(e)})
 
         else:
-            raise HTTPException(
-                status_code=400, detail=f"Unsupported operation: {request.operation}"
-            )
+            raise HTTPException(status_code=400, detail=f"Unsupported operation: {request.operation}")
 
         return BulkOperationResponse(
             operation=request.operation,

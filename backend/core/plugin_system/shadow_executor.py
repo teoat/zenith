@@ -95,20 +95,14 @@ class ShadowExecutor:
             timeout = max(expected_time_ms * 2 / 1000, 1.0)
 
             start_time = time.time()
-            shadow_result = await asyncio.wait_for(
-                plugin.execute(input_data), timeout=timeout
-            )
+            shadow_result = await asyncio.wait_for(plugin.execute(input_data), timeout=timeout)
             shadow_time_ms = (time.time() - start_time) * 1000
 
             # Compare results
             if comparison_function:
-                matches, match_pct, diffs = comparison_function(
-                    expected_result, shadow_result
-                )
+                matches, match_pct, diffs = comparison_function(expected_result, shadow_result)
             else:
-                matches, match_pct, diffs = self._default_comparison(
-                    expected_result, shadow_result
-                )
+                matches, match_pct, diffs = self._default_comparison(expected_result, shadow_result)
 
             # Record metrics
             result = ShadowResult(
@@ -133,9 +127,7 @@ class ShadowExecutor:
                 )
 
         except TimeoutError:
-            self.metrics.record_error(
-                "shadow_timeout", f"Shadow execution timed out for {plugin_id}"
-            )
+            self.metrics.record_error("shadow_timeout", f"Shadow execution timed out for {plugin_id}")
         except Exception as e:
             logger.error(f"Shadow execution error for {plugin_id}: {e}")
             self.metrics.record_error("shadow_error", str(e), {"plugin_id": plugin_id})
@@ -148,9 +140,7 @@ class ShadowExecutor:
         # For dict results, calculate field-level match
         if isinstance(expected, dict) and isinstance(actual, dict):
             total_fields = len(expected)
-            matching_fields = sum(
-                1 for k in expected if k in actual and expected[k] == actual[k]
-            )
+            matching_fields = sum(1 for k in expected if k in actual and expected[k] == actual[k])
 
             match_pct = matching_fields / total_fields if total_fields > 0 else 0.0
 

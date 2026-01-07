@@ -1,22 +1,36 @@
-import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
-import { Button } from '@/components/ui/Button.tsx';
-import { Badge } from '@/components/ui/Badge.tsx';
-import { Upload, Eye } from 'lucide-react';
-import { secureLogger } from '@/utils/secureLogger';
-import { secureRandom } from '@/utils/secureRandom';
-import { getFileIcon } from '@/utils/fileUtils';
-import { formatFileSize } from '@/utils/formatters';
+import React, { useState, useRef } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/Card.tsx";
+import { Button } from "@/components/ui/Button.tsx";
+import { Badge } from "@/components/ui/Badge.tsx";
+import { Upload, Eye } from "lucide-react";
+import { secureLogger } from "@/utils/secureLogger";
+import { secureRandom } from "@/utils/secureRandom";
+import { getFileIcon } from "@/utils/fileUtils";
+import { formatFileSize } from "@/utils/formatters";
+
+interface AnalysisResult {
+  id: string;
+  type: string;
+  filename: string;
+  analysis: {
+    risk_score: number;
+  };
+}
 
 const MultimodalAnalyzer: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [analysisResults, setAnalysisResults] = useState<any[]>([]);
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    setUploadedFiles(prev => [...prev, ...files]);
+    setUploadedFiles((prev) => [...prev, ...files]);
   };
 
   const handleAnalyze = async () => {
@@ -31,22 +45,24 @@ const MultimodalAnalyzer: React.FC = () => {
         type: file.type,
         size: file.size,
         analysis: {
-          ocr: file.type.includes('image') ? 'Text extracted successfully' : 'N/A',
-          forensics: 'Digital signature validated',
-          metadata: 'EXIF data extracted',
-          classification: 'Document - Financial Record',
+          ocr: file.type.includes("image")
+            ? "Text extracted successfully"
+            : "N/A",
+          forensics: "Digital signature validated",
+          metadata: "EXIF data extracted",
+          classification: "Document - Financial Record",
           risk_score: secureRandom.random() * 100,
           findings: [
-            'Valid digital signature detected',
-            'No tampering evidence found',
-            'Metadata matches expected format'
-          ]
-        }
+            "Valid digital signature detected",
+            "No tampering evidence found",
+            "Metadata matches expected format",
+          ],
+        },
       }));
 
       setAnalysisResults(results);
     } catch (error) {
-      secureLogger.error('Analysis failed:', error);
+      secureLogger.error("Analysis failed:", error);
     } finally {
       setIsAnalyzing(false);
     }
@@ -55,9 +71,9 @@ const MultimodalAnalyzer: React.FC = () => {
   // Using shared utility from utils/fileUtils.tsx
 
   const getRiskColor = (score: number) => {
-    if (score > 70) return 'text-red-500 bg-red-500/10';
-    if (score > 40) return 'text-yellow-500 bg-yellow-500/10';
-    return 'text-green-500 bg-green-500/10';
+    if (score > 70) return "text-red-500 bg-red-500/10";
+    if (score > 40) return "text-yellow-500 bg-yellow-500/10";
+    return "text-green-500 bg-green-500/10";
   };
 
   return (
@@ -98,12 +114,19 @@ const MultimodalAnalyzer: React.FC = () => {
 
             {uploadedFiles.length > 0 && (
               <div className="space-y-2">
-                <h4 className="text-sm font-medium text-slate-300">Uploaded Files:</h4>
+                <h4 className="text-sm font-medium text-slate-300">
+                  Uploaded Files:
+                </h4>
                 {uploadedFiles.map((file, index) => (
-                  <div key={index} className="flex items-center gap-3 p-3 bg-slate-700 rounded">
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-3 bg-slate-700 rounded"
+                  >
                     {getFileIcon(file.type)}
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-white">{file.name}</p>
+                      <p className="text-sm font-medium text-white">
+                        {file.name}
+                      </p>
                       <p className="text-xs text-slate-400">
                         {formatFileSize(file.size)}
                       </p>
@@ -116,7 +139,7 @@ const MultimodalAnalyzer: React.FC = () => {
                   disabled={isAnalyzing}
                   className="w-full"
                 >
-                  {isAnalyzing ? 'Analyzing...' : 'Analyze Files'}
+                  {isAnalyzing ? "Analyzing..." : "Analyze Files"}
                 </Button>
               </div>
             )}
@@ -136,7 +159,9 @@ const MultimodalAnalyzer: React.FC = () => {
                     {getFileIcon(result.type)}
                     {result.filename}
                   </CardTitle>
-                  <Badge className={`${getRiskColor(result.analysis.risk_score)} border-0`}>
+                  <Badge
+                    className={`${getRiskColor(result.analysis.risk_score)} border-0`}
+                  >
                     Risk: {Math.round(result.analysis.risk_score)}
                   </Badge>
                 </div>
@@ -144,36 +169,53 @@ const MultimodalAnalyzer: React.FC = () => {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h4 className="text-sm font-medium text-slate-300 mb-2">Analysis Results</h4>
+                    <h4 className="text-sm font-medium text-slate-300 mb-2">
+                      Analysis Results
+                    </h4>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
                         <span className="text-slate-400">OCR:</span>
-                        <span className="text-white">{result.analysis.ocr}</span>
+                        <span className="text-white">
+                          {(result.analysis as any).ocr}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Forensics:</span>
-                        <span className="text-white">{result.analysis.forensics}</span>
+                        <span className="text-white">
+                          {(result.analysis as any).forensics}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Metadata:</span>
-                        <span className="text-white">{result.analysis.metadata}</span>
+                        <span className="text-white">
+                          {(result.analysis as any).metadata}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Classification:</span>
-                        <span className="text-white">{result.analysis.classification}</span>
+                        <span className="text-white">
+                          {(result.analysis as any).classification}
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-medium text-slate-300 mb-2">Key Findings</h4>
+                    <h4 className="text-sm font-medium text-slate-300 mb-2">
+                      Key Findings
+                    </h4>
                     <ul className="space-y-1">
-                      {result.analysis.findings.map((finding: string, index: number) => (
-                        <li key={index} className="flex items-start gap-2 text-sm">
-                          <Eye className="w-3 h-3 mt-0.5 text-green-500 flex-shrink-0" />
-                          <span className="text-slate-300">{finding}</span>
-                        </li>
-                      ))}
+                      {(result.analysis as any).findings.map(
+                        (finding: string, index: number) => (
+                          <li
+                            key={index}
+                            className="flex items-start gap-2 text-sm"
+                          >
+                            <Eye className="w-3 h-3 mt-0.5 text-green-500 flex-shrink-0" />
+                            <span className="text-slate-300">{finding}</span>
+                          </li>
+                        ),
+                      )}
                     </ul>
                   </div>
                 </div>
@@ -199,7 +241,8 @@ const MultimodalAnalyzer: React.FC = () => {
             Multimodal Analysis Ready
           </h3>
           <p className="text-slate-500">
-            Upload files to perform comprehensive analysis including OCR, forensics, and metadata extraction
+            Upload files to perform comprehensive analysis including OCR,
+            forensics, and metadata extraction
           </p>
         </div>
       )}

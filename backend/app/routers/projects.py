@@ -58,17 +58,13 @@ async def create_project(
     """Create a new project"""
     user_id = getattr(current_user, "id", str(current_user)) if current_user else None
 
-    new_project = project_service.create_project(
-        db, name=project.name, description=project.description, created_by=user_id
-    )
+    new_project = project_service.create_project(db, name=project.name, description=project.description, created_by=user_id)
 
     return {
         "id": new_project.id,
         "name": new_project.name,
         "description": new_project.description,
-        "created_at": new_project.created_at.isoformat()
-        if new_project.created_at
-        else None,
+        "created_at": new_project.created_at.isoformat() if new_project.created_at else None,
     }
 
 

@@ -59,7 +59,7 @@ class ProactiveMonitoringService:
         self._background_tasks = [
             asyncio.create_task(self._continuous_health_monitoring()),
             asyncio.create_task(self._anomaly_detection_loop()),
-            asyncio.create_task(self._uptime_calculation_loop())
+            asyncio.create_task(self._uptime_calculation_loop()),
         ]
 
     async def stop_monitoring(self):
@@ -98,18 +98,12 @@ class ProactiveMonitoringService:
 
             # Circuit breakers
             circuit_breakers = get_all_circuit_breakers()
-            open_breakers = [
-                name
-                for name, status in circuit_breakers.items()
-                if status["state"] == "open"
-            ]
+            open_breakers = [name for name, status in circuit_breakers.items() if status["state"] == "open"]
             if open_breakers:
                 critical_issues.append(f"Open circuit breakers: {open_breakers}")
 
             # System resources
-            system_resources = health_result.get("components", {}).get(
-                "system_resources", {}
-            )
+            system_resources = health_result.get("components", {}).get("system_resources", {})
             if system_resources.get("status") in ["critical", "degraded"]:
                 critical_issues.append(f"System resources critical: {system_resources}")
 
@@ -123,12 +117,8 @@ class ProactiveMonitoringService:
                 )
 
             # Track metrics for anomaly detection
-            self._track_metric(
-                "response_time", health_result.get("response_time_ms", 0)
-            )
-            self._track_metric(
-                "error_rate", self._calculate_error_rate_from_health(health_result)
-            )
+            self._track_metric("response_time", health_result.get("response_time_ms", 0))
+            self._track_metric("error_rate", self._calculate_error_rate_from_health(health_result))
 
         except Exception as e:
             logger.error(f"Error performing health checks: {e}")
@@ -212,9 +202,7 @@ class ProactiveMonitoringService:
 
             # In a real implementation, this would track actual downtime events
             # For now, we'll use health check results as a proxy
-            uptime_percentage = (
-                99.95  # Placeholder - would be calculated from actual data
-            )
+            uptime_percentage = 99.95  # Placeholder - would be calculated from actual data
 
             # Alert if uptime drops below 99.9%
             if uptime_percentage < 99.9:
@@ -261,16 +249,11 @@ class ProactiveMonitoringService:
             components = health_result.get("components", {})
 
             unhealthy_components = sum(
-                1
-                for comp in components.values()
-                if isinstance(comp, dict)
-                and comp.get("status") in ["unhealthy", "degraded"]
+                1 for comp in components.values() if isinstance(comp, dict) and comp.get("status") in ["unhealthy", "degraded"]
             )
 
             total_components = len(components)
-            return (
-                unhealthy_components / total_components if total_components > 0 else 0
-            )
+            return unhealthy_components / total_components if total_components > 0 else 0
 
         except Exception:
             return 0
@@ -344,11 +327,7 @@ class ProactiveMonitoringService:
 
     def get_active_alerts(self) -> list[dict[str, Any]]:
         """Get all active alerts"""
-        return [
-            alert
-            for alert in self.alerts.values()
-            if alert["status"] == AlertStatus.ACTIVE
-        ]
+        return [alert for alert in self.alerts.values() if alert["status"] == AlertStatus.ACTIVE]
 
     def acknowledge_alert(self, alert_id: str) -> bool:
         """Acknowledge an alert"""

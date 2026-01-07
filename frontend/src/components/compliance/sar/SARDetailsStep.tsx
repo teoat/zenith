@@ -1,13 +1,29 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { Textarea } from '@/components/ui/Textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { DollarSign, MapPin, Activity, AlertTriangle } from 'lucide-react';
-import { SARFormData, SUSPICIOUS_ACTIVITY_TYPES, REGULATORY_BASES } from '@/types/sar';
-import { Case } from '@/types/schema';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Textarea } from "@/components/ui/Textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
+import { DollarSign, MapPin, Activity, AlertTriangle } from "lucide-react";
+import {
+  SARFormData,
+  SUSPICIOUS_ACTIVITY_TYPES,
+  REGULATORY_BASES,
+} from "@/types/sar";
+import { Case } from "@/types/schema";
 
 interface SARDetailsStepProps {
   formData: SARFormData;
@@ -22,14 +38,16 @@ export const SARDetailsStep: React.FC<SARDetailsStepProps> = ({
   setFormData,
   selectedCase,
   setStep,
-  handleActivityToggle
+  handleActivityToggle,
 }) => {
   return (
     <div className="space-y-6">
       <div className="text-center">
         <AlertTriangle className="h-16 w-16 text-orange-600 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-gray-900">SAR Details</h2>
-        <p className="text-gray-600 mt-2">Provide detailed information for the Suspicious Activity Report</p>
+        <p className="text-gray-600 mt-2">
+          Provide detailed information for the Suspicious Activity Report
+        </p>
       </div>
 
       {selectedCase && (
@@ -41,7 +59,9 @@ export const SARDetailsStep: React.FC<SARDetailsStepProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-medium">{selectedCase.title}</h3>
-                <p className="text-sm text-gray-500">Case ID: {selectedCase.id}</p>
+                <p className="text-sm text-gray-500">
+                  Case ID: {selectedCase.id}
+                </p>
               </div>
               <Button variant="outline" size="sm" onClick={() => setStep(1)}>
                 Change Case
@@ -66,7 +86,12 @@ export const SARDetailsStep: React.FC<SARDetailsStepProps> = ({
                 id="amount"
                 type="number"
                 value={formData.transaction_amount}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, transaction_amount: parseFloat(e.target.value) || 0 }))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    transaction_amount: parseFloat(e.target.value) || 0,
+                  }))
+                }
                 placeholder="0.00"
               />
             </div>
@@ -76,7 +101,12 @@ export const SARDetailsStep: React.FC<SARDetailsStepProps> = ({
                 id="count"
                 type="number"
                 value={formData.transaction_count}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, transaction_count: parseInt(e.target.value) || 0 }))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    transaction_count: parseInt(e.target.value) || 0,
+                  }))
+                }
               />
             </div>
           </CardContent>
@@ -95,19 +125,31 @@ export const SARDetailsStep: React.FC<SARDetailsStepProps> = ({
               <Input
                 id="location"
                 value={formData.geographic_location}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, geographic_location: e.target.value }))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    geographic_location: e.target.value,
+                  }))
+                }
                 placeholder="City, State/Country"
               />
             </div>
             <div>
-              <Label htmlFor="parties">Involved Parties (comma-separated)</Label>
+              <Label htmlFor="parties">
+                Involved Parties (comma-separated)
+              </Label>
               <Input
                 id="parties"
-                value={formData.involved_parties.join(', ')}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({
-                  ...prev,
-                  involved_parties: e.target.value.split(',').map((p: string) => p.trim()).filter((p: string) => p)
-                }))}
+                value={formData.involved_parties.join(", ")}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    involved_parties: e.target.value
+                      .split(",")
+                      .map((p: string) => p.trim())
+                      .filter((p: string) => p),
+                  }))
+                }
                 placeholder="Party names or identifiers"
               />
             </div>
@@ -121,12 +163,17 @@ export const SARDetailsStep: React.FC<SARDetailsStepProps> = ({
             <Activity className="h-5 w-5 mr-2" />
             Suspicious Activities
           </CardTitle>
-          <CardDescription>Select all activities that apply to this case</CardDescription>
+          <CardDescription>
+            Select all activities that apply to this case
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {SUSPICIOUS_ACTIVITY_TYPES.map((activity) => (
-              <label key={activity} className="flex items-center space-x-2 cursor-pointer">
+              <label
+                key={activity}
+                className="flex items-center space-x-2 cursor-pointer"
+              >
                 <input
                   type="checkbox"
                   checked={formData.suspicious_activities.includes(activity)}
@@ -147,20 +194,35 @@ export const SARDetailsStep: React.FC<SARDetailsStepProps> = ({
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="basis">Regulatory Basis</Label>
-            <Select value={formData.regulatory_basis} onValueChange={(value) => setFormData(prev => ({ ...prev, regulatory_basis: value }))}>
+            <Select
+              value={formData.regulatory_basis}
+              onValueChange={(value) =>
+                setFormData((prev) => ({ ...prev, regulatory_basis: value }))
+              }
+            >
               <SelectTrigger title="Regulatory basis">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {REGULATORY_BASES.map((basis) => (
-                  <SelectItem key={basis} value={basis}>{basis}</SelectItem>
+                  <SelectItem key={basis} value={basis}>
+                    {basis}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div>
             <Label htmlFor="risk">Risk Level</Label>
-            <Select value={formData.risk_level} onValueChange={(value) => setFormData(prev => ({ ...prev, risk_level: value as "low" | "medium" | "high" | "critical" }))}>
+            <Select
+              value={formData.risk_level}
+              onValueChange={(value) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  risk_level: value as "low" | "medium" | "high" | "critical",
+                }))
+              }
+            >
               <SelectTrigger title="Risk level">
                 <SelectValue />
               </SelectTrigger>
@@ -178,7 +240,12 @@ export const SARDetailsStep: React.FC<SARDetailsStepProps> = ({
               id="deadline"
               type="number"
               value={formData.deadline_days}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, deadline_days: parseInt(e.target.value) || 30 }))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  deadline_days: parseInt(e.target.value) || 30,
+                }))
+              }
             />
           </div>
         </CardContent>
@@ -194,7 +261,12 @@ export const SARDetailsStep: React.FC<SARDetailsStepProps> = ({
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
               placeholder="Provide a detailed description of the suspicious activity..."
               rows={4}
               required
@@ -205,7 +277,12 @@ export const SARDetailsStep: React.FC<SARDetailsStepProps> = ({
             <Textarea
               id="notes"
               value={formData.additional_notes}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData(prev => ({ ...prev, additional_notes: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  additional_notes: e.target.value,
+                }))
+              }
               placeholder="Any additional context or notes..."
               rows={3}
             />

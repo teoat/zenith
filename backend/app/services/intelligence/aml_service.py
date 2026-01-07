@@ -80,20 +80,14 @@ class AMLVelocityService:
                 proximity_score = (1 - avg_distance) * 0.4
                 consistency_score = self._calculate_consistency(suspicious) * 0.2
 
-                smurfing_score = round(
-                    count_score + proximity_score + consistency_score, 2
-                )
+                smurfing_score = round(count_score + proximity_score + consistency_score, 2)
 
                 # Determine pattern type
                 pattern_type = self._determine_pattern_type(suspicious, threshold)
 
                 # Find the suspicious time window
                 dates = sorted([t["date"] for t in suspicious])
-                window = (
-                    f"{dates[0].strftime('%Y-%m-%d')} to {dates[-1].strftime('%Y-%m-%d')}"
-                    if dates
-                    else None
-                )
+                window = f"{dates[0].strftime('%Y-%m-%d')} to {dates[-1].strftime('%Y-%m-%d')}" if dates else None
 
                 return {
                     "account_id": account_id,
@@ -107,11 +101,7 @@ class AMLVelocityService:
                     "total_amount": round(total_suspicious, 2),
                     "avg_distance_from_threshold": f"{avg_distance * 100:.1f}%",
                     "matching_transactions": [t["id"] for t in suspicious[:10]],
-                    "risk_level": "HIGH"
-                    if smurfing_score > 0.8
-                    else "MEDIUM"
-                    if smurfing_score > 0.6
-                    else "LOW",
+                    "risk_level": "HIGH" if smurfing_score > 0.8 else "MEDIUM" if smurfing_score > 0.6 else "LOW",
                     "analyzed_at": datetime.now().isoformat(),
                 }
 
@@ -174,9 +164,7 @@ class AMLVelocityService:
 
             # Calculate risk score based on structure
             layer_count = len(ownership_chain)
-            jurisdictions = list(
-                {c.get("jurisdiction", "Unknown") for c in ownership_chain}
-            )
+            jurisdictions = list({c.get("jurisdiction", "Unknown") for c in ownership_chain})
 
             # Check for high-risk jurisdictions
             high_risk_jurisdictions = [
@@ -186,9 +174,7 @@ class AMLVelocityService:
                 "Seychelles",
                 "Bahamas",
             ]
-            risk_jurisdictions = [
-                j for j in jurisdictions if j in high_risk_jurisdictions
-            ]
+            risk_jurisdictions = [j for j in jurisdictions if j in high_risk_jurisdictions]
 
             # Build graph path
             path_elements = [entity_name]
@@ -215,9 +201,7 @@ class AMLVelocityService:
                 "graph_path": graph_path,
                 "jurisdictions": jurisdictions,
                 "jurisdiction_risk": jurisdiction_risk,
-                "verification_status": "VERIFIED"
-                if ubos and ubos[0].get("verification_status")
-                else "PROBABILISTIC",
+                "verification_status": "VERIFIED" if ubos and ubos[0].get("verification_status") else "PROBABILISTIC",
                 "complexity_score": min(layer_count / 5, 1.0),
                 "analyzed_at": datetime.now().isoformat(),
             }
@@ -226,9 +210,7 @@ class AMLVelocityService:
             logger.error(f"UBO tracing failed for {entity_name}: {e}")
             return {"entity": entity_name, "ubo_identified": None, "error": str(e)}
 
-    async def analyze_velocity(
-        self, account_id: str, window_days: int = 30
-    ) -> dict[str, Any]:
+    async def analyze_velocity(self, account_id: str, window_days: int = 30) -> dict[str, Any]:
         """
         Analyze transaction velocity for anomalies.
 
@@ -279,11 +261,7 @@ class AMLVelocityService:
             "average_daily_volume": round(avg_volume, 2),
             "average_daily_count": round(avg_count, 1),
             "anomalous_days": anomalies,
-            "risk_level": "HIGH"
-            if len(anomalies) > 3
-            else "MEDIUM"
-            if anomalies
-            else "LOW",
+            "risk_level": "HIGH" if len(anomalies) > 3 else "MEDIUM" if anomalies else "LOW",
             "analyzed_at": datetime.now().isoformat(),
         }
 
@@ -331,25 +309,22 @@ class AMLVelocityService:
 
         try:
             # Primary: Query local Entity database
-            entities = (
-                self.db.query(Entity)
-                .filter(Entity.name.ilike(f"%{entity_name}%"))
-                .limit(max_layers * 5)
-                .all()
-            )
+            entities = self.db.query(Entity).filter(Entity.name.ilike(f"%{entity_name}%")).limit(max_layers * 5).all()
 
             ownership_chain = []
             for e in entities:
-                ownership_chain.append({
-                    "name": e.name,
-                    "entity_type": getattr(e, "entity_type", "Unknown"),
-                    "jurisdiction": getattr(e, "jurisdiction", "Unknown"),
-                    "is_natural_person": getattr(e, "is_person", False),
-                    "ownership_pct": getattr(e, "ownership_pct", 100),
-                    "verified": getattr(e, "verified", False),
-                    "registration_number": getattr(e, "registration_number", None),
-                    "incorporation_date": getattr(e, "incorporation_date", None),
-                })
+                ownership_chain.append(
+                    {
+                        "name": e.name,
+                        "entity_type": getattr(e, "entity_type", "Unknown"),
+                        "jurisdiction": getattr(e, "jurisdiction", "Unknown"),
+                        "is_natural_person": getattr(e, "is_person", False),
+                        "ownership_pct": getattr(e, "ownership_pct", 100),
+                        "verified": getattr(e, "verified", False),
+                        "registration_number": getattr(e, "registration_number", None),
+                        "incorporation_date": getattr(e, "incorporation_date", None),
+                    }
+                )
 
             # If no entities found, try to query corporate registry
             if not ownership_chain:
@@ -389,9 +364,7 @@ class AMLVelocityService:
         consistency = 1 / (1 + variance / 1000)
         return min(consistency, 1.0)
 
-    def _determine_pattern_type(
-        self, transactions: list[dict], threshold: float
-    ) -> str:
+    def _determine_pattern_type(self, transactions: list[dict], threshold: float) -> str:
         """Determine the specific structuring pattern type."""
         if not transactions:
             return "NONE"

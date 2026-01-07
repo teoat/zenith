@@ -35,18 +35,12 @@ def register_all_plugins():
                     continue
 
                 # Check existing
-                existing = (
-                    db.query(PluginRegistry)
-                    .filter(PluginRegistry.namespace == namespace)
-                    .first()
-                )
+                existing = db.query(PluginRegistry).filter(PluginRegistry.namespace == namespace).first()
                 if existing:
                     print(f"Plugin {namespace} already registered. Updating...")
                     existing.metadata_json = metadata
                     existing.updated_at = utc_now()
-                    existing.entry_point = metadata.get(
-                        "entry_point"
-                    )  # Ensure entry point sync
+                    existing.entry_point = metadata.get("entry_point")  # Ensure entry point sync
                     existing.version = metadata.get("version")
                 else:
                     plugin_id = str(uuid.uuid4())

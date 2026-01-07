@@ -13,43 +13,53 @@ from core.logging import logger
 # Try to import Neo4j driver, fallback to in-memory if not available
 try:
     from neo4j import GraphDatabase
+
     NEO4J_AVAILABLE = True
 except ImportError:
     NEO4J_AVAILABLE = False
     logger.warning("Neo4j driver not available, using in-memory graph fallback")
 
+
 @dataclass
 class GraphNode:
     """Graph node representation"""
+
     id: str
     label: str
     properties: Dict[str, Any]
     node_type: str  # 'entity', 'transaction', 'alert', etc.
 
+
 @dataclass
 class GraphEdge:
     """Graph edge representation"""
+
     source: str
     target: str
     relationship: str
     properties: Dict[str, Any]
     weight: float = 1.0
 
+
 @dataclass
 class Community:
     """Community detection result"""
+
     id: str
     nodes: List[str]
     size: int
     density: float
     central_node: str
 
+
 @dataclass
 class CentralityResult:
     """Centrality analysis result"""
+
     node_id: str
     centrality_score: float
     ranking: int
+
 
 class Neo4jGraphService:
     """Neo4j-based graph service"""
@@ -67,6 +77,7 @@ class Neo4jGraphService:
 
     async def create_node(self, node: GraphNode) -> bool:
         """Create a node in Neo4j"""
+
         def _create_node(tx, node):
             query = f"""
             CREATE (n:{node.node_type} {{
@@ -80,8 +91,7 @@ class Neo4jGraphService:
 
         try:
             await asyncio.get_event_loop().run_in_executor(
-                None,
-                lambda: self.driver.execute_query(_create_node, node, database_=self.database)
+                None, lambda: self.driver.execute_query(_create_node, node, database_=self.database)
             )
             return True
         except Exception as e:
@@ -90,6 +100,7 @@ class Neo4jGraphService:
 
     async def create_relationship(self, edge: GraphEdge) -> bool:
         """Create a relationship between nodes"""
+
         def _create_relationship(tx, edge):
             query = f"""
             MATCH (a {{id: $source_id}}), (b {{id: $target_id}})
@@ -98,17 +109,12 @@ class Neo4jGraphService:
                 weight: $weight
             }}]->(b)
             """
-            tx.run(query,
-                   source_id=edge.source,
-                   target_id=edge.target,
-                   properties=json.dumps(edge.properties),
-                   weight=edge.weight)
+            tx.run(query, source_id=edge.source, target_id=edge.target, properties=json.dumps(edge.properties), weight=edge.weight)
             return True
 
         try:
             await asyncio.get_event_loop().run_in_executor(
-                None,
-                lambda: self.driver.execute_query(_create_relationship, edge, database_=self.database)
+                None, lambda: self.driver.execute_query(_create_relationship, edge, database_=self.database)
             )
             return True
         except Exception as e:
@@ -117,6 +123,7 @@ class Neo4jGraphService:
 
     async def run_community_detection(self) -> List[Community]:
         """Run Louvain community detection algorithm"""
+
         def _community_detection(tx):
 
             # Run Louvain algorithm
@@ -138,19 +145,20 @@ class Neo4jGraphService:
 
         try:
             communities_data = await asyncio.get_event_loop().run_in_executor(
-                None,
-                lambda: self.driver.execute_query(_community_detection, database_=self.database)
+                None, lambda: self.driver.execute_query(_community_detection, database_=self.database)
             )
 
             communities = []
             for comm_id, nodes in communities_data[0].items():
-                communities.append(Community(
-                    id=str(comm_id),
-                    nodes=nodes,
-                    size=len(nodes),
-                    density=self._calculate_density(nodes),
-                    central_node=nodes[0] if nodes else ""
-                ))
+                communities.append(
+                    Community(
+                        id=str(comm_id),
+                        nodes=nodes,
+                        size=len(nodes),
+                        density=self._calculate_density(nodes),
+                        central_node=nodes[0] if nodes else "",
+                    )
+                )
 
             return communities
 
@@ -162,6 +170,7 @@ class Neo4jGraphService:
         """Calculate community density"""
         # Simplified density calculation
         return min(1.0, len(nodes) / 100.0)
+
 
 class InMemoryGraphService:
     """Fallback in-memory graph service using NetworkX"""
@@ -184,10 +193,7 @@ class InMemoryGraphService:
     async def create_relationship(self, edge: GraphEdge) -> bool:
         """Create a relationship between nodes"""
         try:
-            self.graph.add_edge(edge.source, edge.target,
-                              relationship=edge.relationship,
-                              weight=edge.weight,
-                              **edge.properties)
+            self.graph.add_edge(edge.source, edge.target, relationship=edge.relationship, weight=edge.weight, **edge.properties)
             self.edge_data[(edge.source, edge.target)] = edge
             return True
         except Exception as e:
@@ -215,13 +221,7 @@ class InMemoryGraphService:
                 else:
                     central_node = nodes_list[0] if nodes_list else ""
 
-                result.append(Community(
-                    id=f"comm_{i}",
-                    nodes=nodes_list,
-                    size=len(nodes_list),
-                    density=density,
-                    central_node=central_node
-                ))
+                result.append(Community(id=f"comm_{i}", nodes=nodes_list, size=len(nodes_list), density=density, central_node=central_node))
 
             return result
 
@@ -248,11 +248,7 @@ class InMemoryGraphService:
 
             results = []
             for rank, (node_id, score) in enumerate(sorted_nodes[:20]):  # Top 20
-                results.append(CentralityResult(
-                    node_id=node_id,
-                    centrality_score=score,
-                    ranking=rank + 1
-                ))
+                results.append(CentralityResult(node_id=node_id, centrality_score=score, ranking=rank + 1))
 
             return results
 
@@ -269,6 +265,7 @@ class InMemoryGraphService:
             logger.error(f"Shortest path finding failed: {e}")
             return []
 
+
 class AdvancedGraphAnalyticsService:
     """Main service for advanced graph analytics"""
 
@@ -279,19 +276,11 @@ class AdvancedGraphAnalyticsService:
     def _initialize_graph_service(self):
         """Initialize the appropriate graph service"""
         # Try Neo4j first
-        neo4j_config = {
-            "uri": "bolt://localhost:7687",
-            "user": "neo4j",
-            "password": "password"
-        }
+        neo4j_config = {"uri": "bolt://localhost:7687", "user": "neo4j", "password": "password"}
 
         if NEO4J_AVAILABLE:
             try:
-                self.graph_service = Neo4jGraphService(
-                    neo4j_config["uri"],
-                    neo4j_config["user"],
-                    neo4j_config["password"]
-                )
+                self.graph_service = Neo4jGraphService(neo4j_config["uri"], neo4j_config["user"], neo4j_config["password"])
                 logger.info("Using Neo4j graph service")
                 return
             except Exception as e:
@@ -303,45 +292,25 @@ class AdvancedGraphAnalyticsService:
 
     async def add_entity(self, entity_id: str, entity_type: str, properties: Dict[str, Any]) -> bool:
         """Add an entity to the graph"""
-        node = GraphNode(
-            id=entity_id,
-            label=f"{entity_type}: {entity_id}",
-            properties=properties,
-            node_type="Entity"
-        )
+        node = GraphNode(id=entity_id, label=f"{entity_type}: {entity_id}", properties=properties, node_type="Entity")
         return await self.graph_service.create_node(node)
 
-    async def add_transaction(self, transaction_id: str, from_entity: str, to_entity: str,
-                            amount: float, timestamp: datetime) -> bool:
+    async def add_transaction(self, transaction_id: str, from_entity: str, to_entity: str, amount: float, timestamp: datetime) -> bool:
         """Add a transaction relationship to the graph"""
         # Create transaction node
         transaction_node = GraphNode(
             id=transaction_id,
             label=f"Transaction: ${amount}",
-            properties={
-                "amount": amount,
-                "timestamp": timestamp.isoformat(),
-                "currency": "USD"
-            },
-            node_type="Transaction"
+            properties={"amount": amount, "timestamp": timestamp.isoformat(), "currency": "USD"},
+            node_type="Transaction",
         )
 
         success1 = await self.graph_service.create_node(transaction_node)
 
         # Create relationships
-        edge1 = GraphEdge(
-            source=from_entity,
-            target=transaction_id,
-            relationship="INITIATED",
-            properties={"role": "sender"}
-        )
+        edge1 = GraphEdge(source=from_entity, target=transaction_id, relationship="INITIATED", properties={"role": "sender"})
 
-        edge2 = GraphEdge(
-            source=transaction_id,
-            target=to_entity,
-            relationship="TRANSFERRED_TO",
-            properties={"role": "receiver"}
-        )
+        edge2 = GraphEdge(source=transaction_id, target=to_entity, relationship="TRANSFERRED_TO", properties={"role": "receiver"})
 
         success2 = await self.graph_service.create_relationship(edge1)
         success3 = await self.graph_service.create_relationship(edge2)
@@ -365,29 +334,22 @@ class AdvancedGraphAnalyticsService:
                     "size": c.size,
                     "density": c.density,
                     "central_node": c.central_node,
-                    "nodes_sample": c.nodes[:5]  # First 5 nodes
+                    "nodes_sample": c.nodes[:5],  # First 5 nodes
                 }
                 for c in communities[:10]  # Top 10 communities
-            ]
+            ],
         }
 
     async def analyze_centrality(self, method: str = "degree") -> Dict[str, Any]:
         """Analyze node centrality"""
-        if not hasattr(self.graph_service, 'calculate_centrality'):
+        if not hasattr(self.graph_service, "calculate_centrality"):
             return {"error": "Centrality analysis not available for current graph service"}
 
         results = await self.graph_service.calculate_centrality(method)
 
         return {
             "method": method,
-            "top_nodes": [
-                {
-                    "node_id": r.node_id,
-                    "centrality_score": r.centrality_score,
-                    "ranking": r.ranking
-                }
-                for r in results
-            ]
+            "top_nodes": [{"node_id": r.node_id, "centrality_score": r.centrality_score, "ranking": r.ranking} for r in results],
         }
 
     async def find_suspicious_patterns(self) -> List[Dict[str, Any]]:
@@ -400,21 +362,25 @@ class AdvancedGraphAnalyticsService:
         # Pattern 3: Connections to known risky entities
 
         # Mock patterns for demonstration
-        patterns.append({
-            "type": "circular_transaction",
-            "severity": "high",
-            "description": "Detected circular transaction pattern",
-            "involved_nodes": ["entity_1", "entity_2", "entity_3"],
-            "confidence": 0.85
-        })
+        patterns.append(
+            {
+                "type": "circular_transaction",
+                "severity": "high",
+                "description": "Detected circular transaction pattern",
+                "involved_nodes": ["entity_1", "entity_2", "entity_3"],
+                "confidence": 0.85,
+            }
+        )
 
-        patterns.append({
-            "type": "high_velocity",
-            "severity": "medium",
-            "description": "Unusual transaction velocity detected",
-            "involved_nodes": ["entity_5"],
-            "confidence": 0.72
-        })
+        patterns.append(
+            {
+                "type": "high_velocity",
+                "severity": "medium",
+                "description": "Unusual transaction velocity detected",
+                "involved_nodes": ["entity_5"],
+                "confidence": 0.72,
+            }
+        )
 
         return patterns
 
@@ -424,17 +390,10 @@ class AdvancedGraphAnalyticsService:
         return {
             "total_nodes": 150,  # Mock data
             "total_relationships": 450,
-            "node_types": {
-                "Entity": 120,
-                "Transaction": 25,
-                "Alert": 5
-            },
-            "relationship_types": {
-                "RELATED_TO": 200,
-                "TRANSFERRED_TO": 150,
-                "TRIGGERED_BY": 100
-            },
-            "last_updated": datetime.now(UTC).isoformat()
+            "node_types": {"Entity": 120, "Transaction": 25, "Alert": 5},
+            "relationship_types": {"RELATED_TO": 200, "TRANSFERRED_TO": 150, "TRIGGERED_BY": 100},
+            "last_updated": datetime.now(UTC).isoformat(),
         }
+
 
 # Global instance

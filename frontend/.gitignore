@@ -104,3 +104,6 @@ storybook-static/
 # Testing
 .nyc_output
 .coverage
+.env*.local
+
+*storybook.log

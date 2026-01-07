@@ -4,12 +4,36 @@
   transition: height 0.3s ease;
 }
 
-.service-status-healthy { background-color: #22c55e; }
-.service-status-degraded { background-color: #eab308; }
-.service-status-unhealthy { background-color: #ef4444; }
-.service-status-offline { background-color: #6b7280; }
+.service-status-healthy {
+  background-color: #22c55e;
+}
+.service-status-degraded {
+  background-color: #eab308;
+}
+.service-status-unhealthy {
+  background-color: #ef4444;
+}
+.service-status-offline {
+  background-color: #6b7280;
+}
 
-.status-badge-healthy { color: #15803d; background-color: #f0fdf4; border-color: #bbf7d0; }
-.status-badge-degraded { color: #a16207; background-color: #fefce8; border-color: #fef08a; }
-.status-badge-unhealthy { color: #b91c1c; background-color: #fef2f2; border-color: #fecaca; }
-.status-badge-offline { color: #374151; background-color: #f3f4f6; border-color: #e5e7eb; }
+.status-badge-healthy {
+  color: #15803d;
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.status-badge-degraded {
+  color: #a16207;
+  background-color: #fefce8;
+  border-color: #fef08a;
+}
+.status-badge-unhealthy {
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+.status-badge-offline {
+  color: #374151;
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
+}

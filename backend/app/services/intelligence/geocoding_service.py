@@ -78,18 +78,12 @@ class GeocodingService:
         """Load fallback location data for common cities/countries."""
         return {
             # Major cities
-            "new york, united states": Location(
-                40.7128, -74.0060, "New York", "United States"
-            ),
-            "london, united kingdom": Location(
-                51.5074, -0.1278, "London", "United Kingdom"
-            ),
+            "new york, united states": Location(40.7128, -74.0060, "New York", "United States"),
+            "london, united kingdom": Location(51.5074, -0.1278, "London", "United Kingdom"),
             "tokyo, japan": Location(35.6762, 139.6503, "Tokyo", "Japan"),
             "paris, france": Location(48.8566, 2.3522, "Paris", "France"),
             "sydney, australia": Location(-33.8688, 151.2093, "Sydney", "Australia"),
-            "singapore, singapore": Location(
-                1.3521, 103.8198, "Singapore", "Singapore"
-            ),
+            "singapore, singapore": Location(1.3521, 103.8198, "Singapore", "Singapore"),
             "hong kong, china": Location(22.3193, 114.1694, "Hong Kong", "China"),
             "shanghai, china": Location(31.2304, 121.4737, "Shanghai", "China"),
             "beijing, china": Location(39.9042, 116.4074, "Beijing", "China"),
@@ -97,15 +91,11 @@ class GeocodingService:
             "delhi, india": Location(28.7041, 77.1025, "Delhi", "India"),
             "bangalore, india": Location(12.9716, 77.5946, "Bangalore", "India"),
             # Countries (capital cities as fallback)
-            "united states": Location(
-                39.8283, -98.5795, "Washington DC", "United States", 0.5
-            ),
+            "united states": Location(39.8283, -98.5795, "Washington DC", "United States", 0.5),
             "china": Location(35.8617, 104.1954, "Beijing", "China", 0.5),
             "india": Location(20.5937, 78.9629, "Delhi", "India", 0.5),
             "japan": Location(36.2048, 138.2529, "Tokyo", "Japan", 0.5),
-            "united kingdom": Location(
-                55.3781, -3.4360, "London", "United Kingdom", 0.5
-            ),
+            "united kingdom": Location(55.3781, -3.4360, "London", "United Kingdom", 0.5),
             "france": Location(46.2276, 2.2137, "Paris", "France", 0.5),
             "germany": Location(51.1657, 10.4515, "Berlin", "Germany", 0.5),
             "australia": Location(-25.2744, 133.7751, "Canberra", "Australia", 0.5),
@@ -253,9 +243,7 @@ class GeocodingService:
 
         return None
 
-    async def batch_geocode(
-        self, locations: list[tuple[str, str]]
-    ) -> dict[tuple[str, str], Location | None]:
+    async def batch_geocode(self, locations: list[tuple[str, str]]) -> dict[tuple[str, str], Location | None]:
         """
         Geocode multiple locations in batch.
 
@@ -317,9 +305,7 @@ class GeocodingService:
 geocoding_service = GeocodingService()
 
 
-async def geocode_transaction_location(
-    city: str, country: str
-) -> dict[str, float] | None:
+async def geocode_transaction_location(city: str, country: str) -> dict[str, float] | None:
     """
     Convenience function to geocode a transaction location.
 

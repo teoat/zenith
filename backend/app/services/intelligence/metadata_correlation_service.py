@@ -74,9 +74,7 @@ class MetadataCorrelationEngine:
                                 "entity_b": entity_list[j].id,
                                 "metadata_type": "phone",
                                 "metadata_value": phone,
-                                "confidence": self.correlation_strength_weights[
-                                    "phone"
-                                ],
+                                "confidence": self.correlation_strength_weights["phone"],
                                 "reasoning": f"Both entities share phone {phone}",
                             }
                         )
@@ -103,9 +101,7 @@ class MetadataCorrelationEngine:
                                 "entity_b": entity_list[j].id,
                                 "metadata_type": "email",
                                 "metadata_value": email,
-                                "confidence": self.correlation_strength_weights[
-                                    "email"
-                                ],
+                                "confidence": self.correlation_strength_weights["email"],
                                 "reasoning": f"Both entities share email {email}",
                             }
                         )
@@ -133,9 +129,7 @@ class MetadataCorrelationEngine:
                                 "entity_b": entity_list[j].id,
                                 "metadata_type": "address",
                                 "metadata_value": address,
-                                "confidence": self.correlation_strength_weights[
-                                    "address"
-                                ],
+                                "confidence": self.correlation_strength_weights["address"],
                                 "reasoning": f"Both entities share address {address}",
                             }
                         )
@@ -162,9 +156,7 @@ class MetadataCorrelationEngine:
                                 "entity_b": entity_list[j].id,
                                 "metadata_type": "ip_address",
                                 "metadata_value": ip,
-                                "confidence": self.correlation_strength_weights[
-                                    "ip_address"
-                                ],
+                                "confidence": self.correlation_strength_weights["ip_address"],
                                 "reasoning": f"Both entities accessed from IP {ip}",
                             }
                         )

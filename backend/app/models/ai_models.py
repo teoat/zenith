@@ -37,12 +37,8 @@ class AIDecision(Base):
     tenant_id: Mapped[int] = mapped_column(Integer, ForeignKey("tenants.id"))
 
     # Timestamps
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now(UTC)
-    )
-    resolved_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(UTC))
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="ai_decisions")
@@ -71,9 +67,7 @@ class AIPrediction(Base):
     tenant_id: Mapped[int] = mapped_column(Integer, ForeignKey("tenants.id"))
 
     # Timestamps
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now(UTC)
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(UTC))
 
 
 class AIInteraction(Base):
@@ -91,16 +85,12 @@ class AIInteraction(Base):
     context: Mapped[str] = mapped_column(Text)  # JSON object
     collaboration_mode: Mapped[str] = mapped_column(String(20))
     confidence_score: Mapped[float] = mapped_column(Float)
-    user_feedback: Mapped[str | None] = mapped_column(
-        Text, nullable=True
-    )  # JSON object
+    user_feedback: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON object
     processing_time: Mapped[float] = mapped_column(Float)
     outcome: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
     # Timestamps
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now(UTC)
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(UTC))
 
 
 class AIScalingEvent(Base):
@@ -121,9 +111,7 @@ class AIScalingEvent(Base):
     success: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Timestamps
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now(UTC)
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(UTC))
 
 
 class AIWorkflowOptimization(Base):
@@ -146,9 +134,7 @@ class AIWorkflowOptimization(Base):
     tenant_id: Mapped[int] = mapped_column(Integer, ForeignKey("tenants.id"))
 
     # Timestamps
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now(UTC)
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(UTC))
 
 
 # Update existing User model to include AI relationships
@@ -163,9 +149,7 @@ class User(Base):
     full_name: Mapped[str] = mapped_column(String(100))
 
     # AI relationships
-    ai_decisions: Mapped[list[AIDecision]] = relationship(
-        "AIDecision", back_populates="user"
-    )
+    ai_decisions: Mapped[list[AIDecision]] = relationship("AIDecision", back_populates="user")
 
 
 # Alembic migration for AI tables would be created separately

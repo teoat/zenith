@@ -1,11 +1,18 @@
-import * as React from 'react';
-import { Suspense, useMemo, useState, useEffect, useCallback, useLayoutEffect } from 'react';
-import { useResizeObserver } from '@/hooks/useResizeObserver';
-import { Skeleton } from '@/components/ui/Skeleton';
+import * as React from "react";
+import {
+  Suspense,
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+} from "react";
+import { useResizeObserver } from "@/hooks/useResizeObserver";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 // Lazy load graph libraries to reduce initial bundle size
-const ForceGraph2D = React.lazy(() => import('react-force-graph-2d'));
-const ForceGraph3D = React.lazy(() => import('react-force-graph-3d'));
+const ForceGraph2D = React.lazy(() => import("react-force-graph-2d"));
+const ForceGraph3D = React.lazy(() => import("react-force-graph-3d"));
 
 export interface NetworkGraphNode {
   id: string;
@@ -13,7 +20,16 @@ export interface NetworkGraphNode {
   group: string;
   val?: number;
   color?: string;
-  [key: string]: any;
+  x?: number;
+  y?: number;
+  z?: number;
+  vx?: number;
+  vy?: number;
+  vz?: number;
+  fx?: number;
+  fy?: number;
+  fz?: number;
+  [key: string]: string | number | undefined;
 }
 
 export interface NetworkGraphLink {
@@ -33,7 +49,7 @@ interface NetworkGraphProps {
   data?: NetworkGraphData;
   height?: number;
   width?: number;
-  mode?: '2d' | '3d';
+  mode?: "2d" | "3d";
   focusNodeId?: string;
   onNodeClick?: (node: NetworkGraphNode) => void;
   onNodeHover?: (node: NetworkGraphNode | null) => void;
@@ -46,15 +62,15 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
   data,
   height = 600,
   width,
-  mode = '2d',
+  mode = "2d",
   onNodeClick,
   onNodeHover,
-  onLinkClick
+  onLinkClick,
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const dimensions = useResizeObserver(containerRef);
   const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
-  
+
   // Use provided dimensions or observed dimensions
   const finalWidth = width || dimensions.width || 800;
   // Ensure height is respected. If container has 0 height initially, default to prop
@@ -64,28 +80,36 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     if (!data) return { nodes: [], links: [] };
     // Clone to avoid mutation by force-graph
     return {
-      nodes: data.nodes.map(n => ({ ...n })),
-      links: data.links.map(l => ({ ...l }))
+      nodes: data.nodes.map((n) => ({ ...n })),
+      links: data.links.map((l) => ({ ...l })),
     };
   }, [data]);
 
   // Keyboard navigation
   // Keyboard navigation
-  const getAdjacentNodes = useCallback((nodeId: string) => {
-    if (!data) return [];
-    const links = data.links.filter(l =>
-      (typeof l.source === 'string' ? l.source : l.source.id) === nodeId ||
-      (typeof l.target === 'string' ? l.target : l.target.id) === nodeId
-    );
-    const adjacentIds = new Set<string>();
-    links.forEach(link => {
-      if (typeof link.source === 'string' && link.source !== nodeId) adjacentIds.add(link.source);
-      else if (typeof link.source === 'object' && link.source.id !== nodeId) adjacentIds.add(link.source.id);
-      if (typeof link.target === 'string' && link.target !== nodeId) adjacentIds.add(link.target);
-      else if (typeof link.target === 'object' && link.target.id !== nodeId) adjacentIds.add(link.target.id);
-    });
-    return Array.from(adjacentIds);
-  }, [data]);
+  const getAdjacentNodes = useCallback(
+    (nodeId: string) => {
+      if (!data) return [];
+      const links = data.links.filter(
+        (l) =>
+          (typeof l.source === "string" ? l.source : l.source.id) === nodeId ||
+          (typeof l.target === "string" ? l.target : l.target.id) === nodeId,
+      );
+      const adjacentIds = new Set<string>();
+      links.forEach((link) => {
+        if (typeof link.source === "string" && link.source !== nodeId)
+          adjacentIds.add(link.source);
+        else if (typeof link.source === "object" && link.source.id !== nodeId)
+          adjacentIds.add(link.source.id);
+        if (typeof link.target === "string" && link.target !== nodeId)
+          adjacentIds.add(link.target);
+        else if (typeof link.target === "object" && link.target.id !== nodeId)
+          adjacentIds.add(link.target.id);
+      });
+      return Array.from(adjacentIds);
+    },
+    [data],
+  );
 
   const focusNextNode = useCallback(() => {
     if (!data || !focusedNodeId) return;
@@ -100,36 +124,38 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
       if (!data || !focusedNodeId) return;
 
       switch (e.key) {
-        case 'ArrowRight':
-        case 'ArrowDown':
+        case "ArrowRight":
+        case "ArrowDown":
           e.preventDefault();
           focusNextNode();
           break;
-        case 'Tab': {
+        case "Tab": {
           e.preventDefault();
-          const currentIndex = data.nodes.findIndex(n => n.id === focusedNodeId);
+          const currentIndex = data.nodes.findIndex(
+            (n) => n.id === focusedNodeId,
+          );
           if (currentIndex >= 0) {
             const nextIndex = (currentIndex + 1) % data.nodes.length;
             setFocusedNodeId(data.nodes[nextIndex].id);
           }
           break;
         }
-        case 'Enter':
-        case ' ': {
+        case "Enter":
+        case " ": {
           e.preventDefault();
-          const node = data.nodes.find(n => n.id === focusedNodeId);
+          const node = data.nodes.find((n) => n.id === focusedNodeId);
           if (node) onNodeClick?.(node);
           break;
         }
-        case 'Escape':
+        case "Escape":
           setFocusedNodeId(null);
           break;
       }
     };
 
     if (data?.nodes.length) {
-      window.addEventListener('keydown', handleKeyDown);
-      return () => window.removeEventListener('keydown', handleKeyDown);
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
     }
   }, [data, focusedNodeId, focusNextNode, onNodeClick]);
 
@@ -142,16 +168,16 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
 
   useLayoutEffect(() => {
     if (containerRef.current) {
-      containerRef.current.style.setProperty('--height', `${height}px`);
+      containerRef.current.style.setProperty("--height", `${height}px`);
     }
   }, [height]);
 
   // Handle no-data container after render
   useLayoutEffect(() => {
-    const el = document.getElementById('network-graph-no-data');
+    const el = document.getElementById("network-graph-no-data");
     if (el) {
-      el.style.setProperty('--height', `${finalHeight}px`);
-      el.style.setProperty('--width', `${finalWidth}px`);
+      el.style.setProperty("--height", `${finalHeight}px`);
+      el.style.setProperty("--width", `${finalWidth}px`);
     }
   }, [finalHeight, finalWidth, data]);
 
@@ -168,21 +194,21 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
 
   // Premium color palette for nodes
   const premiumColors = [
-    '#6366f1', // Indigo
-    '#8b5cf6', // Violet
-    '#ec4899', // Pink
-    '#f59e0b', // Amber
-    '#10b981', // Emerald
-    '#06b6d4', // Cyan
-    '#84cc16', // Lime
-    '#f97316', // Orange
-    '#ef4444', // Red
-    '#64748b'  // Slate
+    "#6366f1", // Indigo
+    "#8b5cf6", // Violet
+    "#ec4899", // Pink
+    "#f59e0b", // Amber
+    "#10b981", // Emerald
+    "#06b6d4", // Cyan
+    "#84cc16", // Lime
+    "#f97316", // Orange
+    "#ef4444", // Red
+    "#64748b", // Slate
   ];
 
   const getNodeColor = (node: any) => {
     if (focusedNodeId === node.id) {
-      return '#dc2626'; // Premium red for focus
+      return "#dc2626"; // Premium red for focus
     }
 
     if (node.color) {
@@ -190,7 +216,9 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     }
 
     // Use group-based coloring with premium colors
-    const groupIndex = node.group ? node.group.charCodeAt(0) % premiumColors.length : 0;
+    const groupIndex = node.group
+      ? node.group.charCodeAt(0) % premiumColors.length
+      : 0;
     return premiumColors[groupIndex];
   };
 
@@ -200,19 +228,20 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     height: finalHeight,
     nodeLabel: "label",
     nodeAutoColorBy: undefined, // Disable auto coloring to use custom
-    nodeVal: (node: any) => focusedNodeId === node.id ? (node.val || 5) * 1.5 : (node.val || 5),
+    nodeVal: (node: any) =>
+      focusedNodeId === node.id ? (node.val || 5) * 1.5 : node.val || 5,
     nodeColor: getNodeColor,
-    linkColor: () => '#94a3b8', // Premium slate color for links
+    linkColor: () => "#94a3b8", // Premium slate color for links
     linkDirectionalArrowLength: 3.5,
     linkDirectionalArrowRelPos: 1,
-    linkDirectionalArrowColor: '#64748b', // Matching arrow color
+    linkDirectionalArrowColor: "#64748b", // Matching arrow color
     onNodeClick: (node: any) => {
       setFocusedNodeId(node.id);
       onNodeClick?.(node as NetworkGraphNode);
     },
     onNodeHover: (node: any) => onNodeHover?.(node as NetworkGraphNode | null),
     onLinkClick: (link: any) => onLinkClick?.(link as NetworkGraphLink),
-    backgroundColor: "rgba(0,0,0,0)" // Transparent to let container bg show
+    backgroundColor: "rgba(0,0,0,0)", // Transparent to let container bg show
   };
 
   return (
@@ -221,7 +250,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
       className="border border-slate-200 dark:border-slate-800 rounded overflow-hidden bg-white dark:bg-slate-950 network-graph-container fill-height"
     >
       <Suspense fallback={<Skeleton className="w-full h-full" />}>
-        {mode === '3d' ? (
+        {mode === "3d" ? (
           <ForceGraph3D
             {...commonProps}
             nodeResolution={8}
@@ -229,9 +258,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
             controlType="orbit"
           />
         ) : (
-          <ForceGraph2D
-            {...commonProps}
-          />
+          <ForceGraph2D {...commonProps} />
         )}
       </Suspense>
     </div>

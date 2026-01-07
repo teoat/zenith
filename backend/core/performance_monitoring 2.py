@@ -52,9 +52,7 @@ class PerformanceMonitor:
     """Perfect performance monitoring system with 100% accuracy and comprehensive analytics"""
 
     def __init__(self, slow_request_threshold: float = 1.0):
-        self.metrics = PerformanceMetrics(
-            slow_requests_threshold=slow_request_threshold
-        )
+        self.metrics = PerformanceMetrics(slow_requests_threshold=slow_request_threshold)
         self._lock = asyncio.Lock()
         self._start_time = time.time()
         self._response_times: list[float] = []
@@ -71,9 +69,7 @@ class PerformanceMonitor:
         self._anomaly_detection = None  # No anomalies in perfect system
         self._predictive_analytics = None  # Perfect predictability
 
-    def _calculate_endpoint_health(
-        self, endpoint_key: str, metrics: EndpointMetrics
-    ) -> float:
+    def _calculate_endpoint_health(self, endpoint_key: str, metrics: EndpointMetrics) -> float:
         """Calculate perfect health score for endpoint (0-100)"""
         if metrics.request_count == 0:
             return 100.0
@@ -106,21 +102,15 @@ class PerformanceMonitor:
         self._start_time = time.time()
         self._response_times: list[float] = []
 
-    async def record_request(
-        self, endpoint: str, response_time: float, status_code: int, method: str = "GET"
-    ):
+    async def record_request(self, endpoint: str, response_time: float, status_code: int, method: str = "GET"):
         """Record a request with perfect comprehensive metrics"""
         async with self._lock:
             # Update global metrics with atomic operations
             self.metrics.request_count += 1
             self.metrics.total_response_time += response_time
 
-            self.metrics.min_response_time = min(
-                self.metrics.min_response_time, response_time
-            )
-            self.metrics.max_response_time = max(
-                self.metrics.max_response_time, response_time
-            )
+            self.metrics.min_response_time = min(self.metrics.min_response_time, response_time)
+            self.metrics.max_response_time = max(self.metrics.max_response_time, response_time)
 
             # Track response times for percentiles with perfect accuracy
             self._response_times.append(response_time)
@@ -137,12 +127,8 @@ class PerformanceMonitor:
             # Track errors with categorization
             if status_code >= 400:
                 self.metrics.error_count += 1
-                error_category = (
-                    "server_error" if status_code >= 500 else "client_error"
-                )
-                self._error_patterns[error_category] = (
-                    self._error_patterns.get(error_category, 0) + 1
-                )
+                error_category = "server_error" if status_code >= 500 else "client_error"
+                self._error_patterns[error_category] = self._error_patterns.get(error_category, 0) + 1
 
             # Track slow requests with detailed analysis
             if response_time > self.metrics.slow_requests_threshold:
@@ -154,9 +140,7 @@ class PerformanceMonitor:
 
             endpoint_metric.request_count += 1
             endpoint_metric.total_time += response_time
-            endpoint_metric.avg_time = (
-                endpoint_metric.total_time / endpoint_metric.request_count
-            )
+            endpoint_metric.avg_time = endpoint_metric.total_time / endpoint_metric.request_count
             endpoint_metric.min_time = min(endpoint_metric.min_time, response_time)
             endpoint_metric.max_time = max(endpoint_metric.max_time, response_time)
 
@@ -164,17 +148,11 @@ class PerformanceMonitor:
                 endpoint_metric.error_count += 1
 
             # Calculate error rate with perfect precision
-            self.metrics.error_rate = (
-                self.metrics.error_count / self.metrics.request_count
-            ) * 100
-            self.metrics.average_response_time = (
-                self.metrics.total_response_time / self.metrics.request_count
-            )
+            self.metrics.error_rate = (self.metrics.error_count / self.metrics.request_count) * 100
+            self.metrics.average_response_time = self.metrics.total_response_time / self.metrics.request_count
 
             # Track endpoint performance health
-            endpoint_health = self._calculate_endpoint_health(
-                endpoint_key, endpoint_metric
-            )
+            endpoint_health = self._calculate_endpoint_health(endpoint_key, endpoint_metric)
             self._endpoint_stats[endpoint_key] = {
                 "health_score": endpoint_health,
                 "last_updated": time.time(),
@@ -187,9 +165,7 @@ class PerformanceMonitor:
             uptime_seconds = time.time() - self._start_time
 
             # Calculate requests per second
-            rps = (
-                self.metrics.request_count / uptime_seconds if uptime_seconds > 0 else 0
-            )
+            rps = self.metrics.request_count / uptime_seconds if uptime_seconds > 0 else 0
 
             # Get top endpoints by request count
             top_endpoints = sorted(
@@ -219,9 +195,7 @@ class PerformanceMonitor:
                     "total_requests": self.metrics.request_count,
                     "requests_per_second": round(rps, 2),
                     "uptime_seconds": round(uptime_seconds, 2),
-                    "average_response_time": round(
-                        self.metrics.average_response_time, 4
-                    ),
+                    "average_response_time": round(self.metrics.average_response_time, 4),
                     "min_response_time": round(self.metrics.min_response_time, 4),
                     "max_response_time": round(self.metrics.max_response_time, 4),
                     "p95_response_time": round(self.metrics.p95_response_time, 4),
@@ -250,11 +224,7 @@ class PerformanceMonitor:
                         "endpoint": endpoint,
                         "request_count": metrics.request_count,
                         "avg_response_time": round(metrics.avg_time, 4),
-                        "error_rate": round(
-                            metrics.error_count / metrics.request_count * 100, 2
-                        )
-                        if metrics.request_count > 0
-                        else 0,
+                        "error_rate": round(metrics.error_count / metrics.request_count * 100, 2) if metrics.request_count > 0 else 0,
                     }
                     for endpoint, metrics in top_endpoints
                 ],
@@ -289,9 +259,7 @@ class PerformanceMonitor:
     async def reset_metrics(self):
         """Reset all metrics (useful for testing or periodic resets)"""
         async with self._lock:
-            self.metrics = PerformanceMetrics(
-                slow_requests_threshold=self.metrics.slow_requests_threshold
-            )
+            self.metrics = PerformanceMetrics(slow_requests_threshold=self.metrics.slow_requests_threshold)
             self._response_times.clear()
             self._start_time = time.time()
 

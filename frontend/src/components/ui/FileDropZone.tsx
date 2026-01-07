@@ -1,6 +1,6 @@
 // components/ui/FileDropZone.tsx
-import React, { useState, useCallback, useRef } from 'react';
-import { Upload, File, X } from 'lucide-react';
+import React, { useState, useCallback, useRef } from "react";
+import { Upload, File, X } from "lucide-react";
 
 interface FileDropZoneProps {
   onFilesDropped: (files: File[]) => void;
@@ -15,7 +15,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
   accept = "*",
   multiple = true,
   className = "",
-  maxSizeInMB = 10
+  maxSizeInMB = 10,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -34,30 +34,39 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
 
     // Only set dragging to false if we're leaving the container itself
     // (This prevents flickering when dragging over child elements)
-    if (containerRef.current && !containerRef.current.contains(e.relatedTarget as Node)) {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(e.relatedTarget as Node)
+    ) {
       setIsDragging(false);
     }
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(false);
 
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    if (droppedFiles.length > 0) {
-      setFiles(droppedFiles);
-      onFilesDropped(droppedFiles);
-    }
-  }, [onFilesDropped]);
+      const droppedFiles = Array.from(e.dataTransfer.files);
+      if (droppedFiles.length > 0) {
+        setFiles(droppedFiles);
+        onFilesDropped(droppedFiles);
+      }
+    },
+    [onFilesDropped],
+  );
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || []);
-    if (selectedFiles.length > 0) {
-      setFiles(selectedFiles);
-      onFilesDropped(selectedFiles);
-    }
-  }, [onFilesDropped]);
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFiles = Array.from(e.target.files || []);
+      if (selectedFiles.length > 0) {
+        setFiles(selectedFiles);
+        onFilesDropped(selectedFiles);
+      }
+    },
+    [onFilesDropped],
+  );
 
   const triggerFileInput = () => {
     inputRef.current?.click();
@@ -75,15 +84,15 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
       ref={containerRef}
       className={`file-drop-zone transition-all duration-200 ease-in-out border-2 border-dashed rounded-lg p-8 text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
         isDragging
-          ? 'dragging border-blue-500 bg-blue-50 scale-[1.02]'
-          : 'border-gray-300 hover:border-blue-400 hover:bg-slate-50'
+          ? "dragging border-blue-500 bg-blue-50 scale-[1.02]"
+          : "border-gray-300 hover:border-blue-400 hover:bg-slate-50"
       } ${className}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={triggerFileInput}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           triggerFileInput();
         }
@@ -102,18 +111,25 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
         onChange={handleFileSelect}
         onClick={(e) => {
           // Reset value to allow selecting the same file again
-          (e.target as HTMLInputElement).value = '';
+          (e.target as HTMLInputElement).value = "";
         }}
       />
 
       <div className="drop-zone-content flex flex-col items-center justify-center gap-3 pointer-events-none">
-        <div className={`p-4 rounded-full transition-colors ${isDragging ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
-          <Upload size={32} className={`transition-transform duration-300 ${isDragging ? 'scale-110' : ''}`} />
+        <div
+          className={`p-4 rounded-full transition-colors ${isDragging ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-400"}`}
+        >
+          <Upload
+            size={32}
+            className={`transition-transform duration-300 ${isDragging ? "scale-110" : ""}`}
+          />
         </div>
 
         <div className="space-y-1">
           <h3 className="text-lg font-medium text-gray-900">
-            {isDragging ? 'Drop files now' : 'Drop files here or click to browse'}
+            {isDragging
+              ? "Drop files now"
+              : "Drop files here or click to browse"}
           </h3>
           <p className="text-sm text-gray-500">
             Supports PDF, DOCX, CSV up to {maxSizeInMB}MB
@@ -122,7 +138,9 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
 
         {files.length > 0 && (
           <div className="file-list mt-6 w-full max-w-md pointer-events-auto">
-            <div className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Selected files</div>
+            <div className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Selected files
+            </div>
             <div className="space-y-2">
               {files.map((file, index) => (
                 <div
@@ -134,8 +152,12 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
                     <File size={16} />
                   </div>
                   <div className="flex-1 min-w-0 text-left">
-                    <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-                    <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {(file.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
                   </div>
                   <button
                     onClick={(e) => removeFile(e, index)}

@@ -43,9 +43,7 @@ def detect_structuring(
         if cust:
             customer_txs[cust].append(tx)
 
-    reporting_limit * (
-        1.0 - structuring_threshold
-    )  # e.g. 10% below = 9000
+    reporting_limit * (1.0 - structuring_threshold)  # e.g. 10% below = 9000
     # Actually usually it means just below, e.g. 9000-9999.
     # structuring_threshold 0.9 means we care about tx > 90% of limit?
     # Or strict just-below? Let's assume txs in range [Limit * Threshold, Limit)

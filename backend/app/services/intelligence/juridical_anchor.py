@@ -39,9 +39,7 @@ class JuridicalAnchorService:
             },
         }
 
-    async def verify_signature(
-        self, signature_id: str, report_content: str, signature_data: dict
-    ) -> bool:
+    async def verify_signature(self, signature_id: str, report_content: str, signature_data: dict) -> bool:
         """
         Verifies a PQ signature against the content.
         """

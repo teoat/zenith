@@ -88,9 +88,7 @@ async def log_frontend_error(
             "user_agent": report.user_agent,
             "client_ip": client_ip,
             "timestamp": report.timestamp,
-            "component_stack": report.error_info.component_stack
-            if report.error_info
-            else None,
+            "component_stack": report.error_info.component_stack if report.error_info else None,
             "stack_trace": report.error.stack,
             "metadata": report.context.metadata,
         }

@@ -1,6 +1,14 @@
+import logging
+from datetime import datetime
+from typing import Any
+
 from app.core.exceptions import (
     ZenithError,
 )
+from fastapi import APIRouter, HTTPException, status
+from fastapi.responses import JSONResponse
+
+from app.services.infrastructure.circuit_breaker import get_all_circuit_breakers
 
 """
 Comprehensive Health Check Router
@@ -14,14 +22,6 @@ Used by:
 - Kubernetes readiness probe (health/ready)
 - Monitoring systems (health endpoint)
 """
-import logging
-from datetime import datetime
-from typing import Any
-
-from fastapi import APIRouter, HTTPException, status
-from fastapi.responses import JSONResponse
-
-from app.services.infrastructure.circuit_breaker import get_all_circuit_breakers
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["Health"])
@@ -145,9 +145,7 @@ async def health_check() -> dict[str, Any] | JSONResponse:
     # Fast circuit breaker check - just count open breakers
     try:
         circuit_breakers = get_all_circuit_breakers()
-        open_count = sum(
-            1 for status in circuit_breakers.values() if status.get("state") == "open"
-        )
+        open_count = sum(1 for status in circuit_breakers.values() if status.get("state") == "open")
         health_status["components"]["circuit_breakers"] = {
             "status": "healthy" if open_count == 0 else "degraded",
             "total_breakers": len(circuit_breakers),
@@ -189,9 +187,7 @@ async def health_check() -> dict[str, Any] | JSONResponse:
     health_status["uptime_calculation"] = {
         "target": "99.99%",
         "current_status": health_status["status"],
-        "estimated_monthly_downtime": (
-            "4.32 minutes" if health_status["status"] == "healthy" else "extended"
-        ),
+        "estimated_monthly_downtime": ("4.32 minutes" if health_status["status"] == "healthy" else "extended"),
         "critical_components": ["database", "circuit_breakers", "system_resources"],
     }
     # Cache the result for future requests

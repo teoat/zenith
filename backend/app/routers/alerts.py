@@ -88,9 +88,7 @@ async def get_alerts(
                 "description": alert.description,
                 "severity": alert.severity,
                 "status": getattr(alert, "status", meta.get("status", "pending")),
-                "risk_score": meta.get(
-                    "risk_score", 0.0
-                ),  # Assuming risk score is in metadata
+                "risk_score": meta.get("risk_score", 0.0),  # Assuming risk score is in metadata
                 "created_at": alert.created_at.isoformat() if alert.created_at else None,
             }
         )
@@ -128,9 +126,7 @@ async def update_alert(
     if status in ["approved", "rejected", "escalated"]:
         alert.is_acknowledged = True
         alert.acknowledged_at = datetime.now(UTC)
-        user_id = (
-            getattr(current_user, "id", str(current_user)) if current_user else None
-        )
+        user_id = getattr(current_user, "id", str(current_user)) if current_user else None
         alert.acknowledged_by = user_id
 
     db.commit()

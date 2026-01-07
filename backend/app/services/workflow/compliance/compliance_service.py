@@ -34,9 +34,7 @@ class ComplianceService:
         """Log a compliance-related event for audit purposes"""
         try:
             # Calculate compliance flags based on the action and resource
-            compliance_flags = self._determine_compliance_flags(
-                action, resource_type, details
-            )
+            compliance_flags = self._determine_compliance_flags(action, resource_type, details)
 
             # Assess risk score for the event
             risk_score = self._calculate_event_risk(action, resource_type, details)
@@ -79,9 +77,7 @@ class ComplianceService:
         """Create a regulatory report (SAR, CTR, etc.)"""
         try:
             # Generate unique report ID
-            report_id = (
-                f"{report_type}-{case_id}-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
-            )
+            report_id = f"{report_type}-{case_id}-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
 
             # Determine due date based on report type
             due_date = self._calculate_due_date(report_type)
@@ -116,9 +112,7 @@ class ComplianceService:
             await self.db.rollback()
             return {"error": str(e)}
 
-    async def submit_security_incident(
-        self, incident_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def submit_security_incident(self, incident_data: dict[str, Any]) -> dict[str, Any]:
         """Submit a security incident report"""
         try:
             incident = SecurityIncident(
@@ -152,9 +146,7 @@ class ComplianceService:
             await self.db.rollback()
             return {"error": str(e)}
 
-    async def initiate_access_review(
-        self, user_id: str, reviewer_id: str, review_period_months: int = 12
-    ) -> dict[str, Any]:
+    async def initiate_access_review(self, user_id: str, reviewer_id: str, review_period_months: int = 12) -> dict[str, Any]:
         """Initiate an access review for a user"""
         try:
             # Calculate review period
@@ -231,26 +223,13 @@ class ComplianceService:
         """Get comprehensive compliance dashboard data"""
         try:
             # Get recent audit logs
-            recent_logs = (
-                self.db.query(ComplianceAuditLog)
-                .order_by(ComplianceAuditLog.timestamp.desc())
-                .limit(100)
-                .all()
-            )
+            recent_logs = self.db.query(ComplianceAuditLog).order_by(ComplianceAuditLog.timestamp.desc()).limit(100).all()
 
             # Get pending regulatory reports
-            pending_reports = (
-                self.db.query(RegulatoryReport)
-                .filter(RegulatoryReport.filing_status.in_(["draft", "pending"]))
-                .count()
-            )
+            pending_reports = self.db.query(RegulatoryReport).filter(RegulatoryReport.filing_status.in_(["draft", "pending"])).count()
 
             # Get open security incidents
-            open_incidents = (
-                self.db.query(SecurityIncident)
-                .filter(SecurityIncident.status.in_(["open", "investigating"]))
-                .count()
-            )
+            open_incidents = self.db.query(SecurityIncident).filter(SecurityIncident.status.in_(["open", "investigating"])).count()
 
             # Get overdue access reviews
             overdue_reviews = (
@@ -266,8 +245,7 @@ class ComplianceService:
             expiring_training = (
                 self.db.query(TrainingRecord)
                 .filter(
-                    TrainingRecord.expiry_date
-                    <= datetime.utcnow() + timedelta(days=30),
+                    TrainingRecord.expiry_date <= datetime.utcnow() + timedelta(days=30),
                     TrainingRecord.completion_status == "completed",
                 )
                 .count()
@@ -292,9 +270,7 @@ class ComplianceService:
             logger.error(f"Failed to get compliance dashboard: {e!s}")
             return {"error": str(e)}
 
-    def _determine_compliance_flags(
-        self, action: str, resource_type: str, details: dict[str, Any]
-    ) -> list[str]:
+    def _determine_compliance_flags(self, action: str, resource_type: str, details: dict[str, Any]) -> list[str]:
         """Determine which compliance frameworks this event relates to"""
         flags = []
 
@@ -316,9 +292,7 @@ class ComplianceService:
 
         return flags
 
-    def _calculate_event_risk(
-        self, action: str, resource_type: str, details: dict[str, Any]
-    ) -> float:
+    def _calculate_event_risk(self, action: str, resource_type: str, details: dict[str, Any]) -> float:
         """Calculate risk score for the compliance event"""
         risk_score = 0.0
 
@@ -351,9 +325,7 @@ class ComplianceService:
 
         return min(risk_score, 1.0)
 
-    async def automate_regulatory_reporting(
-        self, case_id: str, report_types: list[str]
-    ) -> dict[str, Any]:
+    async def automate_regulatory_reporting(self, case_id: str, report_types: list[str]) -> dict[str, Any]:
         """Automate generation and filing of regulatory reports"""
         automation_results = {
             "reports_generated": [],
@@ -368,9 +340,7 @@ class ComplianceService:
                 report_data = await self._generate_report_data(case_id, report_type)
 
                 # Create regulatory report
-                filing_result = await self.create_regulatory_report(
-                    report_type=report_type, case_id=case_id, report_data=report_data
-                )
+                filing_result = await self.create_regulatory_report(report_type=report_type, case_id=case_id, report_data=report_data)
 
                 if "error" not in filing_result:
                     automation_results["reports_generated"].append(
@@ -383,43 +353,27 @@ class ComplianceService:
 
                     # Auto-submit if possible
                     if self._can_auto_submit(report_type):
-                        submit_result = await self._auto_submit_report(
-                            filing_result["report_id"]
-                        )
+                        submit_result = await self._auto_submit_report(filing_result["report_id"])
                         if submit_result:
-                            automation_results["reports_filed"].append(
-                                filing_result["report_id"]
-                            )
+                            automation_results["reports_filed"].append(filing_result["report_id"])
                         else:
-                            automation_results["errors"].append(
-                                f"Failed to auto-submit {report_type}"
-                            )
+                            automation_results["errors"].append(f"Failed to auto-submit {report_type}")
                     else:
-                        automation_results["reports_filed"].append(
-                            filing_result["report_id"]
-                        )
+                        automation_results["reports_filed"].append(filing_result["report_id"])
                 else:
-                    automation_results["errors"].append(
-                        f"Failed to generate {report_type}: {filing_result['error']}"
-                    )
+                    automation_results["errors"].append(f"Failed to generate {report_type}: {filing_result['error']}")
 
             except Exception as e:
-                automation_results["errors"].append(
-                    f"Error processing {report_type}: {e!s}"
-                )
+                automation_results["errors"].append(f"Error processing {report_type}: {e!s}")
 
         # Calculate automation rate
         total_reports = len(report_types)
         successful_reports = len(automation_results["reports_generated"])
-        automation_results["automation_rate"] = (
-            (successful_reports / total_reports * 100) if total_reports > 0 else 0
-        )
+        automation_results["automation_rate"] = (successful_reports / total_reports * 100) if total_reports > 0 else 0
 
         return automation_results
 
-    async def implement_ai_powered_compliance_assessment(
-        self, case_id: str
-    ) -> dict[str, Any]:
+    async def implement_ai_powered_compliance_assessment(self, case_id: str) -> dict[str, Any]:
         """Implement AI-powered compliance risk assessment"""
         try:
             # Get case data
@@ -429,14 +383,10 @@ class ComplianceService:
             risk_assessment = await self._perform_ai_risk_analysis(case_data)
 
             # Generate compliance recommendations
-            recommendations = await self._generate_ai_compliance_recommendations(
-                risk_assessment
-            )
+            recommendations = await self._generate_ai_compliance_recommendations(risk_assessment)
 
             # Automated compliance actions
-            automated_actions = await self._execute_automated_compliance_actions(
-                recommendations
-            )
+            automated_actions = await self._execute_automated_compliance_actions(recommendations)
 
             return {
                 "case_id": case_id,
@@ -468,9 +418,7 @@ class ComplianceService:
             alerts = await self._generate_predictive_alerts(predictions, risk_trends)
 
             # Actionable insights
-            insights = await self._generate_actionable_insights(
-                current_status, predictions
-            )
+            insights = await self._generate_actionable_insights(current_status, predictions)
 
             return {
                 "current_status": current_status,
@@ -485,9 +433,7 @@ class ComplianceService:
         except Exception as e:
             return {"error": str(e), "dashboard_ready": False}
 
-    async def _generate_report_data(
-        self, case_id: str, report_type: str
-    ) -> dict[str, Any]:
+    async def _generate_report_data(self, case_id: str, report_type: str) -> dict[str, Any]:
         """Generate regulatory report data automatically"""
         # Mock implementation - would integrate with actual data sources
         base_data = {
@@ -553,9 +499,7 @@ class ComplianceService:
             "case_age_days": 30,
         }
 
-    async def _perform_ai_risk_analysis(
-        self, case_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _perform_ai_risk_analysis(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Perform AI-powered risk analysis"""
         # Mock AI analysis
         risk_factors = []
@@ -585,22 +529,12 @@ class ComplianceService:
             "risk_factors": risk_factors,
             "confidence_level": 0.88,
             "recommendations": [
-                (
-                    "Enhanced due diligence required"
-                    if overall_risk > 50
-                    else "Standard monitoring sufficient"
-                ),
-                (
-                    "Additional evidence collection needed"
-                    if evidence_count < 5
-                    else "Evidence collection adequate"
-                ),
+                ("Enhanced due diligence required" if overall_risk > 50 else "Standard monitoring sufficient"),
+                ("Additional evidence collection needed" if evidence_count < 5 else "Evidence collection adequate"),
             ],
         }
 
-    async def _generate_ai_compliance_recommendations(
-        self, risk_assessment: dict[str, Any]
-    ) -> list[str]:
+    async def _generate_ai_compliance_recommendations(self, risk_assessment: dict[str, Any]) -> list[str]:
         """Generate AI-powered compliance recommendations"""
         recommendations = []
         risk_score = risk_assessment.get("overall_risk_score", 0)
@@ -633,9 +567,7 @@ class ComplianceService:
 
         return recommendations
 
-    async def _execute_automated_compliance_actions(
-        self, recommendations: list[str]
-    ) -> list[str]:
+    async def _execute_automated_compliance_actions(self, recommendations: list[str]) -> list[str]:
         """Execute automated compliance actions based on recommendations"""
         executed_actions = []
 
@@ -689,9 +621,7 @@ class ComplianceService:
             ],
         }
 
-    async def _generate_predictive_alerts(
-        self, predictions: dict[str, Any], trends: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    async def _generate_predictive_alerts(self, predictions: dict[str, Any], trends: dict[str, Any]) -> list[dict[str, Any]]:
         """Generate predictive compliance alerts"""
         alerts = []
 
@@ -717,9 +647,7 @@ class ComplianceService:
 
         return alerts
 
-    async def _generate_actionable_insights(
-        self, current_status: dict[str, Any], predictions: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    async def _generate_actionable_insights(self, current_status: dict[str, Any], predictions: dict[str, Any]) -> list[dict[str, Any]]:
         """Generate actionable compliance insights"""
         insights = []
 
@@ -775,8 +703,7 @@ class ComplianceService:
             overdue_users = (
                 self.db.query(TrainingRecord.user_id)
                 .filter(
-                    TrainingRecord.expiry_date
-                    <= datetime.utcnow() + timedelta(days=30),
+                    TrainingRecord.expiry_date <= datetime.utcnow() + timedelta(days=30),
                     TrainingRecord.completion_status == "completed",
                 )
                 .distinct()
@@ -788,9 +715,7 @@ class ComplianceService:
                 self.db.query(TrainingRecord.user_id)
                 .filter(
                     TrainingRecord.completion_status == "not_started",
-                    TrainingRecord.training_type.in_(
-                        ["security_awareness", "compliance"]
-                    ),
+                    TrainingRecord.training_type.in_(["security_awareness", "compliance"]),
                 )
                 .distinct()
                 .all()
@@ -805,14 +730,10 @@ class ComplianceService:
             # In a real implementation, this would send actual emails/notifications
             # For now, we'll log the reminders
             for (user_id,) in overdue_users:
-                logger.info(
-                    f"Training reminder sent to user {user_id}: Training expiring soon"
-                )
+                logger.info(f"Training reminder sent to user {user_id}: Training expiring soon")
 
             for (user_id,) in not_started_users:
-                logger.info(
-                    f"Training reminder sent to user {user_id}: Required training not started"
-                )
+                logger.info(f"Training reminder sent to user {user_id}: Required training not started")
 
             return reminders_sent
 
@@ -827,15 +748,9 @@ class ComplianceService:
 
             # Get completion statistics
             total_records = self.db.query(TrainingRecord).count()
-            completed_records = (
-                self.db.query(TrainingRecord)
-                .filter(TrainingRecord.completion_status == "completed")
-                .count()
-            )
+            completed_records = self.db.query(TrainingRecord).filter(TrainingRecord.completion_status == "completed").count()
 
-            completion_rate = (
-                (completed_records / total_records * 100) if total_records > 0 else 0
-            )
+            completion_rate = (completed_records / total_records * 100) if total_records > 0 else 0
 
             # Get completion by training type
             type_stats = (
@@ -844,9 +759,7 @@ class ComplianceService:
                     TrainingRecord.completion_status,
                     self.db.func.count(TrainingRecord.id),
                 )
-                .group_by(
-                    TrainingRecord.training_type, TrainingRecord.completion_status
-                )
+                .group_by(TrainingRecord.training_type, TrainingRecord.completion_status)
                 .all()
             )
 
@@ -865,9 +778,7 @@ class ComplianceService:
                 "completed_records": completed_records,
                 "type_breakdown": type_breakdown,
                 "completion_trends": completion_trends,
-                "recommendations": self._generate_training_recommendations(
-                    completion_rate, type_breakdown
-                ),
+                "recommendations": self._generate_training_recommendations(completion_rate, type_breakdown),
             }
 
         except Exception as e:
@@ -884,19 +795,13 @@ class ComplianceService:
             "trend": "stable",  # improving, declining, stable
         }
 
-    def _generate_training_recommendations(
-        self, completion_rate: float, type_breakdown: dict[str, dict[str, int]]
-    ) -> list[str]:
+    def _generate_training_recommendations(self, completion_rate: float, type_breakdown: dict[str, dict[str, int]]) -> list[str]:
         """Generate training improvement recommendations"""
         recommendations = []
 
         if completion_rate < 85:
-            recommendations.append(
-                "Implement automated reminder system for overdue training"
-            )
-            recommendations.append(
-                "Simplify training modules and reduce completion time"
-            )
+            recommendations.append("Implement automated reminder system for overdue training")
+            recommendations.append("Simplify training modules and reduce completion time")
 
         # Check specific training types
         for training_type, stats in type_breakdown.items():
@@ -905,14 +810,10 @@ class ComplianceService:
             type_rate = (completed / total * 100) if total > 0 else 0
 
             if type_rate < 80:
-                recommendations.append(
-                    f"Improve {training_type} training completion rate (currently {type_rate:.1f}%)"
-                )
+                recommendations.append(f"Improve {training_type} training completion rate (currently {type_rate:.1f}%)")
 
         if len(recommendations) == 0:
-            recommendations.append(
-                "Training completion rates are satisfactory - continue monitoring"
-            )
+            recommendations.append("Training completion rates are satisfactory - continue monitoring")
 
         return recommendations
 
@@ -952,9 +853,7 @@ class ComplianceService:
         """Notify relevant stakeholders of security incident"""
         # This would implement notification logic
         # For now, just log the incident
-        logger.critical(
-            f"Security incident reported: {incident.title} (Severity: {incident.severity})"
-        )
+        logger.critical(f"Security incident reported: {incident.title} (Severity: {incident.severity})")
 
     def _calculate_compliance_score(
         self,

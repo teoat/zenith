@@ -20,17 +20,13 @@ class ASTComplexityAnalyzer:
         return {
             "cyclomatic_complexity": cyclomatic,
             "halstead_metrics": halstead,
-            "maintainability_index": self._calculate_maintainability_index(
-                halstead, cyclomatic, len(content.splitlines())
-            ),
+            "maintainability_index": self._calculate_maintainability_index(halstead, cyclomatic, len(content.splitlines())),
         }
 
     def _calculate_cyclomatic(self, node: ast.AST) -> int:
         complexity = 1
         for child in ast.walk(node):
-            if isinstance(
-                child, (ast.If, ast.While, ast.For, ast.With, ast.ExceptHandler)
-            ):
+            if isinstance(child, (ast.If, ast.While, ast.For, ast.With, ast.ExceptHandler)):
                 complexity += 1
             elif isinstance(child, ast.BoolOp):
                 complexity += len(child.values) - 1
@@ -105,12 +101,7 @@ class ASTComplexityAnalyzer:
         # MI = 171 - 5.2 * ln(V) - 0.23 * G - 16.2 * ln(LOC)
         # Using simplified formula often used
         try:
-            mi = (
-                171
-                - 5.2 * math.log(max(1, volume))
-                - 0.23 * cyclomatic
-                - 16.2 * math.log(max(1, loc))
-            )
+            mi = 171 - 5.2 * math.log(max(1, volume)) - 0.23 * cyclomatic - 16.2 * math.log(max(1, loc))
             return max(0, min(100, mi))
         except Exception:
             return 0.0

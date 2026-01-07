@@ -1,14 +1,34 @@
 // Agent Approvals page
-import React, { useState, useMemo } from 'react';
-import { CheckCircle, XCircle, Clock, AlertTriangle, Filter, Search } from 'lucide-react';
+import React, { useState, useMemo } from "react";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  AlertTriangle,
+  Filter,
+  Search,
+} from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Input } from '@/components/ui/Input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
-import { useToast } from '@/hooks/use-toast';
-import { AccessibleButton } from '@/components/ui/AccessibleButton';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { Input } from "@/components/ui/Input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/Table";
+import { useToast } from "@/hooks/use-toast";
+import { AccessibleButton } from "@/components/ui/AccessibleButton";
 
 interface AgentApproval {
   id: string;
@@ -17,102 +37,116 @@ interface AgentApproval {
   target: string;
   confidence: number;
   timestamp: string;
-  status: 'pending' | 'approved' | 'rejected';
-  risk: 'low' | 'medium' | 'high';
+  status: "pending" | "approved" | "rejected";
+  risk: "low" | "medium" | "high";
   details: string;
 }
 
 const AgentApprovals: React.FC = () => {
   const { toast } = useToast();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [riskFilter, setRiskFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [riskFilter, setRiskFilter] = useState("all");
 
   // Mock data - replace with real API
   const [approvals, setApprovals] = useState<AgentApproval[]>([
     {
-      id: '1',
-      agentName: 'FraudDetectionAgent',
-      action: 'Flag Transaction',
-      target: 'TXN-2024-001',
+      id: "1",
+      agentName: "FraudDetectionAgent",
+      action: "Flag Transaction",
+      target: "TXN-2024-001",
       confidence: 0.89,
-      timestamp: '2024-12-17T10:30:00Z',
-      status: 'pending',
-      risk: 'high',
-      details: 'Suspicious transaction pattern detected with 89% confidence'
+      timestamp: "2024-12-17T10:30:00Z",
+      status: "pending",
+      risk: "high",
+      details: "Suspicious transaction pattern detected with 89% confidence",
     },
     {
-      id: '2',
-      agentName: 'ComplianceAgent',
-      action: 'Escalate Case',
-      target: 'CASE-2024-045',
+      id: "2",
+      agentName: "ComplianceAgent",
+      action: "Escalate Case",
+      target: "CASE-2024-045",
       confidence: 0.76,
-      timestamp: '2024-12-17T09:15:00Z',
-      status: 'pending',
-      risk: 'medium',
-      details: 'Compliance violation detected in regulatory reporting'
+      timestamp: "2024-12-17T09:15:00Z",
+      status: "pending",
+      risk: "medium",
+      details: "Compliance violation detected in regulatory reporting",
     },
     {
-      id: '3',
-      agentName: 'RiskAssessmentAgent',
-      action: 'Block Account',
-      target: 'ACC-789012',
+      id: "3",
+      agentName: "RiskAssessmentAgent",
+      action: "Block Account",
+      target: "ACC-789012",
       confidence: 0.95,
-      timestamp: '2024-12-17T08:45:00Z',
-      status: 'approved',
-      risk: 'high',
-      details: 'High-risk account activity requiring immediate blocking'
-    }
+      timestamp: "2024-12-17T08:45:00Z",
+      status: "approved",
+      risk: "high",
+      details: "High-risk account activity requiring immediate blocking",
+    },
   ]);
 
   const filteredApprovals = useMemo(() => {
-    return approvals.filter(approval => {
-      const matchesSearch = approval.agentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           approval.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           approval.target.toLowerCase().includes(searchTerm.toLowerCase());
+    return approvals.filter((approval) => {
+      const matchesSearch =
+        approval.agentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        approval.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        approval.target.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesStatus = statusFilter === 'all' || approval.status === statusFilter;
-      const matchesRisk = riskFilter === 'all' || approval.risk === riskFilter;
+      const matchesStatus =
+        statusFilter === "all" || approval.status === statusFilter;
+      const matchesRisk = riskFilter === "all" || approval.risk === riskFilter;
 
       return matchesSearch && matchesStatus && matchesRisk;
     });
   }, [approvals, searchTerm, statusFilter, riskFilter]);
 
-  const handleApproval = (id: string, action: 'approve' | 'reject') => {
-    setApprovals(prev => prev.map(approval =>
-      approval.id === id
-        ? { ...approval, status: action === 'approve' ? 'approved' : 'rejected' }
-        : approval
-    ));
+  const handleApproval = (id: string, action: "approve" | "reject") => {
+    setApprovals((prev) =>
+      prev.map((approval) =>
+        approval.id === id
+          ? {
+              ...approval,
+              status: action === "approve" ? "approved" : "rejected",
+            }
+          : approval,
+      ),
+    );
 
     toast({
-      title: action === 'approve' ? 'Approved' : 'Rejected',
+      title: action === "approve" ? "Approved" : "Rejected",
       description: `Agent action ${action}d successfully`,
     });
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'approved': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'rejected': return <XCircle className="w-4 h-4 text-red-500" />;
-      default: return <Clock className="w-4 h-4 text-yellow-500" />;
+      case "approved":
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case "rejected":
+        return <XCircle className="w-4 h-4 text-red-500" />;
+      default:
+        return <Clock className="w-4 h-4 text-yellow-500" />;
     }
   };
 
   const getRiskBadge = (risk: string) => {
     const variants = {
-      high: 'destructive',
-      medium: 'secondary',
-      low: 'outline'
+      high: "destructive",
+      medium: "secondary",
+      low: "outline",
     } as const;
-    return <Badge variant={variants[risk as keyof typeof variants]}>{risk.toUpperCase()}</Badge>;
+    return (
+      <Badge variant={variants[risk as keyof typeof variants]}>
+        {risk.toUpperCase()}
+      </Badge>
+    );
   };
 
   const stats = {
     total: approvals.length,
-    pending: approvals.filter(a => a.status === 'pending').length,
-    approved: approvals.filter(a => a.status === 'approved').length,
-    rejected: approvals.filter(a => a.status === 'rejected').length,
+    pending: approvals.filter((a) => a.status === "pending").length,
+    approved: approvals.filter((a) => a.status === "approved").length,
+    rejected: approvals.filter((a) => a.status === "rejected").length,
   };
 
   return (
@@ -144,7 +178,9 @@ const AgentApprovals: React.FC = () => {
             <Clock className="w-4 h-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-2xl font-bold text-yellow-600">
+              {stats.pending}
+            </div>
           </CardContent>
         </Card>
 
@@ -154,7 +190,9 @@ const AgentApprovals: React.FC = () => {
             <CheckCircle className="w-4 h-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {stats.approved}
+            </div>
           </CardContent>
         </Card>
 
@@ -164,7 +202,9 @@ const AgentApprovals: React.FC = () => {
             <XCircle className="w-4 h-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {stats.rejected}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -185,7 +225,9 @@ const AgentApprovals: React.FC = () => {
                 <Input
                   placeholder="Search agent actions..."
                   value={searchTerm}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSearchTerm(e.target.value)
+                  }
                   className="pl-9"
                 />
               </div>
@@ -237,19 +279,28 @@ const AgentApprovals: React.FC = () => {
             <TableBody>
               {filteredApprovals.map((approval) => (
                 <TableRow key={approval.id}>
-                  <TableCell className="font-medium">{approval.agentName}</TableCell>
+                  <TableCell className="font-medium">
+                    {approval.agentName}
+                  </TableCell>
                   <TableCell>{approval.action}</TableCell>
-                  <TableCell className="font-mono text-sm">{approval.target}</TableCell>
+                  <TableCell className="font-mono text-sm">
+                    {approval.target}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <div className="w-12 bg-secondary rounded-full h-2">
                         <div
                           className="bg-primary h-2 rounded-full bar-fill"
-                           
-                          style={{ '--width': `${approval.confidence * 100}%` } as React.CSSProperties}
+                          style={
+                            {
+                              "--width": `${approval.confidence * 100}%`,
+                            } as React.CSSProperties
+                          }
                         />
                       </div>
-                      <span className="text-sm">{Math.round(approval.confidence * 100)}%</span>
+                      <span className="text-sm">
+                        {Math.round(approval.confidence * 100)}%
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>{getRiskBadge(approval.risk)}</TableCell>
@@ -260,17 +311,17 @@ const AgentApprovals: React.FC = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {approval.status === 'pending' && (
+                    {approval.status === "pending" && (
                       <div className="flex gap-2">
                         <AccessibleButton
-                          onClick={() => handleApproval(approval.id, 'approve')}
+                          onClick={() => handleApproval(approval.id, "approve")}
                           className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
                           aria-label={`Approve action ${approval.action}`}
                         >
                           Approve
                         </AccessibleButton>
                         <AccessibleButton
-                          onClick={() => handleApproval(approval.id, 'reject')}
+                          onClick={() => handleApproval(approval.id, "reject")}
                           variant="secondary"
                           className="border border-red-300 text-red-600 hover:bg-red-50 px-3 py-1 rounded text-sm"
                           aria-label={`Reject action ${approval.action}`}

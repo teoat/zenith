@@ -5,20 +5,20 @@
  * Comprehensive monitoring and reporting for TypeScript quality metrics
  */
 
-import fs from 'fs';
-import path from 'path';
-import { execSync } from 'child_process';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import path from "path";
+import { execSync } from "child_process";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const rootDir = path.join(__dirname, '..', '..', '..');
-const frontendSrc = path.join(rootDir, 'frontend', 'src');
+const rootDir = path.join(__dirname, "..", "..", "..");
+const frontendSrc = path.join(rootDir, "frontend", "src");
 
 const logger = {
   info: (msg: string) => process.stdout.write(`${msg}\n`),
   success: (msg: string) => process.stdout.write(`✅ ${msg}\n`),
-  error: (msg: string) => console.error(msg)
+  error: (msg: string) => console.error(msg),
 };
 
 interface TypeCoverageMetrics {
@@ -61,34 +61,39 @@ function collectTypeCoverageMetrics(): TypeCoverageMetrics {
 
   // Count files
   const allFiles = getAllFiles(frontendPath);
-  const tsFiles = allFiles.filter(f => f.endsWith('.ts') || f.endsWith('.tsx'));
+  const tsFiles = allFiles.filter(
+    (f) => f.endsWith(".ts") || f.endsWith(".tsx"),
+  );
 
   // Count lines of code
   const linesOfCode = tsFiles.reduce((total, file) => {
     try {
-      const content = fs.readFileSync(file, 'utf8');
-      return total + content.split('\n').length;
+      const content = fs.readFileSync(file, "utf8");
+      return total + content.split("\n").length;
     } catch {
       return total;
     }
   }, 0);
 
   // Run lint and count issues
-  let lintOutput = '';
+  let lintOutput = "";
   try {
-    lintOutput = execSync('npm run lint 2>&1', {
-      cwd: path.join(rootDir, 'frontend'),
-      encoding: 'utf8'
+    lintOutput = execSync("npm run lint 2>&1", {
+      cwd: path.join(rootDir, "frontend"),
+      encoding: "utf8",
     });
   } catch (error: unknown) {
-    lintOutput = (error as { stdout?: string; stderr?: string }).stdout || (error as { stdout?: string; stderr?: string }).stderr || '';
+    lintOutput =
+      (error as { stdout?: string; stderr?: string }).stdout ||
+      (error as { stdout?: string; stderr?: string }).stderr ||
+      "";
   }
 
   const lintIssues = parseLintOutput(lintOutput);
   const anyTypeCount = (lintOutput.match(/Unexpected any/g) || []).length;
 
   // Calculate type coverage (rough estimate)
-  const estimatedTypeCoverage = Math.max(0, 100 - (anyTypeCount * 2));
+  const estimatedTypeCoverage = Math.max(0, 100 - anyTypeCount * 2);
 
   // Get top files with any types
   const topFilesWithAnyTypes = parseAnyTypeFiles(lintOutput);
@@ -103,12 +108,12 @@ function collectTypeCoverageMetrics(): TypeCoverageMetrics {
     anyTypeReduction: 0, // Would be calculated against baseline
     topFilesWithAnyTypes: topFilesWithAnyTypes.slice(0, 10),
     criticalPathsCoverage: {
-      api: calculatePathCoverage('services'),
-      components: calculatePathCoverage('components'),
-      services: calculatePathCoverage('services'),
-      types: calculatePathCoverage('types')
+      api: calculatePathCoverage("services"),
+      components: calculatePathCoverage("components"),
+      services: calculatePathCoverage("services"),
+      types: calculatePathCoverage("types"),
     },
-    lintIssues
+    lintIssues,
   };
 }
 
@@ -122,7 +127,11 @@ function getAllFiles(dirPath: string): string[] {
       const fullPath = path.join(currentPath, item);
       const stat = fs.statSync(fullPath);
 
-      if (stat.isDirectory() && !item.startsWith('.') && item !== 'node_modules') {
+      if (
+        stat.isDirectory() &&
+        !item.startsWith(".") &&
+        item !== "node_modules"
+      ) {
         traverse(fullPath);
       } else if (stat.isFile()) {
         files.push(fullPath);
@@ -134,19 +143,26 @@ function getAllFiles(dirPath: string): string[] {
   return files;
 }
 
-function parseLintOutput(output: string): { total: number; byCategory: Record<string, number> } {
-  const lines = output.split('\n');
+function parseLintOutput(output: string): {
+  total: number;
+  byCategory: Record<string, number>;
+} {
+  const lines = output.split("\n");
   const categories: Record<string, number> = {};
   let total = 0;
 
   for (const line of lines) {
-    if (line.includes('error') || line.includes('warning')) {
+    if (line.includes("error") || line.includes("warning")) {
       total++;
       // Extract error type (rough categorization)
-      if (line.includes('any')) categories.anyTypes = (categories.anyTypes || 0) + 1;
-      else if (line.includes('unused')) categories.unused = (categories.unused || 0) + 1;
-      else if (line.includes('import')) categories.imports = (categories.imports || 0) + 1;
-      else if (line.includes('type')) categories.types = (categories.types || 0) + 1;
+      if (line.includes("any"))
+        categories.anyTypes = (categories.anyTypes || 0) + 1;
+      else if (line.includes("unused"))
+        categories.unused = (categories.unused || 0) + 1;
+      else if (line.includes("import"))
+        categories.imports = (categories.imports || 0) + 1;
+      else if (line.includes("type"))
+        categories.types = (categories.types || 0) + 1;
       else categories.other = (categories.other || 0) + 1;
     }
   }
@@ -154,15 +170,17 @@ function parseLintOutput(output: string): { total: number; byCategory: Record<st
   return { total, byCategory: categories };
 }
 
-function parseAnyTypeFiles(output: string): Array<{ file: string; count: number }> {
+function parseAnyTypeFiles(
+  output: string,
+): Array<{ file: string; count: number }> {
   const fileCounts: Record<string, number> = {};
-  const lines = output.split('\n');
+  const lines = output.split("\n");
 
   for (const line of lines) {
-    if (line.includes('Unexpected any')) {
+    if (line.includes("Unexpected any")) {
       const match = line.match(/([^:]+):\d+:\d+/);
       if (match) {
-        const file = match[1].split('/').pop() || match[1];
+        const file = match[1].split("/").pop() || match[1];
         fileCounts[file] = (fileCounts[file] || 0) + 1;
       }
     }
@@ -178,7 +196,7 @@ function calculatePathCoverage(pathName: string): number {
   const pathMap: Record<string, number> = {
     services: 85,
     components: 90,
-    types: 95
+    types: 95,
   };
   return pathMap[pathName] || 80;
 }
@@ -190,10 +208,10 @@ function calculatePathCoverage(pathName: string): number {
 function generateMetricsDashboard(metrics: TypeCoverageMetrics): string {
   const trendData = loadTrendData();
   trendData.push({
-    date: metrics.timestamp.split('T')[0],
+    date: metrics.timestamp.split("T")[0],
     anyTypes: metrics.anyTypeCount,
     typeCoverage: metrics.typeCoverage,
-    lintErrors: metrics.lintIssues.total
+    lintErrors: metrics.lintIssues.total,
   });
 
   saveTrendData(trendData);
@@ -220,23 +238,25 @@ function generateMetricsDashboard(metrics: TypeCoverageMetrics): string {
 - **By Category**:
 ${Object.entries(metrics.lintIssues.byCategory)
   .map(([category, count]) => `  - ${category}: ${count}`)
-  .join('\n')}
+  .join("\n")}
 
 ### **Top Files with 'any' Types**
 ${metrics.topFilesWithAnyTypes
-  .map((file, index) => `${index + 1}. **${file.file}**: ${file.count} instances`)
-  .join('\n')}
+  .map(
+    (file, index) => `${index + 1}. **${file.file}**: ${file.count} instances`,
+  )
+  .join("\n")}
 
 ## 📈 Trends (Last 30 Days)
 
 ### **'any' Types Trend**
-${generateTrendChart(trendData, 'anyTypes', "'any' Types")}
+${generateTrendChart(trendData, "anyTypes", "'any' Types")}
 
 ### **Type Coverage Trend**
-${generateTrendChart(trendData, 'typeCoverage', 'Type Coverage %')}
+${generateTrendChart(trendData, "typeCoverage", "Type Coverage %")}
 
 ### **Lint Errors Trend**
-${generateTrendChart(trendData, 'lintErrors', 'Lint Errors')}
+${generateTrendChart(trendData, "lintErrors", "Lint Errors")}
 
 ## 🎯 **Quality Targets**
 
@@ -261,7 +281,7 @@ ${generateTrendChart(trendData, 'lintErrors', 'Lint Errors')}
 ## 🔧 **Recommendations**
 
 ### **Immediate Actions**
-1. **Focus on Top Files**: Address ${metrics.topFilesWithAnyTypes[0]?.file || 'remaining files'} (${metrics.topFilesWithAnyTypes[0]?.count || 0} 'any' types)
+1. **Focus on Top Files**: Address ${metrics.topFilesWithAnyTypes[0]?.file || "remaining files"} (${metrics.topFilesWithAnyTypes[0]?.count || 0} 'any' types)
 2. **API Migration**: Continue migrating services to typed responses
 3. **Component Enhancement**: Apply event handler types to remaining components
 
@@ -277,29 +297,33 @@ ${generateTrendChart(trendData, 'lintErrors', 'Lint Errors')}
   `;
 }
 
-function generateTrendChart(data: TrendData[], field: keyof TrendData, label: string): string {
-  if (data.length < 2) return 'Insufficient data for trend analysis';
+function generateTrendChart(
+  data: TrendData[],
+  field: keyof TrendData,
+  label: string,
+): string {
+  if (data.length < 2) return "Insufficient data for trend analysis";
 
   const recent: TrendData[] = data.slice(-7); // Last 7 days
   const values = recent.map((d: TrendData) => d[field] as number);
   const current = values[values.length - 1];
   const previous = values[values.length - 2];
-  const trend = current < previous ? '📉' : current > previous ? '📈' : '➡️';
+  const trend = current < previous ? "📉" : current > previous ? "📈" : "➡️";
 
-  return `${trend} **${label}**: ${current} (${previous > current ? '-' : '+'}${Math.abs(previous - current)})`;
+  return `${trend} **${label}**: ${current} (${previous > current ? "-" : "+"}${Math.abs(previous - current)})`;
 }
 
 function loadTrendData(): TrendData[] {
-  const trendFile = path.join(__dirname, 'metrics-trend.json');
+  const trendFile = path.join(__dirname, "metrics-trend.json");
   try {
-    return JSON.parse(fs.readFileSync(trendFile, 'utf8'));
+    return JSON.parse(fs.readFileSync(trendFile, "utf8"));
   } catch {
     return [];
   }
 }
 
 function saveTrendData(data: TrendData[]) {
-  const trendFile = path.join(__dirname, 'metrics-trend.json');
+  const trendFile = path.join(__dirname, "metrics-trend.json");
   // Keep only last 30 days
   const recent = data.slice(-30);
   fs.writeFileSync(trendFile, JSON.stringify(recent, null, 2));
@@ -518,30 +542,30 @@ const metrics = collectTypeCoverageMetrics();
 const dashboard = generateMetricsDashboard(metrics);
 
 // Save dashboard
-const dashboardPath = path.join(__dirname, 'metrics-dashboard.md');
+const dashboardPath = path.join(__dirname, "metrics-dashboard.md");
 fs.writeFileSync(dashboardPath, dashboard);
 
 // Generate CI/CD configuration
 const ciConfig = generateCIConfig();
-const ciDir = path.join(rootDir, '.github', 'workflows');
+const ciDir = path.join(rootDir, ".github", "workflows");
 if (!fs.existsSync(ciDir)) {
   fs.mkdirSync(ciDir, { recursive: true });
 }
-const ciPath = path.join(ciDir, 'typescript-quality.yml');
+const ciPath = path.join(ciDir, "typescript-quality.yml");
 fs.writeFileSync(ciPath, ciConfig);
 
 // Generate training materials
 const training = generateTrainingMaterials();
-const trainingPath = path.join(__dirname, 'typescript-training.md');
+const trainingPath = path.join(__dirname, "typescript-training.md");
 fs.writeFileSync(trainingPath, training);
 
-logger.success('TypeScript Quality Dashboard generated');
+logger.success("TypeScript Quality Dashboard generated");
 logger.info(`📊 Dashboard: ${dashboardPath}`);
 logger.info(`🔄 CI/CD Config: ${ciPath}`);
 logger.info(`📚 Training: ${trainingPath}`);
 
 // Display summary
-logger.info('\n📈 Current Metrics:');
+logger.info("\n📈 Current Metrics:");
 logger.info(`   Type Coverage: ${metrics.typeCoverage.toFixed(1)}%`);
 logger.info(`   'any' Types: ${metrics.anyTypeCount}`);
 logger.info(`   Lint Issues: ${metrics.lintIssues.total}`);

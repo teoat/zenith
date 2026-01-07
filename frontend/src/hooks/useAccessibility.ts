@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef } from "react";
 
 export interface KeyboardNavigationOptions {
   onEscape?: () => void;
@@ -28,89 +28,101 @@ export const useKeyboardNavigation = (options: KeyboardNavigationOptions) => {
     onShiftTab,
     preventDefault = true,
     stopPropagation = false,
-    enabled = true
+    enabled = true,
   } = options;
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (!enabled) return;
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (!enabled) return;
 
-    const { key, shiftKey } = event;
-    let handled = false;
+      const { key, shiftKey } = event;
+      let handled = false;
 
-    switch (key) {
-      case 'Escape':
-        if (onEscape) {
-          onEscape();
-          handled = true;
-        }
-        break;
-      case 'Enter':
-        if (onEnter) {
-          onEnter();
-          handled = true;
-        }
-        break;
-      case ' ':
-        if (onSpace) {
-          onSpace();
-          handled = true;
-        }
-        break;
-      case 'ArrowUp':
-        if (onArrowUp) {
-          onArrowUp();
-          handled = true;
-        }
-        break;
-      case 'ArrowDown':
-        if (onArrowDown) {
-          onArrowDown();
-          handled = true;
-        }
-        break;
-      case 'ArrowLeft':
-        if (onArrowLeft) {
-          onArrowLeft();
-          handled = true;
-        }
-        break;
-      case 'ArrowRight':
-        if (onArrowRight) {
-          onArrowRight();
-          handled = true;
-        }
-        break;
-      case 'Tab':
-        if (shiftKey && onShiftTab) {
-          onShiftTab();
-          handled = true;
-        } else if (!shiftKey && onTab) {
-          onTab();
-          handled = true;
-        }
-        break;
-    }
-
-    if (handled) {
-      if (preventDefault) {
-        event.preventDefault();
+      switch (key) {
+        case "Escape":
+          if (onEscape) {
+            onEscape();
+            handled = true;
+          }
+          break;
+        case "Enter":
+          if (onEnter) {
+            onEnter();
+            handled = true;
+          }
+          break;
+        case " ":
+          if (onSpace) {
+            onSpace();
+            handled = true;
+          }
+          break;
+        case "ArrowUp":
+          if (onArrowUp) {
+            onArrowUp();
+            handled = true;
+          }
+          break;
+        case "ArrowDown":
+          if (onArrowDown) {
+            onArrowDown();
+            handled = true;
+          }
+          break;
+        case "ArrowLeft":
+          if (onArrowLeft) {
+            onArrowLeft();
+            handled = true;
+          }
+          break;
+        case "ArrowRight":
+          if (onArrowRight) {
+            onArrowRight();
+            handled = true;
+          }
+          break;
+        case "Tab":
+          if (shiftKey && onShiftTab) {
+            onShiftTab();
+            handled = true;
+          } else if (!shiftKey && onTab) {
+            onTab();
+            handled = true;
+          }
+          break;
       }
-      if (stopPropagation) {
-        event.stopPropagation();
+
+      if (handled) {
+        if (preventDefault) {
+          event.preventDefault();
+        }
+        if (stopPropagation) {
+          event.stopPropagation();
+        }
       }
-    }
-  }, [
-    onEscape, onEnter, onSpace, onArrowUp, onArrowDown,
-    onArrowLeft, onArrowRight, onTab, onShiftTab,
-    preventDefault, stopPropagation, enabled
-  ]);
+    },
+    [
+      onEscape,
+      onEnter,
+      onSpace,
+      onArrowUp,
+      onArrowDown,
+      onArrowLeft,
+      onArrowRight,
+      onTab,
+      onShiftTab,
+      preventDefault,
+      stopPropagation,
+      enabled,
+    ],
+  );
 
   useEffect(() => {
     if (!enabled) return;
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown, enabled]);
 
@@ -124,14 +136,16 @@ export const useFocusManagement = () => {
   const updateFocusableElements = useCallback((container: HTMLElement) => {
     focusableElements.current = Array.from(
       container.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ),
     ).filter((el) => {
       const element = el as HTMLElement;
-      return !element.hasAttribute('disabled') &&
-             !element.getAttribute('aria-hidden') &&
-             element.offsetWidth > 0 &&
-             element.offsetHeight > 0;
+      return (
+        !element.hasAttribute("disabled") &&
+        !element.getAttribute("aria-hidden") &&
+        element.offsetWidth > 0 &&
+        element.offsetHeight > 0
+      );
     }) as HTMLElement[];
   }, []);
 
@@ -149,7 +163,10 @@ export const useFocusManagement = () => {
 
   const focusNext = useCallback((currentElement: HTMLElement) => {
     const currentIndex = focusableElements.current.indexOf(currentElement);
-    if (currentIndex >= 0 && currentIndex < focusableElements.current.length - 1) {
+    if (
+      currentIndex >= 0 &&
+      currentIndex < focusableElements.current.length - 1
+    ) {
       focusableElements.current[currentIndex + 1].focus();
     }
   }, []);
@@ -161,33 +178,37 @@ export const useFocusManagement = () => {
     }
   }, []);
 
-  const trapFocus = useCallback((container: HTMLElement) => {
-    updateFocusableElements(container);
+  const trapFocus = useCallback(
+    (container: HTMLElement) => {
+      updateFocusableElements(container);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Tab') {
-        const firstElement = focusableElements.current[0];
-        const lastElement = focusableElements.current[focusableElements.current.length - 1];
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "Tab") {
+          const firstElement = focusableElements.current[0];
+          const lastElement =
+            focusableElements.current[focusableElements.current.length - 1];
 
-        if (event.shiftKey) {
-          if (document.activeElement === firstElement) {
-            event.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            event.preventDefault();
-            firstElement.focus();
+          if (event.shiftKey) {
+            if (document.activeElement === firstElement) {
+              event.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              event.preventDefault();
+              firstElement.focus();
+            }
           }
         }
-      }
-    };
+      };
 
-    container.addEventListener('keydown', handleKeyDown);
-    return () => {
-      container.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [updateFocusableElements]);
+      container.addEventListener("keydown", handleKeyDown);
+      return () => {
+        container.removeEventListener("keydown", handleKeyDown);
+      };
+    },
+    [updateFocusableElements],
+  );
 
   return {
     updateFocusableElements,
@@ -195,32 +216,35 @@ export const useFocusManagement = () => {
     focusLast,
     focusNext,
     focusPrevious,
-    trapFocus
+    trapFocus,
   };
 };
 
 // Screen reader announcements
 export const useScreenReader = () => {
-  const announce = useCallback((message: string, priority: 'polite' | 'assertive' = 'polite') => {
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', priority);
-    announcement.setAttribute('aria-atomic', 'true');
-    announcement.style.position = 'absolute';
-    announcement.style.left = '-10000px';
-    announcement.style.width = '1px';
-    announcement.style.height = '1px';
-    announcement.style.overflow = 'hidden';
+  const announce = useCallback(
+    (message: string, priority: "polite" | "assertive" = "polite") => {
+      const announcement = document.createElement("div");
+      announcement.setAttribute("aria-live", priority);
+      announcement.setAttribute("aria-atomic", "true");
+      announcement.style.position = "absolute";
+      announcement.style.left = "-10000px";
+      announcement.style.width = "1px";
+      announcement.style.height = "1px";
+      announcement.style.overflow = "hidden";
 
-    document.body.appendChild(announcement);
-    announcement.textContent = message;
+      document.body.appendChild(announcement);
+      announcement.textContent = message;
 
-    // Remove after announcement
-    setTimeout(() => {
-      if (announcement.parentNode) {
-        announcement.parentNode.removeChild(announcement);
-      }
-    }, 1000);
-  }, []);
+      // Remove after announcement
+      setTimeout(() => {
+        if (announcement.parentNode) {
+          announcement.parentNode.removeChild(announcement);
+        }
+      }, 1000);
+    },
+    [],
+  );
 
   return { announce };
 };

@@ -39,9 +39,7 @@ class DatabaseOptimizer:
 
                 # Log slow queries
                 if execution_time > 1.0:  # More than 1 second
-                    logger.warning(
-                        f"Slow query detected: {execution_time:.2f}s - {query[:100]}..."
-                    )
+                    logger.warning(f"Slow query detected: {execution_time:.2f}s - {query[:100]}...")
 
                 # Store performance metrics
                 self.performance_metrics.append(
@@ -63,9 +61,7 @@ class DatabaseOptimizer:
             logger.error(f"Query execution failed: {e}")
             raise
 
-    def get_paginated_cases(
-        self, page: int = 1, per_page: int = 20, filters: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    def get_paginated_cases(self, page: int = 1, per_page: int = 20, filters: dict[str, Any] | None = None) -> dict[str, Any]:
         """Get paginated cases with optimized queries"""
         start_time = time.time()
 
@@ -96,12 +92,7 @@ class DatabaseOptimizer:
             total_count = query.count()
 
             # Apply pagination with optimized ordering
-            cases = (
-                query.order_by(desc(Case.created_at))
-                .offset((page - 1) * per_page)
-                .limit(per_page)
-                .all()
-            )
+            cases = query.order_by(desc(Case.created_at)).offset((page - 1) * per_page).limit(per_page).all()
 
             execution_time = time.time() - start_time
 
@@ -114,9 +105,7 @@ class DatabaseOptimizer:
                 "execution_time": execution_time,
             }
 
-    def get_case_with_optimized_relationships(
-        self, case_id: str
-    ) -> dict[str, Any] | None:
+    def get_case_with_optimized_relationships(self, case_id: str) -> dict[str, Any] | None:
         """Get case with optimized relationship loading"""
         start_time = time.time()
 
@@ -141,9 +130,7 @@ class DatabaseOptimizer:
 
             return {"case": case, "execution_time": execution_time}
 
-    def get_optimized_transaction_aggregates(
-        self, case_id: str | None = None, date_from=None, date_to=None
-    ) -> dict[str, Any]:
+    def get_optimized_transaction_aggregates(self, case_id: str | None = None, date_from=None, date_to=None) -> dict[str, Any]:
         """Get transaction aggregates with optimized queries"""
         start_time = time.time()
 
@@ -154,9 +141,7 @@ class DatabaseOptimizer:
                 func.avg(Transaction.amount).label("avg_amount"),
                 func.min(Transaction.amount).label("min_amount"),
                 func.max(Transaction.amount).label("max_amount"),
-                func.count(func.distinct(Transaction.merchant_name)).label(
-                    "unique_merchants"
-                ),
+                func.count(func.distinct(Transaction.merchant_name)).label("unique_merchants"),
             )
 
             if case_id:
@@ -187,12 +172,9 @@ class DatabaseOptimizer:
         """Get database performance metrics"""
         return {
             "query_metrics": self.performance_metrics[-20:],  # Last 20 queries
-            "slow_queries": [
-                m for m in self.performance_metrics if m["execution_time"] > 1.0
-            ],
+            "slow_queries": [m for m in self.performance_metrics if m["execution_time"] > 1.0],
             "avg_query_time": (
-                sum(m["execution_time"] for m in self.performance_metrics)
-                / len(self.performance_metrics)
+                sum(m["execution_time"] for m in self.performance_metrics) / len(self.performance_metrics)
                 if self.performance_metrics
                 else 0
             ),
@@ -224,9 +206,7 @@ class DatabaseOptimizer:
 
             # Check for table scans (inefficient)
             if "scan" in detail and "index" not in detail:
-                suggestions.append(
-                    "Consider adding indexes for better query performance"
-                )
+                suggestions.append("Consider adding indexes for better query performance")
 
             # Check for temporary sorts
             if "order by" in detail or "sort" in detail:
@@ -234,9 +214,7 @@ class DatabaseOptimizer:
 
             # Check for nested loops (can be inefficient)
             if "nested loop" in detail:
-                suggestions.append(
-                    "Nested loop detected - consider query restructuring"
-                )
+                suggestions.append("Nested loop detected - consider query restructuring")
 
         if not suggestions:
             suggestions.append("Query plan looks optimized")
@@ -291,9 +269,7 @@ class DatabaseOptimizer:
                     logger.warning(f"Skipping unknown table: {table_name}")
                     continue
 
-                count_result = self.execute_optimized_query(
-                    "SELECT COUNT(*) as count FROM ?;", (table_name,)
-                )
+                count_result = self.execute_optimized_query("SELECT COUNT(*) as count FROM ?;", (table_name,))
                 count = count_result.fetchone()[0]
 
                 stats[table_name] = {

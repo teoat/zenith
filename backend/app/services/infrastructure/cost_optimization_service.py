@@ -167,9 +167,7 @@ class InfrastructureOptimizer:
 
         implementation_cost = 15000  # $15K one-time implementation cost
         monthly_savings = sum(opt["savings"] for opt in optimizations)
-        payback_period = (
-            implementation_cost / monthly_savings if monthly_savings > 0 else 0
-        )
+        payback_period = implementation_cost / monthly_savings if monthly_savings > 0 else 0
 
         return CostAnalysis(
             category=CostCategory.INFRASTRUCTURE,
@@ -277,9 +275,7 @@ class OperationalOptimizer:
             identified_savings=estimated_savings,
             implementation_cost=45000,  # $45K implementation cost
             net_benefit=estimated_savings * 12,
-            payback_period_months=(
-                45000 / estimated_savings if estimated_savings > 0 else 0
-            ),
+            payback_period_months=(45000 / estimated_savings if estimated_savings > 0 else 0),
             roi_percentage=((estimated_savings * 12) / 45000) * 100,
         )
 
@@ -383,9 +379,7 @@ class LicensingOptimizer:
             identified_savings=estimated_savings / 12,  # Monthly savings
             implementation_cost=5000,  # $5K implementation cost
             net_benefit=estimated_savings,
-            payback_period_months=(
-                5000 / (estimated_savings / 12) if estimated_savings > 0 else 0
-            ),
+            payback_period_months=(5000 / (estimated_savings / 12) if estimated_savings > 0 else 0),
             roi_percentage=(estimated_savings / 5000) * 100,
         )
 
@@ -453,9 +447,7 @@ class LicensingOptimizer:
             roi_percentage=9000,  # 9000% ROI
         )
 
-        optimizations.extend(
-            [license_negotiation, open_source_migration, license_optimization]
-        )
+        optimizations.extend([license_negotiation, open_source_migration, license_optimization])
         return optimizations
 
 
@@ -483,29 +475,13 @@ class CostOptimizationService:
         )
 
         total_current_spend = sum(analysis.current_spend for analysis in analyses)
-        total_identified_savings = sum(
-            analysis.identified_savings for analysis in analyses
-        )
-        total_implementation_cost = sum(
-            analysis.implementation_cost for analysis in analyses
-        )
+        total_identified_savings = sum(analysis.identified_savings for analysis in analyses)
+        total_implementation_cost = sum(analysis.implementation_cost for analysis in analyses)
 
         # Calculate overall metrics
-        overall_savings_percentage = (
-            total_identified_savings / total_current_spend
-            if total_current_spend > 0
-            else 0
-        )
-        overall_payback_period = (
-            total_implementation_cost / total_identified_savings
-            if total_identified_savings > 0
-            else 0
-        )
-        overall_roi = (
-            ((total_identified_savings * 12) / total_implementation_cost) * 100
-            if total_implementation_cost > 0
-            else 0
-        )
+        overall_savings_percentage = total_identified_savings / total_current_spend if total_current_spend > 0 else 0
+        overall_payback_period = total_implementation_cost / total_identified_savings if total_identified_savings > 0 else 0
+        overall_roi = ((total_identified_savings * 12) / total_implementation_cost) * 100 if total_implementation_cost > 0 else 0
 
         return {
             "cost_analyses": {
@@ -520,16 +496,13 @@ class CostOptimizationService:
                 "overall_savings_percentage": overall_savings_percentage,
                 "overall_payback_period_months": overall_payback_period,
                 "overall_roi_percentage": overall_roi,
-                "annual_net_benefit": total_identified_savings * 12
-                - total_implementation_cost,
+                "annual_net_benefit": total_identified_savings * 12 - total_implementation_cost,
             },
             "optimization_roadmap": self._create_optimization_roadmap(analyses),
             "success_metrics": self._define_success_metrics(),
         }
 
-    def _create_optimization_roadmap(
-        self, analyses: list[CostAnalysis]
-    ) -> dict[str, Any]:
+    def _create_optimization_roadmap(self, analyses: list[CostAnalysis]) -> dict[str, Any]:
         """Create phased optimization roadmap"""
         return {
             "quick_wins": {
@@ -593,15 +566,9 @@ class CostOptimizationService:
     async def execute_optimization_roadmap(self) -> dict[str, Any]:
         """Execute the cost optimization roadmap"""
         # Get all optimization initiatives
-        infrastructure_opts = (
-            await self.infrastructure_optimizer.implement_infrastructure_optimizations()
-        )
-        operational_opts = (
-            await self.operational_optimizer.implement_operational_optimizations()
-        )
-        licensing_opts = (
-            await self.licensing_optimizer.implement_licensing_optimizations()
-        )
+        infrastructure_opts = await self.infrastructure_optimizer.implement_infrastructure_optimizations()
+        operational_opts = await self.operational_optimizer.implement_operational_optimizations()
+        licensing_opts = await self.licensing_optimizer.implement_licensing_optimizations()
 
         all_optimizations = infrastructure_opts + operational_opts + licensing_opts
 
@@ -622,20 +589,14 @@ class CostOptimizationService:
                 "operational": len(operational_opts),
                 "licensing": len(licensing_opts),
             },
-            "total_estimated_savings": sum(
-                opt.estimated_savings for opt in all_optimizations
-            ),
-            "total_implementation_cost": sum(
-                opt.implementation_cost for opt in all_optimizations
-            ),
+            "total_estimated_savings": sum(opt.estimated_savings for opt in all_optimizations),
+            "total_implementation_cost": sum(opt.implementation_cost for opt in all_optimizations),
             "implementation_timeline": timeline,
             "progress_metrics": progress_metrics,
             "next_milestones": self._identify_next_milestones(all_optimizations),
         }
 
-    def _calculate_implementation_timeline(
-        self, optimizations: list[CostOptimization]
-    ) -> dict[str, Any]:
+    def _calculate_implementation_timeline(self, optimizations: list[CostOptimization]) -> dict[str, Any]:
         """Calculate overall implementation timeline"""
         # Group by complexity and timeline
         complexity_groups = {}
@@ -652,37 +613,23 @@ class CostOptimizationService:
         return {
             "total_months": max_timeline,
             "adjusted_months": max_timeline * parallel_factor,
-            "complexity_breakdown": {
-                comp: len(opts) for comp, opts in complexity_groups.items()
-            },
+            "complexity_breakdown": {comp: len(opts) for comp, opts in complexity_groups.items()},
             "critical_path": max_timeline,
-            "parallel_opportunities": len(
-                [opt for opt in optimizations if opt.complexity == "low"]
-            ),
+            "parallel_opportunities": len([opt for opt in optimizations if opt.complexity == "low"]),
         }
 
-    def _calculate_progress_metrics(
-        self, optimizations: list[CostOptimization]
-    ) -> dict[str, Any]:
+    def _calculate_progress_metrics(self, optimizations: list[CostOptimization]) -> dict[str, Any]:
         """Calculate progress metrics for optimization program"""
         total_optimizations = len(optimizations)
         completed = len([opt for opt in optimizations if opt.status == "completed"])
         in_progress = len([opt for opt in optimizations if opt.status == "in_progress"])
         planned = len([opt for opt in optimizations if opt.status == "planned"])
 
-        completion_rate = (
-            completed / total_optimizations if total_optimizations > 0 else 0
-        )
+        completion_rate = completed / total_optimizations if total_optimizations > 0 else 0
 
         # Calculate savings realization
-        estimated_savings = sum(
-            opt.estimated_savings for opt in optimizations if opt.status == "completed"
-        )
-        actual_savings = sum(
-            opt.actual_savings
-            for opt in optimizations
-            if opt.actual_savings is not None and opt.status == "completed"
-        )
+        estimated_savings = sum(opt.estimated_savings for opt in optimizations if opt.status == "completed")
+        actual_savings = sum(opt.actual_savings for opt in optimizations if opt.actual_savings is not None and opt.status == "completed")
 
         return {
             "completion_rate": completion_rate,
@@ -694,16 +641,12 @@ class CostOptimizationService:
             "savings_realization": {
                 "estimated": estimated_savings,
                 "actual": actual_savings,
-                "realization_rate": (
-                    actual_savings / estimated_savings if estimated_savings > 0 else 0
-                ),
+                "realization_rate": (actual_savings / estimated_savings if estimated_savings > 0 else 0),
             },
             "roi_achievement": self._calculate_roi_achievement(optimizations),
         }
 
-    def _calculate_roi_achievement(
-        self, optimizations: list[CostOptimization]
-    ) -> dict[str, Any]:
+    def _calculate_roi_achievement(self, optimizations: list[CostOptimization]) -> dict[str, Any]:
         """Calculate ROI achievement across optimizations"""
         completed_opts = [opt for opt in optimizations if opt.status == "completed"]
 
@@ -711,16 +654,10 @@ class CostOptimizationService:
             return {"current_roi": 0, "target_achievement": 0}
 
         total_investment = sum(opt.implementation_cost for opt in completed_opts)
-        total_benefit = sum(
-            (opt.actual_savings or opt.estimated_savings) * 12 for opt in completed_opts
-        )
+        total_benefit = sum((opt.actual_savings or opt.estimated_savings) * 12 for opt in completed_opts)
 
-        current_roi = (
-            (total_benefit / total_investment) * 100 if total_investment > 0 else 0
-        )
-        target_achievement = (
-            current_roi / 300 if current_roi > 0 else 0
-        )  # Target is 300% ROI
+        current_roi = (total_benefit / total_investment) * 100 if total_investment > 0 else 0
+        target_achievement = current_roi / 300 if current_roi > 0 else 0  # Target is 300% ROI
 
         return {
             "current_roi": current_roi,
@@ -728,9 +665,7 @@ class CostOptimizationService:
             "investment_recovered": total_benefit >= total_investment,
         }
 
-    def _identify_next_milestones(
-        self, optimizations: list[CostOptimization]
-    ) -> list[dict[str, Any]]:
+    def _identify_next_milestones(self, optimizations: list[CostOptimization]) -> list[dict[str, Any]]:
         """Identify next key milestones in optimization program"""
         # Sort by timeline and priority
         sorted_opts = sorted(
@@ -758,32 +693,16 @@ class CostOptimizationService:
         """Get comprehensive cost optimization dashboard"""
         # Get current optimization status
         total_optimizations = len(self.optimizations)
-        completed = len(
-            [opt for opt in self.optimizations.values() if opt.status == "completed"]
-        )
-        in_progress = len(
-            [opt for opt in self.optimizations.values() if opt.status == "in_progress"]
-        )
+        completed = len([opt for opt in self.optimizations.values() if opt.status == "completed"])
+        in_progress = len([opt for opt in self.optimizations.values() if opt.status == "in_progress"])
 
         # Calculate savings metrics
-        estimated_annual_savings = sum(
-            opt.estimated_savings * 12 for opt in self.optimizations.values()
-        )
-        actual_annual_savings = sum(
-            (opt.actual_savings or 0) * 12
-            for opt in self.optimizations.values()
-            if opt.status == "completed"
-        )
+        estimated_annual_savings = sum(opt.estimated_savings * 12 for opt in self.optimizations.values())
+        actual_annual_savings = sum((opt.actual_savings or 0) * 12 for opt in self.optimizations.values() if opt.status == "completed")
 
         # Calculate program health
-        completion_rate = (
-            completed / total_optimizations if total_optimizations > 0 else 0
-        )
-        savings_realization = (
-            actual_annual_savings / estimated_annual_savings
-            if estimated_annual_savings > 0
-            else 0
-        )
+        completion_rate = completed / total_optimizations if total_optimizations > 0 else 0
+        savings_realization = actual_annual_savings / estimated_annual_savings if estimated_annual_savings > 0 else 0
 
         return {
             "program_overview": {
@@ -796,8 +715,7 @@ class CostOptimizationService:
                 "estimated_annual_savings": estimated_annual_savings,
                 "actual_annual_savings": actual_annual_savings,
                 "savings_realization_rate": savings_realization,
-                "target_achievement": estimated_annual_savings
-                / 255000,  # Target is $255K
+                "target_achievement": estimated_annual_savings / 255000,  # Target is $255K
             },
             "category_breakdown": self._get_category_breakdown(),
             "timeline_progress": self._get_timeline_progress(),
@@ -825,20 +743,13 @@ class CostOptimizationService:
         medium_term_target = 85000
         long_term_target = 125000
 
-        current_savings = sum(
-            opt.estimated_savings
-            for opt in self.optimizations.values()
-            if opt.status in ["completed", "in_progress"]
-        )
+        current_savings = sum(opt.estimated_savings for opt in self.optimizations.values() if opt.status in ["completed", "in_progress"])
 
         return {
             "quick_wins_progress": min(current_savings / quick_wins_target, 1.0),
-            "medium_term_progress": min(
-                current_savings / (quick_wins_target + medium_term_target), 1.0
-            ),
+            "medium_term_progress": min(current_savings / (quick_wins_target + medium_term_target), 1.0),
             "long_term_progress": min(
-                current_savings
-                / (quick_wins_target + medium_term_target + long_term_target),
+                current_savings / (quick_wins_target + medium_term_target + long_term_target),
                 1.0,
             ),
             "overall_progress": current_savings / 255000,  # Total target
@@ -846,21 +757,15 @@ class CostOptimizationService:
 
     def _get_roi_analysis(self) -> dict[str, Any]:
         """Get ROI analysis for completed optimizations"""
-        completed_opts = [
-            opt for opt in self.optimizations.values() if opt.status == "completed"
-        ]
+        completed_opts = [opt for opt in self.optimizations.values() if opt.status == "completed"]
 
         if not completed_opts:
             return {"average_roi": 0, "total_investment": 0, "total_benefit": 0}
 
         total_investment = sum(opt.implementation_cost for opt in completed_opts)
-        total_benefit = sum(
-            (opt.actual_savings or opt.estimated_savings) * 12 for opt in completed_opts
-        )
+        total_benefit = sum((opt.actual_savings or opt.estimated_savings) * 12 for opt in completed_opts)
 
-        average_roi = (
-            (total_benefit / total_investment) * 100 if total_investment > 0 else 0
-        )
+        average_roi = (total_benefit / total_investment) * 100 if total_investment > 0 else 0
 
         return {
             "average_roi": average_roi,
@@ -870,9 +775,7 @@ class CostOptimizationService:
             "roi_distribution": self._calculate_roi_distribution(completed_opts),
         }
 
-    def _calculate_roi_distribution(
-        self, optimizations: list[CostOptimization]
-    ) -> dict[str, int]:
+    def _calculate_roi_distribution(self, optimizations: list[CostOptimization]) -> dict[str, int]:
         """Calculate distribution of ROI achievements"""
         roi_ranges = {"excellent": 0, "good": 0, "fair": 0, "poor": 0}
 
@@ -895,42 +798,25 @@ class CostOptimizationService:
 
         # Analyze current progress
         completion_rate = (
-            len(
-                [
-                    opt
-                    for opt in self.optimizations.values()
-                    if opt.status == "completed"
-                ]
-            )
-            / len(self.optimizations)
+            len([opt for opt in self.optimizations.values() if opt.status == "completed"]) / len(self.optimizations)
             if self.optimizations
             else 0
         )
 
         if completion_rate < 0.5:
-            recommendations.append(
-                "Accelerate implementation of high-ROI optimizations to meet quarterly targets"
-            )
+            recommendations.append("Accelerate implementation of high-ROI optimizations to meet quarterly targets")
 
         # Check for bottlenecks
-        in_progress_count = len(
-            [opt for opt in self.optimizations.values() if opt.status == "in_progress"]
-        )
+        in_progress_count = len([opt for opt in self.optimizations.values() if opt.status == "in_progress"])
         if in_progress_count > 5:
-            recommendations.append(
-                "Consider increasing team capacity or parallelizing implementations"
-            )
+            recommendations.append("Consider increasing team capacity or parallelizing implementations")
 
         # ROI analysis
-        completed_opts = [
-            opt for opt in self.optimizations.values() if opt.status == "completed"
-        ]
+        completed_opts = [opt for opt in self.optimizations.values() if opt.status == "completed"]
         if completed_opts:
             avg_roi = statistics.mean(opt.roi_percentage for opt in completed_opts)
             if avg_roi < 300:
-                recommendations.append(
-                    "Focus on higher-ROI initiatives to improve overall program returns"
-                )
+                recommendations.append("Focus on higher-ROI initiatives to improve overall program returns")
 
         recommendations.extend(
             [
@@ -948,9 +834,6 @@ class CostOptimizationService:
         """Legacy method - redirects to comprehensive analysis"""
         return await self.run_comprehensive_cost_analysis()
 
-    async def get_cost_dashboard(self) -> dict[str, Any]:
-        """Legacy method - redirects to optimization dashboard"""
-        return self.get_cost_optimization_dashboard()
         """
         Conduct comprehensive cost audit across all categories.
         """
@@ -959,33 +842,19 @@ class CostOptimizationService:
         # Analyze each category
         category_analysis = {}
         for category_name, subcategories in self.optimization_categories.items():
-            category_analysis[category_name] = await self._analyze_category_costs(
-                category_name, subcategories
-            )
+            category_analysis[category_name] = await self._analyze_category_costs(category_name, subcategories)
 
         # Calculate total current costs and potential savings
-        total_current_cost = sum(
-            cat["current_cost"] for cat in category_analysis.values()
-        )
-        total_potential_savings = sum(
-            cat["potential_savings"] for cat in category_analysis.values()
-        )
-        total_implementation_cost = sum(
-            cat["implementation_cost"] for cat in category_analysis.values()
-        )
+        total_current_cost = sum(cat["current_cost"] for cat in category_analysis.values())
+        total_potential_savings = sum(cat["potential_savings"] for cat in category_analysis.values())
+        total_implementation_cost = sum(cat["implementation_cost"] for cat in category_analysis.values())
 
         # Calculate ROI metrics
         net_savings = total_potential_savings - total_implementation_cost
-        roi_percentage = (
-            (net_savings / total_implementation_cost * 100)
-            if total_implementation_cost > 0
-            else 0
-        )
+        roi_percentage = (net_savings / total_implementation_cost * 100) if total_implementation_cost > 0 else 0
 
         if total_implementation_cost > 0:
-            payback_period_months = total_implementation_cost / (
-                total_potential_savings / 12
-            )
+            payback_period_months = total_implementation_cost / (total_potential_savings / 12)
         else:
             payback_period_months = 0
 
@@ -998,17 +867,11 @@ class CostOptimizationService:
             "roi_percentage": roi_percentage,
             "payback_period_months": payback_period_months,
             "category_breakdown": category_analysis,
-            "optimization_roadmap": self._create_optimization_roadmap(
-                category_analysis
-            ),
-            "implementation_priorities": self._prioritize_implementations(
-                category_analysis
-            ),
+            "optimization_roadmap": self._create_optimization_roadmap(category_analysis),
+            "implementation_priorities": self._prioritize_implementations(category_analysis),
         }
 
-    async def _analyze_category_costs(
-        self, category: str, subcategories: list[str]
-    ) -> dict[str, Any]:
+    async def _analyze_category_costs(self, category: str, subcategories: list[str]) -> dict[str, Any]:
         """
         Analyze costs within a specific category.
         """
@@ -1099,9 +962,7 @@ class CostOptimizationService:
 
         total_current_cost = sum(current_costs.values())
         total_potential_savings = sum(opp.potential_savings for opp in opportunities)
-        total_implementation_cost = sum(
-            opp.implementation_cost for opp in opportunities
-        )
+        total_implementation_cost = sum(opp.implementation_cost for opp in opportunities)
 
         return {
             "current_cost": total_current_cost,
@@ -1109,11 +970,7 @@ class CostOptimizationService:
             "implementation_cost": total_implementation_cost,
             "cost_breakdown": current_costs,
             "opportunities": [self._opportunity_to_dict(opp) for opp in opportunities],
-            "quick_wins": [
-                opp.opportunity_id
-                for opp in opportunities
-                if opp.payback_period_months < 3
-            ],
+            "quick_wins": [opp.opportunity_id for opp in opportunities if opp.payback_period_months < 3],
         }
 
     async def _analyze_operations_costs(self) -> dict[str, Any]:
@@ -1171,9 +1028,7 @@ class CostOptimizationService:
         return {
             "current_cost": sum(current_costs.values()),
             "potential_savings": sum(opp.potential_savings for opp in opportunities),
-            "implementation_cost": sum(
-                opp.implementation_cost for opp in opportunities
-            ),
+            "implementation_cost": sum(opp.implementation_cost for opp in opportunities),
             "cost_breakdown": current_costs,
             "opportunities": [self._opportunity_to_dict(opp) for opp in opportunities],
         }
@@ -1215,9 +1070,7 @@ class CostOptimizationService:
         return {
             "current_cost": sum(current_costs.values()),
             "potential_savings": sum(opp.potential_savings for opp in opportunities),
-            "implementation_cost": sum(
-                opp.implementation_cost for opp in opportunities
-            ),
+            "implementation_cost": sum(opp.implementation_cost for opp in opportunities),
             "cost_breakdown": current_costs,
             "opportunities": [self._opportunity_to_dict(opp) for opp in opportunities],
         }
@@ -1259,9 +1112,7 @@ class CostOptimizationService:
         return {
             "current_cost": sum(current_costs.values()),
             "potential_savings": sum(opp.potential_savings for opp in opportunities),
-            "implementation_cost": sum(
-                opp.implementation_cost for opp in opportunities
-            ),
+            "implementation_cost": sum(opp.implementation_cost for opp in opportunities),
             "cost_breakdown": current_costs,
             "opportunities": [self._opportunity_to_dict(opp) for opp in opportunities],
         }
@@ -1303,9 +1154,7 @@ class CostOptimizationService:
         return {
             "current_cost": sum(current_costs.values()),
             "potential_savings": sum(opp.potential_savings for opp in opportunities),
-            "implementation_cost": sum(
-                opp.implementation_cost for opp in opportunities
-            ),
+            "implementation_cost": sum(opp.implementation_cost for opp in opportunities),
             "cost_breakdown": current_costs,
             "opportunities": [self._opportunity_to_dict(opp) for opp in opportunities],
         }
@@ -1329,9 +1178,7 @@ class CostOptimizationService:
             "status": opp.status,
         }
 
-    def _create_optimization_roadmap(
-        self, category_analysis: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _create_optimization_roadmap(self, category_analysis: dict[str, Any]) -> dict[str, Any]:
         """
         Create comprehensive cost optimization roadmap.
         """
@@ -1354,11 +1201,9 @@ class CostOptimizationService:
         roadmap = {
             "phase_1_quick_wins": {
                 "duration_months": 3,
-                "opportunities": [
-                    opp
-                    for opp in sorted_opportunities
-                    if opp["payback_period_months"] < 6 and opp["complexity"] == "Low"
-                ][:5],
+                "opportunities": [opp for opp in sorted_opportunities if opp["payback_period_months"] < 6 and opp["complexity"] == "Low"][
+                    :5
+                ],
                 "total_savings": sum(
                     opp["potential_savings"]
                     for opp in sorted_opportunities
@@ -1372,37 +1217,21 @@ class CostOptimizationService:
             },
             "phase_2_high_impact": {
                 "duration_months": 6,
-                "opportunities": [
-                    opp for opp in sorted_opportunities if opp["roi_percentage"] > 200
-                ][:8],
-                "total_savings": sum(
-                    opp["potential_savings"]
-                    for opp in sorted_opportunities
-                    if opp["roi_percentage"] > 200
-                ),
-                "total_investment": sum(
-                    opp["implementation_cost"]
-                    for opp in sorted_opportunities
-                    if opp["roi_percentage"] > 200
-                ),
+                "opportunities": [opp for opp in sorted_opportunities if opp["roi_percentage"] > 200][:8],
+                "total_savings": sum(opp["potential_savings"] for opp in sorted_opportunities if opp["roi_percentage"] > 200),
+                "total_investment": sum(opp["implementation_cost"] for opp in sorted_opportunities if opp["roi_percentage"] > 200),
             },
             "phase_3_strategic": {
                 "duration_months": 12,
                 "opportunities": sorted_opportunities[:10],  # Top 10 overall
-                "total_savings": sum(
-                    opp["potential_savings"] for opp in sorted_opportunities[:10]
-                ),
-                "total_investment": sum(
-                    opp["implementation_cost"] for opp in sorted_opportunities[:10]
-                ),
+                "total_savings": sum(opp["potential_savings"] for opp in sorted_opportunities[:10]),
+                "total_investment": sum(opp["implementation_cost"] for opp in sorted_opportunities[:10]),
             },
         }
 
         return roadmap
 
-    def _prioritize_implementations(
-        self, category_analysis: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    def _prioritize_implementations(self, category_analysis: dict[str, Any]) -> list[dict[str, Any]]:
         """
         Create prioritized implementation plan.
         """
@@ -1424,9 +1253,7 @@ class CostOptimizationService:
 
         return prioritized[:15]  # Top 15 priorities
 
-    async def implement_optimization(
-        self, opportunity_id: str, owner: str
-    ) -> dict[str, Any]:
+    async def implement_optimization(self, opportunity_id: str, owner: str) -> dict[str, Any]:
         """
         Mark an optimization opportunity as implemented.
         """
@@ -1436,9 +1263,7 @@ class CostOptimizationService:
         opportunity = self.optimization_opportunities[opportunity_id]
         opportunity.status = "completed"
         opportunity.implemented_at = datetime.now()
-        opportunity.actual_savings = (
-            opportunity.potential_savings
-        )  # Assume full savings achieved
+        opportunity.actual_savings = opportunity.potential_savings  # Assume full savings achieved
 
         return {
             "opportunity_id": opportunity_id,
@@ -1452,19 +1277,9 @@ class CostOptimizationService:
         Get comprehensive cost optimization dashboard.
         """
         total_opportunities = len(self.optimization_opportunities)
-        implemented_opportunities = len(
-            [
-                opp
-                for opp in self.optimization_opportunities.values()
-                if opp.status == "completed"
-            ]
-        )
-        total_potential_savings = sum(
-            opp.potential_savings for opp in self.optimization_opportunities.values()
-        )
-        total_achieved_savings = sum(
-            opp.actual_savings or 0 for opp in self.optimization_opportunities.values()
-        )
+        implemented_opportunities = len([opp for opp in self.optimization_opportunities.values() if opp.status == "completed"])
+        total_potential_savings = sum(opp.potential_savings for opp in self.optimization_opportunities.values())
+        total_achieved_savings = sum(opp.actual_savings or 0 for opp in self.optimization_opportunities.values())
 
         # Group by category
         by_category = {}
@@ -1502,18 +1317,10 @@ class CostOptimizationService:
             "summary": {
                 "total_opportunities": total_opportunities,
                 "implemented_opportunities": implemented_opportunities,
-                "implementation_rate": (
-                    implemented_opportunities / total_opportunities
-                    if total_opportunities > 0
-                    else 0
-                ),
+                "implementation_rate": (implemented_opportunities / total_opportunities if total_opportunities > 0 else 0),
                 "total_potential_savings": total_potential_savings,
                 "total_achieved_savings": total_achieved_savings,
-                "savings_achievement_rate": (
-                    total_achieved_savings / total_potential_savings
-                    if total_potential_savings > 0
-                    else 0
-                ),
+                "savings_achievement_rate": (total_achieved_savings / total_potential_savings if total_potential_savings > 0 else 0),
             },
             "by_category": by_category,
             "top_opportunities": top_opportunities,
@@ -1525,8 +1332,7 @@ class CostOptimizationService:
                     "actual_savings": opp.actual_savings,
                 }
                 for opp in self.optimization_opportunities.values()
-                if opp.implemented_at
-                and opp.implemented_at > datetime.now() - timedelta(days=30)
+                if opp.implemented_at and opp.implemented_at > datetime.now() - timedelta(days=30)
             ],
         }
 

@@ -5,7 +5,7 @@ Provides cash float reconciliation and batch matching for fraud investigation.
 
 import logging
 from collections import defaultdict
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Any
 
 from sqlalchemy.orm import Session
@@ -47,15 +47,11 @@ class ReconciliationService:
         Returns:
             Reconciliation results with discrepancy analysis
         """
-        logger.info(
-            f"Reconciling cash float for {entity_name}: {start_date} to {end_date}"
-        )
+        logger.info(f"Reconciling cash float for {entity_name}: {start_date} to {end_date}")
 
         try:
             # Query transactions for the entity and period
-            transactions = self._get_entity_transactions(
-                entity_name, start_date, end_date
-            )
+            transactions = self._get_entity_transactions(entity_name, start_date, end_date)
 
             if not transactions:
                 return {
@@ -97,9 +93,7 @@ class ReconciliationService:
                     status = "review_needed"
 
             # Calculate daily balances
-            daily_balances = self._calculate_daily_balances(
-                transactions, start_date, end_date
-            )
+            daily_balances = self._calculate_daily_balances(transactions, start_date, end_date)
 
             # Check for negative float
             negative_days = [d for d, b in daily_balances.items() if b < 0]
@@ -175,9 +169,7 @@ class ReconciliationService:
             withdrawal_date = withdrawal.get("date")
 
             # Get candidate expenses within time window
-            candidates = self._get_expense_candidates(
-                withdrawal_date, time_window_days, withdrawal_amount, tolerance
-            )
+            candidates = self._get_expense_candidates(withdrawal_date, time_window_days, withdrawal_amount, tolerance)
 
             # Score and rank matches
             matches = []
@@ -188,13 +180,9 @@ class ReconciliationService:
                         {
                             "expense_id": expense["id"],
                             "amount": expense["amount"],
-                            "date": expense["date"].isoformat()
-                            if isinstance(expense["date"], (datetime, date))
-                            else expense["date"],
+                            "date": expense["date"].isoformat() if isinstance(expense["date"], (datetime, date)) else expense["date"],
                             "confidence_score": round(score, 2),
-                            "amount_difference": round(
-                                abs(expense["amount"] - withdrawal_amount), 2
-                            ),
+                            "amount_difference": round(abs(expense["amount"] - withdrawal_amount), 2),
                             "description": expense.get("description", ""),
                         }
                     )
@@ -220,9 +208,7 @@ class ReconciliationService:
                 "error": str(e),
             }
 
-    def save_batch_match(
-        self, withdrawal_id: str, expense_ids: list[str], matched_by: str | None = None
-    ) -> dict[str, Any]:
+    def save_batch_match(self, withdrawal_id: str, expense_ids: list[str], matched_by: str | None = None) -> dict[str, Any]:
         """
         Save a confirmed batch match.
 
@@ -264,11 +250,7 @@ class ReconciliationService:
 
             # Calculate totals
             withdrawal_amount = abs(withdrawal.get("amount", 0))
-            expense_total = sum(
-                abs(self._get_transaction(e).get("amount", 0))
-                for e in valid_expenses
-                if self._get_transaction(e)
-            )
+            expense_total = sum(abs(self._get_transaction(e).get("amount", 0)) for e in valid_expenses if self._get_transaction(e))
 
             variance = withdrawal_amount - expense_total
             balanced = abs(variance) < 1.0  # Within $1
@@ -298,9 +280,7 @@ class ReconciliationService:
                 "error": str(e),
             }
 
-    def _get_entity_transactions(
-        self, entity_name: str, start_date: str, end_date: str
-    ) -> list[dict]:
+    def _get_entity_transactions(self, entity_name: str, start_date: str, end_date: str) -> list[dict]:
         """Get transactions for an entity within date range."""
         # In a real implementation, this would query the database
         # For now, return empty list as placeholder - actual data comes from DB
@@ -316,10 +296,7 @@ class ReconciliationService:
                 )
                 .all()
             )
-            return [
-                {"amount": t.amount, "date": t.created_at, "id": str(t.id)}
-                for t in transactions
-            ]
+            return [{"amount": t.amount, "date": t.created_at, "id": str(t.id)} for t in transactions]
         except Exception:
             return []
 
@@ -328,20 +305,14 @@ class ReconciliationService:
         try:
             from core.database import Transaction
 
-            txn = (
-                self.db.query(Transaction)
-                .filter(Transaction.id == transaction_id)
-                .first()
-            )
+            txn = self.db.query(Transaction).filter(Transaction.id == transaction_id).first()
             if txn:
                 return {"id": str(txn.id), "amount": txn.amount, "date": txn.created_at}
         except Exception:
             pass
         return None
 
-    def _get_expense_candidates(
-        self, ref_date, window_days: int, amount: float, tolerance: float
-    ) -> list[dict]:
+    def _get_expense_candidates(self, ref_date, window_days: int, amount: float, tolerance: float) -> list[dict]:
         """Get expense candidates within tolerance from database."""
         try:
             from core.database import Expense
@@ -390,9 +361,7 @@ class ReconciliationService:
                 {
                     "type": "ROUND_NUMBER_CLUSTERING",
                     "count": len(round_numbers),
-                    "percentage": round(
-                        len(round_numbers) / len(transactions) * 100, 1
-                    ),
+                    "percentage": round(len(round_numbers) / len(transactions) * 100, 1),
                 }
             )
 
@@ -410,9 +379,7 @@ class ReconciliationService:
 
         return findings
 
-    def _calculate_daily_balances(
-        self, transactions: list[dict], start_date: str, end_date: str
-    ) -> dict[str, float]:
+    def _calculate_daily_balances(self, transactions: list[dict], start_date: str, end_date: str) -> dict[str, float]:
         """Calculate running daily balances."""
         daily = defaultdict(float)
         for txn in transactions:
@@ -420,9 +387,7 @@ class ReconciliationService:
             daily[day] += txn["amount"]
         return dict(daily)
 
-    def _calculate_match_score(
-        self, withdrawal: dict, expense: dict, tolerance: float
-    ) -> float:
+    def _calculate_match_score(self, withdrawal: dict, expense: dict, tolerance: float) -> float:
         """Calculate confidence score for a potential match."""
         w_amount = abs(withdrawal.get("amount", 0))
         e_amount = abs(expense.get("amount", 0))

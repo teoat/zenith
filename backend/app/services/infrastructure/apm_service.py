@@ -43,9 +43,7 @@ class APMService:
         """Start background APM monitoring"""
         if self._thread is None or not self._thread.is_alive():
             self._stop_event.clear()
-            self._thread = threading.Thread(
-                target=self._system_monitor_worker, daemon=True
-            )
+            self._thread = threading.Thread(target=self._system_monitor_worker, daemon=True)
             self._thread.start()
 
     def stop_monitoring(self):
@@ -95,9 +93,7 @@ class APMService:
             "message": message,
             "endpoint": endpoint,
             "user_id": user_id,
-            "stack_trace": (
-                stack_trace[:500] if stack_trace else None
-            ),  # Limit stack trace length
+            "stack_trace": (stack_trace[:500] if stack_trace else None),  # Limit stack trace length
         }
 
         self.error_metrics.append(error_metric)
@@ -199,21 +195,9 @@ class APMService:
         cutoff_time = datetime.now() - timedelta(hours=hours)
 
         # Filter recent metrics
-        recent_requests = [
-            r
-            for r in self.request_metrics
-            if datetime.fromisoformat(r["timestamp"]) > cutoff_time
-        ]
-        recent_system = [
-            s
-            for s in self.system_metrics
-            if datetime.fromisoformat(s["timestamp"]) > cutoff_time
-        ]
-        recent_errors = [
-            e
-            for e in self.error_metrics
-            if datetime.fromisoformat(e["timestamp"]) > cutoff_time
-        ]
+        recent_requests = [r for r in self.request_metrics if datetime.fromisoformat(r["timestamp"]) > cutoff_time]
+        recent_system = [s for s in self.system_metrics if datetime.fromisoformat(s["timestamp"]) > cutoff_time]
+        recent_errors = [e for e in self.error_metrics if datetime.fromisoformat(e["timestamp"]) > cutoff_time]
 
         # Calculate request metrics
         request_summary = self._calculate_request_metrics(recent_requests)
@@ -225,9 +209,7 @@ class APMService:
         error_summary = self._calculate_error_metrics(recent_errors)
 
         # Generate alerts
-        alerts = self._generate_performance_alerts(
-            request_summary, system_summary, error_summary
-        )
+        alerts = self._generate_performance_alerts(request_summary, system_summary, error_summary)
 
         return {
             "time_range_hours": hours,
@@ -238,9 +220,7 @@ class APMService:
             "generated_at": datetime.now().isoformat(),
         }
 
-    def _calculate_request_metrics(
-        self, requests: list[dict[str, Any]]
-    ) -> dict[str, Any]:
+    def _calculate_request_metrics(self, requests: list[dict[str, Any]]) -> dict[str, Any]:
         """Calculate request performance metrics"""
         if not requests:
             return {"total_requests": 0}
@@ -282,36 +262,22 @@ class APMService:
             "endpoint_performance": endpoint_performance,
         }
 
-    def _calculate_system_metrics(
-        self, system_metrics: list[dict[str, Any]]
-    ) -> dict[str, Any]:
+    def _calculate_system_metrics(self, system_metrics: list[dict[str, Any]]) -> dict[str, Any]:
         """Calculate system performance metrics"""
         if not system_metrics:
             return {"samples": 0}
 
         cpu_percents = [m["cpu"]["percent"] for m in system_metrics if "cpu" in m]
-        memory_percents = [
-            m["memory"]["percent"] for m in system_metrics if "memory" in m
-        ]
+        memory_percents = [m["memory"]["percent"] for m in system_metrics if "memory" in m]
 
         return {
             "samples": len(system_metrics),
-            "avg_cpu_percent": (
-                round(sum(cpu_percents) / len(cpu_percents), 2) if cpu_percents else 0
-            ),
+            "avg_cpu_percent": (round(sum(cpu_percents) / len(cpu_percents), 2) if cpu_percents else 0),
             "max_cpu_percent": max(cpu_percents) if cpu_percents else 0,
-            "avg_memory_percent": (
-                round(sum(memory_percents) / len(memory_percents), 2)
-                if memory_percents
-                else 0
-            ),
+            "avg_memory_percent": (round(sum(memory_percents) / len(memory_percents), 2) if memory_percents else 0),
             "max_memory_percent": max(memory_percents) if memory_percents else 0,
-            "cpu_high_events": sum(
-                1 for m in system_metrics if m.get("cpu", {}).get("is_high", False)
-            ),
-            "memory_high_events": sum(
-                1 for m in system_metrics if m.get("memory", {}).get("is_high", False)
-            ),
+            "cpu_high_events": sum(1 for m in system_metrics if m.get("cpu", {}).get("is_high", False)),
+            "memory_high_events": sum(1 for m in system_metrics if m.get("memory", {}).get("is_high", False)),
         }
 
     def _calculate_error_metrics(self, errors: list[dict[str, Any]]) -> dict[str, Any]:
@@ -327,14 +293,10 @@ class APMService:
             "total_errors": len(errors),
             "errors_per_hour": len(errors),  # Assuming 1 hour window
             "error_types": dict(error_types),
-            "most_common_error": (
-                max(error_types.items(), key=lambda x: x[1]) if error_types else None
-            ),
+            "most_common_error": (max(error_types.items(), key=lambda x: x[1]) if error_types else None),
         }
 
-    def _generate_performance_alerts(
-        self, request_metrics: dict, system_metrics: dict, error_metrics: dict
-    ) -> list[dict[str, Any]]:
+    def _generate_performance_alerts(self, request_metrics: dict, system_metrics: dict, error_metrics: dict) -> list[dict[str, Any]]:
         """Generate performance alerts based on metrics"""
         alerts = []
 

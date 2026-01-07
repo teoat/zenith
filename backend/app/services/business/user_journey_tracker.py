@@ -20,9 +20,7 @@ class UserJourneyTracker:
         self.conversion_funnel = defaultdict(int)
         self.session_data = deque(maxlen=10000)  # Keep last 10k sessions
 
-    def track_event(
-        self, user_id: str, event_type: str, metadata: dict[str, Any] | None = None
-    ):
+    def track_event(self, user_id: str, event_type: str, metadata: dict[str, Any] | None = None):
         """Track a user event"""
         event = {
             "user_id": user_id,
@@ -48,11 +46,7 @@ class UserJourneyTracker:
         funnel_analysis = {}
 
         for step, description in self.funnel_steps.items():
-            conversion_rate = (
-                (self.conversion_funnel[step] / total_users * 100)
-                if total_users > 0
-                else 0
-            )
+            conversion_rate = (self.conversion_funnel[step] / total_users * 100) if total_users > 0 else 0
             funnel_analysis[step] = {
                 "description": description,
                 "count": self.conversion_funnel[step],

@@ -2,8 +2,16 @@
 Implements presence and a simple in-memory event queue for local testing.
 """
 
+import asyncio
+import logging
 import uuid
+from collections import defaultdict
+from dataclasses import dataclass
+from datetime import datetime
+from enum import Enum
 from typing import Any
+
+from fastapi import WebSocket
 
 
 class SyncService:
@@ -29,16 +37,6 @@ class SyncService:
         self.events.clear()
         return evs
 
-
-import asyncio
-import logging
-from collections import defaultdict
-from dataclasses import dataclass
-from datetime import datetime
-from enum import Enum
-from typing import Any
-
-from fastapi import WebSocket
 
 logger = logging.getLogger(__name__)
 
@@ -101,9 +99,7 @@ class CRDTDocument:
             # Update vector clock
             self._update_vector_clock(operation)
 
-            logger.debug(
-                f"Applied {operation.type.value} operation to document {self.document_id}"
-            )
+            logger.debug(f"Applied {operation.type.value} operation to document {self.document_id}")
             return True
 
         except Exception as e:
@@ -113,11 +109,7 @@ class CRDTDocument:
     def _apply_insert(self, operation: CRDTOperation):
         """Apply insert operation"""
         position = min(operation.position, len(self.content))
-        self.content = (
-            self.content[:position]
-            + (operation.content or "")
-            + self.content[position:]
-        )
+        self.content = self.content[:position] + (operation.content or "") + self.content[position:]
 
     def _apply_delete(self, operation: CRDTOperation):
         """Apply delete operation"""
@@ -144,9 +136,7 @@ class CRDTDocument:
         for key, value in operation.vector_clock.items():
             self.vector_clock[key] = max(self.vector_clock.get(key, 0), value)
 
-    def create_insert_operation(
-        self, position: int, content: str, client_id: str
-    ) -> CRDTOperation:
+    def create_insert_operation(self, position: int, content: str, client_id: str) -> CRDTOperation:
         """Create an insert operation"""
         operation_id = str(uuid.uuid4())
 
@@ -162,9 +152,7 @@ class CRDTDocument:
             vector_clock=self.vector_clock.copy(),
         )
 
-    def create_delete_operation(
-        self, position: int, length: int, client_id: str
-    ) -> CRDTOperation:
+    def create_delete_operation(self, position: int, length: int, client_id: str) -> CRDTOperation:
         """Create a delete operation"""
         operation_id = str(uuid.uuid4())
 
@@ -190,9 +178,7 @@ class CRDTDocument:
             "last_modified": datetime.now().isoformat(),
         }
 
-    def get_missing_operations(
-        self, client_vector_clock: dict[str, int]
-    ) -> list[CRDTOperation]:
+    def get_missing_operations(self, client_vector_clock: dict[str, int]) -> list[CRDTOperation]:
         """Get operations that client hasn't seen yet"""
         missing_ops = []
 
@@ -214,9 +200,7 @@ class RealTimeSyncManager:
         self.user_sessions: dict[str, str] = {}  # websocket_id -> user_id
         self.document_locks: dict[str, str] = {}  # document_id -> user_id
         self.documents: dict[str, CRDTDocument] = {}  # document_id -> CRDTDocument
-        self.client_subscriptions: dict[
-            str, set[str]
-        ] = {}  # client_id -> set of document_ids
+        self.client_subscriptions: dict[str, set[str]] = {}  # client_id -> set of document_ids
         self.lock = asyncio.Lock()
 
     async def connect(self, websocket: WebSocket, user_id: str) -> str:
@@ -256,11 +240,7 @@ class RealTimeSyncManager:
             user_id = self.user_sessions.get(connection_id)
 
             # Release any locks held by this user
-            locks_to_release = [
-                doc_id
-                for doc_id, locked_user in self.document_locks.items()
-                if locked_user == user_id
-            ]
+            locks_to_release = [doc_id for doc_id, locked_user in self.document_locks.items() if locked_user == user_id]
             for doc_id in locks_to_release:
                 del self.document_locks[doc_id]
 
@@ -306,13 +286,9 @@ class RealTimeSyncManager:
                 viewers.add(user_id)
 
         for user_id in viewers:
-            await self.broadcast_to_user(
-                user_id, {**message, "document_id": document_id}
-            )
+            await self.broadcast_to_user(user_id, {**message, "document_id": document_id})
 
-    async def handle_crdt_operation(
-        self, connection_id: str, operation: dict[str, Any]
-    ):
+    async def handle_crdt_operation(self, connection_id: str, operation: dict[str, Any]):
         """Handle CRDT-based operations for conflict-free replication"""
         document_id = operation.get("document_id")
         user_id = self.user_sessions.get(connection_id)
@@ -354,13 +330,9 @@ class RealTimeSyncManager:
             exclude_user=user_id,
         )
 
-        logger.info(
-            f"Applied CRDT operation: {operation['type']} on {document_id} by {user_id}"
-        )
+        logger.info(f"Applied CRDT operation: {operation['type']} on {document_id} by {user_id}")
 
-    async def handle_document_lock(
-        self, connection_id: str, lock_request: dict[str, Any]
-    ):
+    async def handle_document_lock(self, connection_id: str, lock_request: dict[str, Any]):
         """Handle document locking for collaborative editing"""
         document_id = lock_request.get("document_id")
         action = lock_request.get("action")  # "acquire" or "release"

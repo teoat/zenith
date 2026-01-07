@@ -9,17 +9,13 @@ class GraphVisualizationService:
     def __init__(self):
         pass
 
-    def extract_nodes_edges(
-        self, case_data: dict[str, Any]
-    ) -> dict[str, list[dict[str, Any]]]:
+    def extract_nodes_edges(self, case_data: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
         # Minimal extraction: treat entities as nodes and relationships as edges if present
         nodes = []
         edges = []
 
         for ent in case_data.get("entities", []):
-            nodes.append(
-                {"id": ent.get("id") or ent.get("name"), "label": ent.get("name")}
-            )
+            nodes.append({"id": ent.get("id") or ent.get("name"), "label": ent.get("name")})
 
         for rel in case_data.get("relationships", []):
             edges.append(

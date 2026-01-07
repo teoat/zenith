@@ -1,6 +1,6 @@
-import React from 'react';
-import { CheckCircle, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
-import { AccessibleButton } from '@/components/ui/AccessibleButton';
+import React from "react";
+import { CheckCircle, XCircle, AlertTriangle, Loader2 } from "lucide-react";
+import { AccessibleButton } from "@/components/ui/AccessibleButton";
 
 interface DecisionPanelProps {
   onApprove: () => void;
@@ -15,7 +15,7 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({
   onReject,
   onEscalate,
   loading = false,
-  disabled = false
+  disabled = false,
 }) => {
   return (
     <div className="sticky bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 p-4 shadow-lg z-10">
@@ -29,7 +29,11 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({
             aria-keyshortcuts="r"
             aria-label="Reject Alert (Press 'r')"
           >
-            {loading ? <Loader2 className="animate-spin mr-2" /> : <XCircle className="mr-2" />}
+            {loading ? (
+              <Loader2 className="animate-spin mr-2" />
+            ) : (
+              <XCircle className="mr-2" />
+            )}
             Reject
           </AccessibleButton>
           <div className="text-center mt-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
@@ -46,7 +50,11 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({
             aria-keyshortcuts="e"
             aria-label="Escalate Alert (Press 'e')"
           >
-            {loading ? <Loader2 className="animate-spin mr-2" /> : <AlertTriangle className="mr-2" />}
+            {loading ? (
+              <Loader2 className="animate-spin mr-2" />
+            ) : (
+              <AlertTriangle className="mr-2" />
+            )}
             Escalate
           </AccessibleButton>
           <div className="text-center mt-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
@@ -63,7 +71,11 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({
             aria-keyshortcuts="a"
             aria-label="Approve Alert (Press 'a')"
           >
-            {loading ? <Loader2 className="animate-spin mr-2" /> : <CheckCircle className="mr-2" />}
+            {loading ? (
+              <Loader2 className="animate-spin mr-2" />
+            ) : (
+              <CheckCircle className="mr-2" />
+            )}
             Approve
           </AccessibleButton>
           <div className="text-center mt-2 text-xs text-slate-500 dark:text-slate-400 font-mono">

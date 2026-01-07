@@ -1,32 +1,47 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Filter, Webhook, Globe, Zap, Database, Server, CheckCircle, Clock, AlertCircle, Settings, ExternalLink } from 'lucide-react';
-import type { Integration } from '@/lib/api';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Search,
+  Filter,
+  Webhook,
+  Globe,
+  Zap,
+  Database,
+  Server,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  Settings,
+  ExternalLink,
+} from "lucide-react";
+import type { Integration } from "@/lib/api";
 
 interface IntegrationsTabProps {
   integrations: Integration[];
 }
 
 const IntegrationsTab: React.FC<IntegrationsTabProps> = ({ integrations }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const filteredIntegrations = integrations.filter(integration => {
-    const matchesSearch = integration.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         integration.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || integration.status === statusFilter;
+  const filteredIntegrations = integrations.filter((integration) => {
+    const matchesSearch =
+      integration.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      integration.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || integration.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active':
+      case "active":
         return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'inactive':
+      case "inactive":
         return <Clock className="w-4 h-4 text-slate-500" />;
-      case 'error':
+      case "error":
         return <AlertCircle className="w-4 h-4 text-red-500" />;
-      case 'maintenance':
+      case "maintenance":
         return <Settings className="w-4 h-4 text-yellow-500" />;
       default:
         return <Clock className="w-4 h-4 text-slate-500" />;
@@ -35,13 +50,13 @@ const IntegrationsTab: React.FC<IntegrationsTabProps> = ({ integrations }) => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'webhook':
+      case "webhook":
         return <Webhook className="w-4 h-4 text-blue-500" />;
-      case 'rest_api':
+      case "rest_api":
         return <Globe className="w-4 h-4 text-green-500" />;
-      case 'graphql':
+      case "graphql":
         return <Zap className="w-4 h-4 text-purple-500" />;
-      case 'database':
+      case "database":
         return <Database className="w-4 h-4 text-orange-500" />;
       default:
         return <Server className="w-4 h-4 text-slate-500" />;
@@ -94,7 +109,9 @@ const IntegrationsTab: React.FC<IntegrationsTabProps> = ({ integrations }) => {
               </div>
               <div className="integration-info">
                 <h3 className="integration-name">{integration.name}</h3>
-                <p className="integration-description">{integration.description}</p>
+                <p className="integration-description">
+                  {integration.description}
+                </p>
               </div>
               <div className="integration-status">
                 {getStatusIcon(integration.status)}
@@ -105,7 +122,9 @@ const IntegrationsTab: React.FC<IntegrationsTabProps> = ({ integrations }) => {
             <div className="integration-details">
               <div className="detail-row">
                 <span className="detail-label">Type:</span>
-                <span className="detail-value">{integration.type.replace('_', ' ').toUpperCase()}</span>
+                <span className="detail-value">
+                  {integration.type.replace("_", " ").toUpperCase()}
+                </span>
               </div>
               <div className="detail-row">
                 <span className="detail-label">Category:</span>
@@ -114,7 +133,9 @@ const IntegrationsTab: React.FC<IntegrationsTabProps> = ({ integrations }) => {
               {integration.endpoint && (
                 <div className="detail-row">
                   <span className="detail-label">Endpoint:</span>
-                  <span className="detail-value endpoint">{integration.endpoint}</span>
+                  <span className="detail-value endpoint">
+                    {integration.endpoint}
+                  </span>
                 </div>
               )}
               {integration.lastUsed && (
@@ -128,18 +149,20 @@ const IntegrationsTab: React.FC<IntegrationsTabProps> = ({ integrations }) => {
             <div className="integration-metrics">
               <div className="metric">
                 <span className="metric-label">Success Rate</span>
-                <span className="metric-value">{(integration.successRate * 100).toFixed(1)}%</span>
+                <span className="metric-value">
+                  {(integration.successRate * 100).toFixed(1)}%
+                </span>
               </div>
               <div className="metric">
                 <span className="metric-label">Requests</span>
-                <span className="metric-value">{integration.requestCount.toLocaleString()}</span>
+                <span className="metric-value">
+                  {integration.requestCount.toLocaleString()}
+                </span>
               </div>
             </div>
 
             <div className="integration-actions">
-              <button className="action-button primary">
-                Configure
-              </button>
+              <button className="action-button primary">Configure</button>
               <button className="action-button secondary">
                 <ExternalLink className="w-3 h-3 mr-1" />
                 Test

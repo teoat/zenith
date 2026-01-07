@@ -120,9 +120,7 @@ class OrchestrationNotificationService:
         for alert in alerts_to_send:
             await self.send_notification(alert)
 
-    def _check_score_drop_alert(
-        self, system_data: dict[str, Any]
-    ) -> dict[str, Any] | None:
+    def _check_score_drop_alert(self, system_data: dict[str, Any]) -> dict[str, Any] | None:
         """Check for score drop alerts."""
         rule = self.alert_rules["score_drop"]
         if not rule["enabled"]:
@@ -150,9 +148,7 @@ class OrchestrationNotificationService:
 
         return None
 
-    def _check_critical_issue_alerts(
-        self, system_data: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    def _check_critical_issue_alerts(self, system_data: dict[str, Any]) -> list[dict[str, Any]]:
         """Check for critical issue alerts."""
         rule = self.alert_rules["critical_issue"]
         if not rule["enabled"]:
@@ -187,9 +183,7 @@ class OrchestrationNotificationService:
 
         return alerts
 
-    def _check_system_degradation_alert(
-        self, system_data: dict[str, Any]
-    ) -> dict[str, Any] | None:
+    def _check_system_degradation_alert(self, system_data: dict[str, Any]) -> dict[str, Any] | None:
         """Check for system degradation alerts."""
         rule = self.alert_rules["system_degradation"]
         if not rule["enabled"]:
@@ -331,9 +325,7 @@ This is an automated notification from the System Orchestration Framework.
         """Get recent alerts."""
         return self.notification_history[-limit:]
 
-    def configure_channel(
-        self, channel_name: str, config: dict[str, Any]
-    ) -> dict[str, Any]:
+    def configure_channel(self, channel_name: str, config: dict[str, Any]) -> dict[str, Any]:
         """Configure a notification channel."""
         if channel_name not in self.notification_channels:
             raise ValueError(f"Unknown channel: {channel_name}")
@@ -341,9 +333,7 @@ This is an automated notification from the System Orchestration Framework.
         self.notification_channels[channel_name].update(config)
         return self.notification_channels[channel_name]
 
-    def configure_alert_rule(
-        self, rule_name: str, config: dict[str, Any]
-    ) -> dict[str, Any]:
+    def configure_alert_rule(self, rule_name: str, config: dict[str, Any]) -> dict[str, Any]:
         """Configure an alert rule."""
         if rule_name not in self.alert_rules:
             raise ValueError(f"Unknown alert rule: {rule_name}")

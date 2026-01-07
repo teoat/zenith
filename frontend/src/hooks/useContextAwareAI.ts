@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useAIContext } from '@/context/AIContext';
+import { useEffect } from "react";
+import { useAIContext } from "@/context/AIContext";
 
 export function useContextAwareAI(page: string, data?: any) {
   const { setContext } = useAIContext();
@@ -8,7 +8,7 @@ export function useContextAwareAI(page: string, data?: any) {
     setContext({
       currentPage: page,
       activeData: data || null,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }, [page, data, setContext]);
 }

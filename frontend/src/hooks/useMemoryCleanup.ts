@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from "react";
 
 export interface MemoryMonitor {
   jsHeapSize: number;
@@ -20,33 +20,42 @@ export function useMemoryMonitor(config: MemoryMonitorConfig = {}) {
   const [memoryStats, setMemoryStats] = useState<MemoryMonitor | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const {
-    updateInterval = 5000
-  } = config;
+  const { updateInterval = 5000 } = config;
 
   const monitorMemory = useCallback(() => {
     // Check if performance.memory is available (Chrome/Edge)
-    if ('memory' in performance) {
-      const memory = (performance as unknown as { memory: { jsHeapSizeLimit: number; totalJSHeapSize: number; usedJSHeapSize: number } }).memory;
+    if ("memory" in performance) {
+      const memory = (
+        performance as unknown as {
+          memory: {
+            jsHeapSizeLimit: number;
+            totalJSHeapSize: number;
+            usedJSHeapSize: number;
+          };
+        }
+      ).memory;
       const memoryInfo: MemoryMonitor = {
         jsHeapSize: memory.jsHeapSizeLimit,
         jsHeapSizeLimit: memory.jsHeapSizeLimit,
         totalJSHeapSize: memory.totalJSHeapSize,
         usedJSHeapSize: memory.usedJSHeapSize,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       setMemoryStats(memoryInfo);
     }
   }, []);
 
-  const takeSnapshot = useCallback((_label?: string) => {
-    monitorMemory();
-  }, [monitorMemory]);
+  const takeSnapshot = useCallback(
+    (_label?: string) => {
+      monitorMemory();
+    },
+    [monitorMemory],
+  );
 
   const forceCleanup = useCallback(() => {
     // Force garbage collection if available
-    if ('gc' in window) {
+    if ("gc" in window) {
       (window as any).gc();
     }
     // Clear any cached data
@@ -75,7 +84,7 @@ export function useMemoryMonitor(config: MemoryMonitorConfig = {}) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
-    }
+    },
   };
 }
 

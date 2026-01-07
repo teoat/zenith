@@ -9,17 +9,17 @@
  * @returns Formatted string (e.g., "1.5 MB")
  */
 export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
-  
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  if (bytes === 0) return "0 B";
+
+  const units = ["B", "KB", "MB", "GB", "TB"];
   let size = bytes;
   let unitIndex = 0;
-  
+
   while (size >= 1024 && unitIndex < units.length - 1) {
     size /= 1024;
     unitIndex++;
   }
-  
+
   return `${size.toFixed(unitIndex === 0 ? 0 : 2)} ${units[unitIndex]}`;
 };
 
@@ -29,7 +29,7 @@ export const formatFileSize = (bytes: number): string => {
  * @param locale - Locale string (default: 'en-US')
  * @returns Formatted number string
  */
-export const formatNumber = (num: number, locale = 'en-US'): string => {
+export const formatNumber = (num: number, locale = "en-US"): string => {
   return new Intl.NumberFormat(locale).format(num);
 };
 
@@ -42,14 +42,14 @@ export const formatNumber = (num: number, locale = 'en-US'): string => {
  */
 export const formatCurrency = (
   amount: number,
-  currency = 'USD',
-  locale = 'en-US'
+  currency = "USD",
+  locale = "en-US",
 ): string => {
   return new Intl.NumberFormat(locale, {
-    style: 'currency',
+    style: "currency",
     currency,
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(amount);
 };
 
@@ -71,19 +71,19 @@ export const formatPercentage = (value: number, decimals = 1): string => {
  */
 export const formatDate = (
   date: string | Date,
-  options: Intl.DateTimeFormatOptions = {}
+  options: Intl.DateTimeFormatOptions = {},
 ): string => {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  
+  const d = typeof date === "string" ? new Date(date) : date;
+
   if (isNaN(d.getTime())) {
-    return 'Invalid Date';
+    return "Invalid Date";
   }
-  
-  return d.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    ...options
+
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    ...options,
   });
 };
 
@@ -93,13 +93,13 @@ export const formatDate = (
  * @returns Relative time string
  */
 export const formatRelativeTime = (date: string | Date): string => {
-  const d = typeof date === 'string' ? new Date(date) : date;
+  const d = typeof date === "string" ? new Date(date) : date;
   const now = new Date();
-  
+
   if (isNaN(d.getTime())) {
-    return 'Invalid Date';
+    return "Invalid Date";
   }
-  
+
   const diffMs = now.getTime() - d.getTime();
   const diffSecs = Math.floor(diffMs / 1000);
   const diffMins = Math.floor(diffSecs / 60);
@@ -108,8 +108,8 @@ export const formatRelativeTime = (date: string | Date): string => {
   const diffWeeks = Math.floor(diffDays / 7);
   const diffMonths = Math.floor(diffDays / 30);
   const diffYears = Math.floor(diffDays / 365);
-  
-  if (diffSecs < 60) return 'just now';
+
+  if (diffSecs < 60) return "just now";
   if (diffMins < 60) return `${diffMins}m ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
@@ -126,7 +126,7 @@ export const formatRelativeTime = (date: string | Date): string => {
  */
 export const truncateString = (str: string, maxLength: number): string => {
   if (str.length <= maxLength) return str;
-  return str.slice(0, maxLength - 3) + '...';
+  return str.slice(0, maxLength - 3) + "...";
 };
 
 /**
@@ -138,11 +138,11 @@ export const formatDuration = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = Math.floor(seconds % 60);
-  
+
   if (hours > 0) {
-    return `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   }
-  return `${minutes}:${String(secs).padStart(2, '0')}`;
+  return `${minutes}:${String(secs).padStart(2, "0")}`;
 };
 
 /**
@@ -152,17 +152,17 @@ export const formatDuration = (seconds: number): string => {
  * @returns Formatted time string
  */
 export const formatTime = (date: string | Date, use24Hour = false): string => {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  
+  const d = typeof date === "string" ? new Date(date) : date;
+
   if (isNaN(d.getTime())) {
-    return 'Invalid Time';
+    return "Invalid Time";
   }
-  
-  return d.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: !use24Hour
+
+  return d.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: !use24Hour,
   });
 };
 
@@ -172,16 +172,16 @@ export const formatTime = (date: string | Date, use24Hour = false): string => {
  * @returns Formatted phone number
  */
 export const formatPhoneNumber = (phone: string): string => {
-  const cleaned = phone.replace(/\D/g, '');
-  
+  const cleaned = phone.replace(/\D/g, "");
+
   if (cleaned.length === 10) {
     return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
   }
-  
-  if (cleaned.length === 11 && cleaned[0] === '1') {
+
+  if (cleaned.length === 11 && cleaned[0] === "1") {
     return `+1 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
   }
-  
+
   return phone; // Return original if format not recognized
 };
 
@@ -191,13 +191,13 @@ export const formatPhoneNumber = (phone: string): string => {
  * @returns Masked card number
  */
 export const formatCardNumber = (cardNumber: string): string => {
-  const cleaned = cardNumber.replace(/\s/g, '');
-  
+  const cleaned = cardNumber.replace(/\s/g, "");
+
   if (cleaned.length >= 4) {
     const last4 = cleaned.slice(-4);
-    const masked = '*'.repeat(cleaned.length - 4);
+    const masked = "*".repeat(cleaned.length - 4);
     return `${masked}${last4}`;
   }
-  
+
   return cardNumber;
 };

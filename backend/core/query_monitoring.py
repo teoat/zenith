@@ -15,9 +15,7 @@ from prometheus_client import Counter, Histogram
 from core.logging import logger
 
 # Prometheus metrics
-query_duration = Histogram(
-    "db_query_duration_seconds", "Database query execution time", ["operation", "table"]
-)
+query_duration = Histogram("db_query_duration_seconds", "Database query execution time", ["operation", "table"])
 
 slow_query_counter = Counter(
     "db_slow_queries_total",
@@ -62,9 +60,7 @@ def monitor_query(operation: str, table: str = "unknown"):
             except Exception as e:
                 error_occurred = True
                 error_type = type(e).__name__
-                query_error_counter.labels(
-                    operation=operation, error_type=error_type
-                ).inc()
+                query_error_counter.labels(operation=operation, error_type=error_type).inc()
 
                 logger.error(
                     "Database query error",
@@ -80,9 +76,7 @@ def monitor_query(operation: str, table: str = "unknown"):
                 duration = time.time() - start_time
 
                 # Record duration metric
-                query_duration.labels(operation=operation, table=table).observe(
-                    duration
-                )
+                query_duration.labels(operation=operation, table=table).observe(duration)
 
                 # Log slow queries
                 if duration > SLOW_QUERY_THRESHOLD:
@@ -160,9 +154,7 @@ class QueryPerformanceContext:
         self.duration = time.time() - self.start_time
 
         # Record metrics
-        query_duration.labels(operation=self.operation, table=self.table).observe(
-            self.duration
-        )
+        query_duration.labels(operation=self.operation, table=self.table).observe(self.duration)
 
         # Check for slow query
         if self.duration > SLOW_QUERY_THRESHOLD:
@@ -179,9 +171,7 @@ class QueryPerformanceContext:
 
         # Log errors
         if exc_type is not None:
-            query_error_counter.labels(
-                operation=self.operation, error_type=exc_type.__name__
-            ).inc()
+            query_error_counter.labels(operation=self.operation, error_type=exc_type.__name__).inc()
 
             logger.error(
                 "Query error in context",

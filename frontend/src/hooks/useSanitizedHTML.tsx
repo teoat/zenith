@@ -1,11 +1,11 @@
 /**
  * useSanitizedHTML - Hook for sanitizing HTML content from LLM outputs
- * 
+ *
  * Prevents XSS attacks by sanitizing all HTML/Markdown from AI responses.
  */
 
-import { useMemo } from 'react';
-import DOMPurify from 'dompurify';
+import { useMemo } from "react";
+import DOMPurify from "dompurify";
 
 interface UseSanitizedHTMLOptions {
   allowedTags?: string[];
@@ -13,44 +13,72 @@ interface UseSanitizedHTMLOptions {
   stripIgnoreTag?: boolean;
 }
 
-// Define TrustedHTML interface if not available
 interface TrustedHTML {
   toString: () => string;
 }
 
-const defaultConfig = {
+interface SanitizeConfig {
+  ALLOWED_TAGS?: string[];
+  ALLOWED_ATTR?: string[];
+  [key: string]: unknown;
+}
+
+const defaultConfig: SanitizeConfig = {
   ALLOWED_TAGS: [
-    'p', 'br', 'strong', 'em', 'u', 's', 'blockquote', 'code', 'pre',
-    'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'a', 'span', 'div', 'table', 'thead', 'tbody', 'tr', 'th', 'td'
+    "p",
+    "br",
+    "strong",
+    "em",
+    "u",
+    "s",
+    "blockquote",
+    "code",
+    "pre",
+    "ul",
+    "ol",
+    "li",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "a",
+    "span",
+    "div",
+    "table",
+    "thead",
+    "tbody",
+    "tr",
+    "th",
+    "td",
   ],
 };
 
-// Bypass missing Config type from namespace
 export function useSanitizedHTML(
   dirtyHTML: string | TrustedHTML,
-  options: UseSanitizedHTMLOptions = {}
+  options: UseSanitizedHTMLOptions = {},
 ): string {
   return useMemo(() => {
-    const config: any = {
+    const config: SanitizeConfig = {
       ...defaultConfig,
       ...(options.allowedTags ? { ALLOWED_TAGS: options.allowedTags } : {}),
-      ...(options.allowedAttributes ? { ALLOWED_ATTR: options.allowedAttributes } : {}),
+      ...(options.allowedAttributes
+        ? { ALLOWED_ATTR: options.allowedAttributes }
+        : {}),
     };
 
-    const htmlString = typeof dirtyHTML === 'string' ? dirtyHTML : dirtyHTML.toString();
-    return DOMPurify.sanitize(htmlString, config as any) as unknown as string;
+    const htmlString =
+      typeof dirtyHTML === "string" ? dirtyHTML : dirtyHTML.toString();
+    return DOMPurify.sanitize(htmlString, config);
   }, [dirtyHTML, options]);
 }
 
-/**
- * sanitizeHTML - Direct function for one-off sanitization
- */
 export function sanitizeHTML(
   dirtyHTML: string,
-  config: any = {}
+  config: SanitizeConfig = {},
 ): string {
-  return DOMPurify.sanitize(dirtyHTML, { ...defaultConfig, ...config } as any) as unknown as string;
+  return DOMPurify.sanitize(dirtyHTML, { ...defaultConfig, ...config });
 }
 
 /**
@@ -64,11 +92,11 @@ interface SanitizedHTMLProps {
 
 export const SanitizedHTML: React.FC<SanitizedHTMLProps> = ({
   html,
-  className = '',
-  as: Component = 'div'
+  className = "",
+  as: Component = "div",
 }) => {
   const cleanHTML = useSanitizedHTML(html);
-  
+
   return (
     <Component
       className={className}

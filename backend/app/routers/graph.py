@@ -37,9 +37,7 @@ class GraphSnapshotResponse(BaseModel):
 
 
 @router.post("/snapshot/{case_id}")
-async def save_graph_snapshot(
-    case_id: str, snapshot_data: GraphSnapshotCreate, db: Session = Depends(get_db)
-):
+async def save_graph_snapshot(case_id: str, snapshot_data: GraphSnapshotCreate, db: Session = Depends(get_db)):
     """Save a graph snapshot for a case"""
     try:
         snapshot_id = str(uuid.uuid4())
@@ -63,11 +61,7 @@ async def save_graph_snapshot(
             "success": True,
             "snapshot_id": snapshot_id,
             "message": f"Snapshot saved with {len(snapshot_data.nodes)} nodes and {len(snapshot_data.links)} links",
-            "created_at": (
-                snapshot.created_at.isoformat()
-                if snapshot.created_at
-                else datetime.now().isoformat()
-            ),
+            "created_at": (snapshot.created_at.isoformat() if snapshot.created_at else datetime.now().isoformat()),
         }
 
     except Exception as e:
@@ -79,12 +73,7 @@ async def save_graph_snapshot(
 async def get_graph_snapshots(case_id: str, db: Session = Depends(get_db)):
     """Get all graph snapshots for a case"""
     try:
-        snapshots = (
-            db.query(GraphSnapshot)
-            .filter(GraphSnapshot.case_id == case_id)
-            .order_by(GraphSnapshot.created_at.desc())
-            .all()
-        )
+        snapshots = db.query(GraphSnapshot).filter(GraphSnapshot.case_id == case_id).order_by(GraphSnapshot.created_at.desc()).all()
 
         return {
             "case_id": case_id,
@@ -110,9 +99,7 @@ async def get_graph_snapshots(case_id: str, db: Session = Depends(get_db)):
 async def get_graph_snapshot(snapshot_id: str, db: Session = Depends(get_db)):
     """Get a specific graph snapshot by ID"""
     try:
-        snapshot = (
-            db.query(GraphSnapshot).filter(GraphSnapshot.id == snapshot_id).first()
-        )
+        snapshot = db.query(GraphSnapshot).filter(GraphSnapshot.id == snapshot_id).first()
 
         if not snapshot:
             raise HTTPException(status_code=404, detail="Snapshot not found")
@@ -126,9 +113,7 @@ async def get_graph_snapshot(snapshot_id: str, db: Session = Depends(get_db)):
             "links": snapshot.links,
             "node_count": snapshot.node_count,
             "link_count": snapshot.link_count,
-            "created_at": (
-                snapshot.created_at.isoformat() if snapshot.created_at else None
-            ),
+            "created_at": (snapshot.created_at.isoformat() if snapshot.created_at else None),
         }
 
     except HTTPException:
@@ -242,32 +227,21 @@ async def detect_communities(
 
             # Count entity types in this community
             for entity_id in community:
-                if (
-                    hasattr(relationship_graph.graph, "nodes")
-                    and entity_id in relationship_graph.graph.nodes
-                ):
-                    entity_type = relationship_graph.graph.nodes[entity_id].get(
-                        "type", "unknown"
-                    )
-                    community_data["entity_types"][entity_type] = (
-                        community_data["entity_types"].get(entity_type, 0) + 1
-                    )
+                if hasattr(relationship_graph.graph, "nodes") and entity_id in relationship_graph.graph.nodes:
+                    entity_type = relationship_graph.graph.nodes[entity_id].get("type", "unknown")
+                    community_data["entity_types"][entity_type] = community_data["entity_types"].get(entity_type, 0) + 1
 
             community_analysis.append(community_data)
 
         return {
             "communities": community_analysis,
             "total_communities": len(communities),
-            "largest_community_size": (
-                max(len(c) for c in communities) if communities else 0
-            ),
+            "largest_community_size": (max(len(c) for c in communities) if communities else 0),
         }
 
     except Exception as e:
         logger.error(f"Error detecting communities: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to detect communities: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to detect communities: {e!s}")
 
 
 @router.get("/central-entities")
@@ -285,9 +259,7 @@ async def get_central_entities(
 
     except Exception as e:
         logger.error(f"Error getting central entities: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get central entities: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get central entities: {e!s}")
 
 
 @router.get("/suspicious-patterns")
@@ -306,19 +278,14 @@ async def get_suspicious_patterns(
 
     except Exception as e:
         logger.error(f"Error finding suspicious patterns: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to find suspicious patterns: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to find suspicious patterns: {e!s}")
 
 
 @router.get("/entity/{entity_id}")
 async def get_entity_details(entity_id: str):
     """Get detailed information about a specific entity"""
     try:
-        if (
-            not hasattr(relationship_graph.graph, "nodes")
-            or entity_id not in relationship_graph.graph.nodes
-        ):
+        if not hasattr(relationship_graph.graph, "nodes") or entity_id not in relationship_graph.graph.nodes:
             raise HTTPException(status_code=404, detail=f"Entity {entity_id} not found")
 
         node_data = relationship_graph.graph.nodes[entity_id]
@@ -340,9 +307,7 @@ async def get_entity_details(entity_id: str):
                         "weight": edge_data.get("weight", 1),
                         "total_amount": edge_data.get("total_amount", 0),
                         "transaction_count": edge_data.get("transaction_count", 0),
-                        "relationship_type": edge_data.get(
-                            "relationship_type", "unknown"
-                        ),
+                        "relationship_type": edge_data.get("relationship_type", "unknown"),
                     },
                 }
             )
@@ -358,9 +323,7 @@ async def get_entity_details(entity_id: str):
         raise
     except Exception as e:
         logger.error(f"Error getting entity details: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get entity details: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get entity details: {e!s}")
 
 
 @router.get("/path/{source}/{target}")
@@ -371,14 +334,10 @@ async def find_shortest_path(source: str, target: str):
             raise HTTPException(status_code=400, detail="Graph not built yet")
 
         if source not in relationship_graph.graph.nodes:
-            raise HTTPException(
-                status_code=404, detail=f"Source entity {source} not found"
-            )
+            raise HTTPException(status_code=404, detail=f"Source entity {source} not found")
 
         if target not in relationship_graph.graph.nodes:
-            raise HTTPException(
-                status_code=404, detail=f"Target entity {target} not found"
-            )
+            raise HTTPException(status_code=404, detail=f"Target entity {target} not found")
 
         import networkx as nx
 
@@ -390,9 +349,7 @@ async def find_shortest_path(source: str, target: str):
             path_details = []
             for i in range(len(path) - 1):
                 edge_data = relationship_graph.graph.edges[path[i], path[i + 1]]
-                path_details.append(
-                    {"from": path[i], "to": path[i + 1], "relationship": edge_data}
-                )
+                path_details.append({"from": path[i], "to": path[i + 1], "relationship": edge_data})
 
             return {
                 "path": path,
@@ -422,9 +379,7 @@ async def export_graph(format: str = "json"):
     """Export graph data in specified format"""
     try:
         if format not in ["json", "graphml"]:
-            raise HTTPException(
-                status_code=400, detail="Format must be 'json' or 'graphml'"
-            )
+            raise HTTPException(status_code=400, detail="Format must be 'json' or 'graphml'")
 
         export_data = relationship_graph.export_graph_data(format)
 
@@ -556,6 +511,4 @@ async def get_metadata_correlations(case_id: str, session: Session = Depends(get
 
     except Exception as e:
         logger.error(f"Error getting metadata correlations: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get correlations: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get correlations: {e!s}")

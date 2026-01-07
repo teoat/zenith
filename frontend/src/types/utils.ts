@@ -14,4 +14,4 @@ export type AsyncResult<T> = {
 
 export type ValueOf<T> = T[keyof T];
 
-export type RequestStatus = 'idle' | 'loading' | 'success' | 'error';
+export type RequestStatus = "idle" | "loading" | "success" | "error";

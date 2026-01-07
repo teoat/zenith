@@ -1,12 +1,12 @@
 // components/ui/ProgressBar.tsx
-import React from 'react';
+import React from "react";
 
 interface ProgressBarProps {
   progress: number; // 0-100
   label?: string;
   showPercentage?: boolean;
   className?: string;
-  color?: 'primary' | 'success' | 'warning' | 'error';
+  color?: "primary" | "success" | "warning" | "error";
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
@@ -14,14 +14,18 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   label,
   showPercentage = true,
   className = "",
-  color = 'primary'
+  color = "primary",
 }) => {
   const getColorClass = () => {
     switch (color) {
-      case 'success': return 'progress-success';
-      case 'warning': return 'progress-warning';
-      case 'error': return 'progress-error';
-      default: return 'progress-primary';
+      case "success":
+        return "progress-success";
+      case "warning":
+        return "progress-warning";
+      case "error":
+        return "progress-error";
+      default:
+        return "progress-primary";
     }
   };
 

@@ -47,9 +47,7 @@ class EntityLinkagePlugin(PluginInterface):
 
         return await self._analyze_entity_linkage(case_data)
 
-    async def _analyze_entity_linkage(
-        self, case_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _analyze_entity_linkage(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Analyze entity relationships and linkages"""
         insights = []
         recommendations = []
@@ -78,12 +76,8 @@ class EntityLinkagePlugin(PluginInterface):
             # Find highly connected entities
             for entity, connections in entity_connections.items():
                 if len(connections) >= self.config.connection_threshold:
-                    insights.append(
-                        f"Entity '{entity}' connected to {len(connections)} other entities"
-                    )
-                    recommendations.append(
-                        f"Investigate entity '{entity}' for central role in network"
-                    )
+                    insights.append(f"Entity '{entity}' connected to {len(connections)} other entities")
+                    recommendations.append(f"Investigate entity '{entity}' for central role in network")
                     confidence += 0.5
 
             # Find isolated clusters
@@ -117,9 +111,7 @@ class EntityLinkagePlugin(PluginInterface):
 
             if len(clusters) > 1:
                 insights.append(f"Found {len(clusters)} separate entity clusters")
-                recommendations.append(
-                    "Analyze each cluster for independent fraud schemes"
-                )
+                recommendations.append("Analyze each cluster for independent fraud schemes")
                 confidence += 0.4
 
         return {

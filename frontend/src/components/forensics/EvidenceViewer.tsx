@@ -1,5 +1,5 @@
-import React from 'react';
-import type { EvidenceItem } from '@/lib/api';
+import React from "react";
+import type { EvidenceItem } from "@/lib/api";
 
 interface EvidenceViewerProps {
   selectedEvidence: EvidenceItem | null;
@@ -7,7 +7,7 @@ interface EvidenceViewerProps {
 }
 
 const EvidenceViewer: React.FC<EvidenceViewerProps> = ({
-  selectedEvidence
+  selectedEvidence,
 }) => {
   if (!selectedEvidence) {
     return (
@@ -17,7 +17,9 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({
             📄
           </div>
           <h3 className="text-lg font-medium mb-2">Select Evidence</h3>
-          <p className="text-sm">Choose an evidence item from the list to view details</p>
+          <p className="text-sm">
+            Choose an evidence item from the list to view details
+          </p>
         </div>
       </div>
     );
@@ -38,7 +40,9 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({
               <label className="block text-sm font-medium text-slate-400 mb-1">
                 File Type
               </label>
-              <span className="text-slate-200">{selectedEvidence.fileType}</span>
+              <span className="text-slate-200">
+                {selectedEvidence.fileType}
+              </span>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-400 mb-1">
@@ -65,7 +69,9 @@ const EvidenceViewer: React.FC<EvidenceViewerProps> = ({
           </div>
 
           <div className="border-t border-slate-800 pt-6">
-            <h3 className="text-lg font-medium text-slate-200 mb-4">Evidence Preview</h3>
+            <h3 className="text-lg font-medium text-slate-200 mb-4">
+              Evidence Preview
+            </h3>
             <div className="bg-slate-950 border border-slate-800 rounded p-4 min-h-64 flex items-center justify-center text-slate-500">
               Preview not available for this file type
             </div>

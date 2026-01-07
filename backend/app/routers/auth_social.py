@@ -13,9 +13,7 @@ async def oauth_login(provider: str):
         raise HTTPException(status_code=400, detail="Unsupported provider")
 
     # Simulate redirect url
-    return RedirectResponse(
-        url=f"https://{provider}.com/oauth2/authorize?client_id=123&redirect_uri=https://api.zenith.com/callback"
-    )
+    return RedirectResponse(url=f"https://{provider}.com/oauth2/authorize?client_id=123&redirect_uri=https://api.zenith.com/callback")
 
 
 @router.get("/{provider}/callback")

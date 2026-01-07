@@ -4,6 +4,8 @@ Metadata Extraction API Endpoints
 Exposes EXIF-like metadata extraction for documents.
 """
 
+import os
+import tempfile
 from pathlib import Path
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
@@ -46,8 +48,10 @@ async def extract_metadata(file: UploadFile = File(...)):
 
     Returns complete metadata including forensic flags.
     """
-    # Save uploaded file temporarily
-    temp_path = Path(f"/tmp/{file.filename}")
+    # Save uploaded file temporarily with secure temp file creation
+    temp_fd, temp_path_str = tempfile.mkstemp(suffix=f"_{file.filename}")
+    temp_path = Path(temp_path_str)
+    os.close(temp_fd)  # Close the file descriptor, we'll reopen it
     try:
         contents = await file.read()
         with open(temp_path, "wb") as f:
@@ -135,7 +139,9 @@ async def forensic_scan(file: UploadFile = File(...)):
     - Modification patterns
     - Missing expected data
     """
-    temp_path = Path(f"/tmp/{file.filename}")
+    temp_fd, temp_path_str = tempfile.mkstemp(suffix=f"_{file.filename}")
+    temp_path = Path(temp_path_str)
+    os.close(temp_fd)  # Close the file descriptor, we'll reopen it
     try:
         contents = await file.read()
         with open(temp_path, "wb") as f:

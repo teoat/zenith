@@ -1,6 +1,6 @@
 /**
  * Electron Store - Unified Storage Abstraction
- * 
+ *
  * Provides a consistent API for local persistence, handling:
  * - Electron Store (when available)
  * - LocalStorage fallback (web mode)
@@ -9,22 +9,21 @@
  */
 
 const isElectron = () => {
-    return typeof window !== 'undefined' && 
-           window.electron !== undefined;
+  return typeof window !== "undefined" && window.electron !== undefined;
 };
 
 export const electronStore = {
   async get<T>(key: string, defaultValue?: T): Promise<T | undefined> {
     try {
       if (isElectron()) {
-          // Native bridge call would go here
-          // return await window.electron.store.get(key, defaultValue);
-          // For now, fallback to localStorage even in electron stub untill bridge is ready
+        // Native bridge call would go here
+        // return await window.electron.store.get(key, defaultValue);
+        // For now, fallback to localStorage even in electron stub untill bridge is ready
       }
-      
+
       const item = localStorage.getItem(key);
       if (item === null) return defaultValue;
-      
+
       try {
         return JSON.parse(item) as T;
       } catch {
@@ -41,9 +40,9 @@ export const electronStore = {
     try {
       const serialized = JSON.stringify(value);
       localStorage.setItem(key, serialized);
-      
+
       if (isElectron()) {
-          // window.electron.store.set(key, value);
+        // window.electron.store.set(key, value);
       }
       return true;
     } catch (error) {
@@ -56,10 +55,10 @@ export const electronStore = {
     try {
       localStorage.removeItem(key);
       if (isElectron()) {
-          // window.electron.store.delete(key);
+        // window.electron.store.delete(key);
       }
     } catch (error) {
-       console.error(`[Storage] Failed to delete key "${key}":`, error);
+      console.error(`[Storage] Failed to delete key "${key}":`, error);
     }
   },
 
@@ -67,16 +66,16 @@ export const electronStore = {
     try {
       localStorage.clear();
       if (isElectron()) {
-          // window.electron.store.clear();
+        // window.electron.store.clear();
       }
     } catch (error) {
-        console.error('[Storage] Failed to clear storage:', error);
+      console.error("[Storage] Failed to clear storage:", error);
     }
   },
 
   async has(key: string): Promise<boolean> {
-     return localStorage.getItem(key) !== null;
-  }
+    return localStorage.getItem(key) !== null;
+  },
 };
 
 export default electronStore;

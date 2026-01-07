@@ -71,9 +71,7 @@ class AIModelCache:
         self.misses = 0
         self.evictions = 0
 
-    def _generate_cache_key(
-        self, model_name: str, inputs: Any, context: dict[str, Any] | None = None
-    ) -> str:
+    def _generate_cache_key(self, model_name: str, inputs: Any, context: dict[str, Any] | None = None) -> str:
         """Generate a unique cache key for the given inputs"""
         # Create input hash
         input_str = json.dumps(inputs, sort_keys=True, default=str)
@@ -103,9 +101,7 @@ class AIModelCache:
         self.evictions += 1
         logger.debug(f"Evicted LRU cache entry: {oldest_key}")
 
-    async def get(
-        self, model_name: str, inputs: Any, context: dict[str, Any] | None = None
-    ) -> Any | None:
+    async def get(self, model_name: str, inputs: Any, context: dict[str, Any] | None = None) -> Any | None:
         """Get cached result if available and valid"""
         cache_key = self._generate_cache_key(model_name, inputs, context)
 
@@ -166,9 +162,7 @@ class AIModelCache:
             key=cache_key,
             result=result,
             model_version=self.model_versions.get(model_name, "v1"),
-            input_hash=hashlib.sha256(
-                json.dumps(inputs, sort_keys=True, default=str).encode()
-            ).hexdigest()[:16],
+            input_hash=hashlib.sha256(json.dumps(inputs, sort_keys=True, default=str).encode()).hexdigest()[:16],
             created_at=datetime.now(),
             expires_at=datetime.now() + timedelta(minutes=self.cache_ttl_minutes),
             metadata=metadata or {},
@@ -200,9 +194,7 @@ class AIModelCache:
                 del self.cache[key]
 
             self.model_versions[model_name] = version
-            logger.info(
-                f"Updated model version for {model_name}: {old_version} -> {version}"
-            )
+            logger.info(f"Updated model version for {model_name}: {old_version} -> {version}")
 
     def clear_model_cache(self, model_name: str) -> int:
         """Clear all cache entries for a specific model"""
@@ -210,9 +202,7 @@ class AIModelCache:
         for key in keys_to_remove:
             del self.cache[key]
 
-        logger.info(
-            f"Cleared {len(keys_to_remove)} cache entries for model {model_name}"
-        )
+        logger.info(f"Cleared {len(keys_to_remove)} cache entries for model {model_name}")
         return len(keys_to_remove)
 
     def clear_all_cache(self) -> int:
@@ -254,9 +244,7 @@ class AIOptimizationManager:
         self.model_metrics: dict[str, dict[str, Any]] = {}
         self.batch_operations: dict[str, list[dict[str, Any]]] = {}
 
-    async def optimize_prediction(
-        self, model_name: str, inputs: Any, context: dict[str, Any] | None = None
-    ) -> tuple[bool, Any]:
+    async def optimize_prediction(self, model_name: str, inputs: Any, context: dict[str, Any] | None = None) -> tuple[bool, Any]:
         """
         Get optimized prediction with caching and batching
         Returns (was_cached, result)
@@ -288,9 +276,7 @@ class AIOptimizationManager:
         """Cache a prediction result"""
         await self.cache.set(model_name, inputs, result, context, metadata)
 
-    def add_to_batch(
-        self, model_name: str, inputs: Any, context: dict[str, Any] | None = None
-    ) -> str:
+    def add_to_batch(self, model_name: str, inputs: Any, context: dict[str, Any] | None = None) -> str:
         """Add prediction request to batch processing queue"""
         batch_id = f"batch_{model_name}_{int(time.time())}_{len(self.batch_operations)}"
 
@@ -352,15 +338,13 @@ class AIOptimizationManager:
         if metric_type == "cache_hit":
             metrics["cache_hits"] += 1
             # Update rolling average
-            metrics["avg_cache_hit_time"] = (
-                (metrics["avg_cache_hit_time"] * (metrics["cache_hits"] - 1)) + value
-            ) / metrics["cache_hits"]
+            metrics["avg_cache_hit_time"] = ((metrics["avg_cache_hit_time"] * (metrics["cache_hits"] - 1)) + value) / metrics["cache_hits"]
 
         elif metric_type == "cache_miss":
             metrics["cache_misses"] += 1
-            metrics["avg_processing_time"] = (
-                (metrics["avg_processing_time"] * (metrics["cache_misses"] - 1)) + value
-            ) / metrics["cache_misses"]
+            metrics["avg_processing_time"] = ((metrics["avg_processing_time"] * (metrics["cache_misses"] - 1)) + value) / metrics[
+                "cache_misses"
+            ]
 
         metrics["total_predictions"] = metrics["cache_hits"] + metrics["cache_misses"]
 
@@ -372,22 +356,14 @@ class AIOptimizationManager:
         # Aggregate stats across all models
         total_stats = {
             "models": list(self.model_metrics.keys()),
-            "total_predictions": sum(
-                m.get("total_predictions", 0) for m in self.model_metrics.values()
-            ),
-            "total_cache_hits": sum(
-                m.get("cache_hits", 0) for m in self.model_metrics.values()
-            ),
-            "total_cache_misses": sum(
-                m.get("cache_misses", 0) for m in self.model_metrics.values()
-            ),
+            "total_predictions": sum(m.get("total_predictions", 0) for m in self.model_metrics.values()),
+            "total_cache_hits": sum(m.get("cache_hits", 0) for m in self.model_metrics.values()),
+            "total_cache_misses": sum(m.get("cache_misses", 0) for m in self.model_metrics.values()),
             "cache_hit_rate": 0.0,
         }
 
         if total_stats["total_predictions"] > 0:
-            total_stats["cache_hit_rate"] = (
-                total_stats["total_cache_hits"] / total_stats["total_predictions"] * 100
-            )
+            total_stats["cache_hit_rate"] = total_stats["total_cache_hits"] / total_stats["total_predictions"] * 100
 
         return {
             **total_stats,
@@ -410,9 +386,7 @@ class AIOptimizationManager:
                     "type": "cache_ttl",
                     "action": "increase",
                     "reason": f"Low cache hit rate ({hit_rate:.1f}%) suggests longer TTL needed",
-                    "suggested_ttl_minutes": min(
-                        self.cache.cache_ttl_minutes * 1.5, 480
-                    ),  # Max 8 hours
+                    "suggested_ttl_minutes": min(self.cache.cache_ttl_minutes * 1.5, 480),  # Max 8 hours
                 }
             )
 
@@ -422,9 +396,7 @@ class AIOptimizationManager:
                     "type": "cache_ttl",
                     "action": "decrease",
                     "reason": f"Very high cache hit rate ({hit_rate:.1f}%) allows shorter TTL for freshness",
-                    "suggested_ttl_minutes": max(
-                        self.cache.cache_ttl_minutes * 0.8, 5
-                    ),  # Min 5 minutes
+                    "suggested_ttl_minutes": max(self.cache.cache_ttl_minutes * 0.8, 5),  # Min 5 minutes
                 }
             )
 

@@ -180,22 +180,14 @@ class CognitiveAutomationEngine:
                     raise ValueError(f"Unsupported decision type: {decision_type}")
 
                 # Calculate confidence and risk
-                confidence_score = self._calculate_confidence_score(
-                    decision_type, evidence
-                )
+                confidence_score = self._calculate_confidence_score(decision_type, evidence)
                 confidence_level = self._get_confidence_level(confidence_score)
-                risk_assessment = self._assess_decision_risk(
-                    decision, evidence, context
-                )
+                risk_assessment = self._assess_decision_risk(decision, evidence, context)
 
                 # Determine if human override is required
-                human_override_required = self._requires_human_override(
-                    confidence_level, risk_assessment, decision_type
-                )
+                human_override_required = self._requires_human_override(confidence_level, risk_assessment, decision_type)
 
-                processing_time = (
-                    datetime.now(UTC) - start_time
-                ).total_seconds()
+                processing_time = (datetime.now(UTC) - start_time).total_seconds()
 
                 cognitive_decision = CognitiveDecision(
                     decision_id=decision_id,
@@ -218,16 +210,11 @@ class CognitiveAutomationEngine:
                 # Log decision metrics
                 mlflow.log_metric("confidence_score", confidence_score)
                 mlflow.log_metric("processing_time", processing_time)
-                mlflow.log_metric(
-                    "human_override_required", 1 if human_override_required else 0
-                )
+                mlflow.log_metric("human_override_required", 1 if human_override_required else 0)
                 mlflow.log_param("final_decision", decision)
                 mlflow.log_param("confidence_level", confidence_level.value)
 
-                logger.info(
-                    f"Cognitive decision made: {decision_id} - {decision} "
-                    f"(confidence: {confidence_level.value})"
-                )
+                logger.info(f"Cognitive decision made: {decision_id} - {decision} " f"(confidence: {confidence_level.value})")
 
                 return cognitive_decision
 
@@ -245,16 +232,12 @@ class CognitiveAutomationEngine:
                 risk_assessment={"error": True},
                 timestamp=start_time,
                 model_version="error_fallback",
-                processing_time=(
-                    datetime.now(UTC) - start_time
-                ).total_seconds(),
+                processing_time=(datetime.now(UTC) - start_time).total_seconds(),
                 human_override_required=True,
                 human_override_reason=f"Decision failed: {e!s}",
             )
 
-    async def _analyze_fraud(
-        self, data: dict[str, Any], context: dict[str, Any] | None = None
-    ) -> tuple:
+    async def _analyze_fraud(self, data: dict[str, Any], context: dict[str, Any] | None = None) -> tuple:
         """Analyze transaction for fraud using ML models"""
         # Extract features
         features = self._extract_fraud_features(data)
@@ -324,9 +307,7 @@ class CognitiveAutomationEngine:
 
         if risk_score >= 5:
             decision = "BLOCK_TRANSACTION"
-            reasoning = [
-                f"High risk score ({risk_score}/10) based on transaction patterns"
-            ]
+            reasoning = [f"High risk score ({risk_score}/10) based on transaction patterns"]
         elif risk_score >= 3:
             decision = "FLAG_FOR_REVIEW"
             reasoning = [f"Medium risk score ({risk_score}/10) requires manual review"]
@@ -336,9 +317,7 @@ class CognitiveAutomationEngine:
 
         return decision, reasoning
 
-    async def _assess_risk(
-        self, data: dict[str, Any], context: dict[str, Any] | None = None
-    ) -> tuple:
+    async def _assess_risk(self, data: dict[str, Any], context: dict[str, Any] | None = None) -> tuple:
         """Assess overall risk level using ML models"""
         # Extract risk features
         features = self._extract_risk_features(data)
@@ -384,9 +363,7 @@ class CognitiveAutomationEngine:
 
         return decision, reasoning, evidence, alternatives
 
-    async def _check_compliance(
-        self, data: dict[str, Any], context: dict[str, Any] | None = None
-    ) -> tuple:
+    async def _check_compliance(self, data: dict[str, Any], context: dict[str, Any] | None = None) -> tuple:
         """Check compliance with regulations using AI"""
         # This would integrate with regulatory databases and ML models
         compliance_issues = []
@@ -400,9 +377,7 @@ class CognitiveAutomationEngine:
         # Check transaction limits
         transaction_limits = await self._check_transaction_limits(data)
         if not transaction_limits["within_limits"]:
-            compliance_issues.append(
-                f"Transaction exceeds limits: {transaction_limits['violation_details']}"
-            )
+            compliance_issues.append(f"Transaction exceeds limits: {transaction_limits['violation_details']}")
 
         # AML checks
         aml_status = await self._check_aml_compliance(data)
@@ -434,9 +409,7 @@ class CognitiveAutomationEngine:
 
         return decision, reasoning, evidence, alternatives
 
-    async def _respond_to_threat(
-        self, data: dict[str, Any], context: dict[str, Any] | None = None
-    ) -> tuple:
+    async def _respond_to_threat(self, data: dict[str, Any], context: dict[str, Any] | None = None) -> tuple:
         """Respond to security threats using AI-driven analysis"""
         threat_level = data.get("threat_level", "unknown")
         data.get("threat_type", "unknown")
@@ -492,9 +465,7 @@ class CognitiveAutomationEngine:
             float(data.get("external_factors", 0)),
         ]
 
-    def _calculate_confidence_score(
-        self, decision_type: DecisionType, evidence: dict[str, Any]
-    ) -> float:
+    def _calculate_confidence_score(self, decision_type: DecisionType, evidence: dict[str, Any]) -> float:
         """Calculate confidence score for the decision"""
         base_confidence = 0.5
 
@@ -543,11 +514,7 @@ class CognitiveAutomationEngine:
             risk_factors.append("Regulatory compliance risk")
 
         return {
-            "risk_level": "high"
-            if len(risk_factors) > 2
-            else "medium"
-            if len(risk_factors) > 0
-            else "low",
+            "risk_level": "high" if len(risk_factors) > 2 else "medium" if len(risk_factors) > 0 else "low",
             "risk_factors": risk_factors,
             "mitigation_required": len(risk_factors) > 0,
         }
@@ -566,8 +533,7 @@ class CognitiveAutomationEngine:
         # Require review for low confidence critical decisions
         return bool(
             confidence in [ConfidenceLevel.LOW, ConfidenceLevel.MEDIUM]
-            and decision_type
-            in [DecisionType.THREAT_RESPONSE, DecisionType.COMPLIANCE_CHECK]
+            and decision_type in [DecisionType.THREAT_RESPONSE, DecisionType.COMPLIANCE_CHECK]
         )
 
     def _get_model_version(self, decision_type: DecisionType) -> str:
@@ -575,13 +541,9 @@ class CognitiveAutomationEngine:
         # In a real implementation, this would check the model registry
         return f"{decision_type.value}_v1.0.0"
 
-    async def optimize_workflow(
-        self, workflow_data: dict[str, Any]
-    ) -> WorkflowOptimization:
+    async def optimize_workflow(self, workflow_data: dict[str, Any]) -> WorkflowOptimization:
         """Optimize workflow using AI analysis"""
-        workflow_id = workflow_data.get(
-            "workflow_id", f"wf_{int(datetime.now(UTC).timestamp())}"
-        )
+        workflow_id = workflow_data.get("workflow_id", f"wf_{int(datetime.now(UTC).timestamp())}")
 
         # Analyze current workflow efficiency
         current_efficiency = self._analyze_workflow_efficiency(workflow_data)
@@ -593,19 +555,13 @@ class CognitiveAutomationEngine:
         optimization_actions = self._generate_optimization_actions(workflow_data)
 
         # Calculate savings
-        estimated_savings = self._calculate_workflow_savings(
-            current_efficiency, recommended_efficiency, workflow_data
-        )
+        estimated_savings = self._calculate_workflow_savings(current_efficiency, recommended_efficiency, workflow_data)
 
         # Assess implementation complexity
-        implementation_complexity = self._assess_implementation_complexity(
-            optimization_actions
-        )
+        implementation_complexity = self._assess_implementation_complexity(optimization_actions)
 
         # Calculate confidence
-        confidence_score = min(
-            0.9, current_efficiency * 0.1 + 0.7
-        )  # Simplified calculation
+        confidence_score = min(0.9, current_efficiency * 0.1 + 0.7)  # Simplified calculation
 
         optimization = WorkflowOptimization(
             workflow_id=workflow_id,
@@ -620,10 +576,7 @@ class CognitiveAutomationEngine:
 
         self.optimization_history.append(optimization)
 
-        logger.info(
-            f"Workflow optimization completed for {workflow_id}: "
-            f"{current_efficiency:.1%} -> {recommended_efficiency:.1%}"
-        )
+        logger.info(f"Workflow optimization completed for {workflow_id}: " f"{current_efficiency:.1%} -> {recommended_efficiency:.1%}")
 
         return optimization
 
@@ -635,9 +588,7 @@ class CognitiveAutomationEngine:
         resource_utilization = workflow_data.get("resource_utilization", 0.8)
 
         # Efficiency formula: lower time + lower errors + higher utilization = higher efficiency
-        efficiency = (
-            (1 / (1 + processing_time / 100)) * (1 - error_rate) * resource_utilization
-        )
+        efficiency = (1 / (1 + processing_time / 100)) * (1 - error_rate) * resource_utilization
         return min(efficiency, 1.0)
 
     def _predict_optimized_efficiency(self, workflow_data: dict[str, Any]) -> float:
@@ -650,9 +601,7 @@ class CognitiveAutomationEngine:
 
         return predicted_efficiency
 
-    def _generate_optimization_actions(
-        self, workflow_data: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    def _generate_optimization_actions(self, workflow_data: dict[str, Any]) -> list[dict[str, Any]]:
         """Generate workflow optimization actions"""
         actions = []
 
@@ -700,9 +649,7 @@ class CognitiveAutomationEngine:
 
         return actions
 
-    def _calculate_workflow_savings(
-        self, current_eff: float, optimized_eff: float, workflow_data: dict[str, Any]
-    ) -> dict[str, float]:
+    def _calculate_workflow_savings(self, current_eff: float, optimized_eff: float, workflow_data: dict[str, Any]) -> dict[str, float]:
         """Calculate estimated savings from workflow optimization"""
         improvement = optimized_eff - current_eff
 
@@ -753,25 +700,13 @@ class CognitiveAutomationEngine:
 
         return {
             "total_decisions": len(decisions),
-            "avg_confidence": sum(
-                d.confidence_level.value.count("high") for d in decisions
-            )
-            / max(len(decisions), 1),
-            "human_override_rate": sum(
-                1 for d in decisions if d.human_override_required
-            )
-            / max(len(decisions), 1),
-            "avg_processing_time": sum(d.processing_time for d in decisions)
-            / max(len(decisions), 1),
+            "avg_confidence": sum(d.confidence_level.value.count("high") for d in decisions) / max(len(decisions), 1),
+            "human_override_rate": sum(1 for d in decisions if d.human_override_required) / max(len(decisions), 1),
+            "avg_processing_time": sum(d.processing_time for d in decisions) / max(len(decisions), 1),
             "total_optimizations": len(optimizations),
-            "avg_efficiency_improvement": sum(
-                (o.recommended_efficiency - o.current_efficiency) for o in optimizations
-            )
+            "avg_efficiency_improvement": sum((o.recommended_efficiency - o.current_efficiency) for o in optimizations)
             / max(len(optimizations), 1),
-            "total_estimated_savings": sum(
-                o.estimated_savings.get("cost_dollars_monthly", 0)
-                for o in optimizations
-            ),
+            "total_estimated_savings": sum(o.estimated_savings.get("cost_dollars_monthly", 0) for o in optimizations),
         }
 
 
@@ -798,9 +733,7 @@ async def demonstrate_cognitive_automation():
     }
 
     logger.info("Making fraud analysis decision...")
-    fraud_decision = await cognitive_engine.make_automated_decision(
-        DecisionType.FRAUD_ANALYSIS, fraud_data
-    )
+    fraud_decision = await cognitive_engine.make_automated_decision(DecisionType.FRAUD_ANALYSIS, fraud_data)
 
     logger.info(f"Decision: {fraud_decision.decision}")
     logger.info(f"Confidence: {fraud_decision.confidence_level.value}")
@@ -819,9 +752,7 @@ async def demonstrate_cognitive_automation():
     }
 
     logger.info("\nMaking risk assessment decision...")
-    risk_decision = await cognitive_engine.make_automated_decision(
-        DecisionType.RISK_ASSESSMENT, risk_data
-    )
+    risk_decision = await cognitive_engine.make_automated_decision(DecisionType.RISK_ASSESSMENT, risk_data)
 
     logger.info(f"Decision: {risk_decision.decision}")
     logger.info(f"Confidence: {risk_decision.confidence_level.value}")
@@ -841,9 +772,7 @@ async def demonstrate_cognitive_automation():
 
     logger.info(f"Current efficiency: {optimization.current_efficiency:.1%}")
     logger.info(f"Recommended efficiency: {optimization.recommended_efficiency:.1%}")
-    logger.info(
-        f"Estimated monthly savings: ${optimization.estimated_savings['cost_dollars_monthly']:.0f}"
-    )
+    logger.info(f"Estimated monthly savings: ${optimization.estimated_savings['cost_dollars_monthly']:.0f}")
 
     # Show performance metrics
     metrics = cognitive_engine.get_performance_metrics()

@@ -8,6 +8,14 @@ from typing import Any
 
 import numpy as np
 
+try:
+    import faiss
+
+    HAS_FAISS = True
+except ImportError:
+    faiss = None
+    HAS_FAISS = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -56,9 +64,7 @@ class SemanticSearchEngine:
         try:
             from app.services.ai.ai_service import AIService
 
-            self.vector_store = AIService(
-                self.config.get("db_path", "data/vector_store.db")
-            )
+            self.vector_store = AIService(self.config.get("db_path", "data/vector_store.db"))
             self.backend_type = "sqlite"
         except ImportError:
             logger.error("SQLite vector store not available")
@@ -102,9 +108,7 @@ class SemanticSearchEngine:
             import faiss
 
             self.faiss_index_path = self.config.get("index_path", "./data/faiss_index")
-            self.faiss_metadata_path = self.config.get(
-                "metadata_path", "./data/faiss_metadata.json"
-            )
+            self.faiss_metadata_path = self.config.get("metadata_path", "./data/faiss_metadata.json")
 
             os.makedirs(os.path.dirname(self.faiss_index_path), exist_ok=True)
 
@@ -115,9 +119,7 @@ class SemanticSearchEngine:
                     self.faiss_metadata = json.load(f)
             else:
                 # Initialize with dimension 384 (for MiniLM model)
-                self.faiss_index = faiss.IndexFlatIP(
-                    384
-                )  # Inner product for cosine similarity
+                self.faiss_index = faiss.IndexFlatIP(384)  # Inner product for cosine similarity
                 self.faiss_metadata = {"documents": [], "next_id": 0}
 
             self.backend_type = "faiss"
@@ -130,9 +132,7 @@ class SemanticSearchEngine:
             logger.error(f"Failed to initialize FAISS: {e}")
             raise
 
-    def index_document(
-        self, document_id: str, content: str, metadata: dict[str, Any] | None = None
-    ) -> IndexingResult:
+    def index_document(self, document_id: str, content: str, metadata: dict[str, Any] | None = None) -> IndexingResult:
         """
         Index a document for semantic search
 
@@ -152,21 +152,15 @@ class SemanticSearchEngine:
                 return IndexingResult(
                     document_id=document_id,
                     success=success,
-                    indexing_time=(
-                        datetime.now(UTC) - start_time
-                    ).total_seconds(),
+                    indexing_time=(datetime.now(UTC) - start_time).total_seconds(),
                     embedding_dimension=384,
                 )
 
             elif self.backend_type == "chroma":
-                return self._index_document_chroma(
-                    document_id, content, metadata, start_time
-                )
+                return self._index_document_chroma(document_id, content, metadata, start_time)
 
             elif self.backend_type == "faiss":
-                return self._index_document_faiss(
-                    document_id, content, metadata, start_time
-                )
+                return self._index_document_faiss(document_id, content, metadata, start_time)
 
         except Exception as e:
             logger.error(f"Failed to index document {document_id}: {e!s}")
@@ -300,14 +294,10 @@ class SemanticSearchEngine:
             logger.error(f"Semantic search failed: {e!s}")
             return []
 
-    def _search_sqlite(
-        self, query: str, limit: int, threshold: float
-    ) -> list[SearchResult]:
+    def _search_sqlite(self, query: str, limit: int, threshold: float) -> list[SearchResult]:
         """Search using SQLite backend"""
         try:
-            results = self.vector_store.search_similar_documents(
-                query, limit, threshold
-            )
+            results = self.vector_store.search_similar_documents(query, limit, threshold)
 
             search_results = []
             for result in results:
@@ -317,9 +307,7 @@ class SemanticSearchEngine:
                     similarity_score=result["similarity"],
                     metadata=result.get("metadata", {}),
                     highlights=self._generate_highlights(result["content"], query),
-                    relevance_explanation=self._generate_relevance_explanation(
-                        result["similarity"]
-                    ),
+                    relevance_explanation=self._generate_relevance_explanation(result["similarity"]),
                 )
                 search_results.append(search_result)
 
@@ -347,9 +335,7 @@ class SemanticSearchEngine:
                 where_clause = filters
 
             # Search ChromaDB
-            chroma_results = self.collection.query(
-                query_embeddings=[query_embedding], n_results=limit, where=where_clause
-            )
+            chroma_results = self.collection.query(query_embeddings=[query_embedding], n_results=limit, where=where_clause)
 
             search_results = []
             if chroma_results["ids"] and chroma_results["ids"][0]:
@@ -363,12 +349,8 @@ class SemanticSearchEngine:
                             content=chroma_results["documents"][0][i],
                             similarity_score=similarity,
                             metadata=chroma_results["metadatas"][0][i],
-                            highlights=self._generate_highlights(
-                                chroma_results["documents"][0][i], query
-                            ),
-                            relevance_explanation=self._generate_relevance_explanation(
-                                similarity
-                            ),
+                            highlights=self._generate_highlights(chroma_results["documents"][0][i], query),
+                            relevance_explanation=self._generate_relevance_explanation(similarity),
                         )
                         search_results.append(search_result)
 
@@ -378,9 +360,7 @@ class SemanticSearchEngine:
             logger.error(f"ChromaDB search failed: {e!s}")
             return []
 
-    def _search_faiss(
-        self, query: str, limit: int, threshold: float
-    ) -> list[SearchResult]:
+    def _search_faiss(self, query: str, limit: int, threshold: float) -> list[SearchResult]:
         """Search using FAISS backend"""
         try:
             # Generate query embedding
@@ -391,9 +371,7 @@ class SemanticSearchEngine:
             faiss.normalize_L2(query_np)
 
             # Search FAISS index
-            similarities, indices = self.faiss_index.search(
-                query_np, min(limit, self.faiss_index.ntotal)
-            )
+            similarities, indices = self.faiss_index.search(query_np, min(limit, self.faiss_index.ntotal))
 
             search_results = []
             for i, (similarity, idx) in enumerate(zip(similarities[0], indices[0])):
@@ -406,12 +384,8 @@ class SemanticSearchEngine:
                         content=doc_metadata["content"],
                         similarity_score=float(similarity),
                         metadata=doc_metadata["metadata"],
-                        highlights=self._generate_highlights(
-                            doc_metadata["content"], query
-                        ),
-                        relevance_explanation=self._generate_relevance_explanation(
-                            float(similarity)
-                        ),
+                        highlights=self._generate_highlights(doc_metadata["content"], query),
+                        relevance_explanation=self._generate_relevance_explanation(float(similarity)),
                     )
                     search_results.append(search_result)
 
@@ -489,9 +463,7 @@ class SemanticSearchEngine:
 
             elif self.backend_type == "faiss":
                 # FAISS doesn't support easy deletion, would need rebuilding
-                logger.warning(
-                    "FAISS backend doesn't support individual document deletion"
-                )
+                logger.warning("FAISS backend doesn't support individual document deletion")
                 return False
 
         except Exception as e:

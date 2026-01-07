@@ -35,8 +35,7 @@ class SecurityMonitor:
         recent_failures = [
             e
             for e in self.failed_auth_attempts[ip_address]
-            if datetime.fromisoformat(e["timestamp"])
-            > datetime.now() - timedelta(minutes=5)
+            if datetime.fromisoformat(e["timestamp"]) > datetime.now() - timedelta(minutes=5)
         ]
 
         if len(recent_failures) >= 5:
@@ -49,9 +48,7 @@ class SecurityMonitor:
                 },
             )
 
-    def log_admin_operation(
-        self, user_id: str, operation: str, details: dict[str, Any]
-    ):
+    def log_admin_operation(self, user_id: str, operation: str, details: dict[str, Any]):
         """Log admin operation for monitoring"""
         event = {
             "timestamp": datetime.now().isoformat(),
@@ -103,31 +100,13 @@ class SecurityMonitor:
 
         # Count recent events
         recent_failed_auths = sum(
-            len(
-                [
-                    e
-                    for e in attempts
-                    if datetime.fromisoformat(e["timestamp"]) > last_24h
-                ]
-            )
+            len([e for e in attempts if datetime.fromisoformat(e["timestamp"]) > last_24h])
             for attempts in self.failed_auth_attempts.values()
         )
 
-        recent_admin_ops = len(
-            [
-                e
-                for e in self.admin_operations
-                if datetime.fromisoformat(e["timestamp"]) > last_24h
-            ]
-        )
+        recent_admin_ops = len([e for e in self.admin_operations if datetime.fromisoformat(e["timestamp"]) > last_24h])
 
-        recent_critical = len(
-            [
-                e
-                for e in self.critical_events
-                if datetime.fromisoformat(e["timestamp"]) > last_24h
-            ]
-        )
+        recent_critical = len([e for e in self.critical_events if datetime.fromisoformat(e["timestamp"]) > last_24h])
 
         return {
             "period": "last_24_hours",
@@ -145,11 +124,7 @@ class SecurityMonitor:
         last_hour = now - timedelta(hours=1)
 
         for ip, attempts in self.failed_auth_attempts.items():
-            recent = [
-                e
-                for e in attempts
-                if datetime.fromisoformat(e["timestamp"]) > last_hour
-            ]
+            recent = [e for e in attempts if datetime.fromisoformat(e["timestamp"]) > last_hour]
             if len(recent) >= 3:  # 3+ failures in last hour
                 high_risk.append(ip)
 

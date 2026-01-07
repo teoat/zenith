@@ -37,9 +37,7 @@ def get_translator(locale: str = DEFAULT_LOCALE) -> gettext.GNUTranslations:
 
     if locale not in _translations:
         try:
-            trans = gettext.translation(
-                DOMAIN, LOCALES_DIR, languages=[locale], fallback=True
-            )
+            trans = gettext.translation(DOMAIN, LOCALES_DIR, languages=[locale], fallback=True)
             _translations[locale] = trans
         except FileNotFoundError:
             # Fallback to default if translation file not found

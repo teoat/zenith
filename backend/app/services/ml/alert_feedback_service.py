@@ -11,6 +11,7 @@ from core.logging import logger
 @dataclass
 class AlertFeedback:
     """Alert feedback data structure"""
+
     id: str
     alert_id: str
     user_id: str
@@ -21,9 +22,11 @@ class AlertFeedback:
     created_at: datetime
     model_version: Optional[str]  # Which model version generated this alert
 
+
 @dataclass
 class ModelVersion:
     """Model version information"""
+
     id: str
     version: str
     created_at: datetime
@@ -35,9 +38,11 @@ class ModelVersion:
     is_active: bool
     feedback_incorporated: int  # Number of feedback items used
 
+
 @dataclass
 class RetrainingJob:
     """Model retraining job"""
+
     id: str
     status: str  # 'pending', 'running', 'completed', 'failed'
     started_at: Optional[datetime]
@@ -46,6 +51,7 @@ class RetrainingJob:
     new_model_version: Optional[str]
     accuracy_improvement: Optional[float]
     error_message: Optional[str]
+
 
 class FeedbackCollectionService:
     """Collects and manages alert feedback"""
@@ -58,7 +64,7 @@ class FeedbackCollectionService:
         """Submit feedback for an alert"""
         try:
             # Validate feedback
-            if feedback.feedback_type not in ['true_positive', 'false_positive', 'needs_investigation']:
+            if feedback.feedback_type not in ["true_positive", "false_positive", "needs_investigation"]:
                 raise ValueError(f"Invalid feedback type: {feedback.feedback_type}")
 
             if not (0 <= feedback.confidence_score <= 1):
@@ -81,12 +87,7 @@ class FeedbackCollectionService:
     async def get_feedback_stats(self) -> Dict[str, Any]:
         """Get feedback statistics"""
         if not self.feedback_store:
-            return {
-                "total_feedback": 0,
-                "feedback_types": {},
-                "average_confidence": 0,
-                "recent_feedback": []
-            }
+            return {"total_feedback": 0, "feedback_types": {}, "average_confidence": 0, "recent_feedback": []}
 
         # Calculate statistics
         feedback_types = {}
@@ -98,30 +99,32 @@ class FeedbackCollectionService:
             confidences.append(fb.confidence_score)
 
             if len(recent_feedback) < 10:
-                recent_feedback.append({
-                    "id": fb.id,
-                    "alert_id": fb.alert_id,
-                    "type": fb.feedback_type,
-                    "confidence": fb.confidence_score,
-                    "created_at": fb.created_at.isoformat()
-                })
+                recent_feedback.append(
+                    {
+                        "id": fb.id,
+                        "alert_id": fb.alert_id,
+                        "type": fb.feedback_type,
+                        "confidence": fb.confidence_score,
+                        "created_at": fb.created_at.isoformat(),
+                    }
+                )
 
         return {
             "total_feedback": len(self.feedback_store),
             "feedback_types": feedback_types,
             "average_confidence": sum(confidences) / len(confidences) if confidences else 0,
-            "recent_feedback": recent_feedback
+            "recent_feedback": recent_feedback,
         }
 
     async def _check_retraining_trigger(self):
         """Check if we should trigger model retraining"""
-        recent_feedback = [fb for fb in self.feedback_store
-                          if fb.created_at > datetime.now(UTC) - timedelta(hours=24)]
+        recent_feedback = [fb for fb in self.feedback_store if fb.created_at > datetime.now(UTC) - timedelta(hours=24)]
 
         if len(recent_feedback) >= 50:  # 50 feedback items in 24 hours
             logger.info("Retraining threshold reached, triggering model retraining")
             # In production, this would trigger the retraining service
             # await retraining_service.start_retraining(recent_feedback)
+
 
 class ModelRetrainingService:
     """Handles model retraining based on feedback"""
@@ -142,7 +145,7 @@ class ModelRetrainingService:
             recall_score=0.88,
             f1_score=0.85,
             is_active=True,
-            feedback_incorporated=0
+            feedback_incorporated=0,
         )
         self.model_versions.append(base_version)
 
@@ -158,7 +161,7 @@ class ModelRetrainingService:
             feedback_count=len(feedback_data),
             new_model_version=None,
             accuracy_improvement=None,
-            error_message=None
+            error_message=None,
         )
 
         self.active_jobs.append(job)
@@ -179,7 +182,7 @@ class ModelRetrainingService:
             await asyncio.sleep(30)  # Simulate 30 seconds of training
 
             # Generate new model version
-            version_parts = self.current_model_version.split('.')
+            version_parts = self.current_model_version.split(".")
             new_version = f"v{version_parts[0]}.{int(version_parts[1]) + 1}.0"
             self.current_model_version = new_version
 
@@ -194,7 +197,7 @@ class ModelRetrainingService:
                 recall_score=0.89,
                 f1_score=0.87,
                 is_active=False,  # Will be activated after validation
-                feedback_incorporated=len(feedback_data)
+                feedback_incorporated=len(feedback_data),
             )
 
             self.model_versions.append(new_model)
@@ -235,6 +238,7 @@ class ModelRetrainingService:
 
         return False
 
+
 class ABTestingService:
     """A/B testing framework for model versions"""
 
@@ -255,8 +259,8 @@ class ABTestingService:
             "status": "active",
             "results": {
                 "model_a": {"alerts": 0, "true_positives": 0, "false_positives": 0},
-                "model_b": {"alerts": 0, "true_positives": 0, "false_positives": 0}
-            }
+                "model_b": {"alerts": 0, "true_positives": 0, "false_positives": 0},
+            },
         }
 
         self.test_configs.append(test_config)
@@ -285,23 +289,24 @@ class ABTestingService:
                 model_b_results = test["results"]["model_b"]
 
                 # Calculate precision for each model
-                a_precision = (model_a_results["true_positives"] / model_a_results["alerts"]
-                             if model_a_results["alerts"] > 0 else 0)
-                b_precision = (model_b_results["true_positives"] / model_b_results["alerts"]
-                             if model_b_results["alerts"] > 0 else 0)
+                a_precision = model_a_results["true_positives"] / model_a_results["alerts"] if model_a_results["alerts"] > 0 else 0
+                b_precision = model_b_results["true_positives"] / model_b_results["alerts"] if model_b_results["alerts"] > 0 else 0
 
-                results.append({
-                    "test_id": test["id"],
-                    "model_a": test["model_a"],
-                    "model_b": test["model_b"],
-                    "traffic_split": test["traffic_split"],
-                    "model_a_precision": a_precision,
-                    "model_b_precision": b_precision,
-                    "winner": "model_a" if a_precision > b_precision else "model_b" if b_precision > a_precision else "tie",
-                    "confidence": abs(a_precision - b_precision)
-                })
+                results.append(
+                    {
+                        "test_id": test["id"],
+                        "model_a": test["model_a"],
+                        "model_b": test["model_b"],
+                        "traffic_split": test["traffic_split"],
+                        "model_a_precision": a_precision,
+                        "model_b_precision": b_precision,
+                        "winner": "model_a" if a_precision > b_precision else "model_b" if b_precision > a_precision else "tie",
+                        "confidence": abs(a_precision - b_precision),
+                    }
+                )
 
         return results
+
 
 class AlertFeedbackLoop:
     """Main service coordinating feedback collection and model improvement"""
@@ -322,7 +327,7 @@ class AlertFeedbackLoop:
             comments=feedback_data.get("comments"),
             corrected_labels=feedback_data.get("corrected_labels"),
             created_at=datetime.now(UTC),
-            model_version=feedback_data.get("model_version")
+            model_version=feedback_data.get("model_version"),
         )
 
         return await self.feedback_service.submit_feedback(feedback)
@@ -341,8 +346,8 @@ class AlertFeedbackLoop:
             "completed_retraining_jobs": len([job for job in retraining_jobs if job["status"] == "completed"]),
             "ab_tests_active": len([test for test in ab_results if test.get("status") == "active"]),
             "model_versions": len(await self.retraining_service.get_model_versions()),
-            "last_retraining": max([job["completed_at"] for job in retraining_jobs
-                                  if job["completed_at"]] or [None])
+            "last_retraining": max([job["completed_at"] for job in retraining_jobs if job["completed_at"]] or [None]),
         }
+
 
 # Global instances

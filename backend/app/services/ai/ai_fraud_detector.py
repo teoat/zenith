@@ -90,11 +90,7 @@ class AIFraudDetector:
 
             # Velocity analysis (transactions in last 24 hours)
             recent_cutoff = timestamp - timedelta(hours=24)
-            recent_count = sum(
-                1
-                for tx in historical_data
-                if self._parse_timestamp(tx.get("timestamp") or tx.get("date")) >= recent_cutoff
-            )
+            recent_count = sum(1 for tx in historical_data if self._parse_timestamp(tx.get("timestamp") or tx.get("date")) >= recent_cutoff)
             velocity_ratio = recent_count / max(1, len(historical_data))
 
             # Merchant frequency

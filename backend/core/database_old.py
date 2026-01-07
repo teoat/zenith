@@ -1,5 +1,7 @@
 # Database models for Zenith Fraud Detection Platform
+import asyncio
 import json
+import logging
 import os
 import uuid
 from datetime import datetime
@@ -25,8 +27,17 @@ from sqlalchemy.orm import relationship, sessionmaker
 # Encrypted field types
 from core.security import EncryptedString
 
+import time
+from sqlalchemy import event, text
+from sqlalchemy.engine import Engine
+from sqlalchemy.pool import QueuePool
+from core.distributed_cache import cached_query as distributed_cached_query
+from core.distributed_cache import get_cache
+
 # Create base class
 Base = declarative_base()
+
+logger = logging.getLogger(__name__)
 
 
 # Utility functions
@@ -705,16 +716,6 @@ class TrainingRecord(Base):
 
 
 # Database optimization utilities
-import time
-
-from sqlalchemy import event, text
-from sqlalchemy.engine import Engine
-from sqlalchemy.pool import QueuePool
-
-from core.distributed_cache import cached_query as distributed_cached_query
-
-# Import distributed cache system
-from core.distributed_cache import get_cache
 
 # Legacy compatibility - use distributed cache
 _cache_ttl = 300  # 5 minutes default TTL

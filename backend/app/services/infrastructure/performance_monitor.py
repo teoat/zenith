@@ -91,9 +91,7 @@ class PerformanceMonitor:
             "disk_usage": lambda: psutil.disk_usage("/").percent,
             "disk_free_gb": lambda: psutil.disk_usage("/").free / (1024**3),
             "network_connections": lambda: len(psutil.net_connections()),
-            "load_average": lambda: psutil.getloadavg()
-            if hasattr(psutil, "getloadavg")
-            else None,
+            "load_average": lambda: psutil.getloadavg() if hasattr(psutil, "getloadavg") else None,
             "process_count": lambda: len(psutil.pids()),
             "uptime_seconds": lambda: time.time() - psutil.boot_time(),
         }
@@ -140,9 +138,7 @@ class PerformanceMonitor:
                     baseline["min"] = min(baseline["min"], value)
                     baseline["max"] = max(baseline["max"], value)
                     baseline["count"] += 1
-                    baseline["avg"] = (
-                        baseline["avg"] * (baseline["count"] - 1) + value
-                    ) / baseline["count"]
+                    baseline["avg"] = (baseline["avg"] * (baseline["count"] - 1) + value) / baseline["count"]
 
     def _is_circuit_breaker_open(self) -> bool:
         """Check if circuit breaker is open"""
@@ -151,9 +147,7 @@ class PerformanceMonitor:
 
         # Check if timeout has elapsed
         if self._circuit_breaker_last_failure:
-            elapsed = (
-                datetime.now(UTC) - self._circuit_breaker_last_failure
-            ).total_seconds()
+            elapsed = (datetime.now(UTC) - self._circuit_breaker_last_failure).total_seconds()
             if elapsed > self._circuit_breaker_timeout:
                 self._circuit_breaker_open = False
                 self._circuit_breaker_failures = 0
@@ -168,9 +162,7 @@ class PerformanceMonitor:
 
         if self._circuit_breaker_failures >= self._max_consecutive_failures:
             self._circuit_breaker_open = True
-            logger.warning(
-                f"Performance monitoring circuit breaker opened after {self._circuit_breaker_failures} failures"
-            )
+            logger.warning(f"Performance monitoring circuit breaker opened after {self._circuit_breaker_failures} failures")
 
     def _reset_circuit_breaker(self):
         """Reset circuit breaker on successful collection"""
@@ -184,22 +176,16 @@ class PerformanceMonitor:
             "baselines": self.baselines,
             "monitoring_active": self._thread is not None and self._thread.is_alive(),
             "metrics_collected": len(self.metrics_history),
-            "circuit_breaker_status": "open"
-            if self._circuit_breaker_open
-            else "closed",
+            "circuit_breaker_status": "open" if self._circuit_breaker_open else "closed",
             "circuit_breaker_failures": self._circuit_breaker_failures,
-            "last_updated": (
-                self.metrics_history[-1]["timestamp"] if self.metrics_history else None
-            ),
+            "last_updated": (self.metrics_history[-1]["timestamp"] if self.metrics_history else None),
         }
 
     def get_current_metrics(self) -> dict[str, Any]:
         """Get current system metrics"""
         return self._collect_metrics()
 
-    def record_api_call(
-        self, endpoint: str, method: str, response_time_ms: float, status_code: int
-    ):
+    def record_api_call(self, endpoint: str, method: str, response_time_ms: float, status_code: int):
         """Record API call performance"""
         api_metric = {
             "timestamp": datetime.now(UTC).isoformat(),
@@ -212,9 +198,7 @@ class PerformanceMonitor:
 
         self.api_calls.append(api_metric)
 
-    def record_database_query(
-        self, query_type: str, execution_time_ms: float, success: bool
-    ):
+    def record_database_query(self, query_type: str, execution_time_ms: float, success: bool):
         """Record database query performance"""
         db_metric = {
             "timestamp": datetime.now(UTC).isoformat(),
@@ -300,9 +284,7 @@ class PerformanceMonitor:
         if not recent_calls:
             return 0
 
-        return sum(call["response_time_ms"] for call in recent_calls) / len(
-            recent_calls
-        )
+        return sum(call["response_time_ms"] for call in recent_calls) / len(recent_calls)
 
     def _calculate_error_rate(self) -> float:
         """Calculate error rate from recent API calls"""
@@ -329,9 +311,7 @@ class PerformanceMonitor:
 
         for metric, threshold in thresholds.items():
             if current.get(metric, 0) > threshold:
-                alerts.append(
-                    f"{metric} exceeded threshold: {current[metric]}% > {threshold}%"
-                )
+                alerts.append(f"{metric} exceeded threshold: {current[metric]}% > {threshold}%")
                 self._generate_alert(
                     f"high_{metric.replace('_percent', '').replace('_usage', '_usage')}",
                     f"{metric} exceeded threshold: {current[metric]}% > {threshold}%",
@@ -364,60 +344,33 @@ class PerformanceMonitor:
                     # Calculate standard deviation from recent history
                     recent_values = [
                         m.get(baseline_key, 0)
-                        for m in list(self.metrics_history)[
-                            -50:
-                        ]  # Last 50 measurements
+                        for m in list(self.metrics_history)[-50:]  # Last 50 measurements
                         if m.get(baseline_key) is not None
                     ]
 
                     if len(recent_values) >= 10:
                         mean = sum(recent_values) / len(recent_values)
-                        variance = sum((x - mean) ** 2 for x in recent_values) / len(
-                            recent_values
-                        )
+                        variance = sum((x - mean) ** 2 for x in recent_values) / len(recent_values)
                         std_dev = variance**0.5
 
                         # Adaptive threshold: mean + 2*std_dev, but not less than 80% of original
                         original_threshold = self._get_original_threshold(rule_name)
-                        adaptive_threshold = max(
-                            mean + 2 * std_dev, original_threshold * 0.8
-                        )
+                        adaptive_threshold = max(mean + 2 * std_dev, original_threshold * 0.8)
 
                         # Update the rule's condition function
                         if "cpu" in baseline_key:
-                            rule["condition"] = (
-                                lambda m, thresh=adaptive_threshold: m.get(
-                                    "cpu_percent", 0
-                                )
-                                > thresh
-                            )
-                            rule["message"] = (
-                                f"CPU usage above {adaptive_threshold:.1f}% (adaptive)"
-                            )
+                            rule["condition"] = lambda m, thresh=adaptive_threshold: m.get("cpu_percent", 0) > thresh
+                            rule["message"] = f"CPU usage above {adaptive_threshold:.1f}% (adaptive)"
                         elif "memory" in baseline_key:
-                            rule["condition"] = (
-                                lambda m, thresh=adaptive_threshold: m.get(
-                                    "memory_percent", 0
-                                )
-                                > thresh
-                            )
-                            rule["message"] = (
-                                f"Memory usage above {adaptive_threshold:.1f}% (adaptive)"
-                            )
+                            rule["condition"] = lambda m, thresh=adaptive_threshold: m.get("memory_percent", 0) > thresh
+                            rule["message"] = f"Memory usage above {adaptive_threshold:.1f}% (adaptive)"
                         elif "response_time" in rule_name:
                             # For response time, use percentile-based threshold
                             sorted_times = sorted(recent_values)
                             p95_index = int(len(sorted_times) * 0.95)
-                            p95_threshold = sorted_times[
-                                min(p95_index, len(sorted_times) - 1)
-                            ]
-                            rule["condition"] = (
-                                lambda thresh=p95_threshold: self._calculate_avg_response_time()
-                                > thresh
-                            )
-                            rule["message"] = (
-                                f"Average API response time above {p95_threshold:.0f}ms (P95 adaptive)"
-                            )
+                            p95_threshold = sorted_times[min(p95_index, len(sorted_times) - 1)]
+                            rule["condition"] = lambda thresh=p95_threshold: self._calculate_avg_response_time() > thresh
+                            rule["message"] = f"Average API response time above {p95_threshold:.0f}ms (P95 adaptive)"
 
     def _get_original_threshold(self, rule_name: str) -> float:
         """Get original threshold for adaptive rules"""
@@ -447,12 +400,9 @@ class PerformanceMonitor:
 
         summary = {
             "current_status": {
-                "monitoring_active": self._thread is not None
-                and self._thread.is_alive(),
+                "monitoring_active": self._thread is not None and self._thread.is_alive(),
                 "metrics_collected": len(self.metrics_history),
-                "alerts_active": len(
-                    [a for a in self.alerts if a["severity"] in ["critical", "warning"]]
-                ),
+                "alerts_active": len([a for a in self.alerts if a["severity"] in ["critical", "warning"]]),
                 "api_calls_tracked": len(self.api_calls),
                 "db_queries_tracked": len(self.database_queries),
             },
@@ -470,11 +420,7 @@ class PerformanceMonitor:
         trends = {}
         if len(self.metrics_history) >= 10:
             recent = list(self.metrics_history)[-10:]
-            older = (
-                list(self.metrics_history)[-20:-10]
-                if len(self.metrics_history) >= 20
-                else recent
-            )
+            older = list(self.metrics_history)[-20:-10] if len(self.metrics_history) >= 20 else recent
 
             for metric in ["cpu_percent", "memory_percent", "disk_usage"]:
                 recent_avg = sum(m.get(metric, 0) for m in recent) / len(recent)
@@ -498,29 +444,21 @@ class PerformanceMonitor:
             latest = self.metrics_history[-1]
 
             if latest.get("cpu_percent", 0) > 80:
-                recommendations.append(
-                    "Consider scaling CPU resources or optimizing CPU-intensive operations"
-                )
+                recommendations.append("Consider scaling CPU resources or optimizing CPU-intensive operations")
 
             if latest.get("memory_percent", 0) > 85:
-                recommendations.append(
-                    "Monitor memory usage and consider memory optimization or scaling"
-                )
+                recommendations.append("Monitor memory usage and consider memory optimization or scaling")
 
         # API performance recommendations
         if self.api_calls:
             avg_response = self._calculate_avg_response_time()
             if avg_response > 1000:
-                recommendations.append(
-                    "Implement response time optimization (caching, query optimization, CDN)"
-                )
+                recommendations.append("Implement response time optimization (caching, query optimization, CDN)")
 
         # Error rate recommendations
         error_rate = self._calculate_error_rate()
         if error_rate > 0.03:
-            recommendations.append(
-                "Investigate and resolve root causes of high error rates"
-            )
+            recommendations.append("Investigate and resolve root causes of high error rates")
 
         return recommendations
 
@@ -532,9 +470,7 @@ class PerformanceMonitor:
         self.root_cause_analysis_enabled = True
         self.anomaly_detection_enabled = True
 
-    async def perform_root_cause_analysis(
-        self, incident_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def perform_root_cause_analysis(self, incident_data: dict[str, Any]) -> dict[str, Any]:
         """Perform AI-powered root cause analysis for incidents"""
         analysis = {
             "primary_cause": "unknown",
@@ -665,9 +601,7 @@ class PerformanceMonitor:
 
         return alerts
 
-    async def create_incident_response_workflow(
-        self, incident_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def create_incident_response_workflow(self, incident_data: dict[str, Any]) -> dict[str, Any]:
         """Create automated incident response workflow"""
         workflow = {
             "incident_id": f"INC-{int(time.time())}",
@@ -798,19 +732,11 @@ class PerformanceMonitor:
         if self.metrics_history:
             latest = self.metrics_history[-1]
             report["metrics_summary"] = {
-                "cpu_average": sum(
-                    m.get("cpu_percent", 0) for m in self.metrics_history
-                )
-                / len(self.metrics_history),
-                "memory_average": sum(
-                    m.get("memory_percent", 0) for m in self.metrics_history
-                )
-                / len(self.metrics_history),
+                "cpu_average": sum(m.get("cpu_percent", 0) for m in self.metrics_history) / len(self.metrics_history),
+                "memory_average": sum(m.get("memory_percent", 0) for m in self.metrics_history) / len(self.metrics_history),
                 "current_cpu": latest.get("cpu_percent", 0),
                 "current_memory": latest.get("memory_percent", 0),
-                "uptime_status": (
-                    "excellent" if latest.get("cpu_percent", 0) < 80 else "acceptable"
-                ),
+                "uptime_status": ("excellent" if latest.get("cpu_percent", 0) < 80 else "acceptable"),
             }
 
         # Generate final recommendations

@@ -4,14 +4,15 @@ This guide covers how to deploy the frontend application to various platforms.
 
 ## Prerequisites
 
--   **Backend URL**: You need the URL where your backend API is deployed (e.g., `https://api.fraud-detection-378x492.com/api/v1`).
--   **Node.js**: Version 20+ installed locally for testing builds.
+- **Backend URL**: You need the URL where your backend API is deployed (e.g., `https://api.fraud-detection-378x492.com/api/v1`).
+- **Node.js**: Version 20+ installed locally for testing builds.
 
 ## Environment Variables
 
 The application relies on `VITE_API_URL` to know where to send requests.
--   **Local**: Defaults to `http://localhost:8000/api/v1` (configured in `src/services/client.ts`).
--   **Production**: You **MUST** set `VITE_API_URL` (e.g., `https://api.fraud-detection-378x492.com/api/v1`) in your deployment platform's environment variables.
+
+- **Local**: Defaults to `http://localhost:8000/api/v1` (configured in `src/services/client.ts`).
+- **Production**: You **MUST** set `VITE_API_URL` (e.g., `https://api.fraud-detection-378x492.com/api/v1`) in your deployment platform's environment variables.
 
 ---
 
@@ -23,8 +24,8 @@ The application relies on `VITE_API_URL` to know where to send requests.
 4.  Select the `frontend` directory as the **Root Directory**.
 5.  Vercel should auto-detect "Vite".
 6.  Expand **Environment Variables**:
-    -   Key: `VITE_API_URL`
-    -   Value: `https://your-backend-url.com/api/v1`
+    - Key: `VITE_API_URL`
+    - Value: `https://your-backend-url.com/api/v1`
 7.  Click **Deploy**.
 
 ## Option 2: Docker
@@ -32,10 +33,13 @@ The application relies on `VITE_API_URL` to know where to send requests.
 We have configured a multi-stage `Dockerfile` (optimized for production).
 
 1.  Build the image:
+
     ```bash
     docker build -t frontend-app .
     ```
-    *Note: To bake in the API URL at build time (if not using runtime injection):*
+
+    _Note: To bake in the API URL at build time (if not using runtime injection):_
+
     ```bash
     docker build --build-arg VITE_API_URL=https://api.example.com/api/v1 -t frontend-app .
     ```
@@ -53,7 +57,7 @@ We have configured a multi-stage `Dockerfile` (optimized for production).
 4.  **Build command**: `npm run build`
 5.  **Publish directory**: `dist`
 6.  Under **Advanced > Environment variables**:
-    -   Set `VITE_API_URL` to your backend URL.
+    - Set `VITE_API_URL` to your backend URL.
 7.  Deploy.
 
 ## Option 4: Static Hosting (S3 / Apache / Nginx)

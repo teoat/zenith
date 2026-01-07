@@ -23,10 +23,7 @@ def migrate():
                 conn.execute(text("ALTER TABLE users ADD COLUMN mfa_secret VARCHAR"))
                 print("✅ mfa_secret added.")
             except Exception as e:
-                if (
-                    "duplicate column" in str(e).lower()
-                    or "no such table" not in str(e).lower()
-                ):
+                if "duplicate column" in str(e).lower() or "no such table" not in str(e).lower():
                     print(f"⚠️ mfa_secret might already exist: {e}")
                 else:
                     print(f"❌ Error adding mfa_secret: {e}")
@@ -34,15 +31,10 @@ def migrate():
             # 2. Add mfa_enabled
             try:
                 print("Adding mfa_enabled column...")
-                conn.execute(
-                    text("ALTER TABLE users ADD COLUMN mfa_enabled BOOLEAN DEFAULT 0")
-                )
+                conn.execute(text("ALTER TABLE users ADD COLUMN mfa_enabled BOOLEAN DEFAULT 0"))
                 print("✅ mfa_enabled added.")
             except Exception as e:
-                if (
-                    "duplicate column" in str(e).lower()
-                    or "no such table" not in str(e).lower()
-                ):
+                if "duplicate column" in str(e).lower() or "no such table" not in str(e).lower():
                     print(f"⚠️ mfa_enabled might already exist: {e}")
                 else:
                     print(f"❌ Error adding mfa_enabled: {e}")

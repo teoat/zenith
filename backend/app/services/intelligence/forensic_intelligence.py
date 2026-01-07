@@ -22,9 +22,7 @@ class TriangulationEngine:
         self.db = db_session
         self._vendor_cache: dict[str, dict] = {}
 
-    async def unmask_redaction(
-        self, transaction_id: str, masked_name: str
-    ) -> dict[str, Any]:
+    async def unmask_redaction(self, transaction_id: str, masked_name: str) -> dict[str, Any]:
         """
         Attempts to resolve '*' or partial names by looking at:
         1. Similar amounts in other transactions.
@@ -38,9 +36,7 @@ class TriangulationEngine:
         Returns:
             Unmasking results with confidence scores
         """
-        logger.info(
-            f"Triangulating redacted merchant for txn {transaction_id}: {masked_name}"
-        )
+        logger.info(f"Triangulating redacted merchant for txn {transaction_id}: {masked_name}")
 
         try:
             # Get transaction details
@@ -63,17 +59,13 @@ class TriangulationEngine:
                     suggestions.append(
                         {
                             "candidate": match["merchant"],
-                            "confidence": min(
-                                0.7 + (0.1 * match.get("frequency", 1)), 0.95
-                            ),
+                            "confidence": min(0.7 + (0.1 * match.get("frequency", 1)), 0.95),
                             "source": "Amount-Pattern Match",
                         }
                     )
 
             # Strategy 2: Account History Sync
-            history_matches = await self._find_by_account_history(
-                transaction.get("account_id"), masked_name
-            )
+            history_matches = await self._find_by_account_history(transaction.get("account_id"), masked_name)
             for match in history_matches:
                 suggestions.append(
                     {
@@ -142,14 +134,7 @@ class TriangulationEngine:
 
             tolerance = amount * 0.05  # 5% tolerance
 
-            matches = (
-                self.db.query(Transaction)
-                .filter(
-                    Transaction.amount.between(amount - tolerance, amount + tolerance)
-                )
-                .limit(50)
-                .all()
-            )
+            matches = self.db.query(Transaction).filter(Transaction.amount.between(amount - tolerance, amount + tolerance)).limit(50).all()
 
             # Group by merchant
             merchant_counts = defaultdict(int)
@@ -157,30 +142,18 @@ class TriangulationEngine:
                 if hasattr(m, "merchant") and m.merchant:
                     merchant_counts[m.merchant] += 1
 
-            return [
-                {"merchant": k, "frequency": v}
-                for k, v in sorted(
-                    merchant_counts.items(), key=lambda x: x[1], reverse=True
-                )
-            ]
+            return [{"merchant": k, "frequency": v} for k, v in sorted(merchant_counts.items(), key=lambda x: x[1], reverse=True)]
         except Exception:
             return []
 
-    async def _find_by_account_history(
-        self, account_id: str, masked: str
-    ) -> list[dict]:
+    async def _find_by_account_history(self, account_id: str, masked: str) -> list[dict]:
         """Find matches from account transaction history."""
         if not account_id:
             return []
         try:
             from core.database import Transaction
 
-            history = (
-                self.db.query(Transaction)
-                .filter_by(account_id=account_id)
-                .limit(100)
-                .all()
-            )
+            history = self.db.query(Transaction).filter_by(account_id=account_id).limit(100).all()
 
             # Find unmasked merchants
             merchant_counts = defaultdict(int)
@@ -188,12 +161,7 @@ class TriangulationEngine:
                 if hasattr(t, "merchant") and t.merchant and "*" not in t.merchant:
                     merchant_counts[t.merchant] += 1
 
-            return [
-                {"merchant": k, "count": v}
-                for k, v in sorted(
-                    merchant_counts.items(), key=lambda x: x[1], reverse=True
-                )[:5]
-            ]
+            return [{"merchant": k, "count": v} for k, v in sorted(merchant_counts.items(), key=lambda x: x[1], reverse=True)[:5]]
         except Exception:
             return []
 
@@ -301,9 +269,7 @@ class LIBRAlgorithm:
                             min_balance = balance_history[j]["balance"]
 
                     # LIBR violation if withdrawal occurred
-                    max_illicit = min(
-                        entry["amount"], max(0, entry["balance"] - min_balance)
-                    )
+                    max_illicit = min(entry["amount"], max(0, entry["balance"] - min_balance))
                     if max_illicit > 0:
                         libr_violations.append(
                             {
@@ -317,9 +283,7 @@ class LIBRAlgorithm:
 
             # Calculate commingling ratio
             total_deposits = sum(t["amount"] for t in transactions if t["amount"] > 0)
-            commingling_ratio = (
-                illicit_float / total_deposits if total_deposits > 0 else 0
-            )
+            commingling_ratio = illicit_float / total_deposits if total_deposits > 0 else 0
 
             # Determine risk status
             if commingling_ratio > 0.5:
@@ -347,9 +311,7 @@ class LIBRAlgorithm:
             logger.error(f"LIBR analysis failed: {e}")
             return {"account_id": account_id, "status": "ERROR", "error": str(e)}
 
-    def _get_transactions(
-        self, account_id: str, start_date: datetime, end_date: datetime
-    ) -> list[dict]:
+    def _get_transactions(self, account_id: str, start_date: datetime, end_date: datetime) -> list[dict]:
         """Get transactions from database."""
         try:
             from core.database import Transaction
@@ -364,10 +326,7 @@ class LIBRAlgorithm:
                 .all()
             )
 
-            return [
-                {"id": str(t.id), "amount": t.amount, "date": t.created_at}
-                for t in txns
-            ]
+            return [{"id": str(t.id), "amount": t.amount, "date": t.created_at} for t in txns]
         except Exception:
             return []
 
@@ -475,9 +434,7 @@ class MensReaEngine:
         for category, keywords in self.legal_lexicon.items():
             matches = [kw for kw in keywords if kw in content_lower]
             if matches:
-                found_markers.append(
-                    {"category": category, "keywords": matches, "count": len(matches)}
-                )
+                found_markers.append({"category": category, "keywords": matches, "count": len(matches)})
                 # Score based on match density
                 category_scores[category] = min(len(matches) / 3, 1.0)
 
@@ -524,11 +481,7 @@ class MensReaEngine:
                 "legal_theory": legal_theory,
             },
             "mens_rea_matrix": {k: round(v, 2) for k, v in intent_scores.items()},
-            "litigation_readiness": "HIGH"
-            if confidence > 0.7
-            else "MODERATE"
-            if confidence > 0.5
-            else "LOW",
+            "litigation_readiness": "HIGH" if confidence > 0.7 else "MODERATE" if confidence > 0.5 else "LOW",
             "admissibility_context": "Ref: Rule 403 (Probative value vs. Prejudice), Rule 404(b) (Prior acts)",
             "analyzed_at": datetime.now().isoformat(),
         }
@@ -608,9 +561,7 @@ class TemporalPairMatcher:
                         continue
 
                     # Check if mirror pair
-                    is_mirror, score = self._check_mirror(
-                        tx1, tx2, threshold_seconds, amount_tolerance
-                    )
+                    is_mirror, score = self._check_mirror(tx1, tx2, threshold_seconds, amount_tolerance)
 
                     if is_mirror:
                         pairs.append(
@@ -620,25 +571,17 @@ class TemporalPairMatcher:
                                     "id": tx1["id"],
                                     "amount": tx1["amount"],
                                     "type": "DEBIT" if tx1["amount"] < 0 else "CREDIT",
-                                    "time": tx1["date"].strftime("%H:%M:%S")
-                                    if hasattr(tx1["date"], "strftime")
-                                    else str(tx1["date"]),
+                                    "time": tx1["date"].strftime("%H:%M:%S") if hasattr(tx1["date"], "strftime") else str(tx1["date"]),
                                 },
                                 "tx2": {
                                     "id": tx2["id"],
                                     "amount": tx2["amount"],
                                     "type": "DEBIT" if tx2["amount"] < 0 else "CREDIT",
-                                    "time": tx2["date"].strftime("%H:%M:%S")
-                                    if hasattr(tx2["date"], "strftime")
-                                    else str(tx2["date"]),
+                                    "time": tx2["date"].strftime("%H:%M:%S") if hasattr(tx2["date"], "strftime") else str(tx2["date"]),
                                 },
                                 "score": round(score, 2),
-                                "time_gap_seconds": self._time_diff_seconds(
-                                    tx1["date"], tx2["date"]
-                                ),
-                                "label": "Potential Wash Trade"
-                                if score > 0.9
-                                else "Suspicious Pair",
+                                "time_gap_seconds": self._time_diff_seconds(tx1["date"], tx2["date"]),
+                                "label": "Potential Wash Trade" if score > 0.9 else "Suspicious Pair",
                             }
                         )
                         matched.add(tx1["id"])
@@ -659,24 +602,13 @@ class TemporalPairMatcher:
         try:
             from core.database import Transaction
 
-            txns = (
-                self.db.query(Transaction)
-                .filter_by(account_id=account_id)
-                .order_by(Transaction.created_at)
-                .limit(500)
-                .all()
-            )
+            txns = self.db.query(Transaction).filter_by(account_id=account_id).order_by(Transaction.created_at).limit(500).all()
 
-            return [
-                {"id": str(t.id), "amount": t.amount, "date": t.created_at}
-                for t in txns
-            ]
+            return [{"id": str(t.id), "amount": t.amount, "date": t.created_at} for t in txns]
         except Exception:
             return []
 
-    def _check_mirror(
-        self, tx1: dict, tx2: dict, threshold_seconds: int, tolerance: float
-    ) -> tuple:
+    def _check_mirror(self, tx1: dict, tx2: dict, threshold_seconds: int, tolerance: float) -> tuple:
         """Check if two transactions form a mirror pair."""
         # Amounts must be opposite (or very close)
         amt1, amt2 = abs(tx1["amount"]), abs(tx2["amount"])

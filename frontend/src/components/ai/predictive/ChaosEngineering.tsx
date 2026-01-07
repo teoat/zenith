@@ -1,14 +1,24 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Cpu, HardDrive, Network, Zap, AlertTriangle, CheckCircle } from 'lucide-react';
-import type { ChaosExperimentResult } from '@/components/ai/types/predictive';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  Cpu,
+  HardDrive,
+  Network,
+  Zap,
+  AlertTriangle,
+  CheckCircle,
+} from "lucide-react";
+import type { ChaosExperimentResult } from "@/components/ai/types/predictive";
 
 interface ChaosEngineeringProps {
   chaosExperiments: ChaosExperimentResult[];
   onRunExperiment: (type: string) => void;
 }
 
-export const ChaosEngineering: React.FC<ChaosEngineeringProps> = ({ chaosExperiments, onRunExperiment }) => {
+export const ChaosEngineering: React.FC<ChaosEngineeringProps> = ({
+  chaosExperiments,
+  onRunExperiment,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -19,7 +29,8 @@ export const ChaosEngineering: React.FC<ChaosEngineeringProps> = ({ chaosExperim
       <div className="chaos-engineering">
         <h3 className="section-title">Chaos Engineering Experiments</h3>
         <p className="section-description">
-          Controlled failure injection to test system resilience and recovery procedures.
+          Controlled failure injection to test system resilience and recovery
+          procedures.
         </p>
 
         {/* Experiment Controls */}
@@ -27,28 +38,28 @@ export const ChaosEngineering: React.FC<ChaosEngineeringProps> = ({ chaosExperim
           <h4 className="controls-title">Run Chaos Experiment</h4>
           <div className="experiment-buttons">
             <button
-              onClick={() => onRunExperiment('cpu_stress')}
+              onClick={() => onRunExperiment("cpu_stress")}
               className="experiment-button"
             >
               <Cpu className="w-4 h-4 mr-2" />
               CPU Stress Test
             </button>
             <button
-              onClick={() => onRunExperiment('memory_pressure')}
+              onClick={() => onRunExperiment("memory_pressure")}
               className="experiment-button"
             >
               <HardDrive className="w-4 h-4 mr-2" />
               Memory Pressure
             </button>
             <button
-              onClick={() => onRunExperiment('network_partition')}
+              onClick={() => onRunExperiment("network_partition")}
               className="experiment-button"
             >
               <Network className="w-4 h-4 mr-2" />
               Network Partition
             </button>
             <button
-              onClick={() => onRunExperiment('service_kill')}
+              onClick={() => onRunExperiment("service_kill")}
               className="experiment-button"
             >
               <Zap className="w-4 h-4 mr-2" />
@@ -65,9 +76,13 @@ export const ChaosEngineering: React.FC<ChaosEngineeringProps> = ({ chaosExperim
               <div key={index} className="experiment-card">
                 <div className="experiment-header">
                   <div className="experiment-info">
-                    <h5 className="experiment-id">{experiment.experiment_id}</h5>
+                    <h5 className="experiment-id">
+                      {experiment.experiment_id}
+                    </h5>
                     <p className="experiment-type">
-                      {experiment.experiment_type.replace('_', ' ').toUpperCase()}
+                      {experiment.experiment_type
+                        .replace("_", " ")
+                        .toUpperCase()}
                     </p>
                   </div>
                   <div className="experiment-status">
@@ -82,26 +97,34 @@ export const ChaosEngineering: React.FC<ChaosEngineeringProps> = ({ chaosExperim
                 <div className="experiment-metrics">
                   <div className="metric-row">
                     <span className="metric-label">Duration:</span>
-                    <span className="metric-value">{experiment.duration_seconds}s</span>
+                    <span className="metric-value">
+                      {experiment.duration_seconds}s
+                    </span>
                   </div>
                   <div className="metric-row">
                     <span className="metric-label">Stability Score:</span>
-                    <span className="metric-value">{experiment.system_stability_score.toFixed(1)}%</span>
+                    <span className="metric-value">
+                      {experiment.system_stability_score.toFixed(1)}%
+                    </span>
                   </div>
                   <div className="metric-row">
                     <span className="metric-label">Recovery Time:</span>
-                    <span className="metric-value">{experiment.recovery_time_seconds.toFixed(1)}s</span>
+                    <span className="metric-value">
+                      {experiment.recovery_time_seconds.toFixed(1)}s
+                    </span>
                   </div>
                 </div>
 
                 <div className="experiment-services">
                   <h6 className="services-title">Affected Services:</h6>
                   <div className="services-list">
-                    {experiment.affected_services.map((service, serviceIndex) => (
-                      <span key={serviceIndex} className="service-tag">
-                        {service}
-                      </span>
-                    ))}
+                    {experiment.affected_services.map(
+                      (service, serviceIndex) => (
+                        <span key={serviceIndex} className="service-tag">
+                          {service}
+                        </span>
+                      ),
+                    )}
                   </div>
                 </div>
 
@@ -109,7 +132,9 @@ export const ChaosEngineering: React.FC<ChaosEngineeringProps> = ({ chaosExperim
                   <h6 className="lessons-title">Lessons Learned:</h6>
                   <ul className="lessons-list">
                     {experiment.lessons_learned.map((lesson, lessonIndex) => (
-                      <li key={lessonIndex} className="lesson-item">{lesson}</li>
+                      <li key={lessonIndex} className="lesson-item">
+                        {lesson}
+                      </li>
                     ))}
                   </ul>
                 </div>

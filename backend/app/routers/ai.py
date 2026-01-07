@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.services.ai.ai_service import get_ai_service
+from app.services.infrastructure.auth_service import auth_service
 from app.services.infrastructure.security.audit_service import AuditService
 from core.database import User, get_db
 
@@ -24,9 +25,6 @@ router = APIRouter(
 )
 
 # Import for deprecated monitoring
-
-# Authentication Dependency
-from app.services.infrastructure.auth_service import auth_service
 
 # Request/Response Models
 
@@ -536,14 +534,10 @@ async def ai_health_check():
             "components": {
                 "vector_store": {
                     "status": "healthy" if hasattr(ai_service, "vector_store") and ai_service.vector_store else "empty",
-                    "documents": len(ai_service.vector_store)
-                    if hasattr(ai_service, "vector_store") and ai_service.vector_store
-                    else 0,
+                    "documents": len(ai_service.vector_store) if hasattr(ai_service, "vector_store") and ai_service.vector_store else 0,
                 },
                 "search_index": {
-                    "status": "healthy"
-                    if hasattr(ai_service, "tfidf_vectorizer") and ai_service.tfidf_vectorizer
-                    else "building",
+                    "status": "healthy" if hasattr(ai_service, "tfidf_vectorizer") and ai_service.tfidf_vectorizer else "building",
                     "features": (
                         getattr(ai_service.tfidf_vectorizer, "n_features_", 0)
                         if hasattr(ai_service, "tfidf_vectorizer") and ai_service.tfidf_vectorizer
@@ -767,9 +761,7 @@ async def chat_with_ai(
         persona = request.persona or "frenly"
 
         # Generate Response using Real/Fallback Service
-        llm_response = await llm_service.generate_response(
-            prompt=request.message, context=request.context, persona=persona
-        )
+        llm_response = await llm_service.generate_response(prompt=request.message, context=request.context, persona=persona)
 
         # Propose actions based on keywords (Heuristic Layer)
         suggestions = []
@@ -839,7 +831,7 @@ async def chat_with_ai(
                     "type": "update",
                     "impact": "high",
                     "description": "Generate 3 alternative benign explanations for the observed behavior.",
-                    "reasoning": "Red Team: Confirmation bias can lead to false positives. Consider innocent explanations.",
+                    "reasoning": ("Red Team: Confirmation bias can lead to false positives. Consider innocent explanations."),
                     "confidence": 0.88,
                 }
             )
@@ -909,7 +901,10 @@ async def analyze_code(
         from app.services.intelligence.advanced_llm_service import get_llm_service
 
         llm_service = await get_llm_service()
-        prompt = f"Review this {request.language} code for security, performance, and maintainability issues. Return findings in structured JSON format.\\n\\n{request.code}"
+        prompt = (
+            f"Review this {request.language} code for security, performance, and maintainability issues. "
+            f"Return findings in structured JSON format.\\n\\n{request.code}"
+        )
 
         # Use 'technical_reviewer' persona
         response = await llm_service.generate_response(prompt, request.context, persona="technical_reviewer")
@@ -973,9 +968,7 @@ async def multi_persona_chat(request: MultiPersonaRequest, db: Session = Depends
         llm_service = await get_llm_service()
 
         # Generate responses from all requested personas
-        responses = await llm_service.multi_persona_analysis(
-            prompt=request.message, personas=request.personas, context=request.context
-        )
+        responses = await llm_service.multi_persona_analysis(prompt=request.message, personas=request.personas, context=request.context)
 
         # Convert to response format
         chat_responses = {}

@@ -1,22 +1,20 @@
-import { secureLogger } from './secureLogger';
-
-
+import { secureLogger } from "./secureLogger";
 
 class Logger {
   info(message: string, ...args: unknown[]) {
-    secureLogger.info('LEGACY', message, { args });
+    secureLogger.info("LEGACY", message, { args });
   }
 
   warn(message: string, ...args: unknown[]) {
-    secureLogger.warn('LEGACY', message, { args });
+    secureLogger.warn("LEGACY", message, { args });
   }
 
   error(message: string, ...args: unknown[]) {
-    secureLogger.error('LEGACY', message, { args });
+    secureLogger.error("LEGACY", message, { args });
   }
 
   debug(message: string, ...args: unknown[]) {
-    secureLogger.debug('LEGACY', message, { args });
+    secureLogger.debug("LEGACY", message, { args });
   }
 }
 

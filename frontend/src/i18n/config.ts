@@ -1,14 +1,14 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import HttpBackend from 'i18next-http-backend';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import HttpBackend from "i18next-http-backend";
+import LanguageDetector from "i18next-browser-languagedetector";
 
 i18n
   .use(HttpBackend)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    fallbackLng: 'en',
+    fallbackLng: "en",
     debug: import.meta.env.DEV,
 
     interpolation: {
@@ -16,13 +16,13 @@ i18n
     },
 
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      loadPath: "/locales/{{lng}}/{{ns}}.json",
     },
 
     detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
-      lookupLocalStorage: 'i18nextLng',
+      order: ["localStorage", "navigator", "htmlTag"],
+      caches: ["localStorage"],
+      lookupLocalStorage: "i18nextLng",
       lookupFromPathIndex: 0,
       lookupFromSubdomainIndex: 0,
     },
@@ -32,8 +32,16 @@ i18n
     },
 
     // Default namespace
-    defaultNS: 'common',
-    ns: ['common', 'dashboard', 'cases', 'settings', 'forensics', 'errors', 'validation'],
+    defaultNS: "common",
+    ns: [
+      "common",
+      "dashboard",
+      "cases",
+      "settings",
+      "forensics",
+      "errors",
+      "validation",
+    ],
   });
 
 export default i18n;

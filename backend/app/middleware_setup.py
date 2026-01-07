@@ -36,14 +36,15 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"
-        response.headers["Strict-Transport-Security"] = (
-            "max-age=31536000; includeSubDomains"
-        )
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;"
+            "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; "
+            "font-src 'self' data:;"
         )
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         return response
+
 
 async def request_logging_middleware(request: Request, call_next):
     """
@@ -91,10 +92,7 @@ async def request_logging_middleware(request: Request, call_next):
     # Determine audit action type
     if path.startswith("/api/v1/auth"):
         action = "login" if method == "POST" and "login" in path else "auth_access"
-    elif any(
-        path.startswith(f"/api/v1/{endpoint}")
-        for endpoint in ["cases", "transactions", "alerts"]
-    ):
+    elif any(path.startswith(f"/api/v1/{endpoint}") for endpoint in ["cases", "transactions", "alerts"]):
         action = "data_access" if method == "GET" else "data_modification"
     elif path.startswith("/api/v1/admin"):
         action = "admin_operation"
@@ -212,6 +210,7 @@ async def request_logging_middleware(request: Request, call_next):
             user_agent=user_agent,
         )
         raise
+
 
 def setup_middleware(app: FastAPI):
     # Setup Exception Handlers

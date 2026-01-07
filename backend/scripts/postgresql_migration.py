@@ -199,16 +199,12 @@ class PostgreSQLMigrationManager:
                 await conn.execute(schema_sql)
                 logger.info("PostgreSQL schema created successfully")
 
-    async def migrate_table_data(
-        self, table_name: str, sqlite_conn, postgres_conn
-    ) -> dict[str, Any]:
+    async def migrate_table_data(self, table_name: str, sqlite_conn, postgres_conn) -> dict[str, Any]:
         """Migrate data from SQLite table to PostgreSQL with progress tracking"""
         logger.info(f"Starting migration for table: {table_name}")
 
         # Get migration status
-        migration_status = await postgres_conn.fetchrow(
-            "SELECT * FROM migration_status WHERE table_name = $1", table_name
-        )
+        migration_status = await postgres_conn.fetchrow("SELECT * FROM migration_status WHERE table_name = $1", table_name)
 
         if not migration_status:
             # Initialize migration status
@@ -225,9 +221,7 @@ class PostgreSQLMigrationManager:
 
         # Get column information
         columns = await sqlite_conn.execute_fetchall(f"PRAGMA table_info({table_name})")
-        [
-            col[1] for col in columns if col[1] != "id"
-        ]  # Exclude id for auto-generation
+        [col[1] for col in columns if col[1] != "id"]  # Exclude id for auto-generation
 
         # Get data in batches
         offset = migration_status["records_migrated"] if migration_status else 0
@@ -258,9 +252,7 @@ class PostgreSQLMigrationManager:
 
                     # Insert into PostgreSQL
                     columns_str = ", ".join(record_dict.keys())
-                    placeholders = ", ".join(
-                        f"${i + 1}" for i in range(len(record_dict))
-                    )
+                    placeholders = ", ".join(f"${i + 1}" for i in range(len(record_dict)))
                     values = list(record_dict.values())
 
                     await postgres_conn.execute(
@@ -311,22 +303,16 @@ class PostgreSQLMigrationManager:
             "fraud_alerts",
         ]
 
-        async with aiosqlite.connect(
-            self.sqlite_url.replace("sqlite:///", "")
-        ) as sqlite_conn:
+        async with aiosqlite.connect(self.sqlite_url.replace("sqlite:///", "")) as sqlite_conn:
             async with asyncpg.create_pool(self.postgres_url) as postgres_pool:
                 async with postgres_pool.acquire() as postgres_conn:
                     for table_name in tables_to_migrate:
                         try:
-                            result = await self.migrate_table_data(
-                                table_name, sqlite_conn, postgres_conn
-                            )
+                            result = await self.migrate_table_data(table_name, sqlite_conn, postgres_conn)
                             if result["status"] == "completed":
                                 migration_results["tables_migrated"] += 1
                                 migration_results["total_records"] += result["records"]
-                                logger.info(
-                                    f"Successfully migrated {result['records']} records from {table_name}"
-                                )
+                                logger.info(f"Successfully migrated {result['records']} records from {table_name}")
                         except Exception as e:
                             error_msg = f"Failed to migrate {table_name}: {e!s}"
                             logger.error(error_msg)
@@ -337,9 +323,7 @@ class PostgreSQLMigrationManager:
         migration_results["duration_seconds"] = duration.total_seconds()
 
         logger.info(f"Migration completed in {duration.total_seconds():.2f} seconds")
-        logger.info(
-            f"Migrated {migration_results['total_records']} records across {migration_results['tables_migrated']} tables"
-        )
+        logger.info(f"Migrated {migration_results['total_records']} records across {migration_results['tables_migrated']} tables")
 
         return migration_results
 
@@ -353,9 +337,7 @@ class PostgreSQLMigrationManager:
             "validation_errors": [],
         }
 
-        async with aiosqlite.connect(
-            self.sqlite_url.replace("sqlite:///", "")
-        ) as sqlite_conn:
+        async with aiosqlite.connect(self.sqlite_url.replace("sqlite:///", "")) as sqlite_conn:
             async with asyncpg.create_pool(self.postgres_url) as postgres_pool:
                 async with postgres_pool.acquire() as postgres_conn:
                     tables_to_check = ["users", "cases", "transactions", "evidence"]
@@ -363,12 +345,8 @@ class PostgreSQLMigrationManager:
                     for table_name in tables_to_check:
                         try:
                             # Get counts from both databases
-                            sqlite_count = await sqlite_conn.execute_fetchall(
-                                f"SELECT COUNT(*) FROM {table_name}"
-                            )
-                            postgres_count = await postgres_conn.fetchval(
-                                f"SELECT COUNT(*) FROM {table_name}"
-                            )
+                            sqlite_count = await sqlite_conn.execute_fetchall(f"SELECT COUNT(*) FROM {table_name}")
+                            postgres_count = await postgres_conn.fetchval(f"SELECT COUNT(*) FROM {table_name}")
 
                             sqlite_count = sqlite_count[0][0] if sqlite_count else 0
 
@@ -388,9 +366,7 @@ class PostgreSQLMigrationManager:
                             )
 
                         except Exception as e:
-                            validation_results["validation_errors"].append(
-                                f"Validation failed for {table_name}: {e!s}"
-                            )
+                            validation_results["validation_errors"].append(f"Validation failed for {table_name}: {e!s}")
 
         return validation_results
 
@@ -442,10 +418,7 @@ class PostgreSQLMigrationManager:
             results["validation"] = validation_result
 
             # Step 4: Switch to PostgreSQL (if validation passes)
-            if (
-                validation_result["table_counts_match"]
-                and not validation_result["validation_errors"]
-            ):
+            if validation_result["table_counts_match"] and not validation_result["validation_errors"]:
                 await self.switch_to_postgres()
                 results["switch_over"] = {"status": "success"}
                 results["overall_success"] = True
@@ -454,9 +427,7 @@ class PostgreSQLMigrationManager:
                     "status": "skipped",
                     "reason": "validation_failed",
                 }
-                logger.warning(
-                    "Switch to PostgreSQL skipped due to validation failures"
-                )
+                logger.warning("Switch to PostgreSQL skipped due to validation failures")
 
         except Exception as e:
             logger.error(f"Migration failed: {e}")

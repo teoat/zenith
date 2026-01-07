@@ -47,9 +47,7 @@ try:
 
     setup_opentelemetry(app)
 except ImportError:
-    zenith_logger.warning(
-        "OpenTelemetry dependencies not found, skipping tracing setup"
-    )
+    zenith_logger.warning("OpenTelemetry dependencies not found, skipping tracing setup")
 except Exception as e:
     zenith_logger.warning("Failed to initialize OpenTelemetry", {"error": str(e)})
 

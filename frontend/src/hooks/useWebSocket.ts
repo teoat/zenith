@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from "react";
 
 interface WebSocketMessage {
   type: string;
@@ -41,7 +41,7 @@ export function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn {
     onMessage,
     onConnect,
     onDisconnect,
-    onError
+    onError,
   } = options;
 
   const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -78,7 +78,7 @@ export function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn {
           setLastMessage(message);
           onMessage?.(message);
         } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
+          console.error("Failed to parse WebSocket message:", error);
         }
       };
 
@@ -98,16 +98,26 @@ export function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn {
       };
 
       ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        console.error("WebSocket error:", error);
         onError?.(error);
       };
-
     } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
+      console.error("Failed to create WebSocket connection:", error);
       setIsConnecting(false);
       onError?.(error as Event);
     }
-  }, [url, protocols, reconnectInterval, maxReconnectAttempts, onMessage, onConnect, onDisconnect, onError, isConnecting, socket]);
+  }, [
+    url,
+    protocols,
+    reconnectInterval,
+    maxReconnectAttempts,
+    onMessage,
+    onConnect,
+    onDisconnect,
+    onError,
+    isConnecting,
+    socket,
+  ]);
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
@@ -117,13 +127,16 @@ export function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn {
     socket?.close();
   }, [socket, maxReconnectAttempts]);
 
-  const sendMessage = useCallback((message: any) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(message));
-    } else {
-      console.warn('WebSocket is not connected. Message not sent:', message);
-    }
-  }, [socket]);
+  const sendMessage = useCallback(
+    (message: any) => {
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify(message));
+      } else {
+        console.warn("WebSocket is not connected. Message not sent:", message);
+      }
+    },
+    [socket],
+  );
 
   useEffect(() => {
     return () => {
@@ -146,6 +159,6 @@ export function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn {
     sendMessage,
     connect,
     disconnect,
-    reconnectCount
+    reconnectCount,
   };
 }

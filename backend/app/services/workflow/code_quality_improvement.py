@@ -115,9 +115,7 @@ class CodeQualityImprovementService:
             "duplicate_threshold": 0.8,  # 80% similarity
         }
 
-    async def analyze_codebase(
-        self, root_path: str = "/Users/Arief/Desktop/Zenith"
-    ) -> dict[str, Any]:
+    async def analyze_codebase(self, root_path: str = "/Users/Arief/Desktop/Zenith") -> dict[str, Any]:
         """Comprehensive codebase analysis"""
         logger.info(f"Starting codebase analysis for: {root_path}")
 
@@ -134,12 +132,7 @@ class CodeQualityImprovementService:
         python_files = []
         for root, dirs, files in os.walk(root_path):
             # Skip certain directories
-            dirs[:] = [
-                d
-                for d in dirs
-                if not d.startswith(".")
-                and d not in ["node_modules", "__pycache__", ".git"]
-            ]
+            dirs[:] = [d for d in dirs if not d.startswith(".") and d not in ["node_modules", "__pycache__", ".git"]]
 
             for file in files:
                 if file.endswith(".py"):
@@ -163,12 +156,8 @@ class CodeQualityImprovementService:
                     issue_type = issue.smell_type.value
                     severity = issue.severity.value
 
-                    analysis_results["issues_by_type"][issue_type] = (
-                        analysis_results["issues_by_type"].get(issue_type, 0) + 1
-                    )
-                    analysis_results["issues_by_severity"][severity] = (
-                        analysis_results["issues_by_severity"].get(severity, 0) + 1
-                    )
+                    analysis_results["issues_by_type"][issue_type] = analysis_results["issues_by_type"].get(issue_type, 0) + 1
+                    analysis_results["issues_by_severity"][severity] = analysis_results["issues_by_severity"].get(severity, 0) + 1
 
                     # Estimate technical debt
                     effort_multiplier = {
@@ -176,25 +165,16 @@ class CodeQualityImprovementService:
                         "refactor": 2,
                         "major_rework": 5,
                     }
-                    analysis_results["technical_debt_estimate"] += (
-                        issue.impact_score
-                        * effort_multiplier.get(issue.estimated_effort, 1)
-                    )
+                    analysis_results["technical_debt_estimate"] += issue.impact_score * effort_multiplier.get(issue.estimated_effort, 1)
 
             except Exception as e:
                 logger.error(f"Failed to analyze {file_path}: {e}")
 
         # Calculate overall metrics
-        analysis_results["technical_debt_hours"] = analysis_results[
-            "technical_debt_estimate"
-        ]
-        analysis_results["code_quality_score"] = max(
-            0, 100 - (analysis_results["issues_found"] * 2)
-        )
+        analysis_results["technical_debt_hours"] = analysis_results["technical_debt_estimate"]
+        analysis_results["code_quality_score"] = max(0, 100 - (analysis_results["issues_found"] * 2))
 
-        logger.info(
-            f"Analysis complete: {analysis_results['issues_found']} issues found in {analysis_results['files_analyzed']} files"
-        )
+        logger.info(f"Analysis complete: {analysis_results['issues_found']} issues found in {analysis_results['files_analyzed']} files")
 
         return analysis_results
 
@@ -225,9 +205,7 @@ class CodeQualityImprovementService:
 
         return issues
 
-    def _detect_long_methods(
-        self, tree: ast.AST, file_path: str, lines: list[str]
-    ) -> list[CodeIssue]:
+    def _detect_long_methods(self, tree: ast.AST, file_path: str, lines: list[str]) -> list[CodeIssue]:
         """Detect methods that are too long"""
         issues = []
 
@@ -236,9 +214,7 @@ class CodeQualityImprovementService:
                 method_length = node.end_lineno - node.lineno
 
                 if method_length > self.analysis_rules["max_method_length"]:
-                    severity = (
-                        DebtPriority.HIGH if method_length > 50 else DebtPriority.MEDIUM
-                    )
+                    severity = DebtPriority.HIGH if method_length > 50 else DebtPriority.MEDIUM
 
                     issue = CodeIssue(
                         issue_id=f"long_method_{file_path}_{node.lineno}",
@@ -247,9 +223,7 @@ class CodeQualityImprovementService:
                         smell_type=CodeSmell.LONG_METHOD,
                         severity=severity,
                         description=f"Method '{node.name}' is {method_length} lines long (max recommended: {self.analysis_rules['max_method_length']})",
-                        code_snippet="\n".join(
-                            lines[node.lineno - 1 : node.lineno + 5]
-                        ),
+                        code_snippet="\n".join(lines[node.lineno - 1 : node.lineno + 5]),
                         estimated_effort="refactor",
                         automated_fix_available=True,
                         impact_score=min(1.0, method_length / 100),
@@ -259,9 +233,7 @@ class CodeQualityImprovementService:
 
         return issues
 
-    def _detect_large_classes(
-        self, tree: ast.AST, file_path: str, lines: list[str]
-    ) -> list[CodeIssue]:
+    def _detect_large_classes(self, tree: ast.AST, file_path: str, lines: list[str]) -> list[CodeIssue]:
         """Detect classes that are too large"""
         issues = []
 
@@ -277,9 +249,7 @@ class CodeQualityImprovementService:
                         smell_type=CodeSmell.LARGE_CLASS,
                         severity=DebtPriority.HIGH,
                         description=f"Class '{node.name}' is {class_length} lines long (max recommended: {self.analysis_rules['max_class_length']})",
-                        code_snippet="\n".join(
-                            lines[node.lineno - 1 : node.lineno + 3]
-                        ),
+                        code_snippet="\n".join(lines[node.lineno - 1 : node.lineno + 3]),
                         estimated_effort="major_rework",
                         automated_fix_available=False,
                         impact_score=min(1.0, class_length / 500),
@@ -289,9 +259,7 @@ class CodeQualityImprovementService:
 
         return issues
 
-    def _detect_long_parameter_lists(
-        self, tree: ast.AST, file_path: str, lines: list[str]
-    ) -> list[CodeIssue]:
+    def _detect_long_parameter_lists(self, tree: ast.AST, file_path: str, lines: list[str]) -> list[CodeIssue]:
         """Detect functions with too many parameters"""
         issues = []
 
@@ -307,9 +275,7 @@ class CodeQualityImprovementService:
                         smell_type=CodeSmell.LONG_PARAMETER_LIST,
                         severity=DebtPriority.MEDIUM,
                         description=f"Function '{node.name}' has {param_count} parameters (max recommended: {self.analysis_rules['max_parameters']})",
-                        code_snippet="\n".join(
-                            lines[node.lineno - 1 : node.lineno + 2]
-                        ),
+                        code_snippet="\n".join(lines[node.lineno - 1 : node.lineno + 2]),
                         estimated_effort="refactor",
                         automated_fix_available=True,
                         impact_score=min(1.0, param_count / 10),
@@ -319,9 +285,7 @@ class CodeQualityImprovementService:
 
         return issues
 
-    def _detect_complex_conditionals(
-        self, tree: ast.AST, file_path: str, lines: list[str]
-    ) -> list[CodeIssue]:
+    def _detect_complex_conditionals(self, tree: ast.AST, file_path: str, lines: list[str]) -> list[CodeIssue]:
         """Detect complex conditional statements"""
         issues = []
 
@@ -338,9 +302,7 @@ class CodeQualityImprovementService:
                         smell_type=CodeSmell.COMPLEX_CONDITIONAL,
                         severity=DebtPriority.MEDIUM,
                         description=f"Complex conditional with complexity score {complexity} (max recommended: {self.analysis_rules['max_complexity']})",
-                        code_snippet="\n".join(
-                            lines[node.lineno - 1 : node.lineno + 3]
-                        ),
+                        code_snippet="\n".join(lines[node.lineno - 1 : node.lineno + 3]),
                         estimated_effort="refactor",
                         automated_fix_available=True,
                         impact_score=min(1.0, complexity / 20),
@@ -362,15 +324,11 @@ class CodeQualityImprovementService:
         if node.orelse:
             for child in node.orelse:
                 if isinstance(child, ast.If):
-                    complexity += self._calculate_conditional_complexity(
-                        child, depth + 1
-                    )
+                    complexity += self._calculate_conditional_complexity(child, depth + 1)
 
         return complexity
 
-    def _detect_duplicate_code(
-        self, content: str, file_path: str, lines: list[str]
-    ) -> list[CodeIssue]:
+    def _detect_duplicate_code(self, content: str, file_path: str, lines: list[str]) -> list[CodeIssue]:
         """Detect duplicate code blocks"""
         issues = []
 
@@ -524,13 +482,9 @@ class CodeQualityImprovementService:
         """Generate comprehensive refactoring plan"""
         plan = {
             "total_issues": len(self.code_issues),
-            "automated_fixes": len(
-                [i for i in self.code_issues.values() if i.automated_fix_available]
-            ),
+            "automated_fixes": len([i for i in self.code_issues.values() if i.automated_fix_available]),
             "refactoring_tasks": len(self.refactoring_tasks),
-            "estimated_effort_days": sum(
-                t.estimated_effort_days for t in self.refactoring_tasks.values()
-            ),
+            "estimated_effort_days": sum(t.estimated_effort_days for t in self.refactoring_tasks.values()),
             "tasks_by_priority": {},
             "tasks_by_type": {},
         }
@@ -538,9 +492,7 @@ class CodeQualityImprovementService:
         # Group tasks by priority and type
         for task in self.refactoring_tasks.values():
             priority = task.priority.value
-            plan["tasks_by_priority"][priority] = (
-                plan["tasks_by_priority"].get(priority, 0) + 1
-            )
+            plan["tasks_by_priority"][priority] = plan["tasks_by_priority"].get(priority, 0) + 1
 
             # Determine task type from title
             if "duplicate" in task.title.lower():
@@ -554,31 +506,23 @@ class CodeQualityImprovementService:
             else:
                 task_type = "general_refactor"
 
-            plan["tasks_by_type"][task_type] = (
-                plan["tasks_by_type"].get(task_type, 0) + 1
-            )
+            plan["tasks_by_type"][task_type] = plan["tasks_by_type"].get(task_type, 0) + 1
 
         return plan
 
     def get_quality_dashboard(self) -> dict[str, Any]:
         """Get code quality dashboard"""
         total_issues = len(self.code_issues)
-        resolved_issues = len(
-            [i for i in self.code_issues.values() if self._is_issue_resolved(i)]
-        )
+        resolved_issues = len([i for i in self.code_issues.values() if self._is_issue_resolved(i)])
 
         return {
             "total_issues": total_issues,
             "resolved_issues": resolved_issues,
-            "resolution_rate": (
-                resolved_issues / total_issues if total_issues > 0 else 0
-            ),
+            "resolution_rate": (resolved_issues / total_issues if total_issues > 0 else 0),
             "refactoring_tasks": len(self.refactoring_tasks),
             "issues_by_severity": self._get_issues_by_severity(),
             "issues_by_type": self._get_issues_by_type(),
-            "estimated_debt_hours": sum(
-                i.impact_score * 8 for i in self.code_issues.values()
-            ),  # Rough estimate
+            "estimated_debt_hours": sum(i.impact_score * 8 for i in self.code_issues.values()),  # Rough estimate
         }
 
     def _get_issues_by_severity(self) -> dict[str, int]:

@@ -1,8 +1,8 @@
 // components/ui/StatusIndicator.tsx
-import React from 'react';
+import React from "react";
 
 interface StatusIndicatorProps {
-  status: 'online' | 'offline' | 'warning' | 'error';
+  status: "online" | "offline" | "warning" | "error";
   label: string;
   className?: string;
 }
@@ -10,15 +10,20 @@ interface StatusIndicatorProps {
 const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   status,
   label,
-  className = ""
+  className = "",
 }) => {
   const getStatusColor = () => {
     switch (status) {
-      case 'online': return '#10b981';
-      case 'offline': return '#6b7280';
-      case 'warning': return '#f59e0b';
-      case 'error': return '#ef4444';
-      default: return '#6b7280';
+      case "online":
+        return "#10b981";
+      case "offline":
+        return "#6b7280";
+      case "warning":
+        return "#f59e0b";
+      case "error":
+        return "#ef4444";
+      default:
+        return "#6b7280";
     }
   };
 

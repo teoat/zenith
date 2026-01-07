@@ -74,8 +74,7 @@ All errors follow this format:
             },
             {
                 "name": "Case Management",
-                "description": "Investigation case management. "
-                "Create, update, assign, and close fraud investigation cases.",
+                "description": "Investigation case management. " "Create, update, assign, and close fraud investigation cases.",
             },
             {
                 "name": "Evidence",
@@ -84,13 +83,11 @@ All errors follow this format:
             },
             {
                 "name": "Network Analysis",
-                "description": "Entity and relationship network analysis. "
-                "Graph-based fraud detection and pattern recognition.",
+                "description": "Entity and relationship network analysis. " "Graph-based fraud detection and pattern recognition.",
             },
             {
                 "name": "Analytics",
-                "description": "Analytics and reporting endpoints. "
-                "Statistics, metrics, and custom report generation.",
+                "description": "Analytics and reporting endpoints. " "Statistics, metrics, and custom report generation.",
             },
             {
                 "name": "Admin",
@@ -100,8 +97,7 @@ All errors follow this format:
             },
             {
                 "name": "Health",
-                "description": "System health and monitoring. "
-                "Health checks, metrics, and system status.",
+                "description": "System health and monitoring. " "Health checks, metrics, and system status.",
             },
         ],
     )

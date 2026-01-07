@@ -1,5 +1,5 @@
 [tool.black]
-line-length = 88
+line-length = 140
 target-version = ['py312']
 include = '\.pyi?$'
 extend-exclude = '''
@@ -20,6 +20,23 @@ extend-exclude = '''
   | venv
 )/
 '''
+
+[tool.ruff]
+line-length = 300
+target-version = "py312"
+select = ["E", "F"]
+ignore = ["E501"]  # Ignore line length for optimization
+per-file-ignores = {}
+line-ending = "auto"
+fix = true
+exclude = [
+  ".git",
+  ".venv",
+  "node_modules",
+  "build",
+  "dist",
+  "__pycache__",
+]
 
 [tool.isort]
 profile = "black"

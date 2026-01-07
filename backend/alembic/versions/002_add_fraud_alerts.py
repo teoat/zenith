@@ -64,27 +64,13 @@ def upgrade() -> None:
     op.create_index("ix_fraud_alerts_resolved_at", "fraud_alerts", ["resolved_at"])
 
     # Create composite indexes
-    op.create_index(
-        "idx_fraud_alert_case_severity", "fraud_alerts", ["case_id", "severity"]
-    )
-    op.create_index(
-        "idx_fraud_alert_case_created", "fraud_alerts", ["case_id", "created_at"]
-    )
-    op.create_index(
-        "idx_fraud_alert_severity_status", "fraud_alerts", ["severity", "status"]
-    )
-    op.create_index(
-        "idx_fraud_alert_risk_created", "fraud_alerts", ["risk_score", "created_at"]
-    )
-    op.create_index(
-        "idx_fraud_alert_rule_created", "fraud_alerts", ["rule_name", "created_at"]
-    )
-    op.create_index(
-        "idx_fraud_alert_assigned_status", "fraud_alerts", ["assigned_to", "status"]
-    )
-    op.create_index(
-        "idx_fraud_alert_confidence_risk", "fraud_alerts", ["confidence", "risk_score"]
-    )
+    op.create_index("idx_fraud_alert_case_severity", "fraud_alerts", ["case_id", "severity"])
+    op.create_index("idx_fraud_alert_case_created", "fraud_alerts", ["case_id", "created_at"])
+    op.create_index("idx_fraud_alert_severity_status", "fraud_alerts", ["severity", "status"])
+    op.create_index("idx_fraud_alert_risk_created", "fraud_alerts", ["risk_score", "created_at"])
+    op.create_index("idx_fraud_alert_rule_created", "fraud_alerts", ["rule_name", "created_at"])
+    op.create_index("idx_fraud_alert_assigned_status", "fraud_alerts", ["assigned_to", "status"])
+    op.create_index("idx_fraud_alert_confidence_risk", "fraud_alerts", ["confidence", "risk_score"])
 
 
 def downgrade() -> None:

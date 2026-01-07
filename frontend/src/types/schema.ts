@@ -1,10 +1,20 @@
-export type CaseStatus = 'OPEN' | 'IN_PROGRESS' | 'INVESTIGATING' | 'ADJUDICATION' | 'CLOSED' | 'ARCHIVED';
-export type CasePriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-export type CaseType = 'FRAUD' | 'AML' | 'COMPLIANCE' | 'OTHER';
-export type TransactionType = 'DEBIT' | 'CREDIT';
-export type AlertSeverity = 'LOW' | 'MEDIUM' | 'HIGH';
-export type AlertStatus = 'NEW' | 'INVESTIGATING' | 'CONFIRMED_FRAUD' | 'FALSE_POSITIVE';
-export type UserRole = 'ANALYST' | 'SENIOR_INVESTIGATOR' | 'ADMIN' | 'MANAGER';
+export type CaseStatus =
+  | "OPEN"
+  | "IN_PROGRESS"
+  | "INVESTIGATING"
+  | "ADJUDICATION"
+  | "CLOSED"
+  | "ARCHIVED";
+export type CasePriority = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type CaseType = "FRAUD" | "AML" | "COMPLIANCE" | "OTHER";
+export type TransactionType = "DEBIT" | "CREDIT";
+export type AlertSeverity = "LOW" | "MEDIUM" | "HIGH";
+export type AlertStatus =
+  | "NEW"
+  | "INVESTIGATING"
+  | "CONFIRMED_FRAUD"
+  | "FALSE_POSITIVE";
+export type UserRole = "ANALYST" | "SENIOR_INVESTIGATOR" | "ADMIN" | "MANAGER";
 
 export interface Case {
   id: string;
@@ -18,7 +28,7 @@ export interface Case {
   tags: string[];
   description?: string;
   selectedPlugins?: string[]; // New: List of selected plugin IDs
-  reconciliationType?: 'project-based' | 'general'; // New: Type of reconciliation
+  reconciliationType?: "project-based" | "general"; // New: Type of reconciliation
   type?: CaseType;
 }
 
@@ -46,7 +56,7 @@ export interface Evidence {
   uploadedAt: string; // ISO Date String
   hash: string;
   isAdmissible: boolean;
-  status?: 'pending' | 'processed' | 'analyzed'; // Added for UI state
+  status?: "pending" | "processed" | "analyzed"; // Added for UI state
   riskScore?: number; // Added for UI display
 }
 

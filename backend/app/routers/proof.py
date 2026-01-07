@@ -348,9 +348,7 @@ def detect_shell_networks(
 
         # Build graph and detect shell networks
         relationship_graph.build_graph_from_transactions(txn_dicts)
-        shell_networks = relationship_graph.detect_shell_networks(
-            min_community_size=min_community_size, max_density=max_density
-        )
+        shell_networks = relationship_graph.detect_shell_networks(min_community_size=min_community_size, max_density=max_density)
 
         return {
             "success": True,
@@ -505,9 +503,7 @@ def get_proof_summary(case_id: str, db: Session = Depends(get_db)):
                 "audit_chain": audit_summary,
                 "shell_networks": shell_summary,
                 "overall_confidence": round(overall_confidence, 2),
-                "court_readiness": (
-                    "high" if overall_confidence >= 0.7 else "medium" if overall_confidence >= 0.4 else "low"
-                ),
+                "court_readiness": ("high" if overall_confidence >= 0.7 else "medium" if overall_confidence >= 0.4 else "low"),
             },
         }
 

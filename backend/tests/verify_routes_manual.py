@@ -2,7 +2,9 @@ import os
 import sys
 from unittest.mock import MagicMock
 
+from core.database import get_db
 from fastapi.testclient import TestClient
+from main import app
 
 # Add backend directory AND project root to sys.path
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,10 +27,6 @@ sys.modules["pandas"] = (
 # But my test case calls GET /items, which uses SQL not pandas.
 # Only /upload-and-reconcile uses pandas.
 # So mocking pandas is safe for GET /items check.
-
-
-from core.database import get_db
-from main import app
 
 
 # Mock DB Session
@@ -57,11 +55,7 @@ def test_routes():
         if response.status_code == 200:
             print(
                 "Response:",
-                (
-                    response.json()[:1]
-                    if isinstance(response.json(), list)
-                    else response.json()
-                ),
+                (response.json()[:1] if isinstance(response.json(), list) else response.json()),
             )
             print("✅ PASS")
         else:
@@ -78,11 +72,7 @@ def test_routes():
         if response.status_code == 200:
             print(
                 "Response:",
-                (
-                    response.json()[:1]
-                    if isinstance(response.json(), list)
-                    else response.json()
-                ),
+                (response.json()[:1] if isinstance(response.json(), list) else response.json()),
             )
             print("✅ PASS")
         else:

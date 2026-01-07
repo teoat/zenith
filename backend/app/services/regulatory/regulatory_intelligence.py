@@ -273,11 +273,7 @@ class RegulatoryIntelligenceHub:
                     rule_id="not_found",
                     is_compliant=False,
                     risk_score=1.0,
-                    violations=[
-                        {
-                            "message": f"No framework found for {jurisdiction} {regulation_type}"
-                        }
-                    ],
+                    violations=[{"message": f"No framework found for {jurisdiction} {regulation_type}"}],
                     recommendations=["Contact compliance team for framework setup"],
                     checked_at=datetime.now(),
                 )
@@ -299,9 +295,7 @@ class RegulatoryIntelligenceHub:
                     recommendations.extend(rule_result.get("recommendations", []))
                     risk_score += rule_result.get("risk_score", 0.1)
 
-            compliance_percentage = (
-                (compliant_rules / total_rules) * 100 if total_rules > 0 else 0
-            )
+            compliance_percentage = (compliant_rules / total_rules) * 100 if total_rules > 0 else 0
 
             return ComplianceCheck(
                 id=f"check_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
@@ -316,11 +310,7 @@ class RegulatoryIntelligenceHub:
                 ai_insights={
                     "compliance_percentage": compliance_percentage,
                     "high_risk_areas": self._identify_high_risk_areas(violations),
-                    "critical_rules": [
-                        rule.get("id")
-                        for rule in applicable_framework.requirements
-                        if rule.get("priority") == "critical"
-                    ],
+                    "critical_rules": [rule.get("id") for rule in applicable_framework.requirements if rule.get("priority") == "critical"],
                 },
             )
 
@@ -338,9 +328,7 @@ class RegulatoryIntelligenceHub:
                 checked_at=datetime.now(),
             )
 
-    async def _check_rule_compliance(
-        self, rule: dict[str, Any], case_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _check_rule_compliance(self, rule: dict[str, Any], case_data: dict[str, Any]) -> dict[str, Any]:
         """Check compliance against individual rule"""
         rule_id = rule.get("id", "unknown")
         threshold = rule.get("threshold", 0)
@@ -370,9 +358,7 @@ class RegulatoryIntelligenceHub:
                 "risk_score": 0.0,
             }
 
-    def _check_sar_compliance(
-        self, case_data: dict[str, Any], threshold: float
-    ) -> dict[str, Any]:
+    def _check_sar_compliance(self, case_data: dict[str, Any], threshold: float) -> dict[str, Any]:
         """Check SAR filing compliance"""
         case_data.get("transactions", [])
         alert_date = case_data.get("alert_date", datetime.now())
@@ -425,9 +411,7 @@ class RegulatoryIntelligenceHub:
             risk_score += 0.2
 
         if not customer.get("identification_number"):
-            violations.append(
-                {"rule": "ID number", "description": "Government-issued ID required"}
-            )
+            violations.append({"rule": "ID number", "description": "Government-issued ID required"})
             risk_score += 0.3
 
         return {
@@ -440,9 +424,7 @@ class RegulatoryIntelligenceHub:
             "risk_score": risk_score,
         }
 
-    def _check_transaction_monitoring(
-        self, case_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _check_transaction_monitoring(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """Check transaction monitoring compliance"""
         monitoring_active = case_data.get("monitoring_active", False)
 
@@ -469,9 +451,7 @@ class RegulatoryIntelligenceHub:
             "risk_score": 0.0,
         }
 
-    def _check_risk_assessment(
-        self, case_data: dict[str, Any], threshold: float
-    ) -> dict[str, Any]:
+    def _check_risk_assessment(self, case_data: dict[str, Any], threshold: float) -> dict[str, Any]:
         """Check risk assessment compliance"""
         risk_score = case_data.get("risk_score", 0)
 
@@ -675,16 +655,10 @@ class RegulatoryIntelligenceHub:
             # Calculate compliance metrics
             total_checks = len(checks)
             compliant_checks = sum(1 for check in checks if check.is_compliant)
-            compliance_rate = (
-                (compliant_checks / total_checks) * 100 if total_checks > 0 else 0
-            )
+            compliance_rate = (compliant_checks / total_checks) * 100 if total_checks > 0 else 0
 
             # Risk analysis
-            average_risk_score = (
-                sum(check.risk_score for check in checks) / total_checks
-                if total_checks > 0
-                else 0
-            )
+            average_risk_score = sum(check.risk_score for check in checks) / total_checks if total_checks > 0 else 0
 
             # Violation analysis
             all_violations = []
@@ -694,13 +668,9 @@ class RegulatoryIntelligenceHub:
                 all_violations.extend(check.violations)
                 for violation in check.violations:
                     violation_type = violation.get("rule", "other")
-                    violation_types[violation_type] = (
-                        violation_types.get(violation_type, 0) + 1
-                    )
+                    violation_types[violation_type] = violation_types.get(violation_type, 0) + 1
 
-            top_violations = sorted(
-                violation_types.items(), key=lambda x: x[1], reverse=True
-            )[:5]
+            top_violations = sorted(violation_types.items(), key=lambda x: x[1], reverse=True)[:5]
 
             # Recommendations
             recommendations = [
@@ -743,9 +713,7 @@ class RegulatoryIntelligenceHub:
         try:
             # In production, this would update from regulatory APIs
             # For now, log the update and simulate success
-            logger.info(
-                f"Framework {framework_id} for {jurisdiction} updated: {update_data}"
-            )
+            logger.info(f"Framework {framework_id} for {jurisdiction} updated: {update_data}")
 
             # Update local cache with new requirements
             frameworks = self.frameworks.get(jurisdiction, [])

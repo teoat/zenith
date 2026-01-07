@@ -51,9 +51,7 @@ async def triangulate_redaction(
 ):
     """Unmask redacted transaction names using probabilistic triangulation."""
     intel = get_forensic_intelligence(db)
-    return await intel["triangulation"].unmask_redaction(
-        request.transaction_id, request.masked_name
-    )
+    return await intel["triangulation"].unmask_redaction(request.transaction_id, request.masked_name)
 
 
 @router.post("/libr-analysis")
@@ -64,9 +62,7 @@ async def run_libr_analysis(
 ):
     """Analyze mixed funds (personal/business) using the Lowest Intermediate Balance Rule."""
     intel = get_forensic_intelligence(db)
-    return intel["libr"].analyze_mixed_funds(
-        request.account_id, request.start_date, request.end_date
-    )
+    return intel["libr"].analyze_mixed_funds(request.account_id, request.start_date, request.end_date)
 
 
 @router.post("/attribute-intent")
@@ -77,9 +73,7 @@ async def attribute_intent(
 ):
     """Determine Mens Rea (Theory of Intent) from forensic evidence."""
     intel = get_forensic_intelligence(db)
-    return await intel["mens_rea"].attribute_intent(
-        request.evidence_id, request.content
-    )
+    return await intel["mens_rea"].attribute_intent(request.evidence_id, request.content)
 
 
 @router.get("/mirror-detection/{account_id}")
@@ -160,9 +154,7 @@ async def zenith_federated_sync(
 
 
 @router.get("/zenith/shield-verify/{artifact_id}")
-async def zenith_shield_verify(
-    artifact_id: str, current_user: Any = Depends(auth_service.get_current_user)
-):
+async def zenith_shield_verify(artifact_id: str, current_user: Any = Depends(auth_service.get_current_user)):
     """Verify artifact integrity using Adversarial Forensic Shield."""
     horizon = get_zenith_horizon()
     return await horizon["adversarial"].verify_artifact(artifact_id)

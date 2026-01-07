@@ -20,6 +20,7 @@ from core.logging import logger
 # Global background tasks reference to prevent GC
 _background_tasks = []
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan - startup and shutdown events with 99.99% uptime procedures"""
@@ -69,32 +70,22 @@ async def lifespan(app: FastAPI):
                     )
                     break
                 else:
-                    logger.warning(
-                        f"Database health check failed on attempt {attempt + 1}: {db_health}"
-                    )
+                    logger.warning(f"Database health check failed on attempt {attempt + 1}: {db_health}")
                     if attempt < max_db_retries - 1:
                         await asyncio.sleep(db_retry_delay)
                         continue
                     else:
-                        raise RuntimeError(
-                            f"Database health check failed after {max_db_retries} attempts"
-                        )
+                        raise RuntimeError(f"Database health check failed after {max_db_retries} attempts")
             except Exception as e:
-                logger.error(
-                    f"Database health check error on attempt {attempt + 1}: {e}"
-                )
+                logger.error(f"Database health check error on attempt {attempt + 1}: {e}")
                 if attempt < max_db_retries - 1:
                     await asyncio.sleep(db_retry_delay)
                     continue
                 else:
-                    raise RuntimeError(
-                        f"Database initialization failed after {max_db_retries} attempts: {e}"
-                    )
+                    raise RuntimeError(f"Database initialization failed after {max_db_retries} attempts: {e}")
 
         # Phase 21: Boot Integrity Check
-        immutable_audit.add_entry(
-            {"event": "system_boot", "status": "initiated", "version": VERSION}
-        )
+        immutable_audit.add_entry({"event": "system_boot", "status": "initiated", "version": VERSION})
 
         # Integrity Checker
         if not integrity_checker.check_integrity():
@@ -123,9 +114,7 @@ async def lifespan(app: FastAPI):
 
             monitoring_service.start_monitoring()
             performance_monitor.start_monitoring()
-            logger.info(
-                "ℹ️ APM monitoring skipped (optional service)", extra={"service": "apm"}
-            )
+            logger.info("ℹ️ APM monitoring skipped (optional service)", extra={"service": "apm"})
         except Exception as e:
             logger.info(
                 f"APM service not available: {e}",
@@ -190,9 +179,7 @@ async def lifespan(app: FastAPI):
         # Start collaboration WebSocket server if enabled
         print("DEBUG: About to check WebSocket startup")
         ws_enabled = os.getenv("ENABLE_COLLABORATION_WS", "false").lower() == "true"
-        print(
-            f"DEBUG: ENABLE_COLLABORATION_WS={os.getenv('ENABLE_COLLABORATION_WS')}, ws_enabled={ws_enabled}"
-        )
+        print(f"DEBUG: ENABLE_COLLABORATION_WS={os.getenv('ENABLE_COLLABORATION_WS')}, ws_enabled={ws_enabled}")
         if ws_enabled:
             print("DEBUG: Starting WebSocket server...")
             try:
@@ -235,28 +222,20 @@ async def lifespan(app: FastAPI):
 
     try:
         # Phase 1: Stop accepting new requests
-        logger.info(
-            "Phase 1: Stopping new request acceptance", extra={"shutdown_phase": 1}
-        )
+        logger.info("Phase 1: Stopping new request acceptance", extra={"shutdown_phase": 1})
 
         # Phase 2: Drain existing connections gracefully
-        logger.info(
-            "Phase 2: Draining existing connections", extra={"shutdown_phase": 2}
-        )
+        logger.info("Phase 2: Draining existing connections", extra={"shutdown_phase": 2})
         # Give active requests time to complete (configurable grace period)
         grace_period = int(os.getenv("SHUTDOWN_GRACE_PERIOD", "30"))
         logger.info(
             f"Waiting {grace_period}s for active requests to complete",
             extra={"grace_period": grace_period},
         )
-        await asyncio.sleep(
-            min(grace_period, 10)
-        )  # Don't wait more than 10s in testing
+        await asyncio.sleep(min(grace_period, 10))  # Don't wait more than 10s in testing
 
         # Phase 3: Stop monitoring services
-        logger.info(
-            "Phase 3: Stopping monitoring services", extra={"shutdown_phase": 3}
-        )
+        logger.info("Phase 3: Stopping monitoring services", extra={"shutdown_phase": 3})
 
         # Stop proactive monitoring first
         try:
@@ -273,9 +252,7 @@ async def lifespan(app: FastAPI):
 
         try:
             monitoring_service.stop_monitoring()
-            logger.info(
-                "✅ Monitoring service stopped", extra={"service": "monitoring"}
-            )
+            logger.info("✅ Monitoring service stopped", extra={"service": "monitoring"})
         except Exception as e:
             logger.warning(
                 f"Error stopping monitoring service: {e}",
@@ -295,9 +272,7 @@ async def lifespan(app: FastAPI):
             )
 
         # Phase 4: Close database connections gracefully
-        logger.info(
-            "Phase 4: Closing database connections", extra={"shutdown_phase": 4}
-        )
+        logger.info("Phase 4: Closing database connections", extra={"shutdown_phase": 4})
         try:
             # The database service uses SQLAlchemy connection pooling which handles cleanup automatically
             logger.info(
@@ -328,14 +303,13 @@ async def lifespan(app: FastAPI):
             )
 
         # Phase 6: Final cleanup and verification
-        logger.info(
-            "Phase 6: Final cleanup and verification", extra={"shutdown_phase": 6}
-        )
+        logger.info("Phase 6: Final cleanup and verification", extra={"shutdown_phase": 6})
 
         # Save any pending monitoring data
         try:
             # Force flush any pending metrics or logs
             import logging
+
             logging.shutdown()
             # logger.info("✅ Logging system flushed", extra={"service": "logging"})
         except Exception as e:
@@ -344,9 +318,7 @@ async def lifespan(app: FastAPI):
 
         # Calculate shutdown duration
         shutdown_duration = asyncio.get_event_loop().time() - shutdown_start
-        print(
-            f"🎉 Graceful shutdown completed in {shutdown_duration:.2f}s"
-        )
+        print(f"🎉 Graceful shutdown completed in {shutdown_duration:.2f}s")
 
     except Exception as e:
         shutdown_duration = asyncio.get_event_loop().time() - shutdown_start

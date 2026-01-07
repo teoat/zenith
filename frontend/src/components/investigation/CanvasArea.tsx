@@ -1,11 +1,14 @@
-import React from 'react';
+import React from "react";
 
 interface CanvasAreaProps {
   children: React.ReactNode;
   setNodeRef: (node: HTMLElement | null) => void;
 }
 
-export const CanvasArea: React.FC<CanvasAreaProps> = ({ children, setNodeRef }) => {
+export const CanvasArea: React.FC<CanvasAreaProps> = ({
+  children,
+  setNodeRef,
+}) => {
   return (
     <div
       ref={setNodeRef}

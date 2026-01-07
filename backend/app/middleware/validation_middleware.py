@@ -79,14 +79,10 @@ class RequestValidationMiddleware(BaseHTTPMiddleware):
             ]
 
             # Check if it's one of the allowed types or starts with allowed prefix
-            is_allowed = any(
-                content_type.startswith(allowed) for allowed in allowed_types
-            )
+            is_allowed = any(content_type.startswith(allowed) for allowed in allowed_types)
 
             if not is_allowed:
-                raise HTTPException(
-                    status_code=415, detail=f"Unsupported content type: {content_type}"
-                )
+                raise HTTPException(status_code=415, detail=f"Unsupported content type: {content_type}")
 
     async def _log_suspicious_requests(self, request: Request) -> None:
         """Log potentially suspicious requests for security monitoring"""
@@ -174,9 +170,7 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
             # More thorough check for path traversal
             normalized_path = path.replace("\\", "/")
             if "../" in normalized_path or "..\\" in normalized_path:
-                raise HTTPException(
-                    status_code=400, detail="Invalid path: path traversal detected"
-                )
+                raise HTTPException(status_code=400, detail="Invalid path: path traversal detected")
 
         # Validate query parameter names (no special characters that could cause issues)
         for param_name in request.query_params:

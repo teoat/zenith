@@ -55,10 +55,10 @@ export interface MetricsData {
 }
 
 export interface PredictiveStats {
-    riskTrend: { date: string; value: number }[];
-    predictedFraud: number;
-    accuracy: number;
-    activeAlerts: number;
+  riskTrend: { date: string; value: number }[];
+  predictedFraud: number;
+  accuracy: number;
+  activeAlerts: number;
 }
 
 export interface LocationData {
@@ -133,7 +133,7 @@ export interface EvidenceItem {
 }
 
 export interface ReportGenerateRequest {
-  format?: 'pdf' | 'docx' | 'html';
+  format?: "pdf" | "docx" | "html";
   sections?: string[];
   includeEvidence?: boolean;
 }
@@ -264,8 +264,8 @@ export interface ReportTemplateInfo {
 export interface ScheduledReport {
   id: string;
   name: string;
-  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
-  template: 'executive' | 'standard' | 'detailed' | 'compliance';
+  frequency: "daily" | "weekly" | "monthly" | "quarterly";
+  template: "executive" | "standard" | "detailed" | "compliance";
   recipients: string[];
   nextRunAt: string;
   lastRunAt: string | null;
@@ -274,8 +274,8 @@ export interface ScheduledReport {
 
 export interface ScheduledReportRequest {
   name: string;
-  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
-  template: 'executive' | 'standard' | 'detailed' | 'compliance';
+  frequency: "daily" | "weekly" | "monthly" | "quarterly";
+  template: "executive" | "standard" | "detailed" | "compliance";
   recipients: string[];
   caseIds?: string[];
   enabled?: boolean;
@@ -284,7 +284,7 @@ export interface ScheduledReportRequest {
 export interface WaterfallItem {
   name: string;
   amount: number;
-  type: 'positive' | 'negative' | 'suspicious' | 'balance';
+  type: "positive" | "negative" | "suspicious" | "balance";
 }
 
 export interface CashflowCategory {
@@ -310,7 +310,7 @@ export interface FinancialHealthData {
 export interface Milestone {
   id: string;
   name: string;
-  status: 'complete' | 'delayed' | 'pending';
+  status: "complete" | "delayed" | "pending";
   amount: number;
   completedAt?: string;
   dueDate?: string;
@@ -331,7 +331,7 @@ export interface ProjectTrackerData {
 
 // ============ MONITORING TYPES ============
 export interface SystemMetrics {
-  status: 'healthy' | 'warning' | 'critical';
+  status: "healthy" | "warning" | "critical";
   health_score: number;
   timestamp: string;
   metrics: {
@@ -371,82 +371,82 @@ export interface ErrorSummary {
 
 // Additional Interfaces I might have missed (Placeholder for future expansion)
 export interface ReconciliationItem {
-    id: string;
-    transactionId: string;
-    source: string;
-    amount: number;
-    currency: string;
-    date: string;
-    status: string;
-    discrepancyAmount?: number;
-    notes?: string;
-    evidenceId?: string;
-    evidenceRegionId?: string;
+  id: string;
+  transactionId: string;
+  source: string;
+  amount: number;
+  currency: string;
+  date: string;
+  status: string;
+  discrepancyAmount?: number;
+  notes?: string;
+  evidenceId?: string;
+  evidenceRegionId?: string;
 }
 
 export interface CashFloatAnalysisResult {
-    entity: string;
-    period_start: string;
-    period_end: string;
-    opening_balance: number;
-    closing_balance: number;
-    calculated_balance: number;
-    discrepancy: number;
-    transactions_count: number;
+  entity: string;
+  period_start: string;
+  period_end: string;
+  opening_balance: number;
+  closing_balance: number;
+  calculated_balance: number;
+  discrepancy: number;
+  transactions_count: number;
 }
 
 export interface BatchMatchResult {
-    withdrawal_id: string;
-    matches: {
-        expense_id: string;
-        amount: number;
-        date: string;
-    }[];
-    total_matched: number;
-    remaining_difference: number;
+  withdrawal_id: string;
+  matches: {
+    expense_id: string;
+    amount: number;
+    date: string;
+  }[];
+  total_matched: number;
+  remaining_difference: number;
 }
 
 export interface TemporalAnalysisResult {
-    analyzed_count: number;
-    anomalies_found: number;
-    anomalies: {
-        transaction_id: string;
-        timestamp: string;
-        type: string;
-        confidence: number;
-    }[];
+  analyzed_count: number;
+  anomalies_found: number;
+  anomalies: {
+    transaction_id: string;
+    timestamp: string;
+    type: string;
+    confidence: number;
+  }[];
 }
 
 export interface AlertItem {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  severity: string;
+  priority: string;
+  status: string;
+  timestamp: string;
+  createdAt: string;
+  riskScore: number;
+  caseId: string;
+  // Adjudication specific fields
+  ai_reasoning?: {
+    summary: string;
+    confidence: number;
+    indicators: { type: string; score: number; desc?: string }[];
+  };
+  amount?: number;
+  currency?: string;
+  subject?: {
     id: string;
-    title: string;
-    description: string;
-    type: string;
-    severity: string;
-    priority: string;
-    status: string;
-    timestamp: string;
-    createdAt: string;
-    riskScore: number;
-    caseId: string;
-    // Adjudication specific fields
-    ai_reasoning?: {
-        summary: string;
-        confidence: number;
-        indicators: { type: string; score: number; desc?: string }[];
-    };
-    amount?: number;
-    currency?: string;
-    subject?: {
-        id: string;
-        name: string;
-        type?: string;
-    };
+    name: string;
+    type?: string;
+  };
 }
 
 export interface ReportResponse {
-    downloadUrl?: string; // or blob
-    success: boolean;
+  downloadUrl?: string; // or blob
+  success: boolean;
 }
 
 // Behavioral Analytics
@@ -470,7 +470,7 @@ export interface GeoData {
   lat: number;
   lng: number;
   value: number;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
 }
 export interface BehavioralAnalyticsResponse {
   timeData: TimeSeriesData[];
@@ -483,7 +483,7 @@ export interface TransactionFlow {
   target: string;
   amount: number;
   timestamp: string;
-  type: 'normal' | 'suspicious' | 'flagged';
+  type: "normal" | "suspicious" | "flagged";
   category: string;
   riskScore?: number;
 }
@@ -493,8 +493,8 @@ export interface TransactionFlow {
 export interface Integration {
   id: string;
   name: string;
-  type: 'webhook' | 'rest_api' | 'graphql' | 'database' | 'file_upload';
-  status: 'active' | 'inactive' | 'error' | 'maintenance';
+  type: "webhook" | "rest_api" | "graphql" | "database" | "file_upload";
+  status: "active" | "inactive" | "error" | "maintenance";
   endpoint?: string;
   lastUsed?: string;
   successRate: number;

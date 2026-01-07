@@ -13,6 +13,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
+import numpy as np
+
 from .ast_analyzer import ASTComplexityAnalyzer
 from .flow_analyzer import SecurityFlowAnalyzer
 
@@ -163,7 +165,7 @@ Format your response as JSON:
                             "model": "codellama",
                             "prompt": prompt,
                             "stream": False,
-                        }
+                        },
                     )
                     if response.status_code == 200:
                         result = response.json()
@@ -183,7 +185,7 @@ Format your response as JSON:
                                 "model": "gpt-4",
                                 "messages": [{"role": "user", "content": prompt}],
                             },
-                            headers={"Authorization": f"Bearer {api_key}"}
+                            headers={"Authorization": f"Bearer {api_key}"},
                         )
                         if response.status_code == 200:
                             result = response.json()
@@ -372,9 +374,7 @@ Format your response as JSON:
         start_time = datetime.now()
 
         # Discover files to analyze
-        files_to_analyze = await self._discover_files(
-            codebase_path, file_patterns, exclude_patterns
-        )
+        files_to_analyze = await self._discover_files(codebase_path, file_patterns, exclude_patterns)
 
         all_issues = []
         total_lines = 0
@@ -392,9 +392,7 @@ Format your response as JSON:
                 # Continue with other files
 
         # Calculate overall quality score
-        quality_score = self._calculate_quality_score(
-            all_issues, total_lines, files_analyzed
-        )
+        quality_score = self._calculate_quality_score(all_issues, total_lines, files_analyzed)
         quality_rating = self._determine_quality_rating(quality_score, len(all_issues))
 
         # Generate metrics
@@ -403,9 +401,7 @@ Format your response as JSON:
         analysis_time = (datetime.now() - start_time).total_seconds()
 
         return CodeReviewResult(
-            repository=(
-                codebase_path.split("/")[-1] if "/" in codebase_path else codebase_path
-            ),
+            repository=(codebase_path.split("/")[-1] if "/" in codebase_path else codebase_path),
             branch="main",  # Would detect actual branch in real implementation
             commit_hash=self._get_commit_hash(codebase_path),
             files_analyzed=files_analyzed,
@@ -475,9 +471,7 @@ Format your response as JSON:
 
         if language in self.analysis_rules:
             # Apply language-specific rules
-            language_issues = self._apply_language_rules(
-                content, lines, file_path, language
-            )
+            language_issues = self._apply_language_rules(content, lines, file_path, language)
             issues.extend(language_issues)
 
         # Apply security pattern analysis
@@ -485,9 +479,7 @@ Format your response as JSON:
         issues.extend(security_issues)
 
         # Apply complexity analysis
-        complexity_issues = self._analyze_complexity(
-            content, lines, file_path, language
-        )
+        complexity_issues = self._analyze_complexity(content, lines, file_path, language)
         issues.extend(complexity_issues)
 
         return issues, line_count
@@ -503,9 +495,7 @@ Format your response as JSON:
         }
         return extension_map.get(extension, "unknown")
 
-    def _apply_language_rules(
-        self, content: str, lines: list[str], file_path: str, language: str
-    ) -> list[CodeIssue]:
+    def _apply_language_rules(self, content: str, lines: list[str], file_path: str, language: str) -> list[CodeIssue]:
         """Apply language-specific analysis rules"""
         issues = []
         rules = self.analysis_rules.get(language, {})
@@ -523,10 +513,7 @@ Format your response as JSON:
                         start_line = max(1, line_num - 2)
                         end_line = min(len(lines), line_num + 2)
                         snippet_lines = lines[start_line - 1 : end_line]
-                        snippet = "\n".join(
-                            f"{i:4d}: {line}"
-                            for i, line in enumerate(snippet_lines, start_line)
-                        )
+                        snippet = "\n".join(f"{i:4d}: {line}" for i, line in enumerate(snippet_lines, start_line))
 
                         issue = CodeIssue(
                             file_path=file_path,
@@ -545,9 +532,7 @@ Format your response as JSON:
 
         return issues
 
-    def _apply_security_patterns(
-        self, content: str, lines: list[str], file_path: str
-    ) -> list[CodeIssue]:
+    def _apply_security_patterns(self, content: str, lines: list[str], file_path: str) -> list[CodeIssue]:
         """Apply security vulnerability pattern analysis"""
         issues = []
 
@@ -562,10 +547,7 @@ Format your response as JSON:
                         start_line = max(1, line_num - 2)
                         end_line = min(len(lines), line_num + 2)
                         snippet_lines = lines[start_line - 1 : end_line]
-                        snippet = "\n".join(
-                            f"{i:4d}: {line}"
-                            for i, line in enumerate(snippet_lines, start_line)
-                        )
+                        snippet = "\n".join(f"{i:4d}: {line}" for i, line in enumerate(snippet_lines, start_line))
 
                         issue = CodeIssue(
                             file_path=file_path,
@@ -606,9 +588,7 @@ Format your response as JSON:
 
         return issues
 
-    def _analyze_complexity(
-        self, content: str, lines: list[str], file_path: str, language: str
-    ) -> list[CodeIssue]:
+    def _analyze_complexity(self, content: str, lines: list[str], file_path: str, language: str) -> list[CodeIssue]:
         """Analyze code complexity and maintainability"""
         issues = []
 
@@ -638,9 +618,7 @@ Format your response as JSON:
 
         return issues
 
-    def _analyze_python_complexity(
-        self, content: str, lines: list[str], file_path: str
-    ) -> list[CodeIssue]:
+    def _analyze_python_complexity(self, content: str, lines: list[str], file_path: str) -> list[CodeIssue]:
         """Analyze Python code complexity"""
         issues = []
 
@@ -670,9 +648,7 @@ Format your response as JSON:
 
         return issues
 
-    def _analyze_js_ts_complexity(
-        self, content: str, lines: list[str], file_path: str
-    ) -> list[CodeIssue]:
+    def _analyze_js_ts_complexity(self, content: str, lines: list[str], file_path: str) -> list[CodeIssue]:
         """Analyze JavaScript/TypeScript code complexity"""
         issues = []
 
@@ -698,10 +674,7 @@ Format your response as JSON:
             if brace_count == 0 and function_start and current_function:
                 # End of function
                 function_length = line_num - function_start + 1
-                if (
-                    function_length
-                    > self.quality_metrics["thresholds"]["max_function_length"]
-                ):
+                if function_length > self.quality_metrics["thresholds"]["max_function_length"]:
                     issues.append(
                         CodeIssue(
                             file_path=file_path,
@@ -737,9 +710,7 @@ Format your response as JSON:
 
         return complexity
 
-    def _calculate_quality_score(
-        self, issues: list[CodeIssue], total_lines: int, files_analyzed: int
-    ) -> float:
+    def _calculate_quality_score(self, issues: list[CodeIssue], total_lines: int, files_analyzed: int) -> float:
         """Calculate overall code quality score"""
         if total_lines == 0:
             return 0.0
@@ -781,21 +752,15 @@ Format your response as JSON:
 
         return CodeQuality.CRITICAL
 
-    def _generate_metrics(
-        self, issues: list[CodeIssue], total_lines: int, files_analyzed: int
-    ) -> dict[str, Any]:
+    def _generate_metrics(self, issues: list[CodeIssue], total_lines: int, files_analyzed: int) -> dict[str, Any]:
         """Generate comprehensive code metrics"""
         # Count issues by category and severity
         category_counts = {}
         severity_counts = {}
 
         for issue in issues:
-            category_counts[issue.category.value] = (
-                category_counts.get(issue.category.value, 0) + 1
-            )
-            severity_counts[issue.severity.value] = (
-                severity_counts.get(issue.severity.value, 0) + 1
-            )
+            category_counts[issue.category.value] = category_counts.get(issue.category.value, 0) + 1
+            severity_counts[issue.severity.value] = severity_counts.get(issue.severity.value, 0) + 1
 
         # Calculate additional metrics
         avg_issues_per_file = len(issues) / max(files_analyzed, 1)
@@ -810,23 +775,17 @@ Format your response as JSON:
             "lines_of_code": total_lines,
             "files_analyzed": files_analyzed,
             "test_coverage_estimate": 80,  # Would be calculated from actual test data
-            "maintainability_index": self._calculate_maintainability_index(
-                issues, total_lines
-            ),
+            "maintainability_index": self._calculate_maintainability_index(issues, total_lines),
         }
 
-    def _calculate_maintainability_index(
-        self, issues: list[CodeIssue], total_lines: int
-    ) -> float:
+    def _calculate_maintainability_index(self, issues: list[CodeIssue], total_lines: int) -> float:
         """Calculate a simplified maintainability index"""
         if total_lines == 0:
             return 0.0
 
         # Count issues by severity for maintainability calculation
         halstead_volume = total_lines * 10  # Simplified estimation
-        cyclomatic_complexity = sum(
-            1 for issue in issues if "complexity" in issue.issue_type
-        )
+        cyclomatic_complexity = sum(1 for issue in issues if "complexity" in issue.issue_type)
 
         # Simplified maintainability index calculation
         mi = 171 - 5.2 * np.log(halstead_volume) - 0.23 * cyclomatic_complexity
@@ -838,9 +797,7 @@ Format your response as JSON:
         # In real implementation, would run git rev-parse HEAD
         return "abcd1234"  # Mock hash
 
-    async def generate_test_suggestions(
-        self, code_changes: list[dict[str, Any]]
-    ) -> list[TestSuggestion]:
+    async def generate_test_suggestions(self, code_changes: list[dict[str, Any]]) -> list[TestSuggestion]:
         """
         Generate AI-powered test case suggestions based on code changes
 
@@ -863,9 +820,7 @@ Format your response as JSON:
                     TestSuggestion(
                         test_type="unit_test",
                         description=f"Test new/modified function in {os.path.basename(file_path)}",
-                        code_example=self._generate_unit_test_example(
-                            file_path, code_diff
-                        ),
+                        code_example=self._generate_unit_test_example(file_path, code_diff),
                         coverage_areas=[
                             "function_logic",
                             "edge_cases",

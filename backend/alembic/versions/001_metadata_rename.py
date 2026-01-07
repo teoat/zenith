@@ -84,12 +84,8 @@ def upgrade() -> None:
         )
         op.create_index("ix_case_activities_case_id", "case_activities", ["case_id"])
         op.create_index("ix_case_activities_user_id", "case_activities", ["user_id"])
-        op.create_index(
-            "ix_case_activities_activity_type", "case_activities", ["activity_type"]
-        )
-        op.create_index(
-            "ix_case_activities_timestamp", "case_activities", ["timestamp"]
-        )
+        op.create_index("ix_case_activities_activity_type", "case_activities", ["activity_type"])
+        op.create_index("ix_case_activities_timestamp", "case_activities", ["timestamp"])
 
 
 def downgrade() -> None:
@@ -157,9 +153,5 @@ def downgrade() -> None:
         )
         op.create_index("ix_case_activities_case_id", "case_activities", ["case_id"])
         op.create_index("ix_case_activities_user_id", "case_activities", ["user_id"])
-        op.create_index(
-            "ix_case_activities_activity_type", "case_activities", ["activity_type"]
-        )
-        op.create_index(
-            "ix_case_activities_timestamp", "case_activities", ["timestamp"]
-        )
+        op.create_index("ix_case_activities_activity_type", "case_activities", ["activity_type"])
+        op.create_index("ix_case_activities_timestamp", "case_activities", ["timestamp"])

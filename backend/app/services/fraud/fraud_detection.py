@@ -35,9 +35,7 @@ def detect_burst(session, ip, window_minutes=60):
             window_delta = timedelta(minutes=window_minutes)
             window_start = now - window_delta
 
-            q_now = session.query(Tx).filter(
-                Tx.ip_address == ip, Tx.date >= window_start
-            )
+            q_now = session.query(Tx).filter(Tx.ip_address == ip, Tx.date >= window_start)
             count_now = q_now.count()
 
             # Build historical windows (previous 12 windows)
@@ -45,11 +43,7 @@ def detect_burst(session, ip, window_minutes=60):
             for i in range(1, 13):
                 start = window_start - i * window_delta
                 end = start + window_delta
-                c = (
-                    session.query(Tx)
-                    .filter(Tx.ip_address == ip, Tx.date >= start, Tx.date < end)
-                    .count()
-                )
+                c = session.query(Tx).filter(Tx.ip_address == ip, Tx.date >= start, Tx.date < end).count()
                 hist_counts.append(c)
 
             import statistics

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { secureLogger } from '@/utils/secureLogger';
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { secureLogger } from "@/utils/secureLogger";
 
 // Import the CollaborationClient from the backend service
 // Note: This would need to be compiled/bundled appropriately
@@ -73,51 +73,75 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
             ws.close();
             return;
           }
-          secureLogger.info('COLLABORATION', 'Connected to collaboration session', { sessionId });
+          secureLogger.info(
+            "COLLABORATION",
+            "Connected to collaboration session",
+            { sessionId },
+          );
           setIsConnected(true);
 
           // Join session with participant info
-          ws.send(JSON.stringify({
-            type: 'join_session',
-            name: `User_${Date.now()}`, // In real app, get from user context
-            role: 'investigator',
-            color: '#3b82f6'
-          }));
+          ws.send(
+            JSON.stringify({
+              type: "join_session",
+              name: `User_${Date.now()}`, // In real app, get from user context
+              role: "investigator",
+              color: "#3b82f6",
+            }),
+          );
         };
 
         ws.onmessage = (event) => {
           if (!isMounted.current) return;
           try {
             const data = JSON.parse(event.data);
-            secureLogger.debug('COLLABORATION', 'Collaboration message received', { type: data.type });
+            secureLogger.debug(
+              "COLLABORATION",
+              "Collaboration message received",
+              { type: data.type },
+            );
 
             // Handle built-in message types
             switch (data.type) {
-              case 'session_state':
+              case "session_state":
                 setParticipants(data.participants || []);
                 break;
-              case 'participant_joined':
-                setParticipants(prev => [...prev, data.participant]);
+              case "participant_joined":
+                setParticipants((prev) => [...prev, data.participant]);
                 break;
-              case 'participant_left':
-                setParticipants(prev => prev.filter(p => p.id !== data.participant_id));
+              case "participant_left":
+                setParticipants((prev) =>
+                  prev.filter((p) => p.id !== data.participant_id),
+                );
                 break;
-              case 'cursor_update':
-                setParticipants(prev => prev.map(p =>
-                  p.id === data.participant_id
-                    ? { ...p, cursor: data.cursor, last_activity: data.cursor.timestamp }
-                    : p
-                ));
+              case "cursor_update":
+                setParticipants((prev) =>
+                  prev.map((p) =>
+                    p.id === data.participant_id
+                      ? {
+                          ...p,
+                          cursor: data.cursor,
+                          last_activity: data.cursor.timestamp,
+                        }
+                      : p,
+                  ),
+                );
                 break;
-              case 'entity_selected':
-                setParticipants(prev => prev.map(p =>
-                  p.id === data.participant_id
-                    ? { ...p, selected_entity: data.entity_id, last_activity: new Date().toISOString() }
-                    : p
-                ));
+              case "entity_selected":
+                setParticipants((prev) =>
+                  prev.map((p) =>
+                    p.id === data.participant_id
+                      ? {
+                          ...p,
+                          selected_entity: data.entity_id,
+                          last_activity: new Date().toISOString(),
+                        }
+                      : p,
+                  ),
+                );
                 break;
-              case 'entity_updated':
-              case 'chat_message': {
+              case "entity_updated":
+              case "chat_message": {
                 // Pass to custom handlers
                 const handler = messageHandlersRef.current.get(data.type);
                 if (handler) {
@@ -134,15 +158,22 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
               }
             }
           } catch (error) {
-            secureLogger.error('COLLABORATION', 'Error parsing collaboration message', { 
-                error: error instanceof Error ? error.message : String(error) 
-            });
+            secureLogger.error(
+              "COLLABORATION",
+              "Error parsing collaboration message",
+              {
+                error: error instanceof Error ? error.message : String(error),
+              },
+            );
           }
         };
 
         ws.onclose = () => {
           if (!isMounted.current) return;
-          secureLogger.info('COLLABORATION', 'Disconnected from collaboration session');
+          secureLogger.info(
+            "COLLABORATION",
+            "Disconnected from collaboration session",
+          );
           setIsConnected(false);
           setParticipants([]);
           websocketRef.current = null;
@@ -159,16 +190,19 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
 
         ws.onerror = (error) => {
           if (!isMounted.current) return;
-          secureLogger.error('COLLABORATION', 'WebSocket error', { 
-              error: error instanceof Error ? error.message : String(error) 
+          secureLogger.error("COLLABORATION", "WebSocket error", {
+            error: error instanceof Error ? error.message : String(error),
           });
         };
-
       } catch (error) {
         if (!isMounted.current) return;
-        secureLogger.error('COLLABORATION', 'Failed to connect to collaboration server', { 
-            error: error instanceof Error ? error.message : String(error) 
-        });
+        secureLogger.error(
+          "COLLABORATION",
+          "Failed to connect to collaboration server",
+          {
+            error: error instanceof Error ? error.message : String(error),
+          },
+        );
       }
     };
 
@@ -187,44 +221,70 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
 
   // Send cursor update
   const sendCursorUpdate = useCallback((x: number, y: number) => {
-    if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
-      websocketRef.current.send(JSON.stringify({
-        type: 'cursor_update',
-        x,
-        y
-      }));
+    if (
+      websocketRef.current &&
+      websocketRef.current.readyState === WebSocket.OPEN
+    ) {
+      websocketRef.current.send(
+        JSON.stringify({
+          type: "cursor_update",
+          x,
+          y,
+        }),
+      );
     }
   }, []);
 
   // Select entity
-  const selectEntity = useCallback((entityId: string, entityName: string = '') => {
-    if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
-      websocketRef.current.send(JSON.stringify({
-        type: 'entity_select',
-        entity_id: entityId,
-        entity_name: entityName
-      }));
-    }
-  }, []);
+  const selectEntity = useCallback(
+    (entityId: string, entityName: string = "") => {
+      if (
+        websocketRef.current &&
+        websocketRef.current.readyState === WebSocket.OPEN
+      ) {
+        websocketRef.current.send(
+          JSON.stringify({
+            type: "entity_select",
+            entity_id: entityId,
+            entity_name: entityName,
+          }),
+        );
+      }
+    },
+    [],
+  );
 
   // Update entity
-  const updateEntity = useCallback((entityId: string, changes: EntityChanges) => {
-    if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
-      websocketRef.current.send(JSON.stringify({
-        type: 'entity_update',
-        entity_id: entityId,
-        changes
-      }));
-    }
-  }, []);
+  const updateEntity = useCallback(
+    (entityId: string, changes: EntityChanges) => {
+      if (
+        websocketRef.current &&
+        websocketRef.current.readyState === WebSocket.OPEN
+      ) {
+        websocketRef.current.send(
+          JSON.stringify({
+            type: "entity_update",
+            entity_id: entityId,
+            changes,
+          }),
+        );
+      }
+    },
+    [],
+  );
 
   // Send chat message
   const sendChatMessage = useCallback((message: string) => {
-    if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
-      websocketRef.current.send(JSON.stringify({
-        type: 'chat_message',
-        message
-      }));
+    if (
+      websocketRef.current &&
+      websocketRef.current.readyState === WebSocket.OPEN
+    ) {
+      websocketRef.current.send(
+        JSON.stringify({
+          type: "chat_message",
+          message,
+        }),
+      );
     }
   }, []);
 
@@ -245,7 +305,7 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
 
   // Memoize expensive computations
   const activeParticipants = useMemo(() => {
-    return participants.filter(p => {
+    return participants.filter((p) => {
       const lastActivity = new Date(p.last_activity);
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
       return lastActivity > fiveMinutesAgo;
@@ -256,10 +316,13 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
     return {
       total: participants.length,
       active: activeParticipants.length,
-      byRole: participants.reduce((acc, p) => {
-        acc[p.role] = (acc[p.role] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
+      byRole: participants.reduce(
+        (acc, p) => {
+          acc[p.role] = (acc[p.role] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
     };
   }, [participants, activeParticipants]);
 
@@ -273,6 +336,6 @@ export function useCollaboration(sessionId: string): CollaborationHookResult {
     updateEntity,
     sendChatMessage,
     onMessage,
-    disconnect
+    disconnect,
   };
 }

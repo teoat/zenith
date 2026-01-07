@@ -19,9 +19,7 @@ class FraudDetectionService:
         self.db = db
         self.rule_engine = rule_engine  # Use shared instance
 
-    async def analyze_case(
-        self, case_id: str, transaction_ids: list[str] | None = None
-    ) -> dict[str, Any]:
+    async def analyze_case(self, case_id: str, transaction_ids: list[str] | None = None) -> dict[str, Any]:
         """Analyze a case for fraud patterns"""
         try:
             # Get case and related transactions
@@ -50,9 +48,7 @@ class FraudDetectionService:
                 transaction_dicts.append(t_dict)
 
             # Execute fraud rules
-            logger.info(
-                f"Running fraud rules on {len(transactions)} transactions for case {case_id}"
-            )
+            logger.info(f"Running fraud rules on {len(transactions)} transactions for case {case_id}")
             rule_alerts = await self.rule_engine.execute_rules(transaction_dicts)
 
             saved_alerts = []
@@ -95,13 +91,9 @@ class FraudDetectionService:
                     {
                         "id": a.id,
                         # Fallback to metadata if column doesn't exist
-                        "rule_name": a.alert_metadata.get("rule_name")
-                        if hasattr(a, "alert_metadata") and a.alert_metadata
-                        else None,
+                        "rule_name": a.alert_metadata.get("rule_name") if hasattr(a, "alert_metadata") and a.alert_metadata else None,
                         "severity": a.severity,
-                        "risk_score": a.alert_metadata.get("risk_score")
-                        if hasattr(a, "alert_metadata") and a.alert_metadata
-                        else 0.0,
+                        "risk_score": a.alert_metadata.get("risk_score") if hasattr(a, "alert_metadata") and a.alert_metadata else 0.0,
                     }
                     for a in saved_alerts
                 ],
@@ -116,10 +108,7 @@ class FraudDetectionService:
         """Get all alerts for a case"""
         try:
             alerts = (
-                self.db.query(FraudAlertModel)
-                .filter(FraudAlertModel.case_id == case_id)
-                .order_by(FraudAlertModel.created_at.desc())
-                .all()
+                self.db.query(FraudAlertModel).filter(FraudAlertModel.case_id == case_id).order_by(FraudAlertModel.created_at.desc()).all()
             )
 
             return [
@@ -130,9 +119,7 @@ class FraudDetectionService:
                     "confidence": alert.confidence,
                     "risk_score": alert.risk_score,
                     "status": alert.status,
-                    "created_at": (
-                        alert.created_at.isoformat() if alert.created_at else None
-                    ),
+                    "created_at": (alert.created_at.isoformat() if alert.created_at else None),
                     "details": alert.details or {},
                 }
                 for alert in alerts
@@ -142,16 +129,10 @@ class FraudDetectionService:
             logger.error(f"Error getting alerts for case {case_id}: {e}")
             return []
 
-    def update_alert_status(
-        self, alert_id: str, status: str, reviewed_by: str | None = None
-    ) -> bool:
+    def update_alert_status(self, alert_id: str, status: str, reviewed_by: str | None = None) -> bool:
         """Update the status of a fraud alert"""
         try:
-            alert = (
-                self.db.query(FraudAlertModel)
-                .filter(FraudAlertModel.id == alert_id)
-                .first()
-            )
+            alert = self.db.query(FraudAlertModel).filter(FraudAlertModel.id == alert_id).first()
             if not alert:
                 return False
 
@@ -173,16 +154,8 @@ class FraudDetectionService:
         try:
             total_cases = self.db.query(Case).count()
             total_alerts = self.db.query(FraudAlertModel).count()
-            high_risk = (
-                self.db.query(FraudAlertModel)
-                .filter(FraudAlertModel.severity.in_(["high", "critical"]))
-                .count()
-            )
-            resolved = (
-                self.db.query(FraudAlertModel)
-                .filter(FraudAlertModel.status == "resolved")
-                .count()
-            )
+            high_risk = self.db.query(FraudAlertModel).filter(FraudAlertModel.severity.in_(["high", "critical"])).count()
+            resolved = self.db.query(FraudAlertModel).filter(FraudAlertModel.status == "resolved").count()
 
             return {
                 "total_cases_analyzed": total_cases,

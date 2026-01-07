@@ -88,11 +88,7 @@ class LocalRAGEngine:
     def get_stats(self):
         return {
             "total_documents": len(self.doc_ids),
-            "vocabulary_size": (
-                len(self.vectorizer.vocabulary_)
-                if hasattr(self.vectorizer, "vocabulary_")
-                else 0
-            ),
+            "vocabulary_size": (len(self.vectorizer.vocabulary_) if hasattr(self.vectorizer, "vocabulary_") else 0),
         }
 
 

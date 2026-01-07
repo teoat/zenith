@@ -45,9 +45,7 @@ def main():
         # Fallback: generate an HMAC key and store base64
         key = secrets.token_urlsafe(48).encode("utf-8")
         write_file(KEY_DIR / "auth_encryption.key", base64.b64encode(key), mode=0o600)
-        print(
-            f"⚠️  PyNaCl not available. Generated HMAC auth key at {KEY_DIR / 'auth_encryption.key'}"
-        )
+        print(f"⚠️  PyNaCl not available. Generated HMAC auth key at {KEY_DIR / 'auth_encryption.key'}")
 
 
 if __name__ == "__main__":

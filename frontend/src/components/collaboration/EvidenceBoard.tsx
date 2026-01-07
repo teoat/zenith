@@ -3,21 +3,32 @@
  * Shared investigation workspace with drag-and-drop evidence organization
  */
 
-import React, { useState, useCallback, useRef, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
-import { Button } from '@/components/ui/Button.tsx';
-import { Badge } from '@/components/ui/Badge.tsx';
-import { Input } from '@/components/ui/Input.tsx';
-import { Textarea } from '@/components/ui/Textarea.tsx';
-import { secureRandom } from '@/utils/secureRandom';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/Dialog.tsx';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select.tsx';
+import React, { useState, useCallback, useRef, useMemo } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
+import { secureRandom } from "@/utils/secureRandom";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/Dialog";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/Select";
 import {
   LayoutGrid,
   Plus,
   Search,
   Link2,
-  
   MessageSquare,
   Users,
   Clock,
@@ -27,34 +38,42 @@ import {
   Video,
   Mail,
   Pin,
-  
   CheckCircle,
   Flag,
-  MoreVertical
-} from 'lucide-react';
-import './EvidenceBoard.css';
+  MoreVertical,
+} from "lucide-react";
+import "./EvidenceBoard.css";
 
-// Types
-interface EvidenceCard {
-  id: string;
-  title: string;
-  type: 'document' | 'image' | 'video' | 'email' | 'transaction' | 'note';
-  content: string;
-  status: 'new' | 'reviewing' | 'verified' | 'flagged';
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  tags: string[];
-  connections: string[];
-  position: { x: number; y: number };
-  addedBy: string;
-  addedAt: Date;
-  comments: Comment[];
-}
+type EvidenceType =
+  | "document"
+  | "image"
+  | "video"
+  | "email"
+  | "transaction"
+  | "note";
+type EvidenceStatus = "new" | "reviewing" | "verified" | "flagged";
+type EvidencePriority = "low" | "medium" | "high" | "critical";
 
 interface Comment {
   id: string;
   author: string;
   content: string;
   timestamp: Date;
+}
+
+interface EvidenceCard {
+  id: string;
+  title: string;
+  type: EvidenceType;
+  content: string;
+  status: EvidenceStatus;
+  priority: EvidencePriority;
+  tags: string[];
+  connections: string[];
+  position: { x: number; y: number };
+  addedBy: string;
+  addedAt: Date;
+  comments: Comment[];
 }
 
 interface Connection {
@@ -73,67 +92,68 @@ interface EvidenceBoardProps {
   onConnectionAdd?: (connection: Connection) => void;
 }
 
-// Mock data
 const generateMockEvidence = (): EvidenceCard[] => [
   {
-    id: 'ev1',
-    title: 'Bank Statement Q4 2024',
-    type: 'document',
-    content: 'Quarterly statement showing unusual wire transfers totaling $2.5M to offshore accounts.',
-    status: 'verified',
-    priority: 'high',
-    tags: ['financial', 'wire-transfer', 'offshore'],
-    connections: ['ev2', 'ev4'],
+    id: "ev1",
+    title: "Bank Statement Q4 2024",
+    type: "document",
+    content:
+      "Quarterly statement showing unusual wire transfers totaling $2.5M to offshore accounts.",
+    status: "verified",
+    priority: "high",
+    tags: ["financial", "wire-transfer", "offshore"],
+    connections: ["ev2", "ev4"],
     position: { x: 50, y: 50 },
-    addedBy: 'John Analyst',
-    addedAt: new Date('2024-12-01'),
-    comments: []
+    addedBy: "John Analyst",
+    addedAt: new Date("2024-12-01"),
+    comments: [],
   },
   {
-    id: 'ev2',
-    title: 'Wire Transfer #7834',
-    type: 'transaction',
-    content: 'Wire transfer of $500,000 to Shell Corp Ltd in Cayman Islands.',
-    status: 'flagged',
-    priority: 'critical',
-    tags: ['suspicious', 'wire-transfer', 'cayman'],
-    connections: ['ev1', 'ev3'],
+    id: "ev2",
+    title: "Wire Transfer #7834",
+    type: "transaction",
+    content: "Wire transfer of $500,000 to Shell Corp Ltd in Cayman Islands.",
+    status: "flagged",
+    priority: "critical",
+    tags: ["suspicious", "wire-transfer", "cayman"],
+    connections: ["ev1", "ev3"],
     position: { x: 350, y: 50 },
-    addedBy: 'Jane Investigator',
-    addedAt: new Date('2024-12-02'),
-    comments: []
+    addedBy: "Jane Investigator",
+    addedAt: new Date("2024-12-02"),
+    comments: [],
   },
   {
-    id: 'ev3',
-    title: 'Email Thread - Project Alpha',
-    type: 'email',
-    content: 'Internal email discussing "restructuring" and offshore entity setup.',
-    status: 'reviewing',
-    priority: 'medium',
-    tags: ['communication', 'internal', 'restructuring'],
-    connections: ['ev2'],
+    id: "ev3",
+    title: "Email Thread - Project Alpha",
+    type: "email",
+    content:
+      'Internal email discussing "restructuring" and offshore entity setup.',
+    status: "reviewing",
+    priority: "medium",
+    tags: ["communication", "internal", "restructuring"],
+    connections: ["ev2"],
     position: { x: 650, y: 50 },
-    addedBy: 'John Analyst',
-    addedAt: new Date('2024-12-03'),
-    comments: []
+    addedBy: "John Analyst",
+    addedAt: new Date("2024-12-03"),
+    comments: [],
   },
   {
-    id: 'ev4',
-    title: 'Corporate Registry Extract',
-    type: 'document',
-    content: 'Registry showing beneficial ownership chain through multiple jurisdictions.',
-    status: 'new',
-    priority: 'high',
-    tags: ['corporate', 'ownership', 'multi-jurisdiction'],
-    connections: ['ev1'],
+    id: "ev4",
+    title: "Corporate Registry Extract",
+    type: "document",
+    content:
+      "Registry showing beneficial ownership chain through multiple jurisdictions.",
+    status: "new",
+    priority: "high",
+    tags: ["corporate", "ownership", "multi-jurisdiction"],
+    connections: ["ev1"],
     position: { x: 200, y: 250 },
-    addedBy: 'Jane Investigator',
-    addedAt: new Date('2024-12-04'),
-    comments: []
-  }
+    addedBy: "Jane Investigator",
+    addedAt: new Date("2024-12-04"),
+    comments: [],
+  },
 ];
 
-// Evidence Card Component
 const EvidenceCardComponent: React.FC<{
   evidence: EvidenceCard;
   isSelected: boolean;
@@ -141,54 +161,67 @@ const EvidenceCardComponent: React.FC<{
   onSelect: () => void;
   onConnect: () => void;
   onUpdate: (updates: Partial<EvidenceCard>) => void;
-}> = ({ evidence, isSelected, isConnecting, onSelect, onConnect, onUpdate: _onUpdate }) => {
-  const getTypeIcon = (type: EvidenceCard['type']) => {
-    const icons = {
+}> = ({ evidence, isSelected, isConnecting, onSelect, onConnect }) => {
+  const getTypeIcon = (type: EvidenceType) => {
+    const icons: Record<EvidenceType, React.ReactNode> = {
       document: <FileText className="w-4 h-4" />,
       image: <Image className="w-4 h-4" />,
       video: <Video className="w-4 h-4" />,
       email: <Mail className="w-4 h-4" />,
       transaction: <File className="w-4 h-4" />,
-      note: <MessageSquare className="w-4 h-4" />
+      note: <MessageSquare className="w-4 h-4" />,
     };
     return icons[type] || <File className="w-4 h-4" />;
   };
 
-  const getStatusColor = (status: EvidenceCard['status']) => {
-    const colors = {
-      new: 'bg-blue-500/20 text-blue-400',
-      reviewing: 'bg-amber-500/20 text-amber-400',
-      verified: 'bg-emerald-500/20 text-emerald-400',
-      flagged: 'bg-red-500/20 text-red-400'
+  const getStatusColor = (status: EvidenceStatus) => {
+    const colors: Record<EvidenceStatus, string> = {
+      new: "bg-blue-500/20 text-blue-400",
+      reviewing: "bg-amber-500/20 text-amber-400",
+      verified: "bg-emerald-500/20 text-emerald-400",
+      flagged: "bg-red-500/20 text-red-400",
     };
     return colors[status];
   };
 
-  const getPriorityIndicator = (priority: EvidenceCard['priority']) => {
-    const colors = {
-      low: '#22c55e',
-      medium: '#eab308',
-      high: '#f59e0b',
-      critical: '#ef4444'
+  const getPriorityIndicator = (priority: EvidencePriority) => {
+    const colors: Record<EvidencePriority, string> = {
+      low: "#22c55e",
+      medium: "#eab308",
+      high: "#f59e0b",
+      critical: "#ef4444",
     };
     return colors[priority];
   };
 
   return (
     <div
-      className={`evidence-card ${isSelected ? 'selected' : ''} ${isConnecting ? 'connecting' : ''}`}
+      className={`evidence-card ${isSelected ? "selected" : ""} ${isConnecting ? "connecting" : ""}`}
       style={{ left: evidence.position.x, top: evidence.position.y }}
       onClick={onSelect}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(); } }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
       tabIndex={0}
       role="button"
     >
-      <div className="card-priority-bar" style={{ background: getPriorityIndicator(evidence.priority) }} />
-      
+      <div
+        className="card-priority-bar"
+        style={{ background: getPriorityIndicator(evidence.priority) }}
+      />
+
       <div className="card-header">
         <div className="card-type-icon">{getTypeIcon(evidence.type)}</div>
         <h4 className="card-title">{evidence.title}</h4>
-        <Button variant="ghost" size="icon" className="card-menu" aria-label="Evidence options">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="card-menu"
+          aria-label="Evidence options"
+        >
           <MoreVertical className="w-4 h-4" />
         </Button>
       </div>
@@ -196,13 +229,15 @@ const EvidenceCardComponent: React.FC<{
       <p className="card-content">{evidence.content}</p>
 
       <div className="card-tags">
-        {evidence.tags.slice(0, 3).map(tag => (
+        {evidence.tags.slice(0, 3).map((tag: string) => (
           <Badge key={tag} variant="outline" className="tag-badge">
             {tag}
           </Badge>
         ))}
         {evidence.tags.length > 3 && (
-          <Badge variant="outline" className="tag-badge">+{evidence.tags.length - 3}</Badge>
+          <Badge variant="outline" className="tag-badge">
+            +{evidence.tags.length - 3}
+          </Badge>
         )}
       </div>
 
@@ -218,7 +253,10 @@ const EvidenceCardComponent: React.FC<{
           variant="ghost"
           size="sm"
           className="connect-btn"
-          onClick={(e: React.MouseEvent) => { e.stopPropagation(); onConnect(); }}
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            onConnect();
+          }}
         >
           <Pin className="w-3 h-3 mr-1" />
           Connect
@@ -241,86 +279,108 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
   connections: propConnections,
   onEvidenceAdd,
   onEvidenceUpdate: _onEvidenceUpdate,
-  onConnectionAdd
+  onConnectionAdd,
 }) => {
-  const [evidence, setEvidence] = useState<EvidenceCard[]>(propEvidence || generateMockEvidence());
-  const [connections, setConnections] = useState<Connection[]>(propConnections || []);
+  const [evidence, setEvidence] = useState<EvidenceCard[]>(
+    propEvidence || generateMockEvidence(),
+  );
+  const [connections, setConnections] = useState<Connection[]>(
+    propConnections || [],
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [connectingFrom, setConnectingFrom] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newEvidence, setNewEvidence] = useState<Partial<EvidenceCard>>({});
   const boardRef = useRef<HTMLDivElement>(null);
 
-  // Filter evidence
   const filteredEvidence = useMemo(() => {
-    return evidence.filter(ev => {
-      const matchesSearch = ev.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           ev.content.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'all' || ev.status === filterStatus;
+    return evidence.filter((ev: EvidenceCard) => {
+      const matchesSearch =
+        ev.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ev.content.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus =
+        filterStatus === "all" || ev.status === filterStatus;
       return matchesSearch && matchesStatus;
     });
   }, [evidence, searchTerm, filterStatus]);
 
-  // Statistics
-  const stats = useMemo(() => ({
-    total: evidence.length,
-    verified: evidence.filter(e => e.status === 'verified').length,
-    flagged: evidence.filter(e => e.status === 'flagged').length,
-    connections: connections.length
-  }), [evidence, connections]);
+  const stats = useMemo(
+    () => ({
+      total: evidence.length,
+      verified: evidence.filter((e: EvidenceCard) => e.status === "verified")
+        .length,
+      flagged: evidence.filter((e: EvidenceCard) => e.status === "flagged")
+        .length,
+      connections: connections.length,
+    }),
+    [evidence, connections],
+  );
 
-  const handleSelect = useCallback((id: string) => {
-    if (connectingFrom) {
-      if (connectingFrom !== id) {
-        const newConnection: Connection = {
-          sourceId: connectingFrom,
-          targetId: id,
-          type: 'related'
-        };
-        setConnections(prev => [...prev, newConnection]);
-        
-        // Update evidence connections
-        setEvidence(prev => prev.map(ev => {
-          if (ev.id === connectingFrom) {
-            return { ...ev, connections: [...ev.connections, id] };
-          }
-          if (ev.id === id) {
-            return { ...ev, connections: [...ev.connections, connectingFrom] };
-          }
-          return ev;
-        }));
-        
-        onConnectionAdd?.(newConnection);
+  const handleSelect = useCallback(
+    (id: string) => {
+      if (connectingFrom) {
+        if (connectingFrom !== id) {
+          const newConnection: Connection = {
+            sourceId: connectingFrom,
+            targetId: id,
+            type: "related",
+          };
+          setConnections((prev) => [...prev, newConnection]);
+
+          setEvidence((prev) =>
+            prev.map((ev: EvidenceCard) => {
+              if (ev.id === connectingFrom) {
+                return { ...ev, connections: [...ev.connections, id] };
+              }
+              if (ev.id === id) {
+                return {
+                  ...ev,
+                  connections: [...ev.connections, connectingFrom],
+                };
+              }
+              return ev;
+            }),
+          );
+
+          onConnectionAdd?.(newConnection);
+        }
+        setConnectingFrom(null);
+      } else {
+        setSelectedId(id === selectedId ? null : id);
       }
-      setConnectingFrom(null);
-    } else {
-      setSelectedId(id === selectedId ? null : id);
-    }
-  }, [connectingFrom, selectedId, onConnectionAdd]);
+    },
+    [connectingFrom, selectedId, onConnectionAdd],
+  );
 
-  const handleConnect = useCallback((id: string) => {
-    setConnectingFrom(connectingFrom === id ? null : id);
-  }, [connectingFrom]);
+  const handleConnect = useCallback(
+    (id: string) => {
+      setConnectingFrom(connectingFrom === id ? null : id);
+    },
+    [connectingFrom],
+  );
 
   const handleAddEvidence = useCallback(() => {
     const ev: EvidenceCard = {
       id: `ev-${Date.now()}`,
-      title: newEvidence.title || 'Untitled',
-      type: newEvidence.type || 'note',
-      content: newEvidence.content || '',
-      status: 'new',
-      priority: newEvidence.priority || 'medium',
+      title: newEvidence.title || "Untitled",
+      type: (newEvidence.type as EvidenceType) || "note",
+      content: newEvidence.content || "",
+      status: "new",
+      priority: (newEvidence.priority as EvidencePriority) || "medium",
       tags: newEvidence.tags || [],
       connections: [],
-      position: { x: 100 + secureRandom.random() * 400, y: 100 + secureRandom.random() * 200 },
-      addedBy: 'Current User',
+      position: {
+        x: 100 + secureRandom.random() * 400,
+        y: 100 + secureRandom.random() * 200,
+      },
+      addedBy: "Current User",
       addedAt: new Date(),
-      comments: []
+      comments: [],
     };
-    
-    setEvidence(prev => [...prev, ev]);
+
+    setEvidence((prev) => [...prev, ev]);
     setShowAddDialog(false);
     setNewEvidence({});
     onEvidenceAdd?.(ev);
@@ -335,7 +395,7 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
               <LayoutGrid className="w-5 h-5" />
             </div>
             <div>
-              <CardTitle className="text-lg">Evidence Board</CardTitle>
+              <h2 className="text-lg font-semibold">Evidence Board</h2>
               <p className="text-sm text-muted-foreground mt-0.5">
                 Collaborative investigation workspace
               </p>
@@ -346,7 +406,10 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
               <File className="w-3 h-3" />
               {stats.total} Items
             </Badge>
-            <Badge variant="outline" className="gap-1 text-emerald-400 border-emerald-500/30">
+            <Badge
+              variant="outline"
+              className="gap-1 text-emerald-400 border-emerald-500/30"
+            >
               <CheckCircle className="w-3 h-3" />
               {stats.verified} Verified
             </Badge>
@@ -361,19 +424,20 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Toolbar */}
         <div className="board-toolbar">
           <div className="flex items-center gap-3 flex-1">
             <div className="search-box">
               <Search className="w-4 h-4" />
               <Input
                 value={searchTerm}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchTerm(e.target.value)
+                }
                 placeholder="Search evidence..."
                 className="search-input"
               />
             </div>
-            
+
             <Select value={filterStatus} onValueChange={setFilterStatus}>
               <SelectTrigger className="w-36">
                 <SelectValue placeholder="Status" />
@@ -402,13 +466,15 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
           </div>
         </div>
 
-        {/* Board Canvas */}
         <div className="board-canvas" ref={boardRef}>
-          {/* Connection Lines */}
           <svg className="connection-layer">
-            {connections.map((conn, idx) => {
-              const source = evidence.find(e => e.id === conn.sourceId);
-              const target = evidence.find(e => e.id === conn.targetId);
+            {connections.map((conn: Connection, idx: number) => {
+              const source = evidence.find(
+                (e: EvidenceCard) => e.id === conn.sourceId,
+              );
+              const target = evidence.find(
+                (e: EvidenceCard) => e.id === conn.targetId,
+              );
               if (!source || !target) return null;
 
               return (
@@ -424,8 +490,7 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
             })}
           </svg>
 
-          {/* Evidence Cards */}
-          {filteredEvidence.map(ev => (
+          {filteredEvidence.map((ev: EvidenceCard) => (
             <EvidenceCardComponent
               key={ev.id}
               evidence={ev}
@@ -433,10 +498,12 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
               isConnecting={connectingFrom === ev.id}
               onSelect={() => handleSelect(ev.id)}
               onConnect={() => handleConnect(ev.id)}
-              onUpdate={(updates) => {
-                setEvidence(prev => prev.map(e => 
-                  e.id === ev.id ? { ...e, ...updates } : e
-                ));
+              onUpdate={(updates: Partial<EvidenceCard>) => {
+                setEvidence((prev: EvidenceCard[]) =>
+                  prev.map((e: EvidenceCard) =>
+                    e.id === ev.id ? { ...e, ...updates } : e,
+                  ),
+                );
               }}
             />
           ))}
@@ -444,12 +511,13 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
           {filteredEvidence.length === 0 && (
             <div className="empty-state">
               <LayoutGrid className="w-12 h-12 mb-4 opacity-30" />
-              <p className="text-muted-foreground">No evidence matches your criteria</p>
+              <p className="text-muted-foreground">
+                No evidence matches your criteria
+              </p>
             </div>
           )}
         </div>
 
-        {/* Add Evidence Dialog */}
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogContent className="add-dialog">
             <DialogHeader>
@@ -460,16 +528,26 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
                 <label htmlFor="evidence-title">Title</label>
                 <Input
                   id="evidence-title"
-                  value={newEvidence.title || ''}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEvidence(prev => ({ ...prev, title: e.target.value }))}
+                  value={newEvidence.title || ""}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setNewEvidence((prev) => ({
+                      ...prev,
+                      title: e.target.value,
+                    }))
+                  }
                   placeholder="Evidence title..."
                 />
               </div>
               <div className="form-field">
                 <label htmlFor="evidence-type">Type</label>
                 <Select
-                  value={newEvidence.type || 'note'}
-                  onValueChange={(val) => setNewEvidence(prev => ({ ...prev, type: val as EvidenceCard['type'] }))}
+                  value={newEvidence.type || "note"}
+                  onValueChange={(val: string) =>
+                    setNewEvidence((prev) => ({
+                      ...prev,
+                      type: val as EvidenceType,
+                    }))
+                  }
                 >
                   <SelectTrigger id="evidence-type">
                     <SelectValue />
@@ -488,8 +566,13 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
                 <label htmlFor="evidence-description">Description</label>
                 <Textarea
                   id="evidence-description"
-                  value={newEvidence.content || ''}
-                  onChange={(e) => setNewEvidence(prev => ({ ...prev, content: e.target.value }))}
+                  value={newEvidence.content || ""}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setNewEvidence((prev) => ({
+                      ...prev,
+                      content: e.target.value,
+                    }))
+                  }
                   placeholder="Describe this evidence..."
                   rows={3}
                 />
@@ -497,8 +580,13 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
               <div className="form-field">
                 <label htmlFor="evidence-priority">Priority</label>
                 <Select
-                  value={newEvidence.priority || 'medium'}
-                  onValueChange={(val) => setNewEvidence(prev => ({ ...prev, priority: val as EvidenceCard['priority'] }))}
+                  value={newEvidence.priority || "medium"}
+                  onValueChange={(val: string) =>
+                    setNewEvidence((prev) => ({
+                      ...prev,
+                      priority: val as EvidencePriority,
+                    }))
+                  }
                 >
                   <SelectTrigger id="evidence-priority">
                     <SelectValue />
@@ -513,7 +601,9 @@ export const EvidenceBoard: React.FC<EvidenceBoardProps> = ({
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowAddDialog(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+                Cancel
+              </Button>
               <Button onClick={handleAddEvidence}>Add Evidence</Button>
             </DialogFooter>
           </DialogContent>

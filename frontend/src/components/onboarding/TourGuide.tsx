@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, X, Check } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronRight, ChevronLeft, X, Check } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 export interface Step {
   title: string;
@@ -12,25 +12,30 @@ export interface Step {
 
 export const defaultSteps: Step[] = [
   {
-    title: 'Welcome to Zenith',
-    description: 'Your advanced platform for fraud adjudication and financial intelligence.',
+    title: "Welcome to Zenith",
+    description:
+      "Your advanced platform for fraud adjudication and financial intelligence.",
   },
   {
-    title: 'The Dashboard',
-    description: 'Customize your command center with widgets, track KPIs, and monitor system health in real-time.',
+    title: "The Dashboard",
+    description:
+      "Customize your command center with widgets, track KPIs, and monitor system health in real-time.",
   },
   {
-    title: 'Case Management',
-    description: 'Navigate to "Cases" to view, filter, and adjudicate investigations using our Kanban or List views.',
+    title: "Case Management",
+    description:
+      'Navigate to "Cases" to view, filter, and adjudicate investigations using our Kanban or List views.',
   },
   {
-    title: 'Graph Intelligence',
-    description: 'Use the "Network" and "Investigation" tabs to visualize complex entity relationships in 3D.',
+    title: "Graph Intelligence",
+    description:
+      'Use the "Network" and "Investigation" tabs to visualize complex entity relationships in 3D.',
   },
   {
-    title: 'Compliance Suite',
-    description: 'Monitor regulatory changes and file SARs directly from the Compliance section.',
-  }
+    title: "Compliance Suite",
+    description:
+      "Monitor regulatory changes and file SARs directly from the Compliance section.",
+  },
 ];
 
 interface TourGuideProps {
@@ -40,14 +45,19 @@ interface TourGuideProps {
   steps?: Step[];
 }
 
-export const TourGuide: React.FC<TourGuideProps> = ({ isOpen, onClose, onComplete, steps = defaultSteps }) => {
+export const TourGuide: React.FC<TourGuideProps> = ({
+  isOpen,
+  onClose,
+  onComplete,
+  steps = defaultSteps,
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   if (!isOpen) return null;
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1);
     } else {
       onComplete();
     }
@@ -55,7 +65,7 @@ export const TourGuide: React.FC<TourGuideProps> = ({ isOpen, onClose, onComplet
 
   const handlePrev = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
@@ -79,7 +89,12 @@ export const TourGuide: React.FC<TourGuideProps> = ({ isOpen, onClose, onComplet
                   {steps[currentStep].title}
                 </h2>
               </div>
-              <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close tour">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                aria-label="Close tour"
+              >
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -89,13 +104,15 @@ export const TourGuide: React.FC<TourGuideProps> = ({ isOpen, onClose, onComplet
               <div className="min-h-[120px] text-muted-foreground">
                 {steps[currentStep].description}
               </div>
-              
+
               {/* Progress Bar */}
               <div className="w-full h-1.5 bg-secondary rounded-full mt-6 overflow-hidden">
-                <motion.div 
+                <motion.div
                   className="h-full bg-primary"
                   initial={{ width: 0 }}
-                  animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+                  animate={{
+                    width: `${((currentStep + 1) / steps.length) * 100}%`,
+                  }}
                   transition={{ duration: 0.3 }}
                 />
               </div>
@@ -111,9 +128,13 @@ export const TourGuide: React.FC<TourGuideProps> = ({ isOpen, onClose, onComplet
                 <ChevronLeft className="mr-2 h-4 w-4" />
                 Previous
               </Button>
-              
+
               <div className="flex gap-2">
-                <Button variant="link" onClick={onComplete} className="text-muted-foreground">
+                <Button
+                  variant="link"
+                  onClick={onComplete}
+                  className="text-muted-foreground"
+                >
                   Skip Tour
                 </Button>
                 <Button onClick={handleNext}>

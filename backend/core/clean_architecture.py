@@ -300,9 +300,7 @@ class AnalyzeFraudUseCase:
             analysis_results.append(result)
 
         # Overall case analysis
-        case_analysis = await self.fraud_detection_service.analyze_case_pattern(
-            case_id, analysis_results
-        )
+        case_analysis = await self.fraud_detection_service.analyze_case_pattern(case_id, analysis_results)
 
         # Audit the analysis
         await self.audit_service.log_action(
@@ -312,9 +310,7 @@ class AnalyzeFraudUseCase:
             resource_id=case_id,
             details={
                 "transaction_count": len(transactions),
-                "fraud_indicators": len(
-                    [r for r in analysis_results if r.get("is_fraudulent")]
-                ),
+                "fraud_indicators": len([r for r in analysis_results if r.get("is_fraudulent")]),
             },
         )
 
@@ -394,10 +390,7 @@ class MockFraudDetectionService(FraudDetectionServicePort):
 
     async def analyze_transaction(self, transaction: Transaction) -> dict[str, Any]:
         # Simple mock analysis
-        is_fraudulent = (
-            transaction.amount > 10000
-            or "suspicious" in transaction.description.lower()
-        )
+        is_fraudulent = transaction.amount > 10000 or "suspicious" in transaction.description.lower()
 
         return {
             "transaction_id": transaction.id,
@@ -455,28 +448,18 @@ class FraudInvestigationApplicationService:
         notification_service: NotificationServicePort,
         audit_service: AuditServicePort,
     ):
-        self.create_case_use_case = CreateFraudCaseUseCase(
-            case_repo, notification_service, audit_service
-        )
-        self.analyze_fraud_use_case = AnalyzeFraudUseCase(
-            fraud_detection_service, transaction_repo, audit_service
-        )
+        self.create_case_use_case = CreateFraudCaseUseCase(case_repo, notification_service, audit_service)
+        self.analyze_fraud_use_case = AnalyzeFraudUseCase(fraud_detection_service, transaction_repo, audit_service)
 
-    async def create_investigation_case(
-        self, case_data: dict[str, Any], created_by: str
-    ) -> FraudCase:
+    async def create_investigation_case(self, case_data: dict[str, Any], created_by: str) -> FraudCase:
         """Create a new fraud investigation case"""
         return await self.create_case_use_case.execute(case_data, created_by)
 
-    async def perform_fraud_analysis(
-        self, case_id: str, analyzed_by: str
-    ) -> dict[str, Any]:
+    async def perform_fraud_analysis(self, case_id: str, analyzed_by: str) -> dict[str, Any]:
         """Perform comprehensive fraud analysis on a case"""
         return await self.analyze_fraud_use_case.execute(case_id, analyzed_by)
 
-    async def assign_investigator(
-        self, case_id: str, investigator_id: str
-    ) -> FraudCase | None:
+    async def assign_investigator(self, case_id: str, investigator_id: str) -> FraudCase | None:
         """Assign an investigator to a case"""
         case = await self.create_case_use_case.fraud_case_repo.find_by_id(case_id)
         if case:
@@ -560,9 +543,7 @@ class CleanArchitectureCompositionRoot:
         for tx in sample_transactions:
             await self.transaction_repo.save(tx)
 
-        logger.info(
-            f"Created sample case {sample_case.id} with {len(sample_transactions)} transactions"
-        )
+        logger.info(f"Created sample case {sample_case.id} with {len(sample_transactions)} transactions")
 
     async def demonstrate_clean_architecture(self) -> dict[str, Any]:
         """Demonstrate Clean Architecture capabilities"""
@@ -583,14 +564,10 @@ class CleanArchitectureCompositionRoot:
         )
 
         # Assign investigator
-        await self.application_service.assign_investigator(
-            new_case.id, "investigator_001"
-        )
+        await self.application_service.assign_investigator(new_case.id, "investigator_001")
 
         # Perform fraud analysis
-        analysis_result = await self.application_service.perform_fraud_analysis(
-            new_case.id, "ai_analyzer"
-        )
+        analysis_result = await self.application_service.perform_fraud_analysis(new_case.id, "ai_analyzer")
 
         return {
             "new_case_created": new_case.id,

@@ -2,25 +2,22 @@
 // Generate OpenAPI/Swagger schemas from TypeScript types
 
 // @ts-ignore
-import type { OpenAPIV3 } from 'openapi-types';
+import type { OpenAPIV3 } from "openapi-types";
 
 // ==========================================
 // TYPE TO SCHEMA CONVERTERS
 // ==========================================
 
 // Convert TypeScript types to OpenAPI schemas
-export function generateOpenAPISchema<T>(
-  _type: T,
-  title?: string
-): any {
+export function generateOpenAPISchema<T>(_type: T, title?: string): any {
   // This would be a comprehensive implementation
   // For now, providing basic structure
 
   return {
-    type: 'object',
+    type: "object",
     title,
     properties: {},
-    required: []
+    required: [],
   };
 }
 
@@ -29,318 +26,324 @@ export function generateOpenAPISchema<T>(
 // ==========================================
 
 export const apiDocumentation = {
-  openapi: '3.0.3',
+  openapi: "3.0.3",
   info: {
-    title: 'Fraud Detection Platform API',
-    version: '1.0.0',
-    description: 'Comprehensive API for fraud detection and investigation'
+    title: "Fraud Detection Platform API",
+    version: "1.0.0",
+    description: "Comprehensive API for fraud detection and investigation",
   },
   servers: [
     {
-      url: 'http://localhost:8000/api/v1',
-      description: 'Development server'
+      url: "http://localhost:8000/api/v1",
+      description: "Development server",
     },
     {
-      url: 'https://api.fraudplatform.com/v1',
-      description: 'Production server'
-    }
+      url: "https://api.fraudplatform.com/v1",
+      description: "Production server",
+    },
   ],
   paths: {
     // User endpoints
-    '/users': {
+    "/users": {
       get: {
-        summary: 'Get users',
+        summary: "Get users",
         parameters: [
           {
-            name: 'page',
-            in: 'query',
-            schema: { type: 'integer', minimum: 1 },
-            description: 'Page number'
+            name: "page",
+            in: "query",
+            schema: { type: "integer", minimum: 1 },
+            description: "Page number",
           },
           {
-            name: 'pageSize',
-            in: 'query',
-            schema: { type: 'integer', minimum: 1, maximum: 100 },
-            description: 'Items per page'
-          }
+            name: "pageSize",
+            in: "query",
+            schema: { type: "integer", minimum: 1, maximum: 100 },
+            description: "Items per page",
+          },
         ],
         responses: {
-          '200': {
-            description: 'Successful response',
+          "200": {
+            description: "Successful response",
             content: {
-              'application/json': {
+              "application/json": {
                 schema: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    success: { type: 'boolean' },
+                    success: { type: "boolean" },
                     data: {
-                      type: 'array',
-                      items: { $ref: '#/components/schemas/User' }
+                      type: "array",
+                      items: { $ref: "#/components/schemas/User" },
                     },
-                    meta: { $ref: '#/components/schemas/PaginationMeta' }
-                  }
-                }
-              }
-            }
-          }
-        }
+                    meta: { $ref: "#/components/schemas/PaginationMeta" },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       post: {
-        summary: 'Create user',
+        summary: "Create user",
         requestBody: {
           required: true,
           content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/CreateUserRequest' }
-            }
-          }
+            "application/json": {
+              schema: { $ref: "#/components/schemas/CreateUserRequest" },
+            },
+          },
         },
         responses: {
-          '201': {
-            description: 'User created',
+          "201": {
+            description: "User created",
             content: {
-              'application/json': {
+              "application/json": {
                 schema: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    success: { type: 'boolean' },
-                    data: { $ref: '#/components/schemas/User' }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    success: { type: "boolean" },
+                    data: { $ref: "#/components/schemas/User" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
-    '/users/{id}': {
+    "/users/{id}": {
       get: {
-        summary: 'Get user by ID',
+        summary: "Get user by ID",
         parameters: [
           {
-            name: 'id',
-            in: 'path',
+            name: "id",
+            in: "path",
             required: true,
-            schema: { type: 'string', format: 'uuid' }
-          }
+            schema: { type: "string", format: "uuid" },
+          },
         ],
         responses: {
-          '200': {
-            description: 'User found',
+          "200": {
+            description: "User found",
             content: {
-              'application/json': {
+              "application/json": {
                 schema: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    success: { type: 'boolean' },
-                    data: { $ref: '#/components/schemas/User' }
-                  }
-                }
-              }
-            }
+                    success: { type: "boolean" },
+                    data: { $ref: "#/components/schemas/User" },
+                  },
+                },
+              },
+            },
           },
-          '404': {
-            description: 'User not found',
+          "404": {
+            description: "User not found",
             content: {
-              'application/json': {
-                schema: { $ref: '#/components/schemas/ErrorResponse' }
-              }
-            }
-          }
-        }
-      }
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
+        },
+      },
     },
 
     // Case endpoints
-    '/cases': {
+    "/cases": {
       get: {
-        summary: 'Get cases',
+        summary: "Get cases",
         parameters: [
           {
-            name: 'status',
-            in: 'query',
+            name: "status",
+            in: "query",
             schema: {
-              type: 'string',
-              enum: ['open', 'in_progress', 'closed', 'suspended']
-            }
+              type: "string",
+              enum: ["open", "in_progress", "closed", "suspended"],
+            },
           },
           {
-            name: 'assigneeId',
-            in: 'query',
-            schema: { type: 'string', format: 'uuid' }
-          }
+            name: "assigneeId",
+            in: "query",
+            schema: { type: "string", format: "uuid" },
+          },
         ],
         responses: {
-          '200': {
-            description: 'Cases retrieved',
+          "200": {
+            description: "Cases retrieved",
             content: {
-              'application/json': {
+              "application/json": {
                 schema: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    success: { type: 'boolean' },
+                    success: { type: "boolean" },
                     data: {
-                      type: 'array',
-                      items: { $ref: '#/components/schemas/Case' }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                      type: "array",
+                      items: { $ref: "#/components/schemas/Case" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       post: {
-        summary: 'Create case',
+        summary: "Create case",
         requestBody: {
           required: true,
           content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/CreateCaseRequest' }
-            }
-          }
+            "application/json": {
+              schema: { $ref: "#/components/schemas/CreateCaseRequest" },
+            },
+          },
         },
         responses: {
-          '201': {
-            description: 'Case created',
+          "201": {
+            description: "Case created",
             content: {
-              'application/json': {
+              "application/json": {
                 schema: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    success: { type: 'boolean' },
-                    data: { $ref: '#/components/schemas/Case' }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                    success: { type: "boolean" },
+                    data: { $ref: "#/components/schemas/Case" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   components: {
     schemas: {
       // User schemas
       User: {
-        type: 'object',
-        required: ['id', 'email', 'name', 'role', 'createdAt', 'updatedAt'],
+        type: "object",
+        required: ["id", "email", "name", "role", "createdAt", "updatedAt"],
         properties: {
-          id: { type: 'string', format: 'uuid' },
-          email: { type: 'string', format: 'email' },
-          name: { type: 'string', minLength: 1, maxLength: 100 },
+          id: { type: "string", format: "uuid" },
+          email: { type: "string", format: "email" },
+          name: { type: "string", minLength: 1, maxLength: 100 },
           role: {
-            type: 'string',
-            enum: ['admin', 'investigator', 'analyst', 'viewer']
+            type: "string",
+            enum: ["admin", "investigator", "analyst", "viewer"],
           },
-          createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' },
-          isActive: { type: 'boolean', default: true },
-          lastLogin: { type: 'string', format: 'date-time' }
-        }
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
+          isActive: { type: "boolean", default: true },
+          lastLogin: { type: "string", format: "date-time" },
+        },
       },
       CreateUserRequest: {
-        type: 'object',
-        required: ['email', 'name', 'role'],
+        type: "object",
+        required: ["email", "name", "role"],
         properties: {
-          email: { type: 'string', format: 'email' },
-          name: { type: 'string', minLength: 1, maxLength: 100 },
+          email: { type: "string", format: "email" },
+          name: { type: "string", minLength: 1, maxLength: 100 },
           role: {
-            type: 'string',
-            enum: ['admin', 'investigator', 'analyst', 'viewer']
-          }
-        }
+            type: "string",
+            enum: ["admin", "investigator", "analyst", "viewer"],
+          },
+        },
       },
 
       // Case schemas
       Case: {
-        type: 'object',
-        required: ['id', 'title', 'description', 'status', 'priority', 'createdById', 'createdAt', 'updatedAt'],
+        type: "object",
+        required: [
+          "id",
+          "title",
+          "description",
+          "status",
+          "priority",
+          "createdById",
+          "createdAt",
+          "updatedAt",
+        ],
         properties: {
-          id: { type: 'string', pattern: '^CASE-\\d{4}-\\d{6}$' },
-          title: { type: 'string', minLength: 1, maxLength: 200 },
-          description: { type: 'string', minLength: 1, maxLength: 2000 },
+          id: { type: "string", pattern: "^CASE-\\d{4}-\\d{6}$" },
+          title: { type: "string", minLength: 1, maxLength: 200 },
+          description: { type: "string", minLength: 1, maxLength: 2000 },
           status: {
-            type: 'string',
-            enum: ['open', 'in_progress', 'closed', 'suspended']
+            type: "string",
+            enum: ["open", "in_progress", "closed", "suspended"],
           },
           priority: {
-            type: 'string',
-            enum: ['low', 'medium', 'high', 'critical']
+            type: "string",
+            enum: ["low", "medium", "high", "critical"],
           },
-          assigneeId: { type: 'string', format: 'uuid' },
-          createdById: { type: 'string', format: 'uuid' },
-          createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' },
-          closedAt: { type: 'string', format: 'date-time' },
+          assigneeId: { type: "string", format: "uuid" },
+          createdById: { type: "string", format: "uuid" },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
+          closedAt: { type: "string", format: "date-time" },
           tags: {
-            type: 'array',
-            items: { type: 'string', maxLength: 50 },
-            maxItems: 20
-          }
-        }
+            type: "array",
+            items: { type: "string", maxLength: 50 },
+            maxItems: 20,
+          },
+        },
       },
       CreateCaseRequest: {
-        type: 'object',
-        required: ['title', 'description', 'priority'],
+        type: "object",
+        required: ["title", "description", "priority"],
         properties: {
-          title: { type: 'string', minLength: 1, maxLength: 200 },
-          description: { type: 'string', minLength: 1, maxLength: 2000 },
+          title: { type: "string", minLength: 1, maxLength: 200 },
+          description: { type: "string", minLength: 1, maxLength: 2000 },
           priority: {
-            type: 'string',
-            enum: ['low', 'medium', 'high', 'critical']
+            type: "string",
+            enum: ["low", "medium", "high", "critical"],
           },
-          assigneeId: { type: 'string', format: 'uuid' },
+          assigneeId: { type: "string", format: "uuid" },
           tags: {
-            type: 'array',
-            items: { type: 'string', maxLength: 50 },
-            maxItems: 20
-          }
-        }
+            type: "array",
+            items: { type: "string", maxLength: 50 },
+            maxItems: 20,
+          },
+        },
       },
 
       // Common schemas
       ErrorResponse: {
-        type: 'object',
+        type: "object",
         properties: {
-          success: { type: 'boolean', example: false },
+          success: { type: "boolean", example: false },
           error: {
-            type: 'object',
+            type: "object",
             properties: {
-              code: { type: 'string' },
-              message: { type: 'string' },
-              details: { type: 'object' }
-            }
-          }
-        }
+              code: { type: "string" },
+              message: { type: "string" },
+              details: { type: "object" },
+            },
+          },
+        },
       },
       PaginationMeta: {
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: 'integer', minimum: 1 },
-          pageSize: { type: 'integer', minimum: 1, maximum: 100 },
-          total: { type: 'integer', minimum: 0 },
-          hasMore: { type: 'boolean' }
-        }
-      }
+          page: { type: "integer", minimum: 1 },
+          pageSize: { type: "integer", minimum: 1, maximum: 100 },
+          total: { type: "integer", minimum: 0 },
+          hasMore: { type: "boolean" },
+        },
+      },
     },
     securitySchemes: {
       bearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT'
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
       },
       apiKeyAuth: {
-        type: 'apiKey',
-        in: 'header',
-        name: 'X-API-Key'
-      }
-    }
+        type: "apiKey",
+        in: "header",
+        name: "X-API-Key",
+      },
+    },
   },
-  security: [
-    { bearerAuth: [] },
-    { apiKeyAuth: [] }
-  ]
+  security: [{ bearerAuth: [] }, { apiKeyAuth: [] }],
 } as const;
 
 // ==========================================
@@ -350,73 +353,75 @@ export const apiDocumentation = {
 // Generate documentation from TypeScript types
 export function generateTypeDrivenDocs<T>(
   _endpoint: string,
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  method: "GET" | "POST" | "PUT" | "DELETE",
   options: {
     summary: string;
     requestType?: T;
     responseType?: any;
     parameters?: Array<{
       name: string;
-      in: 'query' | 'path' | 'header';
+      in: "query" | "path" | "header";
       required?: boolean;
       schema: any;
     }>;
-  }
+  },
 ): OpenAPIV3.OperationObject {
   const operation: OpenAPIV3.OperationObject = {
     summary: options.summary,
     parameters: options.parameters || [],
     responses: {
-      '200': {
-        description: 'Successful response',
+      "200": {
+        description: "Successful response",
         content: {
-          'application/json': {
+          "application/json": {
             schema: {
-              type: 'object',
+              type: "object",
               properties: {
-                success: { type: 'boolean' },
-                data: options.responseType ? { $ref: `#/components/schemas/${options.responseType}` } : { type: 'object' }
-              }
-            }
-          }
-        }
+                success: { type: "boolean" },
+                data: options.responseType
+                  ? { $ref: `#/components/schemas/${options.responseType}` }
+                  : { type: "object" },
+              },
+            },
+          },
+        },
       },
-      '400': {
-        description: 'Bad request',
+      "400": {
+        description: "Bad request",
         content: {
-          'application/json': {
-            schema: { $ref: '#/components/schemas/ErrorResponse' }
-          }
-        }
+          "application/json": {
+            schema: { $ref: "#/components/schemas/ErrorResponse" },
+          },
+        },
       },
-      '401': {
-        description: 'Unauthorized',
+      "401": {
+        description: "Unauthorized",
         content: {
-          'application/json': {
-            schema: { $ref: '#/components/schemas/ErrorResponse' }
-          }
-        }
+          "application/json": {
+            schema: { $ref: "#/components/schemas/ErrorResponse" },
+          },
+        },
       },
-      '404': {
-        description: 'Not found',
+      "404": {
+        description: "Not found",
         content: {
-          'application/json': {
-            schema: { $ref: '#/components/schemas/ErrorResponse' }
-          }
-        }
-      }
-    }
+          "application/json": {
+            schema: { $ref: "#/components/schemas/ErrorResponse" },
+          },
+        },
+      },
+    },
   };
 
   // Add request body for non-GET methods
-  if (method !== 'GET' && options.requestType) {
+  if (method !== "GET" && options.requestType) {
     operation.requestBody = {
       required: true,
       content: {
-        'application/json': {
-          schema: { $ref: `#/components/schemas/${options.requestType}` }
-        }
-      }
+        "application/json": {
+          schema: { $ref: `#/components/schemas/${options.requestType}` },
+        },
+      },
     };
   }
 
@@ -438,8 +443,8 @@ export class DocumentedApiClient {
   // Add endpoint to documentation
   addEndpoint(
     path: string,
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-    operation: OpenAPIV3.OperationObject
+    method: "GET" | "POST" | "PUT" | "DELETE",
+    operation: OpenAPIV3.OperationObject,
   ) {
     if (!this.docs.paths![path]) {
       this.docs.paths![path] = {};
@@ -454,7 +459,7 @@ export class DocumentedApiClient {
 
   // Export to JSON
   exportToFile(filename: string) {
-    const fs = require('fs');
+    const fs = require("fs");
     fs.writeFileSync(filename, JSON.stringify(this.docs, null, 2));
   }
 }

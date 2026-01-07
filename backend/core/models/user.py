@@ -6,8 +6,9 @@ and project organization.
 """
 
 import json
+import uuid
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, String
 from sqlalchemy.orm import relationship
 
 from .base import Base, EncryptedString, UserRole, utc_now

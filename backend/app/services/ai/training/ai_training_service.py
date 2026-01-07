@@ -130,9 +130,7 @@ class AITrainingPipeline:
 
         return True, "Data validation passed"
 
-    def preprocess_training_data(
-        self, raw_data: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
+    def preprocess_training_data(self, raw_data: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Preprocess and clean training data"""
         logger.info("Preprocessing training data")
 
@@ -142,9 +140,7 @@ class AITrainingPipeline:
             try:
                 # Convert date strings to datetime objects
                 if isinstance(tx.get("date"), str):
-                    tx["date"] = datetime.fromisoformat(
-                        tx["date"].replace("Z", "+00:00")
-                    )
+                    tx["date"] = datetime.fromisoformat(tx["date"].replace("Z", "+00:00"))
 
                 # Ensure numeric fields are properly typed
                 tx["amount"] = float(tx.get("amount", 0))
@@ -185,9 +181,7 @@ class AITrainingPipeline:
             processed_data = self.preprocess_training_data(raw_data)
 
             # Step 4: Train model
-            training_result = self.ai_detector.train_model(
-                processed_data, contamination=self.config["contamination"]
-            )
+            training_result = self.ai_detector.train_model(processed_data, contamination=self.config["contamination"])
 
             # Step 5: Validate model performance
             validation_result = await self._validate_model_performance(processed_data)
@@ -207,11 +201,7 @@ class AITrainingPipeline:
             training_duration = time.time() - start_time
             self.training_stats["last_training_duration"] = training_duration
             self.training_stats["average_training_samples"] = (
-                (
-                    self.training_stats["average_training_samples"]
-                    * (self.training_stats["total_trainings"] - 1)
-                )
-                + len(processed_data)
+                (self.training_stats["average_training_samples"] * (self.training_stats["total_trainings"] - 1)) + len(processed_data)
             ) / self.training_stats["total_trainings"]
 
             self.last_training = datetime.now()
@@ -242,9 +232,7 @@ class AITrainingPipeline:
                 "timestamp": datetime.now().isoformat(),
             }
 
-    async def _validate_model_performance(
-        self, test_data: list[dict[str, Any]]
-    ) -> dict[str, Any]:
+    async def _validate_model_performance(self, test_data: list[dict[str, Any]]) -> dict[str, Any]:
         """Validate trained model performance"""
         logger.info("Validating model performance")
 
@@ -261,9 +249,7 @@ class AITrainingPipeline:
                     prediction = self.ai_detector.predict_fraud(tx)
 
                     # For validation, we'll consider transactions with risk_score > 60 as fraudulent
-                    actual_fraud = tx.get("risk_score", 0) > 60 or tx.get(
-                        "is_flagged", False
-                    )
+                    actual_fraud = tx.get("risk_score", 0) > 60 or tx.get("is_flagged", False)
 
                     # Check if prediction aligns with actual
                     predicted_fraud = prediction["score"] > 60
@@ -275,9 +261,7 @@ class AITrainingPipeline:
                     logger.warning(f"Validation prediction failed: {e}")
                     continue
 
-            accuracy = (
-                correct_predictions / total_predictions if total_predictions > 0 else 0
-            )
+            accuracy = correct_predictions / total_predictions if total_predictions > 0 else 0
 
             return {
                 "accuracy": accuracy,
@@ -313,9 +297,7 @@ class AITrainingPipeline:
         if not self.last_training:
             return True  # Never trained before
 
-        hours_since_last_training = (
-            datetime.now() - self.last_training
-        ).total_seconds() / 3600
+        hours_since_last_training = (datetime.now() - self.last_training).total_seconds() / 3600
 
         return hours_since_last_training >= self.config["training_interval_hours"]
 
@@ -337,9 +319,7 @@ class AITrainingPipeline:
                     if result["status"] == "success":
                         logger.info("Scheduled training completed successfully")
                     else:
-                        logger.warning(
-                            f"Scheduled training failed: {result.get('error', 'Unknown error')}"
-                        )
+                        logger.warning(f"Scheduled training failed: {result.get('error', 'Unknown error')}")
                 else:
                     logger.debug("Skipping training - not due yet")
 
@@ -358,9 +338,7 @@ class AITrainingPipeline:
         """Get current training pipeline status"""
         return {
             "is_running": self.is_running,
-            "last_training": (
-                self.last_training.isoformat() if self.last_training else None
-            ),
+            "last_training": (self.last_training.isoformat() if self.last_training else None),
             "should_train": self.should_train(),
             "config": self.config,
             "stats": self.training_stats,

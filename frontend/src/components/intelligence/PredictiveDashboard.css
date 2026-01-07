@@ -1,7 +1,11 @@
 /* PredictiveDashboard Styles */
 
 .predictive-dashboard-card {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.95),
+    rgba(30, 41, 59, 0.95)
+  );
   border: 1px solid rgba(100, 116, 139, 0.2);
   color: white;
 }
@@ -169,7 +173,9 @@
   border-radius: 12px;
   padding: 16px;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .prediction-card:hover {
@@ -297,7 +303,7 @@
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .metrics-grid {
     grid-template-columns: repeat(3, 1fr);
   }

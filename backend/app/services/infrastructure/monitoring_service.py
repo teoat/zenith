@@ -114,9 +114,7 @@ class MonitoringService:
         try:
             data = {
                 "performance_history": [asdict(s) for s in self.performance_history],
-                "error_events": [asdict(e) for e in self.error_events][
-                    -100:
-                ],  # keep last 100 errors
+                "error_events": [asdict(e) for e in self.error_events][-100:],  # keep last 100 errors
                 "request_count": self.request_count,
                 "error_count": self.error_count,
                 "error_counts": self.error_counts,
@@ -161,9 +159,7 @@ class MonitoringService:
                     # Basic reconstruction
                     try:
                         if isinstance(item.get("timestamp"), str):
-                            item["timestamp"] = datetime.fromisoformat(
-                                item["timestamp"]
-                            )
+                            item["timestamp"] = datetime.fromisoformat(item["timestamp"])
                         self.performance_history.append(PerformanceSnapshot(**item))
                     except Exception:
                         pass
@@ -172,9 +168,7 @@ class MonitoringService:
                 for item in data["error_events"]:
                     try:
                         if isinstance(item.get("timestamp"), str):
-                            item["timestamp"] = datetime.fromisoformat(
-                                item["timestamp"]
-                            )
+                            item["timestamp"] = datetime.fromisoformat(item["timestamp"])
                         self.error_events.append(ErrorEvent(**item))
                     except Exception:
                         pass
@@ -243,11 +237,7 @@ class MonitoringService:
         except Exception:
             active_threads = 0
 
-        response_time_avg = (
-            sum(self.response_times) / len(self.response_times)
-            if self.response_times
-            else 0.0
-        )
+        response_time_avg = sum(self.response_times) / len(self.response_times) if self.response_times else 0.0
 
         snapshot = PerformanceSnapshot(
             timestamp=datetime.now(),
@@ -266,21 +256,11 @@ class MonitoringService:
             self.performance_history.append(snapshot)
 
         # Record lightweight metrics
-        self.record_metric(
-            "system.cpu_percent", snapshot.cpu_percent, {"type": "system"}
-        )
-        self.record_metric(
-            "system.memory_percent", snapshot.memory_percent, {"type": "system"}
-        )
-        self.record_metric(
-            "system.disk_usage_percent", snapshot.disk_usage_percent, {"type": "system"}
-        )
-        self.record_metric(
-            "app.request_count", snapshot.request_count, {"type": "application"}
-        )
-        self.record_metric(
-            "app.error_count", snapshot.error_count, {"type": "application"}
-        )
+        self.record_metric("system.cpu_percent", snapshot.cpu_percent, {"type": "system"})
+        self.record_metric("system.memory_percent", snapshot.memory_percent, {"type": "system"})
+        self.record_metric("system.disk_usage_percent", snapshot.disk_usage_percent, {"type": "system"})
+        self.record_metric("app.request_count", snapshot.request_count, {"type": "application"})
+        self.record_metric("app.error_count", snapshot.error_count, {"type": "application"})
 
         return {
             "cpu_usage": snapshot.cpu_percent,
@@ -324,9 +304,7 @@ class MonitoringService:
         with self.metrics_lock:
             self.response_times.append(response_time)
 
-    def record_error(
-        self, error_type: str, message: str, metadata: dict[str, Any] | None = None
-    ):
+    def record_error(self, error_type: str, message: str, metadata: dict[str, Any] | None = None):
         if metadata is None:
             metadata = {}
         self.error_count += 1
@@ -364,22 +342,14 @@ class MonitoringService:
             "error_counts": dict(self.error_counts),
             "performance_metrics": asdict(latest) if latest else {},
             "system_health": max(0, score),
-            "uptime_seconds": (
-                (time.time() - psutil.boot_time())
-                if (psutil and hasattr(psutil, "boot_time"))
-                else 0
-            ),
+            "uptime_seconds": ((time.time() - psutil.boot_time()) if (psutil and hasattr(psutil, "boot_time")) else 0),
         }
 
     # Backwards-compatible API expected by older tests
     def get_system_status(self) -> dict[str, Any]:
         """Legacy alias used by tests/routers for system status."""
         return {
-            "status": (
-                "healthy"
-                if (self.get_health_metrics().get("performance_metrics"))
-                else "unhealthy"
-            ),
+            "status": ("healthy" if (self.get_health_metrics().get("performance_metrics")) else "unhealthy"),
             "health_metrics": self.get_health_metrics(),
         }
 
@@ -415,17 +385,10 @@ class MonitoringService:
                 if self._stop_event.wait(self.metrics_interval):
                     break
 
-    def get_metrics(
-        self, metric_name: str | None = None, hours: int = 1
-    ) -> list[dict[str, Any]]:
+    def get_metrics(self, metric_name: str | None = None, hours: int = 1) -> list[dict[str, Any]]:
         cutoff = datetime.now() - timedelta(hours=hours)
         with self.metrics_lock:
-            return [
-                asdict(m)
-                for m in self.metrics
-                if m.timestamp > cutoff
-                and (metric_name is None or m.name == metric_name)
-            ]
+            return [asdict(m) for m in self.metrics if m.timestamp > cutoff and (metric_name is None or m.name == metric_name)]
 
     def get_performance_history(self, hours: int = 1) -> list[dict[str, Any]]:
         cutoff = datetime.now() - timedelta(hours=hours)
@@ -453,16 +416,8 @@ class MonitoringService:
             "key_metrics": {
                 "total_requests": self.request_count,
                 "total_errors": self.error_count,
-                "avg_response_time": (
-                    (sum(self.response_times) / len(self.response_times))
-                    if self.response_times
-                    else 0
-                ),
-                "uptime_seconds": (
-                    (time.time() - psutil.boot_time())
-                    if (psutil and hasattr(psutil, "boot_time"))
-                    else None
-                ),
+                "avg_response_time": ((sum(self.response_times) / len(self.response_times)) if self.response_times else 0),
+                "uptime_seconds": ((time.time() - psutil.boot_time()) if (psutil and hasattr(psutil, "boot_time")) else None),
             },
         }
 
@@ -500,5 +455,3 @@ def create_monitoring_middleware():
             raise
 
     return middleware
-
-    return monitoring_middleware

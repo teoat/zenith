@@ -114,9 +114,7 @@ class TimelineReconstructionEngine:
                         confidence_score=insight.get("confidence", 0.85),
                         risk_level=insight.get("risk_level", "medium"),
                         ai_persona=insight.get("persona", "risk_quantifier"),
-                        metadata={
-                            "confidence_interval": insight.get("confidence_interval")
-                        },
+                        metadata={"confidence_interval": insight.get("confidence_interval")},
                     )
                     events.append(event)
 
@@ -143,9 +141,7 @@ class TimelineReconstructionEngine:
             events.sort(key=lambda x: x.timestamp)
 
             # Create investigation timeline
-            start_date = (
-                min(event.timestamp for event in events) if events else datetime.now()
-            )
+            start_date = min(event.timestamp for event in events) if events else datetime.now()
             end_date = max(event.timestamp for event in events) if events else None
             total_duration = end_date - start_date if end_date else None
 
@@ -194,12 +190,7 @@ class TimelineReconstructionEngine:
         # Analyze patterns
         high_risk_events = [e for e in events if e.risk_level in ["critical", "high"]]
         total_events = len(events)
-        duration_days = (
-            (max(e.timestamp for e in events) - min(e.timestamp for e in events)).days
-            + 1
-            if len(events) > 1
-            else 0
-        )
+        duration_days = (max(e.timestamp for e in events) - min(e.timestamp for e in events)).days + 1 if len(events) > 1 else 0
 
         # Generate AI summary
         summary_parts = [
@@ -213,13 +204,9 @@ class TimelineReconstructionEngine:
 
     async def get_case_template(self, case_type: str) -> dict[str, Any]:
         """Get predefined template for specific case types"""
-        return self.case_templates.get(
-            case_type, self.case_templates["fraud_detection"]
-        )
+        return self.case_templates.get(case_type, self.case_templates["fraud_detection"])
 
-    async def validate_timeline_integrity(
-        self, timeline: InvestigationTimeline
-    ) -> dict[str, Any]:
+    async def validate_timeline_integrity(self, timeline: InvestigationTimeline) -> dict[str, Any]:
         """Validate reconstructed timeline for data integrity and consistency"""
         validation_result = {
             "is_valid": True,
@@ -234,17 +221,13 @@ class TimelineReconstructionEngine:
             events_sorted = sorted(timeline.events, key=lambda x: x.timestamp)
             for i, event in enumerate(events_sorted[1:], 1):
                 if event.timestamp < events_sorted[i - 1].timestamp:
-                    validation_result["issues"].append(
-                        f"Event {event.id} has inconsistent timestamp"
-                    )
+                    validation_result["issues"].append(f"Event {event.id} has inconsistent timestamp")
                     validation_result["is_valid"] = False
 
             # Check for required evidence
             for event in timeline.events:
                 if not event.evidence_ids:
-                    validation_result["missing_events"].append(
-                        f"Event {event.id} lacks supporting evidence"
-                    )
+                    validation_result["missing_events"].append(f"Event {event.id} lacks supporting evidence")
 
             # Calculate overall confidence
             if validation_result["issues"]:
@@ -258,9 +241,7 @@ class TimelineReconstructionEngine:
 
         return validation_result
 
-    async def optimize_timeline(
-        self, timeline: InvestigationTimeline
-    ) -> InvestigationTimeline:
+    async def optimize_timeline(self, timeline: InvestigationTimeline) -> InvestigationTimeline:
         """Optimize timeline by removing redundancies and improving clarity"""
         try:
             # Remove duplicate or redundant events
@@ -279,18 +260,14 @@ class TimelineReconstructionEngine:
             timeline.events = unique_events
             timeline.summary = summary
 
-            logger.info(
-                f"Timeline optimized: {len(timeline.events) - len(unique_events)} redundancies removed"
-            )
+            logger.info(f"Timeline optimized: {len(timeline.events) - len(unique_events)} redundancies removed")
 
         except Exception as e:
             logger.error(f"Timeline optimization failed: {e}")
 
         return timeline
 
-    async def impute_missing_windows(
-        self, transactions: list[dict[str, Any]], window_size_days: int = 30
-    ) -> list[dict[str, Any]]:
+    async def impute_missing_windows(self, transactions: list[dict[str, Any]], window_size_days: int = 30) -> list[dict[str, Any]]:
         """
         Implementation of the Timeline Interpolator (Forensic Imputation).
         Detects gaps in transaction dates and fills them with "Ghost" events based on patterns.
@@ -299,18 +276,14 @@ class TimelineReconstructionEngine:
             return []
 
         # 1. Sort transactions by date
-        sorted_txs = sorted(
-            transactions, key=lambda x: x.get("timestamp") or x.get("date")
-        )
+        sorted_txs = sorted(transactions, key=lambda x: x.get("timestamp") or x.get("date"))
 
         imputed_events = []
 
         # 2. Scan for gaps > window_size_days
         for i in range(len(sorted_txs) - 1):
             curr_date = sorted_txs[i].get("timestamp") or sorted_txs[i].get("date")
-            next_date = sorted_txs[i + 1].get("timestamp") or sorted_txs[i + 1].get(
-                "date"
-            )
+            next_date = sorted_txs[i + 1].get("timestamp") or sorted_txs[i + 1].get("date")
 
             if isinstance(curr_date, str):
                 curr_date = datetime.fromisoformat(curr_date.replace("Z", "+00:00"))
@@ -320,9 +293,7 @@ class TimelineReconstructionEngine:
             delta = (next_date - curr_date).days
 
             if delta > window_size_days:
-                logger.info(
-                    f"Gap detected between {curr_date} and {next_date} ({delta} days)"
-                )
+                logger.info(f"Gap detected between {curr_date} and {next_date} ({delta} days)")
 
                 # 3. Pattern Extrapolation (Simple: project recurring descriptions)
                 # In production, we'd use a more sophisticated frequency analysis
@@ -344,9 +315,7 @@ class TimelineReconstructionEngine:
                 # Create inferred events for each month in the gap
                 gap_start = curr_date + timedelta(days=window_size_days)
                 while gap_start < next_date:
-                    for rec in recurring_candidates[
-                        :2
-                    ]:  # Fill with top 2 recurring patterns
+                    for rec in recurring_candidates[:2]:  # Fill with top 2 recurring patterns
                         imputed_events.append(
                             {
                                 "id": f"imputed_{gap_start.strftime('%Y%m')}_{rec['id']}",
@@ -368,9 +337,7 @@ class TimelineReconstructionEngine:
 
         return imputed_events
 
-    async def unmask_redacted_fields(
-        self, transactions: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
+    async def unmask_redacted_fields(self, transactions: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """
         Implementation of the Triangulation Engine (Redaction Resolution).
         Infers redacted merchant names using a Global Vendor Graph (Mocked).
@@ -395,9 +362,7 @@ class TimelineReconstructionEngine:
                 inferred_name = VENDOR_GRAPH.get(amount)
 
                 if inferred_name:
-                    logger.info(
-                        f"Unmasked redacted field for amount {amount}: {inferred_name}"
-                    )
+                    logger.info(f"Unmasked redacted field for amount {amount}: {inferred_name}")
                     results.append(
                         {
                             "original_id": tx.get("id"),

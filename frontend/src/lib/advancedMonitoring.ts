@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { secureLogger } from '@/utils/secureLogger';
-import { secureRandom } from '@/utils/secureRandom';
+import { useState, useEffect, useCallback } from "react";
+import { secureLogger } from "@/utils/secureLogger";
+import { secureRandom } from "@/utils/secureRandom";
 
 export interface TraceSpan {
   id: string;
@@ -34,7 +34,7 @@ export interface AnomalyAlert {
   metric: string;
   value: number;
   expectedValue: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   timestamp: number;
   description: string;
 }
@@ -47,7 +47,11 @@ class AdvancedMonitoring {
   private activeSpans: Map<string, TraceSpan> = new Map();
 
   // Distributed Tracing
-  startTrace(name: string, tags: Record<string, any> = {}, parentId?: string): string {
+  startTrace(
+    name: string,
+    tags: Record<string, any> = {},
+    parentId?: string,
+  ): string {
     const spanId = this.generateId();
     const span: TraceSpan = {
       id: spanId,
@@ -55,7 +59,7 @@ class AdvancedMonitoring {
       startTime: Date.now(),
       tags,
       parentId,
-      children: []
+      children: [],
     };
 
     this.activeSpans.set(spanId, span);
@@ -86,22 +90,27 @@ class AdvancedMonitoring {
 
   private sendTrace(span: TraceSpan): void {
     // In a real implementation, this would send to Jaeger, Zipkin, or similar
-    secureLogger.info('MONITORING', 'Trace completed', {
+    secureLogger.info("MONITORING", "Trace completed", {
       id: span.id,
       name: span.name,
       duration: span.duration,
-      tags: span.tags
+      tags: span.tags,
     });
   }
 
   // Business Metrics
-  recordMetric(name: string, value: number, tags: Record<string, any> = {}, unit?: string): void {
+  recordMetric(
+    name: string,
+    value: number,
+    tags: Record<string, any> = {},
+    unit?: string,
+  ): void {
     const metric: BusinessMetric = {
       name,
       value,
       timestamp: Date.now(),
       tags,
-      unit
+      unit,
     };
 
     this.metrics.push(metric);
@@ -119,17 +128,22 @@ class AdvancedMonitoring {
   }
 
   private sendMetric(metric: BusinessMetric): void {
-    secureLogger.info('MONITORING', 'Metric recorded', metric);
+    secureLogger.info("MONITORING", "Metric recorded", metric);
   }
 
   // Performance Baselines
-  setBaseline(metric: string, baseline: number, threshold: number, unit: string): void {
+  setBaseline(
+    metric: string,
+    baseline: number,
+    threshold: number,
+    unit: string,
+  ): void {
     const performanceBaseline: PerformanceBaseline = {
       metric,
       baseline,
       threshold,
       unit,
-      lastUpdated: Date.now()
+      lastUpdated: Date.now(),
     };
 
     this.baselines.set(metric, performanceBaseline);
@@ -146,14 +160,19 @@ class AdvancedMonitoring {
     for (const [metricName, metrics] of metricGroups) {
       if (metrics.length < 10) continue; // Need minimum data points
 
-      const values = metrics.map(m => m.value);
+      const values = metrics.map((m) => m.value);
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
       const stdDev = Math.sqrt(
-        values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length
+        values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length,
       );
 
       // Set baseline as mean, threshold as 2 standard deviations
-      this.setBaseline(metricName, mean, stdDev * 2, metrics[0].unit || 'count');
+      this.setBaseline(
+        metricName,
+        mean,
+        stdDev * 2,
+        metrics[0].unit || "count",
+      );
     }
   }
 
@@ -188,7 +207,7 @@ class AdvancedMonitoring {
         expectedValue: baseline.baseline,
         severity,
         timestamp: Date.now(),
-        description: `${metric.name} deviated by ${deviation.toFixed(2)} ${baseline.unit} from baseline`
+        description: `${metric.name} deviated by ${deviation.toFixed(2)} ${baseline.unit} from baseline`,
       };
 
       this.alerts.push(alert);
@@ -202,17 +221,20 @@ class AdvancedMonitoring {
     }
   }
 
-  private calculateSeverity(deviation: number, threshold: number): 'low' | 'medium' | 'high' | 'critical' {
+  private calculateSeverity(
+    deviation: number,
+    threshold: number,
+  ): "low" | "medium" | "high" | "critical" {
     const ratio = deviation / threshold;
 
-    if (ratio >= 3) return 'critical';
-    if (ratio >= 2) return 'high';
-    if (ratio >= 1.5) return 'medium';
-    return 'low';
+    if (ratio >= 3) return "critical";
+    if (ratio >= 2) return "high";
+    if (ratio >= 1.5) return "medium";
+    return "low";
   }
 
   private sendAlert(alert: AnomalyAlert): void {
-    secureLogger.warn('MONITORING', 'Anomaly detected', alert);
+    secureLogger.warn("MONITORING", "Anomaly detected", alert);
 
     // In a real implementation, this would send notifications
     // via email, Slack, PagerDuty, etc.
@@ -250,9 +272,12 @@ export const advancedMonitoring = new AdvancedMonitoring();
 
 // React hooks
 export const useTracing = () => {
-  const startTrace = useCallback((name: string, tags?: Record<string, any>, parentId?: string) => {
-    return advancedMonitoring.startTrace(name, tags, parentId);
-  }, []);
+  const startTrace = useCallback(
+    (name: string, tags?: Record<string, any>, parentId?: string) => {
+      return advancedMonitoring.startTrace(name, tags, parentId);
+    },
+    [],
+  );
 
   const endTrace = useCallback((spanId: string) => {
     advancedMonitoring.endTrace(spanId);
@@ -264,10 +289,18 @@ export const useTracing = () => {
 export const useMetrics = () => {
   const [metrics, setMetrics] = useState(advancedMonitoring.getMetrics());
 
-  const recordMetric = useCallback((name: string, value: number, tags?: Record<string, any>, unit?: string) => {
-    advancedMonitoring.recordMetric(name, value, tags, unit);
-    setMetrics(advancedMonitoring.getMetrics());
-  }, []);
+  const recordMetric = useCallback(
+    (
+      name: string,
+      value: number,
+      tags?: Record<string, any>,
+      unit?: string,
+    ) => {
+      advancedMonitoring.recordMetric(name, value, tags, unit);
+      setMetrics(advancedMonitoring.getMetrics());
+    },
+    [],
+  );
 
   const updateBaselines = useCallback(() => {
     advancedMonitoring.updateBaselines();
@@ -277,7 +310,7 @@ export const useMetrics = () => {
     metrics,
     recordMetric,
     updateBaselines,
-    baselines: advancedMonitoring.getBaselines()
+    baselines: advancedMonitoring.getBaselines(),
   };
 };
 
@@ -299,7 +332,7 @@ export const useAnomalyDetection = () => {
 export const withTracing = <T extends any[], R>(
   fn: (...args: T) => R,
   name: string,
-  tags?: Record<string, any>
+  tags?: Record<string, any>,
 ) => {
   return (...args: T): R => {
     const spanId = advancedMonitoring.startTrace(name, tags);

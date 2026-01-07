@@ -1,12 +1,15 @@
-import { useState } from 'react';
-import { secureLogger } from '@/utils/secureLogger';
+import { useState } from "react";
+import { secureLogger } from "@/utils/secureLogger";
 
 // Advanced AI Features - Quantum-Resistant Cryptography & More
 // Note: This file contains placeholder implementations for advanced features
 // In production, these would use actual quantum-resistant cryptographic libraries
 
 export class QuantumResistantCrypto {
-  static async generateKyberKeypair(): Promise<{ publicKey: Uint8Array; privateKey: Uint8Array }> {
+  static async generateKyberKeypair(): Promise<{
+    publicKey: Uint8Array;
+    privateKey: Uint8Array;
+  }> {
     const publicKey = new Uint8Array(32);
     const privateKey = new Uint8Array(32);
     crypto.getRandomValues(publicKey);
@@ -14,7 +17,10 @@ export class QuantumResistantCrypto {
     return { publicKey, privateKey };
   }
 
-  static async hybridEncrypt(data: Uint8Array, _publicKey: Uint8Array): Promise<{
+  static async hybridEncrypt(
+    data: Uint8Array,
+    _publicKey: Uint8Array,
+  ): Promise<{
     encryptedData: Uint8Array;
     encapsulatedKey: Uint8Array;
     nonce: Uint8Array;
@@ -31,7 +37,7 @@ export class QuantumResistantCrypto {
     return {
       encryptedData,
       encapsulatedKey: new Uint8Array(64), // Placeholder
-      nonce
+      nonce,
     };
   }
 
@@ -39,7 +45,7 @@ export class QuantumResistantCrypto {
     encryptedData: Uint8Array,
     _encapsulatedKey: Uint8Array,
     nonce: Uint8Array,
-    _privateKey: Uint8Array
+    _privateKey: Uint8Array,
   ): Promise<Uint8Array> {
     // Placeholder decryption
     return encryptedData.slice(nonce.length);
@@ -49,11 +55,17 @@ export class QuantumResistantCrypto {
 export class FederatedLearning {
   private model: Map<string, number[]> = new Map();
 
-  async submitLocalUpdate(_participantId: string, updates: Record<string, number[]>): Promise<void> {
+  async submitLocalUpdate(
+    _participantId: string,
+    updates: Record<string, number[]>,
+  ): Promise<void> {
     // Placeholder federated learning
     Object.entries(updates).forEach(([key, update]) => {
       const current = this.model.get(key) || [];
-      this.model.set(key, current.map((val, idx) => val + (update[idx] || 0)));
+      this.model.set(
+        key,
+        current.map((val, idx) => val + (update[idx] || 0)),
+      );
     });
   }
 
@@ -75,12 +87,14 @@ export class VoiceController {
   }
 
   private initializeSpeechRecognition(): void {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition =
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = false;
       this.recognition.interimResults = false;
-      this.recognition.lang = 'en-US';
+      this.recognition.lang = "en-US";
 
       this.recognition.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript.toLowerCase();
@@ -92,7 +106,7 @@ export class VoiceController {
       };
 
       this.recognition.onerror = (event: any) => {
-        secureLogger.error('Speech recognition error:', event.error);
+        secureLogger.error("Speech recognition error:", event.error);
       };
     }
   }
@@ -130,7 +144,9 @@ export const useQuantumCrypto = () => ({
   decrypt: QuantumResistantCrypto.hybridDecrypt,
 });
 
-export const useFederatedLearning = (_initialModel: Record<string, number[]>) => {
+export const useFederatedLearning = (
+  _initialModel: Record<string, number[]>,
+) => {
   const [fedLearning] = useState(() => new FederatedLearning());
 
   return {

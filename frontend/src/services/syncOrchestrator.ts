@@ -1,6 +1,10 @@
-import { secureLogger } from '@/utils/secureLogger';
+import { secureLogger } from "@/utils/secureLogger";
 
-type EventType = 'DISCREPANCY_FLAGGED' | 'CASE_CREATED' | 'EVIDENCE_LINKED' | 'TRANSACTION_RECONCILED';
+type EventType =
+  | "DISCREPANCY_FLAGGED"
+  | "CASE_CREATED"
+  | "EVIDENCE_LINKED"
+  | "TRANSACTION_RECONCILED";
 
 interface EventPayload {
   type: string;
@@ -22,17 +26,22 @@ class SyncOrchestrator {
 
     // Return unsubscribe function
     return () => {
-      this.listeners[event] = this.listeners[event].filter(cb => cb !== callback);
+      this.listeners[event] = this.listeners[event].filter(
+        (cb) => cb !== callback,
+      );
     };
   }
 
   emit(event: EventType, payload: EventPayload): void {
     if (this.listeners[event]) {
-      this.listeners[event].forEach(callback => {
+      this.listeners[event].forEach((callback) => {
         try {
           callback(payload);
         } catch (error) {
-          secureLogger.error(`Error in SyncOrchestrator listener for event ${event}:`, error);
+          secureLogger.error(
+            `Error in SyncOrchestrator listener for event ${event}:`,
+            error,
+          );
         }
       });
     }

@@ -33,9 +33,7 @@ class PaginationResponse(BaseModel):
     has_prev: bool
 
     @classmethod
-    def create(
-        cls, page: int, page_size: int, total_items: int
-    ) -> "PaginationResponse":
+    def create(cls, page: int, page_size: int, total_items: int) -> "PaginationResponse":
         total_pages = (total_items + page_size - 1) // page_size
         return cls(
             page=page,
@@ -115,9 +113,7 @@ def create_error_response(
             "type": error_type,
             "status_code": status_code,
             "detail": detail,
-            "request_id": getattr(request.state, "request_id", None)
-            if request
-            else None,
+            "request_id": getattr(request.state, "request_id", None) if request else None,
             "timestamp": datetime.now().isoformat(),
             "path": str(request.url.path) if request else None,
             "method": request.method if request else None,

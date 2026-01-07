@@ -67,9 +67,7 @@ class ExplainableFraudDetector:
             "network_connection": "Transaction involves entities connected to {count} previously flagged accounts",
         }
 
-    async def explain_prediction(
-        self, transaction_data: dict[str, Any], prediction_result: dict[str, Any]
-    ) -> PredictionExplanation:
+    async def explain_prediction(self, transaction_data: dict[str, Any], prediction_result: dict[str, Any]) -> PredictionExplanation:
         """
         Generate comprehensive explanation for a fraud prediction
 
@@ -83,29 +81,19 @@ class ExplainableFraudDetector:
         prediction_id = f"exp_{hash(str(transaction_data))}"
 
         # Calculate feature contributions
-        feature_contributions = await self._calculate_feature_contributions(
-            transaction_data, prediction_result
-        )
+        feature_contributions = await self._calculate_feature_contributions(transaction_data, prediction_result)
 
         # Find similar cases
-        similar_cases = await self._find_similar_cases(
-            transaction_data, prediction_result
-        )
+        similar_cases = await self._find_similar_cases(transaction_data, prediction_result)
 
         # Generate counterfactual scenarios
-        counterfactuals = await self._generate_counterfactuals(
-            transaction_data, prediction_result
-        )
+        counterfactuals = await self._generate_counterfactuals(transaction_data, prediction_result)
 
         # Determine risk level and primary reason
-        risk_level, primary_reason = self._assess_risk_level(
-            feature_contributions, prediction_result
-        )
+        risk_level, primary_reason = self._assess_risk_level(feature_contributions, prediction_result)
 
         # Calculate explanation confidence
-        explanation_confidence = self._calculate_explanation_confidence(
-            feature_contributions, similar_cases
-        )
+        explanation_confidence = self._calculate_explanation_confidence(feature_contributions, similar_cases)
 
         return PredictionExplanation(
             prediction_id=prediction_id,
@@ -149,9 +137,7 @@ class ExplainableFraudDetector:
                 weight = feature_weights.get(feature_key, 0.0)
                 contribution = weight * definition["importance"]
 
-                explanation = self._generate_feature_explanation(
-                    feature_key, transaction_data[feature_key], contribution
-                )
+                explanation = self._generate_feature_explanation(feature_key, transaction_data[feature_key], contribution)
 
                 contributions.append(
                     FeatureContribution(
@@ -170,56 +156,42 @@ class ExplainableFraudDetector:
 
         return contributions
 
-    def _generate_feature_explanation(
-        self, feature_key: str, value: Any, contribution: float
-    ) -> str:
+    def _generate_feature_explanation(self, feature_key: str, value: Any, contribution: float) -> str:
         """Generate human-readable explanation for a feature contribution"""
         try:
             if feature_key == "amount":
                 if contribution > 0.5:
-                    return self.explanation_templates["high_amount"].format(
-                        amount=value, percent_above=contribution * 100
-                    )
+                    return self.explanation_templates["high_amount"].format(amount=value, percent_above=contribution * 100)
                 else:
                     return f"Transaction amount (${value}) is within normal range"
 
             elif feature_key == "merchant_category":
                 if contribution > 0.3:
-                    return self.explanation_templates["unusual_merchant"].format(
-                        category=value
-                    )
+                    return self.explanation_templates["unusual_merchant"].format(category=value)
                 else:
                     return f"Merchant category '{value}' matches account's typical spending"
 
             elif feature_key == "location":
                 if contribution > 0.4:
-                    return self.explanation_templates["geographic_anomaly"].format(
-                        location=value
-                    )
+                    return self.explanation_templates["geographic_anomaly"].format(location=value)
                 else:
                     return f"Transaction location ({value}) is consistent with account history"
 
             elif feature_key == "transaction_frequency":
                 if contribution > 0.6:
-                    return self.explanation_templates["velocity_spike"].format(
-                        count=value, factor=contribution * 2
-                    )
+                    return self.explanation_templates["velocity_spike"].format(count=value, factor=contribution * 2)
                 else:
                     return f"Transaction frequency ({value}) is within normal patterns"
 
             elif feature_key == "peer_behavior":
                 if contribution > 0.5:
-                    return self.explanation_templates["peer_anomaly"].format(
-                        percentage=contribution * 100
-                    )
+                    return self.explanation_templates["peer_anomaly"].format(percentage=contribution * 100)
                 else:
                     return "Transaction behavior aligns with similar accounts"
 
             elif feature_key == "network_connections":
                 if contribution > 0.7:
-                    return self.explanation_templates["network_connection"].format(
-                        count=int(contribution * 10)
-                    )
+                    return self.explanation_templates["network_connection"].format(count=int(contribution * 10))
                 else:
                     return "No significant suspicious network connections detected"
 
@@ -230,9 +202,7 @@ class ExplainableFraudDetector:
             logger.warning(f"Error generating explanation for {feature_key}: {e}")
             return f"Feature '{feature_key}' shows {contribution:.2f} risk contribution"
 
-    async def _find_similar_cases(
-        self, transaction_data: dict[str, Any], prediction_result: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    async def _find_similar_cases(self, transaction_data: dict[str, Any], prediction_result: dict[str, Any]) -> list[dict[str, Any]]:
         """Find similar historical cases for comparison"""
         # This would typically query a case database
         # For now, return mock similar cases based on prediction confidence
@@ -286,9 +256,7 @@ class ExplainableFraudDetector:
 
         return similar_cases
 
-    async def _generate_counterfactuals(
-        self, transaction_data: dict[str, Any], prediction_result: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    async def _generate_counterfactuals(self, transaction_data: dict[str, Any], prediction_result: dict[str, Any]) -> list[dict[str, Any]]:
         """Generate counterfactual scenarios showing what would change the prediction"""
         counterfactuals = []
         fraud_probability = prediction_result.get("fraud_probability", 0.0)
@@ -359,9 +327,7 @@ class ExplainableFraudDetector:
 
         return risk_level, primary_reason
 
-    def _extract_model_insights(
-        self, prediction_result: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _extract_model_insights(self, prediction_result: dict[str, Any]) -> dict[str, Any]:
         """Extract model-level insights and metadata"""
         return {
             "model_version": prediction_result.get("model_version", "unknown"),
@@ -386,20 +352,12 @@ class ExplainableFraudDetector:
 
         # Consider contribution distribution
         if contributions:
-            top_contribution_ratio = contributions[0].contribution / sum(
-                abs(c.contribution) for c in contributions
-            )
-            distribution_confidence = (
-                1.0 - top_contribution_ratio
-            )  # Prefer distributed contributions
+            top_contribution_ratio = contributions[0].contribution / sum(abs(c.contribution) for c in contributions)
+            distribution_confidence = 1.0 - top_contribution_ratio  # Prefer distributed contributions
         else:
             distribution_confidence = 0.5
 
-        return (
-            contribution_confidence * 0.5
-            + case_confidence * 0.3
-            + distribution_confidence * 0.2
-        )
+        return contribution_confidence * 0.5 + case_confidence * 0.3 + distribution_confidence * 0.2
 
     def _get_current_timestamp(self) -> str:
         """Get current timestamp in ISO format"""
@@ -407,9 +365,7 @@ class ExplainableFraudDetector:
 
         return datetime.now().isoformat()
 
-    def get_explanation_summary(
-        self, explanation: PredictionExplanation
-    ) -> dict[str, Any]:
+    def get_explanation_summary(self, explanation: PredictionExplanation) -> dict[str, Any]:
         """Generate a concise summary of the explanation"""
         return {
             "prediction_id": explanation.prediction_id,

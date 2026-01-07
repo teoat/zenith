@@ -1,6 +1,6 @@
-import { secureLogger } from '@/utils/secureLogger';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { secureLogger } from "@/utils/secureLogger";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 export interface EvidenceFilters {
   fileType?: string;
@@ -9,9 +9,14 @@ export interface EvidenceFilters {
   tags?: string[];
 }
 
-export const useEvidence = (caseId?: string, page: number = 1, pageSize: number = 20, query?: string) => {
+export const useEvidence = (
+  caseId?: string,
+  page: number = 1,
+  pageSize: number = 20,
+  query?: string,
+) => {
   return useQuery({
-    queryKey: ['evidence', caseId, page, pageSize, query],
+    queryKey: ["evidence", caseId, page, pageSize, query],
     queryFn: () => api.getEvidence(caseId, page, pageSize, query),
     staleTime: 5 * 60 * 1000, // 5 minutes - evidence doesn't change often
     gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache longer (renamed from cacheTime)
@@ -31,12 +36,14 @@ export const useEvidenceUpload = () => {
       api.uploadEvidence(caseId, file),
     onSuccess: (_data, variables) => {
       // Optimistically update the cache
-      queryClient.invalidateQueries({ queryKey: ['evidence', variables.caseId] });
-      queryClient.invalidateQueries({ queryKey: ['evidence'] });
+      queryClient.invalidateQueries({
+        queryKey: ["evidence", variables.caseId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["evidence"] });
     },
     onError: (error, _variables) => {
       // Log error for monitoring
-      secureLogger.error('Evidence upload failed:', error);
+      secureLogger.error("Evidence upload failed:", error);
       // Could add toast notification here
     },
     retry: 2,

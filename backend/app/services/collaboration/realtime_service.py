@@ -10,6 +10,7 @@ from core.logging import logger
 @dataclass
 class CollaborativeSession:
     """A collaborative session for real-time editing"""
+
     id: str
     resource_type: str  # 'case', 'investigation', 'alert', etc.
     resource_id: str
@@ -18,9 +19,11 @@ class CollaborativeSession:
     last_activity: datetime
     is_active: bool = True
 
+
 @dataclass
 class CollaborationEvent:
     """Real-time collaboration event"""
+
     id: str
     session_id: str
     user_id: str
@@ -28,9 +31,11 @@ class CollaborationEvent:
     data: Dict[str, Any]
     timestamp: datetime
 
+
 @dataclass
 class PresenceInfo:
     """User presence information"""
+
     user_id: str
     username: str
     avatar_url: Optional[str]
@@ -38,6 +43,7 @@ class PresenceInfo:
     current_resource: Optional[str]
     cursor_position: Optional[Dict[str, Any]]  # For text editing
     status: str = "online"  # 'online', 'away', 'offline'
+
 
 class WebSocketConnectionManager:
     """Manages WebSocket connections for real-time collaboration"""
@@ -55,16 +61,11 @@ class WebSocketConnectionManager:
             "websocket": websocket,
             "connection_id": connection_id,
             "username": username,
-            "connected_at": datetime.now(UTC)
+            "connected_at": datetime.now(UTC),
         }
 
         # Update presence
-        self.presence_info[user_id] = PresenceInfo(
-            user_id=user_id,
-            username=username,
-            last_seen=datetime.now(UTC),
-            status="online"
-        )
+        self.presence_info[user_id] = PresenceInfo(user_id=user_id, username=username, last_seen=datetime.now(UTC), status="online")
 
         logger.info(f"User {username} ({user_id}) connected with connection {connection_id}")
         return connection_id
@@ -100,7 +101,7 @@ class WebSocketConnectionManager:
                 resource_id=resource_id,
                 participants=set(),
                 created_at=datetime.now(UTC),
-                last_activity=datetime.now(UTC)
+                last_activity=datetime.now(UTC),
             )
             self.collaborative_sessions[session_key] = session
             logger.info(f"Created new collaborative session {session.id} for {resource_type}:{resource_id}")
@@ -116,12 +117,16 @@ class WebSocketConnectionManager:
             self.presence_info[user_id].current_resource = session_key
 
         # Broadcast join event
-        await self.broadcast_to_session(session_key, {
-            "type": "user_joined",
-            "user_id": user_id,
-            "username": self.active_connections.get(user_id, {}).get("username", "Unknown"),
-            "timestamp": datetime.now(UTC).isoformat()
-        }, exclude_user=user_id)
+        await self.broadcast_to_session(
+            session_key,
+            {
+                "type": "user_joined",
+                "user_id": user_id,
+                "username": self.active_connections.get(user_id, {}).get("username", "Unknown"),
+                "timestamp": datetime.now(UTC).isoformat(),
+            },
+            exclude_user=user_id,
+        )
 
         logger.info(f"User {user_id} joined session {session.id}")
         return session.id
@@ -148,12 +153,15 @@ class WebSocketConnectionManager:
                 self.presence_info[user_id].current_resource = None
 
             # Broadcast leave event
-            await self.broadcast_to_session(session_key, {
-                "type": "user_left",
-                "user_id": user_id,
-                "username": self.active_connections.get(user_id, {}).get("username", "Unknown"),
-                "timestamp": datetime.now(UTC).isoformat()
-            })
+            await self.broadcast_to_session(
+                session_key,
+                {
+                    "type": "user_left",
+                    "user_id": user_id,
+                    "username": self.active_connections.get(user_id, {}).get("username", "Unknown"),
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
+            )
 
             # Clean up empty sessions
             if not session.participants:
@@ -204,11 +212,7 @@ class WebSocketConnectionManager:
                 break
 
         if not session:
-            await self.send_to_user(user_id, {
-                "type": "error",
-                "message": "Session not found",
-                "event_id": event_data.get("id")
-            })
+            await self.send_to_user(user_id, {"type": "error", "message": "Session not found", "event_id": event_data.get("id")})
             return
 
         # Update session activity
@@ -221,43 +225,57 @@ class WebSocketConnectionManager:
                 self.presence_info[user_id].cursor_position = event_data.get("position")
 
             # Broadcast cursor position to other participants
-            await self.broadcast_to_session(session_key, {
-                "type": "cursor_update",
-                "user_id": user_id,
-                "position": event_data.get("position"),
-                "timestamp": datetime.now(UTC).isoformat()
-            }, exclude_user=user_id)
+            await self.broadcast_to_session(
+                session_key,
+                {
+                    "type": "cursor_update",
+                    "user_id": user_id,
+                    "position": event_data.get("position"),
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
+                exclude_user=user_id,
+            )
 
         elif event_type == "text_edit":
             # Broadcast text changes
-            await self.broadcast_to_session(session_key, {
-                "type": "text_change",
-                "user_id": user_id,
-                "changes": event_data.get("changes", {}),
-                "timestamp": datetime.now(UTC).isoformat()
-            }, exclude_user=user_id)
+            await self.broadcast_to_session(
+                session_key,
+                {
+                    "type": "text_change",
+                    "user_id": user_id,
+                    "changes": event_data.get("changes", {}),
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
+                exclude_user=user_id,
+            )
 
         elif event_type == "comment_add":
             # Broadcast new comments
-            await self.broadcast_to_session(session_key, {
-                "type": "comment_added",
-                "user_id": user_id,
-                "comment": event_data.get("comment"),
-                "position": event_data.get("position"),
-                "timestamp": datetime.now(UTC).isoformat()
-            })
+            await self.broadcast_to_session(
+                session_key,
+                {
+                    "type": "comment_added",
+                    "user_id": user_id,
+                    "comment": event_data.get("comment"),
+                    "position": event_data.get("position"),
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
+            )
 
         elif event_type == "status_update":
             # Update user status
             if user_id in self.presence_info:
                 self.presence_info[user_id].status = event_data.get("status", "online")
 
-            await self.broadcast_to_session(session_key, {
-                "type": "user_status_update",
-                "user_id": user_id,
-                "status": event_data.get("status", "online"),
-                "timestamp": datetime.now(UTC).isoformat()
-            })
+            await self.broadcast_to_session(
+                session_key,
+                {
+                    "type": "user_status_update",
+                    "user_id": user_id,
+                    "status": event_data.get("status", "online"),
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
+            )
 
     def get_session_participants(self, session_id: str) -> List[Dict[str, Any]]:
         """Get list of participants in a session"""
@@ -267,13 +285,15 @@ class WebSocketConnectionManager:
                 for user_id in session.participants:
                     presence = self.presence_info.get(user_id)
                     if presence:
-                        participants.append({
-                            "user_id": user_id,
-                            "username": presence.username,
-                            "status": presence.status,
-                            "cursor_position": presence.cursor_position,
-                            "last_seen": presence.last_seen.isoformat()
-                        })
+                        participants.append(
+                            {
+                                "user_id": user_id,
+                                "username": presence.username,
+                                "status": presence.status,
+                                "cursor_position": presence.cursor_position,
+                                "last_seen": presence.last_seen.isoformat(),
+                            }
+                        )
                 return participants
         return []
 
@@ -282,16 +302,19 @@ class WebSocketConnectionManager:
         sessions = []
         for session_key, session in self.collaborative_sessions.items():
             if session.is_active:
-                sessions.append({
-                    "id": session.id,
-                    "resource_type": session.resource_type,
-                    "resource_id": session.resource_id,
-                    "participant_count": len(session.participants),
-                    "participants": list(session.participants),
-                    "created_at": session.created_at.isoformat(),
-                    "last_activity": session.last_activity.isoformat()
-                })
+                sessions.append(
+                    {
+                        "id": session.id,
+                        "resource_type": session.resource_type,
+                        "resource_id": session.resource_id,
+                        "participant_count": len(session.participants),
+                        "participants": list(session.participants),
+                        "created_at": session.created_at.isoformat(),
+                        "last_activity": session.last_activity.isoformat(),
+                    }
+                )
         return sessions
+
 
 class ConflictResolutionService:
     """Handles conflicts in collaborative editing"""
@@ -316,11 +339,12 @@ class ConflictResolutionService:
             "conflict_id": conflict_data.get("id"),
             "resolution": "last_write_wins",
             "winner": conflict_data.get("latest_user"),
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         self.resolutions.append(resolution)
         return resolution
+
 
 class NotificationService:
     """Handles real-time notifications for collaboration"""
@@ -331,19 +355,17 @@ class NotificationService:
 
     async def send_notification(self, user_id: str, notification: Dict[str, Any]):
         """Send notification to specific user"""
-        await self.connection_manager.send_to_user(user_id, {
-            "type": "notification",
-            "notification": notification,
-            "timestamp": datetime.now(UTC).isoformat()
-        })
+        await self.connection_manager.send_to_user(
+            user_id, {"type": "notification", "notification": notification, "timestamp": datetime.now(UTC).isoformat()}
+        )
 
     async def broadcast_notification(self, session_key: str, notification: Dict[str, Any], exclude_user: Optional[str] = None):
         """Broadcast notification to session participants"""
-        await self.connection_manager.broadcast_to_session(session_key, {
-            "type": "notification",
-            "notification": notification,
-            "timestamp": datetime.now(UTC).isoformat()
-        }, exclude_user=exclude_user)
+        await self.connection_manager.broadcast_to_session(
+            session_key,
+            {"type": "notification", "notification": notification, "timestamp": datetime.now(UTC).isoformat()},
+            exclude_user=exclude_user,
+        )
 
     async def send_case_assignment_notification(self, case_id: str, assignee_id: str, assigner_name: str):
         """Send case assignment notification"""
@@ -354,7 +376,7 @@ class NotificationService:
             "message": f"You have been assigned a new case by {assigner_name}",
             "case_id": case_id,
             "action_url": f"/cases/{case_id}",
-            "priority": "normal"
+            "priority": "normal",
         }
 
         await self.send_notification(assignee_id, notification)
@@ -368,11 +390,12 @@ class NotificationService:
             "message": f"{commenter_name} added a comment to case {case_id}",
             "case_id": case_id,
             "action_url": f"/cases/{case_id}",
-            "priority": "low"
+            "priority": "low",
         }
 
         for user_id in participants:
             await self.send_notification(user_id, notification)
+
 
 # Global instances
 connection_manager = WebSocketConnectionManager()

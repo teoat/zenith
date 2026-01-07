@@ -2,7 +2,9 @@ import asyncio
 import logging
 from typing import Any
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status, HTTPException
+import json
+from datetime import UTC, datetime
 
 from app.services.infrastructure.auth_service import auth_service
 
@@ -91,11 +93,6 @@ async def websocket_endpoint(websocket: WebSocket, case_id: str):
 
 # ===== ADVANCED REAL-TIME COLLABORATION FEATURES =====
 
-import json
-from datetime import UTC, datetime
-
-from fastapi import HTTPException
-
 
 @router.websocket("/advanced/{resource_type}/{resource_id}")
 async def advanced_collaborative_session(websocket: WebSocket, resource_type: str, resource_id: str, token: str = None):
@@ -135,9 +132,7 @@ async def advanced_collaborative_session(websocket: WebSocket, resource_type: st
             await connection_manager.handle_collaboration_event(user.id, message_data)
 
             # Send acknowledgment
-            await websocket.send_json(
-                {"type": "ack", "event_id": message_data.get("id"), "timestamp": datetime.now(UTC).isoformat()}
-            )
+            await websocket.send_json({"type": "ack", "event_id": message_data.get("id"), "timestamp": datetime.now(UTC).isoformat()})
 
     except WebSocketDisconnect:
         logging.info(f"Advanced WebSocket disconnected for user {user.id}")

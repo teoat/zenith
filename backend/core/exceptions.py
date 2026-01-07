@@ -29,9 +29,7 @@ class ErrorCategory(Enum):
     SECURITY = "security"
 
 
-def handle_exceptions(
-    func_name: str, category: ErrorCategory = ErrorCategory.BUSINESS_LOGIC
-):
+def handle_exceptions(func_name: str, category: ErrorCategory = ErrorCategory.BUSINESS_LOGIC):
     """
     Decorator for standardized exception handling
 
@@ -58,9 +56,7 @@ def handle_exceptions(
             except ConnectionError as e:
                 raise ServiceUnavailableError("external") from e
             except FileNotFoundError as e:
-                raise APIException(
-                    status.HTTP_404_NOT_FOUND, f"File not found: {e!s}"
-                ) from e
+                raise APIException(status.HTTP_404_NOT_FOUND, f"File not found: {e!s}") from e
             except Exception as e:
                 # Log unexpected errors and convert to generic API exception
                 logger.error(f"Unexpected error in {func_name}: {e}", exc_info=True)
@@ -83,9 +79,7 @@ def handle_exceptions(
             except ConnectionError as e:
                 raise ServiceUnavailableError("external") from e
             except FileNotFoundError as e:
-                raise APIException(
-                    status.HTTP_404_NOT_FOUND, f"File not found: {e!s}"
-                ) from e
+                raise APIException(status.HTTP_404_NOT_FOUND, f"File not found: {e!s}") from e
             except Exception as e:
                 logger.error(f"Unexpected error in {func_name}: {e}", exc_info=True)
                 raise APIException(
@@ -131,9 +125,7 @@ class APIException(HTTPException):
 class AuthenticationError(APIException):
     """Invalid or missing authentication"""
 
-    def __init__(
-        self, detail: str = "Authentication required", metadata: dict | None = None
-    ):
+    def __init__(self, detail: str = "Authentication required", metadata: dict | None = None):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=detail,
@@ -286,17 +278,13 @@ class handle_api_errors:
 
         # Convert common exceptions
         if exc_type.__name__ == "IntegrityError":
-            raise DatabaseError(
-                "create", f"Integrity constraint violation during {self.operation}"
-            )
+            raise DatabaseError("create", f"Integrity constraint violation during {self.operation}")
 
         if exc_type.__name__ == "OperationalError":
             raise DatabaseError("query", f"Database error during {self.operation}")
 
         # Log and raise generic API exception
-        logger.error(
-            f"Unhandled exception during {self.operation}: {exc_val}", exc_info=True
-        )
+        logger.error(f"Unhandled exception during {self.operation}: {exc_val}", exc_info=True)
         raise APIException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Internal error during {self.operation}",

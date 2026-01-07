@@ -32,9 +32,7 @@ class BehaviorBaselineService:
             "last_calculated": datetime.utcnow().isoformat(),
         }
 
-    async def detect_anomalies(
-        self, account_id: str, current_transactions: list[dict]
-    ) -> list[dict]:
+    async def detect_anomalies(self, account_id: str, current_transactions: list[dict]) -> list[dict]:
         """
         Compares current transactions against the baseline.
         """
@@ -97,13 +95,8 @@ class BehaviorBaselineService:
 
             # Simplified heuristic for personal vs business
             desc = tx.get("description", "").upper()
-            is_personal = any(
-                term in desc
-                for term in ["GROCERY", "CINEMA", "REST", "PHARMACY", "RENT"]
-            )
-            is_business = any(
-                term in desc for term in ["PAYROLL", "SUPPLY", "INVOICE", "VENDOR"]
-            )
+            is_personal = any(term in desc for term in ["GROCERY", "CINEMA", "REST", "PHARMACY", "RENT"])
+            is_business = any(term in desc for term in ["PAYROLL", "SUPPLY", "INVOICE", "VENDOR"])
 
             if is_credit:
                 if is_personal:
@@ -129,27 +122,17 @@ class BehaviorBaselineService:
                 {
                     "date": tx.get("date"),
                     "buffer": buffer,
-                    "dependency_ratio": (illicit_dependency / business_survival_total)
-                    if business_survival_total > 0
-                    else 0,
+                    "dependency_ratio": (illicit_dependency / business_survival_total) if business_survival_total > 0 else 0,
                 }
             )
 
-        ratio = (
-            (illicit_dependency / business_survival_total)
-            if business_survival_total > 0
-            else 0
-        )
+        ratio = (illicit_dependency / business_survival_total) if business_survival_total > 0 else 0
 
         return {
             "account_id": account_id,
             "comingling_ratio": ratio,
             "total_illicit_infusion": illicit_dependency,
-            "status": "CRITICAL_DEPENDENCY"
-            if ratio > 0.5
-            else "HIGH_CO_MINGLING"
-            if ratio > 0.1
-            else "HEALTHY",
+            "status": "CRITICAL_DEPENDENCY" if ratio > 0.5 else "HIGH_CO_MINGLING" if ratio > 0.1 else "HEALTHY",
             "heatmap_data": points,
             "libr_verdict": f"Business survived on {ratio:.1%} illicit/external float after personal buffer exhaustion.",
         }

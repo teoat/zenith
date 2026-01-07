@@ -1,7 +1,7 @@
-import React from 'react';
-import { Check, X, Info } from 'lucide-react';
-import { AccessibleButton } from './AccessibleButton';
-import type { DraftState } from '@/services/draftPreviewService';
+import React from "react";
+import { Check, X, Info } from "lucide-react";
+import { AccessibleButton } from "./AccessibleButton";
+import type { DraftState } from "@/services/draftPreviewService";
 
 interface DraftPreviewProps {
   draft: DraftState;
@@ -14,25 +14,35 @@ export const DraftPreview: React.FC<DraftPreviewProps> = ({
   draft,
   onAccept,
   onReject,
-  className = ''
+  className = "",
 }) => {
   return (
-    <div className={`flex flex-col gap-2 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg text-sm ${className}`}>
+    <div
+      className={`flex flex-col gap-2 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg text-sm ${className}`}
+    >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2 text-amber-800 dark:text-amber-200 font-medium">
           <Info size={14} />
           <span>AI Suggestion for {draft.field}</span>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-2 gap-4 mt-1">
         <div>
-          <span className="text-[10px] uppercase text-amber-600 dark:text-amber-400 font-bold">Current</span>
-          <div className="text-slate-500 line-through truncate">{String(draft.originalValue || 'Empty')}</div>
+          <span className="text-[10px] uppercase text-amber-600 dark:text-amber-400 font-bold">
+            Current
+          </span>
+          <div className="text-slate-500 line-through truncate">
+            {String(draft.originalValue || "Empty")}
+          </div>
         </div>
         <div>
-          <span className="text-[10px] uppercase text-blue-600 dark:text-blue-400 font-bold">Proposed</span>
-          <div className="text-blue-700 dark:text-blue-300 font-medium truncate">{String(draft.value)}</div>
+          <span className="text-[10px] uppercase text-blue-600 dark:text-blue-400 font-bold">
+            Proposed
+          </span>
+          <div className="text-blue-700 dark:text-blue-300 font-medium truncate">
+            {String(draft.value)}
+          </div>
         </div>
       </div>
 

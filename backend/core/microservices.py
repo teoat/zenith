@@ -243,9 +243,7 @@ class EvidenceProcessingService(Microservice):
     def _setup_routes(self):
         @self.app.post("/evidence/process")
         async def process_evidence(evidence_data: dict[str, Any]):
-            evidence_id = evidence_data.get(
-                "id", f"evidence_{len(self.processed_evidence) + 1}"
-            )
+            evidence_id = evidence_data.get("id", f"evidence_{len(self.processed_evidence) + 1}")
 
             # Add to processing queue
             await self.processing_queue.put(evidence_data)
@@ -323,9 +321,7 @@ class UserManagementService(Microservice):
         @self.app.post("/users")
         async def create_user(user_data: dict[str, Any]):
             user_id = user_data.get("email", f"user_{len(self.users) + 1}")
-            user_data["permissions"] = self.roles.get(
-                user_data.get("role", "viewer"), []
-            )
+            user_data["permissions"] = self.roles.get(user_data.get("role", "viewer"), [])
             self.users[user_id] = user_data
 
             # Publish user created event
@@ -404,9 +400,7 @@ class ReportingAnalyticsService(Microservice):
 
             return analytics
 
-    async def _generate_report_data(
-        self, report_type: str, config: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _generate_report_data(self, report_type: str, config: dict[str, Any]) -> dict[str, Any]:
         """Generate report data based on type"""
         if report_type == "case_summary":
             return {
@@ -559,9 +553,7 @@ class MicroservicesOrchestrator:
         try:
             import uvicorn
 
-            config = uvicorn.Config(
-                service.app, host="0.0.0.0", port=port, log_level="info"
-            )
+            config = uvicorn.Config(service.app, host="0.0.0.0", port=port, log_level="info")
             server = uvicorn.Server(config)
             await server.serve()
         except Exception as e:

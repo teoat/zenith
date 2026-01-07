@@ -20,9 +20,7 @@ class ScriptExecutionLog(BaseModel):
 
 
 @router.post("/execute", response_model=ScriptExecutionLog)
-async def execute_remediation_script(
-    request: ScriptRequest, background_tasks: BackgroundTasks
-):
+async def execute_remediation_script(request: ScriptRequest, background_tasks: BackgroundTasks):
     """
     Execute a predefined remediation script in a sandboxed environment.
     """
@@ -52,6 +50,4 @@ async def get_pending_approvals():
     """
     List scripts waiting for dual-control approval.
     """
-    return [
-        {"id": "exec_002", "script": "flush_redis_cache", "requester": "system_monitor"}
-    ]
+    return [{"id": "exec_002", "script": "flush_redis_cache", "requester": "system_monitor"}]

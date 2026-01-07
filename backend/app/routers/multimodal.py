@@ -47,9 +47,7 @@ async def analyze_uploaded_file(
             raise HTTPException(status_code=400, detail="No file provided")
 
         # Save uploaded file temporarily
-        with tempfile.NamedTemporaryFile(
-            delete=False, suffix=f"_{file.filename}"
-        ) as temp_file:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=f"_{file.filename}") as temp_file:
             content = await file.read()
             temp_file.write(content)
             temp_file_path = temp_file.name
@@ -67,9 +65,7 @@ async def analyze_uploaded_file(
             # This returns a List[ProcessingResult]
             results = await processor.process_files_batch([temp_file_path], options)
             if not results:
-                raise HTTPException(
-                    status_code=500, detail="Analysis produced no results"
-                )
+                raise HTTPException(status_code=500, detail="Analysis produced no results")
 
             analysis = results[0]
 
@@ -90,9 +86,7 @@ async def analyze_uploaded_file(
                     )
                     else 500
                 )
-                raise HTTPException(
-                    status_code=status_code, detail=f"Analysis failed: {analysis.error}"
-                )
+                raise HTTPException(status_code=status_code, detail=f"Analysis failed: {analysis.error}")
 
             # Convert ProcessingResult to the Response format frontend expects
             result = _map_processing_result(analysis, file.filename, options)
@@ -158,9 +152,7 @@ async def analyze_file_path(
                 )
                 else 500
             )
-            raise HTTPException(
-                status_code=status_code, detail=f"Analysis failed: {analysis.error}"
-            )
+            raise HTTPException(status_code=status_code, detail=f"Analysis failed: {analysis.error}")
 
         # Convert to dict for JSON response
         result = _map_processing_result(analysis, os.path.basename(file_path), options)
@@ -208,9 +200,7 @@ async def analyze_batch_files(
                     continue
 
                 # Save uploaded file temporarily
-                with tempfile.NamedTemporaryFile(
-                    delete=False, suffix=f"_{file.filename}"
-                ) as temp_file:
+                with tempfile.NamedTemporaryFile(delete=False, suffix=f"_{file.filename}") as temp_file:
                     content = await file.read()
                     temp_file.write(content)
                     temp_file_path = temp_file.name
@@ -237,17 +227,13 @@ async def analyze_batch_files(
                     # Flatten structure slightly for batch response to match previous API if needed?
                     # Previous API returned full structure. We will return full structure + success flag.
                     mapped["success"] = True
-                    mapped["filename"] = (
-                        original_filename  # Ensure filename at top level
-                    )
+                    mapped["filename"] = original_filename  # Ensure filename at top level
                     mapped_results.append(mapped)
 
             return {
                 "success": True,
                 "total_files": len(files),
-                "successful_analyses": len(
-                    [r for r in mapped_results if r.get("success", False)]
-                ),
+                "successful_analyses": len([r for r in mapped_results if r.get("success", False)]),
                 "results": mapped_results,
                 "analysis_timestamp": datetime.now(UTC).isoformat(),
             }
@@ -310,9 +296,7 @@ async def get_analysis_status():
     }
 
 
-def _map_processing_result(
-    analysis: ProcessingResult, filename: str, options: dict[str, Any]
-) -> dict[str, Any]:
+def _map_processing_result(analysis: ProcessingResult, filename: str, options: dict[str, Any]) -> dict[str, Any]:
     """Helper to map EvidenceProcessor result to the JSON structure expected by frontend"""
 
     # Extract metadata fields if they exist
@@ -343,9 +327,7 @@ def _map_processing_result(
         },
         "visual_analysis": {
             "visual_features": meta.get("visual_features", {}),
-            "objects_detected": meta.get(
-                "objects_detected", []
-            ),  # Features missing in evidence_service for now
+            "objects_detected": meta.get("objects_detected", []),  # Features missing in evidence_service for now
             "faces_detected": meta.get("faces_detected", []),
         },
         "document_analysis": {

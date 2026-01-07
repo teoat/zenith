@@ -6,7 +6,7 @@ export interface AccessibilityResult {
   score: number;
   violations: Array<{
     rule: string;
-    impact: 'minor' | 'moderate' | 'serious' | 'critical';
+    impact: "minor" | "moderate" | "serious" | "critical";
     description: string;
     element?: string;
   }>;
@@ -20,7 +20,7 @@ export interface AccessibilityResult {
 
 export async function checkAccessibility(
   _container: HTMLElement,
-  _options?: { rules?: string[]; level?: 'A' | 'AA' | 'AAA' }
+  _options?: { rules?: string[]; level?: "A" | "AA" | "AAA" },
 ): Promise<AccessibilityResult> {
   // Mock implementation for testing
   return {
@@ -30,14 +30,14 @@ export async function checkAccessibility(
       passed: 15,
       failed: 0,
       incomplete: 0,
-      inapplicable: 2
-    }
+      inapplicable: 2,
+    },
   };
 }
 
 export function getAccessibilityViolations(
-  _container: HTMLElement
-): AccessibilityResult['violations'] {
+  _container: HTMLElement,
+): AccessibilityResult["violations"] {
   // Mock implementation
   return [];
 }

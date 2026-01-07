@@ -44,9 +44,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         # Force HTTPS (only in production)
         environment = os.getenv("ENVIRONMENT", "development").lower()
         if environment != "development":
-            response.headers["Strict-Transport-Security"] = (
-                "max-age=31536000; includeSubDomains; preload"
-            )
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
 
         # Referrer Policy - Limit information leakage
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"

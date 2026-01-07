@@ -15,9 +15,7 @@ logger = logging.getLogger(__name__)
 class AuditService:
     """Comprehensive audit trail and compliance logging service"""
 
-    def __init__(
-        self, db_path: str = "data/audit.db", retention_days: int = 2555
-    ):  # 7 years
+    def __init__(self, db_path: str = "data/audit.db", retention_days: int = 2555):  # 7 years
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(exist_ok=True)
         self.retention_days = retention_days
@@ -55,14 +53,10 @@ class AuditService:
             )
 
             # Indexes for performance
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_timestamp ON audit_log(timestamp)"
-            )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON audit_log(timestamp)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_user_id ON audit_log(user_id)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_action ON audit_log(action)")
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_resource ON audit_log(resource_type, resource_id)"
-            )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_resource ON audit_log(resource_type, resource_id)")
 
             # Compliance events table
             conn.execute(
@@ -429,9 +423,7 @@ class AuditService:
             logger.error(f"Failed to get audit trail: {e}")
             return []
 
-    def get_compliance_report(
-        self, start_date: str | None = None, end_date: str | None = None
-    ) -> dict[str, Any]:
+    def get_compliance_report(self, start_date: str | None = None, end_date: str | None = None) -> dict[str, Any]:
         """Generate compliance report"""
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -545,11 +537,7 @@ class AuditService:
                     "total_entries": total_entries,
                     "valid_entries": valid_entries,
                     "invalid_entries": len(invalid_entries),
-                    "integrity_percentage": (
-                        (valid_entries / total_entries * 100)
-                        if total_entries > 0
-                        else 100
-                    ),
+                    "integrity_percentage": ((valid_entries / total_entries * 100) if total_entries > 0 else 100),
                     "invalid_entry_ids": invalid_entries[:10],  # First 10 for brevity
                     "verified_at": datetime.now().isoformat(),
                 }

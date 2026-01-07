@@ -1,16 +1,16 @@
-import { secureLogger } from '@/utils/secureLogger';
+import { secureLogger } from "@/utils/secureLogger";
 
 export enum CircuitState {
-  CLOSED = 'CLOSED',     // Normal operation
-  OPEN = 'OPEN',         // Circuit is open, failing fast
-  HALF_OPEN = 'HALF_OPEN' // Testing if service recovered
+  CLOSED = "CLOSED", // Normal operation
+  OPEN = "OPEN", // Circuit is open, failing fast
+  HALF_OPEN = "HALF_OPEN", // Testing if service recovered
 }
 
 export interface CircuitBreakerConfig {
-  failureThreshold: number;    // Number of failures before opening circuit
-  recoveryTimeout: number;     // Time in ms before attempting recovery
-  monitoringPeriod: number;    // Time window in ms to count failures
-  successThreshold: number;    // Number of successes needed in HALF_OPEN to close
+  failureThreshold: number; // Number of failures before opening circuit
+  recoveryTimeout: number; // Time in ms before attempting recovery
+  monitoringPeriod: number; // Time window in ms to count failures
+  successThreshold: number; // Number of successes needed in HALF_OPEN to close
 }
 
 export interface CircuitBreakerStats {
@@ -36,7 +36,7 @@ class CircuitBreaker {
 
   constructor(
     private name: string,
-    private config: CircuitBreakerConfig
+    private config: CircuitBreakerConfig,
   ) {}
 
   async execute<T>(operation: () => Promise<T>): Promise<T> {
@@ -47,7 +47,10 @@ class CircuitBreaker {
       if (this.shouldAttemptRecovery()) {
         this.state = CircuitState.HALF_OPEN;
         this.successCount = 0;
-        secureLogger.info('Circuit Breaker', `Circuit breaker ${this.name} transitioning to HALF_OPEN`);
+        secureLogger.info(
+          "Circuit Breaker",
+          `Circuit breaker ${this.name} transitioning to HALF_OPEN`,
+        );
       } else {
         throw new Error(`Circuit breaker ${this.name} is OPEN - failing fast`);
       }
@@ -71,7 +74,10 @@ class CircuitBreaker {
       this.successCount++;
       if (this.successCount >= this.config.successThreshold) {
         this.reset();
-        secureLogger.info('Circuit Breaker', `Circuit breaker ${this.name} closed after successful recovery`);
+        secureLogger.info(
+          "Circuit Breaker",
+          `Circuit breaker ${this.name} closed after successful recovery`,
+        );
       }
     } else if (this.state === CircuitState.CLOSED) {
       // Reset failure count on success in closed state
@@ -88,11 +94,19 @@ class CircuitBreaker {
       // Failed during recovery test, go back to OPEN
       this.state = CircuitState.OPEN;
       this.successCount = 0;
-      secureLogger.warn('Circuit Breaker', `Circuit breaker ${this.name} recovery failed, returning to OPEN`);
-    } else if (this.state === CircuitState.CLOSED &&
-               this.failureCount >= this.config.failureThreshold) {
+      secureLogger.warn(
+        "Circuit Breaker",
+        `Circuit breaker ${this.name} recovery failed, returning to OPEN`,
+      );
+    } else if (
+      this.state === CircuitState.CLOSED &&
+      this.failureCount >= this.config.failureThreshold
+    ) {
       this.state = CircuitState.OPEN;
-      secureLogger.warn('Circuit Breaker', `Circuit breaker ${this.name} opened due to ${this.failureCount} failures`);
+      secureLogger.warn(
+        "Circuit Breaker",
+        `Circuit breaker ${this.name} opened due to ${this.failureCount} failures`,
+      );
     }
   }
 
@@ -124,18 +138,27 @@ class CircuitBreaker {
   // Manual control methods
   forceOpen(): void {
     this.state = CircuitState.OPEN;
-    secureLogger.warn('Circuit Breaker', `Circuit breaker ${this.name} manually opened`);
+    secureLogger.warn(
+      "Circuit Breaker",
+      `Circuit breaker ${this.name} manually opened`,
+    );
   }
 
   forceClose(): void {
     this.reset();
-    secureLogger.info('Circuit Breaker', `Circuit breaker ${this.name} manually closed`);
+    secureLogger.info(
+      "Circuit Breaker",
+      `Circuit breaker ${this.name} manually closed`,
+    );
   }
 
   forceHalfOpen(): void {
     this.state = CircuitState.HALF_OPEN;
     this.successCount = 0;
-    secureLogger.info('Circuit Breaker', `Circuit breaker ${this.name} manually set to HALF_OPEN`);
+    secureLogger.info(
+      "Circuit Breaker",
+      `Circuit breaker ${this.name} manually set to HALF_OPEN`,
+    );
   }
 }
 
@@ -196,7 +219,10 @@ export const DEFAULT_CIRCUIT_CONFIGS = {
 export const circuitBreakerRegistry = new CircuitBreakerRegistry();
 
 // Convenience functions
-export function createCircuitBreaker(name: string, config: CircuitBreakerConfig): CircuitBreaker {
+export function createCircuitBreaker(
+  name: string,
+  config: CircuitBreakerConfig,
+): CircuitBreaker {
   return circuitBreakerRegistry.create(name, config);
 }
 
@@ -204,6 +230,9 @@ export function getCircuitBreaker(name: string): CircuitBreaker | undefined {
   return circuitBreakerRegistry.get(name);
 }
 
-export function getAllCircuitBreakerStats(): Record<string, CircuitBreakerStats> {
+export function getAllCircuitBreakerStats(): Record<
+  string,
+  CircuitBreakerStats
+> {
   return circuitBreakerRegistry.getStats();
 }

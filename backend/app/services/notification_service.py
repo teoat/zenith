@@ -28,9 +28,7 @@ class NotificationService:
         await self.mq.subscribe("notifications.sms", self._handle_sms)
         logger.info("[NotificationService] Initialized and subscribed to topics")
 
-    async def send_notification(
-        self, type: str, recipient: str, template: str, context: dict[str, Any]
-    ):
+    async def send_notification(self, type: str, recipient: str, template: str, context: dict[str, Any]):
         """Publish notification request to MQ"""
         payload = {
             "type": type,
@@ -58,9 +56,7 @@ class NotificationService:
 
         db = SessionLocal()
         try:
-            plugins = await plugin_registry_service.get_plugins_by_capability(
-                "notification", db
-            )
+            plugins = await plugin_registry_service.get_plugins_by_capability("notification", db)
 
             if plugins:
                 for plugin in plugins:
@@ -75,17 +71,11 @@ class NotificationService:
                         }
 
                         result = await plugin.execute(plugin_input)
-                        logger.info(
-                            f"Notification plugin {plugin.metadata.name} executed: {result}"
-                        )
+                        logger.info(f"Notification plugin {plugin.metadata.name} executed: {result}")
                     except Exception as pe:
-                        logger.error(
-                            f"Plugin {plugin.metadata.name} failed to send email: {pe}"
-                        )
+                        logger.error(f"Plugin {plugin.metadata.name} failed to send email: {pe}")
             else:
-                logger.warning(
-                    "No notification plugins active. Fallback to basic logging."
-                )
+                logger.warning("No notification plugins active. Fallback to basic logging.")
                 logger.info(f"[EMAIL FALLBACK] Sending to {recipient}: {message}")
 
         except Exception as e:

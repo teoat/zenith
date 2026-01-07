@@ -60,15 +60,9 @@ class AutomatedScoringSystem:
             )
 
             # Indexes for performance
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_timestamp ON health_scores(timestamp)"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_dimension ON health_scores(dimension)"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_overall_timestamp ON overall_scores(timestamp)"
-            )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON health_scores(timestamp)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_dimension ON health_scores(dimension)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_overall_timestamp ON overall_scores(timestamp)")
 
     async def run_scoring_cycle(self) -> dict[str, Any]:
         """Run a complete scoring cycle."""
@@ -103,9 +97,7 @@ class AutomatedScoringSystem:
             logger.error(f"Scoring cycle failed: {e}")
             return {"error": str(e), "timestamp": datetime.now().isoformat()}
 
-    async def _calculate_trends(
-        self, current_diagnostics: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _calculate_trends(self, current_diagnostics: dict[str, Any]) -> dict[str, Any]:
         """Calculate trends based on historical data."""
         trends = {}
 
@@ -117,26 +109,18 @@ class AutomatedScoringSystem:
                 continue
 
             current_score = data["health_score"]
-            dimension_trend = self._analyze_trend(
-                dimension, current_score, historical_data
-            )
+            dimension_trend = self._analyze_trend(dimension, current_score, historical_data)
 
             trends[dimension] = dimension_trend
 
         # Overall trend
         current_overall = current_diagnostics.get("overall_health_score", 0)
-        overall_historical = [
-            s["overall_score"] for s in historical_data.get("overall", [])
-        ]
-        trends["overall"] = self._analyze_trend(
-            "overall", current_overall, {"overall": overall_historical}
-        )
+        overall_historical = [s["overall_score"] for s in historical_data.get("overall", [])]
+        trends["overall"] = self._analyze_trend("overall", current_overall, {"overall": overall_historical})
 
         return trends
 
-    def _analyze_trend(
-        self, dimension: str, current_score: float, historical: dict[str, list[float]]
-    ) -> dict[str, Any]:
+    def _analyze_trend(self, dimension: str, current_score: float, historical: dict[str, list[float]]) -> dict[str, Any]:
         """Analyze trend for a specific dimension."""
         historical_scores = historical.get(dimension, [])
 
@@ -159,10 +143,7 @@ class AutomatedScoringSystem:
 
         # Calculate volatility
         if len(recent_scores) > 1:
-            volatility = sum(
-                abs(recent_scores[i] - recent_scores[i - 1])
-                for i in range(1, len(recent_scores))
-            ) / len(recent_scores)
+            volatility = sum(abs(recent_scores[i] - recent_scores[i - 1]) for i in range(1, len(recent_scores))) / len(recent_scores)
         else:
             volatility = 0
 
@@ -170,14 +151,10 @@ class AutomatedScoringSystem:
             "trend": trend,
             "change": change,
             "volatility": volatility,
-            "confidence": min(
-                len(historical_scores) / 10, 1.0
-            ),  # More data = higher confidence
+            "confidence": min(len(historical_scores) / 10, 1.0),  # More data = higher confidence
         }
 
-    def _get_historical_scores(
-        self, days_back: int = 7
-    ) -> dict[str, list[dict[str, Any]]]:
+    def _get_historical_scores(self, days_back: int = 7) -> dict[str, list[dict[str, Any]]]:
         """Get historical scoring data."""
         cutoff_date = (datetime.now() - timedelta(days=days_back)).isoformat()
 
@@ -190,9 +167,7 @@ class AutomatedScoringSystem:
                 (cutoff_date,),
             )
             for row in cursor:
-                historical["overall"].append(
-                    {"timestamp": row[0], "overall_score": row[1]}
-                )
+                historical["overall"].append({"timestamp": row[0], "overall_score": row[1]})
 
             # Get dimension scores
             cursor = conn.execute(
@@ -207,9 +182,7 @@ class AutomatedScoringSystem:
 
         return historical
 
-    async def _store_scoring_results(
-        self, diagnostics: dict[str, Any], trends: dict[str, Any]
-    ):
+    async def _store_scoring_results(self, diagnostics: dict[str, Any], trends: dict[str, Any]):
         """Store scoring results in database."""
         timestamp = datetime.now().isoformat()
 
@@ -246,13 +219,7 @@ class AutomatedScoringSystem:
                 (
                     timestamp,
                     diagnostics.get("overall_health_score", 0),
-                    json.dumps(
-                        {
-                            k: v
-                            for k, v in diagnostics.items()
-                            if isinstance(v, dict) and "health_score" in v
-                        }
-                    ),
+                    json.dumps({k: v for k, v in diagnostics.items() if isinstance(v, dict) and "health_score" in v}),
                     json.dumps(diagnostics.get("recommendations", [])),
                     overall_trend.get("trend", "unknown"),
                 ),
@@ -260,9 +227,7 @@ class AutomatedScoringSystem:
 
             conn.commit()
 
-    def _generate_alerts(
-        self, diagnostics: dict[str, Any], trends: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    def _generate_alerts(self, diagnostics: dict[str, Any], trends: dict[str, Any]) -> list[dict[str, Any]]:
         """Generate alerts based on diagnostics and trends."""
         alerts = []
 
@@ -280,10 +245,7 @@ class AutomatedScoringSystem:
 
         # Score drop alerts
         overall_trend = trends.get("overall", {})
-        if (
-            overall_trend.get("trend") == "declining"
-            and abs(overall_trend.get("change", 0)) > 0.05
-        ):
+        if overall_trend.get("trend") == "declining" and abs(overall_trend.get("change", 0)) > 0.05:
             alerts.append(
                 {
                     "severity": "high",
@@ -332,9 +294,7 @@ class AutomatedScoringSystem:
                 (cutoff_date,),
             )
             for row in cursor:
-                history["overall_scores"].append(
-                    {"timestamp": row[0], "score": row[1], "trend": row[2]}
-                )
+                history["overall_scores"].append({"timestamp": row[0], "score": row[1], "trend": row[2]})
 
             # Dimension trends
             cursor = conn.execute(
@@ -346,9 +306,7 @@ class AutomatedScoringSystem:
                 if dimension not in history["dimension_trends"]:
                     history["dimension_trends"][dimension] = []
 
-                history["dimension_trends"][dimension].append(
-                    {"timestamp": row[1], "score": row[2], "trend": row[3]}
-                )
+                history["dimension_trends"][dimension].append({"timestamp": row[1], "score": row[2], "trend": row[3]})
 
         return history
 

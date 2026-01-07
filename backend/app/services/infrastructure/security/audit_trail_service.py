@@ -154,9 +154,7 @@ class AuditTrailService:
                     event_id=str(log.get("id", "")),
                     event_type=event_type,
                     severity=severity,
-                    timestamp=datetime.fromisoformat(
-                        log.get("timestamp", datetime.now().isoformat())
-                    ),
+                    timestamp=datetime.fromisoformat(log.get("timestamp", datetime.now().isoformat())),
                     user_id=log.get("user_id"),
                     session_id=log.get("session_id"),
                     ip_address=log.get("ip_address"),
@@ -164,15 +162,12 @@ class AuditTrailService:
                     resource=log.get("resource_type", ""),
                     action=action,
                     details=details,
-                    success=log.get("status_code", 200)
-                    < 400,  # Success if status < 400
+                    success=log.get("status_code", 200) < 400,  # Success if status < 400
                     checksum=log.get("checksum"),
                 )
                 self.audit_events.append(event)
 
-            logger.info(
-                f"Loaded {len(self.audit_events)} audit events from persistent storage"
-            )
+            logger.info(f"Loaded {len(self.audit_events)} audit events from persistent storage")
 
         except Exception as e:
             logger.error(f"Failed to load audit events from persistent storage: {e}")
@@ -272,9 +267,7 @@ class AuditTrailService:
 
         return event_id
 
-    def _determine_severity(
-        self, event_type: AuditEventType, resource: str, action: str
-    ) -> AuditSeverity:
+    def _determine_severity(self, event_type: AuditEventType, resource: str, action: str) -> AuditSeverity:
         """
         Determine the severity of an audit event.
         """
@@ -434,14 +427,10 @@ class AuditTrailService:
             "covered_rules": covered_rules,
             "missing_coverage": missing_coverage,
             "event_distribution": event_type_counts,
-            "recommendations": self._generate_coverage_recommendations(
-                missing_coverage
-            ),
+            "recommendations": self._generate_coverage_recommendations(missing_coverage),
         }
 
-    def _generate_coverage_recommendations(
-        self, missing_coverage: list[str]
-    ) -> list[str]:
+    def _generate_coverage_recommendations(self, missing_coverage: list[str]) -> list[str]:
         """Generate recommendations for missing audit coverage."""
         recommendations = []
 
@@ -473,26 +462,10 @@ class AuditTrailService:
 
         compliance_metrics = {
             "total_audit_events": len(recent_events),
-            "data_modification_events": len(
-                [
-                    e
-                    for e in recent_events
-                    if e["event_type"] in ["data_access", "data_modification"]
-                ]
-            ),
-            "security_events": len(
-                [e for e in recent_events if e["event_type"] == "security_event"]
-            ),
-            "admin_operations": len(
-                [
-                    e
-                    for e in recent_events
-                    if e["event_type"] in ["admin_operation", "configuration_change"]
-                ]
-            ),
-            "failed_operations": len(
-                [e for e in recent_events if not e.get("success", True)]
-            ),
+            "data_modification_events": len([e for e in recent_events if e["event_type"] in ["data_access", "data_modification"]]),
+            "security_events": len([e for e in recent_events if e["event_type"] == "security_event"]),
+            "admin_operations": len([e for e in recent_events if e["event_type"] in ["admin_operation", "configuration_change"]]),
+            "failed_operations": len([e for e in recent_events if not e.get("success", True)]),
         }
 
         # Calculate compliance score based on coverage
@@ -507,32 +480,16 @@ class AuditTrailService:
         for required in required_coverage:
             if required in ["authentication"]:
                 # Check login/logout events
-                auth_events = len(
-                    [
-                        e
-                        for e in recent_events
-                        if e["event_type"] in ["user_login", "user_logout"]
-                    ]
-                )
-                coverage_scores.append(
-                    min(1.0, auth_events / 100)
-                )  # Expect at least 100 auth events in 90 days
+                auth_events = len([e for e in recent_events if e["event_type"] in ["user_login", "user_logout"]])
+                coverage_scores.append(min(1.0, auth_events / 100))  # Expect at least 100 auth events in 90 days
             elif required == "data_modification":
-                coverage_scores.append(
-                    min(1.0, compliance_metrics["data_modification_events"] / 1000)
-                )
+                coverage_scores.append(min(1.0, compliance_metrics["data_modification_events"] / 1000))
             elif required == "security_events":
-                coverage_scores.append(
-                    min(1.0, compliance_metrics["security_events"] / 10)
-                )
+                coverage_scores.append(min(1.0, compliance_metrics["security_events"] / 10))
             elif required == "admin_operations":
-                coverage_scores.append(
-                    min(1.0, compliance_metrics["admin_operations"] / 50)
-                )
+                coverage_scores.append(min(1.0, compliance_metrics["admin_operations"] / 50))
 
-        compliance_score = (
-            sum(coverage_scores) / len(coverage_scores) if coverage_scores else 0.0
-        )
+        compliance_score = sum(coverage_scores) / len(coverage_scores) if coverage_scores else 0.0
 
         return {
             "compliance_score": compliance_score,
@@ -543,42 +500,26 @@ class AuditTrailService:
                 "sox_compliance": compliance_score >= 0.95,
                 "pci_compliance": compliance_score >= 0.9,
             },
-            "recommendations": self._generate_compliance_recommendations(
-                compliance_score, compliance_metrics
-            ),
+            "recommendations": self._generate_compliance_recommendations(compliance_score, compliance_metrics),
         }
 
-    def _generate_compliance_recommendations(
-        self, compliance_score: float, metrics: dict[str, Any]
-    ) -> list[str]:
+    def _generate_compliance_recommendations(self, compliance_score: float, metrics: dict[str, Any]) -> list[str]:
         """Generate compliance-focused recommendations."""
         recommendations = []
 
         if compliance_score < 0.9:
-            recommendations.append(
-                "URGENT: Improve audit logging coverage to meet regulatory requirements"
-            )
+            recommendations.append("URGENT: Improve audit logging coverage to meet regulatory requirements")
 
         if metrics["failed_operations"] > metrics["total_audit_events"] * 0.05:
-            recommendations.append(
-                "Investigate high rate of failed operations in audit logs"
-            )
+            recommendations.append("Investigate high rate of failed operations in audit logs")
 
         if metrics["security_events"] < 10:
-            recommendations.append(
-                "Implement additional security event detection and logging"
-            )
+            recommendations.append("Implement additional security event detection and logging")
 
         if metrics["admin_operations"] < 25:
-            recommendations.append(
-                "Ensure all administrative actions are properly logged"
-            )
+            recommendations.append("Ensure all administrative actions are properly logged")
 
-        return (
-            recommendations
-            if recommendations
-            else ["Audit compliance requirements appear to be met"]
-        )
+        return recommendations if recommendations else ["Audit compliance requirements appear to be met"]
 
 
 # Global instance

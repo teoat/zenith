@@ -15,9 +15,7 @@ class MacroExecutionRequest(BaseModel):
 
 
 @router.post("/macros/execute")
-async def execute_macro(
-    request: MacroExecutionRequest, background_tasks: BackgroundTasks
-):
+async def execute_macro(request: MacroExecutionRequest, background_tasks: BackgroundTasks):
     """
     Execute a predefined macro (multi-step workflow) on a set of cases.
     """

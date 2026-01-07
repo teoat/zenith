@@ -1,9 +1,8 @@
-
-import React from 'react';
-import { VirtualList } from './VirtualList';
-import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp, ChevronsUpDown, Loader2 } from 'lucide-react';
-import { Pagination } from './Pagination';
+import React from "react";
+import { VirtualList } from "./VirtualList";
+import { cn } from "@/lib/utils";
+import { ChevronDown, ChevronUp, ChevronsUpDown, Loader2 } from "lucide-react";
+import { Pagination } from "./Pagination";
 
 export interface Column<T> {
   key: string;
@@ -23,9 +22,9 @@ interface DataGridProps<T> {
   currentPage?: number;
   totalItems?: number;
   isLoading?: boolean;
-  onSort?: (key: string, direction: 'asc' | 'desc') => void;
+  onSort?: (key: string, direction: "asc" | "desc") => void;
   sortColumn?: string;
-  sortDirection?: 'asc' | 'desc';
+  sortDirection?: "asc" | "desc";
   rowHeight?: number;
   height?: number;
 }
@@ -43,12 +42,12 @@ export function DataGrid<T extends { id: string | number }>({
   sortColumn,
   sortDirection,
   rowHeight = 50,
-  height = 400
+  height = 400,
 }: DataGridProps<T>) {
-
   const handleSort = (key: string) => {
     if (onSort) {
-      const newDirection = sortColumn === key && sortDirection === 'asc' ? 'desc' : 'asc';
+      const newDirection =
+        sortColumn === key && sortDirection === "asc" ? "desc" : "asc";
       onSort(key, newDirection);
     }
   };
@@ -62,7 +61,9 @@ export function DataGrid<T extends { id: string | number }>({
           <div className="flex items-center gap-2">
             {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
             <span className="text-xs text-muted-foreground">
-              {totalItems ? `${data.length} of ${totalItems}` : `${data.length} items`}
+              {totalItems
+                ? `${data.length} of ${totalItems}`
+                : `${data.length} items`}
             </span>
           </div>
         </div>
@@ -75,9 +76,12 @@ export function DataGrid<T extends { id: string | number }>({
             key={col.key}
             className={cn(
               "px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider",
-              col.width ? `w-[${col.width}px]` : "flex-1"
+              col.width ? `w-[${col.width}px]` : "flex-1",
             )}
-            style={{ width: typeof col.width === 'number' ? `${col.width}px` : col.width }}
+            style={{
+              width:
+                typeof col.width === "number" ? `${col.width}px` : col.width,
+            }}
           >
             {col.sortable ? (
               <button
@@ -86,7 +90,7 @@ export function DataGrid<T extends { id: string | number }>({
               >
                 {col.header}
                 {sortColumn === col.key ? (
-                  sortDirection === 'asc' ? (
+                  sortDirection === "asc" ? (
                     <ChevronUp className="h-3 w-3" />
                   ) : (
                     <ChevronDown className="h-3 w-3" />
@@ -127,9 +131,14 @@ export function DataGrid<T extends { id: string | number }>({
                       key={`${String(item.id)}-${col.key}`}
                       className={cn(
                         "px-4 py-3 text-sm",
-                        col.width ? `w-[${col.width}px]` : "flex-1"
+                        col.width ? `w-[${col.width}px]` : "flex-1",
                       )}
-                      style={{ width: typeof col.width === 'number' ? `${col.width}px` : col.width }}
+                      style={{
+                        width:
+                          typeof col.width === "number"
+                            ? `${col.width}px`
+                            : col.width,
+                      }}
                     >
                       {col.render ? col.render(item) : (item as any)[col.key]}
                     </div>
@@ -139,16 +148,23 @@ export function DataGrid<T extends { id: string | number }>({
                 {/* Mobile view - Card layout */}
                 <div className="md:hidden p-4">
                   <div className="space-y-2">
-                    {columns.filter(col => !col.hideOnMobile).map((col) => (
-                      <div key={`${String(item.id)}-${col.key}`} className="flex justify-between items-center">
-                        <span className="text-xs font-medium text-muted-foreground uppercase">
-                          {col.header}:
-                        </span>
-                        <span className="text-sm">
-                          {col.render ? col.render(item) : (item as any)[col.key]}
-                        </span>
-                      </div>
-                    ))}
+                    {columns
+                      .filter((col) => !col.hideOnMobile)
+                      .map((col) => (
+                        <div
+                          key={`${String(item.id)}-${col.key}`}
+                          className="flex justify-between items-center"
+                        >
+                          <span className="text-xs font-medium text-muted-foreground uppercase">
+                            {col.header}:
+                          </span>
+                          <span className="text-sm">
+                            {col.render
+                              ? col.render(item)
+                              : (item as any)[col.key]}
+                          </span>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>

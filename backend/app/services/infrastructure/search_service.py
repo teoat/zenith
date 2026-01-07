@@ -83,9 +83,7 @@ class EvidenceSearchIndex:
             """
             )
 
-    def index_evidence(
-        self, evidence_id: str, file_path: str, processing_result: dict[str, Any]
-    ):
+    def index_evidence(self, evidence_id: str, file_path: str, processing_result: dict[str, Any]):
         """Index processed evidence for search"""
         try:
             content = processing_result.get("extracted_text", "")
@@ -123,9 +121,7 @@ class EvidenceSearchIndex:
             logger.error(f"Failed to index evidence {evidence_id}: {e}")
             return False
 
-    def search_evidence(
-        self, query: str, limit: int = 20, filters: dict[str, Any] | None = None
-    ) -> list[dict[str, Any]]:
+    def search_evidence(self, query: str, limit: int = 20, filters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """Search indexed evidence"""
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -180,9 +176,7 @@ class EvidenceSearchIndex:
                             "evidence_id": evidence_id,
                             "file_path": file_path,
                             "extracted_text": extracted_text,
-                            "key_entities": (
-                                json.loads(key_entities) if key_entities else []
-                            ),
+                            "key_entities": (json.loads(key_entities) if key_entities else []),
                             "metadata": json.loads(metadata) if metadata else {},
                             "file_type": file_type,
                             "quality_score": quality_score,
@@ -233,9 +227,7 @@ class EvidenceSearchIndex:
         """Remove evidence from index"""
         try:
             with sqlite3.connect(self.db_path) as conn:
-                conn.execute(
-                    "DELETE FROM evidence_index WHERE evidence_id = ?", (evidence_id,)
-                )
+                conn.execute("DELETE FROM evidence_index WHERE evidence_id = ?", (evidence_id,))
             logger.info(f"Deleted evidence {evidence_id} from index")
             return True
         except Exception as e:

@@ -77,9 +77,7 @@ class CaseListResponse(BaseModel):
 class CaseNoteCreate(BaseModel):
     content: str = Field(..., min_length=1, max_length=2000)
     is_internal: bool = False
-    category: str | None = Field(
-        None, pattern=r"^(Investigation|Evidence|Analysis|Communication)$"
-    )
+    category: str | None = Field(None, pattern=r"^(Investigation|Evidence|Analysis|Communication)$")
 
 
 class CaseNoteResponse(BaseModel):
@@ -132,15 +130,9 @@ async def create_case(
             "selected_country": getattr(case_data, "selected_country", None),
             "selected_documents": getattr(case_data, "selected_documents", []),
             "reconciliation_type": getattr(case_data, "reconciliation_type", "general"),
-            "selected_calendar_format": getattr(
-                case_data, "selected_calendar_format", "gregory"
-            ),
-            "selected_currency_format": getattr(
-                case_data, "selected_currency_format", "USD"
-            ),
-            "selected_decimal_format": getattr(
-                case_data, "selected_decimal_format", "standard"
-            ),
+            "selected_calendar_format": getattr(case_data, "selected_calendar_format", "gregory"),
+            "selected_currency_format": getattr(case_data, "selected_currency_format", "USD"),
+            "selected_decimal_format": getattr(case_data, "selected_decimal_format", "standard"),
             "milestones": getattr(case_data, "milestones", []),
             "proposed_features": getattr(case_data, "proposed_features", []),
         }
@@ -170,9 +162,7 @@ async def create_case(
                 "priority": new_case.priority,
                 "fraud_amount": getattr(new_case, "fraud_amount", 0.0),
                 "customer_name": getattr(new_case, "customer_name", "Unknown"),
-                "created_at": new_case.created_at.isoformat()
-                if new_case.created_at
-                else None,
+                "created_at": new_case.created_at.isoformat() if new_case.created_at else None,
             },
         }
     except Exception as e:
@@ -195,9 +185,7 @@ async def get_cases(
     page: int = Query(1, ge=1, le=1000),
     per_page: int = Query(20, ge=1, le=100),
     search: str | None = Query(None, min_length=1, max_length=100),
-    status: str | None = Query(
-        None, pattern=r"^(OPEN|INVESTIGATING|PENDING_REVIEW|ESCALATED|CLOSED|ARCHIVED)$"
-    ),
+    status: str | None = Query(None, pattern=r"^(OPEN|INVESTIGATING|PENDING_REVIEW|ESCALATED|CLOSED|ARCHIVED)$"),
     assignee_id: str | None = Query(None),
     priority: str | None = Query(None, pattern=r"^(Low|Medium|High|Critical)$"),
     risk_level: str | None = Query(None, pattern=r"^(Low|Medium|High|Critical)$"),
@@ -240,9 +228,7 @@ async def get_cases(
                     "customer_name": getattr(row, "customer_name", "Unknown"),
                     "created_at": row.created_at.isoformat() if row.created_at else None,
                     "updated_at": row.updated_at.isoformat() if row.updated_at else None,
-                    "due_date": getattr(row, "due_date", None).isoformat()
-                    if getattr(row, "due_date", None)
-                    else None,
+                    "due_date": getattr(row, "due_date", None).isoformat() if getattr(row, "due_date", None) else None,
                     "tags": row.tags if hasattr(row, "tags") else [],
                 }
             )
@@ -393,9 +379,7 @@ async def close_case(
     """Close a case"""
     from app.services.infrastructure.storage.database_service import db_service
 
-    case = db_service.update_case(
-        db, case_id, status="closed", closed_at=datetime.now(UTC)
-    )
+    case = db_service.update_case(db, case_id, status="closed", closed_at=datetime.now(UTC))
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
     return {
@@ -485,9 +469,7 @@ async def bulk_delete_cases(
     try:
         case_ids = request.case_ids
         if not case_ids:
-            return BulkDeleteResponse(
-                deleted_count=0, failed_ids=[], message="No cases specified for deletion"
-            )
+            return BulkDeleteResponse(deleted_count=0, failed_ids=[], message="No cases specified for deletion")
 
         deleted_count = 0
         failed_ids = []
@@ -508,9 +490,7 @@ async def bulk_delete_cases(
         if failed_ids:
             message += f", {len(failed_ids)} failed"
 
-        return BulkDeleteResponse(
-            deleted_count=deleted_count, failed_ids=failed_ids, message=message
-        )
+        return BulkDeleteResponse(deleted_count=deleted_count, failed_ids=failed_ids, message=message)
     except Exception as e:
         logger.error(f"Bulk delete cases failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))

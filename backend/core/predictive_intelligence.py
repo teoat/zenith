@@ -125,14 +125,10 @@ class PredictiveIntelligenceEngine:
                     self.forecasting_models[model_name] = pickle.load(f)
                 logger.info(f"Loaded predictive model: {model_name}")
 
-    async def generate_business_forecast(
-        self, forecast_type: str, data: dict[str, Any]
-    ) -> PredictiveInsight:
+    async def generate_business_forecast(self, forecast_type: str, data: dict[str, Any]) -> PredictiveInsight:
         """Generate business forecast using predictive models"""
 
-        insight_id = (
-            f"pred_{forecast_type}_{int(datetime.now(UTC).timestamp())}"
-        )
+        insight_id = f"pred_{forecast_type}_{int(datetime.now(UTC).timestamp())}"
 
         try:
             if forecast_type == "fraud_trends":
@@ -179,16 +175,12 @@ class PredictiveIntelligenceEngine:
         # Use Prophet for forecasting
         df = pd.DataFrame(
             {
-                "ds": pd.date_range(
-                    end=datetime.now(), periods=len(historical_data), freq="D"
-                ),
+                "ds": pd.date_range(end=datetime.now(), periods=len(historical_data), freq="D"),
                 "y": historical_data,
             }
         )
 
-        model = Prophet(
-            yearly_seasonality=True, weekly_seasonality=True, daily_seasonality=False
-        )
+        model = Prophet(yearly_seasonality=True, weekly_seasonality=True, daily_seasonality=False)
         model.fit(df)
 
         # Make future predictions
@@ -204,11 +196,7 @@ class PredictiveIntelligenceEngine:
         upper_bound = np.percentile(predictions, 95)
 
         # Determine business impact
-        current_avg = (
-            np.mean(historical_data[-30:])
-            if len(historical_data) >= 30
-            else np.mean(historical_data)
-        )
+        current_avg = np.mean(historical_data[-30:]) if len(historical_data) >= 30 else np.mean(historical_data)
         change_percent = ((avg_prediction - current_avg) / current_avg) * 100
 
         if change_percent > 20:
@@ -247,9 +235,7 @@ class PredictiveIntelligenceEngine:
             model_used="Prophet",
         )
 
-    async def _forecast_transaction_volume(
-        self, data: dict[str, Any]
-    ) -> PredictiveInsight:
+    async def _forecast_transaction_volume(self, data: dict[str, Any]) -> PredictiveInsight:
         """Forecast transaction volume using regression models"""
         # Extract features
         features = data.get("features", {})
@@ -396,9 +382,7 @@ class PredictiveIntelligenceEngine:
             model_used="RiskClassificationModel",
         )
 
-    async def _forecast_compliance_violations(
-        self, data: dict[str, Any]
-    ) -> PredictiveInsight:
+    async def _forecast_compliance_violations(self, data: dict[str, Any]) -> PredictiveInsight:
         """Forecast compliance violations using anomaly detection"""
         # Extract compliance metrics
         compliance_data = data.get("compliance_metrics", [])
@@ -466,9 +450,7 @@ class PredictiveIntelligenceEngine:
             return min(normalized_score, 10.0)
         return 0.0
 
-    def _detect_compliance_anomalies(
-        self, compliance_data: list[dict[str, Any]]
-    ) -> bool:
+    def _detect_compliance_anomalies(self, compliance_data: list[dict[str, Any]]) -> bool:
         """Detect compliance anomalies"""
         # Simple anomaly detection based on thresholds
         violations = 0
@@ -495,9 +477,7 @@ class PredictiveIntelligenceEngine:
 
             # Check for variety (avoid constant values)
             if len({str(x) for x in data if x is not None}) > 1:
-                variety = min(
-                    len({str(x) for x in data if x is not None}) / len(data), 1.0
-                )
+                variety = min(len({str(x) for x in data if x is not None}) / len(data), 1.0)
             else:
                 variety = 0.1  # Penalize constant data
 
@@ -505,9 +485,7 @@ class PredictiveIntelligenceEngine:
         else:
             return 0.8  # Default quality score
 
-    async def predict_business_risks(
-        self, risk_data: dict[str, Any]
-    ) -> list[RiskPrediction]:
+    async def predict_business_risks(self, risk_data: dict[str, Any]) -> list[RiskPrediction]:
         """Predict various business risks"""
         predictions = []
 
@@ -530,9 +508,7 @@ class PredictiveIntelligenceEngine:
         self.risk_predictions.extend(predictions)
         return predictions
 
-    async def _predict_category_risk(
-        self, category: str, data: dict[str, Any]
-    ) -> RiskPrediction:
+    async def _predict_category_risk(self, category: str, data: dict[str, Any]) -> RiskPrediction:
         """Predict risk for a specific category"""
         risk_id = f"risk_{category}_{int(datetime.now(UTC).timestamp())}"
 
@@ -541,9 +517,7 @@ class PredictiveIntelligenceEngine:
         historical_data = data.get("historical_data", [])
 
         # Calculate risk probability
-        base_probability = self._calculate_category_risk_probability(
-            category, indicators, historical_data
-        )
+        base_probability = self._calculate_category_risk_probability(category, indicators, historical_data)
 
         # Determine potential impact
         if base_probability > 0.8:
@@ -628,9 +602,7 @@ class PredictiveIntelligenceEngine:
         # Historical trend analysis
         historical_score = 0
         if historical_data:
-            recent_trends = (
-                historical_data[-30:] if len(historical_data) > 30 else historical_data
-            )
+            recent_trends = historical_data[-30:] if len(historical_data) > 30 else historical_data
             avg_risk = sum(h["risk_level"] for h in recent_trends) / len(recent_trends)
             historical_score = min(avg_risk / 10, 1.0)  # Normalize to 0-1
 
@@ -655,21 +627,16 @@ class PredictiveIntelligenceEngine:
 
         return {
             "total_insights": len(insights),
-            "avg_confidence_score": sum(i.confidence_score for i in insights)
-            / max(len(insights), 1),
+            "avg_confidence_score": sum(i.confidence_score for i in insights) / max(len(insights), 1),
             "insights_by_type": {
-                insight_type: len(
-                    [i for i in insights if i.insight_type == insight_type]
-                )
+                insight_type: len([i for i in insights if i.insight_type == insight_type])
                 for insight_type in {i.insight_type for i in insights}
             },
             "total_risk_predictions": len(risks),
             "high_probability_risks": len([r for r in risks if r.probability > 0.7]),
-            "avg_risk_probability": sum(r.probability for r in risks)
-            / max(len(risks), 1),
+            "avg_risk_probability": sum(r.probability for r in risks) / max(len(risks), 1),
             "business_impact_distribution": {
-                impact: len([i for i in insights if i.business_impact == impact])
-                for impact in {i.business_impact for i in insights}
+                impact: len([i for i in insights if i.business_impact == impact]) for impact in {i.business_impact for i in insights}
             },
         }
 
@@ -720,16 +687,12 @@ async def demonstrate_predictive_intelligence():
     }
 
     logger.info("Generating fraud trend forecast...")
-    fraud_insight = await predictive_engine.generate_business_forecast(
-        "fraud_trends", fraud_data
-    )
+    fraud_insight = await predictive_engine.generate_business_forecast("fraud_trends", fraud_data)
 
     logger.info(f"Prediction: {fraud_insight.prediction} fraud rate")
     logger.info(f"Confidence: {fraud_insight.confidence_score:.1%}")
     logger.info(f"Business Impact: {fraud_insight.business_impact}")
-    logger.info(
-        f"Recommended Actions: {len(fraud_insight.recommended_actions)} actions"
-    )
+    logger.info(f"Recommended Actions: {len(fraud_insight.recommended_actions)} actions")
 
     # Example transaction volume forecasting
     volume_data = {
@@ -750,14 +713,10 @@ async def demonstrate_predictive_intelligence():
     }
 
     logger.info("\nGenerating transaction volume forecast...")
-    volume_insight = await predictive_engine.generate_business_forecast(
-        "transaction_volume", volume_data
-    )
+    volume_insight = await predictive_engine.generate_business_forecast("transaction_volume", volume_data)
 
     logger.info(f"Prediction: {volume_insight.prediction} transactions")
-    logger.info(
-        f"Confidence Interval: {volume_insight.confidence_interval[0]:,.0f} - {volume_insight.confidence_interval[1]:,.0f}"
-    )
+    logger.info(f"Confidence Interval: {volume_insight.confidence_interval[0]:,.0f} - {volume_insight.confidence_interval[1]:,.0f}")
     logger.info(f"Business Impact: {volume_insight.business_impact}")
 
     # Example risk exposure forecasting
@@ -786,9 +745,7 @@ async def demonstrate_predictive_intelligence():
     }
 
     logger.info("\nGenerating risk exposure forecast...")
-    risk_insight = await predictive_engine.generate_business_forecast(
-        "risk_exposure", risk_data
-    )
+    risk_insight = await predictive_engine.generate_business_forecast("risk_exposure", risk_data)
 
     logger.info(f"Prediction: {risk_insight.prediction} risk level")
     logger.info(f"Confidence: {risk_insight.confidence_score:.1%}")
@@ -836,9 +793,7 @@ async def demonstrate_predictive_intelligence():
     }
 
     logger.info("\nGenerating business risk predictions...")
-    risk_predictions = await predictive_engine.predict_business_risks(
-        business_risk_data
-    )
+    risk_predictions = await predictive_engine.predict_business_risks(business_risk_data)
 
     for prediction in risk_predictions:
         logger.info(f"Risk: {prediction.risk_type}")

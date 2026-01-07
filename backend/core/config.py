@@ -2,10 +2,9 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv(dotenv_path=Path(__file__).parent.parent / "config" / ".env.development")
-
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -44,9 +43,7 @@ class Settings(BaseSettings):
     AI_MIN_TRAINING_SAMPLES: int = 1000
 
     # Security - Certificate Pinning
-    TRUSTED_PUBLIC_KEY_HASHES: list[str] = [
-        "dummy_hash_for_development"
-    ]  # Replace with actual hashes in production
+    TRUSTED_PUBLIC_KEY_HASHES: list[str] = ["dummy_hash_for_development"]  # Replace with actual hashes in production
 
     # File Upload Configuration
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10MB
@@ -61,9 +58,7 @@ class Settings(BaseSettings):
     # Plugin System
     PLUGIN_CACHE_TTL: int = 3600
 
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 
 # Validate required settings
@@ -73,16 +68,9 @@ settings = Settings()
 # Manual validation for encryption key to ensure secure startup
 def get_encryption_key() -> str:
     """Retrieves the encryption key from environment variables, raising an error if not found."""
-    key = (
-        os.environ.get("FIELD_ENCRYPTION_KEY")
-        or os.environ.get("ENCRYPTION_KEY")
-        or os.environ.get("SECRET_KEY")
-    )
+    key = os.environ.get("FIELD_ENCRYPTION_KEY") or os.environ.get("ENCRYPTION_KEY") or os.environ.get("SECRET_KEY")
     if not key:
-        raise ValueError(
-            "Security risk: No encryption key found. "
-            "Set FIELD_ENCRYPTION_KEY, ENCRYPTION_KEY, or SECRET_KEY."
-        )
+        raise ValueError("Security risk: No encryption key found. Set FIELD_ENCRYPTION_KEY, ENCRYPTION_KEY, or SECRET_KEY.")
     return key
 
 

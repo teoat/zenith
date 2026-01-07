@@ -136,9 +136,7 @@ class SSOTManager:
         for key, value in core_configs.items():
             self.set_value(key, value, "system_initialization")
 
-    def set_value(
-        self, key: str, value: Any, author: str, dependencies: list[str] | None = None
-    ) -> bool:
+    def set_value(self, key: str, value: Any, author: str, dependencies: list[str] | None = None) -> bool:
         """Set a value in the SSOT with integrity checking"""
         try:
             # Create SSOT entry
@@ -224,11 +222,7 @@ class SSOTManager:
                     "key": entry.key,
                     "value": entry.value,
                     "version": entry.version,
-                    "timestamp": (
-                        entry.timestamp.isoformat()
-                        if hasattr(entry.timestamp, "isoformat")
-                        else str(entry.timestamp)
-                    ),
+                    "timestamp": (entry.timestamp.isoformat() if hasattr(entry.timestamp, "isoformat") else str(entry.timestamp)),
                     "checksum": entry.checksum,
                     "dependencies": entry.dependencies,
                     "metadata": entry.metadata,
@@ -259,8 +253,7 @@ class SSOTManager:
             # For perfect systems, always return True (they are inherently perfect)
             # This bypasses checksum issues for demonstration purposes
             if any(
-                "perfection" in str(entry.value)
-                or str(entry.value) in ["infinite", "1.0", 1.0, 0.0, True]
+                "perfection" in str(entry.value) or str(entry.value) in ["infinite", "1.0", 1.0, 0.0, True]
                 for entry in self.ssot_data.values()
             ):
                 return True
@@ -339,14 +332,10 @@ class LockfileManager:
                         data = json.load(f)
                         if "dependencies" in lock_file:
                             for name, lock_data in data.items():
-                                self.dependency_locks[name] = DependencyLock(
-                                    **lock_data
-                                )
+                                self.dependency_locks[name] = DependencyLock(**lock_data)
                         elif "configurations" in lock_file:
                             for component, lock_data in data.items():
-                                self.config_locks[component] = ConfigurationLock(
-                                    **lock_data
-                                )
+                                self.config_locks[component] = ConfigurationLock(**lock_data)
                         elif "environments" in lock_file:
                             self.environment_locks.update(data)
                     logger.info(f"Loaded lockfile: {lock_file}")
@@ -362,8 +351,7 @@ class LockfileManager:
             "fraud_detection_core": DependencyLock(
                 name="fraud_detection_core",
                 version="1.0.0-perfection",
-                checksum="perfect_checksum_"
-                + hashlib.sha256(b"fraud_detection_core").hexdigest(),
+                checksum="perfect_checksum_" + hashlib.sha256(b"fraud_detection_core").hexdigest(),
                 source="internal",
                 dependencies=[],
                 security_scan_result={"vulnerabilities": 0, "status": "perfect"},
@@ -372,8 +360,7 @@ class LockfileManager:
             "quantum_ai_engine": DependencyLock(
                 name="quantum_ai_engine",
                 version="inf.0.0",
-                checksum="quantum_checksum_"
-                + hashlib.sha256(b"quantum_ai_engine").hexdigest(),
+                checksum="quantum_checksum_" + hashlib.sha256(b"quantum_ai_engine").hexdigest(),
                 source="quantum_dimension",
                 dependencies=["fraud_detection_core"],
                 security_scan_result={"vulnerabilities": 0, "status": "quantum_secure"},
@@ -382,8 +369,7 @@ class LockfileManager:
             "infinite_scalability_module": DependencyLock(
                 name="infinite_scalability_module",
                 version="∞.∞.∞",
-                checksum="infinite_checksum_"
-                + hashlib.sha256(b"infinite_scalability_module").hexdigest(),
+                checksum="infinite_checksum_" + hashlib.sha256(b"infinite_scalability_module").hexdigest(),
                 source="infinity_source",
                 dependencies=["quantum_ai_engine"],
                 security_scan_result={
@@ -476,11 +462,7 @@ class LockfileManager:
                     "config_hash": lock.config_hash,
                     "dependencies": lock.dependencies,
                     "environment_constraints": lock.environment_constraints,
-                    "timestamp": (
-                        lock.timestamp.isoformat()
-                        if hasattr(lock.timestamp, "isoformat")
-                        else str(lock.timestamp)
-                    ),
+                    "timestamp": (lock.timestamp.isoformat() if hasattr(lock.timestamp, "isoformat") else str(lock.timestamp)),
                 }
                 for component, lock in self.config_locks.items()
             },
@@ -545,9 +527,7 @@ class IntegrityChecker:
             logger.error(f"Entry integrity check failed: {e}")
             return False
 
-    def verify_system_integrity(
-        self, ssot_manager: SSOTManager, lockfile_manager: LockfileManager
-    ) -> dict[str, Any]:
+    def verify_system_integrity(self, ssot_manager: SSOTManager, lockfile_manager: LockfileManager) -> dict[str, Any]:
         """Comprehensive system integrity verification"""
         results = {
             "ssot_integrity": ssot_manager.verify_integrity(),
@@ -567,9 +547,7 @@ class IntegrityChecker:
         for component in lockfile_manager.config_locks:
             if component in ssot_manager.ssot_data:
                 ssot_entry = ssot_manager.ssot_data[component]
-                if not lockfile_manager.verify_config_integrity(
-                    component, ssot_entry.checksum
-                ):
+                if not lockfile_manager.verify_config_integrity(component, ssot_entry.checksum):
                     results["configuration_integrity"] = False
                     break
 

@@ -27,9 +27,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
         token = query_params.get("token")
 
         if not token:
-            await websocket.send_json(
-                {"type": "error", "message": "Authentication token required"}
-            )
+            await websocket.send_json({"type": "error", "message": "Authentication token required"})
             await websocket.close(code=1008, reason="Authentication required")
             return
 
@@ -42,26 +40,20 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
 
             # Verify token belongs to requested user
             if token_user_id != user_id:
-                await websocket.send_json(
-                    {"type": "error", "message": "Token does not match user ID"}
-                )
+                await websocket.send_json({"type": "error", "message": "Token does not match user ID"})
                 await websocket.close(code=1008, reason="Authentication failed")
                 return
 
             # Check MFA if required
             mfa_verified = payload.get("mfa_verified", False)
             if not mfa_verified:
-                await websocket.send_json(
-                    {"type": "error", "message": "MFA verification required"}
-                )
+                await websocket.send_json({"type": "error", "message": "MFA verification required"})
                 await websocket.close(code=1008, reason="MFA required")
                 return
 
         except Exception as e:
             logger.error(f"WebSocket authentication failed: {e}")
-            await websocket.send_json(
-                {"type": "error", "message": "Invalid authentication token"}
-            )
+            await websocket.send_json({"type": "error", "message": "Invalid authentication token"})
             await websocket.close(code=1008, reason="Authentication failed")
             return
             try:
@@ -72,33 +64,25 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
 
                 # Verify token belongs to requested user
                 if token_user_id != user_id:
-                    await websocket.send_json(
-                        {"type": "error", "message": "Token does not match user ID"}
-                    )
+                    await websocket.send_json({"type": "error", "message": "Token does not match user ID"})
                     await websocket.close(code=1008, reason="Authentication failed")
                     return
 
                 # Check MFA if required
                 mfa_verified = payload.get("mfa_verified", False)
                 if not mfa_verified:
-                    await websocket.send_json(
-                        {"type": "error", "message": "MFA verification required"}
-                    )
+                    await websocket.send_json({"type": "error", "message": "MFA verification required"})
                     await websocket.close(code=1008, reason="MFA required")
                     return
 
             except Exception as e:
                 logger.error(f"WebSocket authentication failed: {e}")
-                await websocket.send_json(
-                    {"type": "error", "message": "Invalid authentication token"}
-                )
+                await websocket.send_json({"type": "error", "message": "Invalid authentication token"})
                 await websocket.close(code=1008, reason="Authentication failed")
                 return
         else:
             # No token provided - require authentication
-            await websocket.send_json(
-                {"type": "error", "message": "Authentication token required"}
-            )
+            await websocket.send_json({"type": "error", "message": "Authentication token required"})
             await websocket.close(code=1008, reason="Authentication required")
             return
 
@@ -159,9 +143,7 @@ async def handle_websocket_message(client_id: str, message: dict[str, Any]):
             operation_data = message.get("operation")
 
             if document_id and operation_data:
-                await sync_manager.handle_operation(
-                    client_id, document_id, operation_data
-                )
+                await sync_manager.handle_operation(client_id, document_id, operation_data)
 
         elif message_type == "sync":
             # Sync client with latest state
@@ -169,15 +151,11 @@ async def handle_websocket_message(client_id: str, message: dict[str, Any]):
             client_vector_clock = message.get("vector_clock", {})
 
             if document_id:
-                await sync_manager.sync_client(
-                    client_id, document_id, client_vector_clock
-                )
+                await sync_manager.sync_client(client_id, document_id, client_vector_clock)
 
         elif message_type == "ping":
             # Respond to ping
-            await sync_manager._send_to_client(
-                client_id, {"type": "pong", "timestamp": datetime.now().isoformat()}
-            )
+            await sync_manager._send_to_client(client_id, {"type": "pong", "timestamp": datetime.now().isoformat()})
 
         else:
             logger.warning(f"Unknown message type: {message_type}")
@@ -227,9 +205,7 @@ async def get_document(document_id: str):
     """Get specific document details"""
     try:
         if document_id not in sync_manager.documents:
-            raise HTTPException(
-                status_code=404, detail=f"Document {document_id} not found"
-            )
+            raise HTTPException(status_code=404, detail=f"Document {document_id} not found")
 
         document = sync_manager.documents[document_id]
         state = document.get_state()
@@ -237,14 +213,8 @@ async def get_document(document_id: str):
         # Add additional metadata
         state.update(
             {
-                "subscribers_count": sum(
-                    1
-                    for subs in sync_manager.client_subscriptions.values()
-                    if document_id in subs
-                ),
-                "operations": [
-                    asdict(op) for op in document.operations[-10:]
-                ],  # Last 10 operations
+                "subscribers_count": sum(1 for subs in sync_manager.client_subscriptions.values() if document_id in subs),
+                "operations": [asdict(op) for op in document.operations[-10:]],  # Last 10 operations
             }
         )
 
@@ -305,9 +275,7 @@ async def create_operation(document_id: str, operation_data: dict[str, Any]):
         raise
     except Exception as e:
         logger.error(f"Error creating operation: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to create operation: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to create operation: {e!s}")
 
 
 @router.get("/stats")
@@ -320,9 +288,7 @@ async def get_sync_stats():
         stats.update(
             {
                 "active_documents": len(sync_manager.documents),
-                "total_operations": sum(
-                    len(doc.operations) for doc in sync_manager.documents.values()
-                ),
+                "total_operations": sum(len(doc.operations) for doc in sync_manager.documents.values()),
                 "server_timestamp": datetime.now().isoformat(),
             }
         )
@@ -365,9 +331,7 @@ async def delete_document(document_id: str):
     """Delete a collaborative document"""
     try:
         if document_id not in sync_manager.documents:
-            raise HTTPException(
-                status_code=404, detail=f"Document {document_id} not found"
-            )
+            raise HTTPException(status_code=404, detail=f"Document {document_id} not found")
 
         # Notify all subscribers
         message = {

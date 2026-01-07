@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from app.core.exceptions import ZenithError
-from core.zlogging import logger
 from fastapi import APIRouter, HTTPException, Request
 
 from app.services.infrastructure.redis_cluster import redis_cluster_manager
@@ -21,9 +20,7 @@ async def _store_csrf_token(token: str, expires_in: int = 3600):
         csrf_key = f"csrf_token:{token}"
         await redis_cluster_manager.set(csrf_key, "valid", ex=expires_in)
     else:
-        _csrf_tokens[token] = {
-            "expires": datetime.now() + timedelta(seconds=expires_in)
-        }
+        _csrf_tokens[token] = {"expires": datetime.now() + timedelta(seconds=expires_in)}
 
 
 async def _validate_csrf_token(token: str) -> bool:

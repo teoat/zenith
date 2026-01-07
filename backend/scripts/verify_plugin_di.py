@@ -64,10 +64,7 @@ async def verify_plugin_di():
         # 3. Final Assertion
         if "ai_service" in services and services["ai_service"] is not None:
             print("\n[✅] SUCCESS: AIService is correctly injectable.")
-            if (
-                hasattr(services["ai_service"], "initialized")
-                and services["ai_service"].initialized
-            ):
+            if hasattr(services["ai_service"], "initialized") and services["ai_service"].initialized:
                 print("[✅] SUCCESS: AIService is fully initialized.")
             else:
                 print("[⚠️] WARNING: AIService exists but is NOT initialized.")

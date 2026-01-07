@@ -1,5 +1,5 @@
-import React, { useRef, useCallback } from 'react';
-import ForceGraph3D from 'react-force-graph-3d';
+import React, { useRef, useCallback } from "react";
+import ForceGraph3D from "react-force-graph-3d";
 
 interface GraphNode {
   id: string;
@@ -49,32 +49,32 @@ const EntityGraph3DWebGL: React.FC<EntityGraph3DWebGLProps> = ({
         fgRef.current.cameraPosition(
           { x: x * distRatio, y: y * distRatio, z: z * distRatio }, // new position
           node, // lookAt ({ x, y, z })
-          3000 // ms transition duration
+          3000, // ms transition duration
         );
       }
-      
+
       onNodeClick?.(node);
     },
-    [onNodeClick]
+    [onNodeClick],
   );
 
   return (
     <div className="w-full h-full">
-         <ForceGraph3D
-            ref={fgRef}
-            graphData={data}
-            nodeLabel="id"
-            nodeAutoColorBy="group"
-            onNodeClick={handleNodeClick}
-            width={width}
-            height={height}
-            backgroundColor="#00000000" // Transparent
-            linkDirectionalArrowLength={3.5}
-            linkDirectionalArrowRelPos={1}
-            // Optimization: Level of Detail
-            nodeResolution={8} 
-            linkResolution={6}
-          />
+      <ForceGraph3D
+        ref={fgRef}
+        graphData={data}
+        nodeLabel="id"
+        nodeAutoColorBy="group"
+        onNodeClick={handleNodeClick}
+        width={width}
+        height={height}
+        backgroundColor="#00000000" // Transparent
+        linkDirectionalArrowLength={3.5}
+        linkDirectionalArrowRelPos={1}
+        // Optimization: Level of Detail
+        nodeResolution={8}
+        linkResolution={6}
+      />
     </div>
   );
 };

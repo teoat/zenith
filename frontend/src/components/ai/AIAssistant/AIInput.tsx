@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Send } from 'lucide-react';
+import React, { useState } from "react";
+import { Send } from "lucide-react";
 
 interface AIInputProps {
   onSend: (message: string) => void;
@@ -7,19 +7,26 @@ interface AIInputProps {
   placeholder?: string;
 }
 
-export const AIInput: React.FC<AIInputProps> = ({ onSend, disabled, placeholder }) => {
-  const [input, setInput] = useState('');
+export const AIInput: React.FC<AIInputProps> = ({
+  onSend,
+  disabled,
+  placeholder,
+}) => {
+  const [input, setInput] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || disabled) return;
-    
+
     onSend(input.trim());
-    setInput('');
+    setInput("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800"
+    >
       <div className="relative">
         <input
           type="text"

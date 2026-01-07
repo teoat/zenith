@@ -3,6 +3,7 @@ Analytics & Insights Dashboard - Real-time investigation performance metrics
 """
 
 import logging
+import random
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -152,16 +153,12 @@ class AnalyticsDashboard:
             logger.error(f"Error getting current metrics: {e}")
             return InvestigationMetrics()
 
-    async def get_performance_trends(
-        self, time_range_days: int = 30
-    ) -> list[PerformanceTrend]:
+    async def get_performance_trends(self, time_range_days: int = 30) -> list[PerformanceTrend]:
         """Get performance trends over specified time range"""
         try:
             cutoff_date = datetime.now() - timedelta(days=time_range_days)
 
-            recent_trends = [
-                trend for trend in self.metrics_history if trend.date >= cutoff_date
-            ]
+            recent_trends = [trend for trend in self.metrics_history if trend.date >= cutoff_date]
 
             return recent_trends
 
@@ -506,18 +503,14 @@ class AnalyticsDashboard:
 
             # Keep only last 90 days of data
             cutoff_date = datetime.now() - timedelta(days=90)
-            self.metrics_history = [
-                trend for trend in self.metrics_history if trend.date >= cutoff_date
-            ]
+            self.metrics_history = [trend for trend in self.metrics_history if trend.date >= cutoff_date]
 
             logger.info(f"New metrics sample added for {metrics.total_cases} cases")
 
         except Exception as e:
             logger.error(f"Error adding metric sample: {e}")
 
-    async def generate_performance_report(
-        self, format_type: str = "summary"
-    ) -> dict[str, Any]:
+    async def generate_performance_report(self, format_type: str = "summary") -> dict[str, Any]:
         """Generate comprehensive performance report"""
         try:
             current_metrics = await self.get_current_metrics()
@@ -529,18 +522,12 @@ class AnalyticsDashboard:
                 "current_metrics": current_metrics.dict(),
                 "period": self.configuration.time_range_days,
                 "summary": self._generate_performance_summary(current_metrics),
-                "recommendations": self._generate_performance_recommendations(
-                    current_metrics
-                ),
+                "recommendations": self._generate_performance_recommendations(current_metrics),
             }
 
             if format_type == "detailed":
-                report_data["performance_trends"] = await self.get_performance_trends(
-                    self.configuration.time_range_days
-                )
-                report_data["insights"] = await self.generate_investigation_insights(
-                    current_metrics
-                )
+                report_data["performance_trends"] = await self.get_performance_trends(self.configuration.time_range_days)
+                report_data["insights"] = await self.generate_investigation_insights(current_metrics)
 
             logger.info(f"Performance report generated: {format_type}")
             return report_data
@@ -566,41 +553,27 @@ class AnalyticsDashboard:
         Overall Status: {self._get_overall_status(metrics)}
         """
 
-    def _generate_performance_recommendations(
-        self, metrics: InvestigationMetrics
-    ) -> list[str]:
+    def _generate_performance_recommendations(self, metrics: InvestigationMetrics) -> list[str]:
         """Generate performance improvement recommendations"""
         recommendations = []
 
         if metrics.success_rate < 80:
-            recommendations.append(
-                "Focus on improving investigation success rate through training and better case management"
-            )
+            recommendations.append("Focus on improving investigation success rate through training and better case management")
 
         if metrics.average_resolution_time > 48:
-            recommendations.append(
-                "Investigate bottlenecks in investigation process and consider automation for time-consuming tasks"
-            )
+            recommendations.append("Investigate bottlenecks in investigation process and consider automation for time-consuming tasks")
 
         if metrics.fraud_detection_rate < 80:
-            recommendations.append(
-                "Review and enhance fraud detection models with recent data"
-            )
+            recommendations.append("Review and enhance fraud detection models with recent data")
 
         if metrics.false_positive_rate > 10:
-            recommendations.append(
-                "Implement stricter investigation criteria and improve pattern recognition to reduce false positives"
-            )
+            recommendations.append("Implement stricter investigation criteria and improve pattern recognition to reduce false positives")
 
         if metrics.ai_assist_rate < 50:
-            recommendations.append(
-                "Improve AI assistant usability and provide training to increase adoption"
-            )
+            recommendations.append("Improve AI assistant usability and provide training to increase adoption")
 
         if metrics.compliance_rate < 90:
-            recommendations.append(
-                "Strengthen compliance procedures and documentation to improve regulatory compliance"
-            )
+            recommendations.append("Strengthen compliance procedures and documentation to improve regulatory compliance")
 
         return recommendations
 

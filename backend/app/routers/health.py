@@ -134,11 +134,7 @@ async def health_check() -> dict[str, Any]:
     # Circuit breaker health check
     try:
         circuit_breakers = get_all_circuit_breakers()
-        open_breakers = [
-            name
-            for name, status in circuit_breakers.items()
-            if status["state"] == "open"
-        ]
+        open_breakers = [name for name, status in circuit_breakers.items() if status["state"] == "open"]
 
         health_status["components"]["circuit_breakers"] = {
             "status": "healthy" if not open_breakers else "degraded",
@@ -181,9 +177,7 @@ async def health_check() -> dict[str, Any]:
             "active": perf_baselines.get("monitoring_active", False),
             "metrics_collected": perf_baselines.get("metrics_collected", 0),
             "active_alerts": len(active_alerts),
-            "circuit_breaker_status": perf_baselines.get(
-                "circuit_breaker_status", "unknown"
-            ),
+            "circuit_breaker_status": perf_baselines.get("circuit_breaker_status", "unknown"),
             "issues": perf_issues,
             "current_cpu": current_metrics.get("cpu_percent"),
             "current_memory": current_metrics.get("memory_percent"),
@@ -236,9 +230,7 @@ async def health_check() -> dict[str, Any]:
     health_status["uptime_calculation"] = {
         "target": "99.99%",
         "current_status": health_status["status"],
-        "estimated_monthly_downtime": "4.32 minutes"
-        if health_status["status"] == "healthy"
-        else "extended",
+        "estimated_monthly_downtime": "4.32 minutes" if health_status["status"] == "healthy" else "extended",
         "critical_components": ["database", "circuit_breakers", "system_resources"],
     }
 

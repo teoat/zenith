@@ -80,9 +80,7 @@ class PerformanceProfiler:
                 tasks.append((task, task_start))
 
             # Run batch concurrently
-            results = await asyncio.gather(
-                *[t[0] for t in tasks], return_exceptions=True
-            )
+            results = await asyncio.gather(*[t[0] for t in tasks], return_exceptions=True)
 
             # Record times
             for idx, result in enumerate(results):
@@ -106,12 +104,8 @@ class PerformanceProfiler:
             min_response_time_ms=round(min(response_times), 2),
             max_response_time_ms=round(max(response_times), 2),
             p50_response_time_ms=round(statistics.median(response_times), 2),
-            p95_response_time_ms=round(
-                response_times[int(len(response_times) * 0.95)], 2
-            ),
-            p99_response_time_ms=round(
-                response_times[int(len(response_times) * 0.99)], 2
-            ),
+            p95_response_time_ms=round(response_times[int(len(response_times) * 0.95)], 2),
+            p99_response_time_ms=round(response_times[int(len(response_times) * 0.99)], 2),
             error_count=errors,
             error_rate=round(errors / num_requests * 100, 2),
         )
@@ -189,9 +183,7 @@ class PerformanceProfiler:
                     "sql": q["sql"][:100] + "..." if len(q["sql"]) > 100 else q["sql"],
                     "duration_ms": round(q["duration"], 2),
                 }
-                for q in sorted(
-                    slow_queries, key=lambda x: x["duration"], reverse=True
-                )[:10]
+                for q in sorted(slow_queries, key=lambda x: x["duration"], reverse=True)[:10]
             ],
             "query_types": {
                 qtype: {
@@ -261,9 +253,7 @@ class PerformanceBenchmark:
         for count in node_counts:
             # Simulate graph with N nodes
             [{"id": str(i), "label": f"Node {i}"} for i in range(count)]
-            links = [
-                {"source": str(i), "target": str((i + 1) % count)} for i in range(count)
-            ]
+            links = [{"source": str(i), "target": str((i + 1) % count)} for i in range(count)]
 
             # Time the layout calculation (simulated)
             start = time.time()
@@ -276,9 +266,7 @@ class PerformanceBenchmark:
                     "nodes": count,
                     "links": len(links),
                     "duration_ms": round(duration * 1000, 2),
-                    "fps_estimate": round(
-                        1 / (duration / 60) if duration > 0 else 60, 1
-                    ),
+                    "fps_estimate": round(1 / (duration / 60) if duration > 0 else 60, 1),
                 }
             )
 
@@ -311,9 +299,7 @@ def generate_performance_report(results: list[PerformanceResult]) -> str:
         report.append(f"  P50 (Median):     {result.p50_response_time_ms}")
         report.append(f"  P95:              {result.p95_response_time_ms}")
         report.append(f"  P99:              {result.p99_response_time_ms}")
-        report.append(
-            f"\n_errors:             {result.error_count} ({result.error_rate}%)"
-        )
+        report.append(f"\n_errors:             {result.error_count} ({result.error_rate}%)")
 
         # Performance assessment
         if result.requests_per_second > 100:

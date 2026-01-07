@@ -3,7 +3,7 @@
  * Provides a unified API client with Axios-like interface for type-safe API calls
  */
 
-import { request } from '@/services/client';
+import { request } from "@/services/client";
 
 export interface AxiosLikeResponse<T> {
   data: T;
@@ -16,13 +16,13 @@ export interface AxiosLikeResponse<T> {
  */
 export const apiService = {
   async get<T>(url: string): Promise<AxiosLikeResponse<T>> {
-    const data = await request<T>(url, { method: 'GET' });
+    const data = await request<T>(url, { method: "GET" });
     return { data, status: 200 };
   },
 
   async post<T>(url: string, payload?: unknown): Promise<AxiosLikeResponse<T>> {
     const data = await request<T>(url, {
-      method: 'POST',
+      method: "POST",
       body: payload ? JSON.stringify(payload) : undefined,
     });
     return { data, status: 200 };
@@ -30,20 +30,23 @@ export const apiService = {
 
   async put<T>(url: string, payload?: unknown): Promise<AxiosLikeResponse<T>> {
     const data = await request<T>(url, {
-      method: 'PUT',
+      method: "PUT",
       body: payload ? JSON.stringify(payload) : undefined,
     });
     return { data, status: 200 };
   },
 
   async delete<T>(url: string): Promise<AxiosLikeResponse<T>> {
-    const data = await request<T>(url, { method: 'DELETE' });
+    const data = await request<T>(url, { method: "DELETE" });
     return { data, status: 200 };
   },
 
-  async patch<T>(url: string, payload?: unknown): Promise<AxiosLikeResponse<T>> {
+  async patch<T>(
+    url: string,
+    payload?: unknown,
+  ): Promise<AxiosLikeResponse<T>> {
     const data = await request<T>(url, {
-      method: 'PATCH',
+      method: "PATCH",
       body: payload ? JSON.stringify(payload) : undefined,
     });
     return { data, status: 200 };

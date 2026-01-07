@@ -146,9 +146,7 @@ class FraudCase(AggregateRoot):
             timestamp=datetime.now(),
             version=self.version + 1,
             data={
-                "old_assignee": str(self.assignee_id.value)
-                if self.assignee_id
-                else None,
+                "old_assignee": str(self.assignee_id.value) if self.assignee_id else None,
                 "new_assignee": str(investigator_id.value),
                 "assigned_at": datetime.now().isoformat(),
             },
@@ -221,9 +219,7 @@ class FraudAnalysisService:
     def __init__(self, risk_threshold: float = 0.7):
         self.risk_threshold = risk_threshold
 
-    def analyze_transaction_patterns(
-        self, transactions: list[Transaction], case: FraudCase
-    ) -> RiskScore:
+    def analyze_transaction_patterns(self, transactions: list[Transaction], case: FraudCase) -> RiskScore:
         """Analyze transaction patterns for fraud indicators"""
 
         if not transactions:
@@ -247,9 +243,7 @@ class FraudAnalysisService:
             sorted_txs = sorted(transactions, key=lambda x: x.transaction_date)
 
             for i in range(1, len(sorted_txs)):
-                diff = (
-                    sorted_txs[i].transaction_date - sorted_txs[i - 1].transaction_date
-                ).seconds
+                diff = (sorted_txs[i].transaction_date - sorted_txs[i - 1].transaction_date).seconds
                 time_diffs.append(diff)
 
             avg_time_diff = sum(time_diffs) / len(time_diffs)
@@ -260,15 +254,11 @@ class FraudAnalysisService:
         base_risk = len(risk_factors) * 0.2
         risk_score = min(base_risk + (total_amount / 100000), 1.0)  # Cap at 1.0
 
-        confidence = min(
-            0.5 + (len(transactions) * 0.1), 1.0
-        )  # Higher confidence with more data
+        confidence = min(0.5 + (len(transactions) * 0.1), 1.0)  # Higher confidence with more data
 
         return RiskScore(risk_score, confidence, risk_factors)
 
-    def assess_case_risk(
-        self, case: FraudCase, transactions: list[Transaction]
-    ) -> RiskScore:
+    def assess_case_risk(self, case: FraudCase, transactions: list[Transaction]) -> RiskScore:
         """Assess overall case risk"""
         if not transactions:
             return RiskScore(0.1, 0.8, ["Insufficient transaction data"])
@@ -297,9 +287,7 @@ class CaseAssignmentService:
     def __init__(self, workload_capacity: dict[str, int]):
         self.workload_capacity = workload_capacity  # investigator_id -> max_cases
 
-    def recommend_assignment(
-        self, case: FraudCase, available_investigators: list[dict[str, Any]]
-    ) -> EntityId | None:
+    def recommend_assignment(self, case: FraudCase, available_investigators: list[dict[str, Any]]) -> EntityId | None:
         """
         Recommend case assignment based on:
         - Investigator expertise
@@ -389,9 +377,7 @@ class TransactionRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_suspicious_patterns(
-        self, time_window_hours: int
-    ) -> list[Transaction]:
+    async def find_suspicious_patterns(self, time_window_hours: int) -> list[Transaction]:
         pass
 
 
@@ -402,9 +388,7 @@ class CreateFraudCaseUseCase:
     def __init__(self, case_repository: FraudCaseRepository):
         self.case_repository = case_repository
 
-    async def execute(
-        self, title: str, description: str | None, priority: str, creator_id: EntityId
-    ) -> FraudCase:
+    async def execute(self, title: str, description: str | None, priority: str, creator_id: EntityId) -> FraudCase:
         # Create new case
         case_id = EntityId.new()
         case = FraudCase(

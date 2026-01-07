@@ -1,5 +1,5 @@
-import { apiService } from '@/services/api/client';
-import { isApiErrorResponse } from './guards';
+import { apiService } from "@/services/api/client";
+import { isApiErrorResponse } from "./guards";
 
 export interface ApiResponse<T> {
   data: T | null;
@@ -18,20 +18,20 @@ export const safeApi = {
       return {
         data: response.data,
         error: null,
-        status: response.status
+        status: response.status,
       };
     } catch (error: any) {
       if (isApiErrorResponse(error.response?.data)) {
         return {
           data: null,
-          error: error.response.data.message || 'Unknown API Error',
-          status: error.response?.status || 500
+          error: error.response.data.message || "Unknown API Error",
+          status: error.response?.status || 500,
         };
       }
       return {
         data: null,
-        error: error.message || 'Network Error',
-        status: error.response?.status || 500
+        error: error.message || "Network Error",
+        status: error.response?.status || 500,
       };
     }
   },
@@ -42,21 +42,21 @@ export const safeApi = {
       return {
         data: response.data,
         error: null,
-        status: response.status
+        status: response.status,
       };
     } catch (error: any) {
-       if (isApiErrorResponse(error.response?.data)) {
+      if (isApiErrorResponse(error.response?.data)) {
         return {
           data: null,
-          error: error.response.data.message || 'Unknown API Error',
-          status: error.response?.status || 500
+          error: error.response.data.message || "Unknown API Error",
+          status: error.response?.status || 500,
         };
       }
       return {
         data: null,
-        error: error.message || 'Network Error',
-        status: error.response?.status || 500
+        error: error.message || "Network Error",
+        status: error.response?.status || 500,
       };
     }
-  }
+  },
 };

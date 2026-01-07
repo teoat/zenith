@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 interface TouchGestureOptions {
   onSwipeLeft?: () => void;
@@ -14,7 +14,9 @@ interface TouchGestureOptions {
 
 export const useTouchGestures = (options: TouchGestureOptions) => {
   const elementRef = useRef<HTMLDivElement>(null);
-  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(
+    null,
+  );
   const lastTapRef = useRef<number>(0);
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export const useTouchGestures = (options: TouchGestureOptions) => {
       touchStartRef.current = {
         x: touch.clientX,
         y: touch.clientY,
-        time: Date.now()
+        time: Date.now(),
       };
     };
 
@@ -47,7 +49,7 @@ export const useTouchGestures = (options: TouchGestureOptions) => {
         onTap,
         onDoubleTap,
         minSwipeDistance = 50,
-        maxTapDuration = 300
+        maxTapDuration = 300,
       } = options;
 
       // Handle taps
@@ -92,14 +94,16 @@ export const useTouchGestures = (options: TouchGestureOptions) => {
     };
 
     // Add touch event listeners
-    element.addEventListener('touchstart', handleTouchStart, { passive: false });
-    element.addEventListener('touchend', handleTouchEnd, { passive: false });
-    element.addEventListener('touchmove', handleTouchMove, { passive: false });
+    element.addEventListener("touchstart", handleTouchStart, {
+      passive: false,
+    });
+    element.addEventListener("touchend", handleTouchEnd, { passive: false });
+    element.addEventListener("touchmove", handleTouchMove, { passive: false });
 
     return () => {
-      element.removeEventListener('touchstart', handleTouchStart);
-      element.removeEventListener('touchend', handleTouchEnd);
-      element.removeEventListener('touchmove', handleTouchMove);
+      element.removeEventListener("touchstart", handleTouchStart);
+      element.removeEventListener("touchend", handleTouchEnd);
+      element.removeEventListener("touchmove", handleTouchMove);
     };
   }, [options]);
 

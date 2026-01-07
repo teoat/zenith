@@ -88,9 +88,7 @@ class RuntimeSecurityMonitor:
         # Check for brute force attempts
         for ip, attempts in self.brute_force_attempts.items():
             recent_attempts = [
-                attempt
-                for attempt in attempts
-                if (datetime.now() - attempt).seconds < self.suspicious_activity_window
+                attempt for attempt in attempts if (datetime.now() - attempt).seconds < self.suspicious_activity_window
             ]
 
             if len(recent_attempts) >= self.max_failed_attempts:
@@ -119,7 +117,7 @@ class RuntimeSecurityMonitor:
     ):
         """Log a security event"""
         event = SecurityEvent(
-            event_id=f"sec_{int(time.time())}_{hashlib.md5(f'{event_type}{source_ip}'.encode()).hexdigest()[:8]}",
+            event_id=f"sec_{int(time.time())}_{hashlib.sha256(f'{event_type}{source_ip}'.encode()).hexdigest()[:16]}",
             event_type=event_type,
             severity=severity,
             source_ip=source_ip,
@@ -153,9 +151,7 @@ class RuntimeSecurityMonitor:
 
         # Cleanup old attempts
         cutoff = datetime.now() - timedelta(seconds=self.suspicious_activity_window)
-        self.brute_force_attempts[ip] = [
-            attempt for attempt in self.brute_force_attempts[ip] if attempt > cutoff
-        ]
+        self.brute_force_attempts[ip] = [attempt for attempt in self.brute_force_attempts[ip] if attempt > cutoff]
 
 
 # Zero-Trust Security Middleware
@@ -218,9 +214,7 @@ class ZeroTrustMiddleware(BaseHTTPMiddleware):
         for policy in self.policies.values():
             if re.match(policy.resource_pattern, str(request.url)):
                 # Check permissions
-                if not self._has_required_permissions(
-                    user_permissions, policy.required_permissions
-                ):
+                if not self._has_required_permissions(user_permissions, policy.required_permissions):
                     await self.security_monitor._log_security_event(
                         event_type="insufficient_permissions",
                         severity="high",
@@ -238,9 +232,7 @@ class ZeroTrustMiddleware(BaseHTTPMiddleware):
                     )
 
                 # Check MFA requirement
-                if policy.mfa_required and not getattr(
-                    request.state, "mfa_verified", False
-                ):
+                if policy.mfa_required and not getattr(request.state, "mfa_verified", False):
                     return JSONResponse(
                         status_code=403,
                         content={
@@ -279,9 +271,7 @@ class ZeroTrustMiddleware(BaseHTTPMiddleware):
         # Fall back to direct connection
         return request.client.host if request.client else "unknown"
 
-    def _has_required_permissions(
-        self, user_permissions: list[str], required_permissions: list[str]
-    ) -> bool:
+    def _has_required_permissions(self, user_permissions: list[str], required_permissions: list[str]) -> bool:
         """Check if user has all required permissions"""
         return all(perm in user_permissions for perm in required_permissions)
 
@@ -338,10 +328,7 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         # Only validate JSON requests
-        if (
-            request.method in ["POST", "PUT", "PATCH"]
-            and request.headers.get("content-type") == "application/json"
-        ):
+        if request.method in ["POST", "PUT", "PATCH"] and request.headers.get("content-type") == "application/json":
             try:
                 # Read and validate request body
                 body = await request.json()
@@ -362,14 +349,10 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                 request.state.validated_body = body
 
             except json.JSONDecodeError:
-                return JSONResponse(
-                    status_code=400, content={"error": "Invalid JSON format"}
-                )
+                return JSONResponse(status_code=400, content={"error": "Invalid JSON format"})
             except Exception as e:
                 logger.error(f"Input validation error: {e}")
-                return JSONResponse(
-                    status_code=400, content={"error": "Input validation failed"}
-                )
+                return JSONResponse(status_code=400, content={"error": "Input validation failed"})
 
         response = await call_next(request)
         return response
@@ -399,13 +382,9 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                 elif rule.validation_type == "length":
                     str_value = str(value)
                     if rule.min_length and len(str_value) < rule.min_length:
-                        errors.append(
-                            f"{field_name}: Too short (minimum {rule.min_length})"
-                        )
+                        errors.append(f"{field_name}: Too short (minimum {rule.min_length})")
                     if rule.max_length and len(str_value) > rule.max_length:
-                        errors.append(
-                            f"{field_name}: Too long (maximum {rule.max_length})"
-                        )
+                        errors.append(f"{field_name}: Too long (maximum {rule.max_length})")
 
                 elif rule.validation_type == "type":
                     # Add type validation logic
@@ -447,7 +426,11 @@ class AdvancedSecurityHeadersMiddleware(BaseHTTPMiddleware):
         # Enhanced security headers
         headers = {
             # Content Security Policy with nonce
-            "Content-Security-Policy": f"default-src 'self'; script-src 'self' 'nonce-{nonce}'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' wss: https:; frame-ancestors 'none';",
+            "Content-Security-Policy": (
+                f"default-src 'self'; script-src 'self' 'nonce-{nonce}'; "
+                f"style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; "
+                f"font-src 'self' data:; connect-src 'self' wss: https:; frame-ancestors 'none';"
+            ),
             # Security headers
             "X-Content-Type-Options": "nosniff",
             "X-Frame-Options": "DENY",
@@ -460,7 +443,11 @@ class AdvancedSecurityHeadersMiddleware(BaseHTTPMiddleware):
             "Cross-Origin-Opener-Policy": "same-origin",
             "Cross-Origin-Resource-Policy": "same-origin",
             # Feature policy restrictions
-            "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=(), ambient-light-sensor=(), autoplay=(), encrypted-media=(), fullscreen=(self), picture-in-picture=()",
+            "Permissions-Policy": (
+                "camera=(), microphone=(), geolocation=(), payment=(), usb=(), "
+                "magnetometer=(), accelerometer=(), gyroscope=(), ambient-light-sensor=(), "
+                "autoplay=(), encrypted-media=(), fullscreen=(self), picture-in-picture=()"
+            ),
         }
 
         # Apply headers to response

@@ -5,6 +5,14 @@ from datetime import datetime
 
 from .encryption import EncryptedString, decrypt_value, encrypt_value
 
+__all__ = [
+    "EncryptedString",
+    "decrypt_value",
+    "encrypt_value",
+    "generate_secure_session_token",
+    "validate_session_integrity",
+]
+
 
 # Enhanced session security
 def generate_secure_session_token() -> str:

@@ -1,5 +1,5 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
-import { secureLogger } from '@/utils/secureLogger';
+import { Component, ErrorInfo, ReactNode } from "react";
+import { secureLogger } from "@/utils/secureLogger";
 
 interface Props {
   children: ReactNode;
@@ -34,8 +34,8 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
-      secureLogger.error('Error Boundary caught an error:', error, errorInfo);
+    if (process.env.NODE_ENV === "development") {
+      secureLogger.error("Error Boundary caught an error:", error, errorInfo);
     }
 
     // Update state with error details
@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
     // In production, you'd send this to an error reporting service
     // e.g., Sentry, LogRocket, etc.
-    if (process.env.NODE_ENV === 'production' && window.sentryAPI) {
+    if (process.env.NODE_ENV === "production" && window.sentryAPI) {
       window.sentryAPI.captureException(error, {
         contexts: {
           react: {
@@ -93,7 +93,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
             </div>
 
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <div className="mb-6">
                 <details className="bg-gray-50 rounded-lg p-4">
                   <summary className="cursor-pointer font-semibold text-gray-700 mb-2">
@@ -101,14 +101,18 @@ export class ErrorBoundary extends Component<Props, State> {
                   </summary>
                   <div className="mt-2 space-y-2">
                     <div>
-                      <p className="text-sm font-semibold text-gray-700">Error:</p>
+                      <p className="text-sm font-semibold text-gray-700">
+                        Error:
+                      </p>
                       <pre className="text-xs text-red-600 bg-red-50 p-2 rounded overflow-x-auto">
                         {this.state.error.toString()}
                       </pre>
                     </div>
                     {this.state.errorInfo && (
                       <div>
-                        <p className="text-sm font-semibold text-gray-700">Component Stack:</p>
+                        <p className="text-sm font-semibold text-gray-700">
+                          Component Stack:
+                        </p>
                         <pre className="text-xs text-gray-600 bg-gray-100 p-2 rounded overflow-x-auto max-h-40 overflow-y-auto">
                           {this.state.errorInfo.componentStack}
                         </pre>
@@ -127,7 +131,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 Try Again
               </button>
               <button
-                onClick={() => window.location.href = '/'}
+                onClick={() => (window.location.href = "/")}
                 className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all"
               >
                 Go to Home
@@ -136,7 +140,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
-                If this problem persists, please{' '}
+                If this problem persists, please{" "}
                 <a
                   href="/settings"
                   className="text-blue-600 hover:text-blue-700 underline"

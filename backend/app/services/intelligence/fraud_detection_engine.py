@@ -88,9 +88,7 @@ class FraudDetectionEngine:
             try:
                 from core.database import FraudRule
 
-                rules = (
-                    self.db.query(FraudRule).filter(FraudRule.is_active).all()
-                )
+                rules = self.db.query(FraudRule).filter(FraudRule.is_active).all()
                 for rule in rules:
                     if rule.rule_id in self.config:
                         # Simple casting based on value_type
@@ -153,9 +151,7 @@ class FraudDetectionEngine:
             raise ValueError("Transactions list cannot be None")
 
         if not isinstance(transactions, list):
-            raise TypeError(
-                f"Transactions must be a list, got {type(transactions).__name__}"
-            )
+            raise TypeError(f"Transactions must be a list, got {type(transactions).__name__}")
 
         if len(transactions) == 0:
             raise ValueError("Transactions list cannot be empty")
@@ -163,9 +159,7 @@ class FraudDetectionEngine:
         # Validate each transaction
         for i, tx in enumerate(transactions):
             if not isinstance(tx, Transaction):
-                raise TypeError(
-                    f"Transaction at index {i} must be a Transaction instance, got {type(tx).__name__}"
-                )
+                raise TypeError(f"Transaction at index {i} must be a Transaction instance, got {type(tx).__name__}")
 
         self.alerts = []
 
@@ -183,9 +177,7 @@ class FraudDetectionEngine:
         account_groups = self._group_transactions_by_account_pairs(transactions)
         return self._analyze_account_groups_for_structuring(account_groups)
 
-    def _group_transactions_by_account_pairs(
-        self, transactions: list[Transaction]
-    ) -> dict[tuple[str, str], list[Transaction]]:
+    def _group_transactions_by_account_pairs(self, transactions: list[Transaction]) -> dict[tuple[str, str], list[Transaction]]:
         """Group transactions by account pairs for structuring analysis"""
         account_groups: dict[tuple[str, str], list[Transaction]] = {}
 
@@ -198,9 +190,7 @@ class FraudDetectionEngine:
 
         return account_groups
 
-    def _analyze_account_groups_for_structuring(
-        self, account_groups: dict[tuple[str, str], list[Transaction]]
-    ) -> list[FraudAlert]:
+    def _analyze_account_groups_for_structuring(self, account_groups: dict[tuple[str, str], list[Transaction]]) -> list[FraudAlert]:
         """Analyze grouped transactions for structuring patterns"""
         alerts = []
 
@@ -216,9 +206,7 @@ class FraudDetectionEngine:
 
         return alerts
 
-    def _find_structuring_windows(
-        self, transactions: list[Transaction]
-    ) -> list[dict[str, Any]]:
+    def _find_structuring_windows(self, transactions: list[Transaction]) -> list[dict[str, Any]]:
         """Find windows of transactions that may indicate structuring"""
         windows = []
 
@@ -248,13 +236,9 @@ class FraudDetectionEngine:
 
         return windows
 
-    def _is_within_structuring_window(
-        self, transaction: Transaction, window_start
-    ) -> bool:
+    def _is_within_structuring_window(self, transaction: Transaction, window_start) -> bool:
         """Check if transaction is within structuring time window"""
-        return (
-            transaction.timestamp - window_start
-        ).total_seconds() / 3600 <= self.STRUCTURING_WINDOW_HOURS
+        return (transaction.timestamp - window_start).total_seconds() / 3600 <= self.STRUCTURING_WINDOW_HOURS
 
     def _is_suspicious_amount(self, amount: float) -> bool:
         """Check if transaction amount is suspiciously close to threshold"""
@@ -265,14 +249,9 @@ class FraudDetectionEngine:
         txs = window_data["transactions"]
         total_amount = window_data["total_amount"]
 
-        return (
-            len(txs) >= self.STRUCTURING_MIN_TRANSACTIONS
-            and total_amount >= self.STRUCTURING_THRESHOLD
-        )
+        return len(txs) >= self.STRUCTURING_MIN_TRANSACTIONS and total_amount >= self.STRUCTURING_THRESHOLD
 
-    def _create_structuring_alert(
-        self, account_pair: tuple[str, str], window_data: dict[str, Any]
-    ) -> FraudAlert:
+    def _create_structuring_alert(self, account_pair: tuple[str, str], window_data: dict[str, Any]) -> FraudAlert:
         """Create a structuring fraud alert"""
         txs = window_data["transactions"]
         total_amount = window_data["total_amount"]
@@ -315,17 +294,13 @@ class FraudDetectionEngine:
         proximities = []
         for tx in transactions:
             if tx.amount < self.STRUCTURING_THRESHOLD:
-                proximity = (
-                    self.STRUCTURING_THRESHOLD - tx.amount
-                ) / self.STRUCTURING_THRESHOLD
+                proximity = (self.STRUCTURING_THRESHOLD - tx.amount) / self.STRUCTURING_THRESHOLD
                 proximities.append(proximity)
 
         avg_proximity = sum(proximities) / len(proximities) if proximities else 0
         return int(avg_proximity * 40)
 
-    def _generate_structuring_description(
-        self, transactions: list[Transaction], total_amount: float
-    ) -> str:
+    def _generate_structuring_description(self, transactions: list[Transaction], total_amount: float) -> str:
         """Generate human-readable description of structuring pattern"""
         count = len(transactions)
         avg_amount = total_amount / count
@@ -377,9 +352,7 @@ class FraudDetectionEngine:
                 window_txs = []
 
                 for tx in txs[i:]:
-                    if (
-                        tx.timestamp - window_start
-                    ).total_seconds() / 60 <= self.VELOCITY_WINDOW_MINUTES:
+                    if (tx.timestamp - window_start).total_seconds() / 60 <= self.VELOCITY_WINDOW_MINUTES:
                         window_txs.append(tx)
                     else:
                         break
@@ -388,17 +361,11 @@ class FraudDetectionEngine:
                 if len(window_txs) >= self.VELOCITY_MAX_TRANSACTIONS:
                     # Calculate risk score based on velocity
                     base_score = 50
-                    velocity_bonus = min(
-                        (len(window_txs) - self.VELOCITY_MAX_TRANSACTIONS) * 5, 40
-                    )
+                    velocity_bonus = min((len(window_txs) - self.VELOCITY_MAX_TRANSACTIONS) * 5, 40)
 
                     # Bonus for very short time window
-                    actual_window_minutes = (
-                        window_txs[-1].timestamp - window_txs[0].timestamp
-                    ).total_seconds() / 60
-                    time_bonus = int(
-                        (1 - actual_window_minutes / self.VELOCITY_WINDOW_MINUTES) * 10
-                    )
+                    actual_window_minutes = (window_txs[-1].timestamp - window_txs[0].timestamp).total_seconds() / 60
+                    time_bonus = int((1 - actual_window_minutes / self.VELOCITY_WINDOW_MINUTES) * 10)
 
                     risk_score = min(base_score + velocity_bonus + time_bonus, 100)
 
@@ -443,9 +410,7 @@ class FraudDetectionEngine:
             graph[tx.source_account].append((tx.destination_account, tx))
 
         # Find cycles using DFS
-        def find_cycle(
-            start: str, current: str, path: list[Transaction], visited: set
-        ) -> list[Transaction]:
+        def find_cycle(start: str, current: str, path: list[Transaction], visited: set) -> list[Transaction]:
             """Find cycle from current node back to start"""
             if current == start and len(path) > 1:
                 return path  # Found cycle!
@@ -458,16 +423,10 @@ class FraudDetectionEngine:
             if current in graph:
                 for next_account, tx in graph[current]:
                     # Check if within time window
-                    if (
-                        path
-                        and (tx.timestamp - path[0].timestamp).total_seconds() / 3600
-                        > self.ROUND_TRIP_TIME_WINDOW_HOURS
-                    ):
+                    if path and (tx.timestamp - path[0].timestamp).total_seconds() / 3600 > self.ROUND_TRIP_TIME_WINDOW_HOURS:
                         continue
 
-                    result = find_cycle(
-                        start, next_account, [*path, tx], visited.copy()
-                    )
+                    result = find_cycle(start, next_account, [*path, tx], visited.copy())
                     if result:
                         return result
 
@@ -495,10 +454,7 @@ class FraudDetectionEngine:
                     risk_score = min(base_score + hop_bonus + amount_bonus, 100)
 
                     # Build path description
-                    path_desc = " → ".join(
-                        [cycle[0].source_account]
-                        + [tx.destination_account for tx in cycle]
-                    )
+                    path_desc = " → ".join([cycle[0].source_account] + [tx.destination_account for tx in cycle])
 
                     alert = FraudAlert(
                         alert_id=f"ROUND_{cycle_id}",
@@ -513,19 +469,14 @@ class FraudDetectionEngine:
                             "cycle_length": len(cycle),
                             "total_amount": total_amount,
                             "path": path_desc,
-                            "time_span_hours": (
-                                cycle[-1].timestamp - cycle[0].timestamp
-                            ).total_seconds()
-                            / 3600,
+                            "time_span_hours": (cycle[-1].timestamp - cycle[0].timestamp).total_seconds() / 3600,
                         },
                     )
                     alerts.append(alert)
 
         return alerts
 
-    def calculate_overall_risk(
-        self, account: str, transactions: list[Transaction]
-    ) -> int:
+    def calculate_overall_risk(self, account: str, transactions: list[Transaction]) -> int:
         """
         Calculate overall risk score for an account (0-100)
 
@@ -534,11 +485,7 @@ class FraudDetectionEngine:
         - Severity of alerts
         - Transaction patterns
         """
-        account_txs = [
-            tx
-            for tx in transactions
-            if tx.source_account == account or tx.destination_account == account
-        ]
+        account_txs = [tx for tx in transactions if tx.source_account == account or tx.destination_account == account]
 
         if not account_txs:
             return 0
@@ -551,9 +498,7 @@ class FraudDetectionEngine:
             return 10  # Base risk for any active account
 
         # Weighted average of alert scores
-        total_score = sum(
-            alert.risk_score * alert.confidence for alert in account_alerts
-        )
+        total_score = sum(alert.risk_score * alert.confidence for alert in account_alerts)
         avg_score = int(total_score / len(account_alerts))
 
         # Bonus for multiple different fraud types

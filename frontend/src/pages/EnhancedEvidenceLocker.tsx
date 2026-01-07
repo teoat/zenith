@@ -1,9 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
-import { Button } from '@/components/ui/Button.tsx';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert.tsx';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs.tsx';
-import { secureLogger } from '@/utils/secureLogger';
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/Card.tsx";
+import { Button } from "@/components/ui/Button.tsx";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/Alert.tsx";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/Tabs.tsx";
+import { secureLogger } from "@/utils/secureLogger";
 import {
   FileText,
   Shield,
@@ -13,32 +23,31 @@ import {
   Clock,
   Hash,
   AlertTriangle,
-  Zap
-} from 'lucide-react';
+  Zap,
+} from "lucide-react";
 
-
-import {
-  EvidenceMetadata
-} from '@/types/evidence';
-import { EvidenceStats } from '@/components/evidence/EvidenceStats';
-import { EvidenceDetailsSidebar } from '@/components/evidence/EvidenceDetailsSidebar';
-import { EvidenceSearchFilters } from '@/components/evidence/EvidenceSearchFilters';
-import { MOCK_EVIDENCE } from '@/mocks/evidenceMocks';
-import { EvidenceCard } from '@/components/evidence/EvidenceCard';
-import { ChainOfCustodyTimeline } from '@/components/evidence/ChainOfCustodyTimeline';
-import { EvidenceCorrelationsList } from '@/components/evidence/EvidenceCorrelationsList';
-import { MultimodalAnalysisResults } from '@/components/evidence/MultimodalAnalysisResults';
-import VirtualizedEvidenceList from '@/components/VirtualizedEvidenceList';
+import { EvidenceMetadata } from "@/types/evidence";
+import { EvidenceStats } from "@/components/evidence/EvidenceStats";
+import { EvidenceDetailsSidebar } from "@/components/evidence/EvidenceDetailsSidebar";
+import { EvidenceSearchFilters } from "@/components/evidence/EvidenceSearchFilters";
+import { MOCK_EVIDENCE } from "@/mocks/evidenceMocks";
+import { EvidenceCard } from "@/components/evidence/EvidenceCard";
+import { ChainOfCustodyTimeline } from "@/components/evidence/ChainOfCustodyTimeline";
+import { EvidenceCorrelationsList } from "@/components/evidence/EvidenceCorrelationsList";
+import { MultimodalAnalysisResults } from "@/components/evidence/MultimodalAnalysisResults";
+import VirtualizedEvidenceList from "@/components/VirtualizedEvidenceList";
 
 const EnhancedEvidenceLocker: React.FC = () => {
   const [evidence, setEvidence] = useState<EvidenceMetadata[]>([]);
-  const [selectedEvidence, setSelectedEvidence] = useState<EvidenceMetadata | null>(null);
+  const [selectedEvidence, setSelectedEvidence] =
+    useState<EvidenceMetadata | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<string>('all');
-  const [activeTab, setActiveTab] = useState('files');
-  const [processingStatus, setProcessingStatus] = useState<Record<string, string>>({});
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState("files");
+  const [processingStatus, setProcessingStatus] = useState<
+    Record<string, string>
+  >({});
 
   useEffect(() => {
     loadEvidence();
@@ -50,7 +59,7 @@ const EnhancedEvidenceLocker: React.FC = () => {
       // Mock enhanced evidence data - replace with actual API calls
       setEvidence(MOCK_EVIDENCE);
     } catch (error) {
-      secureLogger.error('Failed to load evidence:', error);
+      secureLogger.error("Failed to load evidence:", error);
     } finally {
       setLoading(false);
     }
@@ -59,29 +68,30 @@ const EnhancedEvidenceLocker: React.FC = () => {
   // Utility functions now imported from shared utils
 
   const startProcessing = async (id: string) => {
-    setProcessingStatus(prev => ({ ...prev, [id]: 'processing' }));
+    setProcessingStatus((prev) => ({ ...prev, [id]: "processing" }));
 
     // Simulate multimodal analysis
     setTimeout(() => {
-      setProcessingStatus(prev => ({ ...prev, [id]: 'completed' }));
+      setProcessingStatus((prev) => ({ ...prev, [id]: "completed" }));
     }, 3000);
   };
 
-  const filteredEvidence = evidence.filter(ev => {
-    const matchesSearch = ev.filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         ev.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = filterType === 'all' || ev.fileType === filterType;
+  const filteredEvidence = evidence.filter((ev) => {
+    const matchesSearch =
+      ev.filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ev.id.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = filterType === "all" || ev.fileType === filterType;
     return matchesSearch && matchesFilter;
   });
-
-
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-600"></div>
-          <p className="text-slate-500 font-medium animate-pulse">Loading Evidence Repository...</p>
+          <p className="text-slate-500 font-medium animate-pulse">
+            Loading Evidence Repository...
+          </p>
         </div>
       </div>
     );
@@ -93,18 +103,24 @@ const EnhancedEvidenceLocker: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 text-blue-600 mb-1">
             <Lock className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Secure Storage</span>
+            <span className="text-xs font-bold uppercase tracking-widest">
+              Secure Storage
+            </span>
           </div>
           <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center">
             Evidence Locker
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2 max-w-xl">
-            Enterprise-grade secure evidence management with multimodal AI analysis and blockchain-verified integrity.
+            Enterprise-grade secure evidence management with multimodal AI
+            analysis and blockchain-verified integrity.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="rounded-xl border-slate-200 dark:border-slate-800 shadow-sm">
+          <Button
+            variant="outline"
+            className="rounded-xl border-slate-200 dark:border-slate-800 shadow-sm"
+          >
             <History className="h-4 w-4 mr-2" />
             Audit Log
           </Button>
@@ -119,7 +135,11 @@ const EnhancedEvidenceLocker: React.FC = () => {
       <EvidenceStats totalItems={evidence.length} />
 
       {/* Main Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <TabsList className="bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
             <TabsTrigger value="files" className="rounded-lg px-6">
@@ -136,8 +156,8 @@ const EnhancedEvidenceLocker: React.FC = () => {
             </TabsTrigger>
           </TabsList>
 
-          {activeTab === 'files' && (
-            <EvidenceSearchFilters 
+          {activeTab === "files" && (
+            <EvidenceSearchFilters
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               filterType={filterType}
@@ -163,7 +183,9 @@ const EnhancedEvidenceLocker: React.FC = () => {
                           key={ev.id}
                           evidence={ev}
                           isSelected={selectedEvidence?.id === ev.id}
-                          onSelect={(selected) => setSelectedEvidence(selected as EvidenceMetadata)}
+                          onSelect={(selected) =>
+                            setSelectedEvidence(selected as EvidenceMetadata)
+                          }
                         />
                       </div>
                     )}
@@ -175,7 +197,9 @@ const EnhancedEvidenceLocker: React.FC = () => {
                         key={ev.id}
                         evidence={ev}
                         isSelected={selectedEvidence?.id === ev.id}
-                        onSelect={(selected) => setSelectedEvidence(selected as EvidenceMetadata)}
+                        onSelect={(selected) =>
+                          setSelectedEvidence(selected as EvidenceMetadata)
+                        }
                       />
                     ))}
                   </div>
@@ -185,8 +209,13 @@ const EnhancedEvidenceLocker: React.FC = () => {
                   <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-full w-fit mx-auto mb-4">
                     <FileText className="h-10 w-10 text-slate-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">No evidence found</h3>
-                  <p className="text-slate-500 dark:text-slate-400 max-w-xs mx-auto mt-2">Try adjusting your search query or filters to find specific items.</p>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                    No evidence found
+                  </h3>
+                  <p className="text-slate-500 dark:text-slate-400 max-w-xs mx-auto mt-2">
+                    Try adjusting your search query or filters to find specific
+                    items.
+                  </p>
                 </div>
               )}
             </div>
@@ -212,38 +241,57 @@ const EnhancedEvidenceLocker: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600">
-                        Run our enterprise AI models to extract content, signatures, faces, and more.
+                        Run our enterprise AI models to extract content,
+                        signatures, faces, and more.
                       </p>
                     </div>
                     <Button
                       onClick={() => startProcessing(selectedEvidence.id)}
-                      disabled={processingStatus[selectedEvidence.id] === 'processing'}
+                      disabled={
+                        processingStatus[selectedEvidence.id] === "processing"
+                      }
                     >
                       <Hash className="h-4 w-4 mr-2" />
-                      {processingStatus[selectedEvidence.id] === 'processing' ? 'Extracting Metadata...' : 'Extract Metadata'}
+                      {processingStatus[selectedEvidence.id] === "processing"
+                        ? "Extracting Metadata..."
+                        : "Extract Metadata"}
                     </Button>
                   </div>
 
                   {processingStatus[selectedEvidence.id] && (
-                    <Alert className={
-                      processingStatus[selectedEvidence.id] === 'completed'
-                        ? 'border-green-200 bg-green-50'
-                        : processingStatus[selectedEvidence.id] === 'failed'
-                        ? 'border-red-200 bg-red-50'
-                        : 'border-blue-200 bg-blue-50'
-                    }>
-                      {processingStatus[selectedEvidence.id] === 'completed' && <CheckCircle className="h-4 w-4" />}
-                      {processingStatus[selectedEvidence.id] === 'processing' && <Clock className="h-4 w-4" />}
-                      {processingStatus[selectedEvidence.id] === 'failed' && <AlertTriangle className="h-4 w-4" />}
+                    <Alert
+                      className={
+                        processingStatus[selectedEvidence.id] === "completed"
+                          ? "border-green-200 bg-green-50"
+                          : processingStatus[selectedEvidence.id] === "failed"
+                            ? "border-red-200 bg-red-50"
+                            : "border-blue-200 bg-blue-50"
+                      }
+                    >
+                      {processingStatus[selectedEvidence.id] ===
+                        "completed" && <CheckCircle className="h-4 w-4" />}
+                      {processingStatus[selectedEvidence.id] ===
+                        "processing" && <Clock className="h-4 w-4" />}
+                      {processingStatus[selectedEvidence.id] === "failed" && (
+                        <AlertTriangle className="h-4 w-4" />
+                      )}
                       <AlertTitle>
-                        {processingStatus[selectedEvidence.id] === 'completed' && 'Processing Complete'}
-                        {processingStatus[selectedEvidence.id] === 'processing' && 'Processing...'}
-                        {processingStatus[selectedEvidence.id] === 'failed' && 'Processing Failed'}
+                        {processingStatus[selectedEvidence.id] ===
+                          "completed" && "Processing Complete"}
+                        {processingStatus[selectedEvidence.id] ===
+                          "processing" && "Processing..."}
+                        {processingStatus[selectedEvidence.id] === "failed" &&
+                          "Processing Failed"}
                       </AlertTitle>
                       <AlertDescription>
-                        {processingStatus[selectedEvidence.id] === 'completed' && 'Multimodal analysis completed successfully.'}
-                        {processingStatus[selectedEvidence.id] === 'processing' && 'Please wait while we analyze the evidence.'}
-                        {processingStatus[selectedEvidence.id] === 'failed' && 'Analysis failed. Please try again.'}
+                        {processingStatus[selectedEvidence.id] ===
+                          "completed" &&
+                          "Multimodal analysis completed successfully."}
+                        {processingStatus[selectedEvidence.id] ===
+                          "processing" &&
+                          "Please wait while we analyze the evidence."}
+                        {processingStatus[selectedEvidence.id] === "failed" &&
+                          "Analysis failed. Please try again."}
                       </AlertDescription>
                     </Alert>
                   )}
@@ -257,8 +305,13 @@ const EnhancedEvidenceLocker: React.FC = () => {
           ) : (
             <div className="text-center py-12">
               <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Select Evidence for Analysis</h3>
-              <p className="text-gray-600">Choose an evidence file from the Files tab to perform multimodal analysis</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Select Evidence for Analysis
+              </h3>
+              <p className="text-gray-600">
+                Choose an evidence file from the Files tab to perform multimodal
+                analysis
+              </p>
             </div>
           )}
         </TabsContent>
@@ -273,8 +326,13 @@ const EnhancedEvidenceLocker: React.FC = () => {
           ) : (
             <div className="text-center py-12">
               <Shield className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Select Evidence for Custody Review</h3>
-              <p className="text-gray-600">Choose an evidence file from the Files tab to view its chain of custody</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Select Evidence for Custody Review
+              </h3>
+              <p className="text-gray-600">
+                Choose an evidence file from the Files tab to view its chain of
+                custody
+              </p>
             </div>
           )}
         </TabsContent>

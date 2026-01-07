@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Play, Pause, SkipBack, SkipForward, RotateCcw } from 'lucide-react';
-import { AccessibleButton } from './ui/AccessibleButton';
+import React, { useState, useEffect } from "react";
+import { Play, Pause, SkipBack, SkipForward, RotateCcw } from "lucide-react";
+import { AccessibleButton } from "./ui/AccessibleButton";
 
 interface TemporalPlaybackProps {
   caseId?: string;
@@ -10,7 +10,7 @@ interface TemporalPlaybackProps {
 
 const TemporalPlayback: React.FC<TemporalPlaybackProps> = ({
   onTimeChange,
-  className = ''
+  className = "",
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -19,18 +19,18 @@ const TemporalPlayback: React.FC<TemporalPlaybackProps> = ({
 
   // Mock timeline data - in real implementation, this would come from API
   const timelineEvents = [
-    { timestamp: 10, label: 'Case Opened', type: 'milestone' },
-    { timestamp: 25, label: 'First Evidence Uploaded', type: 'evidence' },
-    { timestamp: 45, label: 'Initial Analysis Complete', type: 'analysis' },
-    { timestamp: 70, label: 'Suspect Identified', type: 'finding' },
-    { timestamp: 90, label: 'Case Closed', type: 'milestone' }
+    { timestamp: 10, label: "Case Opened", type: "milestone" },
+    { timestamp: 25, label: "First Evidence Uploaded", type: "evidence" },
+    { timestamp: 45, label: "Initial Analysis Complete", type: "analysis" },
+    { timestamp: 70, label: "Suspect Identified", type: "finding" },
+    { timestamp: 90, label: "Case Closed", type: "milestone" },
   ];
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isPlaying) {
       interval = setInterval(() => {
-        setCurrentTime(prev => {
+        setCurrentTime((prev) => {
           const next = prev + speed;
           if (next >= duration) {
             setIsPlaying(false);
@@ -55,10 +55,11 @@ const TemporalPlayback: React.FC<TemporalPlaybackProps> = ({
     onTimeChange?.(new Date());
   };
 
-  const handleSkip = (direction: 'forward' | 'backward') => {
+  const handleSkip = (direction: "forward" | "backward") => {
     const skipAmount = 10; // 10 seconds
-    setCurrentTime(prev => {
-      const next = direction === 'forward' ? prev + skipAmount : prev - skipAmount;
+    setCurrentTime((prev) => {
+      const next =
+        direction === "forward" ? prev + skipAmount : prev - skipAmount;
       return Math.max(0, Math.min(duration, next));
     });
   };
@@ -66,19 +67,24 @@ const TemporalPlayback: React.FC<TemporalPlaybackProps> = ({
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const progressPercentage = (currentTime / duration) * 100;
 
   return (
-    <div className={`temporal-playback bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-4 ${className}`}>
+    <div
+      className={`temporal-playback bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-4 ${className}`}
+    >
       <div className="flex items-center justify-between mb-4">
         <h4 className="text-lg font-semibold text-slate-900 dark:text-white">
           Temporal Playback
         </h4>
         <div className="flex items-center gap-2">
-          <label htmlFor="speed-select" className="text-sm text-slate-600 dark:text-slate-400">
+          <label
+            htmlFor="speed-select"
+            className="text-sm text-slate-600 dark:text-slate-400"
+          >
             Speed:
           </label>
           <select
@@ -133,7 +139,7 @@ const TemporalPlayback: React.FC<TemporalPlaybackProps> = ({
           </AccessibleButton>
 
           <AccessibleButton
-            onClick={() => handleSkip('backward')}
+            onClick={() => handleSkip("backward")}
             variant="secondary"
             size="sm"
             aria-label="Skip backward 10 seconds"
@@ -145,13 +151,13 @@ const TemporalPlayback: React.FC<TemporalPlaybackProps> = ({
             onClick={handlePlayPause}
             variant="primary"
             size="sm"
-            aria-label={isPlaying ? 'Pause playback' : 'Start playback'}
+            aria-label={isPlaying ? "Pause playback" : "Start playback"}
           >
             {isPlaying ? <Pause size={16} /> : <Play size={16} />}
           </AccessibleButton>
 
           <AccessibleButton
-            onClick={() => handleSkip('forward')}
+            onClick={() => handleSkip("forward")}
             variant="secondary"
             size="sm"
             aria-label="Skip forward 10 seconds"
@@ -180,7 +186,9 @@ const TemporalPlayback: React.FC<TemporalPlaybackProps> = ({
 
       {/* Current event display */}
       <div className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-        {timelineEvents.find(event => Math.abs(event.timestamp - currentTime) < 2)?.label || 'No event at current time'}
+        {timelineEvents.find(
+          (event) => Math.abs(event.timestamp - currentTime) < 2,
+        )?.label || "No event at current time"}
       </div>
     </div>
   );

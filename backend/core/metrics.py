@@ -36,13 +36,9 @@ fraud_detections_total = Counter(
     registry=registry,
 )
 
-active_cases = Gauge(
-    "active_cases_total", "Number of active fraud cases", registry=registry
-)
+active_cases = Gauge("active_cases_total", "Number of active fraud cases", registry=registry)
 
-db_connection_pool_size = Gauge(
-    "db_connection_pool_size", "Database connection pool size", registry=registry
-)
+db_connection_pool_size = Gauge("db_connection_pool_size", "Database connection pool size", registry=registry)
 
 
 class PrometheusMiddleware:
@@ -54,11 +50,7 @@ class PrometheusMiddleware:
         """Compatibility dispatch method used by unit tests that call
         middleware.dispatch(mock_request, call_next)."""
         method = getattr(request, "method", "GET")
-        path = (
-            getattr(getattr(request, "url", None), "path", "/")
-            if hasattr(request, "url")
-            else getattr(request, "path", "/")
-        )
+        path = getattr(getattr(request, "url", None), "path", "/") if hasattr(request, "url") else getattr(request, "path", "/")
 
         start_time = time.time()
         try:
@@ -70,12 +62,8 @@ class PrometheusMiddleware:
         finally:
             duration = time.time() - start_time
             try:
-                http_requests_total.labels(
-                    method=method, endpoint=path, status=str(status_code)
-                ).inc()
-                http_request_duration_seconds.labels(
-                    method=method, endpoint=path
-                ).observe(duration)
+                http_requests_total.labels(method=method, endpoint=path, status=str(status_code)).inc()
+                http_request_duration_seconds.labels(method=method, endpoint=path).observe(duration)
             except Exception:
                 # Metric recording should not break tests
                 pass
@@ -97,13 +85,9 @@ class PrometheusMiddleware:
                 duration = time.time() - start_time
 
                 # Record metrics
-                http_requests_total.labels(
-                    method=method, endpoint=path, status=status_code
-                ).inc()
+                http_requests_total.labels(method=method, endpoint=path, status=status_code).inc()
 
-                http_request_duration_seconds.labels(
-                    method=method, endpoint=path
-                ).observe(duration)
+                http_request_duration_seconds.labels(method=method, endpoint=path).observe(duration)
 
             await send(message)
 

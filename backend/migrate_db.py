@@ -7,9 +7,7 @@ db_path = os.path.expanduser("~/.zenith/fraud_detection.db")
 print(f"Migrating database at: {db_path}")
 
 if not os.path.exists(db_path):
-    print(
-        "Database file not found. Skipping migration (tables will be created by app startup)."
-    )
+    print("Database file not found. Skipping migration (tables will be created by app startup).")
     exit(0)
 
 conn = sqlite3.connect(db_path)
@@ -21,7 +19,8 @@ try:
     print("Projects table exists.")
 except sqlite3.OperationalError:
     print("Creating projects table...")
-    cursor.execute("""
+    cursor.execute(
+        """
     CREATE TABLE projects (
         id VARCHAR PRIMARY KEY,
         name VARCHAR NOT NULL,
@@ -30,7 +29,8 @@ except sqlite3.OperationalError:
         created_by VARCHAR,
         FOREIGN KEY(created_by) REFERENCES users(id)
     );
-    """)
+    """
+    )
     cursor.execute("CREATE INDEX ix_projects_name ON projects (name)")
 
     # Add default project
@@ -70,9 +70,7 @@ try:
     print("Cases table already has customer_name.")
 except sqlite3.OperationalError:
     print("Adding customer_name to cases...")
-    cursor.execute(
-        "ALTER TABLE cases ADD COLUMN customer_name VARCHAR DEFAULT 'Unknown'"
-    )
+    cursor.execute("ALTER TABLE cases ADD COLUMN customer_name VARCHAR DEFAULT 'Unknown'")
 
 # 3. Add status to fraud_alerts
 try:
@@ -80,9 +78,7 @@ try:
     print("Fraud_alerts table already has status.")
 except sqlite3.OperationalError:
     print("Adding status to fraud_alerts...")
-    cursor.execute(
-        "ALTER TABLE fraud_alerts ADD COLUMN status VARCHAR DEFAULT 'pending'"
-    )
+    cursor.execute("ALTER TABLE fraud_alerts ADD COLUMN status VARCHAR DEFAULT 'pending'")
     cursor.execute("CREATE INDEX ix_fraud_alerts_status ON fraud_alerts (status)")
 
 conn.commit()

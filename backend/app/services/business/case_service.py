@@ -24,9 +24,7 @@ class CaseService:
                 joinedload(Case.assignee),  # Load assignee relationship
                 joinedload(Case.project),  # Load project relationship
                 # Use selectinload for collections to avoid N+1 queries
-                selectinload(
-                    Case.evidence
-                ),  # Load evidence with selectin for better performance
+                selectinload(Case.evidence),  # Load evidence with selectin for better performance
                 selectinload(Case.notes),  # Load notes with selectin
                 selectinload(Case.activities),  # Load activities with selectin
                 selectinload(Case.alerts),  # Load alerts with selectin
@@ -199,9 +197,7 @@ class CaseService:
         db.commit()
         return True
 
-    def get_case_stats(
-        self, db: Session, project_id: str | None = None
-    ) -> dict[str, Any]:
+    def get_case_stats(self, db: Session, project_id: str | None = None) -> dict[str, Any]:
         """Get case statistics"""
         query = db.query(Case)
         if project_id:
@@ -219,9 +215,7 @@ class CaseService:
             "critical_cases": critical,
         }
 
-    def get_cases_paginated(
-        self, db: Session, page: int, per_page: int, filters: dict[str, Any]
-    ) -> dict[str, Any]:
+    def get_cases_paginated(self, db: Session, page: int, per_page: int, filters: dict[str, Any]) -> dict[str, Any]:
         """Get cases with pagination and filtering"""
         import math
 
@@ -247,13 +241,7 @@ class CaseService:
             page = total_pages
 
         offset = (page - 1) * per_page
-        cases = (
-            query.options(joinedload(Case.assignee))
-            .order_by(Case.created_at.desc())
-            .offset(offset)
-            .limit(per_page)
-            .all()
-        )
+        cases = query.options(joinedload(Case.assignee)).order_by(Case.created_at.desc()).offset(offset).limit(per_page).all()
 
         return {
             "cases": cases,

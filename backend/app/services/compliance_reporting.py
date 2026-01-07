@@ -415,7 +415,9 @@ class AutomatedComplianceReporter:
 
             for metric in framework_report.get("metrics", []):
                 status_emoji = "✅" if metric["value"] >= 90 else "⚠️" if metric["value"] >= 80 else "❌"
-                md.append(f"- {status_emoji} **{metric['name']}:** {metric['value']}{metric['unit']} (Threshold: {metric['threshold']}{metric['unit']}) - {metric['status']}")
+                md.append(
+                    f"- {status_emoji} **{metric['name']}:** {metric['value']}{metric['unit']} (Threshold: {metric['threshold']}{metric['unit']}) - {metric['status']}"
+                )
 
             md.append("")
 

@@ -154,9 +154,7 @@ class CryptoFraudDetectorPlugin(PluginInterface):
             reasons.append("Whale movement > 100 ETH")
 
         # Simulate "Tornado Cash" interaction for test data
-        if address.lower().startswith("0xtornado") or address.lower().startswith(
-            "0xmix"
-        ):
+        if address.lower().startswith("0xtornado") or address.lower().startswith("0xmix"):
             risk = 0.99
             reasons.append("High-risk interaction (Mixer/Privacy Protocol)")
 

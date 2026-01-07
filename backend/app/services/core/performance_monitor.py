@@ -66,9 +66,7 @@ class PerformanceMonitor:
             "memory_percent": psutil.virtual_memory().percent,
             "disk_usage": psutil.disk_usage("/").percent,
             "network_connections": len(psutil.net_connections()),
-            "load_average": (
-                psutil.getloadavg() if hasattr(psutil, "getloadavg") else None
-            ),
+            "load_average": (psutil.getloadavg() if hasattr(psutil, "getloadavg") else None),
         }
 
     def _update_baselines(self, metrics: dict[str, Any]):
@@ -87,9 +85,7 @@ class PerformanceMonitor:
                     baseline["min"] = min(baseline["min"], value)
                     baseline["max"] = max(baseline["max"], value)
                     baseline["count"] += 1
-                    baseline["avg"] = (
-                        baseline["avg"] * (baseline["count"] - 1) + value
-                    ) / baseline["count"]
+                    baseline["avg"] = (baseline["avg"] * (baseline["count"] - 1) + value) / baseline["count"]
 
     def get_baselines(self) -> dict[str, Any]:
         """Get current performance baselines"""
@@ -97,18 +93,14 @@ class PerformanceMonitor:
             "baselines": self.baselines,
             "monitoring_active": self._thread is not None and self._thread.is_alive(),
             "metrics_collected": len(self.metrics_history),
-            "last_updated": (
-                self.metrics_history[-1]["timestamp"] if self.metrics_history else None
-            ),
+            "last_updated": (self.metrics_history[-1]["timestamp"] if self.metrics_history else None),
         }
 
     def get_current_metrics(self) -> dict[str, Any]:
         """Get current system metrics"""
         return self._collect_metrics()
 
-    def record_api_call(
-        self, endpoint: str, method: str, response_time_ms: float, status_code: int
-    ):
+    def record_api_call(self, endpoint: str, method: str, response_time_ms: float, status_code: int):
         """Record API call performance"""
         api_metric = {
             "timestamp": datetime.now(UTC).isoformat(),
@@ -121,9 +113,7 @@ class PerformanceMonitor:
 
         self.api_calls.append(api_metric)
 
-    def record_database_query(
-        self, query_type: str, execution_time_ms: float, success: bool
-    ):
+    def record_database_query(self, query_type: str, execution_time_ms: float, success: bool):
         """Record database query performance"""
         db_metric = {
             "timestamp": datetime.now(UTC).isoformat(),
@@ -168,9 +158,7 @@ class PerformanceMonitor:
         if not recent_calls:
             return 0
 
-        return sum(call["response_time_ms"] for call in recent_calls) / len(
-            recent_calls
-        )
+        return sum(call["response_time_ms"] for call in recent_calls) / len(recent_calls)
 
     def _calculate_error_rate(self) -> float:
         """Calculate error rate from recent API calls"""
@@ -194,9 +182,7 @@ class PerformanceMonitor:
 
         for metric, threshold in thresholds.items():
             if current.get(metric, 0) > threshold:
-                alerts.append(
-                    f"{metric} exceeded threshold: {current[metric]}% > {threshold}%"
-                )
+                alerts.append(f"{metric} exceeded threshold: {current[metric]}% > {threshold}%")
                 self._generate_alert(
                     f"high_{metric.replace('_percent', '').replace('_usage', '_usage')}",
                     f"{metric} exceeded threshold: {current[metric]}% > {threshold}%",
@@ -233,12 +219,9 @@ class PerformanceMonitor:
 
         summary = {
             "current_status": {
-                "monitoring_active": self._thread is not None
-                and self._thread.is_alive(),
+                "monitoring_active": self._thread is not None and self._thread.is_alive(),
                 "metrics_collected": len(self.metrics_history),
-                "alerts_active": len(
-                    [a for a in self.alerts if a["severity"] in ["critical", "warning"]]
-                ),
+                "alerts_active": len([a for a in self.alerts if a["severity"] in ["critical", "warning"]]),
                 "api_calls_tracked": len(self.api_calls),
                 "db_queries_tracked": len(self.database_queries),
             },
@@ -256,11 +239,7 @@ class PerformanceMonitor:
         trends = {}
         if len(self.metrics_history) >= 10:
             recent = list(self.metrics_history)[-10:]
-            older = (
-                list(self.metrics_history)[-20:-10]
-                if len(self.metrics_history) >= 20
-                else recent
-            )
+            older = list(self.metrics_history)[-20:-10] if len(self.metrics_history) >= 20 else recent
 
             for metric in ["cpu_percent", "memory_percent", "disk_usage"]:
                 recent_avg = sum(m.get(metric, 0) for m in recent) / len(recent)
@@ -284,29 +263,21 @@ class PerformanceMonitor:
             latest = self.metrics_history[-1]
 
             if latest.get("cpu_percent", 0) > 80:
-                recommendations.append(
-                    "Consider scaling CPU resources or optimizing CPU-intensive operations"
-                )
+                recommendations.append("Consider scaling CPU resources or optimizing CPU-intensive operations")
 
             if latest.get("memory_percent", 0) > 85:
-                recommendations.append(
-                    "Monitor memory usage and consider memory optimization or scaling"
-                )
+                recommendations.append("Monitor memory usage and consider memory optimization or scaling")
 
         # API performance recommendations
         if self.api_calls:
             avg_response = self._calculate_avg_response_time()
             if avg_response > 1000:
-                recommendations.append(
-                    "Implement response time optimization (caching, query optimization, CDN)"
-                )
+                recommendations.append("Implement response time optimization (caching, query optimization, CDN)")
 
         # Error rate recommendations
         error_rate = self._calculate_error_rate()
         if error_rate > 0.03:
-            recommendations.append(
-                "Investigate and resolve root causes of high error rates"
-            )
+            recommendations.append("Investigate and resolve root causes of high error rates")
 
         return recommendations
 
@@ -318,9 +289,7 @@ class PerformanceMonitor:
         self.root_cause_analysis_enabled = True
         self.anomaly_detection_enabled = True
 
-    async def perform_root_cause_analysis(
-        self, incident_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def perform_root_cause_analysis(self, incident_data: dict[str, Any]) -> dict[str, Any]:
         """Perform AI-powered root cause analysis for incidents"""
         analysis = {
             "primary_cause": "unknown",
@@ -451,9 +420,7 @@ class PerformanceMonitor:
 
         return alerts
 
-    async def create_incident_response_workflow(
-        self, incident_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def create_incident_response_workflow(self, incident_data: dict[str, Any]) -> dict[str, Any]:
         """Create automated incident response workflow"""
         workflow = {
             "incident_id": f"INC-{int(time.time())}",
@@ -584,19 +551,11 @@ class PerformanceMonitor:
         if self.metrics_history:
             latest = self.metrics_history[-1]
             report["metrics_summary"] = {
-                "cpu_average": sum(
-                    m.get("cpu_percent", 0) for m in self.metrics_history
-                )
-                / len(self.metrics_history),
-                "memory_average": sum(
-                    m.get("memory_percent", 0) for m in self.metrics_history
-                )
-                / len(self.metrics_history),
+                "cpu_average": sum(m.get("cpu_percent", 0) for m in self.metrics_history) / len(self.metrics_history),
+                "memory_average": sum(m.get("memory_percent", 0) for m in self.metrics_history) / len(self.metrics_history),
                 "current_cpu": latest.get("cpu_percent", 0),
                 "current_memory": latest.get("memory_percent", 0),
-                "uptime_status": (
-                    "excellent" if latest.get("cpu_percent", 0) < 80 else "acceptable"
-                ),
+                "uptime_status": ("excellent" if latest.get("cpu_percent", 0) < 80 else "acceptable"),
             }
 
         # Generate final recommendations

@@ -19,9 +19,7 @@ class ChainOfCustodyService:
     def __init__(self, db_session):
         self.db = db_session
 
-    async def log_event(
-        self, evidence_id: str, action: str, user_id: str, notes: str | None = None
-    ) -> dict[str, Any]:
+    async def log_event(self, evidence_id: str, action: str, user_id: str, notes: str | None = None) -> dict[str, Any]:
         """
         Logs a custody event with a cumulative hash anchor.
         """
@@ -65,9 +63,7 @@ class ChainOfCustodyService:
                 metadata["chain_of_custody"] = coc
 
                 self.db.execute(
-                    text(
-                        "UPDATE evidence SET evidence_metadata = :meta WHERE id = :id"
-                    ),
+                    text("UPDATE evidence SET evidence_metadata = :meta WHERE id = :id"),
                     {"meta": json.dumps(metadata), "id": evidence_id},
                 )
                 self.db.commit()

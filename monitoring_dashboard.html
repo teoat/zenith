@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenith Fraud Detection - Monitoring Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Zenith Fraud Detection Platform</h1>
+            <p class="text-gray-600">System Monitoring Dashboard</p>
+            <div id="last-updated" class="text-sm text-gray-500 mt-2"></div>
+        </header>
+
+        <!-- System Health Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div id="system-status" class="w-8 h-8 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-medium text-gray-900">System Status</h3>
+                        <p id="system-status-text" class="text-gray-500">Operational</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-2xl font-bold text-blue-600" id="total-requests">0</div>
+                <p class="text-gray-600">Total Requests</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-2xl font-bold text-green-600" id="avg-response-time">0ms</div>
+                <p class="text-gray-600">Avg Response Time</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-2xl font-bold text-red-600" id="error-rate">0%</div>
+                <p class="text-gray-600">Error Rate</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Response Time Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Response Time Trends</h3>
+                <canvas id="responseTimeChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Error Rate Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Error Rate Trends</h3>
+                <canvas id="errorRateChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Security & Performance Metrics -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Security Issues -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Security Status</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">High Severity Issues</span>
+                        <span id="high-security-issues" class="font-medium text-red-600">25</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Medium Severity Issues</span>
+                        <span id="medium-security-issues" class="font-medium text-yellow-600">43</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Test Coverage</span>
+                        <span id="test-coverage" class="font-medium text-green-600">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Health -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Database Health</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Connection Status</span>
+                        <span id="db-status" class="font-medium text-green-600">Healthy</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Slow Queries</span>
+                        <span id="slow-queries" class="font-medium text-yellow-600">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Active Connections</span>
+                        <span id="active-connections" class="font-medium text-blue-600">1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Performance -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">API Performance</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Uptime</span>
+                        <span id="uptime" class="font-medium text-green-600">100%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Memory Usage</span>
+                        <span id="memory-usage" class="font-medium text-blue-600">45%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">CPU Usage</span>
+                        <span id="cpu-usage" class="font-medium text-blue-600">23%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Activity</h3>
+            <div id="recent-activity" class="space-y-2">
+                <div class="text-gray-500 text-center py-4">Loading activity data...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data for demonstration - in production, this would fetch from API
+        const mockData = {
+            systemStatus: 'operational',
+            totalRequests: 15420,
+            avgResponseTime: 245,
+            errorRate: 2.1,
+            securityIssues: { high: 25, medium: 43 },
+            testCoverage: 0,
+            dbStatus: 'healthy',
+            slowQueries: 0,
+            activeConnections: 1,
+            uptime: 100,
+            memoryUsage: 45,
+            cpuUsage: 23
+        };
+
+        // Update dashboard with mock data
+        function updateDashboard() {
+            document.getElementById('system-status').className = 'w-8 h-8 rounded-full ' +
+                (mockData.systemStatus === 'operational' ? 'bg-green-500' : 'bg-red-500');
+            document.getElementById('system-status-text').textContent =
+                mockData.systemStatus.charAt(0).toUpperCase() + mockData.systemStatus.slice(1);
+
+            document.getElementById('total-requests').textContent = mockData.totalRequests.toLocaleString();
+            document.getElementById('avg-response-time').textContent = mockData.avgResponseTime + 'ms';
+            document.getElementById('error-rate').textContent = mockData.errorRate + '%';
+
+            document.getElementById('high-security-issues').textContent = mockData.securityIssues.high;
+            document.getElementById('medium-security-issues').textContent = mockData.securityIssues.medium;
+            document.getElementById('test-coverage').textContent = mockData.testCoverage + '%';
+
+            document.getElementById('db-status').textContent = mockData.dbStatus.charAt(0).toUpperCase() + mockData.dbStatus.slice(1);
+            document.getElementById('slow-queries').textContent = mockData.slowQueries;
+            document.getElementById('active-connections').textContent = mockData.activeConnections;
+
+            document.getElementById('uptime').textContent = mockData.uptime + '%';
+            document.getElementById('memory-usage').textContent = mockData.memoryUsage + '%';
+            document.getElementById('cpu-usage').textContent = mockData.cpuUsage + '%';
+
+            document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleString();
+
+            // Update charts
+            updateCharts();
+        }
+
+        function updateCharts() {
+            // Response Time Chart
+            const responseTimeCtx = document.getElementById('responseTimeChart').getContext('2d');
+            new Chart(responseTimeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1h ago', '45m ago', '30m ago', '15m ago', 'Now'],
+                    datasets: [{
+                        label: 'Response Time (ms)',
+                        data: [280, 245, 260, 235, mockData.avgResponseTime],
+                        borderColor: 'rgb(59, 130, 246)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Error Rate Chart
+            const errorRateCtx = document.getElementById('errorRateChart').getContext('2d');
+            new Chart(errorRateCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1h ago', '45m ago', '30m ago', '15m ago', 'Now'],
+                    datasets: [{
+                        label: 'Error Rate (%)',
+                        data: [1.8, 2.2, 1.9, 2.3, mockData.errorRate],
+                        borderColor: 'rgb(239, 68, 68)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update recent activity
+        function updateActivity() {
+            const activities = [
+                { time: '2 minutes ago', event: 'Security scan completed', type: 'security' },
+                { time: '5 minutes ago', event: 'Database health check passed', type: 'database' },
+                { time: '8 minutes ago', event: 'API response time: 245ms', type: 'performance' },
+                { time: '12 minutes ago', event: 'Test suite execution started', type: 'testing' },
+                { time: '15 minutes ago', event: 'Memory usage: 45%', type: 'system' }
+            ];
+
+            const activityHtml = activities.map(activity => `
+                <div class="flex items-center space-x-3 py-2">
+                    <div class="flex-shrink-0">
+                        <div class="w-2 h-2 rounded-full ${
+                            activity.type === 'security' ? 'bg-red-500' :
+                            activity.type === 'database' ? 'bg-blue-500' :
+                            activity.type === 'performance' ? 'bg-green-500' :
+                            activity.type === 'testing' ? 'bg-purple-500' : 'bg-gray-500'
+                        }"></div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-900">${activity.event}</p>
+                        <p class="text-xs text-gray-500">${activity.time}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('recent-activity').innerHTML = activityHtml;
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboard();
+            updateActivity();
+
+            // Refresh data every 30 seconds
+            setInterval(() => {
+                updateDashboard();
+                updateActivity();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
-import React from 'react';
-import { CheckCircle, Webhook, Globe, Database } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { CheckCircle, Webhook, Globe, Database } from "lucide-react";
+import { motion } from "framer-motion";
 
 const OverviewTab: React.FC = () => {
   return (
@@ -18,7 +18,9 @@ const OverviewTab: React.FC = () => {
             <CheckCircle className="w-4 h-4" />
             <span>Operational</span>
           </div>
-          <p className="status-description">Federated API requests routing normally</p>
+          <p className="status-description">
+            Federated API requests routing normally
+          </p>
         </div>
 
         <div className="status-card">
@@ -27,7 +29,9 @@ const OverviewTab: React.FC = () => {
             <CheckCircle className="w-4 h-4" />
             <span>Active</span>
           </div>
-          <p className="status-description">Real-time event processing operational</p>
+          <p className="status-description">
+            Real-time event processing operational
+          </p>
         </div>
 
         <div className="status-card">
@@ -51,14 +55,18 @@ const OverviewTab: React.FC = () => {
 
       {/* Recent Activity */}
       <div className="recent-activity">
-        <h3 className="text-lg font-semibold mb-4">Recent Integration Activity</h3>
+        <h3 className="text-lg font-semibold mb-4">
+          Recent Integration Activity
+        </h3>
         <div className="activity-list">
           <div className="activity-item">
             <div className="activity-icon">
               <Webhook className="w-4 h-4 text-blue-500" />
             </div>
             <div className="activity-content">
-              <p className="activity-text">Credit Bureau webhook processed successfully</p>
+              <p className="activity-text">
+                Credit Bureau webhook processed successfully
+              </p>
               <p className="activity-time">2 minutes ago</p>
             </div>
           </div>
@@ -68,7 +76,9 @@ const OverviewTab: React.FC = () => {
               <Globe className="w-4 h-4 text-green-500" />
             </div>
             <div className="activity-content">
-              <p className="activity-text">Bank API integration synced 150 transactions</p>
+              <p className="activity-text">
+                Bank API integration synced 150 transactions
+              </p>
               <p className="activity-time">5 minutes ago</p>
             </div>
           </div>
@@ -78,7 +88,9 @@ const OverviewTab: React.FC = () => {
               <Database className="w-4 h-4 text-orange-500" />
             </div>
             <div className="activity-content">
-              <p className="activity-text">Fraud database synchronization completed</p>
+              <p className="activity-text">
+                Fraud database synchronization completed
+              </p>
               <p className="activity-time">8 minutes ago</p>
             </div>
           </div>

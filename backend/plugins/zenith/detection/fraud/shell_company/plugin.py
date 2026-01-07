@@ -31,9 +31,7 @@ def detect_shell_companies(
     - Lack of typical business expenses (inferred)
     """
     alerts = []
-    merchant_stats = defaultdict(
-        lambda: {"inflow": 0.0, "outflow": 0.0, "count": 0, "round_amounts": 0}
-    )
+    merchant_stats = defaultdict(lambda: {"inflow": 0.0, "outflow": 0.0, "count": 0, "round_amounts": 0})
 
     for tx in transactions:
         merchant = tx.get("merchant_name")
@@ -49,9 +47,7 @@ def detect_shell_companies(
         if amount % 100 == 0:
             stats["round_amounts"] += 1
 
-        if (
-            tx_type == "CREDIT"
-        ):  # Income for merchant (assuming merchant view or outgoing from user)
+        if tx_type == "CREDIT":  # Income for merchant (assuming merchant view or outgoing from user)
             # NOTE: In transaction list, CREDIT/DEBIT usually refers to the Account Holder.
             # If "merchant_name" is the counterparty.
             # DEBIT = User pays Merchant (Merchant Inflow)
@@ -106,11 +102,7 @@ class ShellCompanyPlugin(PluginInterface):
 
     async def initialize(self, context: PluginContext) -> bool:
         self.context = context
-        config_dict = (
-            context.config
-            if context.config
-            else {"min_transaction_volume": 1000.0, "pass_through_threshold": 0.05}
-        )
+        config_dict = context.config if context.config else {"min_transaction_volume": 1000.0, "pass_through_threshold": 0.05}
         self.config = ShellCompanyConfig(**config_dict)
         return True
 

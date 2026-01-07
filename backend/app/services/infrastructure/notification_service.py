@@ -78,11 +78,13 @@ class NotificationService:
             if plugins:
                 for plugin in plugins:
                     try:
-                        plugin.execute({
-                            "to": email,
-                            "subject": subject,
-                            "body": body,
-                        })
+                        plugin.execute(
+                            {
+                                "to": email,
+                                "subject": subject,
+                                "body": body,
+                            }
+                        )
                         plugins_executed = True
                         logger.info(f"Email sent via plugin to {email}")
                     except Exception as pe:
@@ -197,9 +199,7 @@ class AdvancedNotificationSystem:
         }
 
         class TemplateEngine:
-            def render(
-                self, notification_type: NotificationType, data: dict[str, Any]
-            ) -> dict[str, str]:
+            def render(self, notification_type: NotificationType, data: dict[str, Any]) -> dict[str, str]:
                 template = templates.get(notification_type)
                 if not template:
                     return {
@@ -256,9 +256,7 @@ class AdvancedNotificationSystem:
                 user_notifications = self.storage.get(user_id, [])
 
                 if unread_only:
-                    user_notifications = [
-                        n for n in user_notifications if not n.get("read", False)
-                    ]
+                    user_notifications = [n for n in user_notifications if not n.get("read", False)]
 
                 return sorted(
                     user_notifications,
@@ -301,18 +299,18 @@ class AdvancedNotificationSystem:
 
                 try:
                     # 1. Try Plugin System first
-                    plugins = await plugin_registry_service.get_plugins_by_capability(
-                        "notification", db
-                    )
+                    plugins = await plugin_registry_service.get_plugins_by_capability("notification", db)
 
                     if plugins:
                         for plugin in plugins:
                             try:
-                                await plugin.execute({
-                                    "to": recipient,
-                                    "subject": notification.get("title"),
-                                    "body": notification.get("message"),
-                                })
+                                await plugin.execute(
+                                    {
+                                        "to": recipient,
+                                        "subject": notification.get("title"),
+                                        "body": notification.get("message"),
+                                    }
+                                )
                                 plugins_executed = True
                                 logger.info(f"Email sent via plugin to {recipient}")
                             except Exception as pe:
@@ -369,9 +367,7 @@ class AdvancedNotificationSystem:
 
                 try:
                     # Simulate webhook call (in production, use actual HTTP request)
-                    logger.info(
-                        f"Webhook sent to {recipient}: {notification.get('title')}"
-                    )
+                    logger.info(f"Webhook sent to {recipient}: {notification.get('title')}")
                     return True
                 except Exception as e:
                     logger.error(f"Failed to send webhook: {e!s}")
@@ -426,9 +422,7 @@ class AdvancedNotificationSystem:
 
         self.rules.update(default_rules)
 
-    async def process_event(
-        self, event_type: str, data: dict[str, Any], recipient: str | None = None
-    ):
+    async def process_event(self, event_type: str, data: dict[str, Any], recipient: str | None = None):
         """Process an event and trigger notifications based on rules"""
         try:
             triggered_rules = []
@@ -449,9 +443,7 @@ class AdvancedNotificationSystem:
         except Exception as e:
             logger.error(f"Error processing event {event_type}: {e!s}")
 
-    def _evaluate_conditions(
-        self, conditions: dict[str, Any], data: dict[str, Any]
-    ) -> bool:
+    def _evaluate_conditions(self, conditions: dict[str, Any], data: dict[str, Any]) -> bool:
         """Evaluate rule conditions against event data"""
         try:
             for key, condition in conditions.items():
@@ -488,20 +480,14 @@ class AdvancedNotificationSystem:
         if not rule:
             return False
 
-        cooldown_end = self.cooldowns[rule_id] + timedelta(
-            minutes=rule.get("cooldown_minutes", 5)
-        )
+        cooldown_end = self.cooldowns[rule_id] + timedelta(minutes=rule.get("cooldown_minutes", 5))
         return datetime.now() < cooldown_end
 
-    async def _create_and_send_notification(
-        self, rule_id: str, rule: dict[str, Any], data: dict[str, Any], recipient: str
-    ):
+    async def _create_and_send_notification(self, rule_id: str, rule: dict[str, Any], data: dict[str, Any], recipient: str):
         """Create and send notification"""
         try:
             # Determine notification type
-            notification_type = self._map_event_to_type(
-                rule.get("event_type", "system_alert")
-            )
+            notification_type = self._map_event_to_type(rule.get("event_type", "system_alert"))
 
             # Render template
             template_data = self.template_engine.render(notification_type, data)
@@ -536,9 +522,7 @@ class AdvancedNotificationSystem:
             if len(self.notification_history) > 10000:
                 self.notification_history = self.notification_history[-5000:]
 
-            logger.info(
-                f"Notification sent via {successful_channels} for rule {rule.get('name')}"
-            )
+            logger.info(f"Notification sent via {successful_channels} for rule {rule.get('name')}")
 
         except Exception as e:
             logger.error(f"Error creating/sending notification: {e!s}")
@@ -557,22 +541,16 @@ class AdvancedNotificationSystem:
         }
         return mapping.get(event_type, NotificationType.SYSTEM_ALERT)
 
-    def get_user_notifications(
-        self, user_id: str, unread_only: bool = False
-    ) -> list[dict[str, Any]]:
+    def get_user_notifications(self, user_id: str, unread_only: bool = False) -> list[dict[str, Any]]:
         """Get notifications for a user"""
         if NotificationChannel.IN_APP in self.handlers:
-            return self.handlers[NotificationChannel.IN_APP].get_user_notifications(
-                user_id, unread_only
-            )
+            return self.handlers[NotificationChannel.IN_APP].get_user_notifications(user_id, unread_only)
         return []
 
     def mark_notification_read(self, user_id: str, notification_id: str) -> bool:
         """Mark notification as read"""
         if NotificationChannel.IN_APP in self.handlers:
-            return self.handlers[NotificationChannel.IN_APP].mark_as_read(
-                user_id, notification_id
-            )
+            return self.handlers[NotificationChannel.IN_APP].mark_as_read(user_id, notification_id)
         return False
 
     def get_system_stats(self) -> dict[str, Any]:
@@ -580,11 +558,7 @@ class AdvancedNotificationSystem:
         now = datetime.now()
         last_24h = now - timedelta(hours=24)
 
-        recent_notifications = [
-            n
-            for n in self.notification_history
-            if datetime.fromisoformat(n.get("created_at", "")) > last_24h
-        ]
+        recent_notifications = [n for n in self.notification_history if datetime.fromisoformat(n.get("created_at", "")) > last_24h]
 
         # Priority stats
         priority_stats = {}

@@ -122,9 +122,7 @@ def init_sentry():
             before_send=before_send_filter,
         )
 
-        logger.info(
-            f"✅ Sentry initialized - Environment: {environment}, Sample Rate: {traces_sample_rate}"
-        )
+        logger.info(f"✅ Sentry initialized - Environment: {environment}, Sample Rate: {traces_sample_rate}")
         return True
 
     except Exception as e:
@@ -210,9 +208,7 @@ def capture_message(message: str, level: str = "info", context: dict | None = No
         sentry_sdk.capture_message(message, level=level)
 
 
-def set_user_context(
-    user_id: str, email: str | None = None, username: str | None = None
-):
+def set_user_context(user_id: str, email: str | None = None, username: str | None = None):
     """
     Set user context for error tracking
 

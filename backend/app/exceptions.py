@@ -51,7 +51,6 @@ def setup_exception_handlers(app: FastAPI):
         )
         return JSONResponse(status_code=exc.status_code, content=error_response)
 
-
     @app.exception_handler(Exception)
     async def general_exception_handler(request: Request, exc: Exception):
         """Handle unexpected exceptions with structured logging and localized response"""
@@ -91,7 +90,6 @@ def setup_exception_handlers(app: FastAPI):
             # Add traceback for development
             error_response["error"]["traceback"] = traceback.format_exc()
             return JSONResponse(status_code=500, content=error_response)
-
 
     @app.exception_handler(StarletteHTTPException)
     async def starlette_exception_handler(request: Request, exc: StarletteHTTPException):

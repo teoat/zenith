@@ -1,32 +1,34 @@
-import React from 'react';
-import { Activity, AlertTriangle, Zap } from 'lucide-react';
-import { useMemoryMonitor } from '@/hooks/useMemoryCleanup';
+import React from "react";
+import { Activity, AlertTriangle, Zap } from "lucide-react";
+import { useMemoryMonitor } from "@/hooks/useMemoryCleanup";
 
 interface MemoryMonitorProps {
   className?: string;
 }
 
-const MemoryMonitor: React.FC<MemoryMonitorProps> = ({ className = '' }) => {
+const MemoryMonitor: React.FC<MemoryMonitorProps> = ({ className = "" }) => {
   const { memoryStats, takeSnapshot, forceCleanup } = useMemoryMonitor({
     enableAlerts: true,
-    alertThreshold: 75
+    alertThreshold: 75,
   });
 
   const formatBytes = (bytes?: number) => {
-    if (!bytes) return 'N/A';
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+    if (!bytes) return "N/A";
+    const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
   };
 
   const getMemoryStatus = () => {
-    if (!memoryStats) return { status: 'unknown', color: 'text-secondary-400' };
+    if (!memoryStats) return { status: "unknown", color: "text-secondary-400" };
 
-    const percentage = (memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) * 100;
+    const percentage =
+      (memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) * 100;
 
-    if (percentage > 90) return { status: 'critical', color: 'text-error-400' };
-    if (percentage > 75) return { status: 'warning', color: 'text-warning-400' };
-    return { status: 'good', color: 'text-success-400' };
+    if (percentage > 90) return { status: "critical", color: "text-error-400" };
+    if (percentage > 75)
+      return { status: "warning", color: "text-warning-400" };
+    return { status: "good", color: "text-success-400" };
   };
 
   const memoryStatus = getMemoryStatus();
@@ -40,7 +42,7 @@ const MemoryMonitor: React.FC<MemoryMonitorProps> = ({ className = '' }) => {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => takeSnapshot('manual')}
+            onClick={() => takeSnapshot("manual")}
             className="text-xs px-2 py-1 bg-primary-500/20 hover:bg-primary-500/30 rounded transition-colors"
             title="Take memory snapshot"
           >
@@ -81,18 +83,24 @@ const MemoryMonitor: React.FC<MemoryMonitorProps> = ({ className = '' }) => {
             <div className="flex justify-between text-xs mb-1">
               <span>Usage</span>
               <span className={memoryStatus.color}>
-                {((memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) * 100).toFixed(1)}%
+                {(
+                  (memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) *
+                  100
+                ).toFixed(1)}
+                %
               </span>
             </div>
             <div className="w-full bg-secondary-700 rounded-full h-2">
               <div
                 className={`h-2 rounded-full transition-all duration-300 ${
-                  memoryStatus.status === 'critical' ? 'bg-error-500' :
-                  memoryStatus.status === 'warning' ? 'bg-warning-500' :
-                  'bg-success-500'
+                  memoryStatus.status === "critical"
+                    ? "bg-error-500"
+                    : memoryStatus.status === "warning"
+                      ? "bg-warning-500"
+                      : "bg-success-500"
                 }`}
                 style={{
-                  width: `${Math.min((memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) * 100, 100)}%`
+                  width: `${Math.min((memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) * 100, 100)}%`,
                 }}
               />
             </div>
@@ -110,10 +118,12 @@ const MemoryMonitor: React.FC<MemoryMonitorProps> = ({ className = '' }) => {
         </div>
       )}
 
-      {memoryStatus.status === 'critical' && (
+      {memoryStatus.status === "critical" && (
         <div className="mt-3 p-2 bg-error-500/10 border border-error-500/20 rounded flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-error-400" />
-          <span className="text-xs text-error-400">High memory usage detected</span>
+          <span className="text-xs text-error-400">
+            High memory usage detected
+          </span>
         </div>
       )}
     </div>

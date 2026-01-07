@@ -30,9 +30,7 @@ class UserCreateRequest(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: str = Field(..., pattern=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
     full_name: str = Field(..., min_length=1, max_length=100)
-    role: str = Field(
-        ..., pattern=r"^(analyst|senior_analyst|investigator|manager|admin)$"
-    )
+    role: str = Field(..., pattern=r"^(analyst|senior_analyst|investigator|manager|admin)$")
 
 
 class RegisterRequest(BaseModel):
@@ -41,20 +39,6 @@ class RegisterRequest(BaseModel):
     password: str = Field(..., min_length=8, max_length=128)
     full_name: str = Field(..., min_length=1, max_length=100)
     role: str | None = "ANALYST"  # Default role
-
-
-
-class UserProfileResponse(BaseModel):
-    id: str
-    username: str
-    email: str
-    full_name: str
-    role: str
-    is_active: bool
-    mfa_enabled: bool
-    created_at: datetime
-    last_login: datetime | None
-
 
 
 class UserProfileResponse(BaseModel):
@@ -80,9 +64,7 @@ class RegisterResponse(BaseModel):
     created_at: datetime
 
 
-@router.post(
-    "/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED
-)
+@router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
 async def register(user_data: RegisterRequest):
     """
     Register a new user with password strength validation
@@ -102,16 +84,12 @@ async def register(user_data: RegisterRequest):
         # Check if username already exists
         existing_user = auth_service.get_user_by_username(user_data.username)
         if existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="Username already exists"
-            )
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
 
         # Check if email already exists
         existing_email = auth_service.get_user_by_email(user_data.email)
         if existing_email:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="Email already registered"
-            )
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
 
         # Create user
         new_user = auth_service.create_user(user_data)
@@ -157,9 +135,7 @@ async def login(login_data: LoginRequest, request: Request, response: Response):
         if user.mfa_enabled:
             # If MFA enabled and no code provided, return 403 to trigger frontend prompt
             if not login_data.mfa_code:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN, detail="MFA code required"
-                )
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="MFA code required")
 
             if not user.mfa_secret:
                 logger.error(f"User {user.username} has MFA enabled but no secret")
@@ -168,9 +144,7 @@ async def login(login_data: LoginRequest, request: Request, response: Response):
             totp = pyotp.TOTP(user.mfa_secret)
             if not totp.verify(login_data.mfa_code):
                 logger.warning(f"Invalid MFA code for user {user.username}")
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid MFA code"
-                )
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid MFA code")
 
         logger.info(
             f"Successful login for user: {user.username} (ID: {user.id}) from IP: {request.client.host if request.client else 'unknown'}"
@@ -185,8 +159,8 @@ async def login(login_data: LoginRequest, request: Request, response: Response):
                 event_type="login",
                 metadata={"role": user.role, "mfa": user.mfa_enabled},
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning(f"Failed to track user journey event: {e}")
 
         # Create tokens
         access_token = auth_service.create_access_token(
@@ -270,9 +244,7 @@ async def mfa_setup(current_user: User = Depends(auth_service.get_current_user))
         db.commit()
 
     # Generate Provisioning URI
-    uri = pyotp.totp.TOTP(secret).provisioning_uri(
-        name=current_user.email, issuer_name="Zenith Fraud Platform"
-    )
+    uri = pyotp.totp.TOTP(secret).provisioning_uri(name=current_user.email, issuer_name="Zenith Fraud Platform")
 
     return {"secret": secret, "otpauth_url": uri}
 
@@ -296,9 +268,7 @@ async def mfa_verify(
     with db_service.get_db() as db:
         user = db.query(User).filter(User.id == current_user.id).first()
         if not user or not user.mfa_secret:
-            raise HTTPException(
-                status_code=400, detail="MFA setup not initiated (no secret found)"
-            )
+            raise HTTPException(status_code=400, detail="MFA setup not initiated (no secret found)")
 
         totp = pyotp.TOTP(user.mfa_secret)
         if not totp.verify(verify_data.code):
@@ -330,11 +300,7 @@ async def refresh_token(request: Request, response: Response):
         user_id = payload.get("sub")
 
         # Determine claims
-        user = (
-            auth_service.get_user(user_id)
-            if hasattr(auth_service, "get_user")
-            else None
-        )
+        user = auth_service.get_user(user_id) if hasattr(auth_service, "get_user") else None
 
         claims = {"sub": user_id}
         if user:
@@ -378,9 +344,6 @@ async def logout(response: Response):
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token", path="/api/v1/auth/refresh")
     return {"message": "Logged out successfully"}
-
-
-
 
 
 @router.get("/me", response_model=UserProfileResponse)

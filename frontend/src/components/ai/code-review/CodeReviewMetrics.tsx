@@ -1,13 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BarChart3, Target, FileText, CheckCircle } from 'lucide-react';
-import type { CodeReviewResult } from '@/types/code-review';
+import React from "react";
+import { motion } from "framer-motion";
+import { BarChart3, Target, FileText, CheckCircle } from "lucide-react";
+import type { CodeReviewResult } from "@/types/code-review";
 
 interface CodeReviewMetricsProps {
   reviewResult: CodeReviewResult;
 }
 
-export const CodeReviewMetrics: React.FC<CodeReviewMetricsProps> = ({ reviewResult }) => {
+export const CodeReviewMetrics: React.FC<CodeReviewMetricsProps> = ({
+  reviewResult,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -40,9 +42,7 @@ export const CodeReviewMetrics: React.FC<CodeReviewMetricsProps> = ({ reviewResu
             <div className="metric-value-large">
               {reviewResult.metrics.issues_per_1000_lines.toFixed(2)}
             </div>
-            <div className="metric-description">
-              Lower is better
-            </div>
+            <div className="metric-description">Lower is better</div>
           </div>
 
           <div className="metric-card">
@@ -53,9 +53,7 @@ export const CodeReviewMetrics: React.FC<CodeReviewMetricsProps> = ({ reviewResu
             <div className="metric-value-large">
               {reviewResult.metrics.avg_issues_per_file.toFixed(2)}
             </div>
-            <div className="metric-description">
-              Lower is better
-            </div>
+            <div className="metric-description">Lower is better</div>
           </div>
 
           <div className="metric-card">
@@ -66,9 +64,7 @@ export const CodeReviewMetrics: React.FC<CodeReviewMetricsProps> = ({ reviewResu
             <div className="metric-value-large">
               {reviewResult.metrics.test_coverage_estimate}%
             </div>
-            <div className="metric-description">
-              Estimated coverage
-            </div>
+            <div className="metric-description">Estimated coverage</div>
           </div>
         </div>
 
@@ -76,18 +72,22 @@ export const CodeReviewMetrics: React.FC<CodeReviewMetricsProps> = ({ reviewResu
         <div className="severity-chart">
           <h4 className="chart-title">Issues by Severity</h4>
           <div className="severity-bars">
-            {Object.entries(reviewResult.metrics.issues_by_severity).map(([severity, count]) => (
-              <div key={severity} className="severity-bar">
-                <div className="bar-label">{severity}</div>
-                <div className="bar-container">
-                  <div
-                    className={`bar-fill severity-${severity}`}
-                    style={{ width: `${(count / reviewResult.metrics.total_issues) * 100}%` }}
-                  ></div>
+            {Object.entries(reviewResult.metrics.issues_by_severity).map(
+              ([severity, count]) => (
+                <div key={severity} className="severity-bar">
+                  <div className="bar-label">{severity}</div>
+                  <div className="bar-container">
+                    <div
+                      className={`bar-fill severity-${severity}`}
+                      style={{
+                        width: `${(count / reviewResult.metrics.total_issues) * 100}%`,
+                      }}
+                    ></div>
+                  </div>
+                  <div className="bar-value">{count}</div>
                 </div>
-                <div className="bar-value">{count}</div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         </div>
       </div>

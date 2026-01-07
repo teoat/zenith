@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
-import { Edit2, Shield, AlertTriangle, Check, DollarSign, Brain } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  Edit2,
+  Shield,
+  AlertTriangle,
+  Check,
+  DollarSign,
+  Brain,
+} from "lucide-react";
 
 interface Finding {
   id: string;
-  type: 'pattern' | 'amount' | 'confirmation' | 'false_positive' | 'recommendation';
-  severity: 'high' | 'medium' | 'low';
+  type:
+    | "pattern"
+    | "amount"
+    | "confirmation"
+    | "false_positive"
+    | "recommendation";
+  severity: "high" | "medium" | "low";
   description: string;
 }
 
@@ -14,22 +26,32 @@ interface KeyFindingsProps {
   editable?: boolean;
 }
 
-const KeyFindings: React.FC<KeyFindingsProps> = ({ findings, editable = true }) => {
+const KeyFindings: React.FC<KeyFindingsProps> = ({
+  findings,
+  editable = true,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [localFindings, setLocalFindings] = useState(findings);
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'pattern': return <Brain size={16} className="text-purple-500" />;
-      case 'amount': return <DollarSign size={16} className="text-green-500" />;
-      case 'confirmation': return <Check size={16} className="text-blue-500" />;
-      case 'recommendation': return <Shield size={16} className="text-indigo-500" />;
-      default: return <AlertTriangle size={16} className="text-slate-500" />;
+      case "pattern":
+        return <Brain size={16} className="text-purple-500" />;
+      case "amount":
+        return <DollarSign size={16} className="text-green-500" />;
+      case "confirmation":
+        return <Check size={16} className="text-blue-500" />;
+      case "recommendation":
+        return <Shield size={16} className="text-indigo-500" />;
+      default:
+        return <AlertTriangle size={16} className="text-slate-500" />;
     }
   };
 
   const handleChange = (id: string, value: string) => {
-    setLocalFindings(prev => prev.map(f => f.id === id ? { ...f, description: value } : f));
+    setLocalFindings((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, description: value } : f)),
+    );
   };
 
   return (
@@ -43,13 +65,13 @@ const KeyFindings: React.FC<KeyFindingsProps> = ({ findings, editable = true }) 
           <button
             onClick={() => setIsEditing(!isEditing)}
             className={`p-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
-              isEditing 
-                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' 
-                : 'hover:bg-slate-200 dark:hover:bg-slate-700'
+              isEditing
+                ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                : "hover:bg-slate-200 dark:hover:bg-slate-700"
             }`}
           >
             {isEditing ? <Check size={16} /> : <Edit2 size={16} />}
-            {isEditing ? 'Done Editing' : 'Edit Summary'}
+            {isEditing ? "Done Editing" : "Edit Summary"}
           </button>
         )}
       </div>
@@ -57,9 +79,7 @@ const KeyFindings: React.FC<KeyFindingsProps> = ({ findings, editable = true }) 
       <div className="p-4 space-y-4">
         {localFindings.map((finding) => (
           <div key={finding.id} className="flex gap-3 items-start group">
-            <div className="mt-1 flex-shrink-0">
-              {getIcon(finding.type)}
-            </div>
+            <div className="mt-1 flex-shrink-0">{getIcon(finding.type)}</div>
             {isEditing ? (
               <textarea
                 value={finding.description}
@@ -72,20 +92,28 @@ const KeyFindings: React.FC<KeyFindingsProps> = ({ findings, editable = true }) 
                 {finding.description}
               </p>
             )}
-            
-            <div className={`
+
+            <div
+              className={`
               px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0
-              ${finding.severity === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
-                finding.severity === 'medium' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' :
-                'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}
-            `}>
+              ${
+                finding.severity === "high"
+                  ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                  : finding.severity === "medium"
+                    ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300"
+                    : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+              }
+            `}
+            >
               {finding.severity}
             </div>
           </div>
         ))}
-        
+
         {localFindings.length === 0 && (
-          <p className="text-center text-slate-500 py-8 italic">No findings generated yet.</p>
+          <p className="text-center text-slate-500 py-8 italic">
+            No findings generated yet.
+          </p>
         )}
       </div>
     </div>

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Upload, File, CheckCircle, AlertCircle, Loader } from 'lucide-react';
-import { secureLogger } from '@/utils/secureLogger';
-import { getFileIcon as getFileIconUtil } from '@/utils/fileUtils';
-import { formatFileSize, formatPercentage } from '@/utils/formatters';
+import React, { useState } from "react";
+import { Upload, File, CheckCircle, AlertCircle, Loader } from "lucide-react";
+import { secureLogger } from "@/utils/secureLogger";
+import { getFileIcon as getFileIconUtil } from "@/utils/fileUtils";
+import { formatFileSize, formatPercentage } from "@/utils/formatters";
 
 interface ProcessedDocument {
   success: boolean;
@@ -20,7 +20,8 @@ export const DocumentViewer: React.FC = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [processing, setProcessing] = useState(false);
   const [results, setResults] = useState<ProcessedDocument[]>([]);
-  const [selectedResult, setSelectedResult] = useState<ProcessedDocument | null>(null);
+  const [selectedResult, setSelectedResult] =
+    useState<ProcessedDocument | null>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -31,42 +32,42 @@ export const DocumentViewer: React.FC = () => {
   const processDocuments = async () => {
     setProcessing(true);
     const formData = new FormData();
-    
+
     if (files.length === 1) {
-      formData.append('file', files[0]);
-      
+      formData.append("file", files[0]);
+
       try {
-        const response = await fetch('/api/v1/ocr/process', {
-          method: 'POST',
-          body: formData
+        const response = await fetch("/api/v1/ocr/process", {
+          method: "POST",
+          body: formData,
         });
-        
+
         const result = await response.json();
         setResults([result]);
         setSelectedResult(result);
-       } catch (error) { 
-        secureLogger.error('Processing failed:', error);
+      } catch (error) {
+        secureLogger.error("Processing failed:", error);
       }
     } else {
       // Batch processing
-      files.forEach(file => formData.append('files', file));
-      
+      files.forEach((file) => formData.append("files", file));
+
       try {
-        const response = await fetch('/api/v1/ocr/batch-process', {
-          method: 'POST',
-          body: formData
+        const response = await fetch("/api/v1/ocr/batch-process", {
+          method: "POST",
+          body: formData,
         });
-        
+
         const data = await response.json();
         setResults(data.results || []);
         if (data.results?.length > 0) {
           setSelectedResult(data.results[0]);
         }
-       } catch (error) { 
-        secureLogger.error('Batch processing failed:', error);
+      } catch (error) {
+        secureLogger.error("Batch processing failed:", error);
       }
     }
-    
+
     setProcessing(false);
   };
 
@@ -117,10 +118,15 @@ export const DocumentViewer: React.FC = () => {
             </h3>
             <div className="space-y-2">
               {files.map((file, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                <div
+                  key={idx}
+                  className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
+                >
                   <File size={16} />
                   <span>{file.name}</span>
-                  <span className="text-slate-400">({formatFileSize(file.size)})</span>
+                  <span className="text-slate-400">
+                    ({formatFileSize(file.size)})
+                  </span>
                 </div>
               ))}
             </div>
@@ -135,7 +141,7 @@ export const DocumentViewer: React.FC = () => {
                   Processing...
                 </span>
               ) : (
-                'Process Documents'
+                "Process Documents"
               )}
             </button>
           </div>
@@ -156,13 +162,18 @@ export const DocumentViewer: React.FC = () => {
                   <div
                     key={idx}
                     onClick={() => setSelectedResult(result)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedResult(result); } }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedResult(result);
+                      }
+                    }}
                     tabIndex={0}
                     role="button"
                     className={`p-3 rounded-lg cursor-pointer transition-colors ${
                       selectedResult === result
-                        ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500'
-                        : 'bg-slate-50 dark:bg-slate-800 border-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700'
+                        ? "bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500"
+                        : "bg-slate-50 dark:bg-slate-800 border-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700"
                     }`}
                   >
                     <div className="flex items-start gap-2">
@@ -174,15 +185,21 @@ export const DocumentViewer: React.FC = () => {
                         <div className="flex items-center gap-2 mt-1">
                           {result.success ? (
                             <>
-                              <CheckCircle size={14} className="text-green-500" />
+                              <CheckCircle
+                                size={14}
+                                className="text-green-500"
+                              />
                               <span className="text-xs text-green-600 dark:text-green-400">
-                                {formatPercentage(result.confidence || 0, 0)} confidence
+                                {formatPercentage(result.confidence || 0, 0)}{" "}
+                                confidence
                               </span>
                             </>
                           ) : (
                             <>
                               <AlertCircle size={14} className="text-red-500" />
-                              <span className="text-xs text-red-600 dark:text-red-400">Failed</span>
+                              <span className="text-xs text-red-600 dark:text-red-400">
+                                Failed
+                              </span>
                             </>
                           )}
                         </div>
@@ -206,38 +223,51 @@ export const DocumentViewer: React.FC = () => {
                   {/* Metadata */}
                   {selectedResult.metadata && (
                     <div className="mb-6">
-                      <h4 className="font-semibold mb-2 text-slate-900 dark:text-white">Metadata</h4>
+                      <h4 className="font-semibold mb-2 text-slate-900 dark:text-white">
+                        Metadata
+                      </h4>
                       <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
-                        {Object.entries(selectedResult.metadata).map(([key, value]) => (
-                          <div key={key} className="flex justify-between text-sm mb-1">
-                            <span className="text-slate-600 dark:text-slate-400">{key}:</span>
-                            <span className="font-mono text-slate-900 dark:text-white">
-                              {String(value)}
-                            </span>
-                          </div>
-                        ))}
+                        {Object.entries(selectedResult.metadata).map(
+                          ([key, value]) => (
+                            <div
+                              key={key}
+                              className="flex justify-between text-sm mb-1"
+                            >
+                              <span className="text-slate-600 dark:text-slate-400">
+                                {key}:
+                              </span>
+                              <span className="font-mono text-slate-900 dark:text-white">
+                                {String(value)}
+                              </span>
+                            </div>
+                          ),
+                        )}
                       </div>
                     </div>
                   )}
 
                   {/* Extracted Entities */}
-                  {selectedResult.entities && selectedResult.entities.length > 0 && (
-                    <div className="mb-6">
-                      <h4 className="font-semibold mb-2 text-slate-900 dark:text-white">
-                        Extracted Entities
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedResult.entities.map((entity, idx) => (
-                          <div
-                            key={idx}
-                            className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm"
-                          >
-                            <span className="font-semibold">{entity.type}:</span> {entity.value}
-                          </div>
-                        ))}
+                  {selectedResult.entities &&
+                    selectedResult.entities.length > 0 && (
+                      <div className="mb-6">
+                        <h4 className="font-semibold mb-2 text-slate-900 dark:text-white">
+                          Extracted Entities
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedResult.entities.map((entity, idx) => (
+                            <div
+                              key={idx}
+                              className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm"
+                            >
+                              <span className="font-semibold">
+                                {entity.type}:
+                              </span>{" "}
+                              {entity.value}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {/* Extracted Text */}
                   {selectedResult.extracted_text && (
@@ -253,7 +283,10 @@ export const DocumentViewer: React.FC = () => {
                 </>
               ) : (
                 <div className="text-center py-12">
-                  <AlertCircle className="mx-auto mb-4 text-red-500" size={48} />
+                  <AlertCircle
+                    className="mx-auto mb-4 text-red-500"
+                    size={48}
+                  />
                   <p className="text-red-600 dark:text-red-400">
                     Processing failed: {selectedResult.error}
                   </p>

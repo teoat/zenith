@@ -74,38 +74,27 @@ class PluginRegistryService:
 
                     plugin_record = (
                         db.query(PluginRegistry)
-                        .filter(
-                            (PluginRegistry.namespace == plugin_id)
-                            | (PluginRegistry.plugin_id == plugin_id)
-                        )
+                        .filter((PluginRegistry.namespace == plugin_id) | (PluginRegistry.plugin_id == plugin_id))
                         .first()
                     )
 
                     if plugin_record:
                         # Dynamically load the plugin module
                         namespace = plugin_record.namespace
-                        module_path = (
-                            "plugins." + namespace.replace("/", ".") + ".plugin"
-                        )
+                        module_path = "plugins." + namespace.replace("/", ".") + ".plugin"
 
                         logger.info(f"Attempting to load plugin from {module_path}")
 
                         # run_in_executor to avoid blocking the event loop with synchronous import
                         loop = asyncio.get_event_loop()
-                        module = await loop.run_in_executor(
-                            None, importlib.import_module, module_path
-                        )
+                        module = await loop.run_in_executor(None, importlib.import_module, module_path)
 
                         plugin_class = getattr(module, "Plugin", None)
                         if not plugin_class:
                             import inspect
 
                             for name, obj in inspect.getmembers(module):
-                                if (
-                                    inspect.isclass(obj)
-                                    and name.endswith("Plugin")
-                                    and name != "PluginInterface"
-                                ):
+                                if inspect.isclass(obj) and name.endswith("Plugin") and name != "PluginInterface":
                                     plugin_class = obj
                                     break
 
@@ -122,6 +111,7 @@ class PluginRegistryService:
                         services = {}
                         try:
                             from app.services.ai.ai_service import AIService
+
                             # Check if AIService is a class (needs instantiation) or instance
                             # Based on file view, it's a class but might have a global instance or need one
                             # However, 'ai_service' variable usually implies instance.
@@ -139,9 +129,7 @@ class PluginRegistryService:
 
                             # Let's use a lazy property or similar if possible.
                             # For now, let's instantiate.
-                            services["ai_service"] = (
-                                AIService()
-                            )  # This uses local ./data/vector_store.db
+                            services["ai_service"] = AIService()  # This uses local ./data/vector_store.db
                             await services["ai_service"].initialize()
 
                             from app.services.infrastructure.storage.database_service import (
@@ -157,9 +145,7 @@ class PluginRegistryService:
                             services["monitoring_service"] = monitoring_service
 
                         except ImportError as e:
-                            logger.warning(
-                                f"Could not inject some services into plugin context: {e}"
-                            )
+                            logger.warning(f"Could not inject some services into plugin context: {e}")
 
                         context = PluginContext(config={}, services=services)
 
@@ -180,21 +166,15 @@ class PluginRegistryService:
                             "loaded_at": time.time(),
                         }
 
-                        logger.info(
-                            f"Successfully loaded and cached plugin {plugin_id} in {load_time:.2f}s"
-                        )
+                        logger.info(f"Successfully loaded and cached plugin {plugin_id} in {load_time:.2f}s")
                         return plugin_instance
                 except Exception as e:
                     logger.error(f"Failed to load plugin {plugin_id}: {e}")
                     raise ImportError(f"Failed to load plugin {plugin_id}: {e}")
 
-        raise ValueError(
-            f"Plugin {plugin_id} not found and no valid DB session provided"
-        )
+        raise ValueError(f"Plugin {plugin_id} not found and no valid DB session provided")
 
-    async def get_plugins_by_capability(
-        self, capability: str, db: Session
-    ) -> list[Any]:
+    async def get_plugins_by_capability(self, capability: str, db: Session) -> list[Any]:
         """Find and load all active plugins with a specific capability."""
         if not db:
             return []
@@ -202,9 +182,7 @@ class PluginRegistryService:
         try:
             # Filter in Python for maximum compatibility across SQL dialects (SQLite vs Postgres JSON)
             # Assuming strictly active plugins
-            all_plugins = (
-                db.query(PluginRegistry).filter(PluginRegistry.status == "active").all()
-            )
+            all_plugins = db.query(PluginRegistry).filter(PluginRegistry.status == "active").all()
 
             matching_plugins = []
             for p in all_plugins:
@@ -215,18 +193,14 @@ class PluginRegistryService:
                         instance = await self.get_plugin(p.plugin_id, db)
                         matching_plugins.append(instance)
                     except Exception as e:
-                        logger.error(
-                            f"Failed to load capable plugin {p.plugin_id}: {e}"
-                        )
+                        logger.error(f"Failed to load capable plugin {p.plugin_id}: {e}")
 
             return matching_plugins
         except Exception as e:
             logger.error(f"Error finding plugins by capability '{capability}': {e}")
             return []
 
-    async def preload_plugins(
-        self, plugin_ids: list[str], db: Session = None
-    ) -> dict[str, Any]:
+    async def preload_plugins(self, plugin_ids: list[str], db: Session = None) -> dict[str, Any]:
         """Batch preload multiple plugins asynchronously for better performance."""
         results = {}
 
@@ -245,9 +219,7 @@ class PluginRegistryService:
 
         return results
 
-    async def warmup_cache(
-        self, frequently_used_plugins: list[str], db: Session = None
-    ):
+    async def warmup_cache(self, frequently_used_plugins: list[str], db: Session = None):
         """Warm up the cache with frequently used plugins."""
         logger.info(f"Warming up cache with {len(frequently_used_plugins)} plugins")
 
@@ -258,11 +230,7 @@ class PluginRegistryService:
     def get_cache_stats(self) -> dict[str, Any]:
         """Get cache performance statistics."""
         total_plugins = len(self._plugin_cache)
-        expired_count = sum(
-            1
-            for cached in self._plugin_cache.values()
-            if time.time() >= cached["expiry"]
-        )
+        expired_count = sum(1 for cached in self._plugin_cache.values() if time.time() >= cached["expiry"])
 
         total_accesses = sum(self._access_counts.values())
         avg_load_time = sum(self._load_times.values()) / max(len(self._load_times), 1)
@@ -273,9 +241,7 @@ class PluginRegistryService:
             "total_accesses": total_accesses,
             "average_load_time_ms": avg_load_time * 1000,
             "cache_hit_rate": self._calculate_cache_hit_rate(),
-            "most_accessed_plugins": sorted(
-                self._access_counts.items(), key=lambda x: x[1], reverse=True
-            )[:5],
+            "most_accessed_plugins": sorted(self._access_counts.items(), key=lambda x: x[1], reverse=True)[:5],
         }
 
     def _calculate_cache_hit_rate(self) -> float:
@@ -286,8 +252,7 @@ class PluginRegistryService:
         cache_hits = sum(
             1
             for plugin_id in self._access_counts
-            if plugin_id in self._plugin_cache
-            and time.time() < self._plugin_cache[plugin_id]["expiry"]
+            if plugin_id in self._plugin_cache and time.time() < self._plugin_cache[plugin_id]["expiry"]
         )
 
         total_accesses = sum(self._access_counts.values())
@@ -307,9 +272,7 @@ class PluginRegistryService:
             logger.debug(f"Cleaned up expired cache for plugin {plugin_id}")
 
         if expired_plugins:
-            logger.info(
-                f"Cleaned up {len(expired_plugins)} expired plugin cache entries"
-            )
+            logger.info(f"Cleaned up {len(expired_plugins)} expired plugin cache entries")
 
     async def store_shadow_result(self, result: Any, db: Session = None):
         """Store result in DB."""

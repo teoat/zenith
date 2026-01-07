@@ -13,9 +13,7 @@ class IntegrityChecker:
 
     def __init__(self, project_root: str | None = None):
         self.project_root = project_root or os.getcwd()
-        self.dependencies_lock_path = os.path.join(
-            self.project_root, "dependencies.lock"
-        )
+        self.dependencies_lock_path = os.path.join(self.project_root, "dependencies.lock")
 
     def check_integrity(self) -> bool:
         """Run all integrity checks."""
@@ -23,9 +21,7 @@ class IntegrityChecker:
 
         try:
             if not self._verify_dependencies_lock():
-                logger.error(
-                    "Integrity Check Failed: dependencies.lock verification failed"
-                )
+                logger.error("Integrity Check Failed: dependencies.lock verification failed")
                 return False
 
             # Additional checks could go here (e.g. Python version, specific package versions)

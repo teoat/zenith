@@ -1,10 +1,10 @@
 // frontend/src/components/collaboration/CollaborativeEditor.tsx
-import React, { useState, useRef, useCallback } from 'react';
-import { Button } from '@/components/ui/Button';
+import React, { useState, useRef, useCallback } from "react";
+import { Button } from "@/components/ui/Button";
 // Input import removed as unused
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Users, User, Edit3, Save, X } from 'lucide-react';
-import { useCollaborativeEditor } from '@/hooks/useCollaborativeEditor';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Users, User, Edit3, Save, X } from "lucide-react";
+import { useCollaborativeEditor } from "@/hooks/useCollaborativeEditor";
 
 interface CollaborativeEditorProps {
   documentId: string;
@@ -16,33 +16,34 @@ interface CollaborativeEditorProps {
 
 export function CollaborativeEditor({
   documentId,
-  initialContent = '',
+  initialContent = "",
   onSave,
   onClose,
-  className = ''
+  className = "",
 }: CollaborativeEditorProps) {
-  const {
-    content,
-    isConnected,
-    users,
-    updateContent,
-    updateCursor
-  } = useCollaborativeEditor(documentId, initialContent);
+  const { content, isConnected, users, updateContent, updateCursor } =
+    useCollaborativeEditor(documentId, initialContent);
 
   const [isEditing, setIsEditing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleContentChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newContent = e.target.value;
-    updateContent(newContent);
-    setHasUnsavedChanges(true);
-    setIsEditing(true);
-  }, [updateContent]);
+  const handleContentChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const newContent = e.target.value;
+      updateContent(newContent);
+      setHasUnsavedChanges(true);
+      setIsEditing(true);
+    },
+    [updateContent],
+  );
 
-  const handleCursorMove = useCallback((e: React.SyntheticEvent<HTMLTextAreaElement>) => {
-    updateCursor(e.currentTarget.selectionStart);
-  }, [updateCursor]);
+  const handleCursorMove = useCallback(
+    (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+      updateCursor(e.currentTarget.selectionStart);
+    },
+    [updateCursor],
+  );
 
   const handleSave = useCallback(() => {
     onSave?.(content);
@@ -71,13 +72,15 @@ export function CollaborativeEditor({
 
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 text-sm">
-              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-              {isConnected ? 'Connected' : 'Disconnected'}
+              <div
+                className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+              />
+              {isConnected ? "Connected" : "Disconnected"}
             </div>
 
             <div className="flex items-center gap-1 text-sm text-gray-600">
               <Users className="h-4 w-4" />
-              {users.length + 1} user{users.length !== 0 ? 's' : ''}
+              {users.length + 1} user{users.length !== 0 ? "s" : ""}
             </div>
 
             <div className="flex gap-1">
@@ -103,11 +106,16 @@ export function CollaborativeEditor({
         {users.length > 0 && (
           <div className="flex items-center gap-2 mt-2">
             <span className="text-sm text-gray-600">Active users:</span>
-            {users.map(user => (
+            {users.map((user) => (
               <div
                 key={user.user_id}
                 className="flex items-center gap-1 text-sm"
-                style={{ ['--user-color' as string]: user.color, color: 'var(--user-color)' } as React.CSSProperties}
+                style={
+                  {
+                    ["--user-color" as string]: user.color,
+                    color: "var(--user-color)",
+                  } as React.CSSProperties
+                }
               >
                 <User className="h-3 w-3" />
                 {user.user_name}
@@ -132,11 +140,9 @@ export function CollaborativeEditor({
         <div className="mt-2 text-xs text-gray-500 flex justify-between">
           <span>
             {content.length} characters
-            {isEditing && ' (editing)'}
+            {isEditing && " (editing)"}
           </span>
-          <span>
-            {isConnected ? 'Real-time sync active' : 'Offline mode'}
-          </span>
+          <span>{isConnected ? "Real-time sync active" : "Offline mode"}</span>
         </div>
       </CardContent>
     </Card>

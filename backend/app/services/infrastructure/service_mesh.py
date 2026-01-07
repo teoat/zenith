@@ -105,18 +105,12 @@ class ServiceMesh:
             self.load_balancers[service_name] = RoundRobinLoadBalancer()
 
         self.services[service_name].append(instance)
-        logger.info(
-            f"Registered service instance: {service_name}/{instance.instance_id} at {instance.url}"
-        )
+        logger.info(f"Registered service instance: {service_name}/{instance.instance_id} at {instance.url}")
 
     def deregister_service(self, service_name: str, instance_id: str):
         """Deregister a service instance"""
         if service_name in self.services:
-            self.services[service_name] = [
-                instance
-                for instance in self.services[service_name]
-                if instance.instance_id != instance_id
-            ]
+            self.services[service_name] = [instance for instance in self.services[service_name] if instance.instance_id != instance_id]
 
             if not self.services[service_name]:
                 del self.services[service_name]
@@ -151,22 +145,16 @@ class ServiceMesh:
             # Get route configuration
             route = self._get_route_config(service_name, route_name)
             if not route:
-                raise ServiceMeshError(
-                    f"Route {route_name} not found for service {service_name}"
-                )
+                raise ServiceMeshError(f"Route {route_name} not found for service {service_name}")
 
             # Check if method is allowed
             if method.upper() not in [m.upper() for m in route.methods]:
-                raise ServiceMeshError(
-                    f"Method {method} not allowed for route {route_name}"
-                )
+                raise ServiceMeshError(f"Method {method} not allowed for route {route_name}")
 
             # Select service instance
             instance = self._select_instance(service_name)
             if not instance:
-                raise ServiceUnavailableError(
-                    f"No healthy instances available for service {service_name}"
-                )
+                raise ServiceUnavailableError(f"No healthy instances available for service {service_name}")
 
             # Build URL
             url = self._build_url(instance, route, path_params, query_params)
@@ -184,9 +172,7 @@ class ServiceMesh:
             circuit_key = f"{service_name}:{route_name}"
             if route.circuit_breaker_enabled:
                 if circuit_key not in self.circuit_breakers:
-                    self.circuit_breakers[circuit_key] = CircuitBreaker(
-                        failure_threshold=5, recovery_timeout=60
-                    )
+                    self.circuit_breakers[circuit_key] = CircuitBreaker(failure_threshold=5, recovery_timeout=60)
 
                 circuit_breaker = self.circuit_breakers[circuit_key]
 
@@ -200,9 +186,7 @@ class ServiceMesh:
             logger.error(f"Service call failed: {service_name}/{route_name} - {e}")
             raise
 
-    def _get_route_config(
-        self, service_name: str, route_name: str
-    ) -> ServiceRoute | None:
+    def _get_route_config(self, service_name: str, route_name: str) -> ServiceRoute | None:
         """Get route configuration"""
         service_routes = self.routes.get(service_name, {})
         return service_routes.get(route_name)
@@ -212,11 +196,7 @@ class ServiceMesh:
         if service_name not in self.services:
             return None
 
-        healthy_instances = [
-            instance
-            for instance in self.services[service_name]
-            if instance.is_healthy()
-        ]
+        healthy_instances = [instance for instance in self.services[service_name] if instance.is_healthy()]
 
         if not healthy_instances:
             return None
@@ -338,16 +318,12 @@ class ServiceMesh:
                         "instance_id": inst.instance_id,
                         "url": inst.url,
                         "health": inst.health.value,
-                        "last_check": inst.last_health_check.isoformat()
-                        if inst.last_health_check
-                        else None,
+                        "last_check": inst.last_health_check.isoformat() if inst.last_health_check else None,
                     }
                     for inst in instances
                 ],
                 "total_instances": len(instances),
-                "healthy_instances": len(
-                    [inst for inst in instances if inst.is_healthy()]
-                ),
+                "healthy_instances": len([inst for inst in instances if inst.is_healthy()]),
             }
 
         # Return status for all services

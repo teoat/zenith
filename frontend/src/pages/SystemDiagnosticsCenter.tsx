@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
-import './SystemDiagnosticsCenter.css';
+import React, { useState } from "react";
+import "./SystemDiagnosticsCenter.css";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
-import { RefreshCw } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
+import { RefreshCw } from "lucide-react";
 
-import { useSystemDiagnostics } from '@/hooks/useSystemDiagnostics';
-import { SystemOverviewCards } from '@/components/diagnostics/SystemOverviewCards';
-import { SystemServicesTab } from '@/components/diagnostics/SystemServicesTab';
-import { SystemPerformanceTab } from '@/components/diagnostics/SystemPerformanceTab';
-import { SystemIssuesTab } from '@/components/diagnostics/SystemIssuesTab';
+import { useSystemDiagnostics } from "@/hooks/useSystemDiagnostics";
+import { SystemOverviewCards } from "@/components/diagnostics/SystemOverviewCards";
+import { SystemServicesTab } from "@/components/diagnostics/SystemServicesTab";
+import { SystemPerformanceTab } from "@/components/diagnostics/SystemPerformanceTab";
+import { SystemIssuesTab } from "@/components/diagnostics/SystemIssuesTab";
 
 const SystemDiagnosticsCenter: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-  
+  const [activeTab, setActiveTab] = useState("overview");
+
   const {
     currentMetrics,
     serviceHealth,
@@ -24,7 +30,7 @@ const SystemDiagnosticsCenter: React.FC = () => {
     autoRefresh,
     setAutoRefresh,
     loadDiagnosticsData,
-    resolveIssue
+    resolveIssue,
   } = useSystemDiagnostics();
 
   if (loading && !currentMetrics) {
@@ -39,18 +45,26 @@ const SystemDiagnosticsCenter: React.FC = () => {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">System Diagnostics Center</h1>
-          <p className="text-gray-600 mt-2">Comprehensive system monitoring and health diagnostics</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            System Diagnostics Center
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Comprehensive system monitoring and health diagnostics
+          </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setAutoRefresh(!autoRefresh)}
-            className={autoRefresh ? 'bg-green-50 text-green-700 border-green-200' : ''}
+            className={
+              autoRefresh ? "bg-green-50 text-green-700 border-green-200" : ""
+            }
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
-            Auto Refresh {autoRefresh ? 'On' : 'Off'}
+            <RefreshCw
+              className={`h-4 w-4 mr-2 ${autoRefresh ? "animate-spin" : ""}`}
+            />
+            Auto Refresh {autoRefresh ? "On" : "Off"}
           </Button>
           <Button variant="outline" size="sm" onClick={loadDiagnosticsData}>
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -91,7 +105,10 @@ const SystemDiagnosticsCenter: React.FC = () => {
               or just show the Performance Tab content directly.
               Let's use the explicit Performance Tab component for consistency.
            */}
-           <SystemPerformanceTab performanceHistory={performanceHistory} currentMetrics={currentMetrics} />
+          <SystemPerformanceTab
+            performanceHistory={performanceHistory}
+            currentMetrics={currentMetrics}
+          />
         </TabsContent>
 
         <TabsContent value="services" className="space-y-6">
@@ -99,11 +116,14 @@ const SystemDiagnosticsCenter: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="performance" className="space-y-6">
-          <SystemPerformanceTab performanceHistory={performanceHistory} currentMetrics={currentMetrics} />
+          <SystemPerformanceTab
+            performanceHistory={performanceHistory}
+            currentMetrics={currentMetrics}
+          />
         </TabsContent>
 
         <TabsContent value="issues" className="space-y-6">
-           <SystemIssuesTab issues={diagnosticIssues} onResolve={resolveIssue} />
+          <SystemIssuesTab issues={diagnosticIssues} onResolve={resolveIssue} />
         </TabsContent>
       </Tabs>
     </div>

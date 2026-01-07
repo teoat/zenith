@@ -1,15 +1,30 @@
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
-import { Bell, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Bell, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+
+interface AlertMetadata {
+  source?: string;
+  category?: string;
+  affectedEntities?: string[];
+  complianceRule?: string;
+  severity?: string;
+  [key: string]: unknown;
+}
 
 interface Alert {
   id: string;
   severity: string;
   timestamp: string;
   message: string;
-  metadata?: any;
+  metadata?: AlertMetadata;
   acknowledged: boolean;
   resolved: boolean;
 }
@@ -19,14 +34,22 @@ interface ComplianceAlertsProps {
   onAcknowledge: (id: string) => void;
 }
 
-export const ComplianceAlerts: React.FC<ComplianceAlertsProps> = ({ alerts, onAcknowledge }) => {
+export const ComplianceAlerts: React.FC<ComplianceAlertsProps> = ({
+  alerts,
+  onAcknowledge,
+}) => {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'text-red-700 bg-red-100 border-red-200';
-      case 'high': return 'text-orange-700 bg-orange-100 border-orange-200';
-      case 'medium': return 'text-yellow-700 bg-yellow-100 border-yellow-200';
-      case 'low': return 'text-blue-700 bg-blue-100 border-blue-200';
-      default: return 'text-gray-700 bg-gray-100 border-gray-200';
+      case "critical":
+        return "text-red-700 bg-red-100 border-red-200";
+      case "high":
+        return "text-orange-700 bg-orange-100 border-orange-200";
+      case "medium":
+        return "text-yellow-700 bg-yellow-100 border-yellow-200";
+      case "low":
+        return "text-blue-700 bg-blue-100 border-blue-200";
+      default:
+        return "text-gray-700 bg-gray-100 border-gray-200";
     }
   };
 
@@ -38,7 +61,9 @@ export const ComplianceAlerts: React.FC<ComplianceAlertsProps> = ({ alerts, onAc
             <Bell className="h-5 w-5 text-indigo-500" />
             <div>
               <CardTitle className="text-lg">Active Alerts</CardTitle>
-              <CardDescription>Current compliance alerts requiring attention</CardDescription>
+              <CardDescription>
+                Current compliance alerts requiring attention
+              </CardDescription>
             </div>
           </div>
           <Badge variant="outline" className="rounded-full px-3 py-1 font-bold">
@@ -52,8 +77,12 @@ export const ComplianceAlerts: React.FC<ComplianceAlertsProps> = ({ alerts, onAc
             <div className="p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-full w-fit mx-auto mb-4 border border-emerald-100 dark:border-emerald-900/20">
               <CheckCircle className="h-10 w-10 text-emerald-500" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">All Clear</h3>
-            <p className="text-slate-500 dark:text-slate-400 mt-2">No active alerts. All systems operating normally.</p>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+              All Clear
+            </h3>
+            <p className="text-slate-500 dark:text-slate-400 mt-2">
+              No active alerts. All systems operating normally.
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -68,7 +97,10 @@ export const ComplianceAlerts: React.FC<ComplianceAlertsProps> = ({ alerts, onAc
                       <div className="p-1.5 rounded-lg bg-white/50 backdrop-blur-sm">
                         <AlertTriangle className="h-4 w-4" />
                       </div>
-                      <Badge variant="outline" className="capitalize font-bold bg-white/20 border-current/20">
+                      <Badge
+                        variant="outline"
+                        className="capitalize font-bold bg-white/20 border-current/20"
+                      >
                         {alert.severity}
                       </Badge>
                       <span className="text-xs font-semibold opacity-70 flex items-center gap-1">
@@ -77,11 +109,12 @@ export const ComplianceAlerts: React.FC<ComplianceAlertsProps> = ({ alerts, onAc
                       </span>
                     </div>
                     <p className="font-bold text-lg mb-1">{alert.message}</p>
-                    {alert.metadata && Object.keys(alert.metadata).length > 0 && (
-                      <div className="mt-2 text-sm p-3 bg-black/5 rounded-xl border border-black/5 font-mono">
-                         {JSON.stringify(alert.metadata)}
-                      </div>
-                    )}
+                    {alert.metadata &&
+                      Object.keys(alert.metadata).length > 0 && (
+                        <div className="mt-2 text-sm p-3 bg-black/5 rounded-xl border border-black/5 font-mono">
+                          {JSON.stringify(alert.metadata)}
+                        </div>
+                      )}
                   </div>
                   <div className="shrink-0">
                     {!alert.acknowledged && (

@@ -5,47 +5,47 @@
  * Checks for broken links in documentation files
  */
 
-import fs from 'fs';
-import path from 'path';
-import https from 'https';
-import http from 'http';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import path from "path";
+import https from "https";
+import http from "http";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Configuration
-const DOCS_DIR = path.join(__dirname, '..', '..', 'docs');
+const DOCS_DIR = path.join(__dirname, "..", "..", "docs");
 const IGNORE_PATTERNS = [
-  /^\.\//,  // Relative links starting with ./
+  /^\.\//, // Relative links starting with ./
   /^\.\.\//, // Relative links starting with ../
-  /^#/,     // Anchors
+  /^#/, // Anchors
   /^mailto:/, // Email links
-  /^tel:/,  // Phone links
+  /^tel:/, // Phone links
   /^https?:\/\/(localhost|127\.0\.0\.1)/, // Local development URLs
 ];
 const VALID_DOMAINS = [
-  'github.com',
-  'docs.github.com',
-  'api.slack.com',
-  'datatracker.ietf.org',
-  'semver.org',
-  'restfulapi.net',
-  'stripe.com',
-  'owasp.org',
-  'electron.build',
-  'docs.codecov.com',
-  'codecov.io',
-  'tanstack.com',
-  'docs.microsoft.com',
-  'cure53.github.io'
+  "github.com",
+  "docs.github.com",
+  "api.slack.com",
+  "datatracker.ietf.org",
+  "semver.org",
+  "restfulapi.net",
+  "stripe.com",
+  "owasp.org",
+  "electron.build",
+  "docs.codecov.com",
+  "codecov.io",
+  "tanstack.com",
+  "docs.microsoft.com",
+  "cure53.github.io",
 ];
 
 /**
  * Check if a URL should be ignored
  */
 function shouldIgnoreLink(url) {
-  return IGNORE_PATTERNS.some(pattern => pattern.test(url));
+  return IGNORE_PATTERNS.some((pattern) => pattern.test(url));
 }
 
 /**
@@ -53,14 +53,14 @@ function shouldIgnoreLink(url) {
  */
 function checkExternalUrl(url) {
   return new Promise((resolve) => {
-    const client = url.startsWith('https://') ? https : http;
+    const client = url.startsWith("https://") ? https : http;
     const timeout = 5000; // 5 second timeout
 
-    const req = client.request(url, { method: 'HEAD' }, (res) => {
+    const req = client.request(url, { method: "HEAD" }, (res) => {
       resolve(res.statusCode < 400);
     });
 
-    req.on('error', () => resolve(false));
+    req.on("error", () => resolve(false));
     req.setTimeout(timeout, () => {
       req.destroy();
       resolve(false);
@@ -99,9 +99,9 @@ function findMarkdownFiles(dir) {
       const fullPath = path.join(directory, item);
       const stat = fs.statSync(fullPath);
 
-      if (stat.isDirectory() && !item.startsWith('.')) {
+      if (stat.isDirectory() && !item.startsWith(".")) {
         scan(fullPath);
-      } else if (stat.isFile() && item.endsWith('.md')) {
+      } else if (stat.isFile() && item.endsWith(".md")) {
         files.push(fullPath);
       }
     }
@@ -115,7 +115,7 @@ function findMarkdownFiles(dir) {
  * Main link checking function
  */
 async function checkLinks() {
-  console.log('🔗 Checking documentation links...');
+  console.log("🔗 Checking documentation links...");
 
   const markdownFiles = findMarkdownFiles(DOCS_DIR);
   const brokenLinks = [];
@@ -123,7 +123,7 @@ async function checkLinks() {
 
   for (const file of markdownFiles) {
     try {
-      const content = fs.readFileSync(file, 'utf8');
+      const content = fs.readFileSync(file, "utf8");
       const links = extractLinks(content, file);
 
       for (const link of links) {
@@ -132,10 +132,12 @@ async function checkLinks() {
         }
 
         // Check relative file links
-        if (!link.url.includes('://')) {
+        if (!link.url.includes("://")) {
           const linkPath = path.resolve(path.dirname(file), link.url);
           if (!fs.existsSync(linkPath)) {
-            brokenLinks.push(`❌ ${link.text}: ${link.url} (in ${path.relative(DOCS_DIR, file)})`);
+            brokenLinks.push(
+              `❌ ${link.text}: ${link.url} (in ${path.relative(DOCS_DIR, file)})`,
+            );
           }
         } else {
           // Check external links (only known domains for CI/CD performance)
@@ -143,7 +145,9 @@ async function checkLinks() {
           if (VALID_DOMAINS.includes(url.hostname)) {
             const isAccessible = await checkExternalUrl(link.url);
             if (!isAccessible) {
-              warnings.push(`⚠️ External link may be broken: ${link.url} (in ${path.relative(DOCS_DIR, file)})`);
+              warnings.push(
+                `⚠️ External link may be broken: ${link.url} (in ${path.relative(DOCS_DIR, file)})`,
+              );
             }
           }
         }
@@ -156,16 +160,16 @@ async function checkLinks() {
   // Report results
   if (brokenLinks.length > 0) {
     console.log(`\n❌ Found ${brokenLinks.length} broken links:`);
-    brokenLinks.forEach(link => console.log(`   ${link}`));
+    brokenLinks.forEach((link) => console.log(`   ${link}`));
   }
 
   if (warnings.length > 0) {
     console.log(`\n⚠️ Found ${warnings.length} warnings:`);
-    warnings.forEach(warning => console.log(`   ${warning}`));
+    warnings.forEach((warning) => console.log(`   ${warning}`));
   }
 
   if (brokenLinks.length === 0) {
-    console.log('\n✅ All documentation links are valid!');
+    console.log("\n✅ All documentation links are valid!");
   }
 
   return brokenLinks.length === 0;
@@ -174,11 +178,11 @@ async function checkLinks() {
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   checkLinks()
-    .then(success => {
+    .then((success) => {
       process.exit(success ? 0 : 1);
     })
-    .catch(error => {
-      console.error('Error checking links:', error);
+    .catch((error) => {
+      console.error("Error checking links:", error);
       process.exit(1);
     });
 }

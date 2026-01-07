@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef, useEffect } from "react";
 
 interface RetryOptions {
   maxRetries?: number;
@@ -26,139 +26,166 @@ export function useHttpClient() {
   useEffect(() => {
     // Cleanup: abort all pending requests on unmount
     return () => {
-      abortControllersRef.current.forEach(controller => controller.abort());
+      abortControllersRef.current.forEach((controller) => controller.abort());
       abortControllersRef.current.clear();
     };
   }, []);
 
-  const request = useCallback(async <T = unknown>(
-    url: string,
-    config: RequestConfig = {},
-    retryOptions: RetryOptions = {}
-  ): Promise<T> => {
-    const {
-      maxRetries = 3,
-      delayMs = 1000,
-      backoffMultiplier = 2,
-      shouldRetry = (error, attempt) => {
-        // Default: retry on network errors and 5xx status codes
-        if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
-          return attempt < maxRetries;
-        }
-        if ('status' in error && typeof error.status === 'number') {
-          return error.status >= 500 && attempt < maxRetries;
-        }
-        return false;
-      }
-    } = retryOptions;
+  const request = useCallback(
+    async <T = unknown,>(
+      url: string,
+      config: RequestConfig = {},
+      retryOptions: RetryOptions = {},
+    ): Promise<T> => {
+      const {
+        maxRetries = 3,
+        delayMs = 1000,
+        backoffMultiplier = 2,
+        shouldRetry = (error, attempt) => {
+          // Default: retry on network errors and 5xx status codes
+          if (
+            error.message.includes("NetworkError") ||
+            error.message.includes("Failed to fetch")
+          ) {
+            return attempt < maxRetries;
+          }
+          if ("status" in error && typeof error.status === "number") {
+            return error.status >= 500 && attempt < maxRetries;
+          }
+          return false;
+        },
+      } = retryOptions;
 
-    const { timeout = 30000, ...fetchConfig } = config;
+      const { timeout = 30000, ...fetchConfig } = config;
 
-  let lastError: Error | undefined;
-    
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      // Create abort controller for this request
-      const controller = new AbortController();
-      const requestId = `${url}-${Date.now()}`;
-      abortControllersRef.current.set(requestId, controller);
+      let lastError: Error | undefined;
 
-      // Set up timeout
-      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        // Create abort controller for this request
+        const controller = new AbortController();
+        const requestId = `${url}-${Date.now()}`;
+        abortControllersRef.current.set(requestId, controller);
 
-      try {
-        const response = await fetch(url, {
-          ...fetchConfig,
-          signal: controller.signal
-        });
+        // Set up timeout
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-        clearTimeout(timeoutId);
-        abortControllersRef.current.delete(requestId);
+        try {
+          const response = await fetch(url, {
+            ...fetchConfig,
+            signal: controller.signal,
+          });
 
-        if (!response.ok) {
-          const error: HttpError = new Error(`HTTP ${response.status}: ${response.statusText}`);
-          error.status = response.status;
-          error.response = response;
+          clearTimeout(timeoutId);
+          abortControllersRef.current.delete(requestId);
+
+          if (!response.ok) {
+            const error: HttpError = new Error(
+              `HTTP ${response.status}: ${response.statusText}`,
+            );
+            error.status = response.status;
+            error.response = response;
+            throw error;
+          }
+
+          const data = await response.json();
+          return data as T;
+        } catch (error: unknown) {
+          clearTimeout(timeoutId);
+          abortControllersRef.current.delete(requestId);
+
+          const err = error instanceof Error ? error : new Error(String(error));
+          lastError = err;
+
+          // Don't retry if request was aborted by user
+          if (err.name === "AbortError" && attempt === 0) {
+            throw err;
+          }
+
+          // Check if we should retry
+          if (attempt < maxRetries && shouldRetry(err, attempt)) {
+            const delay = delayMs * Math.pow(backoffMultiplier, attempt);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            continue;
+          }
+
           throw error;
         }
-
-        const data = await response.json();
-        return data as T;
-
-      } catch (error: unknown) {
-        clearTimeout(timeoutId);
-        abortControllersRef.current.delete(requestId);
-
-        const err = error instanceof Error ? error : new Error(String(error));
-        lastError = err;
-
-        // Don't retry if request was aborted by user
-        if (err.name === 'AbortError' && attempt === 0) {
-          throw err;
-        }
-
-        // Check if we should retry
-        if (attempt < maxRetries && shouldRetry(err, attempt)) {
-          const delay = delayMs * Math.pow(backoffMultiplier, attempt);
-          await new Promise(resolve => setTimeout(resolve, delay));
-          continue;
-        }
-
-        throw error;
       }
-    }
 
-  throw lastError || new Error('Retry failed after all attempts');
-  }, []);
+      throw lastError || new Error("Retry failed after all attempts");
+    },
+    [],
+  );
 
-  const get = useCallback(<T = unknown>(
-    url: string,
-    config?: RequestConfig,
-    retryOptions?: RetryOptions
-  ) => {
-    return request<T>(url, { ...config, method: 'GET' }, retryOptions);
-  }, [request]);
+  const get = useCallback(
+    <T = unknown,>(
+      url: string,
+      config?: RequestConfig,
+      retryOptions?: RetryOptions,
+    ) => {
+      return request<T>(url, { ...config, method: "GET" }, retryOptions);
+    },
+    [request],
+  );
 
-  const post = useCallback(<T = unknown>(
-    url: string,
-    data?: unknown,
-    config?: RequestConfig,
-    retryOptions?: RetryOptions
-  ) => {
-    return request<T>(url, {
-      ...config,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...config?.headers
-      },
-      body: JSON.stringify(data)
-    }, retryOptions);
-  }, [request]);
+  const post = useCallback(
+    <T = unknown,>(
+      url: string,
+      data?: unknown,
+      config?: RequestConfig,
+      retryOptions?: RetryOptions,
+    ) => {
+      return request<T>(
+        url,
+        {
+          ...config,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...config?.headers,
+          },
+          body: JSON.stringify(data),
+        },
+        retryOptions,
+      );
+    },
+    [request],
+  );
 
-  const put = useCallback(<T = unknown>(
-    url: string,
-    data?: unknown,
-    config?: RequestConfig,
-    retryOptions?: RetryOptions
-  ) => {
-    return request<T>(url, {
-      ...config,
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...config?.headers
-      },
-      body: JSON.stringify(data)
-    }, retryOptions);
-  }, [request]);
+  const put = useCallback(
+    <T = unknown,>(
+      url: string,
+      data?: unknown,
+      config?: RequestConfig,
+      retryOptions?: RetryOptions,
+    ) => {
+      return request<T>(
+        url,
+        {
+          ...config,
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            ...config?.headers,
+          },
+          body: JSON.stringify(data),
+        },
+        retryOptions,
+      );
+    },
+    [request],
+  );
 
-  const del = useCallback(<T = any>(
-    url: string,
-    config?: RequestConfig,
-    retryOptions?: RetryOptions
-  ) => {
-    return request<T>(url, { ...config, method: 'DELETE' }, retryOptions);
-  }, [request]);
+  const del = useCallback(
+    <T = any,>(
+      url: string,
+      config?: RequestConfig,
+      retryOptions?: RetryOptions,
+    ) => {
+      return request<T>(url, { ...config, method: "DELETE" }, retryOptions);
+    },
+    [request],
+  );
 
   const abort = useCallback((url?: string) => {
     if (url) {
@@ -171,7 +198,7 @@ export function useHttpClient() {
       });
     } else {
       // Abort all requests
-      abortControllersRef.current.forEach(controller => controller.abort());
+      abortControllersRef.current.forEach((controller) => controller.abort());
       abortControllersRef.current.clear();
     }
   }, []);
@@ -182,7 +209,7 @@ export function useHttpClient() {
     post,
     put,
     delete: del,
-    abort
+    abort,
   };
 }
 
@@ -191,13 +218,13 @@ export function useHttpClient() {
  */
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const {
     maxRetries = 3,
     delayMs = 1000,
     backoffMultiplier = 2,
-    shouldRetry = () => true
+    shouldRetry = () => true,
   } = options;
 
   let lastError: Error;
@@ -211,7 +238,7 @@ export async function withRetry<T>(
 
       if (attempt < maxRetries && shouldRetry(err, attempt)) {
         const delay = delayMs * Math.pow(backoffMultiplier, attempt);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
         continue;
       }
 

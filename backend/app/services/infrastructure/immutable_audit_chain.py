@@ -41,11 +41,7 @@ class ImmutableAuditChainService:
         self.db_path.parent.mkdir(exist_ok=True)
 
         # HMAC secret from env or parameter
-        self.hmac_secret = (
-            hmac_secret
-            or os.environ.get("AUDIT_HMAC_SECRET")
-            or "default-dev-secret-change-in-production"
-        ).encode()
+        self.hmac_secret = (hmac_secret or os.environ.get("AUDIT_HMAC_SECRET") or "default-dev-secret-change-in-production").encode()
 
         self._init_db()
 
@@ -73,18 +69,10 @@ class ImmutableAuditChainService:
             )
 
             # Indexes
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_chain_sequence ON audit_chain(sequence_number)"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_chain_timestamp ON audit_chain(timestamp)"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_chain_entity ON audit_chain(entity_type, entity_id)"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_chain_user ON audit_chain(user_id)"
-            )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_chain_sequence ON audit_chain(sequence_number)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_chain_timestamp ON audit_chain(timestamp)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_chain_entity ON audit_chain(entity_type, entity_id)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_chain_user ON audit_chain(user_id)")
 
     def append_entry(
         self,
@@ -114,9 +102,7 @@ class ImmutableAuditChainService:
 
         with sqlite3.connect(self.db_path) as conn:
             # Get previous hash and sequence number
-            cursor = conn.execute(
-                "SELECT sequence_number, data_hash FROM audit_chain ORDER BY sequence_number DESC LIMIT 1"
-            )
+            cursor = conn.execute("SELECT sequence_number, data_hash FROM audit_chain ORDER BY sequence_number DESC LIMIT 1")
             row = cursor.fetchone()
 
             if row:
@@ -131,9 +117,7 @@ class ImmutableAuditChainService:
             data_hash = hashlib.sha256(hash_input.encode()).hexdigest()
 
             # Calculate HMAC signature
-            hmac_signature = hmac.new(
-                self.hmac_secret, data_hash.encode(), hashlib.sha256
-            ).hexdigest()
+            hmac_signature = hmac.new(self.hmac_secret, data_hash.encode(), hashlib.sha256).hexdigest()
 
             # Insert entry
             conn.execute(
@@ -172,9 +156,7 @@ class ImmutableAuditChainService:
                 "hmac_signature": hmac_signature,
             }
 
-            logger.info(
-                f"Appended audit chain entry #{sequence_number}: {event_type}/{action}"
-            )
+            logger.info(f"Appended audit chain entry #{sequence_number}: {event_type}/{action}")
             return entry
 
     def verify_chain_integrity(self) -> dict[str, Any]:
@@ -229,9 +211,7 @@ class ImmutableAuditChainService:
                     )
 
                 # Verify HMAC signature
-                calculated_hmac = hmac.new(
-                    self.hmac_secret, entry["data_hash"].encode(), hashlib.sha256
-                ).hexdigest()
+                calculated_hmac = hmac.new(self.hmac_secret, entry["data_hash"].encode(), hashlib.sha256).hexdigest()
 
                 if calculated_hmac != entry["hmac_signature"]:
                     hmac_failures.append(
@@ -253,9 +233,7 @@ class ImmutableAuditChainService:
                 "valid_entries": valid_entries,
                 "chain_breaks": chain_breaks[:10],  # Limit for response size
                 "hmac_failures": hmac_failures[:10],
-                "integrity_percentage": (
-                    (valid_entries / total_entries * 100) if total_entries > 0 else 100
-                ),
+                "integrity_percentage": ((valid_entries / total_entries * 100) if total_entries > 0 else 100),
                 "verified_at": datetime.now(UTC).isoformat(),
             }
 
@@ -314,9 +292,7 @@ class ImmutableAuditChainService:
 
             # Calculate proof signature over entire export
             proof_data = json.dumps(entries, sort_keys=True, default=str)
-            proof_signature = hmac.new(
-                self.hmac_secret, proof_data.encode(), hashlib.sha256
-            ).hexdigest()
+            proof_signature = hmac.new(self.hmac_secret, proof_data.encode(), hashlib.sha256).hexdigest()
 
             return {
                 "proof_document": {

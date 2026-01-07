@@ -1,5 +1,5 @@
-import React from 'react';
-import { ForensicsLayout } from '@/components/forensics';
+import React from "react";
+import { ForensicsLayout } from "@/components/forensics";
 
 const Forensics: React.FC = () => {
   return <ForensicsLayout />;

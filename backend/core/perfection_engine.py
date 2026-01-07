@@ -55,9 +55,7 @@ class SubMillisecondResponseOptimizer:
         self.performance_history: list[PerformanceMetrics] = []
         self.max_history_size = 10000
 
-    async def optimize_response(
-        self, request_data: dict[str, Any], handler: Callable
-    ) -> dict[str, Any]:
+    async def optimize_response(self, request_data: dict[str, Any], handler: Callable) -> dict[str, Any]:
         """Optimize request for sub-millisecond response"""
 
         start_time = time.perf_counter()
@@ -82,9 +80,7 @@ class SubMillisecondResponseOptimizer:
 
             # Execute in thread pool for CPU-bound operations
             loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(
-                self.executor, self._execute_handler_sync, handler, optimized_data
-            )
+            result = await loop.run_in_executor(self.executor, self._execute_handler_sync, handler, optimized_data)
 
             # Post-process and cache
             final_result = await self._post_process_result(result)
@@ -112,14 +108,10 @@ class SubMillisecondResponseOptimizer:
             if isinstance(v, (str, int, float, bool)):
                 key_components.append(f"{k}:{v}")
             elif isinstance(v, (list, dict)):
-                key_components.append(
-                    f"{k}:{hash(str(sorted(v.items() if isinstance(v, dict) else v)))}"
-                )
+                key_components.append(f"{k}:{hash(str(sorted(v.items() if isinstance(v, dict) else v)))}")
         return "|".join(key_components)
 
-    async def _precompute_expensive_ops(
-        self, request_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _precompute_expensive_ops(self, request_data: dict[str, Any]) -> dict[str, Any]:
         """Pre-compute expensive operations"""
         # This would include data prefetching, complex calculations, etc.
         optimized = dict(request_data)
@@ -135,9 +127,7 @@ class SubMillisecondResponseOptimizer:
 
         return optimized
 
-    def _execute_handler_sync(
-        self, handler: Callable, data: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _execute_handler_sync(self, handler: Callable, data: dict[str, Any]) -> dict[str, Any]:
         """Execute handler synchronously in thread pool"""
         return handler(data)
 
@@ -155,9 +145,7 @@ class SubMillisecondResponseOptimizer:
 
         return processed
 
-    def _record_metrics(
-        self, response_time: float, cache_hit: bool = False, error: bool = False
-    ):
+    def _record_metrics(self, response_time: float, cache_hit: bool = False, error: bool = False):
         """Record performance metrics"""
         metrics = PerformanceMetrics(
             response_time_ms=response_time,
@@ -172,9 +160,7 @@ class SubMillisecondResponseOptimizer:
 
         self.performance_history.append(metrics)
         if len(self.performance_history) > self.max_history_size:
-            self.performance_history = self.performance_history[
-                -self.max_history_size :
-            ]
+            self.performance_history = self.performance_history[-self.max_history_size :]
 
 
 class IntelligentResourceManager:
@@ -195,9 +181,7 @@ class IntelligentResourceManager:
 
         self.last_scaling_time = datetime.min
 
-    async def make_scaling_decision(
-        self, metrics: PerformanceMetrics
-    ) -> ScalingDecision:
+    async def make_scaling_decision(self, metrics: PerformanceMetrics) -> ScalingDecision:
         """Make intelligent scaling decision based on metrics"""
 
         # Check cooldown period
@@ -219,9 +203,7 @@ class IntelligentResourceManager:
 
         return decision
 
-    def _analyze_metrics_for_scaling(
-        self, metrics: PerformanceMetrics
-    ) -> ScalingDecision:
+    def _analyze_metrics_for_scaling(self, metrics: PerformanceMetrics) -> ScalingDecision:
         """Analyze metrics to determine scaling needs"""
 
         # Scale up conditions
@@ -229,13 +211,9 @@ class IntelligentResourceManager:
         if metrics.cpu_usage_percent > self.cpu_scale_up_threshold:
             scale_up_reasons.append(f"High CPU usage: {metrics.cpu_usage_percent:.1f}%")
         if metrics.memory_usage_mb > self.memory_scale_up_threshold:
-            scale_up_reasons.append(
-                f"High memory usage: {metrics.memory_usage_mb:.1f}MB"
-            )
+            scale_up_reasons.append(f"High memory usage: {metrics.memory_usage_mb:.1f}MB")
         if metrics.response_time_ms > self.response_time_scale_up_threshold:
-            scale_up_reasons.append(
-                f"High response time: {metrics.response_time_ms:.1f}ms"
-            )
+            scale_up_reasons.append(f"High response time: {metrics.response_time_ms:.1f}ms")
         if metrics.queue_depth > 100:
             scale_up_reasons.append(f"High queue depth: {metrics.queue_depth}")
 
@@ -279,24 +257,16 @@ class IntelligentResourceManager:
                 timestamp=datetime.now(),
             )
 
-    async def predict_resource_needs(
-        self, historical_metrics: list[PerformanceMetrics]
-    ) -> dict[str, Any]:
+    async def predict_resource_needs(self, historical_metrics: list[PerformanceMetrics]) -> dict[str, Any]:
         """Predict future resource needs using time series analysis"""
         if len(historical_metrics) < 10:
             return {"prediction": "insufficient_data"}
 
         # Simple trend analysis
         recent_metrics = historical_metrics[-10:]
-        cpu_trend = np.polyfit(
-            range(len(recent_metrics)), [m.cpu_usage_percent for m in recent_metrics], 1
-        )[0]
-        memory_trend = np.polyfit(
-            range(len(recent_metrics)), [m.memory_usage_mb for m in recent_metrics], 1
-        )[0]
-        response_trend = np.polyfit(
-            range(len(recent_metrics)), [m.response_time_ms for m in recent_metrics], 1
-        )[0]
+        cpu_trend = np.polyfit(range(len(recent_metrics)), [m.cpu_usage_percent for m in recent_metrics], 1)[0]
+        memory_trend = np.polyfit(range(len(recent_metrics)), [m.memory_usage_mb for m in recent_metrics], 1)[0]
+        response_trend = np.polyfit(range(len(recent_metrics)), [m.response_time_ms for m in recent_metrics], 1)[0]
 
         prediction = {
             "cpu_trend": "increasing" if cpu_trend > 0.5 else "stable",
@@ -325,9 +295,7 @@ class IntelligentResourceManager:
             "cpu_percent": psutil.cpu_percent(),
             "memory_percent": psutil.virtual_memory().percent,
             "memory_used_mb": psutil.virtual_memory().used / 1024 / 1024,
-            "last_scaling": self.last_scaling_time.isoformat()
-            if self.last_scaling_time != datetime.min
-            else None,
+            "last_scaling": self.last_scaling_time.isoformat() if self.last_scaling_time != datetime.min else None,
         }
 
 
@@ -345,24 +313,18 @@ class UltimatePerformanceEngine:
             "target_memory_usage": 70.0,
         }
 
-    async def process_request(
-        self, request_data: dict[str, Any], handler: Callable
-    ) -> dict[str, Any]:
+    async def process_request(self, request_data: dict[str, Any], handler: Callable) -> dict[str, Any]:
         """Process request with ultimate performance optimization"""
 
         # Optimize response
-        response = await self.response_optimizer.optimize_response(
-            request_data, handler
-        )
+        response = await self.response_optimizer.optimize_response(request_data, handler)
 
         # Get latest metrics
         if self.response_optimizer.performance_history:
             latest_metrics = self.response_optimizer.performance_history[-1]
 
             # Make scaling decision
-            scaling_decision = await self.resource_manager.make_scaling_decision(
-                latest_metrics
-            )
+            scaling_decision = await self.resource_manager.make_scaling_decision(latest_metrics)
 
             # Add scaling info to response
             response["_scaling_decision"] = {
@@ -387,27 +349,18 @@ class UltimatePerformanceEngine:
         if self.response_optimizer.performance_history:
             recent_metrics = self.response_optimizer.performance_history[-10:]
             dashboard["current_metrics"] = {
-                "avg_response_time_ms": sum(m.response_time_ms for m in recent_metrics)
-                / len(recent_metrics),
-                "avg_cpu_usage": sum(m.cpu_usage_percent for m in recent_metrics)
-                / len(recent_metrics),
-                "avg_memory_mb": sum(m.memory_usage_mb for m in recent_metrics)
-                / len(recent_metrics),
-                "cache_hit_ratio": sum(m.cache_hit_ratio for m in recent_metrics)
-                / len(recent_metrics),
-                "error_rate": sum(m.error_rate for m in recent_metrics)
-                / len(recent_metrics),
+                "avg_response_time_ms": sum(m.response_time_ms for m in recent_metrics) / len(recent_metrics),
+                "avg_cpu_usage": sum(m.cpu_usage_percent for m in recent_metrics) / len(recent_metrics),
+                "avg_memory_mb": sum(m.memory_usage_mb for m in recent_metrics) / len(recent_metrics),
+                "cache_hit_ratio": sum(m.cache_hit_ratio for m in recent_metrics) / len(recent_metrics),
+                "error_rate": sum(m.error_rate for m in recent_metrics) / len(recent_metrics),
             }
 
         # Performance predictions
-        dashboard["predictions"] = await self.resource_manager.predict_resource_needs(
-            self.response_optimizer.performance_history
-        )
+        dashboard["predictions"] = await self.resource_manager.predict_resource_needs(self.response_optimizer.performance_history)
 
         # Achievement tracking
-        dashboard["achievements"] = self._calculate_achievements(
-            dashboard["current_metrics"]
-        )
+        dashboard["achievements"] = self._calculate_achievements(dashboard["current_metrics"])
 
         return dashboard
 
@@ -421,16 +374,10 @@ class UltimatePerformanceEngine:
             "perfect_performance_score": False,
         }
 
-        if (
-            metrics.get("avg_response_time_ms", 1000)
-            < self.performance_targets["max_response_time_ms"]
-        ):
+        if metrics.get("avg_response_time_ms", 1000) < self.performance_targets["max_response_time_ms"]:
             achievements["sub_millisecond_responses"] = True
 
-        if (
-            metrics.get("cache_hit_ratio", 0)
-            > self.performance_targets["min_cache_hit_ratio"]
-        ):
+        if metrics.get("cache_hit_ratio", 0) > self.performance_targets["min_cache_hit_ratio"]:
             achievements["high_cache_hit_ratio"] = True
 
         if metrics.get("error_rate", 1) < self.performance_targets["max_error_rate"]:
@@ -438,10 +385,7 @@ class UltimatePerformanceEngine:
 
         cpu_usage = metrics.get("avg_cpu_usage", 100)
         memory_usage = metrics.get("avg_memory_mb", 100)
-        if (
-            cpu_usage < self.performance_targets["target_cpu_usage"]
-            and memory_usage < self.performance_targets["target_memory_usage"]
-        ):
+        if cpu_usage < self.performance_targets["target_cpu_usage"] and memory_usage < self.performance_targets["target_memory_usage"]:
             achievements["optimal_resource_usage"] = True
 
         # Perfect score if all achievements are met
@@ -491,10 +435,7 @@ class UltimatePerformanceEngine:
             optimization_results["performance_improved"] = {
                 "baseline_response_time": baseline_avg,
                 "current_response_time": current_avg,
-                "improvement_percent": ((baseline_avg - current_avg) / baseline_avg)
-                * 100
-                if baseline_avg > 0
-                else 0,
+                "improvement_percent": ((baseline_avg - current_avg) / baseline_avg) * 100 if baseline_avg > 0 else 0,
             }
 
         return optimization_results
@@ -545,13 +486,9 @@ async def achieve_sub_millisecond_performance() -> dict[str, Any]:
     return {
         "performance_test_results": performance_results,
         "dashboard": dashboard,
-        "sub_millisecond_achieved": all(
-            r["response_time_ms"] < 50 for r in performance_results
-        ),
-        "average_response_time": sum(r["response_time_ms"] for r in performance_results)
-        / len(performance_results),
-        "cache_hit_ratio": sum(1 for r in performance_results if r["cache_hit"])
-        / len(performance_results),
+        "sub_millisecond_achieved": all(r["response_time_ms"] < 50 for r in performance_results),
+        "average_response_time": sum(r["response_time_ms"] for r in performance_results) / len(performance_results),
+        "cache_hit_ratio": sum(1 for r in performance_results if r["cache_hit"]) / len(performance_results),
     }
 
 
@@ -583,9 +520,7 @@ async def demonstrate_perfection() -> dict[str, Any]:
         "scaling_status": scaling_status,
         "achievements": achievements,
         "perfection_score": sum(achievements.values()) / len(achievements) * 100,
-        "system_status": "PERFECT"
-        if achievements["ultimate_system_perfection"]
-        else "EXCELLENT",
+        "system_status": "PERFECT" if achievements["ultimate_system_perfection"] else "EXCELLENT",
     }
 
 

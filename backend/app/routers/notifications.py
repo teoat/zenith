@@ -59,9 +59,7 @@ async def get_notifications(user_id: str, unread_only: bool = False, limit: int 
 
     except Exception as e:
         logger.error(f"Error getting notifications for user {user_id}: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get notifications: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get notifications: {e!s}")
 
 
 @router.post("/{notification_id}/read")
@@ -83,18 +81,14 @@ async def mark_notification_read(notification_id: str, user_id: str):
         raise
     except Exception as e:
         logger.error(f"Error marking notification as read: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to mark notification as read: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to mark notification as read: {e!s}")
 
 
 @router.post("/mark-all-read")
 async def mark_all_notifications_read(user_id: str):
     """Mark all notifications as read for a user"""
     try:
-        notifications = notification_system.get_user_notifications(
-            user_id, unread_only=True
-        )
+        notifications = notification_system.get_user_notifications(user_id, unread_only=True)
         marked_count = 0
 
         for notification in notifications:
@@ -117,9 +111,7 @@ async def mark_all_notifications_read(user_id: str):
 
 
 @router.post("/trigger")
-async def trigger_notification(
-    event_data: dict[str, Any], background_tasks: BackgroundTasks
-):
+async def trigger_notification(event_data: dict[str, Any], background_tasks: BackgroundTasks):
     """Manually trigger a notification event"""
     try:
         event_type = event_data.get("event_type")
@@ -130,9 +122,7 @@ async def trigger_notification(
             raise HTTPException(status_code=400, detail="event_type is required")
 
         # Process event in background
-        background_tasks.add_task(
-            notification_system.process_event, event_type, data, recipient
-        )
+        background_tasks.add_task(notification_system.process_event, event_type, data, recipient)
 
         return {
             "message": "Notification event triggered",
@@ -145,9 +135,7 @@ async def trigger_notification(
         raise
     except Exception as e:
         logger.error(f"Error triggering notification: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to trigger notification: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to trigger notification: {e!s}")
 
 
 @router.get("/stats")
@@ -166,9 +154,7 @@ async def get_notification_stats(
 
 
 @router.post("/test")
-async def test_notification(
-    notification_type: str, recipient: str, background_tasks: BackgroundTasks
-):
+async def test_notification(notification_type: str, recipient: str, background_tasks: BackgroundTasks):
     """Send a test notification"""
     try:
         # Create test data based on notification type
@@ -250,9 +236,7 @@ async def test_notification(
         event_type = event_mapping.get(notification_type, "system_alert")
 
         # Process event in background
-        background_tasks.add_task(
-            notification_system.process_event, event_type, data, recipient
-        )
+        background_tasks.add_task(notification_system.process_event, event_type, data, recipient)
 
         return {
             "message": "Test notification sent",
@@ -265,9 +249,7 @@ async def test_notification(
 
     except Exception as e:
         logger.error(f"Error sending test notification: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to send test notification: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to send test notification: {e!s}")
 
 
 @router.delete("/clear")
@@ -284,9 +266,7 @@ async def clear_notifications(user_id: str):
 
     except Exception as e:
         logger.error(f"Error clearing notifications: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to clear notifications: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to clear notifications: {e!s}")
 
 
 @router.get("/types")
@@ -308,9 +288,7 @@ async def get_notification_types(
 
     except Exception as e:
         logger.error(f"Error getting notification types: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get notification types: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get notification types: {e!s}")
 
 
 @router.get("/channels")
@@ -332,6 +310,4 @@ async def get_notification_channels(
 
     except Exception as e:
         logger.error(f"Error getting notification channels: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get notification channels: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get notification channels: {e!s}")

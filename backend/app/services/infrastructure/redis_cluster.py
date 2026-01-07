@@ -50,9 +50,7 @@ class RedisClusterManager:
 
     def __init__(self, config: RedisConfig):
         if not REDIS_AVAILABLE:
-            raise ImportError(
-                "redis library not available. Install with: pip install redis"
-            )
+            raise ImportError("redis library not available. Install with: pip install redis")
 
         self.config = config
         self.client: redis.Redis | RedisCluster | Sentinel | None = None
@@ -134,9 +132,7 @@ class RedisClusterManager:
                     # Multiple instances - use round-robin
                     self.connection_pool = redis.ConnectionPool(
                         host=self.config.hosts[0].split(":")[0],
-                        port=int(self.config.hosts[0].split(":")[1])
-                        if ":" in self.config.hosts[0]
-                        else 6379,
+                        port=int(self.config.hosts[0].split(":")[1]) if ":" in self.config.hosts[0] else 6379,
                         password=self.config.password,
                         db=self.config.db,
                         max_connections=self.config.max_connections,
@@ -147,9 +143,7 @@ class RedisClusterManager:
             # Test connection
             await self.client.ping()
             self.is_connected = True
-            logger.info(
-                f"Successfully connected to Redis cluster: {len(self.config.hosts)} nodes"
-            )
+            logger.info(f"Successfully connected to Redis cluster: {len(self.config.hosts)} nodes")
             return True
 
         except Exception as e:
@@ -179,25 +173,18 @@ class RedisClusterManager:
 
                 # Update metrics
                 self.operations_count += 1
-                self.avg_response_time = (
-                    (self.avg_response_time * (self.operations_count - 1))
-                    + response_time
-                ) / self.operations_count
+                self.avg_response_time = ((self.avg_response_time * (self.operations_count - 1)) + response_time) / self.operations_count
 
                 return result
 
             except Exception as e:
                 self.error_count += 1
                 if attempt == max_retries - 1:
-                    logger.error(
-                        f"Redis operation failed after {max_retries} attempts: {e}"
-                    )
+                    logger.error(f"Redis operation failed after {max_retries} attempts: {e}")
                     raise
 
                 delay = base_delay * (2**attempt)
-                logger.warning(
-                    f"Redis operation failed (attempt {attempt + 1}), retrying in {delay}s: {e}"
-                )
+                logger.warning(f"Redis operation failed (attempt {attempt + 1}), retrying in {delay}s: {e}")
                 await asyncio.sleep(delay)
 
     # Core Redis operations with enhanced error handling
@@ -348,17 +335,13 @@ class RedisClusterManager:
         """Get range from sorted set"""
         if not self.is_connected:
             return []
-        return await self._execute_with_retry(
-            self.client.zrange, key, start, end, withscores=withscores
-        )
+        return await self._execute_with_retry(self.client.zrange, key, start, end, withscores=withscores)
 
     async def zrevrange(self, key: str, start: int, end: int, withscores: bool = False):
         """Get reverse range from sorted set"""
         if not self.is_connected:
             return []
-        return await self._execute_with_retry(
-            self.client.zrevrange, key, start, end, withscores=withscores
-        )
+        return await self._execute_with_retry(self.client.zrevrange, key, start, end, withscores=withscores)
 
     async def zscore(self, key: str, member: str) -> float | None:
         """Get score of member in sorted set"""
@@ -399,9 +382,7 @@ class RedisClusterManager:
                 "total_operations": self.operations_count,
                 "error_count": self.error_count,
                 "avg_response_time_ms": round(self.avg_response_time * 1000, 2),
-                "error_rate_percent": round(
-                    (self.error_count / max(self.operations_count, 1)) * 100, 2
-                ),
+                "error_rate_percent": round((self.error_count / max(self.operations_count, 1)) * 100, 2),
             },
         }
 
@@ -422,9 +403,7 @@ class RedisClusterManager:
         return status
 
     # Session management
-    async def store_session(
-        self, session_id: str, data: dict[str, Any], ttl_seconds: int = 3600
-    ) -> bool:
+    async def store_session(self, session_id: str, data: dict[str, Any], ttl_seconds: int = 3600) -> bool:
         """Store session data with TTL"""
         key = f"session:{session_id}"
         return await self.set_json(key, data, ex=ttl_seconds)

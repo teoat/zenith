@@ -463,17 +463,14 @@ class MicroservicesArchitecturePlanner:
         """Get summary of consolidation plans and benefits"""
         total_services_before = len(self.current_services)
         total_services_after = len(self.target_architecture)
-        total_effort_days = sum(
-            plan.estimated_effort_days for plan in self.consolidation_plans
-        )
+        total_effort_days = sum(plan.estimated_effort_days for plan in self.consolidation_plans)
 
         return {
             "services_before": total_services_before,
             "services_after": total_services_after,
             "consolidation_ratio": f"{total_services_before} → {total_services_after} ({total_services_before / total_services_after:.1f}x reduction)",
             "total_effort_days": total_effort_days,
-            "total_effort_months": total_effort_days
-            / 21,  # Assuming 21 working days per month
+            "total_effort_months": total_effort_days / 21,  # Assuming 21 working days per month
             "risk_breakdown": self._analyze_risk_breakdown(),
             "benefit_categories": self._analyze_benefits(),
         }
@@ -498,15 +495,9 @@ class MicroservicesArchitecturePlanner:
 
         for plan in self.consolidation_plans:
             for benefit in plan.consolidation_benefits:
-                if any(
-                    word in benefit.lower()
-                    for word in ["deployment", "scaling", "resource", "monitoring"]
-                ):
+                if any(word in benefit.lower() for word in ["deployment", "scaling", "resource", "monitoring"]):
                     benefits["Operational"].append(benefit)
-                elif any(
-                    word in benefit.lower()
-                    for word in ["api", "communication", "logic", "infrastructure"]
-                ):
+                elif any(word in benefit.lower() for word in ["api", "communication", "logic", "infrastructure"]):
                     benefits["Technical"].append(benefit)
                 else:
                     benefits["Business"].append(benefit)
@@ -537,15 +528,10 @@ class MicroservicesArchitecturePlanner:
                     "key_benefits": plan.consolidation_benefits[:2],  # Top 2 benefits
                     "milestones": plan.migration_steps,
                     "start_date": current_date.isoformat(),
-                    "end_date": (
-                        current_date
-                        + self._days_to_timedelta(plan.estimated_effort_days)
-                    ).isoformat(),
+                    "end_date": (current_date + self._days_to_timedelta(plan.estimated_effort_days)).isoformat(),
                 }
             )
-            current_date += self._days_to_timedelta(
-                plan.estimated_effort_days + 2
-            )  # 2 days buffer
+            current_date += self._days_to_timedelta(plan.estimated_effort_days + 2)  # 2 days buffer
 
         return roadmap
 

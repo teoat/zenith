@@ -55,9 +55,7 @@ class InvestigationWorkflowService:
             },
         }
 
-    async def check_triggers(
-        self, diagnostics_data: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    async def check_triggers(self, diagnostics_data: dict[str, Any]) -> list[dict[str, Any]]:
         """Check all triggers against current diagnostics data."""
         triggered_investigations = []
 
@@ -77,9 +75,7 @@ class InvestigationWorkflowService:
 
         return triggered_investigations
 
-    def _check_score_drop_trigger(
-        self, diagnostics_data: dict[str, Any]
-    ) -> dict[str, Any] | None:
+    def _check_score_drop_trigger(self, diagnostics_data: dict[str, Any]) -> dict[str, Any] | None:
         """Check if score drop trigger should activate."""
         trigger_config = self.triggers["score_drop"]
         if not trigger_config["enabled"]:
@@ -94,16 +90,12 @@ class InvestigationWorkflowService:
                 "trigger_type": InvestigationTrigger.SCORE_DROP.value,
                 "reason": f"Overall health score dropped to {overall_score:.1%}",
                 "severity": "high",
-                "affected_dimensions": self._identify_affected_dimensions(
-                    diagnostics_data
-                ),
+                "affected_dimensions": self._identify_affected_dimensions(diagnostics_data),
             }
 
         return None
 
-    def _check_critical_issue_trigger(
-        self, diagnostics_data: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    def _check_critical_issue_trigger(self, diagnostics_data: dict[str, Any]) -> list[dict[str, Any]]:
         """Check for critical issues that should trigger investigation."""
         trigger_config = self.triggers["critical_issue"]
         if not trigger_config["enabled"]:
@@ -118,10 +110,7 @@ class InvestigationWorkflowService:
 
             alerts = dimension_data.get("alerts", [])
             for alert in alerts:
-                if any(
-                    keyword.lower() in alert.lower()
-                    for keyword in trigger_config["keywords"]
-                ):
+                if any(keyword.lower() in alert.lower() for keyword in trigger_config["keywords"]):
                     investigations.append(
                         {
                             "trigger_type": InvestigationTrigger.CRITICAL_ISSUE.value,
@@ -164,9 +153,7 @@ class InvestigationWorkflowService:
 
         return None
 
-    def _identify_affected_dimensions(
-        self, diagnostics_data: dict[str, Any]
-    ) -> list[str]:
+    def _identify_affected_dimensions(self, diagnostics_data: dict[str, Any]) -> list[str]:
         """Identify dimensions affected by issues."""
         affected = []
         for dimension_name, dimension_data in diagnostics_data.items():
@@ -194,9 +181,7 @@ class InvestigationWorkflowService:
         }
 
         self.active_investigations[investigation_id] = investigation
-        logger.info(
-            f"Started investigation {investigation_id}: {trigger_data.get('reason', 'Unknown')}"
-        )
+        logger.info(f"Started investigation {investigation_id}: {trigger_data.get('reason', 'Unknown')}")
 
         # Start with surface analysis
         await self._execute_surface_analysis(investigation)
@@ -215,16 +200,12 @@ class InvestigationWorkflowService:
             "timestamp": datetime.now().isoformat(),
             "phase": InvestigationPhase.SURFACE_ANALYSIS.value,
             "anomalies_detected": 3,
-            "dimensions_affected": investigation["trigger"].get(
-                "affected_dimensions", []
-            ),
+            "dimensions_affected": investigation["trigger"].get("affected_dimensions", []),
             "initial_assessment": "Multiple dimensions showing performance degradation",
         }
 
         investigation["findings"]["surface_analysis"] = surface_findings
-        investigation["phases_completed"].append(
-            InvestigationPhase.SURFACE_ANALYSIS.value
-        )
+        investigation["phases_completed"].append(InvestigationPhase.SURFACE_ANALYSIS.value)
         investigation["phase"] = InvestigationPhase.DEEP_INVESTIGATION.value
 
         # Move to deep investigation
@@ -233,9 +214,7 @@ class InvestigationWorkflowService:
     async def _execute_deep_investigation(self, investigation: dict[str, Any]):
         """Execute deep investigation phase."""
         investigation_id = investigation["id"]
-        logger.info(
-            f"Executing deep investigation for investigation {investigation_id}"
-        )
+        logger.info(f"Executing deep investigation for investigation {investigation_id}")
 
         # Root cause analysis for identified issues
         # This would perform detailed analysis
@@ -256,9 +235,7 @@ class InvestigationWorkflowService:
         }
 
         investigation["findings"]["deep_investigation"] = deep_findings
-        investigation["phases_completed"].append(
-            InvestigationPhase.DEEP_INVESTIGATION.value
-        )
+        investigation["phases_completed"].append(InvestigationPhase.DEEP_INVESTIGATION.value)
         investigation["phase"] = InvestigationPhase.RECOMMENDATION_GENERATION.value
 
         # Move to recommendation generation
@@ -295,9 +272,7 @@ class InvestigationWorkflowService:
         ]
 
         investigation["recommendations"] = recommendations
-        investigation["phases_completed"].append(
-            InvestigationPhase.RECOMMENDATION_GENERATION.value
-        )
+        investigation["phases_completed"].append(InvestigationPhase.RECOMMENDATION_GENERATION.value)
         investigation["phase"] = InvestigationPhase.SYNC_PLANNING.value
 
         # Move to sync planning
@@ -350,9 +325,7 @@ class InvestigationWorkflowService:
 
         logger.info(f"Investigation {investigation_id} completed successfully")
 
-    async def get_investigation_status(
-        self, investigation_id: str
-    ) -> dict[str, Any] | None:
+    async def get_investigation_status(self, investigation_id: str) -> dict[str, Any] | None:
         """Get status of a specific investigation."""
         if investigation_id in self.active_investigations:
             return self.active_investigations[investigation_id]

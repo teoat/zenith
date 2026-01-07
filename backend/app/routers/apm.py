@@ -82,9 +82,7 @@ async def get_metrics(
         if end_time:
             end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
 
-        metrics = apm_service.get_metrics(
-            name=name, start_time=start_dt, end_time=end_dt, limit=limit
-        )
+        metrics = apm_service.get_metrics(name=name, start_time=start_dt, end_time=end_dt, limit=limit)
 
         return {
             "success": True,
@@ -195,9 +193,7 @@ async def get_alerts(
             try:
                 severity_enum = AlertSeverity(severity.lower())
             except ValueError:
-                raise HTTPException(
-                    status_code=400, detail=f"Invalid severity: {severity}"
-                )
+                raise HTTPException(status_code=400, detail=f"Invalid severity: {severity}")
 
         # Parse time filters
         start_dt = None
@@ -238,9 +234,7 @@ async def get_alerts(
 async def create_metric(
     name: str = Body(..., description="Metric name"),
     value: float = Body(..., description="Metric value"),
-    metric_type: str = Body(
-        "gauge", description="Metric type (counter, gauge, histogram, timer)"
-    ),
+    metric_type: str = Body("gauge", description="Metric type (counter, gauge, histogram, timer)"),
     tags: dict[str, str] | None = Body(None, description="Metric tags"),
     unit: str | None = Body(None, description="Metric unit"),
     db: Session = Depends(get_db),
@@ -265,9 +259,7 @@ async def create_metric(
         try:
             metric_type_enum = MetricType(metric_type.lower())
         except ValueError:
-            raise HTTPException(
-                status_code=400, detail=f"Invalid metric type: {metric_type}"
-            )
+            raise HTTPException(status_code=400, detail=f"Invalid metric type: {metric_type}")
 
         record_metric(name, value, metric_type_enum, tags=tags, unit=unit)
 
@@ -303,9 +295,7 @@ async def start_span_endpoint(
         Span creation result with span ID
     """
     try:
-        span_id = start_span(
-            operation_name, trace_id=trace_id, parent_span_id=parent_span_id, tags=tags
-        )
+        span_id = start_span(operation_name, trace_id=trace_id, parent_span_id=parent_span_id, tags=tags)
 
         return {
             "success": True,
@@ -324,9 +314,7 @@ async def start_span_endpoint(
 async def finish_span_endpoint(
     span_id: str,
     status: str = Body("ok", description="Span status (ok, error, timeout)"),
-    error_message: str | None = Body(
-        None, description="Error message if status is error"
-    ),
+    error_message: str | None = Body(None, description="Error message if status is error"),
     db: Session = Depends(get_db),
 ):
     """
@@ -358,9 +346,7 @@ async def finish_span_endpoint(
 
 @router.post("/alerts")
 async def create_alert_endpoint(
-    severity: str = Body(
-        ..., description="Alert severity (info, warning, error, critical)"
-    ),
+    severity: str = Body(..., description="Alert severity (info, warning, error, critical)"),
     title: str = Body(..., description="Alert title"),
     message: str = Body(..., description="Alert message"),
     source: str = Body("application", description="Alert source"),
@@ -391,9 +377,7 @@ async def create_alert_endpoint(
         except ValueError:
             raise HTTPException(status_code=400, detail=f"Invalid severity: {severity}")
 
-        create_alert(
-            severity_enum, title, message, source=source, metadata=metadata, tags=tags
-        )
+        create_alert(severity_enum, title, message, source=source, metadata=metadata, tags=tags)
 
         return {
             "success": True,
@@ -455,17 +439,13 @@ async def get_system_metrics():
 
     except Exception as e:
         logger.error(f"Failed to get system metrics: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get system metrics: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get system metrics: {e!s}")
 
 
 @router.get("/aggregated-metrics")
 async def get_aggregated_metrics(
     name: str = Query(..., description="Metric name"),
-    aggregation: str = Query(
-        "avg", description="Aggregation type (avg, sum, min, max, p50, p95, p99)"
-    ),
+    aggregation: str = Query("avg", description="Aggregation type (avg, sum, min, max, p50, p95, p99)"),
     time_window_minutes: int = Query(5, description="Time window in minutes"),
     db: Session = Depends(get_db),
 ):
@@ -483,9 +463,7 @@ async def get_aggregated_metrics(
     try:
         from app.services.apm_service import apm_service
 
-        aggregated = apm_service.get_aggregated_metrics(
-            name, aggregation, time_window_minutes
-        )
+        aggregated = apm_service.get_aggregated_metrics(name, aggregation, time_window_minutes)
 
         return {
             "success": True,
@@ -498,9 +476,7 @@ async def get_aggregated_metrics(
 
     except Exception as e:
         logger.error(f"Failed to get aggregated metrics: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get aggregated metrics: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get aggregated metrics: {e!s}")
 
 
 @router.post("/export")
@@ -531,9 +507,7 @@ async def export_apm_data(
             timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
             file_path = f"logs/apm_export_{timestamp}.json"
 
-        apm_service.export_data(
-            file_path, include_metrics, include_spans, include_alerts
-        )
+        apm_service.export_data(file_path, include_metrics, include_spans, include_alerts)
 
         return {
             "success": True,
@@ -583,7 +557,6 @@ async def get_dashboard_data():
         # api/apm.py
         import logging
         from datetime import datetime
-        from typing import Any
 
         from app.services.apm_service import (
             get_apm_summary,
@@ -598,7 +571,7 @@ async def get_dashboard_data():
         router = APIRouter(prefix="/apm", tags=["apm-monitoring"])
 
         # Placeholders so tests can patch `auth_service` and `User`
-        User = Any
+        # UserPlaceholder = Any  # Removed unused placeholder
 
         @router.get("/summary")
         async def get_apm_summary_endpoint(current_user: User = Depends(lambda: None)):
@@ -619,9 +592,7 @@ async def get_dashboard_data():
 
             except Exception as e:
                 logger.error(f"Failed to get APM summary: {e!s}")
-                raise HTTPException(
-                    status_code=500, detail=f"Failed to get APM summary: {e!s}"
-                )
+                raise HTTPException(status_code=500, detail=f"Failed to get APM summary: {e!s}")
 
         @router.get("/metrics")
         async def get_metrics(
@@ -654,9 +625,7 @@ async def get_dashboard_data():
                 if end_time:
                     end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
 
-                metrics = apm_service.get_metrics(
-                    name=name, start_time=start_dt, end_time=end_dt, limit=limit
-                )
+                metrics = apm_service.get_metrics(name=name, start_time=start_dt, end_time=end_dt, limit=limit)
 
                 return {
                     "success": True,
@@ -673,9 +642,7 @@ async def get_dashboard_data():
 
             except Exception as e:
                 logger.error(f"Failed to get metrics: {e!s}")
-                raise HTTPException(
-                    status_code=500, detail=f"Failed to get metrics: {e!s}"
-                )
+                raise HTTPException(status_code=500, detail=f"Failed to get metrics: {e!s}")
 
 
 # Health Check Endpoints - Achieving 10/10 Reliability
@@ -751,9 +718,7 @@ async def get_health_status(
         return status
     except Exception as e:
         logger.error(f"Failed to get health status: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get health status: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get health status: {e!s}")
 
 
 @router.get("/health/history")
@@ -772,9 +737,7 @@ async def get_health_history(
         }
     except Exception as e:
         logger.error(f"Failed to get health history: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get health history: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get health history: {e!s}")
 
 
 @router.get("/health/degradation")
@@ -789,9 +752,7 @@ async def get_degradation_status(
         return status
     except Exception as e:
         logger.error(f"Failed to get degradation status: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get degradation status: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get degradation status: {e!s}")
 
 
 # Distributed Tracing Endpoints - Achieving 10/10 Reliability
@@ -813,7 +774,7 @@ async def start_trace(
 
 
 @router.post("/trace/{trace_id}/span/start")
-async def start_span(
+async def start_trace_span(
     trace_id: str,
     span_name: str,
     parent_span_id: str | None = None,
@@ -915,9 +876,7 @@ async def get_trace_summary(
         raise
     except Exception as e:
         logger.error(f"Failed to get trace summary: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get trace summary: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get trace summary: {e!s}")
 
 
 @router.get("/traces/recent")
@@ -933,6 +892,4 @@ async def get_recent_traces(
         return {"traces": traces, "count": len(traces), "limit": limit}
     except Exception as e:
         logger.error(f"Failed to get recent traces: {e!s}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get recent traces: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get recent traces: {e!s}")

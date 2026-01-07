@@ -22,7 +22,7 @@ async def get_ml_system_status():
         "feedback_loop_enabled": True,
         "ab_testing_enabled": True,
         "last_feedback_timestamp": None,
-        "feedback_count": 0
+        "feedback_count": 0,
     }
 
 
@@ -34,8 +34,4 @@ async def get_ab_test_results():
     Returns:
         Results from A/B testing iterations
     """
-    return {
-        "tests": [],
-        "total": 0,
-        "message": "No A/B tests configured"
-    }
+    return {"tests": [], "total": 0, "message": "No A/B tests configured"}

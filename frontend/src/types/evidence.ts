@@ -18,7 +18,7 @@ export interface EvidenceMetadata {
 export interface CustodyEvent {
   id: string;
   timestamp: string;
-  action: 'upload' | 'access' | 'transfer' | 'analysis' | 'download' | 'delete';
+  action: "upload" | "access" | "transfer" | "analysis" | "download" | "delete";
   user: string;
   location?: string;
   notes?: string;
@@ -75,7 +75,7 @@ export interface DigitalSignature {
 export interface EvidenceCorrelation {
   id: string;
   relatedEvidenceId: string;
-  correlationType: 'content' | 'metadata' | 'temporal' | 'entity' | 'semantic';
+  correlationType: "content" | "metadata" | "temporal" | "entity" | "semantic";
   confidence: number;
   description: string;
   detectedAt: string;

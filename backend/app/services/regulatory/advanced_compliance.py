@@ -137,9 +137,7 @@ class AdvancedComplianceEngine:
 
         # Redis connection
         try:
-            pool = redis.ConnectionPool.from_url(
-                settings.REDIS_URL, decode_responses=True
-            )
+            pool = redis.ConnectionPool.from_url(settings.REDIS_URL, decode_responses=True)
             self.redis_client = redis.Redis(connection_pool=pool)
             logger.info("AdvancedComplianceEngine connected to Redis")
         except Exception as e:
@@ -179,15 +177,11 @@ class AdvancedComplianceEngine:
                     new_entries.add(line.split(",")[0].strip().lower())
 
             self.sanctions_db.update(new_entries)
-            logger.info(
-                f"Updated sanctions database from {source}. Total entries: {len(self.sanctions_db)}"
-            )
+            logger.info(f"Updated sanctions database from {source}. Total entries: {len(self.sanctions_db)}")
         except Exception as e:
             logger.error(f"Failed to parse sanctions data from {source}: {e}")
 
-    async def _check_sanctions_compliance(
-        self, entity_data: dict[str, Any]
-    ) -> tuple[ComplianceStatus, float]:
+    async def _check_sanctions_compliance(self, entity_data: dict[str, Any]) -> tuple[ComplianceStatus, float]:
         """Check entity against sanctions lists"""
         name = entity_data.get("name", "").lower()
         if not name:
@@ -212,11 +206,7 @@ class AdvancedComplianceEngine:
                 risk_score = 0.9
                 break
 
-        status = (
-            ComplianceStatus.NON_COMPLIANT
-            if risk_score > 0.8
-            else ComplianceStatus.COMPLIANT
-        )
+        status = ComplianceStatus.NON_COMPLIANT if risk_score > 0.8 else ComplianceStatus.COMPLIANT
         return status, risk_score
 
     async def _detect_suspicious_pattern(self, pattern: str) -> list[dict[str, Any]]:
@@ -260,9 +250,7 @@ class AdvancedComplianceEngine:
                     "Verify identity through trusted third parties",
                     "Enhanced due diligence for high-risk customers",
                 ],
-                reference_links=[
-                    "https://www.finra.org/rules-guidance/key-topics/know-your-customer"
-                ],
+                reference_links=["https://www.finra.org/rules-guidance/key-topics/know-your-customer"],
             ),
             "transaction_monitoring": ComplianceRule(
                 rule_id="transaction_monitoring",
@@ -278,9 +266,7 @@ class AdvancedComplianceEngine:
                     "Freeze suspicious transactions",
                     "Enhanced monitoring of involved parties",
                 ],
-                reference_links=[
-                    "https://www.fincen.gov/resources/statutes-regulations/guidance/msb-guidance"
-                ],
+                reference_links=["https://www.fincen.gov/resources/statutes-regulations/guidance/msb-guidance"],
             ),
             "sanctions_screening": ComplianceRule(
                 rule_id="sanctions_screening",
@@ -296,9 +282,7 @@ class AdvancedComplianceEngine:
                     "Enhanced due diligence for PEP relationships",
                     "Regular screening updates",
                 ],
-                reference_links=[
-                    "https://www.treasury.gov/resource-center/sanctions/Pages/default.aspx"
-                ],
+                reference_links=["https://www.treasury.gov/resource-center/sanctions/Pages/default.aspx"],
             ),
             "data_protection": ComplianceRule(
                 rule_id="data_protection",
@@ -346,9 +330,7 @@ class AdvancedComplianceEngine:
                     "Regular risk assessments of products and services",
                     "Update risk mitigation strategies",
                 ],
-                reference_links=[
-                    "https://www.fatf-gafi.org/publications/fatfrecommendations/"
-                ],
+                reference_links=["https://www.fatf-gafi.org/publications/fatfrecommendations/"],
             ),
         }
 
@@ -432,9 +414,7 @@ class AdvancedComplianceEngine:
 
         return check_result
 
-    async def generate_compliance_report(
-        self, framework: RegulatoryFramework, period_days: int = 30
-    ) -> ComplianceReport:
+    async def generate_compliance_report(self, framework: RegulatoryFramework, period_days: int = 30) -> ComplianceReport:
         """
         Generate comprehensive compliance report for a regulatory framework
 
@@ -461,27 +441,15 @@ class AdvancedComplianceEngine:
         risk_summary = {}
         for risk_level in ComplianceRisk:
             risk_summary[risk_level.value] = sum(
-                1
-                for check in relevant_checks
-                if self.compliance_rules[check.rule_id].risk_level == risk_level
+                1 for check in relevant_checks if self.compliance_rules[check.rule_id].risk_level == risk_level
             )
 
         # Determine overall status
-        critical_findings = [
-            check
-            for check in relevant_checks
-            if check.status == ComplianceStatus.NON_COMPLIANT
-        ]
-        overall_status = (
-            ComplianceStatus.NON_COMPLIANT
-            if critical_findings
-            else ComplianceStatus.COMPLIANT
-        )
+        critical_findings = [check for check in relevant_checks if check.status == ComplianceStatus.NON_COMPLIANT]
+        overall_status = ComplianceStatus.NON_COMPLIANT if critical_findings else ComplianceStatus.COMPLIANT
 
         # Generate recommendations
-        recommendations = self._generate_report_recommendations(
-            relevant_checks, framework
-        )
+        recommendations = self._generate_report_recommendations(relevant_checks, framework)
 
         report = ComplianceReport(
             report_id=f"report_{framework.value}_{int(period_end.timestamp())}",
@@ -490,9 +458,7 @@ class AdvancedComplianceEngine:
             period_end=period_end,
             overall_status=overall_status,
             risk_summary=risk_summary,
-            critical_findings=[
-                f"Non-compliant check: {check.check_id}" for check in critical_findings
-            ],
+            critical_findings=[f"Non-compliant check: {check.check_id}" for check in critical_findings],
             recommendations=recommendations,
             generated_at=period_end,
         )
@@ -514,13 +480,9 @@ class AdvancedComplianceEngine:
                 # Update Redis
                 if self.redis_client and sanctions_data:
                     self.redis_client.sadd("sanctions:names", *sanctions_data)
-                    logger.info(
-                        f"Updated Redis sanctions list with {len(sanctions_data)} entries"
-                    )
+                    logger.info(f"Updated Redis sanctions list with {len(sanctions_data)} entries")
 
-                logger.info(
-                    f"Sanctions lists updated. Total entries: {len(self.sanctions_db)}"
-                )
+                logger.info(f"Sanctions lists updated. Total entries: {len(self.sanctions_db)}")
 
                 # Check for sanctions matches in recent transactions
                 await self._check_recent_transactions_against_sanctions()
@@ -540,20 +502,14 @@ class AdvancedComplianceEngine:
                 # In a real app, we'd inject a transaction_service or similar.
                 recent_transactions = []  # Placeholder: await transaction_service.get_recent_transactions()
 
-                findings = self.transaction_analyzer.analyze_velocity(
-                    recent_transactions
-                )
-                structuring = self.transaction_analyzer.detect_structuring(
-                    recent_transactions
-                )
+                findings = self.transaction_analyzer.analyze_velocity(recent_transactions)
+                structuring = self.transaction_analyzer.detect_structuring(recent_transactions)
 
                 all_findings = findings + structuring
 
                 if all_findings:
                     for finding in all_findings:
-                        await self._generate_suspicious_activity_alert(
-                            finding.get("pattern", "suspicious_pattern"), [finding]
-                        )
+                        await self._generate_suspicious_activity_alert(finding.get("pattern", "suspicious_pattern"), [finding])
 
             except Exception as e:
                 logger.error(f"Error monitoring transaction patterns: {e}")
@@ -590,9 +546,7 @@ class AdvancedComplianceEngine:
                     impact_assessment = await self._assess_regulatory_impact(update)
 
                     if impact_assessment["requires_action"]:
-                        await self._generate_regulatory_change_alert(
-                            update, impact_assessment
-                        )
+                        await self._generate_regulatory_change_alert(update, impact_assessment)
 
             except Exception as e:
                 logger.error(f"Error monitoring regulatory changes: {e}")
@@ -643,9 +597,7 @@ class AdvancedComplianceEngine:
                 recommendations.extend(rule.remediation_steps)
 
         elif rule.rule_id == "data_protection":
-            status, risk_score = await self._check_data_protection_compliance(
-                entity_data
-            )
+            status, risk_score = await self._check_data_protection_compliance(entity_data)
             if status == ComplianceStatus.NON_COMPLIANT:
                 findings.append("Personal data processing without consent")
                 recommendations.extend(rule.remediation_steps)
@@ -657,9 +609,7 @@ class AdvancedComplianceEngine:
 
         return status, risk_score, findings, recommendations
 
-    async def _check_kyc_compliance(
-        self, customer_data: dict[str, Any]
-    ) -> tuple[ComplianceStatus, float]:
+    async def _check_kyc_compliance(self, customer_data: dict[str, Any]) -> tuple[ComplianceStatus, float]:
         """Check KYC compliance for customer data"""
         required_fields = [
             "full_name",
@@ -679,16 +629,10 @@ class AdvancedComplianceEngine:
         if customer_data.get("pep_association", False):
             risk_score += 0.4
 
-        status = (
-            ComplianceStatus.NON_COMPLIANT
-            if risk_score > 0.5
-            else ComplianceStatus.COMPLIANT
-        )
+        status = ComplianceStatus.NON_COMPLIANT if risk_score > 0.5 else ComplianceStatus.COMPLIANT
         return status, risk_score
 
-    async def _check_transaction_compliance(
-        self, transaction_data: dict[str, Any]
-    ) -> tuple[ComplianceStatus, float]:
+    async def _check_transaction_compliance(self, transaction_data: dict[str, Any]) -> tuple[ComplianceStatus, float]:
         """Check transaction for suspicious patterns"""
         risk_score = 0.0
 
@@ -705,16 +649,10 @@ class AdvancedComplianceEngine:
         if transaction_data.get("round_trip_pattern", False):
             risk_score += 0.6
 
-        status = (
-            ComplianceStatus.NON_COMPLIANT
-            if risk_score > 0.4
-            else ComplianceStatus.COMPLIANT
-        )
+        status = ComplianceStatus.NON_COMPLIANT if risk_score > 0.4 else ComplianceStatus.COMPLIANT
         return status, risk_score
 
-    async def _check_sanctions_compliance(
-        self, entity_data: dict[str, Any]
-    ) -> tuple[ComplianceStatus, float]:
+    async def _check_sanctions_compliance(self, entity_data: dict[str, Any]) -> tuple[ComplianceStatus, float]:
         """Check entity against sanctions lists"""
         # In real implementation, would check against comprehensive sanctions databases
         name = entity_data.get("name", "").lower()
@@ -726,16 +664,10 @@ class AdvancedComplianceEngine:
                 risk_score = 1.0
                 break
 
-        status = (
-            ComplianceStatus.NON_COMPLIANT
-            if risk_score > 0.8
-            else ComplianceStatus.COMPLIANT
-        )
+        status = ComplianceStatus.NON_COMPLIANT if risk_score > 0.8 else ComplianceStatus.COMPLIANT
         return status, risk_score
 
-    async def _check_data_protection_compliance(
-        self, data_processing: dict[str, Any]
-    ) -> tuple[ComplianceStatus, float]:
+    async def _check_data_protection_compliance(self, data_processing: dict[str, Any]) -> tuple[ComplianceStatus, float]:
         """Check GDPR/data protection compliance"""
         risk_score = 0.0
 
@@ -748,11 +680,7 @@ class AdvancedComplianceEngine:
         if not data_processing.get("privacy_policy_provided", False):
             risk_score += 0.3
 
-        status = (
-            ComplianceStatus.NON_COMPLIANT
-            if risk_score > 0.3
-            else ComplianceStatus.COMPLIANT
-        )
+        status = ComplianceStatus.NON_COMPLIANT if risk_score > 0.3 else ComplianceStatus.COMPLIANT
         return status, risk_score
 
     def _calculate_next_check_date(self, frequency: str) -> datetime:
@@ -774,9 +702,7 @@ class AdvancedComplianceEngine:
         else:
             return now + timedelta(days=1)  # Default to daily
 
-    async def _generate_regulatory_alert(
-        self, rule: ComplianceRule, check: ComplianceCheck
-    ) -> None:
+    async def _generate_regulatory_alert(self, rule: ComplianceRule, check: ComplianceCheck) -> None:
         """Generate regulatory alert for non-compliant findings"""
         alert = RegulatoryAlert(
             alert_id=f"alert_{check.check_id}",
@@ -809,9 +735,7 @@ class AdvancedComplianceEngine:
         # In real implementation, would analyze transaction data for patterns
         return []  # Mock empty result
 
-    async def _generate_suspicious_activity_alert(
-        self, pattern: str, findings: list[dict[str, Any]]
-    ) -> None:
+    async def _generate_suspicious_activity_alert(self, pattern: str, findings: list[dict[str, Any]]) -> None:
         """Generate alert for suspicious activity"""
         logger.warning(f"Suspicious activity detected: {pattern}")
 
@@ -833,21 +757,15 @@ class AdvancedComplianceEngine:
         """Assess impact of regulatory change"""
         return {"requires_action": False, "impact_level": "low"}
 
-    async def _generate_regulatory_change_alert(
-        self, update: dict[str, Any], impact: dict[str, Any]
-    ) -> None:
+    async def _generate_regulatory_change_alert(self, update: dict[str, Any], impact: dict[str, Any]) -> None:
         """Generate alert for regulatory change"""
         logger.info("Regulatory change alert generated")
 
-    def _generate_report_recommendations(
-        self, checks: list[ComplianceCheck], framework: RegulatoryFramework
-    ) -> list[str]:
+    def _generate_report_recommendations(self, checks: list[ComplianceCheck], framework: RegulatoryFramework) -> list[str]:
         """Generate recommendations for compliance report"""
         recommendations = []
 
-        non_compliant_checks = [
-            c for c in checks if c.status == ComplianceStatus.NON_COMPLIANT
-        ]
+        non_compliant_checks = [c for c in checks if c.status == ComplianceStatus.NON_COMPLIANT]
 
         if non_compliant_checks:
             recommendations.append("Address all non-compliant findings immediately")

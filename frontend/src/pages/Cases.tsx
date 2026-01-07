@@ -1,78 +1,91 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Activity, LayoutList } from 'lucide-react';
-import { useCases } from '@/hooks/useCases';
-import type { Case } from '@/types/schema';
-import { approvalService } from '@/services/approvalService';
-import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
-import { useTouchGestures } from '@/hooks/useTouchGestures';
-import { CaseList } from '@/components/cases/CaseList';
-import CasePreviewDrawer from '@/components/cases/CasePreviewDrawer';
-import CaseHeader from '@/components/cases/CaseHeader';
-import { KeyboardShortcutsModal } from '@/components/ui/KeyboardShortcutsModal';
-import { Badge } from '@/components/ui/Badge';
-import { KEYBOARD_SHORTCUTS } from '@/lib/keyboardShortcuts';
-import { useQueryClient } from '@tanstack/react-query';
-import { ApprovalQueue } from '@/components/ApprovalQueue';
-import { SplitView } from '@/components/ui/SplitView';
-import { secureLogger } from '@/utils/secureLogger';
-import PageErrorBoundary from '@/components/PageErrorBoundary';
-import LoadingState from '@/components/LoadingState';
-import { useToast } from '@/providers/ToastProvider';
-
+import React, { useState, useCallback, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Activity, LayoutList } from "lucide-react";
+import { useCases } from "@/features/cases/hooks/useCases";
+import type { Case } from "@/types/schema";
+import { approvalService } from "@/services/approvalService";
+import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation";
+import { useTouchGestures } from "@/hooks/useTouchGestures";
+import { CaseList } from "@/features/cases/components/CaseList";
+import CasePreviewDrawer from "@/features/cases/components/CasePreviewDrawer";
+import CaseHeader from "@/features/cases/components/CaseHeader";
+import { KeyboardShortcutsModal } from "@/components/ui/KeyboardShortcutsModal";
+import { Badge } from "@/components/ui/Badge";
+import { KEYBOARD_SHORTCUTS } from "@/lib/keyboardShortcuts";
+import { useQueryClient } from "@tanstack/react-query";
+import { ApprovalQueue } from "@/components/ApprovalQueue";
+import { SplitView } from "@/components/ui/SplitView";
+import { secureLogger } from "@/utils/secureLogger";
+import PageErrorBoundary from "@/components/PageErrorBoundary";
+import LoadingState from "@/components/LoadingState";
+import { useToast } from "@/providers/ToastProvider";
 
 // Lazy load heavy components
-const CaseKanban = React.lazy(() => import('../components/cases/CaseKanban'));
-const AdjudicationQueue = React.lazy(() => import('../pages/AdjudicationQueue'));
+const CaseKanban = React.lazy(
+  () => import("../features/cases/components/CaseKanban"),
+);
+const AdjudicationQueue = React.lazy(
+  () => import("../pages/AdjudicationQueue"),
+);
 
 interface CasesProps {}
 
 const Cases: React.FC<CasesProps> = () => {
   const { data, isLoading, error } = useCases();
-  const cases = useMemo(() => data?.data?.items || [], [data?.data?.items]);
+  const cases = useMemo(() => data?.items || [], [data?.items]);
   const { caseId } = useParams<{ caseId: string }>();
   const navigate = useNavigate();
   const { addToast } = useToast();
   const queryClient = useQueryClient();
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [selectedCases, setSelectedCases] = useState<Set<string>>(new Set());
-  const [viewMode, setViewMode] = useState<'list' | 'kanban' | 'adjudication'>('list');
+  const [viewMode, setViewMode] = useState<"list" | "kanban" | "adjudication">(
+    "list",
+  );
 
   // Computed values
   const previewCaseId = caseId || null;
 
-  const filteredCases = useMemo(() =>
-    cases.filter((caseItem: Case) =>
-      caseItem.title?.toLowerCase().includes(searchTerm.toLowerCase())
-    ), [cases, searchTerm]
+  const filteredCases = useMemo(
+    () =>
+      cases.filter((caseItem: Case) =>
+        caseItem.title?.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
+    [cases, searchTerm],
   );
 
   // Event handlers
-  const handleOpenCase = useCallback((id: string) => {
-    navigate(`/cases/${id}`);
-  }, [navigate]);
+  const handleOpenCase = useCallback(
+    (id: string) => {
+      navigate(`/cases/${id}`);
+    },
+    [navigate],
+  );
 
   const handleNewCase = useCallback(() => {
-    navigate('/cases/new');
+    navigate("/cases/new");
   }, [navigate]);
 
-  const toggleCaseSelection = useCallback((id: string, e?: React.MouseEvent | React.KeyboardEvent) => {
-    if (e) e.stopPropagation();
-    setSelectedCases(prev => {
-      const newSelected = new Set(prev);
-      if (newSelected.has(id)) {
-        newSelected.delete(id);
-      } else {
-        newSelected.add(id);
-      }
-      return newSelected;
-    });
-  }, []);
+  const toggleCaseSelection = useCallback(
+    (id: string, e?: React.MouseEvent | React.KeyboardEvent) => {
+      if (e) e.stopPropagation();
+      setSelectedCases((prev) => {
+        const newSelected = new Set(prev);
+        if (newSelected.has(id)) {
+          newSelected.delete(id);
+        } else {
+          newSelected.add(id);
+        }
+        return newSelected;
+      });
+    },
+    [],
+  );
 
   const selectAllCases = useCallback(() => {
-    setSelectedCases(new Set(filteredCases.map(c => c.id)));
+    setSelectedCases(new Set(filteredCases.map((c: Case) => c.id)));
   }, [filteredCases]);
 
   const clearSelection = useCallback(() => {
@@ -82,28 +95,28 @@ const Cases: React.FC<CasesProps> = () => {
   const handleBulkDelete = useCallback(async () => {
     const selectedIds = Array.from(selectedCases);
     const selectedCaseTitles = cases
-      .filter(c => selectedCases.has(c.id))
-      .map(c => c.title)
-      .join(', ');
+      .filter((c: Case) => selectedCases.has(c.id))
+      .map((c: Case) => c.title)
+      .join(", ");
 
     try {
       await approvalService.createFromAISuggestion({
-        type: 'delete',
+        type: "delete",
         title: `Bulk Delete ${selectedIds.length} Cases`,
         description: `Delete the following cases: ${selectedCaseTitles}`,
         details: {
           caseIds: selectedIds,
-          operation: 'bulk_delete'
+          operation: "bulk_delete",
         },
-        reasoning: 'Bulk delete operation initiated by user',
-        confidence: 1.0
+        reasoning: "Bulk delete operation initiated by user",
+        confidence: 1.0,
       });
 
       setSelectedCases(new Set());
-      addToast('Bulk delete request submitted', 'success');
+      addToast("Bulk delete request submitted", "success");
     } catch (error) {
-      secureLogger.error('Failed to add bulk delete to approval queue:', error);
-      addToast('Failed to submit bulk delete request', 'error');
+      secureLogger.error("Failed to add bulk delete to approval queue:", error);
+      addToast("Failed to submit bulk delete request", "error");
     }
   }, [selectedCases, cases, addToast]);
 
@@ -111,71 +124,94 @@ const Cases: React.FC<CasesProps> = () => {
     const selectedIds = Array.from(selectedCases);
     try {
       await approvalService.createFromAISuggestion({
-        type: 'external_api',
+        type: "external_api",
         title: `AI Deep Analysis: ${selectedIds.length} Cases`,
         description: `Run comprehensive cross-case correlation and fraud pattern detection on ${selectedIds.length} investigations.`,
         details: {
           caseIds: selectedIds,
-          operation: 'bulk_ai_analyze'
+          operation: "bulk_ai_analyze",
         },
-        reasoning: 'AI-driven batch triage requested for selected cases',
-        confidence: 0.95
+        reasoning: "AI-driven batch triage requested for selected cases",
+        confidence: 0.95,
       });
       setSelectedCases(new Set());
-      addToast('AI analysis request submitted', 'success');
+      addToast("AI analysis request submitted", "success");
     } catch (error) {
-      secureLogger.error('Failed to add bulk AI analysis to approval queue:', error);
-      addToast('Failed to submit AI analysis request', 'error');
+      secureLogger.error(
+        "Failed to add bulk AI analysis to approval queue:",
+        error,
+      );
+      addToast("Failed to submit AI analysis request", "error");
     }
   }, [selectedCases, addToast]);
 
   // Touch gestures
   const touchRef = useTouchGestures({
     onSwipeLeft: useCallback(() => {
-      const currentIndex = filteredCases.findIndex(c => c.id === previewCaseId);
+      const currentIndex = filteredCases.findIndex(
+        (c: Case) => c.id === previewCaseId,
+      );
       if (currentIndex >= 0 && currentIndex < filteredCases.length - 1) {
         handleOpenCase(filteredCases[currentIndex + 1].id);
       }
     }, [filteredCases, previewCaseId, handleOpenCase]),
 
     onSwipeRight: useCallback(() => {
-      const currentIndex = filteredCases.findIndex(c => c.id === previewCaseId);
+      const currentIndex = filteredCases.findIndex(
+        (c: Case) => c.id === previewCaseId,
+      );
       if (currentIndex > 0) {
         handleOpenCase(filteredCases[currentIndex - 1].id);
       }
-    }, [filteredCases, previewCaseId, handleOpenCase])
+    }, [filteredCases, previewCaseId, handleOpenCase]),
   });
 
   // Keyboard shortcuts
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === '?') {
+      if (e.key === "?") {
         e.preventDefault();
         setShowShortcuts(true);
       }
+      if (e.key === "Enter" && previewCaseId) {
+        e.preventDefault();
+        handleOpenCase(previewCaseId);
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setPreviewCaseId(null);
+      }
+      if (e.key === "/" && e.ctrlKey) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [previewCaseId, handleOpenCase]);
 
   // Keyboard navigation for case list
   const listRef = useKeyboardNavigation({
     onArrowDown: useCallback(() => {
-      const currentIndex = filteredCases.findIndex(c => c.id === previewCaseId);
+      const currentIndex = filteredCases.findIndex(
+        (c: Case) => c.id === previewCaseId,
+      );
       if (currentIndex < filteredCases.length - 1) {
         handleOpenCase(filteredCases[currentIndex + 1].id);
       }
     }, [filteredCases, previewCaseId, handleOpenCase]),
 
     onArrowUp: useCallback(() => {
-      const currentIndex = filteredCases.findIndex(c => c.id === previewCaseId);
+      const currentIndex = filteredCases.findIndex(
+        (c: Case) => c.id === previewCaseId,
+      );
       if (currentIndex > 0) {
         handleOpenCase(filteredCases[currentIndex - 1].id);
       }
     }, [filteredCases, previewCaseId, handleOpenCase]),
 
-    enabled: viewMode === 'list' && !!previewCaseId
+    enabled: viewMode === "list" && !!previewCaseId,
   });
 
   // Loading state
@@ -188,11 +224,18 @@ const Cases: React.FC<CasesProps> = () => {
               <LayoutList size={24} className="text-blue-600" />
               Cases
             </h1>
-            <p className="text-slate-500 text-sm mt-1">Manage and triage active fraud investigations</p>
+            <p className="text-slate-500 text-sm mt-1">
+              Manage and triage active fraud investigations
+            </p>
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center">
-          <LoadingState type="spinner" context="data" size="lg" text="Loading cases..." />
+          <LoadingState
+            type="spinner"
+            context="data"
+            size="lg"
+            text="Loading cases..."
+          />
         </div>
       </div>
     );
@@ -213,9 +256,13 @@ const Cases: React.FC<CasesProps> = () => {
         </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center p-8">
-            <p className="text-red-500 mb-4">Error loading cases: {error.message}</p>
+            <p className="text-red-500 mb-4">
+              Error loading cases: {error.message}
+            </p>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: ['cases'] })}
+              onClick={() =>
+                queryClient.invalidateQueries({ queryKey: ["cases"] })
+              }
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
               Retry
@@ -240,12 +287,12 @@ const Cases: React.FC<CasesProps> = () => {
 
       {/* Content Area */}
       <div ref={touchRef} className="flex-1 overflow-hidden relative">
-        {viewMode === 'list' ? (
+        {viewMode === "list" ? (
           <SplitView
             initialSplit={33}
             minLeftWidth={300}
             minRightWidth={400}
-            left={(
+            left={
               <CaseList
                 cases={filteredCases}
                 selectedCases={selectedCases}
@@ -258,54 +305,77 @@ const Cases: React.FC<CasesProps> = () => {
                 onBulkDelete={handleBulkDelete}
                 listRef={listRef}
               />
-            )}
-            right={(
+            }
+            right={
               <div className="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-slate-950">
                 {previewCaseId ? (
                   <CasePreviewDrawer
                     isOpen={true}
                     caseId={previewCaseId}
-                    onClose={() => navigate('/cases')}
+                    onClose={() => navigate("/cases")}
                     isEmbedded={true}
                   />
                 ) : (
                   <div className="flex-1 p-10 space-y-10 overflow-y-auto">
                     <div className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 p-16 text-center shadow-xl shadow-slate-200/20 dark:shadow-none relative overflow-hidden">
                       <div className="absolute top-0 right-0 p-8 opacity-5">
-                         <LayoutList size={200} />
+                        <LayoutList size={200} />
                       </div>
                       <div className="relative z-10">
                         <div className="p-4 bg-blue-500/10 rounded-2xl w-fit mx-auto mb-6">
-                           <Activity size={48} className="text-blue-500 animate-pulse" />
+                          <Activity
+                            size={48}
+                            className="text-blue-500 animate-pulse"
+                          />
                         </div>
-                        <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight italic">CASE ORCHESTRATOR</h3>
+                        <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight italic">
+                          CASE ORCHESTRATOR
+                        </h3>
                         <p className="text-slate-500 text-base mt-4 max-w-sm mx-auto font-medium leading-relaxed">
-                          Select an active investigation from the ledger to initiate deep-layer forensic analysis and cross-entity correlation.
+                          Select an active investigation from the ledger to
+                          initiate deep-layer forensic analysis and cross-entity
+                          correlation.
                         </p>
                       </div>
                     </div>
 
                     <div className="space-y-6">
                       <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Prioritized Approvals</h4>
-                        <Badge className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold rounded-full">ACTION REQUIRED</Badge>
+                        <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                          Prioritized Approvals
+                        </h4>
+                        <Badge className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold rounded-full">
+                          ACTION REQUIRED
+                        </Badge>
                       </div>
-                      <ApprovalQueue maxHeight="450px" showHeader={false} className="border-none shadow-none bg-transparent" />
+                      <ApprovalQueue
+                        maxHeight="450px"
+                        showHeader={false}
+                        className="border-none shadow-none bg-transparent"
+                      />
                     </div>
                   </div>
                 )}
               </div>
-            )}
+            }
           />
-        ) : viewMode === 'kanban' ? (
-          <React.Suspense fallback={<LoadingState type="skeleton" context="component" size="lg" />}>
+        ) : viewMode === "kanban" ? (
+          <React.Suspense
+            fallback={
+              <LoadingState type="skeleton" context="component" size="lg" />
+            }
+          >
             <CaseKanban
               cases={filteredCases}
               onCaseClick={(id) => navigate(`/cases/${id}`)}
             />
           </React.Suspense>
         ) : (
-          <React.Suspense fallback={<LoadingState type="skeleton" context="component" size="lg" />}>
+          <React.Suspense
+            fallback={
+              <LoadingState type="skeleton" context="component" size="lg" />
+            }
+          >
             <AdjudicationQueue />
           </React.Suspense>
         )}

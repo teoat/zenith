@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import { secureLogger } from '@/utils/secureLogger';
+import { useState, useCallback, useEffect } from "react";
+import { secureLogger } from "@/utils/secureLogger";
 
 export interface DataConsistencyCheck {
   id: string;
@@ -35,61 +35,61 @@ class ReliabilityManager {
   private initializeConsistencyChecks() {
     const checks: DataConsistencyCheck[] = [
       {
-        id: 'database-connection',
-        name: 'Database Connection',
+        id: "database-connection",
+        name: "Database Connection",
         check: async () => {
           try {
             // Check database connectivity via real health endpoint
-            const response = await fetch('/api/health');
+            const response = await fetch("/api/health");
             if (!response.ok) return false;
             const data = await response.json();
-            return data.components?.database?.status === 'healthy';
+            return data.components?.database?.status === "healthy";
           } catch {
             return false;
           }
         },
         lastChecked: 0,
-        lastResult: null
+        lastResult: null,
       },
       {
-        id: 'system-integrity',
-        name: 'System Integrity',
+        id: "system-integrity",
+        name: "System Integrity",
         check: async () => {
           try {
             // Check overall system status
-            const response = await fetch('/api/health');
+            const response = await fetch("/api/health");
             if (!response.ok) return false;
             const data = await response.json();
-            return data.status === 'healthy';
+            return data.status === "healthy";
           } catch {
             return false;
           }
         },
         lastChecked: 0,
-        lastResult: null
+        lastResult: null,
       },
       {
-        id: 'cache-status',
-        name: 'Cache Services',
+        id: "cache-status",
+        name: "Cache Services",
         check: async () => {
           try {
             // Check cache status
-            const response = await fetch('/api/health');
+            const response = await fetch("/api/health");
             if (!response.ok) return false;
             const data = await response.json();
             // Pass if healthy or explicitly not configured (optional dependency)
             const status = data.components?.cache?.status;
-            return status === 'healthy' || status === 'not_configured';
+            return status === "healthy" || status === "not_configured";
           } catch {
             return false;
           }
         },
         lastChecked: 0,
-        lastResult: null
-      }
+        lastResult: null,
+      },
     ];
 
-    checks.forEach(check => {
+    checks.forEach((check) => {
       this.consistencyChecks.set(check.id, check);
     });
   }
@@ -97,53 +97,57 @@ class ReliabilityManager {
   private initializeFailoverStrategies() {
     const strategies: FailoverStrategy[] = [
       {
-        id: 'database-failover',
-        name: 'Database Failover',
-        description: 'Switch to backup database instance',
+        id: "database-failover",
+        name: "Database Failover",
+        description: "Switch to backup database instance",
         isActive: false,
         priority: 1,
         execute: async () => {
-          secureLogger.info('RELIABILITY', 'Executing database failover...');
+          secureLogger.info("RELIABILITY", "Executing database failover...");
           // Implementation would switch database connections
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          secureLogger.info('RELIABILITY', 'Database failover completed');
-        }
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          secureLogger.info("RELIABILITY", "Database failover completed");
+        },
       },
       {
-        id: 'cache-invalidation',
-        name: 'Cache Invalidation',
-        description: 'Clear and rebuild cache from database',
+        id: "cache-invalidation",
+        name: "Cache Invalidation",
+        description: "Clear and rebuild cache from database",
         isActive: false,
         priority: 2,
         execute: async () => {
-          secureLogger.info('RELIABILITY', 'Executing cache invalidation...');
+          secureLogger.info("RELIABILITY", "Executing cache invalidation...");
           try {
-            await fetch('/api/cache/invalidate', { method: 'POST' });
-            secureLogger.info('RELIABILITY', 'Cache invalidation completed');
+            await fetch("/api/cache/invalidate", { method: "POST" });
+            secureLogger.info("RELIABILITY", "Cache invalidation completed");
           } catch (error) {
-            secureLogger.error('RELIABILITY', 'Cache invalidation failed', { error: error instanceof Error ? error.message : String(error) });
+            secureLogger.error("RELIABILITY", "Cache invalidation failed", {
+              error: error instanceof Error ? error.message : String(error),
+            });
           }
-        }
+        },
       },
       {
-        id: 'service-restart',
-        name: 'Service Restart',
-        description: 'Restart affected microservices',
+        id: "service-restart",
+        name: "Service Restart",
+        description: "Restart affected microservices",
         isActive: false,
         priority: 3,
         execute: async () => {
-          secureLogger.info('RELIABILITY', 'Executing service restart...');
+          secureLogger.info("RELIABILITY", "Executing service restart...");
           try {
-            await fetch('/api/admin/restart-services', { method: 'POST' });
-            secureLogger.info('RELIABILITY', 'Service restart completed');
+            await fetch("/api/admin/restart-services", { method: "POST" });
+            secureLogger.info("RELIABILITY", "Service restart completed");
           } catch (error) {
-            secureLogger.error('RELIABILITY', 'Service restart failed', { error: error instanceof Error ? error.message : String(error) });
+            secureLogger.error("RELIABILITY", "Service restart failed", {
+              error: error instanceof Error ? error.message : String(error),
+            });
           }
-        }
-      }
+        },
+      },
     ];
 
-    strategies.forEach(strategy => {
+    strategies.forEach((strategy) => {
       this.failoverStrategies.set(strategy.id, strategy);
     });
   }
@@ -156,7 +160,7 @@ class ReliabilityManager {
   }
 
   private notifyListeners() {
-    this.listeners.forEach(listener => listener());
+    this.listeners.forEach((listener) => listener());
   }
 
   async runConsistencyChecks(): Promise<Map<string, DataConsistencyCheck>> {
@@ -169,7 +173,7 @@ class ReliabilityManager {
           ...check,
           lastChecked: Date.now(),
           lastResult: result,
-          errorMessage: undefined
+          errorMessage: undefined,
         };
         results.set(id, updatedCheck);
         this.consistencyChecks.set(id, updatedCheck);
@@ -178,7 +182,8 @@ class ReliabilityManager {
           ...check,
           lastChecked: Date.now(),
           lastResult: false,
-          errorMessage: error instanceof Error ? error.message : 'Unknown error'
+          errorMessage:
+            error instanceof Error ? error.message : "Unknown error",
         };
         results.set(id, updatedCheck);
         this.consistencyChecks.set(id, updatedCheck);
@@ -191,18 +196,27 @@ class ReliabilityManager {
 
   async executeFailoverIfNeeded(): Promise<void> {
     const checkResults = await this.runConsistencyChecks();
-    const failedChecks = Array.from(checkResults.values()).filter(check => check.lastResult === false);
+    const failedChecks = Array.from(checkResults.values()).filter(
+      (check) => check.lastResult === false,
+    );
 
     if (failedChecks.length > 0) {
-      secureLogger.warn('RELIABILITY', `${failedChecks.length} consistency checks failed, initiating failover...`);
+      secureLogger.warn(
+        "RELIABILITY",
+        `${failedChecks.length} consistency checks failed, initiating failover...`,
+      );
 
       // Execute failover strategies in priority order
-      const strategies = Array.from(this.failoverStrategies.values())
-        .sort((a, b) => a.priority - b.priority);
+      const strategies = Array.from(this.failoverStrategies.values()).sort(
+        (a, b) => a.priority - b.priority,
+      );
 
       for (const strategy of strategies) {
         try {
-          secureLogger.info('RELIABILITY', `Executing failover strategy: ${strategy.name}`);
+          secureLogger.info(
+            "RELIABILITY",
+            `Executing failover strategy: ${strategy.name}`,
+          );
           await strategy.execute();
           strategy.isActive = true;
           this.failoverStrategies.set(strategy.id, strategy);
@@ -210,14 +224,23 @@ class ReliabilityManager {
 
           // Re-run checks to see if failover resolved the issue
           const recheckResults = await this.runConsistencyChecks();
-          const stillFailed = Array.from(recheckResults.values()).filter(check => check.lastResult === false);
+          const stillFailed = Array.from(recheckResults.values()).filter(
+            (check) => check.lastResult === false,
+          );
 
           if (stillFailed.length === 0) {
-            secureLogger.info('RELIABILITY', 'Failover successful, all checks now passing');
+            secureLogger.info(
+              "RELIABILITY",
+              "Failover successful, all checks now passing",
+            );
             break;
           }
         } catch (error) {
-          secureLogger.error('RELIABILITY', `Failover strategy ${strategy.name} failed`, { error: error instanceof Error ? error.message : String(error) });
+          secureLogger.error(
+            "RELIABILITY",
+            `Failover strategy ${strategy.name} failed`,
+            { error: error instanceof Error ? error.message : String(error) },
+          );
         }
       }
     }
@@ -228,14 +251,16 @@ class ReliabilityManager {
     if (this.isMonitoring) return;
 
     this.isMonitoring = true;
-    secureLogger.info('RELIABILITY', 'Starting reliability monitoring...');
+    secureLogger.info("RELIABILITY", "Starting reliability monitoring...");
     this.notifyListeners();
 
     this.checkInterval = setInterval(async () => {
       try {
         await this.executeFailoverIfNeeded();
       } catch (error) {
-        secureLogger.error('RELIABILITY', 'Reliability monitoring error', { error: error instanceof Error ? error.message : String(error) });
+        secureLogger.error("RELIABILITY", "Reliability monitoring error", {
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }, intervalMs);
   }
@@ -246,7 +271,7 @@ class ReliabilityManager {
       this.checkInterval = null;
     }
     this.isMonitoring = false;
-    secureLogger.info('RELIABILITY', 'Stopped reliability monitoring');
+    secureLogger.info("RELIABILITY", "Stopped reliability monitoring");
     this.notifyListeners();
   }
 
@@ -268,9 +293,15 @@ export const reliabilityManager = new ReliabilityManager();
 
 // React hook for reliability management
 export const useReliabilityManager = () => {
-  const [consistencyChecks, setConsistencyChecks] = useState(reliabilityManager.getConsistencyChecks());
-  const [failoverStrategies, setFailoverStrategies] = useState(reliabilityManager.getFailoverStrategies());
-  const [isMonitoring, setIsMonitoring] = useState(reliabilityManager.isMonitoringActive());
+  const [consistencyChecks, setConsistencyChecks] = useState(
+    reliabilityManager.getConsistencyChecks(),
+  );
+  const [failoverStrategies, setFailoverStrategies] = useState(
+    reliabilityManager.getFailoverStrategies(),
+  );
+  const [isMonitoring, setIsMonitoring] = useState(
+    reliabilityManager.isMonitoringActive(),
+  );
 
   const updateState = useCallback(() => {
     setConsistencyChecks(reliabilityManager.getConsistencyChecks());
@@ -309,6 +340,6 @@ export const useReliabilityManager = () => {
     runChecks,
     executeFailover,
     startMonitoring,
-    stopMonitoring
+    stopMonitoring,
   };
 };

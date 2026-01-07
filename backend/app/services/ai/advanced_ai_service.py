@@ -554,9 +554,7 @@ class AdvancedAIService:
         for model_type in ModelType:
             self.federated_coordinators[model_type] = FederatedLearningCoordinator(model_type)
 
-    async def explain_prediction(
-        self, model_type: ModelType, input_data: dict[str, Any], prediction: Any
-    ) -> ExplainabilityResult:
+    async def explain_prediction(self, model_type: ModelType, input_data: dict[str, Any], prediction: Any) -> ExplainabilityResult:
         """Get explainable AI analysis for a prediction"""
         # Get active model for explanation
         active_model = self.model_retrainer.get_active_model(model_type)
@@ -672,8 +670,7 @@ class AdvancedAIService:
                 for model_type, model in self.model_retrainer.active_models.items()
             },
             "federated_learning": {
-                model_type.value: coordinator.get_status()
-                for model_type, coordinator in self.federated_coordinators.items()
+                model_type.value: coordinator.get_status() for model_type, coordinator in self.federated_coordinators.items()
             },
             "retraining_status": self.check_all_models_retraining(),
             "total_model_versions": len(self.model_retrainer.models),

@@ -12,9 +12,7 @@ class SecurityConfig(BaseModel):
     """Security configuration for production"""
 
     # JWT Settings
-    jwt_secret_key: str = os.getenv(
-        "JWT_SECRET_KEY", "development-jwt-key-replace-in-production"
-    )
+    jwt_secret_key: str = os.getenv("JWT_SECRET_KEY", "development-jwt-key-replace-in-production")
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30  # Short-lived tokens
     refresh_token_expire_days: int = 7
@@ -84,9 +82,7 @@ class ProductionConfig(BaseModel):
     api_prefix: str = "/api/v1"
 
     # Database
-    database_url: str = os.getenv(
-        "DATABASE_URL", "postgresql://user:pass@localhost/fraud_db"
-    )
+    database_url: str = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost/fraud_db")
     database_echo: bool = False  # Disable SQL logging in production
 
     # Redis Cache

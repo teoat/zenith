@@ -25,16 +25,12 @@ class SimpleConnectionManager:
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
-        logger.info(
-            f"WebSocket client connected. Total: {len(self.active_connections)}"
-        )
+        logger.info(f"WebSocket client connected. Total: {len(self.active_connections)}")
 
     def disconnect(self, websocket: WebSocket) -> None:
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
-            logger.info(
-                f"WebSocket client disconnected. Total: {len(self.active_connections)}"
-            )
+            logger.info(f"WebSocket client disconnected. Total: {len(self.active_connections)}")
 
     async def broadcast(self, message: Any):
         for connection in self.active_connections:
@@ -64,9 +60,7 @@ class CollaborationManager:
             if not self.active_connections[case_id]:
                 del self.active_connections[case_id]
 
-    async def broadcast(
-        self, message: dict[str, Any], case_id: str, sender: WebSocket | None = None
-    ):
+    async def broadcast(self, message: dict[str, Any], case_id: str, sender: WebSocket | None = None):
         if case_id in self.active_connections:
             for connection in self.active_connections[case_id]:
                 if connection != sender:
@@ -120,9 +114,7 @@ async def metrics_websocket(websocket: WebSocket):
 
 
 @router.websocket("/ws/collaboration/{case_id}")
-async def collaboration_websocket(
-    websocket: WebSocket, case_id: str, token: str | None = None
-):
+async def collaboration_websocket(websocket: WebSocket, case_id: str, token: str | None = None):
     """Case-specific collaboration"""
     if not token:
         await websocket.close(code=4001, reason="Authentication required")
@@ -163,20 +155,14 @@ async def handle_websocket_message(client_id: str, message: dict[str, Any]) -> N
             document_id = message.get("document_id")
             operation_data = message.get("operation")
             if document_id and operation_data:
-                await sync_manager.handle_operation(
-                    client_id, document_id, operation_data
-                )
+                await sync_manager.handle_operation(client_id, document_id, operation_data)
         elif message_type == "sync":
             document_id = message.get("document_id")
             client_vector_clock = message.get("vector_clock", {})
             if document_id:
-                await sync_manager.sync_client(
-                    client_id, document_id, client_vector_clock
-                )
+                await sync_manager.sync_client(client_id, document_id, client_vector_clock)
         elif message_type == "ping":
-            await sync_manager._send_to_client(
-                client_id, {"type": "pong", "timestamp": datetime.now().isoformat()}
-            )
+            await sync_manager._send_to_client(client_id, {"type": "pong", "timestamp": datetime.now().isoformat()})
     except (ZenithError, Exception) as e:
         logger.error(f"Error handling message {message_type}: {e!s}")
 

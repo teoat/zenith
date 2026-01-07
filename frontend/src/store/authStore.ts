@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
-import { authService } from '@/services/auth';
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+import { authService } from "@/services/auth";
 
 interface User {
   id: string;
@@ -27,7 +27,7 @@ interface AuthState {
 
 /**
  * Auth Store - Cookie-Based Authentication
- * 
+ *
  * NOTE: This store does NOT persist tokens. Authentication is managed
  * via HttpOnly cookies set by the backend. The store only tracks
  * the current user state for UI purposes.
@@ -46,26 +46,25 @@ export const useAuthStore = create<AuthState>()(
         try {
           // Call real API - backend sets HttpOnly cookies
           const response = await authService.login({ email, password });
-          
+
           // Response contains user profile (cookies are set automatically)
           const user: User = {
             id: response.id,
             email: response.email,
             fullName: response.full_name,
-            role: response.role || 'ANALYST',
-            avatar: undefined
+            role: response.role || "ANALYST",
+            avatar: undefined,
           };
 
           set({
             user,
             isAuthenticated: true,
-            isLoading: false
+            isLoading: false,
           });
-
         } catch (error) {
           set({
-            error: error instanceof Error ? error.message : 'Login failed',
-            isLoading: false
+            error: error instanceof Error ? error.message : "Login failed",
+            isLoading: false,
           });
           throw error;
         }
@@ -78,11 +77,11 @@ export const useAuthStore = create<AuthState>()(
         } catch {
           // Proceed with local logout even if API fails
         }
-        
+
         set({
           user: null,
           isAuthenticated: false,
-          error: null
+          error: null,
         });
       },
 
@@ -91,7 +90,10 @@ export const useAuthStore = create<AuthState>()(
           // Backend handles cookie refresh
           await authService.refreshToken();
         } catch (error) {
-          set({ error: error instanceof Error ? error.message : 'Token refresh failed' });
+          set({
+            error:
+              error instanceof Error ? error.message : "Token refresh failed",
+          });
           throw error;
         }
       },
@@ -115,10 +117,10 @@ export const useAuthStore = create<AuthState>()(
                 email: user.email,
                 role: user.role,
                 fullName: undefined,
-                avatar: undefined
+                avatar: undefined,
               },
               isAuthenticated: true,
-              isLoading: false
+              isLoading: false,
             });
           } else {
             set({ isLoading: false });
@@ -126,10 +128,10 @@ export const useAuthStore = create<AuthState>()(
         } catch {
           set({ isLoading: false });
         }
-      }
+      },
     }),
     {
-      name: 'auth-store',
-    }
-  )
+      name: "auth-store",
+    },
+  ),
 );

@@ -194,7 +194,8 @@ class SemanticSearchEngine:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 CREATE TABLE IF NOT EXISTS documents (
                     id TEXT PRIMARY KEY,
                     content TEXT NOT NULL,
@@ -203,12 +204,15 @@ class SemanticSearchEngine:
                     created_at TEXT,
                     updated_at TEXT
                 )
-            """)
+            """
+            )
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_documents_created
                 ON documents(created_at)
-            """)
+            """
+            )
 
             conn.commit()
             conn.close()
@@ -233,9 +237,7 @@ class SemanticSearchEngine:
         except Exception as e:
             logger.warning(f"Failed to load documents for fitting: {e}")
 
-    def index_document(
-        self, document_id: str, content: str, metadata: dict[str, Any] | None = None
-    ) -> IndexingResult:
+    def index_document(self, document_id: str, content: str, metadata: dict[str, Any] | None = None) -> IndexingResult:
         """
         Index a document for semantic search.
 
@@ -281,9 +283,7 @@ class SemanticSearchEngine:
             elapsed = (datetime.now() - start_time).total_seconds()
             logger.debug(f"Indexed document {document_id} in {elapsed:.3f}s")
 
-            return IndexingResult(
-                document_id=document_id, success=True, indexing_time=elapsed
-            )
+            return IndexingResult(document_id=document_id, success=True, indexing_time=elapsed)
 
         except Exception as e:
             logger.error(f"Failed to index document {document_id}: {e}")
@@ -319,10 +319,12 @@ class SemanticSearchEngine:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT id, content, embedding, metadata
                 FROM documents
-            """)
+            """
+            )
 
             results = []
             query_words = set(query.lower().split())
@@ -343,9 +345,7 @@ class SemanticSearchEngine:
 
                     # Boost for keyword matches
                     content_words = set(content.lower().split())
-                    keyword_overlap = len(query_words & content_words) / max(
-                        len(query_words), 1
-                    )
+                    keyword_overlap = len(query_words & content_words) / max(len(query_words), 1)
                     similarity = min(1.0, similarity * 0.7 + keyword_overlap * 0.3)
 
                     if similarity >= threshold:
@@ -516,8 +516,6 @@ class SemanticSearchEngine:
 
 
 # Factory function
-def get_semantic_search_engine(
-    backend: str = "sqlite", config: dict[str, Any] | None = None
-) -> SemanticSearchEngine:
+def get_semantic_search_engine(backend: str = "sqlite", config: dict[str, Any] | None = None) -> SemanticSearchEngine:
     """Get a semantic search engine instance."""
     return SemanticSearchEngine(backend=backend, config=config)

@@ -85,9 +85,7 @@ class ResourceMetrics:
 
     def headroom_percentage(self) -> float:
         """Get available headroom as percentage"""
-        return (
-            (self.max_capacity - self.current_utilization) / self.max_capacity
-        ) * 100
+        return ((self.max_capacity - self.current_utilization) / self.max_capacity) * 100
 
 
 class AutonomousScalingEngine:
@@ -237,12 +235,8 @@ class AutonomousScalingEngine:
         """Get current compute instance count"""
         # In a real implementation, this would query cloud provider APIs
         # For simulation, return current value with some variance
-        current = self.resource_metrics[
-            ResourceType.COMPUTE_INSTANCES
-        ].current_utilization
-        variance = (
-            0.95 + 0.1 * (datetime.now().timestamp() % 10) / 10
-        )  # 95-105% variance
+        current = self.resource_metrics[ResourceType.COMPUTE_INSTANCES].current_utilization
+        variance = 0.95 + 0.1 * (datetime.now().timestamp() % 10) / 10  # 95-105% variance
         return current * variance
 
     async def _get_database_connections(self) -> float:
@@ -250,18 +244,14 @@ class AutonomousScalingEngine:
         # Simulate database connection monitoring
         base_connections = 45
         time_factor = datetime.now().hour / 24  # Daily pattern
-        load_factor = (
-            0.8 + 0.4 * abs(time_factor - 0.5) * 2
-        )  # Peak during business hours
+        load_factor = 0.8 + 0.4 * abs(time_factor - 0.5) * 2  # Peak during business hours
         return base_connections * load_factor
 
     async def _get_cache_memory_usage(self) -> float:
         """Get current cache memory usage"""
         # Simulate cache memory monitoring
         base_memory = 2.1
-        variance = 0.9 + 0.2 * (
-            (datetime.now().timestamp() % 3600) / 3600
-        )  # Hourly variance
+        variance = 0.9 + 0.2 * ((datetime.now().timestamp() % 3600) / 3600)  # Hourly variance
         return base_memory * variance
 
     async def _get_worker_process_count(self) -> float:
@@ -269,9 +259,7 @@ class AutonomousScalingEngine:
         # Simulate worker process monitoring
         base_workers = 8
         queue_length = await self._get_queue_length()
-        utilization_factor = min(
-            1.5, max(0.5, queue_length / 20)
-        )  # Adjust based on queue
+        utilization_factor = min(1.5, max(0.5, queue_length / 20))  # Adjust based on queue
         return base_workers * utilization_factor
 
     async def _get_queue_length(self) -> float:
@@ -307,9 +295,7 @@ class AutonomousScalingEngine:
 
         return scaling_events
 
-    async def _evaluate_resource_scaling(
-        self, resource_type: ResourceType, metrics: ResourceMetrics
-    ) -> dict[str, Any]:
+    async def _evaluate_resource_scaling(self, resource_type: ResourceType, metrics: ResourceMetrics) -> dict[str, Any]:
         """Evaluate scaling decision for a specific resource"""
 
         utilization_pct = metrics.utilization_percentage()
@@ -317,14 +303,8 @@ class AutonomousScalingEngine:
         # Check cooldown periods
         last_action = self.last_scaling_actions.get(resource_type)
         if last_action:
-            cooldown_period = (
-                self.scale_up_cooldown
-                if "up" in str(last_action)
-                else self.scale_down_cooldown
-            )
-            if datetime.now(UTC) - last_action < timedelta(
-                seconds=cooldown_period
-            ):
+            cooldown_period = self.scale_up_cooldown if "up" in str(last_action) else self.scale_down_cooldown
+            if datetime.now(UTC) - last_action < timedelta(seconds=cooldown_period):
                 return {
                     "decision": ScalingDecision.NO_CHANGE,
                     "target_capacity": metrics.current_utilization,
@@ -337,14 +317,10 @@ class AutonomousScalingEngine:
         if utilization_pct > self.emergency_threshold:
             return {
                 "decision": ScalingDecision.EMERGENCY_SCALE,
-                "target_capacity": min(
-                    metrics.current_utilization * 1.5, metrics.max_capacity
-                ),
+                "target_capacity": min(metrics.current_utilization * 1.5, metrics.max_capacity),
                 "reason": f"Emergency: Utilization at {utilization_pct:.1f}% exceeds threshold",
                 "confidence": 0.95,
-                "cost_impact": self._calculate_cost_impact(
-                    resource_type, metrics.current_utilization * 1.5
-                ),
+                "cost_impact": self._calculate_cost_impact(resource_type, metrics.current_utilization * 1.5),
             }
 
         # Normal scaling logic
@@ -353,9 +329,7 @@ class AutonomousScalingEngine:
         if utilization_pct > self.scale_up_threshold:
             # Scale up
             increment = policy.get("scale_up_increment", 1)
-            new_capacity = min(
-                metrics.current_utilization + increment, metrics.max_capacity
-            )
+            new_capacity = min(metrics.current_utilization + increment, metrics.max_capacity)
 
             return {
                 "decision": ScalingDecision.SCALE_UP,
@@ -365,15 +339,10 @@ class AutonomousScalingEngine:
                 "cost_impact": self._calculate_cost_impact(resource_type, new_capacity),
             }
 
-        elif (
-            utilization_pct < self.scale_down_threshold
-            and metrics.current_utilization > metrics.min_capacity
-        ):
+        elif utilization_pct < self.scale_down_threshold and metrics.current_utilization > metrics.min_capacity:
             # Scale down
             decrement = policy.get("scale_down_increment", 1)
-            new_capacity = max(
-                metrics.current_utilization - decrement, metrics.min_capacity
-            )
+            new_capacity = max(metrics.current_utilization - decrement, metrics.min_capacity)
 
             # Only scale down if we're significantly below target
             if utilization_pct < self.scale_down_threshold * 0.7:
@@ -382,9 +351,7 @@ class AutonomousScalingEngine:
                     "target_capacity": new_capacity,
                     "reason": f"Low utilization: {utilization_pct:.1f}% < {self.scale_down_threshold}%",
                     "confidence": 0.7,
-                    "cost_impact": self._calculate_cost_impact(
-                        resource_type, new_capacity
-                    ),
+                    "cost_impact": self._calculate_cost_impact(resource_type, new_capacity),
                 }
 
         return {
@@ -395,9 +362,7 @@ class AutonomousScalingEngine:
             "cost_impact": 0.0,
         }
 
-    def _calculate_cost_impact(
-        self, resource_type: ResourceType, new_capacity: float
-    ) -> float:
+    def _calculate_cost_impact(self, resource_type: ResourceType, new_capacity: float) -> float:
         """Calculate cost impact of scaling decision"""
         metrics = self.resource_metrics[resource_type]
         capacity_change = new_capacity - metrics.current_utilization
@@ -407,15 +372,11 @@ class AutonomousScalingEngine:
             return capacity_change * metrics.cost_per_unit * 24  # Daily cost
         elif capacity_change < 0:
             # Scaling down savings
-            return (
-                capacity_change * metrics.cost_per_unit * 24
-            )  # Daily savings (negative)
+            return capacity_change * metrics.cost_per_unit * 24  # Daily savings (negative)
         else:
             return 0.0
 
-    async def execute_scaling_decisions(
-        self, scaling_events: list[ScalingEvent]
-    ) -> list[ScalingEvent]:
+    async def execute_scaling_decisions(self, scaling_events: list[ScalingEvent]) -> list[ScalingEvent]:
         """Execute approved scaling decisions"""
         logger.info(f"Executing {len(scaling_events)} scaling decisions...")
 
@@ -428,20 +389,14 @@ class AutonomousScalingEngine:
                 success = await self._execute_scaling_action(event)
 
                 event.success = success
-                event.execution_time = (
-                    datetime.now(UTC) - start_time
-                ).total_seconds()
+                event.execution_time = (datetime.now(UTC) - start_time).total_seconds()
 
                 if success:
                     # Update last scaling action
-                    self.last_scaling_actions[event.resource_type] = datetime.now(
-                        UTC
-                    )
+                    self.last_scaling_actions[event.resource_type] = datetime.now(UTC)
 
                     # Update resource metrics
-                    self.resource_metrics[
-                        event.resource_type
-                    ].current_utilization = event.target_capacity
+                    self.resource_metrics[event.resource_type].current_utilization = event.target_capacity
 
                     logger.info(f"Successfully executed scaling: {event.event_id}")
                 else:
@@ -468,9 +423,7 @@ class AutonomousScalingEngine:
             elif event.resource_type == ResourceType.WORKER_PROCESSES:
                 return await self._scale_worker_processes(event)
             else:
-                logger.warning(
-                    f"Unsupported resource type for scaling: {event.resource_type}"
-                )
+                logger.warning(f"Unsupported resource type for scaling: {event.resource_type}")
                 return False
 
         except Exception as e:
@@ -480,65 +433,49 @@ class AutonomousScalingEngine:
     async def _scale_compute_instances(self, event: ScalingEvent) -> bool:
         """Scale compute instances (AWS EC2, etc.)"""
         # In a real implementation, this would call cloud provider APIs
-        logger.info(
-            f"Scaling compute instances from {event.current_capacity} to {event.target_capacity}"
-        )
+        logger.info(f"Scaling compute instances from {event.current_capacity} to {event.target_capacity}")
 
         # Simulate scaling operation
         await asyncio.sleep(2)  # Simulate API call delay
 
         # Update internal tracking
-        self.resource_metrics[
-            ResourceType.COMPUTE_INSTANCES
-        ].capacity = event.target_capacity
+        self.resource_metrics[ResourceType.COMPUTE_INSTANCES].capacity = event.target_capacity
 
         return True
 
     async def _scale_database_connections(self, event: ScalingEvent) -> bool:
         """Scale database connections"""
-        logger.info(
-            f"Scaling database connections from {event.current_capacity} to {event.target_capacity}"
-        )
+        logger.info(f"Scaling database connections from {event.current_capacity} to {event.target_capacity}")
 
         # Simulate connection pool adjustment
         await asyncio.sleep(1)
 
         # Update metrics
-        self.resource_metrics[
-            ResourceType.DATABASE_CONNECTIONS
-        ].capacity = event.target_capacity
+        self.resource_metrics[ResourceType.DATABASE_CONNECTIONS].capacity = event.target_capacity
 
         return True
 
     async def _scale_cache_memory(self, event: ScalingEvent) -> bool:
         """Scale cache memory"""
-        logger.info(
-            f"Scaling cache memory from {event.current_capacity}GB to {event.target_capacity}GB"
-        )
+        logger.info(f"Scaling cache memory from {event.current_capacity}GB to {event.target_capacity}GB")
 
         # Simulate Redis/memory scaling
         await asyncio.sleep(1.5)
 
         # Update metrics
-        self.resource_metrics[
-            ResourceType.CACHE_MEMORY
-        ].capacity = event.target_capacity
+        self.resource_metrics[ResourceType.CACHE_MEMORY].capacity = event.target_capacity
 
         return True
 
     async def _scale_worker_processes(self, event: ScalingEvent) -> bool:
         """Scale worker processes"""
-        logger.info(
-            f"Scaling worker processes from {event.current_capacity} to {event.target_capacity}"
-        )
+        logger.info(f"Scaling worker processes from {event.current_capacity} to {event.target_capacity}")
 
         # Simulate process scaling
         await asyncio.sleep(1)
 
         # Update metrics
-        self.resource_metrics[
-            ResourceType.WORKER_PROCESSES
-        ].capacity = event.target_capacity
+        self.resource_metrics[ResourceType.WORKER_PROCESSES].capacity = event.target_capacity
 
         return True
 
@@ -561,41 +498,31 @@ class AutonomousScalingEngine:
 
         return optimizations
 
-    async def _optimize_resource(
-        self, resource_type: ResourceType, metrics: ResourceMetrics
-    ) -> dict[str, Any] | None:
+    async def _optimize_resource(self, resource_type: ResourceType, metrics: ResourceMetrics) -> dict[str, Any] | None:
         """Optimize a specific resource"""
         utilization = metrics.utilization_percentage()
 
         if utilization < 40 and metrics.current_utilization > metrics.min_capacity:
             # Under-utilized - consider rightsizing
-            recommended_capacity = max(
-                metrics.min_capacity, metrics.current_utilization * 0.8
-            )
+            recommended_capacity = max(metrics.min_capacity, metrics.current_utilization * 0.8)
 
             return {
                 "action": "rightsize",
                 "current_capacity": metrics.current_utilization,
                 "recommended_capacity": recommended_capacity,
-                "estimated_savings": self._calculate_cost_impact(
-                    resource_type, recommended_capacity
-                ),
+                "estimated_savings": self._calculate_cost_impact(resource_type, recommended_capacity),
                 "reason": f"Resource under-utilized at {utilization:.1f}%",
             }
 
         elif utilization > 85:
             # Over-utilized - consider scaling
-            recommended_capacity = min(
-                metrics.max_capacity, metrics.current_utilization * 1.2
-            )
+            recommended_capacity = min(metrics.max_capacity, metrics.current_utilization * 1.2)
 
             return {
                 "action": "scale_up",
                 "current_capacity": metrics.current_utilization,
                 "recommended_capacity": recommended_capacity,
-                "estimated_cost": self._calculate_cost_impact(
-                    resource_type, recommended_capacity
-                ),
+                "estimated_cost": self._calculate_cost_impact(resource_type, recommended_capacity),
                 "reason": f"Resource over-utilized at {utilization:.1f}%",
             }
 
@@ -604,12 +531,8 @@ class AutonomousScalingEngine:
     async def _optimize_cross_resources(self) -> dict[str, Any] | None:
         """Optimize across multiple resources"""
         # Analyze compute vs memory ratio
-        compute_util = self.resource_metrics[
-            ResourceType.COMPUTE_INSTANCES
-        ].utilization_percentage()
-        memory_util = self.resource_metrics[
-            ResourceType.CACHE_MEMORY
-        ].utilization_percentage()
+        compute_util = self.resource_metrics[ResourceType.COMPUTE_INSTANCES].utilization_percentage()
+        memory_util = self.resource_metrics[ResourceType.CACHE_MEMORY].utilization_percentage()
 
         if compute_util > 80 and memory_util < 50:
             return {
@@ -619,9 +542,7 @@ class AutonomousScalingEngine:
             }
 
         # Analyze worker vs queue ratio
-        worker_util = self.resource_metrics[
-            ResourceType.WORKER_PROCESSES
-        ].utilization_percentage()
+        worker_util = self.resource_metrics[ResourceType.WORKER_PROCESSES].utilization_percentage()
         queue_length = await self._get_queue_length()
 
         if worker_util > 90 and queue_length > 50:
@@ -653,21 +574,12 @@ class AutonomousScalingEngine:
             }
 
         # Overall system health
-        avg_utilization = sum(
-            m.utilization_percentage() for m in self.resource_metrics.values()
-        ) / len(self.resource_metrics)
+        avg_utilization = sum(m.utilization_percentage() for m in self.resource_metrics.values()) / len(self.resource_metrics)
         report["system_health"] = {
             "average_utilization": avg_utilization,
-            "overall_status": "healthy"
-            if avg_utilization < 80
-            else "warning"
-            if avg_utilization < 90
-            else "critical",
+            "overall_status": "healthy" if avg_utilization < 80 else "warning" if avg_utilization < 90 else "critical",
             "total_capacity": sum(m.capacity for m in self.resource_metrics.values()),
-            "total_cost_per_hour": sum(
-                m.current_utilization * m.cost_per_unit
-                for m in self.resource_metrics.values()
-            ),
+            "total_cost_per_hour": sum(m.current_utilization * m.cost_per_unit for m in self.resource_metrics.values()),
         }
 
         return report
@@ -694,9 +606,7 @@ class AutonomousScalingEngine:
         # Generate report
         report = {
             "cycle_timestamp": datetime.now(UTC).isoformat(),
-            "resource_metrics": {
-                k.value: v.current_utilization for k, v in resource_metrics.items()
-            },
+            "resource_metrics": {k.value: v.current_utilization for k, v in resource_metrics.items()},
             "scaling_actions": len(executed_events),
             "successful_scalings": sum(1 for e in executed_events if e.success),
             "optimizations": optimizations,
@@ -704,8 +614,7 @@ class AutonomousScalingEngine:
         }
 
         logger.info(
-            f"✅ Scaling cycle completed: {len(executed_events)} actions, "
-            f"{sum(1 for e in executed_events if e.success)} successful"
+            f"✅ Scaling cycle completed: {len(executed_events)} actions, " f"{sum(1 for e in executed_events if e.success)} successful"
         )
 
         return report
@@ -726,10 +635,7 @@ async def demonstrate_autonomous_scaling():
 
     for resource_type, metric in metrics.items():
         utilization = metric.utilization_percentage()
-        logger.info(
-            f"{resource_type.value}: {metric.current_utilization:.1f}/{metric.capacity:.1f} "
-            f"({utilization:.1f}% utilization)"
-        )
+        logger.info(f"{resource_type.value}: {metric.current_utilization:.1f}/{metric.capacity:.1f} " f"({utilization:.1f}% utilization)")
 
     # Evaluate scaling decisions
     logger.info("\nEvaluating scaling decisions...")
@@ -749,9 +655,7 @@ async def demonstrate_autonomous_scaling():
         executed_events = await scaling_engine.execute_scaling_decisions(scaling_events)
 
         successful = sum(1 for e in executed_events if e.success)
-        logger.info(
-            f"Executed {successful}/{len(executed_events)} scaling actions successfully"
-        )
+        logger.info(f"Executed {successful}/{len(executed_events)} scaling actions successfully")
     else:
         logger.info("No scaling actions required at this time")
 
@@ -765,9 +669,7 @@ async def demonstrate_autonomous_scaling():
             logger.info(f"  - {resource}: {optimization.get('action', 'unknown')}")
             logger.info(f"    Reason: {optimization.get('reason', 'N/A')}")
             if "estimated_savings" in optimization:
-                logger.info(
-                    f"    Savings: ${optimization['estimated_savings']:.2f}/day"
-                )
+                logger.info(f"    Savings: ${optimization['estimated_savings']:.2f}/day")
             logger.info("")
     else:
         logger.info("No optimization recommendations at this time")
@@ -776,9 +678,7 @@ async def demonstrate_autonomous_scaling():
     logger.info("Running complete autonomous scaling cycle...")
     cycle_report = await scaling_engine.run_autonomous_scaling_cycle()
 
-    logger.info(
-        f"Cycle completed with {cycle_report['successful_scalings']}/{cycle_report['scaling_actions']} successful scalings"
-    )
+    logger.info(f"Cycle completed with {cycle_report['successful_scalings']}/{cycle_report['scaling_actions']} successful scalings")
 
     # Show system health
     system_report = scaling_engine.get_resource_utilization_report()

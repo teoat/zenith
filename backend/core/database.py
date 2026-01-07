@@ -19,7 +19,9 @@ from core.logging import logger
 from core.models import (
     # Database utilities
     Base,
+    Case,
     CasePriority,
+    Transaction,
     # Enums
     CaseStatus,
     CaseType,
@@ -252,37 +254,28 @@ def optimize_database_performance():
 
 # Backward compatibility - the original file exports
 __all__ = [
-    # Base class
+    # Base class and utilities
     "Base",
     "Case",
-    "CaseActivity",
-    "CaseNote",
-    "CasePriority",
+    "Transaction",
+    "utc_now",
+    "EncryptedString",
     # Enums
     "CaseStatus",
     "CaseType",
-    "Entity",
-    "Evidence",
-    "FraudAlert",
-    "FraudRule",
-    "GraphSnapshot",
-    "IntegrationConfigModel",
     "ReconciliationType",
-    "Relationship",
-    "RookieChecklist",
     "SessionLocal",
-    "Team",
-    "Transaction",
-    # Models
-    "User",
-    "UserDevice",
-    "UserOnboardingState",
     "UserRole",
+    # Database utilities
     "create_engine_and_session",
     "create_tables",
     "engine",
     "get_database_url",
     "get_db",
+    "secure_query_execution",
+    "utc_now",
+    # Classes defined in this file
+    "DatabaseOptimizer",
     "secure_query_execution",
     # Utilities
     "utc_now",
@@ -290,3 +283,27 @@ __all__ = [
     "DatabaseOptimizer",
     "optimize_database_performance",
 ]
+
+
+# Database query monitoring
+@event.listens_for(Engine, "before_execute")
+def before_execute(conn, clauseelement, multiparams, params):
+    """Monitor database queries before execution"""
+    conn.info["query_start_time"] = time.time()
+    if hasattr(clauseelement, "text") and clauseelement.text:
+        logger.debug(f"SQL Query: {clauseelement.text}")
+
+
+@event.listens_for(Engine, "after_execute")
+def after_execute(conn, clauseelement, multiparams, params, result):
+    """Monitor database queries after execution"""
+    if "query_start_time" in conn.info:
+        duration = time.time() - conn.info["query_start_time"]
+
+        # Log slow queries
+        if duration > 1.0:
+            logger.warning(
+                f"Slow database query: {duration:.3f}s", extra={"query_duration": duration, "query_type": "database"}
+            )
+        elif duration > 0.1:
+            logger.info(f"Database query completed in {duration:.3f}s")

@@ -49,9 +49,7 @@ class FraudRule:
         self.created_at = datetime.utcnow()
         self.triggered_count = 0
 
-    def evaluate(
-        self, transaction: dict[str, Any], context: dict[str, Any]
-    ) -> dict[str, Any]:
+    def evaluate(self, transaction: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         """
         Evaluate if transaction triggers this rule
 
@@ -86,14 +84,10 @@ class VelocityRule(FraudRule):
         self.max_transactions = max_transactions
         self.time_window_minutes = time_window_minutes
 
-    def evaluate(
-        self, transaction: dict[str, Any], context: dict[str, Any]
-    ) -> dict[str, Any]:
+    def evaluate(self, transaction: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         """Check if velocity threshold exceeded"""
         account_id = transaction.get("account_id")
-        timestamp = datetime.fromisoformat(
-            transaction.get("timestamp", datetime.utcnow().isoformat())
-        )
+        timestamp = datetime.fromisoformat(transaction.get("timestamp", datetime.utcnow().isoformat()))
 
         # Get recent transactions from context
         recent_transactions = context.get("recent_transactions", [])
@@ -103,8 +97,7 @@ class VelocityRule(FraudRule):
         transactions_in_window = [
             t
             for t in recent_transactions
-            if datetime.fromisoformat(t.get("timestamp", "")) > cutoff_time
-            and t.get("account_id") == account_id
+            if datetime.fromisoformat(t.get("timestamp", "")) > cutoff_time and t.get("account_id") == account_id
         ]
 
         count = len(transactions_in_window) + 1  # +1 for current transaction
@@ -113,9 +106,7 @@ class VelocityRule(FraudRule):
         if triggered:
             self.triggered_count += 1
 
-        risk_score = (
-            min(100, int((count / self.max_transactions) * 50)) if triggered else 0
-        )
+        risk_score = min(100, int((count / self.max_transactions) * 50)) if triggered else 0
 
         return {
             "triggered": triggered,
@@ -149,9 +140,7 @@ class AmountThresholdRule(FraudRule):
         self.threshold_amount = threshold_amount
         self.currency = currency
 
-    def evaluate(
-        self, transaction: dict[str, Any], context: dict[str, Any]
-    ) -> dict[str, Any]:
+    def evaluate(self, transaction: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         """Check if amount exceeds threshold"""
         amount = float(transaction.get("amount", 0))
         currency = transaction.get("currency", "USD")
@@ -161,9 +150,7 @@ class AmountThresholdRule(FraudRule):
         if triggered:
             self.triggered_count += 1
 
-        risk_score = (
-            min(100, int((amount / self.threshold_amount) * 60)) if triggered else 0
-        )
+        risk_score = min(100, int((amount / self.threshold_amount) * 60)) if triggered else 0
 
         return {
             "triggered": triggered,
@@ -173,9 +160,7 @@ class AmountThresholdRule(FraudRule):
                 "amount": amount,
                 "currency": currency,
                 "threshold": self.threshold_amount,
-                "excess_percentage": (
-                    ((amount / self.threshold_amount) - 1) * 100 if triggered else 0
-                ),
+                "excess_percentage": (((amount / self.threshold_amount) - 1) * 100 if triggered else 0),
             },
         }
 
@@ -200,14 +185,10 @@ class GeographicAnomalyRule(FraudRule):
         self.max_distance_km = max_distance_km
         self.min_time_hours = min_time_hours
 
-    def evaluate(
-        self, transaction: dict[str, Any], context: dict[str, Any]
-    ) -> dict[str, Any]:
+    def evaluate(self, transaction: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         """Check for impossible travel"""
         location = transaction.get("location", {})
-        timestamp = datetime.fromisoformat(
-            transaction.get("timestamp", datetime.utcnow().isoformat())
-        )
+        timestamp = datetime.fromisoformat(transaction.get("timestamp", datetime.utcnow().isoformat()))
 
         last_transaction = context.get("last_transaction", {})
         if not last_transaction:
@@ -226,19 +207,13 @@ class GeographicAnomalyRule(FraudRule):
         time_diff_hours = (timestamp - last_timestamp).total_seconds() / 3600
 
         # Check if travel is physically impossible
-        required_speed = (
-            distance_km / time_diff_hours if time_diff_hours > 0 else float("inf")
-        )
-        triggered = (
-            distance_km > self.max_distance_km and time_diff_hours < self.min_time_hours
-        )
+        required_speed = distance_km / time_diff_hours if time_diff_hours > 0 else float("inf")
+        triggered = distance_km > self.max_distance_km and time_diff_hours < self.min_time_hours
 
         if triggered:
             self.triggered_count += 1
 
-        risk_score = (
-            min(100, int((distance_km / self.max_distance_km) * 80)) if triggered else 0
-        )
+        risk_score = min(100, int((distance_km / self.max_distance_km) * 80)) if triggered else 0
 
         return {
             "triggered": triggered,
@@ -284,9 +259,7 @@ class RuleEngine:
         """Get a specific rule"""
         return next((r for r in self.rules if r.rule_id == rule_id), None)
 
-    def evaluate_transaction(
-        self, transaction: dict[str, Any], context: dict[str, Any]
-    ) -> dict[str, Any]:
+    def evaluate_transaction(self, transaction: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         """
         Evaluate a transaction against all enabled rules
 
@@ -325,14 +298,10 @@ class RuleEngine:
 
         # Cap at 100
         overall_risk_score = min(100, total_risk_score)
-        is_fraud = overall_risk_score >= 70 or any(
-            r["risk_level"] == "critical" for r in triggered_rules
-        )
+        is_fraud = overall_risk_score >= 70 or any(r["risk_level"] == "critical" for r in triggered_rules)
 
         # Generate recommendations
-        recommendations = self._generate_recommendations(
-            triggered_rules, overall_risk_score
-        )
+        recommendations = self._generate_recommendations(triggered_rules, overall_risk_score)
 
         return {
             "is_fraud": is_fraud,
@@ -342,16 +311,12 @@ class RuleEngine:
             "evaluation_timestamp": datetime.utcnow().isoformat(),
         }
 
-    def _generate_recommendations(
-        self, triggered_rules: list[dict], risk_score: int
-    ) -> list[str]:
+    def _generate_recommendations(self, triggered_rules: list[dict], risk_score: int) -> list[str]:
         """Generate action recommendations based on results"""
         recommendations = []
 
         if risk_score >= 90:
-            recommendations.append(
-                "IMMEDIATE ACTION: Block transaction and contact fraud team"
-            )
+            recommendations.append("IMMEDIATE ACTION: Block transaction and contact fraud team")
             recommendations.append("Freeze account pending investigation")
         elif risk_score >= 70:
             recommendations.append("HIGH RISK: Manual review required within 1 hour")
@@ -382,15 +347,9 @@ class RuleEngine:
             "total_rules": len(self.rules),
             "enabled_rules": sum(1 for r in self.rules if r.enabled),
             "total_evaluations": self.evaluation_count,
-            "rules_by_type": {
-                rule_type.value: sum(1 for r in self.rules if r.rule_type == rule_type)
-                for rule_type in RuleType
-            },
+            "rules_by_type": {rule_type.value: sum(1 for r in self.rules if r.rule_type == rule_type) for rule_type in RuleType},
             "most_triggered_rules": sorted(
-                [
-                    {"rule_id": r.rule_id, "name": r.name, "count": r.triggered_count}
-                    for r in self.rules
-                ],
+                [{"rule_id": r.rule_id, "name": r.name, "count": r.triggered_count} for r in self.rules],
                 key=lambda x: x["count"],
                 reverse=True,
             )[:5],
@@ -421,16 +380,8 @@ def create_default_rules() -> RuleEngine:
     )
 
     # Amount rules
-    engine.add_rule(
-        AmountThresholdRule(
-            "AMT001", threshold_amount=10000.0, risk_level=RiskLevel.HIGH
-        )
-    )
-    engine.add_rule(
-        AmountThresholdRule(
-            "AMT002", threshold_amount=50000.0, risk_level=RiskLevel.CRITICAL
-        )
-    )
+    engine.add_rule(AmountThresholdRule("AMT001", threshold_amount=10000.0, risk_level=RiskLevel.HIGH))
+    engine.add_rule(AmountThresholdRule("AMT002", threshold_amount=50000.0, risk_level=RiskLevel.CRITICAL))
 
     # Geographic rules
     engine.add_rule(

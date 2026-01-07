@@ -1,5 +1,6 @@
 # backend/app/routers/fraud.py
 import logging
+import uuid
 from datetime import UTC, datetime
 from typing import Any
 
@@ -72,9 +73,6 @@ async def analyze_transaction(
     except Exception as e:
         logger.error(f"Error analyzing transaction: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-
-import uuid
 
 
 @router.post("/analyze/batch")
@@ -218,9 +216,7 @@ async def freeze_account(
             raise HTTPException(status_code=400, detail="account_id is required")
 
         # Check if already frozen
-        existing = (
-            db.query(FrozenEntity).filter(FrozenEntity.entity_id == account_id).first()
-        )
+        existing = db.query(FrozenEntity).filter(FrozenEntity.entity_id == account_id).first()
         if existing and existing.status == "frozen":
             return {
                 "status": "already_frozen",
@@ -240,9 +236,7 @@ async def freeze_account(
         db.add(freeze_record)
         db.commit()
 
-        logger.info(
-            f"ACCOUNT FROZEN PERMANENTLY: {account_id} by user {current_user.get('id')}"
-        )
+        logger.info(f"ACCOUNT FROZEN PERMANENTLY: {account_id} by user {current_user.get('id')}")
 
         return {
             "status": "success",

@@ -28,14 +28,10 @@ class ServiceAuthenticator:
     def get_ssl_context(self) -> ssl.SSLContext:
         """Get or create mutual TLS SSL context"""
         if self._ssl_context is None:
-            self._ssl_context = ssl.create_default_context(
-                purpose=ssl.Purpose.SERVER_AUTH, cafile=self.ca_cert_path
-            )
+            self._ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=self.ca_cert_path)
 
             # Load client certificate for mutual TLS
-            self._ssl_context.load_cert_chain(
-                certfile=self.client_cert_path, keyfile=self.client_key_path
-            )
+            self._ssl_context.load_cert_chain(certfile=self.client_cert_path, keyfile=self.client_key_path)
 
             # Require certificate from server
             self._ssl_context.check_hostname = True
@@ -53,16 +49,12 @@ class ServiceAuthenticator:
 
             now = datetime.datetime.utcnow()
             if now < cert.not_valid_before or now > cert.not_valid_after:
-                logger.warning(
-                    "Service certificate is not valid (expired or not yet valid)"
-                )
+                logger.warning("Service certificate is not valid (expired or not yet valid)")
                 return False
 
             # Check subject alternative names for service identity
             try:
-                san_extension = cert.extensions.get_extension_for_oid(
-                    ExtensionOID.SUBJECT_ALTERNATIVE_NAME
-                )
+                san_extension = cert.extensions.get_extension_for_oid(ExtensionOID.SUBJECT_ALTERNATIVE_NAME)
                 san_names = san_extension.value.get_values_for_type(x509.DNSName)
 
                 # Verify that certificate contains service identity
@@ -74,14 +66,10 @@ class ServiceAuthenticator:
                 ]
 
                 for san_name in san_names:
-                    if any(
-                        service_name in san_name for service_name in valid_service_names
-                    ):
+                    if any(service_name in san_name for service_name in valid_service_names):
                         return True
 
-                logger.warning(
-                    f"Certificate SAN names {san_names} do not match trusted services"
-                )
+                logger.warning(f"Certificate SAN names {san_names} do not match trusted services")
                 return False
 
             except x509.ExtensionNotFound:
@@ -121,9 +109,7 @@ class ServiceAuthMiddleware:
         # In production, this would come from the TLS connection
         client_cert = getattr(request, "client_cert", None)
         if not client_cert:
-            logger.warning(
-                f"No client certificate provided for service {caller_service}"
-            )
+            logger.warning(f"No client certificate provided for service {caller_service}")
             return False
 
         # Validate certificate
@@ -169,9 +155,7 @@ def require_service_auth(service_name: str):
                 # Check for service authentication header
                 auth_header = request.headers.get("X-Service-Auth")
                 if not auth_header:
-                    logger.warning(
-                        f"Missing service authentication header for {service_name}"
-                    )
+                    logger.warning(f"Missing service authentication header for {service_name}")
                     # In production, this would raise an exception
                     # For now, we'll allow it for development
 
@@ -209,15 +193,11 @@ class SecureServiceClient:
         if self.session:
             await self.session.close()
 
-    async def call_service(
-        self, service_url: str, method: str = "GET", data: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    async def call_service(self, service_url: str, method: str = "GET", data: dict[str, Any] | None = None) -> dict[str, Any]:
         """Make an authenticated call to another service"""
 
         if not self.session:
-            raise RuntimeError(
-                "SecureServiceClient must be used as async context manager"
-            )
+            raise RuntimeError("SecureServiceClient must be used as async context manager")
 
         headers = {
             "X-Caller-Service": self.service_name,
@@ -226,9 +206,7 @@ class SecureServiceClient:
         }
 
         try:
-            async with self.session.request(
-                method=method, url=service_url, json=data, headers=headers
-            ) as response:
+            async with self.session.request(method=method, url=service_url, json=data, headers=headers) as response:
                 response.raise_for_status()
                 return await response.json()
 
@@ -241,23 +219,17 @@ class SecureServiceClient:
 service_authenticator: ServiceAuthenticator | None = None
 
 
-def initialize_service_auth(
-    ca_cert_path: str, client_cert_path: str, client_key_path: str
-):
+def initialize_service_auth(ca_cert_path: str, client_cert_path: str, client_key_path: str):
     """Initialize global service authenticator"""
     global service_authenticator
-    service_authenticator = ServiceAuthenticator(
-        ca_cert_path, client_cert_path, client_key_path
-    )
+    service_authenticator = ServiceAuthenticator(ca_cert_path, client_cert_path, client_key_path)
     logger.info("Service authentication initialized with mutual TLS")
 
 
 def get_service_authenticator() -> ServiceAuthenticator:
     """Get the global service authenticator instance"""
     if not service_authenticator:
-        raise RuntimeError(
-            "Service authentication not initialized. Call initialize_service_auth() first."
-        )
+        raise RuntimeError("Service authentication not initialized. Call initialize_service_auth() first.")
     return service_authenticator
 
 

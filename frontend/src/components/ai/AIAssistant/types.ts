@@ -1,17 +1,17 @@
-import { AIPersona } from '@/context/AIContext';
+import { AIPersona } from "@/context/AIContext";
 
 export interface SuggestionAction {
   id: string;
   label: string;
   endpoint?: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: Record<string, unknown>;
   description?: string;
-  style?: 'primary' | 'danger' | 'ghost';
-  icon?: 'alert' | 'user' | 'search' | 'eye' | 'file';
+  style?: "primary" | "danger" | "ghost";
+  icon?: "alert" | "user" | "search" | "eye" | "file";
   action?: string;
-  type?: 'create' | 'update' | 'delete' | 'external_api' | 'financial';
-  impact?: 'low' | 'medium' | 'high' | 'critical';
+  type?: "create" | "update" | "delete" | "external_api" | "financial";
+  impact?: "low" | "medium" | "high" | "critical";
   entityType?: string;
   entityId?: string;
   payload?: Record<string, unknown>;
@@ -21,7 +21,7 @@ export interface SuggestionAction {
 
 export interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: number;
   persona?: AIPersona;

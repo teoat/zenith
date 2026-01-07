@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { secureLogger } from '@/utils/secureLogger';
+import { useEffect, useState } from "react";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { secureLogger } from "@/utils/secureLogger";
 import {
   Activity,
   Cpu,
@@ -15,8 +15,8 @@ import {
   CheckCircle,
   Clock,
   TrendingUp,
-  TrendingDown
-} from 'lucide-react';
+  TrendingDown,
+} from "lucide-react";
 
 interface SystemMetrics {
   timestamp: string;
@@ -44,10 +44,11 @@ interface PerformanceDashboardProps {
 
 export function PerformanceDashboard({
   refreshInterval = 5000,
-  className = ''
+  className = "",
 }: PerformanceDashboardProps) {
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
-  const [collaborationStats, setCollaborationStats] = useState<CollaborationStats | null>(null);
+  const [collaborationStats, setCollaborationStats] =
+    useState<CollaborationStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
@@ -55,7 +56,7 @@ export function PerformanceDashboard({
   // Fetch system metrics
   const fetchMetrics = async () => {
     try {
-      const response = await fetch('/api/v1/monitoring/metrics');
+      const response = await fetch("/api/v1/monitoring/metrics");
       if (response.ok) {
         const data = await response.json();
         setMetrics(data);
@@ -64,20 +65,20 @@ export function PerformanceDashboard({
         throw new Error(`Failed to fetch metrics: ${response.status}`);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     }
   };
 
   // Fetch collaboration stats
   const fetchCollaborationStats = async () => {
     try {
-      const response = await fetch('/api/v1/collaboration/stats');
+      const response = await fetch("/api/v1/collaboration/stats");
       if (response.ok) {
         const data = await response.json();
         setCollaborationStats(data);
       }
     } catch (err) {
-      secureLogger.error('Failed to fetch collaboration stats:', err);
+      secureLogger.error("Failed to fetch collaboration stats:", err);
     }
   };
 
@@ -102,28 +103,34 @@ export function PerformanceDashboard({
     unit,
     icon: Icon,
     status,
-    trend
+    trend,
   }: {
     title: string;
     value: number | string;
     unit?: string;
     icon: any;
-    status: 'good' | 'warning' | 'critical';
-    trend?: 'up' | 'down' | 'stable';
+    status: "good" | "warning" | "critical";
+    trend?: "up" | "down" | "stable";
   }) => {
     const getStatusColor = () => {
       switch (status) {
-        case 'good': return 'text-green-600 bg-green-50 border-green-200';
-        case 'warning': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-        case 'critical': return 'text-red-600 bg-red-50 border-red-200';
+        case "good":
+          return "text-green-600 bg-green-50 border-green-200";
+        case "warning":
+          return "text-yellow-600 bg-yellow-50 border-yellow-200";
+        case "critical":
+          return "text-red-600 bg-red-50 border-red-200";
       }
     };
 
     const getTrendIcon = () => {
       switch (trend) {
-        case 'up': return <TrendingUp className="w-3 h-3 text-red-500" />;
-        case 'down': return <TrendingDown className="w-3 h-3 text-green-500" />;
-        default: return null;
+        case "up":
+          return <TrendingUp className="w-3 h-3 text-red-500" />;
+        case "down":
+          return <TrendingDown className="w-3 h-3 text-green-500" />;
+        default:
+          return null;
       }
     };
 
@@ -139,7 +146,7 @@ export function PerformanceDashboard({
           </div>
           <div className="mt-2">
             <span className="text-2xl font-bold">
-              {typeof value === 'number' ? value.toFixed(1) : value}
+              {typeof value === "number" ? value.toFixed(1) : value}
               {unit && <span className="text-sm font-normal ml-1">{unit}</span>}
             </span>
           </div>
@@ -150,30 +157,30 @@ export function PerformanceDashboard({
 
   // Get status for CPU usage
   const getCpuStatus = (cpu: number) => {
-    if (cpu > 90) return 'critical';
-    if (cpu > 70) return 'warning';
-    return 'good';
+    if (cpu > 90) return "critical";
+    if (cpu > 70) return "warning";
+    return "good";
   };
 
   // Get status for memory usage
   const getMemoryStatus = (memory: number) => {
-    if (memory > 90) return 'critical';
-    if (memory > 80) return 'warning';
-    return 'good';
+    if (memory > 90) return "critical";
+    if (memory > 80) return "warning";
+    return "good";
   };
 
   // Get status for response time
   const getResponseTimeStatus = (rt: number) => {
-    if (rt > 2000) return 'critical'; // > 2 seconds
-    if (rt > 500) return 'warning';   // > 500ms
-    return 'good';
+    if (rt > 2000) return "critical"; // > 2 seconds
+    if (rt > 500) return "warning"; // > 500ms
+    return "good";
   };
 
   // Get status for error rate
   const getErrorRateStatus = (rate: number) => {
-    if (rate > 5) return 'critical';  // > 5%
-    if (rate > 1) return 'warning';   // > 1%
-    return 'good';
+    if (rate > 5) return "critical"; // > 5%
+    if (rate > 1) return "warning"; // > 1%
+    return "good";
   };
 
   if (loading && !metrics) {
@@ -223,11 +230,14 @@ export function PerformanceDashboard({
                 variant="outline"
                 onClick={() => {
                   setLoading(true);
-                  Promise.all([fetchMetrics(), fetchCollaborationStats()]).finally(() => setLoading(false));
+                  Promise.all([
+                    fetchMetrics(),
+                    fetchCollaborationStats(),
+                  ]).finally(() => setLoading(false));
                 }}
                 disabled={loading}
               >
-                {loading ? 'Refreshing...' : 'Refresh'}
+                {loading ? "Refreshing..." : "Refresh"}
               </Button>
             </div>
           </div>
@@ -289,7 +299,13 @@ export function PerformanceDashboard({
             value={metrics.disk_usage}
             unit="%"
             icon={Database}
-            status={metrics.disk_usage > 90 ? 'critical' : metrics.disk_usage > 80 ? 'warning' : 'good'}
+            status={
+              metrics.disk_usage > 90
+                ? "critical"
+                : metrics.disk_usage > 80
+                  ? "warning"
+                  : "good"
+            }
           />
 
           <MetricCard
@@ -314,10 +330,18 @@ export function PerformanceDashboard({
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="flex items-center gap-2">
-                <CheckCircle className={`w-4 h-4 ${collaborationStats.server_running ? 'text-green-500' : 'text-red-500'}`} />
+                <CheckCircle
+                  className={`w-4 h-4 ${collaborationStats.server_running ? "text-green-500" : "text-red-500"}`}
+                />
                 <span className="text-sm">WebSocket Server</span>
-                <Badge variant={collaborationStats.server_running ? 'default' : 'destructive'}>
-                  {collaborationStats.server_running ? 'Running' : 'Stopped'}
+                <Badge
+                  variant={
+                    collaborationStats.server_running
+                      ? "default"
+                      : "destructive"
+                  }
+                >
+                  {collaborationStats.server_running ? "Running" : "Stopped"}
                 </Badge>
               </div>
 
@@ -357,14 +381,28 @@ export function PerformanceDashboard({
               <>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Overall Status</span>
-                  <Badge variant={
-                    (metrics.cpu_usage > 90 || metrics.memory_usage > 90 || metrics.error_rate > 5) ? 'destructive' :
-                    (metrics.cpu_usage > 70 || metrics.memory_usage > 80 || metrics.error_rate > 1) ? 'secondary' :
-                    'default'
-                  }>
-                    {(metrics.cpu_usage > 90 || metrics.memory_usage > 90 || metrics.error_rate > 5) ? 'Critical' :
-                     (metrics.cpu_usage > 70 || metrics.memory_usage > 80 || metrics.error_rate > 1) ? 'Warning' :
-                     'Healthy'}
+                  <Badge
+                    variant={
+                      metrics.cpu_usage > 90 ||
+                      metrics.memory_usage > 90 ||
+                      metrics.error_rate > 5
+                        ? "destructive"
+                        : metrics.cpu_usage > 70 ||
+                            metrics.memory_usage > 80 ||
+                            metrics.error_rate > 1
+                          ? "secondary"
+                          : "default"
+                    }
+                  >
+                    {metrics.cpu_usage > 90 ||
+                    metrics.memory_usage > 90 ||
+                    metrics.error_rate > 5
+                      ? "Critical"
+                      : metrics.cpu_usage > 70 ||
+                          metrics.memory_usage > 80 ||
+                          metrics.error_rate > 1
+                        ? "Warning"
+                        : "Healthy"}
                   </Badge>
                 </div>
 
@@ -379,7 +417,9 @@ export function PerformanceDashboard({
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Last Metrics Update</span>
                   <span className="text-sm text-gray-600">
-                    {lastUpdate ? `${Math.round((Date.now() - lastUpdate.getTime()) / 1000)}s ago` : 'Never'}
+                    {lastUpdate
+                      ? `${Math.round((Date.now() - lastUpdate.getTime()) / 1000)}s ago`
+                      : "Never"}
                   </span>
                 </div>
               </>

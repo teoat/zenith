@@ -109,9 +109,7 @@ class SynchronizationProtocolService:
                 continue
 
             # Check sync status for this protocol
-            sync_status = await self._check_protocol_sync_status(
-                protocol_name, protocol_config
-            )
+            sync_status = await self._check_protocol_sync_status(protocol_name, protocol_config)
             status_report["protocols"][protocol_name] = sync_status
 
             if sync_status["status"] != "synced":
@@ -124,18 +122,14 @@ class SynchronizationProtocolService:
                     }
                 )
 
-        status_report["overall_sync_health"] = max(
-            0.0, status_report["overall_sync_health"]
-        )
+        status_report["overall_sync_health"] = max(0.0, status_report["overall_sync_health"])
 
         # Get recent sync events
         status_report["last_sync_events"] = self.sync_history[-10:]  # Last 10 events
 
         return status_report
 
-    async def _check_protocol_sync_status(
-        self, protocol_name: str, config: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _check_protocol_sync_status(self, protocol_name: str, config: dict[str, Any]) -> dict[str, Any]:
         """Check sync status for a specific protocol."""
         # This is a simplified implementation - in practice, this would check actual sync status
 
@@ -216,9 +210,7 @@ class SynchronizationProtocolService:
             "health_correlation_active": True,
         }
 
-    async def trigger_sync_action(
-        self, protocol_name: str, action: str
-    ) -> dict[str, Any]:
+    async def trigger_sync_action(self, protocol_name: str, action: str) -> dict[str, Any]:
         """Trigger a specific synchronization action."""
         if protocol_name not in self.sync_protocols:
             return {"error": f"Unknown protocol: {protocol_name}"}
@@ -239,16 +231,10 @@ class SynchronizationProtocolService:
 
         # Execute action (simplified - in practice would perform actual sync)
         try:
-            if (
-                protocol_name == "tests_implementation"
-                and action == "run_relevant_tests"
-            ):
+            if protocol_name == "tests_implementation" and action == "run_relevant_tests":
                 # Trigger test run
                 result = await self._run_relevant_tests()
-            elif (
-                protocol_name == "code_documentation"
-                and action == "auto_generate_api_docs"
-            ):
+            elif protocol_name == "code_documentation" and action == "auto_generate_api_docs":
                 # Generate API docs
                 result = await self._generate_api_docs()
             else:
@@ -286,9 +272,7 @@ class SynchronizationProtocolService:
             "schemas_updated": 12,
         }
 
-    async def configure_protocol(
-        self, protocol_name: str, config: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def configure_protocol(self, protocol_name: str, config: dict[str, Any]) -> dict[str, Any]:
         """Configure a synchronization protocol."""
         if protocol_name not in self.sync_protocols:
             return {"error": f"Unknown protocol: {protocol_name}"}

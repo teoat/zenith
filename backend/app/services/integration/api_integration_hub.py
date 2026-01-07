@@ -160,11 +160,7 @@ class APIIntegrationHub:
             if self.db:
                 from core.database import IntegrationConfigModel
 
-                db_int = (
-                    self.db.query(IntegrationConfigModel)
-                    .filter(IntegrationConfigModel.id == config.integration_id)
-                    .first()
-                )
+                db_int = self.db.query(IntegrationConfigModel).filter(IntegrationConfigModel.id == config.integration_id).first()
                 if not db_int:
                     db_int = IntegrationConfigModel(
                         id=config.integration_id,
@@ -202,9 +198,7 @@ class APIIntegrationHub:
                 "last_reset": datetime.now(),
             }
 
-            logger.info(
-                f"Registered integration: {config.name} ({config.integration_id})"
-            )
+            logger.info(f"Registered integration: {config.name} ({config.integration_id})")
             return True
 
         except Exception as e:
@@ -263,19 +257,13 @@ class APIIntegrationHub:
                 request_headers.update(headers)
 
             # Add authentication
-            await self._add_authentication(
-                config, request_headers, method, full_url, data
-            )
+            await self._add_authentication(config, request_headers, method, full_url, data)
 
             # Make request based on integration type
             if config.type == IntegrationType.REST_API:
-                response = await self._make_rest_call(
-                    config, method, full_url, data, request_headers
-                )
+                response = await self._make_rest_call(config, method, full_url, data, request_headers)
             elif config.type == IntegrationType.GRAPHQL:
-                response = await self._make_graphql_call(
-                    config, full_url, data, request_headers
-                )
+                response = await self._make_graphql_call(config, full_url, data, request_headers)
             else:
                 raise ValueError(f"Unsupported integration type: {config.type}")
 
@@ -300,11 +288,7 @@ class APIIntegrationHub:
                 try:
                     from core.database import IntegrationConfigModel
 
-                    db_int = (
-                        self.db.query(IntegrationConfigModel)
-                        .filter(IntegrationConfigModel.id == integration_id)
-                        .first()
-                    )
+                    db_int = self.db.query(IntegrationConfigModel).filter(IntegrationConfigModel.id == integration_id).first()
                     if db_int:
                         db_int.last_used = config.last_used
                         self.db.commit()
@@ -334,9 +318,7 @@ class APIIntegrationHub:
             logger.error(f"Integration call failed: {integration_id} - {e}")
             raise
 
-    async def register_webhook_handler(
-        self, integration_id: str, event_type: str, handler: Callable
-    ) -> bool:
+    async def register_webhook_handler(self, integration_id: str, event_type: str, handler: Callable) -> bool:
         """
         Register a webhook event handler
 
@@ -393,9 +375,7 @@ class APIIntegrationHub:
         if config.webhook_secret:
             signature = headers.get("X-Signature", headers.get("X-Hub-Signature"))
             if signature:
-                webhook_event.verified = self._verify_webhook_signature(
-                    raw_body, signature, config.webhook_secret
-                )
+                webhook_event.verified = self._verify_webhook_signature(raw_body, signature, config.webhook_secret)
             else:
                 logger.warning(f"No signature provided for webhook: {event_id}")
 
@@ -432,9 +412,7 @@ class APIIntegrationHub:
                 "verified": webhook_event.verified,
             }
 
-    async def get_integration_status(
-        self, integration_id: str
-    ) -> dict[str, Any] | None:
+    async def get_integration_status(self, integration_id: str) -> dict[str, Any] | None:
         """Get detailed status of an integration"""
         if integration_id not in self.integrations:
             return None
@@ -444,11 +422,7 @@ class APIIntegrationHub:
 
         # Calculate current rate limit status
         calls_last_minute = len(
-            [
-                call_time
-                for call_time in rate_limiter.get("calls", [])
-                if datetime.now() - call_time < timedelta(minutes=1)
-            ]
+            [call_time for call_time in rate_limiter.get("calls", []) if datetime.now() - call_time < timedelta(minutes=1)]
         )
 
         return {
@@ -468,28 +442,14 @@ class APIIntegrationHub:
     def get_integration_metrics(self) -> dict[str, Any]:
         """Get overall integration hub metrics"""
         total_integrations = len(self.integrations)
-        active_integrations = len(
-            [
-                config
-                for config in self.integrations.values()
-                if config.status == IntegrationStatus.ACTIVE
-            ]
-        )
+        active_integrations = len([config for config in self.integrations.values() if config.status == IntegrationStatus.ACTIVE])
 
         total_calls = len(self.call_history)
-        successful_calls = len(
-            [
-                call
-                for call in self.call_history
-                if call.status_code and 200 <= call.status_code < 300
-            ]
-        )
+        successful_calls = len([call for call in self.call_history if call.status_code and 200 <= call.status_code < 300])
 
         avg_response_time = 0
         if self.call_history:
-            response_times = [
-                call.duration_ms for call in self.call_history if call.duration_ms
-            ]
+            response_times = [call.duration_ms for call in self.call_history if call.duration_ms]
             if response_times:
                 avg_response_time = sum(response_times) / len(response_times)
 
@@ -498,9 +458,7 @@ class APIIntegrationHub:
             "active_integrations": active_integrations,
             "total_api_calls": total_calls,
             "successful_calls": successful_calls,
-            "success_rate": (
-                (successful_calls / total_calls * 100) if total_calls > 0 else 0
-            ),
+            "success_rate": ((successful_calls / total_calls * 100) if total_calls > 0 else 0),
             "average_response_time_ms": avg_response_time,
             "integrations_by_type": self._count_integrations_by_type(),
             "integrations_by_status": self._count_integrations_by_status(),
@@ -525,9 +483,7 @@ class APIIntegrationHub:
         # Test authentication configuration
         if config.authentication != AuthenticationType.NONE:
             required_fields = self._get_auth_required_fields(config.authentication)
-            missing_fields = [
-                field for field in required_fields if field not in config.auth_config
-            ]
+            missing_fields = [field for field in required_fields if field not in config.auth_config]
             if missing_fields:
                 raise ValueError(f"Missing authentication fields: {missing_fields}")
 
@@ -547,9 +503,7 @@ class APIIntegrationHub:
         connector = aiohttp.TCPConnector(limit=10, ttl_dns_cache=300)
         timeout = aiohttp.ClientTimeout(total=config.timeout_seconds)
 
-        session = aiohttp.ClientSession(
-            connector=connector, timeout=timeout, headers=config.headers
-        )
+        session = aiohttp.ClientSession(connector=connector, timeout=timeout, headers=config.headers)
 
         self.session_pool[config.integration_id] = session
 
@@ -618,9 +572,7 @@ class APIIntegrationHub:
         calls = rate_limiter["calls"]
 
         # Clean old calls (older than 1 minute)
-        calls[:] = [
-            call_time for call_time in calls if now - call_time < timedelta(minutes=1)
-        ]
+        calls[:] = [call_time for call_time in calls if now - call_time < timedelta(minutes=1)]
 
         # Check if under limit
         if len(calls) >= config.rate_limit:
@@ -649,30 +601,18 @@ class APIIntegrationHub:
         """Make REST API call with circuit breaker protection"""
         session = self.session_pool.get(config.integration_id)
         if not session:
-            raise Exception(
-                f"No session available for integration: {config.integration_id}"
-            )
+            raise Exception(f"No session available for integration: {config.integration_id}")
 
         # Prepare request data
         json_data = json.dumps(data) if data else None
 
-        async with session.request(
-            method, url, data=json_data, headers=headers
-        ) as response:
-            response_data = (
-                await response.json()
-                if response.content_type == "application/json"
-                else await response.text()
-            )
+        async with session.request(method, url, data=json_data, headers=headers) as response:
+            response_data = await response.json() if response.content_type == "application/json" else await response.text()
 
             return {
                 "status_code": response.status,
                 "headers": dict(response.headers),
-                "data": (
-                    response_data
-                    if isinstance(response_data, dict)
-                    else {"text": response_data}
-                ),
+                "data": (response_data if isinstance(response_data, dict) else {"text": response_data}),
             }
 
     async def _make_graphql_call(
@@ -694,23 +634,17 @@ class APIIntegrationHub:
 
         return await self._make_rest_call(config, "POST", url, graphql_payload, headers)
 
-    def _verify_webhook_signature(
-        self, body: bytes, signature: str, secret: str
-    ) -> bool:
+    def _verify_webhook_signature(self, body: bytes, signature: str, secret: str) -> bool:
         """Verify webhook signature"""
         try:
             # GitHub-style signature verification
             if signature.startswith("sha256="):
-                expected_signature = hmac.new(
-                    secret.encode(), body, hashlib.sha256
-                ).hexdigest()
+                expected_signature = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
                 provided_signature = signature[7:]  # Remove 'sha256=' prefix
                 return hmac.compare_digest(expected_signature, provided_signature)
             else:
                 # Simple HMAC verification
-                expected_signature = hmac.new(
-                    secret.encode(), body, hashlib.sha256
-                ).hexdigest()
+                expected_signature = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
                 return hmac.compare_digest(expected_signature, signature)
 
         except Exception as e:

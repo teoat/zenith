@@ -3,8 +3,14 @@ export interface CodeIssue {
   line_number: number;
   column?: number;
   issue_type: string;
-  category: 'security' | 'performance' | 'maintainability' | 'reliability' | 'compliance' | 'best_practice';
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  category:
+    | "security"
+    | "performance"
+    | "maintainability"
+    | "reliability"
+    | "compliance"
+    | "best_practice";
+  severity: "info" | "warning" | "error" | "critical";
   title: string;
   description: string;
   code_snippet: string;
@@ -22,7 +28,7 @@ export interface CodeReviewResult {
   files_analyzed: number;
   total_lines: number;
   quality_score: number;
-  quality_rating: 'excellent' | 'good' | 'fair' | 'poor' | 'critical';
+  quality_rating: "excellent" | "good" | "fair" | "poor" | "critical";
   issues: CodeIssue[];
   metrics: {
     total_issues: number;

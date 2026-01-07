@@ -1,6 +1,6 @@
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Database, CheckCircle, Network, Lock } from 'lucide-react';
+import React from "react";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Database, CheckCircle, Network, Lock } from "lucide-react";
 
 interface EvidenceStatsProps {
   totalItems: number;
@@ -26,7 +26,9 @@ export const EvidenceStats: React.FC<EvidenceStatsProps> = ({ totalItems }) => {
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">Integrity Verified</p>
+              <p className="text-sm font-medium text-gray-500">
+                Integrity Verified
+              </p>
               <p className="text-2xl font-bold text-green-600">100%</p>
             </div>
             <div className="p-2 bg-green-100 rounded-full">
@@ -39,7 +41,9 @@ export const EvidenceStats: React.FC<EvidenceStatsProps> = ({ totalItems }) => {
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">AI Correlations</p>
+              <p className="text-sm font-medium text-gray-500">
+                AI Correlations
+              </p>
               <p className="text-2xl font-bold">12 Active</p>
             </div>
             <div className="p-2 bg-purple-100 rounded-full">
@@ -52,7 +56,9 @@ export const EvidenceStats: React.FC<EvidenceStatsProps> = ({ totalItems }) => {
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">Secure Accesses</p>
+              <p className="text-sm font-medium text-gray-500">
+                Secure Accesses
+              </p>
               <p className="text-2xl font-bold">48 (24h)</p>
             </div>
             <div className="p-2 bg-orange-100 rounded-full">

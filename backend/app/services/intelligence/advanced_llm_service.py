@@ -44,9 +44,7 @@ class AdvancedLLMService:
 
     def __init__(self):
         self.api_key = os.getenv("OPENAI_API_KEY")
-        self.client = (
-            AsyncOpenAI(api_key=self.api_key) if HAS_OPENAI and self.api_key else None
-        )
+        self.client = AsyncOpenAI(api_key=self.api_key) if HAS_OPENAI and self.api_key else None
 
     def is_api_available(self) -> bool:
         """Check if external LLM API is available and configured."""
@@ -119,9 +117,7 @@ class AdvancedLLMService:
 
         return results
 
-    async def _simulate_response(
-        self, prompt: str, context: dict[str, Any] | None, persona: str
-    ) -> ACosmicLLMResponse:
+    async def _simulate_response(self, prompt: str, context: dict[str, Any] | None, persona: str) -> ACosmicLLMResponse:
         """
         Generate a sophisticated simulated response using RAG-like heuristics.
         """
@@ -139,9 +135,7 @@ class AdvancedLLMService:
         }
 
         # Dynamic Analysis based on keywords
-        analysis = (
-            "No specific patterns detected, but standard due diligence is advised."
-        )
+        analysis = "No specific patterns detected, but standard due diligence is advised."
 
         if "layering" in prompt_lower or "structure" in prompt_lower:
             analysis = "detected complex transaction layering often associated with placement phase money laundering."
@@ -151,6 +145,11 @@ class AdvancedLLMService:
             analysis = "found 3 hidden relationships between subject and known high-risk entities."
         elif "delete" in prompt_lower:
             analysis = "user intent to delete evidence noted. Logging logic requires administrative override."
+
+        template = templates.get(persona, templates["frenly"])
+        content = template.format(query=prompt, analysis=analysis)
+
+        duration = int((datetime.now() - start_time).total_seconds() * 1000)
 
         if persona == "technical_reviewer":
             analysis = "Code Scan Complete."
@@ -162,11 +161,6 @@ class AdvancedLLMService:
                 response_time_ms=duration,
                 metadata={"simulated_scan": True},
             )
-
-        template = templates.get(persona, templates["frenly"])
-        content = template.format(query=prompt, analysis=analysis)
-
-        duration = int((datetime.now() - start_time).total_seconds() * 1000)
 
         return ACosmicLLMResponse(
             content=content,

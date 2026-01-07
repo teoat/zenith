@@ -33,9 +33,7 @@ class AIIntegrationHub:
             "legacy_ai": self._handle_legacy_request,
         }
 
-    async def process_ai_request(
-        self, request_type: str, request_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def process_ai_request(self, request_type: str, request_data: dict[str, Any]) -> dict[str, Any]:
         """Main entry point for AI requests - routes to appropriate handler"""
 
         if request_type not in self.integration_routes:
@@ -44,9 +42,7 @@ class AIIntegrationHub:
         handler = self.integration_routes[request_type]
         return await handler(request_data)
 
-    async def _handle_federated_request(
-        self, request_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _handle_federated_request(self, request_data: dict[str, Any]) -> dict[str, Any]:
         """Handle federated learning requests"""
         action = request_data.get("action")
 
@@ -65,9 +61,7 @@ class AIIntegrationHub:
 
         raise ValueError(f"Unknown federated action: {action}")
 
-    async def _handle_realtime_request(
-        self, request_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _handle_realtime_request(self, request_data: dict[str, Any]) -> dict[str, Any]:
         """Handle real-time adaptation requests"""
         transaction_data = request_data.get("transaction_data", {})
         request_data.get("context_data", {})
@@ -76,9 +70,7 @@ class AIIntegrationHub:
         current_prediction = await self.ai_service.analyze_transaction(transaction_data)
 
         # Apply real-time adaptation
-        adapted_result = await self.realtime_adapter.monitor_and_adapt(
-            transaction_data, current_prediction
-        )
+        adapted_result = await self.realtime_adapter.monitor_and_adapt(transaction_data, current_prediction)
 
         return {
             "original_prediction": current_prediction,
@@ -87,9 +79,7 @@ class AIIntegrationHub:
             "model_version": adapted_result.model_version,
         }
 
-    async def _handle_multimodal_request(
-        self, request_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _handle_multimodal_request(self, request_data: dict[str, Any]) -> dict[str, Any]:
         """Handle multi-modal analysis requests"""
         entity_id = request_data.get("entity_id")
         modalities_data = request_data.get("modalities", {})
@@ -102,9 +92,7 @@ class AIIntegrationHub:
         }
 
         # Process through multimodal integrator
-        result = await self.multimodal_integrator.process_multimodal_input(
-            multimodal_input
-        )
+        result = await self.multimodal_integrator.process_multimodal_input(multimodal_input)
 
         return {
             "entity_id": entity_id,
@@ -114,9 +102,7 @@ class AIIntegrationHub:
             "recommendations": self._generate_multimodal_recommendations(result),
         }
 
-    async def _handle_legacy_request(
-        self, request_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _handle_legacy_request(self, request_data: dict[str, Any]) -> dict[str, Any]:
         """Handle legacy AI service requests for backward compatibility"""
         return await self.ai_service.analyze_transaction(request_data)
 

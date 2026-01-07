@@ -1,12 +1,12 @@
-import React from 'react';
-import { Button } from '@/components/ui/Button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
-import { AlertTriangle, CheckCircle, Save, Send } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/Button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/Alert";
+import { AlertTriangle, CheckCircle, Save, Send } from "lucide-react";
 
-import { useSARCreation } from '@/hooks/useSARCreation';
-import { SelectCaseStep } from '@/components/compliance/sar/SelectCaseStep';
-import { SARDetailsStep } from '@/components/compliance/sar/SARDetailsStep';
-import { SARDraftsSidebar } from '@/components/compliance/sar/SARDraftsSidebar';
+import { useSARCreation } from "@/hooks/useSARCreation";
+import { SelectCaseStep } from "@/components/compliance/sar/SelectCaseStep";
+import { SARDetailsStep } from "@/components/compliance/sar/SARDetailsStep";
+import { SARDraftsSidebar } from "@/components/compliance/sar/SARDraftsSidebar";
 
 const SARCreationWizard: React.FC = () => {
   const {
@@ -25,7 +25,7 @@ const SARCreationWizard: React.FC = () => {
     filteredCases,
     handleCaseSelect,
     handleActivityToggle,
-    handleSubmit
+    handleSubmit,
   } = useSARCreation();
 
   return (
@@ -36,11 +36,17 @@ const SARCreationWizard: React.FC = () => {
       <div className="flex-1 space-y-6 max-w-4xl">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">SAR Creation Wizard</h1>
-            <p className="text-gray-600 mt-2">Create a Suspicious Activity Report for regulatory filing</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              SAR Creation Wizard
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Create a Suspicious Activity Report for regulatory filing
+            </p>
           </div>
           <div className="flex items-center space-x-2">
-            <div className={`px-3 py-1 rounded-full text-sm ${step === 1 ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
+            <div
+              className={`px-3 py-1 rounded-full text-sm ${step === 1 ? "bg-blue-100 text-blue-800" : "bg-green-100 text-green-800"}`}
+            >
               Step {step} of 2
             </div>
           </div>
@@ -72,7 +78,7 @@ const SARCreationWizard: React.FC = () => {
             handleCaseSelect={handleCaseSelect}
           />
         )}
-        
+
         {step === 2 && (
           <SARDetailsStep
             formData={formData}
@@ -94,19 +100,21 @@ const SARCreationWizard: React.FC = () => {
 
           <div className="flex space-x-3">
             {step === 1 && selectedCase && (
-              <Button onClick={() => setStep(2)}>
-                Next: SAR Details
-              </Button>
+              <Button onClick={() => setStep(2)}>Next: SAR Details</Button>
             )}
             {step === 2 && (
               <>
-                <Button variant="outline" onClick={handleSubmit} disabled={loading}>
+                <Button
+                  variant="outline"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                >
                   <Save className="h-4 w-4 mr-2" />
                   Save Draft
                 </Button>
                 <Button onClick={handleSubmit} disabled={loading}>
                   <Send className="h-4 w-4 mr-2" />
-                  {loading ? 'Creating SAR...' : 'Create & Submit SAR'}
+                  {loading ? "Creating SAR..." : "Create & Submit SAR"}
                 </Button>
               </>
             )}

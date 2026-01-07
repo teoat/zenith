@@ -18,6 +18,7 @@ from app.services.infrastructure.circuit_breaker import (
 )
 from app.services.infrastructure.storage.database_optimizer_service import db_optimizer
 from core.database import (
+    SAR,
     Case,
     CaseActivity,
     CaseNote,
@@ -144,9 +145,7 @@ class DatabaseService:
             # Connection pool check
             pool_status = self._get_connection_pool_status()
             health_status["checks"]["connection_pool"] = {
-                "status": "healthy"
-                if pool_status.get("pool_size", 0) > 0
-                else "degraded",
+                "status": "healthy" if pool_status.get("pool_size", 0) > 0 else "degraded",
                 "details": pool_status,
             }
 
@@ -165,7 +164,8 @@ class DatabaseService:
                 for table in tables_to_check:
                     try:
                         # Use a lightweight query to check table accessibility
-                        db.execute(text(f"SELECT 1 FROM {table} LIMIT 1")).fetchone()
+                        # Use parameterized query to prevent SQL injection
+                        db.execute(text("SELECT 1 FROM :table LIMIT 1").bindparams(table=table)).fetchone()
                         health_status["checks"][f"{table}_table"] = {
                             "status": "healthy",
                             "accessible": True,
@@ -183,9 +183,7 @@ class DatabaseService:
                 db.execute(text("SELECT 1 FROM users LIMIT 1")).fetchone()
                 perf_time = (time.time() - perf_start) * 1000
                 health_status["checks"]["performance"] = {
-                    "status": "healthy"
-                    if perf_time < 50
-                    else "degraded",  # Lower threshold for lightweight query
+                    "status": "healthy" if perf_time < 50 else "degraded",  # Lower threshold for lightweight query
                     "query_time_ms": round(perf_time, 2),
                     "threshold_ms": 50,
                 }
@@ -206,15 +204,9 @@ class DatabaseService:
         health_status["response_time_ms"] = round((time.time() - start_time) * 1000, 2)
 
         # Overall status determination
-        if any(
-            check.get("status") == "unhealthy"
-            for check in health_status["checks"].values()
-        ):
+        if any(check.get("status") == "unhealthy" for check in health_status["checks"].values()):
             health_status["status"] = "unhealthy"
-        elif any(
-            check.get("status") == "degraded"
-            for check in health_status["checks"].values()
-        ):
+        elif any(check.get("status") == "degraded" for check in health_status["checks"].values()):
             health_status["status"] = "degraded"
 
         return health_status
@@ -254,15 +246,11 @@ class DatabaseService:
                 return self._get_cases_paginated_logic(db, page, per_page, filters)
             else:
                 with self.get_db() as session:
-                    return self._get_cases_paginated_logic(
-                        session, page, per_page, filters
-                    )
+                    return self._get_cases_paginated_logic(session, page, per_page, filters)
         except SQLAlchemyError as e:
             from app.core._errors import error_handler
 
-            error_handler.log_and_raise_http_error(
-                error_handler.handle_database_error(e, "get_cases_paginated")
-            )
+            error_handler.log_and_raise_http_error(error_handler.handle_database_error(e, "get_cases_paginated"))
         except Exception as e:
             from app.core._errors import (
                 ErrorCategory,
@@ -282,9 +270,7 @@ class DatabaseService:
                 )
             )
 
-    def _get_cases_paginated_logic(
-        self, db: Session, page: int, per_page: int, filters: dict
-    ) -> dict[str, Any]:
+    def _get_cases_paginated_logic(self, db: Session, page: int, per_page: int, filters: dict) -> dict[str, Any]:
         """Core logic for paginated case retrieval"""
         offset = (page - 1) * per_page
 
@@ -327,9 +313,7 @@ class DatabaseService:
         total_count = query.count()
 
         # Apply pagination and ordering
-        cases = (
-            query.order_by(desc(Case.created_at)).offset(offset).limit(per_page).all()
-        )
+        cases = query.order_by(desc(Case.created_at)).offset(offset).limit(per_page).all()
 
         total_pages = (total_count + per_page - 1) // per_page if per_page > 0 else 0
 
@@ -344,9 +328,7 @@ class DatabaseService:
             "execution_time": 0.0,
         }
 
-    def get_cases(
-        self, skip: int = 0, limit: int = 100, filters: dict[str, Any] | None = None
-    ) -> list[Case]:
+    def get_cases(self, skip: int = 0, limit: int = 100, filters: dict[str, Any] | None = None) -> list[Case]:
         """Get cases with optional filtering (legacy method)"""
         # Convert to pagination format for backward compatibility
         page = (skip // limit) + 1
@@ -393,11 +375,7 @@ class DatabaseService:
             if hasattr(args[0], "add") and hasattr(args[0], "commit"):
                 db = args[0]
                 case_data = kwargs
-                created_by = (
-                    kwargs.get("created_by")
-                    or kwargs.get("assignee_id")
-                    or kwargs.get("assignee_id")
-                )
+                created_by = kwargs.get("created_by") or kwargs.get("assignee_id") or kwargs.get("assignee_id")
             # Check if first arg is a dict (legacy call)
             elif isinstance(args[0], dict):
                 case_data = args[0].copy()
@@ -418,9 +396,7 @@ class DatabaseService:
             with self.get_db() as session:
                 return self._create_case_logic(session, case_data, created_by)
 
-    def _create_case_logic(
-        self, db: Session, case_data: dict, created_by: str | None = None
-    ) -> Case:
+    def _create_case_logic(self, db: Session, case_data: dict, created_by: str | None = None) -> Case:
         """Common logic for case creation"""
         # Ensure created_by is stored if provided
         if created_by and "created_by" not in case_data:
@@ -479,17 +455,13 @@ class DatabaseService:
             update_data = remaining_args.pop(0)
         else:
             # Use kwargs for update_data if not passed as dict
-            update_data = {
-                k: v for k, v in kwargs.items() if k not in ["case_id", "updated_by"]
-            }
+            update_data = {k: v for k, v in kwargs.items() if k not in ["case_id", "updated_by"]}
 
         if db:
             return self._update_case_logic(db, case_id, update_data, updated_by)
         else:
             with self.get_db() as session:
-                return self._update_case_logic(
-                    session, case_id, update_data, updated_by
-                )
+                return self._update_case_logic(session, case_id, update_data, updated_by)
 
     def _update_case_logic(
         self,
@@ -528,9 +500,7 @@ class DatabaseService:
                 user_id=updated_by,
                 activity_type="updated",
                 description="Case updated",
-                activity_metadata=make_serializable(
-                    {"changes": update_data, "old_values": old_values}
-                ),
+                activity_metadata=make_serializable({"changes": update_data, "old_values": old_values}),
             )
             db.add(activity)
 
@@ -538,19 +508,7 @@ class DatabaseService:
         db.refresh(case)
         return case
 
-    def delete_case(self, case_id: str) -> bool:
-        """Delete a case"""
-        with self.get_db() as db:
-            case = db.query(Case).filter(Case.id == case_id).first()
-            if case:
-                db.delete(case)
-                db.commit()
-                return True
-            return False
-
-    def assign_case(
-        self, case_id: str, assignee_id: str, assigned_by: str
-    ) -> Case | None:
+    def assign_case(self, case_id: str, assignee_id: str, assigned_by: str) -> Case | None:
         """Assign case to user"""
         return self.update_case(
             case_id,
@@ -620,18 +578,14 @@ class DatabaseService:
                 )
                 .count()
             )
-            escalated = (
-                db.query(Case).filter(Case.status == CaseStatus.ESCALATED).count()
-            )
+            escalated = db.query(Case).filter(Case.status == CaseStatus.ESCALATED).count()
 
             return {
                 "total_cases": total_cases,
                 "open_cases": open_cases,
                 "high_priority": 0,  # metrics placeholder
                 "escalated": escalated,
-                "closure_rate": (
-                    (total_cases - open_cases) / total_cases if total_cases > 0 else 0
-                ),
+                "closure_rate": ((total_cases - open_cases) / total_cases if total_cases > 0 else 0),
             }
 
     def get_case(self, *args, **kwargs) -> Case | None:
@@ -684,9 +638,7 @@ class DatabaseService:
 
     # ===== TRANSACTION MANAGEMENT =====
 
-    def get_transactions_by_case(
-        self, case_id: str, filters: dict[str, Any] | None = None
-    ) -> list[Transaction]:
+    def get_transactions_by_case(self, case_id: str, filters: dict[str, Any] | None = None) -> list[Transaction]:
         """Get transactions for a case with optional filtering"""
         with self.get_db() as db:
             query = db.query(Transaction).filter(Transaction.case_id == case_id)
@@ -695,9 +647,7 @@ class DatabaseService:
                 if "status" in filters:
                     query = query.filter(Transaction.status == filters["status"])
                 if "is_flagged" in filters:
-                    query = query.filter(
-                        Transaction.is_flagged == filters["is_flagged"]
-                    )
+                    query = query.filter(Transaction.is_flagged == filters["is_flagged"])
                 if "date_from" in filters:
                     query = query.filter(Transaction.date >= filters["date_from"])
                 if "date_to" in filters:
@@ -714,14 +664,10 @@ class DatabaseService:
             db.refresh(transaction)
             return transaction
 
-    def update_transaction_status(
-        self, transaction_id: str, status: str, reviewed_by: str
-    ) -> Transaction | None:
+    def update_transaction_status(self, transaction_id: str, status: str, reviewed_by: str) -> Transaction | None:
         """Update transaction status"""
         with self.get_db() as db:
-            transaction = (
-                db.query(Transaction).filter(Transaction.id == transaction_id).first()
-            )
+            transaction = db.query(Transaction).filter(Transaction.id == transaction_id).first()
             if transaction:
                 transaction.status = status
                 transaction.reviewed_by = reviewed_by
@@ -735,12 +681,7 @@ class DatabaseService:
     def get_evidence_by_case(self, case_id: str) -> list[Evidence]:
         """Get evidence for a case"""
         with self.get_db() as db:
-            return (
-                db.query(Evidence)
-                .filter(Evidence.case_id == case_id)
-                .order_by(desc(Evidence.uploaded_at))
-                .all()
-            )
+            return db.query(Evidence).filter(Evidence.case_id == case_id).order_by(desc(Evidence.uploaded_at)).all()
 
     def create_evidence(self, evidence_data: dict) -> Evidence:
         """Create new evidence"""
@@ -775,9 +716,7 @@ class DatabaseService:
             db.refresh(note)
             return note
 
-    def get_case_notes(
-        self, case_id: str, include_internal: bool = True
-    ) -> list[CaseNote]:
+    def get_case_notes(self, case_id: str, include_internal: bool = True) -> list[CaseNote]:
         """Get notes for a case"""
         with self.get_db() as db:
             query = db.query(CaseNote).filter(CaseNote.case_id == case_id)
@@ -813,9 +752,7 @@ class DatabaseService:
 
             return query.all()
 
-    def get_users_paginated(
-        self, pagination: "PaginationParams", filters: "FilterParams" = None
-    ) -> dict[str, Any]:
+    def get_users_paginated(self, pagination: "PaginationParams", filters: "FilterParams" = None) -> dict[str, Any]:
         """Get users with pagination and advanced filtering"""
         with self.get_db() as db:
             query = db.query(User).filter(User.is_active)
@@ -860,20 +797,12 @@ class DatabaseService:
     def get_user(self, user_id: str) -> User | None:
         """Get user by ID"""
         with self.get_db() as db:
-            return (
-                db.query(User)
-                .filter(User.id == user_id, User.is_active)
-                .first()
-            )
+            return db.query(User).filter(User.id == user_id, User.is_active).first()
 
     def get_user_by_username(self, username: str) -> User | None:
         """Get user by username"""
         with self.get_db() as db:
-            return (
-                db.query(User)
-                .filter(User.username == username, User.is_active)
-                .first()
-            )
+            return db.query(User).filter(User.username == username, User.is_active).first()
 
     def update_user(self, user_id: str, data: dict[str, Any]) -> bool:
         """Update user by ID with data dict"""
@@ -920,9 +849,7 @@ class DatabaseService:
         date_to: datetime | None = None,
     ) -> dict[str, Any]:
         """Get optimized transaction aggregates"""
-        return db_optimizer.get_optimized_transaction_aggregates(
-            case_id, date_from, date_to
-        )
+        return db_optimizer.get_optimized_transaction_aggregates(case_id, date_from, date_to)
 
     def get_database_performance_metrics(self) -> dict[str, Any]:
         """Get database performance metrics"""
@@ -932,9 +859,7 @@ class DatabaseService:
         """Get comprehensive database statistics"""
         return db_optimizer.get_database_stats()
 
-    def analyze_query_performance(
-        self, query: str, params: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    def analyze_query_performance(self, query: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         """Analyze query performance with EXPLAIN"""
         return db_optimizer.optimize_query_with_explain(query, params)
 
@@ -972,17 +897,13 @@ class DatabaseService:
         return clear_all_cache()
 
     @cached("case_analytics", ttl_seconds=600)  # Cache for 10 minutes
-    def get_case_analytics(
-        self, date_from: datetime | None = None, date_to: datetime | None = None
-    ) -> dict[str, Any]:
+    def get_case_analytics(self, date_from: datetime | None = None, date_to: datetime | None = None) -> dict[str, Any]:
         """Get case analytics with optimized queries"""
         with self.get_db() as db:
             # Use optimized aggregation queries
             total_cases_query = db.query(Case.id)
             if date_from:
-                total_cases_query = total_cases_query.filter(
-                    Case.created_at >= date_from
-                )
+                total_cases_query = total_cases_query.filter(Case.created_at >= date_from)
             if date_to:
                 total_cases_query = total_cases_query.filter(Case.created_at <= date_to)
 
@@ -999,24 +920,16 @@ class DatabaseService:
                 )
             )
             if date_from:
-                closed_cases_query = closed_cases_query.filter(
-                    Case.created_at >= date_from
-                )
+                closed_cases_query = closed_cases_query.filter(Case.created_at >= date_from)
             if date_to:
-                closed_cases_query = closed_cases_query.filter(
-                    Case.created_at <= date_to
-                )
+                closed_cases_query = closed_cases_query.filter(Case.created_at <= date_to)
 
             closed_cases = closed_cases_query.count()
 
             priority_distribution = {}
 
             # Get status distribution efficiently
-            status_stats = (
-                db.query(Case.status, db.func.count(Case.id).label("count"))
-                .group_by(Case.status)
-                .all()
-            )
+            status_stats = db.query(Case.status, db.func.count(Case.id).label("count")).group_by(Case.status).all()
 
             status_distribution = {s.value: count for s, count in status_stats}
 

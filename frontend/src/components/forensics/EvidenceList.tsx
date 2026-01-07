@@ -1,5 +1,5 @@
-import React from 'react';
-import type { EvidenceItem } from '@/lib/api';
+import React from "react";
+import type { EvidenceItem } from "@/lib/api";
 
 interface EvidenceListProps {
   evidence: EvidenceItem[];
@@ -12,7 +12,7 @@ interface EvidenceListProps {
 const EvidenceList: React.FC<EvidenceListProps> = ({
   evidence,
   selectedEvidenceId,
-  onEvidenceSelect
+  onEvidenceSelect,
 }) => {
   return (
     <div className="w-80 bg-slate-900 border-r border-slate-800 flex flex-col">
@@ -26,19 +26,17 @@ const EvidenceList: React.FC<EvidenceListProps> = ({
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {evidence.map(item => (
+        {evidence.map((item) => (
           <button
             key={item.id}
             onClick={() => onEvidenceSelect(item.id)}
             className={`w-full flex items-center gap-3 p-3 text-left transition-all border-l-4 ${
               selectedEvidenceId === item.id
-                ? 'bg-blue-900/20 text-blue-200 border-blue-500'
-                : 'border-transparent hover:bg-slate-800 text-slate-400 hover:text-slate-200'
+                ? "bg-blue-900/20 text-blue-200 border-blue-500"
+                : "border-transparent hover:bg-slate-800 text-slate-400 hover:text-slate-200"
             }`}
           >
-            <div className="p-2 rounded bg-slate-800">
-              📄
-            </div>
+            <div className="p-2 rounded bg-slate-800">📄</div>
             <div className="overflow-hidden min-w-0 flex-1">
               <div className="truncate text-sm font-medium">
                 {item.fileName}

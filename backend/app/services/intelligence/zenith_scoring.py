@@ -52,9 +52,7 @@ class ForensicImputationValidator:
     def __init__(self, db_session):
         self.db = db_session
 
-    def validate_imputation(
-        self, original_data: dict, imputed_data: dict
-    ) -> dict[str, Any]:
+    def validate_imputation(self, original_data: dict, imputed_data: dict) -> dict[str, Any]:
         """
         Checks the resilience of imputed forensic artifacts.
         """

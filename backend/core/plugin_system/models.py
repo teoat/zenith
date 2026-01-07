@@ -21,12 +21,8 @@ class PluginRegistry(Base):
     plugin_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     namespace = Column(String, unique=True, nullable=False, index=True)
     version = Column(String, nullable=False)
-    trust_level = Column(
-        String, nullable=False
-    )  # 'official', 'verified', 'community', 'custom'
-    status = Column(
-        String, default="inactive", index=True
-    )  # 'active', 'inactive', 'quarantined'
+    trust_level = Column(String, nullable=False)  # 'official', 'verified', 'community', 'custom'
+    status = Column(String, default="inactive", index=True)  # 'active', 'inactive', 'quarantined'
     metadata_json = Column(JSON, nullable=False)
     signature = Column(Text)
     created_at = Column(DateTime, default=utc_now)
@@ -34,12 +30,8 @@ class PluginRegistry(Base):
     created_by = Column(String, ForeignKey("users.id"))
 
     # Relationships
-    dependencies = relationship(
-        "PluginDependency", back_populates="plugin", cascade="all, delete-orphan"
-    )
-    permissions = relationship(
-        "PluginPermission", back_populates="plugin", cascade="all, delete-orphan"
-    )
+    dependencies = relationship("PluginDependency", back_populates="plugin", cascade="all, delete-orphan")
+    permissions = relationship("PluginPermission", back_populates="plugin", cascade="all, delete-orphan")
     executions = relationship("PluginExecution", back_populates="plugin")
 
 

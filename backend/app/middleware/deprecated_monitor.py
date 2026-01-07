@@ -177,9 +177,7 @@ def get_deprecated_usage_stats() -> dict[str, dict]:
     for endpoint, data in _deprecated_usage_stats.items():
         stats[endpoint] = {
             "count": data["count"],
-            "first_seen": data["first_seen"].isoformat()
-            if data["first_seen"]
-            else None,
+            "first_seen": data["first_seen"].isoformat() if data["first_seen"] else None,
             "last_seen": data["last_seen"].isoformat() if data["last_seen"] else None,
             "unique_user_agents": len(data["user_agents"]),
             "unique_ip_addresses": len(data["ip_addresses"]),
@@ -238,13 +236,14 @@ def check_and_send_deprecation_alerts():
     for warning in warnings:
         if warning["severity"] == "critical":
             logger.critical(
-                f"CRITICAL: Deprecated endpoint {warning['endpoint']} will be removed in {warning['days_until_removal']} days! "
-                f"Still receiving {warning['usage_count']} calls. Migration required!",
+                f"CRITICAL: Deprecated endpoint {warning['endpoint']} will be removed in "
+                f"{warning['days_until_removal']} days! Still receiving {warning['usage_count']} calls. "
+                f"Migration required!",
                 extra=warning,
             )
         elif warning["severity"] == "high":
             logger.error(
-                f"WARNING: Deprecated endpoint {warning['endpoint']} will be removed in {warning['days_until_removal']} days. "
-                f"Currently receiving {warning['usage_count']} calls.",
+                f"WARNING: Deprecated endpoint {warning['endpoint']} will be removed in "
+                f"{warning['days_until_removal']} days. Currently receiving {warning['usage_count']} calls.",
                 extra=warning,
             )

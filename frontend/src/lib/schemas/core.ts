@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Core User Schema
@@ -7,10 +7,10 @@ export const UserSchema = z.object({
   id: z.string().uuid().or(z.string()),
   email: z.string().email(),
   full_name: z.string(),
-  role: z.enum(['ADMIN', 'INVESTIGATOR', 'ANALYST', 'VIEWER']),
-  created_at: z.string().datetime(),
+  role: z.enum(["ADMIN", "INVESTIGATOR", "ANALYST", "VIEWER"]),
+  created_at: z.string().datetime({ offset: true }),
   is_active: z.boolean().default(true),
-  preferences: z.record(z.any()).optional(),
+  preferences: z.record(z.string(), z.any()).optional(),
 });
 
 export type User = z.infer<typeof UserSchema>;
@@ -22,13 +22,13 @@ export const CaseSchema = z.object({
   id: z.string().uuid().or(z.string()),
   title: z.string().min(1),
   description: z.string().optional(),
-  status: z.enum(['OPEN', 'CLOSED', 'INVESTIGATING', 'ARCHIVED']),
-  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
+  status: z.enum(["OPEN", "CLOSED", "INVESTIGATING", "ARCHIVED"]),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
   assignee_id: z.string().uuid().or(z.string()).nullable(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: z.string().datetime({ offset: true }),
+  updated_at: z.string().datetime({ offset: true }),
   tags: z.array(z.string()).default([]),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export type Case = z.infer<typeof CaseSchema>;
@@ -38,10 +38,10 @@ export type Case = z.infer<typeof CaseSchema>;
  */
 export const HealthCheckSchema = z.object({
   component: z.string(),
-  status: z.enum(['healthy', 'degraded', 'unhealthy']),
+  status: z.enum(["healthy", "degraded", "unhealthy"]),
   latency_ms: z.number().optional(),
-  last_check: z.string().datetime(),
-  details: z.record(z.any()).optional(),
+  last_check: z.string().datetime({ offset: true }),
+  details: z.record(z.string(), z.any()).optional(),
 });
 
 export type HealthCheck = z.infer<typeof HealthCheckSchema>;
@@ -50,18 +50,18 @@ export type HealthCheck = z.infer<typeof HealthCheckSchema>;
  * API Response Generic Schema Builder
  */
 export function createApiResponseSchema<T extends z.ZodTypeAny>(dataSchema: T) {
-  return z.discriminatedUnion('success', [
+  return z.discriminatedUnion("success", [
     z.object({
       success: z.literal(true),
       data: dataSchema,
-      metadata: z.record(z.any()).optional(),
+      metadata: z.record(z.string(), z.any()).optional(),
     }),
     z.object({
       success: z.literal(false),
       error: z.object({
         code: z.string(),
         message: z.string(),
-        details: z.record(z.any()).optional(),
+        details: z.record(z.string(), z.any()).optional(),
       }),
     }),
   ]);

@@ -38,6 +38,7 @@ class VectorStore:
         """Initialize ChromaDB client."""
         try:
             import chromadb
+
             self._chroma_client = chromadb.HttpClient(host=url)
             # Try to get or create collection
             try:
@@ -56,11 +57,7 @@ class VectorStore:
         """Index a document for semantic search."""
         if self._use_chroma and self._collection:
             try:
-                self._collection.add(
-                    documents=[text],
-                    ids=[doc_id],
-                    metadatas=[metadata or {}]
-                )
+                self._collection.add(documents=[text], ids=[doc_id], metadatas=[metadata or {}])
                 return
             except Exception as e:
                 logger.error(f"ChromaDB indexing failed: {e}")
@@ -75,15 +72,9 @@ class VectorStore:
         """Query for similar documents."""
         if self._use_chroma and self._collection:
             try:
-                results = self._collection.query(
-                    query_texts=[text],
-                    n_results=top_k
-                )
+                results = self._collection.query(query_texts=[text], n_results=top_k)
                 if results and results.get("ids"):
-                    return list(zip(
-                        results["ids"][0],
-                        [float(s) for s in results.get("distances", [0] * len(results["ids"][0]))]
-                    ))
+                    return list(zip(results["ids"][0], [float(s) for s in results.get("distances", [0] * len(results["ids"][0]))]))
             except Exception as e:
                 logger.error(f"ChromaDB query failed: {e}")
 

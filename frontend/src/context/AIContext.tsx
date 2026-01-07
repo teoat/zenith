@@ -1,6 +1,11 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from "react";
 
-export type AIPersona = 'frenly' | 'investigator' | 'legal' | 'forensic' | 'redteam';
+export type AIPersona =
+  | "frenly"
+  | "investigator"
+  | "legal"
+  | "forensic"
+  | "redteam";
 
 export interface AIContextState {
   currentPage: string;
@@ -16,19 +21,21 @@ interface AIContextType {
 }
 
 const defaultContext: AIContextState = {
-  currentPage: 'dashboard',
+  currentPage: "dashboard",
   activeData: null,
-  timestamp: Date.now()
+  timestamp: Date.now(),
 };
 
 const AIContext = createContext<AIContextType | undefined>(undefined);
 
 export const AIProvider = ({ children }: { children: ReactNode }) => {
   const [context, setContext] = useState<AIContextState>(defaultContext);
-  const [activePersona, setPersona] = useState<AIPersona>('frenly');
+  const [activePersona, setPersona] = useState<AIPersona>("frenly");
 
   return (
-    <AIContext.Provider value={{ context, setContext, activePersona, setPersona }}>
+    <AIContext.Provider
+      value={{ context, setContext, activePersona, setPersona }}
+    >
       {children}
     </AIContext.Provider>
   );
@@ -37,7 +44,7 @@ export const AIProvider = ({ children }: { children: ReactNode }) => {
 export const useAIContext = () => {
   const context = useContext(AIContext);
   if (!context) {
-    throw new Error('useAIContext must be used within an AIProvider');
+    throw new Error("useAIContext must be used within an AIProvider");
   }
   return context;
 };

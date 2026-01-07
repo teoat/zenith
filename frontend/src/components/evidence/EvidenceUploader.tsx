@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import { useEvidenceUpload } from '@/hooks/useEvidence';
-import type { EvidenceItem } from '@/types/api';
+import React, { useState, useCallback } from "react";
+import { useEvidenceUpload } from "@/hooks/useEvidence";
+import type { EvidenceItem } from "@/types/api";
 
 interface EvidenceUploaderProps {
   caseId: string;
@@ -14,8 +14,8 @@ export default function EvidenceUploader({
   caseId,
   onUploadComplete,
   onUploadError,
-  acceptedTypes = ['image/*', 'application/pdf', '.doc', '.docx', '.txt'],
-  maxFileSize = 10 * 1024 * 1024 // 10MB
+  acceptedTypes = ["image/*", "application/pdf", ".doc", ".docx", ".txt"],
+  maxFileSize = 10 * 1024 * 1024, // 10MB
 }: EvidenceUploaderProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -24,42 +24,48 @@ export default function EvidenceUploader({
 
   const uploadMutation = useEvidenceUpload();
 
-  const validateFile = useCallback((file: File): string | null => {
-    if (file.size > maxFileSize) {
-      return `File size exceeds ${maxFileSize / (1024 * 1024)}MB limit`;
-    }
-
-    const isAccepted = acceptedTypes.some(type => {
-      if (type.startsWith('.')) {
-        return file.name.toLowerCase().endsWith(type.toLowerCase());
+  const validateFile = useCallback(
+    (file: File): string | null => {
+      if (file.size > maxFileSize) {
+        return `File size exceeds ${maxFileSize / (1024 * 1024)}MB limit`;
       }
-      return file.type.match(type.replace('*', '.*'));
-    });
 
-    if (!isAccepted) {
-      return `File type not accepted. Accepted types: ${acceptedTypes.join(', ')}`;
-    }
+      const isAccepted = acceptedTypes.some((type) => {
+        if (type.startsWith(".")) {
+          return file.name.toLowerCase().endsWith(type.toLowerCase());
+        }
+        return file.type.match(type.replace("*", ".*"));
+      });
 
-    return null;
-  }, [acceptedTypes, maxFileSize]);
-
-  const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(event.target.files || []);
-    const validFiles: File[] = [];
-    const validationErrors: string[] = [];
-
-    selectedFiles.forEach(file => {
-      const error = validateFile(file);
-      if (error) {
-        validationErrors.push(`${file.name}: ${error}`);
-      } else {
-        validFiles.push(file);
+      if (!isAccepted) {
+        return `File type not accepted. Accepted types: ${acceptedTypes.join(", ")}`;
       }
-    });
 
-    setFiles(prev => [...prev, ...validFiles]);
-    setErrors(validationErrors);
-  }, [validateFile]);
+      return null;
+    },
+    [acceptedTypes, maxFileSize],
+  );
+
+  const handleFileSelect = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFiles = Array.from(event.target.files || []);
+      const validFiles: File[] = [];
+      const validationErrors: string[] = [];
+
+      selectedFiles.forEach((file) => {
+        const error = validateFile(file);
+        if (error) {
+          validationErrors.push(`${file.name}: ${error}`);
+        } else {
+          validFiles.push(file);
+        }
+      });
+
+      setFiles((prev) => [...prev, ...validFiles]);
+      setErrors(validationErrors);
+    },
+    [validateFile],
+  );
 
   const handleUpload = useCallback(async () => {
     if (files.length === 0) return;
@@ -72,14 +78,17 @@ export default function EvidenceUploader({
         try {
           const result = await uploadMutation.mutateAsync({
             caseId,
-            file
+            file,
           });
           onUploadComplete?.(result);
           return result;
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Upload failed';
-          setErrors(prev => [...prev, `${file.name}: ${errorMessage}`]);
-          onUploadError?.(error instanceof Error ? error : new Error(errorMessage));
+          const errorMessage =
+            error instanceof Error ? error.message : "Upload failed";
+          setErrors((prev) => [...prev, `${file.name}: ${errorMessage}`]);
+          onUploadError?.(
+            error instanceof Error ? error : new Error(errorMessage),
+          );
           return null;
         }
       });
@@ -90,14 +99,14 @@ export default function EvidenceUploader({
       setFiles([]);
       setProgress({});
     } catch (error) {
-      console.error('Upload process failed:', error);
+      console.error("Upload process failed:", error);
     } finally {
       setUploading(false);
     }
   }, [files, caseId, uploadMutation, onUploadComplete, onUploadError]);
 
   const removeFile = useCallback((index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index));
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   const clearErrors = useCallback(() => {
@@ -110,30 +119,39 @@ export default function EvidenceUploader({
 
       {/* File Input */}
       <div className="mb-4">
-        <label htmlFor="evidence-upload" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="evidence-upload"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           Select Files
         </label>
         <input
           id="evidence-upload"
           type="file"
           multiple
-          accept={acceptedTypes.join(',')}
+          accept={acceptedTypes.join(",")}
           onChange={handleFileSelect}
           disabled={uploading}
           className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
         />
         <p className="text-xs text-gray-500 mt-1">
-          Accepted types: {acceptedTypes.join(', ')} | Max size: {maxFileSize / (1024 * 1024)}MB
+          Accepted types: {acceptedTypes.join(", ")} | Max size:{" "}
+          {maxFileSize / (1024 * 1024)}MB
         </p>
       </div>
 
       {/* File List */}
       {files.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Selected Files:</h4>
+          <h4 className="text-sm font-medium text-gray-700 mb-2">
+            Selected Files:
+          </h4>
           <ul className="space-y-2">
             {files.map((file, index) => (
-              <li key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+              <li
+                key={index}
+                className="flex items-center justify-between p-2 bg-gray-50 rounded"
+              >
                 <div className="flex-1">
                   <span className="text-sm font-medium">{file.name}</span>
                   <span className="text-xs text-gray-500 ml-2">
@@ -167,7 +185,9 @@ export default function EvidenceUploader({
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded">
           <div className="flex justify-between items-start">
             <div>
-              <h4 className="text-sm font-medium text-red-800 mb-1">Upload Errors:</h4>
+              <h4 className="text-sm font-medium text-red-800 mb-1">
+                Upload Errors:
+              </h4>
               <ul className="text-sm text-red-700">
                 {errors.map((error, index) => (
                   <li key={index}>• {error}</li>
@@ -193,7 +213,9 @@ export default function EvidenceUploader({
             disabled={uploading}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {uploading ? 'Uploading...' : `Upload ${files.length} File${files.length > 1 ? 's' : ''}`}
+            {uploading
+              ? "Uploading..."
+              : `Upload ${files.length} File${files.length > 1 ? "s" : ""}`}
           </button>
         </div>
       )}

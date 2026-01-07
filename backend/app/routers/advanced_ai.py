@@ -25,18 +25,14 @@ class RedTeamRequest(BaseModel):
 @router.post("/advanced-ai/rag/query")
 async def local_rag_query(req: RAGQuery):
     """Retrieve documents using consolidated AI Service (FAISS/TF-IDF)."""
-    results = await ai_service.semantic_search(
-        req.query, limit=req.k, filters=req.filters
-    )
+    results = await ai_service.semantic_search(req.query, limit=req.k, filters=req.filters)
     return {"query": req.query, "results": results}
 
 
 @router.post("/advanced-ai/rag/add")
 async def local_rag_add(doc_id: str = Form(...), text: str = Form(...)):
     """Add a document to the shared vector store."""
-    success = await ai_service.add_document(
-        doc_id, text, metadata={"source": "user_upload"}
-    )
+    success = await ai_service.add_document(doc_id, text, metadata={"source": "user_upload"})
     return {"success": success, "doc_id": doc_id}
 
 
@@ -55,9 +51,7 @@ async def analyze_image(file: UploadFile = File(...)):
             temp_file_path = temp_file.name
 
         try:
-            results = await evidence_processor.process_files_batch(
-                [temp_file_path], options={"enable_ocr": True, "enable_forensics": True}
-            )
+            results = await evidence_processor.process_files_batch([temp_file_path], options={"enable_ocr": True, "enable_forensics": True})
             if not results:
                 raise HTTPException(status_code=500, detail="Analysis failed")
 
@@ -83,9 +77,7 @@ async def analyze_text(text: str = Form(...)):
     import tempfile
 
     try:
-        with tempfile.NamedTemporaryFile(
-            delete=False, mode="w", suffix=".txt"
-        ) as temp_file:
+        with tempfile.NamedTemporaryFile(delete=False, mode="w", suffix=".txt") as temp_file:
             temp_file.write(text)
             temp_file_path = temp_file.name
 

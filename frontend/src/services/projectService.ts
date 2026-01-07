@@ -1,4 +1,4 @@
-import { request } from './client';
+import { request } from "./client";
 
 export interface Project {
   id: string;
@@ -9,17 +9,20 @@ export interface Project {
 
 export const projectService = {
   getProjects: async (): Promise<Project[]> => {
-    return request('/projects');
+    return request("/projects");
   },
 
-  createProject: async (name: string, description?: string): Promise<Project> => {
-    return request('/projects', {
-      method: 'POST',
+  createProject: async (
+    name: string,
+    description?: string,
+  ): Promise<Project> => {
+    return request("/projects", {
+      method: "POST",
       body: JSON.stringify({ name, description }),
     });
   },
 
   getProject: async (projectId: string): Promise<Project> => {
     return request(`/projects/${projectId}`);
-  }
+  },
 };

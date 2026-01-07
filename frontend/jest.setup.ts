@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
 // Extend Jest matchers for testing-library
 declare global {
@@ -20,7 +20,7 @@ class MockWebSocket {
 
   readyState = MockWebSocket.OPEN;
   url: string;
-  
+
   onopen: ((event: Event) => void) | null = null;
   onclose: ((event: CloseEvent) => void) | null = null;
   onmessage: ((event: MessageEvent) => void) | null = null;
@@ -31,7 +31,7 @@ class MockWebSocket {
     // Simulate async connection
     setTimeout(() => {
       if (this.onopen) {
-        this.onopen(new Event('open'));
+        this.onopen(new Event("open"));
       }
     }, 0);
   }
@@ -43,16 +43,22 @@ class MockWebSocket {
   close(_code?: number, _reason?: string) {
     this.readyState = MockWebSocket.CLOSED;
     if (this.onclose) {
-      const event = new CloseEvent('close', { code: _code, reason: _reason });
+      const event = new CloseEvent("close", { code: _code, reason: _reason });
       this.onclose(event);
     }
   }
 
-  addEventListener(_type: string, _listener: EventListenerOrEventListenerObject) {
+  addEventListener(
+    _type: string,
+    _listener: EventListenerOrEventListenerObject,
+  ) {
     // Mock addEventListener
   }
 
-  removeEventListener(_type: string, _listener: EventListenerOrEventListenerObject) {
+  removeEventListener(
+    _type: string,
+    _listener: EventListenerOrEventListenerObject,
+  ) {
     // Mock removeEventListener
   }
 
@@ -69,7 +75,9 @@ global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
   disconnect() {}
   observe() {}
-  takeRecords() { return []; }
+  takeRecords() {
+    return [];
+  }
   unobserve() {}
 } as unknown as typeof IntersectionObserver;
 
@@ -82,9 +90,9 @@ global.ResizeObserver = class ResizeObserver {
 } as unknown as typeof ResizeObserver;
 
 // Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -104,11 +112,11 @@ const originalError = console.error;
 beforeAll(() => {
   console.error = (...args: unknown[]) => {
     // Suppress React Query errors
-    if (typeof args[0] === 'string' && args[0].includes('No QueryClient set')) {
+    if (typeof args[0] === "string" && args[0].includes("No QueryClient set")) {
       return;
     }
     // Suppress router errors
-    if (typeof args[0] === 'string' && args[0].includes('useNavigate')) {
+    if (typeof args[0] === "string" && args[0].includes("useNavigate")) {
       return;
     }
     originalError.call(console, ...args);

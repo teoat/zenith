@@ -1,12 +1,19 @@
-import { useState, useEffect } from 'react';
-import { Shield, AlertTriangle, CheckCircle, XCircle, TrendingUp, TrendingDown } from 'lucide-react';
+import { useState, useEffect } from "react";
+import {
+  Shield,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  TrendingUp,
+  TrendingDown,
+} from "lucide-react";
 
 interface ComplianceMetric {
   id: string;
   title: string;
   value: number | string;
-  status: 'pass' | 'fail' | 'warning';
-  trend?: 'up' | 'down' | 'stable';
+  status: "pass" | "fail" | "warning";
+  trend?: "up" | "down" | "stable";
   description?: string;
 }
 
@@ -14,13 +21,12 @@ interface ComplianceFramework {
   id: string;
   name: string;
   version: string;
-  status: 'compliant' | 'non_compliant' | 'partial';
+  status: "compliant" | "non_compliant" | "partial";
   lastAudit: string;
   nextAudit: string;
 }
 
-import { complianceService } from '@/services/compliance';
-
+import { complianceService } from "@/services/compliance";
 
 export default function ComplianceDashboard() {
   const [metrics, setMetrics] = useState<ComplianceMetric[]>([]);
@@ -36,38 +42,42 @@ export default function ComplianceDashboard() {
 
         setMetrics([
           {
-            id: 'overall',
-            title: 'Overall Score',
+            id: "overall",
+            title: "Overall Score",
             value: `${dashboardData.overall_compliance_score}%`,
-            status: dashboardData.overall_compliance_score >= 90 ? 'pass' : 'warning',
-            description: 'Overall compliance health'
+            status:
+              dashboardData.overall_compliance_score >= 90 ? "pass" : "warning",
+            description: "Overall compliance health",
           },
           {
-            id: 'reports',
-            title: 'Pending Reports',
+            id: "reports",
+            title: "Pending Reports",
             value: dashboardData.pending_regulatory_reports.toString(),
-            status: dashboardData.pending_regulatory_reports > 5 ? 'fail' : 'pass',
-            description: 'Regulatory filings due'
+            status:
+              dashboardData.pending_regulatory_reports > 5 ? "fail" : "pass",
+            description: "Regulatory filings due",
           },
           {
-            id: 'incidents',
-            title: 'Active Incidents',
+            id: "incidents",
+            title: "Active Incidents",
             value: dashboardData.open_security_incidents.toString(),
-            status: dashboardData.open_security_incidents > 0 ? 'fail' : 'pass',
-            description: 'Security incidents requiring attention'
-          }
+            status: dashboardData.open_security_incidents > 0 ? "fail" : "pass",
+            description: "Security incidents requiring attention",
+          },
         ]);
 
-        setFrameworks(regionalData.regions.map(r => ({
-          id: r.region,
-          name: r.framework,
-          version: '1.0',
-          status: (r as any).status || 'compliant',
-          lastAudit: r.last_audit_date,
-          nextAudit: r.next_audit_date
-        })));
+        setFrameworks(
+          regionalData.regions.map((r) => ({
+            id: r.region,
+            name: r.framework,
+            version: "1.0",
+            status: (r as any).status || "compliant",
+            lastAudit: r.last_audit_date,
+            nextAudit: r.next_audit_date,
+          })),
+        );
       } catch (error) {
-        console.error('Failed to load compliance data:', error);
+        console.error("Failed to load compliance data:", error);
       } finally {
         setLoading(false);
       }
@@ -78,14 +88,14 @@ export default function ComplianceDashboard() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pass':
-      case 'compliant':
+      case "pass":
+      case "compliant":
         return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'fail':
-      case 'non_compliant':
+      case "fail":
+      case "non_compliant":
         return <XCircle className="h-5 w-5 text-red-500" />;
-      case 'warning':
-      case 'partial':
+      case "warning":
+      case "partial":
         return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
       default:
         return <Shield className="h-5 w-5 text-gray-500" />;
@@ -94,25 +104,25 @@ export default function ComplianceDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pass':
-      case 'compliant':
-        return 'text-green-600 bg-green-50 border-green-200';
-      case 'fail':
-      case 'non_compliant':
-        return 'text-red-600 bg-red-50 border-red-200';
-      case 'warning':
-      case 'partial':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case "pass":
+      case "compliant":
+        return "text-green-600 bg-green-50 border-green-200";
+      case "fail":
+      case "non_compliant":
+        return "text-red-600 bg-red-50 border-red-200";
+      case "warning":
+      case "partial":
+        return "text-yellow-600 bg-yellow-50 border-yellow-200";
       default:
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return "text-gray-600 bg-gray-50 border-gray-200";
     }
   };
 
   const getTrendIcon = (trend?: string) => {
     switch (trend) {
-      case 'up':
+      case "up":
         return <TrendingUp className="h-4 w-4 text-green-500" />;
-      case 'down':
+      case "down":
         return <TrendingDown className="h-4 w-4 text-red-500" />;
       default:
         return null;
@@ -132,8 +142,12 @@ export default function ComplianceDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Compliance Dashboard</h1>
-          <p className="text-gray-600">Monitor regulatory compliance across all frameworks</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Compliance Dashboard
+          </h1>
+          <p className="text-gray-600">
+            Monitor regulatory compliance across all frameworks
+          </p>
         </div>
         <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
           Run Compliance Check
@@ -143,20 +157,28 @@ export default function ComplianceDashboard() {
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((metric) => (
-          <div key={metric.id} className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <div
+            key={metric.id}
+            className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+          >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-2">
                 {getStatusIcon(metric.status)}
-                <h3 className="text-sm font-medium text-gray-900">{metric.title}</h3>
+                <h3 className="text-sm font-medium text-gray-900">
+                  {metric.title}
+                </h3>
               </div>
               {getTrendIcon(metric.trend)}
             </div>
 
             <div className="flex items-baseline space-x-2">
-              <span className="text-2xl font-bold text-gray-900">{metric.value}</span>
-              {typeof metric.value === 'string' && metric.value.includes('%') && (
-                <span className="text-sm text-gray-500">compliance</span>
-              )}
+              <span className="text-2xl font-bold text-gray-900">
+                {metric.value}
+              </span>
+              {typeof metric.value === "string" &&
+                metric.value.includes("%") && (
+                  <span className="text-sm text-gray-500">compliance</span>
+                )}
             </div>
 
             {metric.description && (
@@ -169,8 +191,12 @@ export default function ComplianceDashboard() {
       {/* Frameworks Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Compliance Frameworks</h2>
-          <p className="text-sm text-gray-600">Current status of all regulatory frameworks</p>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Compliance Frameworks
+          </h2>
+          <p className="text-sm text-gray-600">
+            Current status of all regulatory frameworks
+          </p>
         </div>
 
         <div className="overflow-x-auto">
@@ -201,15 +227,23 @@ export default function ComplianceDashboard() {
               {frameworks.map((framework) => (
                 <tr key={framework.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{framework.name}</div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {framework.name}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{framework.version}</div>
+                    <div className="text-sm text-gray-900">
+                      {framework.version}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(framework.status)}`}>
+                    <div
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(framework.status)}`}
+                    >
                       {getStatusIcon(framework.status)}
-                      <span className="ml-1 capitalize">{framework.status.replace('_', ' ')}</span>
+                      <span className="ml-1 capitalize">
+                        {framework.status.replace("_", " ")}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -238,7 +272,9 @@ export default function ComplianceDashboard() {
         <div className="flex">
           <AlertTriangle className="h-5 w-5 text-yellow-400 mt-0.5 mr-3" />
           <div>
-            <h3 className="text-sm font-medium text-yellow-800">Action Required</h3>
+            <h3 className="text-sm font-medium text-yellow-800">
+              Action Required
+            </h3>
             <div className="mt-2 text-sm text-yellow-700">
               <p>The following compliance issues need attention:</p>
               <ul className="list-disc list-inside mt-1 space-y-1">

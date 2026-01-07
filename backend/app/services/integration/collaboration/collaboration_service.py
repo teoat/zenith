@@ -74,9 +74,7 @@ class CollaborationManager:
             # For testing/development, don't wait for server closure
             # This allows the server to start without blocking the lifespan
             if os.getenv("TESTING", "false").lower() == "true":
-                logger.info(
-                    "WebSocket server started in testing mode - not waiting for closure"
-                )
+                logger.info("WebSocket server started in testing mode - not waiting for closure")
                 return
 
             # Keep server running (production mode)
@@ -104,11 +102,7 @@ class CollaborationManager:
             print("DEBUG: Starting connection handler")
             # Extract session ID from path (e.g., /ws/session/123)
             path_parts = path.strip("/").split("/")
-            if (
-                len(path_parts) >= 3
-                and path_parts[0] == "ws"
-                and path_parts[1] == "session"
-            ):
+            if len(path_parts) >= 3 and path_parts[0] == "ws" and path_parts[1] == "session":
                 session_id = path_parts[2]
             else:
                 await websocket.close(1008, "Invalid session path")
@@ -167,22 +161,14 @@ class CollaborationManager:
                 try:
                     data = json.loads(message)
                     print(f"DEBUG: Parsed message: {data}")
-                    await self.handle_message(
-                        session_id, participant_id, data, websocket
-                    )
+                    await self.handle_message(session_id, participant_id, data, websocket)
                 except json.JSONDecodeError as je:
                     print(f"DEBUG: JSON decode error: {je}")
-                    await websocket.send(
-                        json.dumps({"type": "error", "message": "Invalid JSON message"})
-                    )
+                    await websocket.send(json.dumps({"type": "error", "message": "Invalid JSON message"}))
                 except Exception as e:
                     print(f"DEBUG: Error handling message: {e}")
                     logger.error(f"Error handling message: {e}")
-                    await websocket.send(
-                        json.dumps(
-                            {"type": "error", "message": "Internal server error"}
-                        )
-                    )
+                    await websocket.send(json.dumps({"type": "error", "message": "Internal server error"}))
 
         except Exception as e:
             logger.error(f"Connection handler error: {e}", exc_info=True)
@@ -205,9 +191,7 @@ class CollaborationManager:
                     {
                         "type": "participant_left",
                         "participant_id": participant_id,
-                        "participants": list(
-                            self.session_participants.get(session_id, {}).values()
-                        ),
+                        "participants": list(self.session_participants.get(session_id, {}).values()),
                     },
                 )
 
@@ -232,18 +216,12 @@ class CollaborationManager:
         if message_type in self.message_handlers:
             try:
                 print(f"DEBUG: Calling handler for {message_type}")
-                await self.message_handlers[message_type](
-                    session_id, participant_id, data, websocket
-                )
+                await self.message_handlers[message_type](session_id, participant_id, data, websocket)
                 print(f"DEBUG: Handler completed for {message_type}")
             except Exception as e:
                 print(f"DEBUG: Handler error: {e}")
                 logger.error(f"Message handler error for {message_type}: {e}")
-                await websocket.send(
-                    json.dumps(
-                        {"type": "error", "message": f"Error processing {message_type}"}
-                    )
-                )
+                await websocket.send(json.dumps({"type": "error", "message": f"Error processing {message_type}"}))
         else:
             print(f"DEBUG: Unknown message type: {message_type}")
             await websocket.send(
@@ -263,9 +241,7 @@ class CollaborationManager:
         websocket: WebSocketConnection,
     ):
         """Handle session join"""
-        print(
-            f"DEBUG: Handling join_session for session {session_id}, participant {participant_id}"
-        )
+        print(f"DEBUG: Handling join_session for session {session_id}, participant {participant_id}")
         try:
             # Simple response for testing
             await websocket.send(
@@ -311,10 +287,7 @@ class CollaborationManager:
         websocket: WebSocketConnection,
     ):
         """Handle cursor position updates"""
-        if (
-            session_id in self.session_participants
-            and participant_id in self.session_participants[session_id]
-        ):
+        if session_id in self.session_participants and participant_id in self.session_participants[session_id]:
             participant = self.session_participants[session_id][participant_id]
             participant["cursor"] = {
                 "x": data.get("x", 0),
@@ -342,10 +315,7 @@ class CollaborationManager:
         websocket: WebSocketConnection,
     ):
         """Handle entity selection"""
-        if (
-            session_id in self.session_participants
-            and participant_id in self.session_participants[session_id]
-        ):
+        if session_id in self.session_participants and participant_id in self.session_participants[session_id]:
             participant = self.session_participants[session_id][participant_id]
             participant["selected_entity"] = data.get("entity_id")
             participant["last_activity"] = datetime.now().isoformat()
@@ -398,14 +368,9 @@ class CollaborationManager:
         }
 
         # Add participant info
-        if (
-            session_id in self.session_participants
-            and participant_id in self.session_participants[session_id]
-        ):
+        if session_id in self.session_participants and participant_id in self.session_participants[session_id]:
             participant = self.session_participants[session_id][participant_id]
-            message["participant_name"] = participant.get(
-                "name", f"User {participant_id}"
-            )
+            message["participant_name"] = participant.get("name", f"User {participant_id}")
             message["participant_color"] = participant.get("color", "#3b82f6")
 
         # Broadcast to all participants in session
@@ -419,9 +384,7 @@ class CollaborationManager:
         websocket: WebSocketConnection,
     ):
         """Handle ping messages"""
-        await websocket.send(
-            json.dumps({"type": "pong", "timestamp": datetime.now().isoformat()})
-        )
+        await websocket.send(json.dumps({"type": "pong", "timestamp": datetime.now().isoformat()}))
 
     async def broadcast_to_session(
         self,
@@ -443,9 +406,7 @@ class CollaborationManager:
         if tasks:
             await asyncio.gather(*tasks, return_exceptions=True)
 
-    async def send_to_participant(
-        self, session_id: str, participant_id: str, message: dict[str, Any]
-    ):
+    async def send_to_participant(self, session_id: str, participant_id: str, message: dict[str, Any]):
         """Send message to specific participant"""
         if session_id not in self.active_connections:
             return
@@ -477,27 +438,19 @@ class CollaborationManager:
         return {
             "session_id": session_id,
             "active_connections": len(self.active_connections.get(session_id, set())),
-            "participants": list(
-                self.session_participants.get(session_id, {}).values()
-            ),
+            "participants": list(self.session_participants.get(session_id, {}).values()),
             "created_at": datetime.now().isoformat(),
         }
 
     def get_all_sessions(self) -> list[dict[str, Any]]:
         """Get information about all active sessions"""
-        return [
-            self.get_session_info(session_id) for session_id in self.active_connections
-        ]
+        return [self.get_session_info(session_id) for session_id in self.active_connections]
 
     def get_system_stats(self) -> dict[str, Any]:
         """Get system-wide collaboration statistics"""
         try:
-            total_connections = sum(
-                len(connections) for connections in self.active_connections.values()
-            )
-            total_participants = sum(
-                len(participants) for participants in self.session_participants.values()
-            )
+            total_connections = sum(len(connections) for connections in self.active_connections.values())
+            total_participants = sum(len(participants) for participants in self.session_participants.values())
 
             return {
                 "active_sessions": len(self.active_connections),
@@ -626,9 +579,7 @@ class CollaborationClient:
         self.reconnect_attempts += 1
         wait_time = min(2**self.reconnect_attempts, 30)  # Exponential backoff, max 30s
 
-        logger.info(
-            f"Attempting reconnection in {wait_time} seconds (attempt {self.reconnect_attempts})"
-        )
+        logger.info(f"Attempting reconnection in {wait_time} seconds (attempt {self.reconnect_attempts})")
 
         await asyncio.sleep(wait_time)
         try:
@@ -663,9 +614,7 @@ class CollaborationClient:
 
     async def update_entity(self, entity_id: str, changes: dict[str, Any]):
         """Update an entity"""
-        await self.send_message(
-            {"type": "entity_update", "entity_id": entity_id, "changes": changes}
-        )
+        await self.send_message({"type": "entity_update", "entity_id": entity_id, "changes": changes})
 
     async def send_chat_message(self, message: str):
         """Send a chat message"""

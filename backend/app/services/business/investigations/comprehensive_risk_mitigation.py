@@ -6,6 +6,7 @@ Advanced risk management with predictive mitigation and automated response
 
 import asyncio
 import logging
+import random
 import statistics
 import time
 from collections import defaultdict
@@ -493,9 +494,7 @@ class ComprehensiveRiskMitigationFramework:
                     action.status = MitigationStatus.RESOLVED
                     risk = self.risks[action.risk_id]
                     risk.status = MitigationStatus.RESOLVED
-                    logger.info(
-                        f"Mitigation resolved: {action.action_id} (Effectiveness: {effectiveness:.2f})"
-                    )
+                    logger.info(f"Mitigation resolved: {action.action_id} (Effectiveness: {effectiveness:.2f})")
 
     # Automated response implementations
     async def _auto_scale_infrastructure(self, action: MitigationAction) -> bool:
@@ -526,31 +525,19 @@ class ComprehensiveRiskMitigationFramework:
 
     async def _manual_mitigation_fallback(self, action: MitigationAction) -> bool:
         """Fallback to manual mitigation process"""
-        logger.info(
-            f"Initiating manual mitigation process for action: {action.action_id}"
-        )
+        logger.info(f"Initiating manual mitigation process for action: {action.action_id}")
         # In production, this would create tickets, send notifications, etc.
         return random.random() > 0.3  # 70% success rate for manual processes
 
     def get_risk_dashboard(self) -> dict[str, Any]:
         """Get comprehensive risk dashboard"""
         total_risks = len(self.risks)
-        mitigated_risks = len(
-            [r for r in self.risks.values() if r.status == MitigationStatus.RESOLVED]
-        )
-        critical_risks = len(
-            [r for r in self.risks.values() if r.severity == RiskSeverity.CRITICAL]
-        )
+        mitigated_risks = len([r for r in self.risks.values() if r.status == MitigationStatus.RESOLVED])
+        critical_risks = len([r for r in self.risks.values() if r.severity == RiskSeverity.CRITICAL])
 
         mitigation_actions = list(self.mitigation_actions.values())
         avg_mitigation_time = (
-            statistics.mean(
-                [
-                    (a.completed_at - a.created_at).days
-                    for a in mitigation_actions
-                    if a.completed_at
-                ]
-            )
+            statistics.mean([(a.completed_at - a.created_at).days for a in mitigation_actions if a.completed_at])
             if mitigation_actions
             else 0
         )
@@ -582,9 +569,7 @@ class ComprehensiveRiskMitigationFramework:
 
     def _get_top_risks(self) -> list[dict[str, Any]]:
         """Get top 5 risks by score"""
-        sorted_risks = sorted(
-            self.risks.values(), key=lambda r: r.risk_score, reverse=True
-        )
+        sorted_risks = sorted(self.risks.values(), key=lambda r: r.risk_score, reverse=True)
         return [
             {
                 "risk_id": r.risk_id,

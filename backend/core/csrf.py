@@ -32,9 +32,7 @@ class CSRFProtection:
 
             # Recreate signature
             message = f"{session_id}:{nonce}".encode()
-            expected_signature = hmac.new(
-                self.secret_key, message, hashlib.sha256
-            ).hexdigest()
+            expected_signature = hmac.new(self.secret_key, message, hashlib.sha256).hexdigest()
 
             # Constant-time comparison
             return hmac.compare_digest(signature, expected_signature)

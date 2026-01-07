@@ -1,8 +1,12 @@
-
-import React from 'react';
-import { Button } from './Button';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { Button } from "./Button";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PaginationProps extends React.HTMLAttributes<HTMLDivElement> {
   currentPage: number;
@@ -26,12 +30,17 @@ export function Pagination({
   ...props
 }: PaginationProps) {
   return (
-    <div className={cn("flex items-center justify-between px-2", className)} {...props}>
+    <div
+      className={cn("flex items-center justify-between px-2", className)}
+      {...props}
+    >
       <div className="flex-1 text-sm text-muted-foreground">
         {totalItems !== undefined && (
           <>
-            Showing {Math.min((currentPage - 1) * (pageSize || 10) + 1, totalItems)} to{' '}
-            {Math.min(currentPage * (pageSize || 10), totalItems)} of {totalItems} entries
+            Showing{" "}
+            {Math.min((currentPage - 1) * (pageSize || 10) + 1, totalItems)} to{" "}
+            {Math.min(currentPage * (pageSize || 10), totalItems)} of{" "}
+            {totalItems} entries
           </>
         )}
       </div>

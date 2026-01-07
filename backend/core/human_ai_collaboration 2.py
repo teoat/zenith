@@ -8,7 +8,7 @@ import logging
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Any
+from typing import Any, Tuple
 
 from core.autonomous_scaling import scaling_engine
 
@@ -84,16 +84,10 @@ class AIAssistant:
         """Check if assistant can handle a task"""
         # Simple capability matching
         task_keywords = task.lower().split()
-        capability_matches = any(
-            any(keyword in capability.lower() for keyword in task_keywords)
-            for capability in self.capabilities
-        )
+        capability_matches = any(any(keyword in capability.lower() for keyword in task_keywords) for capability in self.capabilities)
 
         # Context-based matching
-        context_relevance = any(
-            expertise in context.get("domain", "").lower()
-            for expertise in self.expertise_areas
-        )
+        context_relevance = any(expertise in context.get("domain", "").lower() for expertise in self.expertise_areas)
 
         return capability_matches or context_relevance
 
@@ -244,26 +238,20 @@ class HumanAICollaborationEngine:
 
         logger.info(f"Initialized {len(self.assistants)} AI assistants")
 
-    async def process_user_interaction(
-        self, user_id: str, user_input: str, context: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    async def process_user_interaction(self, user_id: str, user_input: str, context: dict[str, Any] | None = None) -> dict[str, Any]:
         """Process user interaction and provide AI assistance"""
 
         start_time = datetime.now(UTC)
         interaction_id = f"interact_{user_id}_{int(start_time.timestamp())}"
 
         context = context or {}
-        collaboration_mode = self._determine_collaboration_mode(
-            user_id, user_input, context
-        )
+        collaboration_mode = self._determine_collaboration_mode(user_id, user_input, context)
 
         # Select appropriate assistant
         assistant = self._select_assistant(user_input, context)
 
         # Process the interaction
-        ai_response, confidence = await self._generate_ai_response(
-            assistant, user_input, context, collaboration_mode
-        )
+        ai_response, confidence = await self._generate_ai_response(assistant, user_input, context, collaboration_mode)
 
         processing_time = (datetime.now(UTC) - start_time).total_seconds()
 
@@ -298,9 +286,7 @@ class HumanAICollaborationEngine:
 
         return response
 
-    def _determine_collaboration_mode(
-        self, user_id: str, user_input: str, context: dict[str, Any]
-    ) -> CollaborationMode:
+    def _determine_collaboration_mode(self, user_id: str, user_input: str, context: dict[str, Any]) -> CollaborationMode:
         """Determine the appropriate collaboration mode"""
 
         # Check user preferences
@@ -325,9 +311,7 @@ class HumanAICollaborationEngine:
         else:
             return CollaborationMode.ASSISTIVE
 
-    def _select_assistant(
-        self, user_input: str, context: dict[str, Any]
-    ) -> AIAssistant:
+    def _select_assistant(self, user_input: str, context: dict[str, Any]) -> AIAssistant:
         """Select the most appropriate AI assistant"""
 
         # Score each assistant
@@ -342,18 +326,12 @@ class HumanAICollaborationEngine:
 
             # Context relevance
             domain = context.get("domain", "").lower()
-            if any(
-                expertise.lower() in domain for expertise in assistant.expertise_areas
-            ):
+            if any(expertise.lower() in domain for expertise in assistant.expertise_areas):
                 score += 0.3
 
             # User preference
             user_id = context.get("user_id")
-            if (
-                user_id
-                and self.user_preferences.get(user_id, {}).get("preferred_assistant")
-                == assistant.assistant_id
-            ):
+            if user_id and self.user_preferences.get(user_id, {}).get("preferred_assistant") == assistant.assistant_id:
                 score += 0.3
 
             assistant_scores[assistant.assistant_id] = score
@@ -375,21 +353,13 @@ class HumanAICollaborationEngine:
         intent = self._parse_user_intent(user_input)
 
         if assistant.assistant_id == "fraud_analyst":
-            response, confidence = await self._handle_fraud_analysis(
-                intent, context, collaboration_mode
-            )
+            response, confidence = await self._handle_fraud_analysis(intent, context, collaboration_mode)
         elif assistant.assistant_id == "ops_manager":
-            response, confidence = await self._handle_operations(
-                intent, context, collaboration_mode
-            )
+            response, confidence = await self._handle_operations(intent, context, collaboration_mode)
         elif assistant.assistant_id == "bi_analyst":
-            response, confidence = await self._handle_business_intelligence(
-                intent, context, collaboration_mode
-            )
+            response, confidence = await self._handle_business_intelligence(intent, context, collaboration_mode)
         elif assistant.assistant_id == "compliance_officer":
-            response, confidence = await self._handle_compliance(
-                intent, context, collaboration_mode
-            )
+            response, confidence = await self._handle_compliance(intent, context, collaboration_mode)
         else:
             response = "I'm not sure how to help with that. Could you please rephrase your request?"
             confidence = 0.0
@@ -410,9 +380,7 @@ class HumanAICollaborationEngine:
 
             if transaction_data:
                 # Make automated decision
-                decision = await cognitive_engine.make_automated_decision(
-                    DecisionType.FRAUD_ANALYSIS, transaction_data
-                )
+                decision = await cognitive_engine.make_automated_decision(DecisionType.FRAUD_ANALYSIS, transaction_data)
 
                 if collaboration_mode == CollaborationMode.ASSISTIVE:
                     response = (
@@ -453,10 +421,7 @@ class HumanAICollaborationEngine:
                     confidence = 0.75
 
             else:
-                response = (
-                    "I need transaction details to perform fraud analysis. "
-                    "Please provide the transaction information."
-                )
+                response = "I need transaction details to perform fraud analysis. Please provide the transaction information."
                 confidence = 0.0
 
         elif intent.get("action") == "report":
@@ -548,9 +513,7 @@ class HumanAICollaborationEngine:
             forecast_data = context.get("forecast_data", {})
             forecast_type = context.get("forecast_type", "transaction_volume")
 
-            insight = await predictive_engine.generate_business_forecast(
-                forecast_type, forecast_data
-            )
+            insight = await predictive_engine.generate_business_forecast(forecast_type, forecast_data)
 
             response = (
                 f"Business forecast generated: {insight.prediction} expected for {forecast_type.replace('_', ' ')}. "
@@ -570,8 +533,7 @@ class HumanAICollaborationEngine:
 
         else:
             response = (
-                "I can help you with forecasting, trend analysis, or generating business insights. "
-                "What would you like to explore?"
+                "I can help you with forecasting, trend analysis, or generating business insights. " "What would you like to explore?"
             )
             confidence = 0.7
 
@@ -589,14 +551,10 @@ class HumanAICollaborationEngine:
             # Perform compliance check
             compliance_data = context.get("compliance_data", {})
 
-            decision = await cognitive_engine.make_automated_decision(
-                DecisionType.COMPLIANCE_CHECK, compliance_data
-            )
+            decision = await cognitive_engine.make_automated_decision(DecisionType.COMPLIANCE_CHECK, compliance_data)
 
             if decision.decision == "COMPLIANCE_PASSED":
-                response = (
-                    "Compliance check passed. All regulatory requirements are met."
-                )
+                response = "Compliance check passed. All regulatory requirements are met."
                 confidence = 0.9
             else:
                 response = (
@@ -628,9 +586,7 @@ class HumanAICollaborationEngine:
         input_lower = user_input.lower()
 
         # Simple rule-based intent parsing
-        if any(
-            word in input_lower for word in ["analyze", "check", "review", "assess"]
-        ):
+        if any(word in input_lower for word in ["analyze", "check", "review", "assess"]):
             action = "analyze"
         elif any(word in input_lower for word in ["forecast", "predict", "trend"]):
             action = "forecast"
@@ -670,9 +626,7 @@ class HumanAICollaborationEngine:
         ]
 
         complexity_score = min(words / 50, 1.0)  # Length factor
-        complexity_score += (
-            sum(1 for word in complexity_indicators if word in user_input.lower()) * 0.1
-        )
+        complexity_score += sum(1 for word in complexity_indicators if word in user_input.lower()) * 0.1
 
         return min(complexity_score, 1.0)
 
@@ -684,10 +638,7 @@ class HumanAICollaborationEngine:
             return InteractionType.QUERY
         elif any(word in input_lower for word in ["do", "execute", "run", "generate"]):
             return InteractionType.COMMAND
-        elif any(
-            word in input_lower
-            for word in ["good", "bad", "correct", "wrong", "feedback"]
-        ):
+        elif any(word in input_lower for word in ["good", "bad", "correct", "wrong", "feedback"]):
             return InteractionType.FEEDBACK
         elif any(word in input_lower for word in ["override", "cancel", "stop"]):
             return InteractionType.OVERRIDE
@@ -726,40 +677,28 @@ class HumanAICollaborationEngine:
                     f"(Rating: {feedback['rating']}) - {feedback.get('comments', 'No comments')}"
                 )
 
-    def _generate_follow_up_suggestions(
-        self, interaction: HumanAIInteraction
-    ) -> list[str]:
+    def _generate_follow_up_suggestions(self, interaction: HumanAIInteraction) -> list[str]:
         """Generate follow-up suggestions based on interaction"""
         suggestions = []
 
         if interaction.interaction_type == InteractionType.QUERY:
-            suggestions.append(
-                "Would you like me to provide more details or run additional analysis?"
-            )
+            suggestions.append("Would you like me to provide more details or run additional analysis?")
 
         elif interaction.interaction_type == InteractionType.COMMAND:
-            suggestions.append(
-                "Would you like me to show the results or generate a report?"
-            )
+            suggestions.append("Would you like me to show the results or generate a report?")
 
         if interaction.confidence_score < 0.7:
             suggestions.append("Consider providing more context for better assistance.")
 
         if interaction.collaboration_mode == CollaborationMode.ASSISTIVE:
-            suggestions.append(
-                "Would you like to switch to collaborative mode for more detailed analysis?"
-            )
+            suggestions.append("Would you like to switch to collaborative mode for more detailed analysis?")
 
         return suggestions[:3]  # Limit to 3 suggestions
 
-    async def provide_workflow_augmentation(
-        self, workflow_data: dict[str, Any]
-    ) -> WorkflowAugmentation:
+    async def provide_workflow_augmentation(self, workflow_data: dict[str, Any]) -> WorkflowAugmentation:
         """Provide workflow augmentation suggestions"""
 
-        workflow_id = workflow_data.get(
-            "workflow_id", f"wf_{int(datetime.now(UTC).timestamp())}"
-        )
+        workflow_id = workflow_data.get("workflow_id", f"wf_{int(datetime.now(UTC).timestamp())}")
 
         # Analyze current workflow
         workflow_data.get("efficiency", 0.7)
@@ -806,9 +745,7 @@ class HumanAICollaborationEngine:
         # Calculate benefits
         estimated_benefits = {
             "time_savings": len(ai_suggestions) * 15,  # 15 minutes per automation
-            "error_reduction": min(
-                len(ai_suggestions) * 5, 50
-            ),  # Up to 50% error reduction
+            "error_reduction": min(len(ai_suggestions) * 5, 50),  # Up to 50% error reduction
             "cost_savings": len(ai_suggestions) * 100,  # $100 per automation point
         }
 
@@ -834,28 +771,15 @@ class HumanAICollaborationEngine:
 
         return {
             "total_interactions": len(interactions),
-            "avg_confidence_score": sum(i.confidence_score for i in interactions)
-            / max(len(interactions), 1),
+            "avg_confidence_score": sum(i.confidence_score for i in interactions) / max(len(interactions), 1),
             "collaboration_mode_distribution": {
-                mode.value: len(
-                    [i for i in interactions if i.collaboration_mode == mode]
-                )
-                for mode in CollaborationMode
+                mode.value: len([i for i in interactions if i.collaboration_mode == mode]) for mode in CollaborationMode
             },
             "interaction_type_distribution": {
-                itype.value: len(
-                    [i for i in interactions if i.interaction_type == itype]
-                )
-                for itype in InteractionType
+                itype.value: len([i for i in interactions if i.interaction_type == itype]) for itype in InteractionType
             },
-            "avg_processing_time": sum(i.processing_time for i in interactions)
-            / max(len(interactions), 1),
-            "assistants_usage": {
-                aid: len(
-                    [i for i in interactions if i.context.get("assistant_id") == aid]
-                )
-                for aid in self.assistants
-            },
+            "avg_processing_time": sum(i.processing_time for i in interactions) / max(len(interactions), 1),
+            "assistants_usage": {aid: len([i for i in interactions if i.context.get("assistant_id") == aid]) for aid in self.assistants},
         }
 
     def get_recent_interactions(self, days: int = 7) -> list[HumanAIInteraction]:
@@ -920,9 +844,7 @@ async def demonstrate_human_ai_collaboration():
         logger.info(f"\n👤 User: {scenario['user_id']}")
         logger.info(f"💬 Input: {scenario['input']}")
 
-        response = await collaboration_engine.process_user_interaction(
-            scenario["user_id"], scenario["input"], scenario["context"]
-        )
+        response = await collaboration_engine.process_user_interaction(scenario["user_id"], scenario["input"], scenario["context"])
 
         logger.info(f"🤖 Assistant: {response['assistant']}")
         logger.info(f"💡 Response: {response['response']}")
@@ -947,17 +869,13 @@ async def demonstrate_human_ai_collaboration():
     }
 
     logger.info(f"\n🔄 Analyzing workflow: {workflow_data['workflow_name']}")
-    augmentation = await collaboration_engine.provide_workflow_augmentation(
-        workflow_data
-    )
+    augmentation = await collaboration_engine.provide_workflow_augmentation(workflow_data)
 
     logger.info("🎯 Workflow Augmentation Suggestions:")
     logger.info(f"   Type: {augmentation.augmentation_type}")
     logger.info(f"   AI Tasks: {len(augmentation.ai_suggestions)} suggestions")
     logger.info(f"   Human Tasks: {len(augmentation.human_tasks)} responsibilities")
-    logger.info(
-        f"   Time Savings: {augmentation.estimated_benefits['time_savings']} minutes/day"
-    )
+    logger.info(f"   Time Savings: {augmentation.estimated_benefits['time_savings']} minutes/day")
 
     # Show collaboration metrics
     metrics = collaboration_engine.get_collaboration_metrics()

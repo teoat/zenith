@@ -11,7 +11,7 @@ export interface SystemMetrics {
 
 export interface ServiceHealth {
   name: string;
-  status: 'healthy' | 'degraded' | 'unhealthy' | 'offline';
+  status: "healthy" | "degraded" | "unhealthy" | "offline";
   response_time: number;
   last_check: string;
   error_count: number;
@@ -30,8 +30,8 @@ export interface PerformanceMetrics {
 
 export interface DiagnosticIssue {
   id: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  category: 'performance' | 'security' | 'reliability' | 'compliance';
+  severity: "low" | "medium" | "high" | "critical";
+  category: "performance" | "security" | "reliability" | "compliance";
   title: string;
   description: string;
   affected_services: string[];
@@ -52,11 +52,14 @@ export interface SystemDiagnosticsResponse {
     };
   };
   health: {
-    components: Record<string, {
-      status: string;
-      response_time_ms?: number;
-      error?: boolean;
-    }>;
+    components: Record<
+      string,
+      {
+        status: string;
+        response_time_ms?: number;
+        error?: boolean;
+      }
+    >;
   };
   key_metrics: {
     total_requests: number;

@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
-import { Button } from '@/components/ui/Button.tsx';
-import { Input } from '@/components/ui/Input.tsx';
-import { Badge } from '@/components/ui/Badge.tsx';
-import { Search, FileText, Brain } from 'lucide-react';
-import { secureLogger } from '@/utils/secureLogger';
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/Card.tsx";
+import { Button } from "@/components/ui/Button.tsx";
+import { Input } from "@/components/ui/Input.tsx";
+import { Badge } from "@/components/ui/Badge.tsx";
+import { Search, FileText, Brain } from "lucide-react";
+import { secureLogger } from "@/utils/secureLogger";
 
 interface SearchResult {
   id: string;
@@ -15,7 +20,7 @@ interface SearchResult {
 }
 
 const RagSearchInterface: React.FC = () => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,30 +32,33 @@ const RagSearchInterface: React.FC = () => {
       // Mock search results for now
       const mockResults = [
         {
-          id: 'doc_1',
-          title: 'Fraud Detection Best Practices',
-          content: 'Advanced techniques for identifying sophisticated fraud patterns...',
+          id: "doc_1",
+          title: "Fraud Detection Best Practices",
+          content:
+            "Advanced techniques for identifying sophisticated fraud patterns...",
           relevance: 0.95,
-          source: 'Knowledge Base'
+          source: "Knowledge Base",
         },
         {
-          id: 'doc_2',
-          title: 'Transaction Monitoring Guidelines',
-          content: 'Comprehensive guidelines for real-time transaction analysis...',
+          id: "doc_2",
+          title: "Transaction Monitoring Guidelines",
+          content:
+            "Comprehensive guidelines for real-time transaction analysis...",
           relevance: 0.87,
-          source: 'Regulatory Docs'
+          source: "Regulatory Docs",
         },
         {
-          id: 'doc_3',
-          title: 'Risk Assessment Framework',
-          content: 'Multi-factor risk scoring methodology and implementation...',
+          id: "doc_3",
+          title: "Risk Assessment Framework",
+          content:
+            "Multi-factor risk scoring methodology and implementation...",
           relevance: 0.82,
-          source: 'Technical Documentation'
-        }
+          source: "Technical Documentation",
+        },
       ];
       setResults(mockResults);
     } catch (error) {
-      secureLogger.error('RAG search failed:', error);
+      secureLogger.error("RAG search failed:", error);
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +66,7 @@ const RagSearchInterface: React.FC = () => {
 
   const handleAddDocument = async () => {
     // Mock document addition
-    secureLogger.info('Adding document to RAG index');
+    secureLogger.info("Adding document to RAG index");
   };
 
   return (
@@ -70,15 +78,19 @@ const RagSearchInterface: React.FC = () => {
             <Input
               placeholder="Search knowledge base with AI-powered retrieval..."
               value={query}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
-              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && handleSearch()}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setQuery(e.target.value)
+              }
+              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) =>
+                e.key === "Enter" && handleSearch()
+              }
               className="pl-10 bg-slate-800 border-slate-700 text-white"
             />
           </div>
         </div>
         <Button onClick={handleSearch} disabled={isLoading || !query.trim()}>
           <Brain className="w-4 h-4 mr-2" />
-          {isLoading ? 'Searching...' : 'Search'}
+          {isLoading ? "Searching..." : "Search"}
         </Button>
         <Button variant="secondary" onClick={handleAddDocument}>
           <FileText className="w-4 h-4 mr-2" />
@@ -93,7 +105,9 @@ const RagSearchInterface: React.FC = () => {
             <Card key={result.id} className="bg-slate-800 border-slate-700">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-white text-base">{result.title}</CardTitle>
+                  <CardTitle className="text-white text-base">
+                    {result.title}
+                  </CardTitle>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="text-xs">
                       {Math.round(result.relevance * 100)}% relevance
@@ -127,7 +141,8 @@ const RagSearchInterface: React.FC = () => {
             AI-Powered Knowledge Retrieval
           </h3>
           <p className="text-slate-500">
-            Enter a query to search through indexed documents using advanced RAG technology
+            Enter a query to search through indexed documents using advanced RAG
+            technology
           </p>
         </div>
       )}

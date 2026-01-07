@@ -3,6 +3,7 @@ Automated Regulatory Reporting System
 Generates and manages regulatory compliance reports (SAR, CTR, etc.)
 """
 
+import asyncio
 import json
 import logging
 from dataclasses import dataclass
@@ -147,9 +148,7 @@ class AutomatedRegulatoryReporter:
             },
         }
 
-    async def generate_report(
-        self, case_id: str, report_type: ReportType, jurisdiction: str = "US_FINCEN"
-    ) -> RegulatoryReport:
+    async def generate_report(self, case_id: str, report_type: ReportType, jurisdiction: str = "US_FINCEN") -> RegulatoryReport:
         """
         Generate a regulatory report from case data
 
@@ -231,12 +230,8 @@ class AutomatedRegulatoryReporter:
             return {
                 "case_id": case.id,
                 "title": case.title,
-                "status": case.status.value
-                if hasattr(case.status, "value")
-                else str(case.status),
-                "priority": case.priority.value
-                if hasattr(case.priority, "value")
-                else str(case.priority),
+                "status": case.status.value if hasattr(case.status, "value") else str(case.status),
+                "priority": case.priority.value if hasattr(case.priority, "value") else str(case.priority),
                 "transactions": transactions,  # Empty if no direct relation (better than fake data)
                 "entities": entities,
                 "evidence": [],  # Would need evidence service to fetch this
@@ -247,16 +242,12 @@ class AutomatedRegulatoryReporter:
                 },
             }
 
-    def _validate_report_requirements(
-        self, case_data: dict[str, Any], report_type: ReportType, jurisdiction: str
-    ):
+    def _validate_report_requirements(self, case_data: dict[str, Any], report_type: ReportType, jurisdiction: str):
         """Validate that case data meets regulatory requirements"""
         requirements = self.regulatory_requirements.get(jurisdiction, {})
 
         if report_type not in requirements.get("supported_reports", []):
-            raise ValueError(
-                f"Report type {report_type.value} not supported in {jurisdiction}"
-            )
+            raise ValueError(f"Report type {report_type.value} not supported in {jurisdiction}")
 
         # Check for required data elements
         required_fields = requirements.get("required_fields", [])
@@ -268,13 +259,9 @@ class AutomatedRegulatoryReporter:
         # Validate amount thresholds for CTR
         if report_type == ReportType.CTR:
             threshold = requirements.get("ctr_threshold_usd", 10000)
-            total_amount = sum(
-                tx.get("amount", 0) for tx in case_data.get("transactions", [])
-            )
+            total_amount = sum(tx.get("amount", 0) for tx in case_data.get("transactions", []))
             if total_amount < threshold:
-                raise ValueError(
-                    f"Transaction amount ${total_amount} below CTR threshold ${threshold}"
-                )
+                raise ValueError(f"Transaction amount ${total_amount} below CTR threshold ${threshold}")
 
     def _has_required_data(self, case_data: dict[str, Any], field: str) -> bool:
         """Check if case data has required field"""
@@ -286,9 +273,7 @@ class AutomatedRegulatoryReporter:
             return "analysis" in case_data
         return field in case_data
 
-    async def _generate_report_content(
-        self, case_data: dict[str, Any], report_type: ReportType
-    ) -> dict[str, Any]:
+    async def _generate_report_content(self, case_data: dict[str, Any], report_type: ReportType) -> dict[str, Any]:
         """Generate the content for the regulatory report"""
         if report_type == ReportType.SAR:
             return self._generate_sar_content(case_data)
@@ -313,9 +298,7 @@ class AutomatedRegulatoryReporter:
                 "amount": primary_transaction.get("amount", 0),
                 "date": primary_transaction.get("date", ""),
                 "description": primary_transaction.get("description", ""),
-                "suspicious_indicators": primary_transaction.get(
-                    "suspicious_indicators", []
-                ),
+                "suspicious_indicators": primary_transaction.get("suspicious_indicators", []),
             },
             "narrative": self._generate_structured_narrative(case_data),
             "evidence": self._format_evidence_list(case_data.get("evidence", [])),
@@ -365,9 +348,7 @@ class AutomatedRegulatoryReporter:
         # Suspicious indicators
         suspicious_patterns = analysis.get("suspicious_patterns", [])
         if suspicious_patterns:
-            narrative_parts.append(
-                f"The activity exhibits the following suspicious patterns: {', '.join(suspicious_patterns)}."
-            )
+            narrative_parts.append(f"The activity exhibits the following suspicious patterns: {', '.join(suspicious_patterns)}.")
 
         # Risk assessment
         risk_score = analysis.get("risk_score", 0)
@@ -378,16 +359,11 @@ class AutomatedRegulatoryReporter:
         else:
             risk_level = "low"
 
-        narrative_parts.append(
-            f"Risk assessment indicates a {risk_level} level of suspicion "
-            f"with a confidence score of {risk_score:.1%}."
-        )
+        narrative_parts.append(f"Risk assessment indicates a {risk_level} level of suspicion with a confidence score of {risk_score:.1%}.")
 
         return " ".join(narrative_parts)
 
-    def _format_evidence_list(
-        self, evidence: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
+    def _format_evidence_list(self, evidence: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Format evidence list for regulatory submission"""
         formatted_evidence = []
 
@@ -397,9 +373,7 @@ class AutomatedRegulatoryReporter:
                     "type": item.get("type", "document"),
                     "filename": item.get("filename", ""),
                     "description": item.get("description", ""),
-                    "date_collected": item.get(
-                        "uploaded_at", datetime.now().isoformat()
-                    ),
+                    "date_collected": item.get("uploaded_at", datetime.now().isoformat()),
                 }
             )
 
@@ -425,9 +399,7 @@ class AutomatedRegulatoryReporter:
         gateway = self._get_submission_gateway(report.report_type, jurisdiction)
 
         if not gateway:
-            raise ValueError(
-                f"No submission gateway available for {report.report_type.value} in {jurisdiction}"
-            )
+            raise ValueError(f"No submission gateway available for {report.report_type.value} in {jurisdiction}")
 
         # Format report for submission
         formatted_report = self._format_report_for_submission(report, gateway)
@@ -448,9 +420,7 @@ class AutomatedRegulatoryReporter:
         # This would be determined from institution location or case data
         return "US_FINCEN"
 
-    def _get_submission_gateway(
-        self, report_type: ReportType, jurisdiction: str
-    ) -> dict[str, Any] | None:
+    def _get_submission_gateway(self, report_type: ReportType, jurisdiction: str) -> dict[str, Any] | None:
         """Get appropriate submission gateway"""
         if jurisdiction == "US_FINCEN":
             return self.submission_gateways.get("FINCEN_GATEWAY")
@@ -461,9 +431,7 @@ class AutomatedRegulatoryReporter:
 
         return None
 
-    def _format_report_for_submission(
-        self, report: RegulatoryReport, gateway: dict[str, Any]
-    ) -> str:
+    def _format_report_for_submission(self, report: RegulatoryReport, gateway: dict[str, Any]) -> str:
         """Format report for gateway submission"""
         if gateway["format"] == "XML":
             return self._format_as_xml(report)
@@ -505,17 +473,13 @@ class AutomatedRegulatoryReporter:
             "generated_at": report.generated_at.isoformat(),
         }
 
-    async def _submit_to_gateway(
-        self, formatted_report: str, gateway: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _submit_to_gateway(self, formatted_report: str, gateway: dict[str, Any]) -> dict[str, Any]:
         """Submit formatted report to regulatory gateway"""
         # SAFE SIMULATION MODE
         # In a real production environment, this would use mTLS/HTTPS to submit to FinCEN/FCA.
         # For this deployment, we simulate the submission to avoid actual regulatory filings.
 
-        logger.info(
-            f"SIMULATION: Submitting {gateway['format']} report to {gateway['endpoint']}"
-        )
+        logger.info(f"SIMULATION: Submitting {gateway['format']} report to {gateway['endpoint']}")
 
         # Simulate API call delay
         await asyncio.sleep(1)
@@ -561,9 +525,7 @@ class AutomatedRegulatoryReporter:
         if template and "max_narrative_length" in template:
             max_length = template["max_narrative_length"]
             if len(report.narrative) > max_length:
-                issues.append(
-                    f"Narrative exceeds maximum length of {max_length} characters"
-                )
+                issues.append(f"Narrative exceeds maximum length of {max_length} characters")
 
         return {
             "compliant": len(issues) == 0,

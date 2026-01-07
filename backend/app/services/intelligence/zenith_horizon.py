@@ -60,17 +60,13 @@ class AdversarialForensicShield:
 
         # Randomly simulate a potential detection for a "suspicious" ID
         is_suspicious = "suspicious" in artifact_id.lower()
-        synthetic_prob = (
-            random.uniform(0.4, 0.9) if is_suspicious else random.uniform(0.001, 0.01)
-        )
+        synthetic_prob = random.uniform(0.4, 0.9) if is_suspicious else random.uniform(0.001, 0.01)
 
         return {
             "artifact_id": artifact_id,
             "synthetic_probability": round(synthetic_prob, 4),
             "adversarial_perturbation_detected": synthetic_prob > 0.5,
-            "source_device_fingerprint": "MATCHED (Canon EOS 5D)"
-            if not is_suspicious
-            else "SIGNATURE_ABSENT",
+            "source_device_fingerprint": "MATCHED (Canon EOS 5D)" if not is_suspicious else "SIGNATURE_ABSENT",
             "integrity_score": round(1.0 - synthetic_prob, 4),
             "models_consulted": self.detection_models,
         }

@@ -1,6 +1,7 @@
 """Compatibility shim exposing `detect_burst` in top-level `services` package.
 Delegates to backend implementation when available.
 """
+
 from datetime import UTC
 
 from sqlalchemy import case, func
@@ -67,9 +68,7 @@ def detect_burst(session, ip, window_minutes=60):
             # The filter(Tx.date >= earliest_start) includes everything from earliest_start onwards.
             # So it covers all historical windows AND the current window.
 
-            expressions.append(
-                func.sum(case((Tx.date >= window_start, 1), else_=0))
-            )
+            expressions.append(func.sum(case((Tx.date >= window_start, 1), else_=0)))
 
             # 2. Historical windows counts
             for i in range(1, 13):
@@ -77,15 +76,10 @@ def detect_burst(session, ip, window_minutes=60):
                 end = start + window_delta
                 # Range: [start, end)
                 cond = (Tx.date >= start) & (Tx.date < end)
-                expressions.append(
-                    func.sum(case((cond, 1), else_=0))
-                )
+                expressions.append(func.sum(case((cond, 1), else_=0)))
 
             # Execute single query
-            results = session.query(*expressions).filter(
-                Tx.ip_address == ip,
-                Tx.date >= earliest_start
-            ).first()
+            results = session.query(*expressions).filter(Tx.ip_address == ip, Tx.date >= earliest_start).first()
 
             # Handle results (None if no rows match filter)
             if results:

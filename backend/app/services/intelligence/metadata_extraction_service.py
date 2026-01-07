@@ -10,9 +10,23 @@ import logging
 import mimetypes
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
+
+
+class EXIFMetadata(BaseModel):
+    """EXIF metadata for images"""
+
+    camera_make: str | None = None
+    camera_model: str | None = None
+    datetime_original: str | None = None
+    gps_latitude: float | None = None
+    gps_longitude: float | None = None
+
+
+if TYPE_CHECKING:
+    EXIFMetadata = Any  # Type alias for EXIF metadata
 
 logger = logging.getLogger(__name__)
 
@@ -193,8 +207,8 @@ class MetadataExtractionService:
 
         # Extract OCR confidence from ocr_result if available
         ocr_confidence = None
-        if ocr_result and 'metadata' in ocr_result:
-            ocr_confidence = ocr_result['metadata'].get('ocr_confidence')
+        if ocr_result and "metadata" in ocr_result:
+            ocr_confidence = ocr_result["metadata"].get("ocr_confidence")
 
         # Base metadata
         metadata = DocumentMetadata(
@@ -206,12 +220,8 @@ class MetadataExtractionService:
             created=CreationContext(
                 date=datetime.fromtimestamp(stat.st_ctime).isoformat(),
             ),
-            modified=ModificationHistory(
-                last_date=datetime.fromtimestamp(stat.st_mtime).isoformat(), count=1
-            ),
-            forensic=ForensicFlags(
-                ocr_confidence=ocr_confidence
-            ),
+            modified=ModificationHistory(last_date=datetime.fromtimestamp(stat.st_mtime).isoformat(), count=1),
+            forensic=ForensicFlags(ocr_confidence=ocr_confidence),
         )
 
         # Type-specific extraction
@@ -235,12 +245,12 @@ class MetadataExtractionService:
                         version="unknown",
                         pages=0,
                         encrypted=False,
-                        permissions=[]
+                        permissions=[],
                     )
                 }
 
         try:
-            with open(file_path, 'rb') as file:
+            with open(file_path, "rb") as file:
                 reader = PdfReader(file)
 
                 # Extract basic metadata
@@ -248,16 +258,16 @@ class MetadataExtractionService:
                 num_pages = len(reader.pages)
 
                 # Extract producer info
-                producer = getattr(metadata, 'producer', None) or getattr(metadata, '/Producer', None)
+                producer = getattr(metadata, "producer", None) or getattr(metadata, "/Producer", None)
                 if isinstance(producer, bytes):
-                    producer = producer.decode('utf-8', errors='ignore')
+                    producer = producer.decode("utf-8", errors="ignore")
 
                 # Extract version info
                 version = "1.4"  # Default
-                if hasattr(reader, 'pdf_header'):
+                if hasattr(reader, "pdf_header"):
                     header = reader.pdf_header
-                    if b'PDF-1.' in header:
-                        version_match = header.split(b'PDF-1.')[1][:1]
+                    if b"PDF-1." in header:
+                        version_match = header.split(b"PDF-1.")[1][:1]
                         if version_match.isdigit():
                             version = f"1.{version_match.decode()}"
 
@@ -270,7 +280,7 @@ class MetadataExtractionService:
                     try:
                         # Check if we can extract text (implies read permission)
                         page = reader.pages[0]
-                        if hasattr(page, 'extract_text'):
+                        if hasattr(page, "extract_text"):
                             permissions.append("read")
                     except Exception:
                         pass
@@ -283,17 +293,17 @@ class MetadataExtractionService:
                         pass
 
                 # Extract additional metadata
-                creation_date = getattr(metadata, 'creation_date', None)
-                modification_date = getattr(metadata, 'modification_date', None)
-                author = getattr(metadata, 'author', None)
-                subject = getattr(metadata, 'subject', None)
-                title = getattr(metadata, 'title', None)
+                creation_date = getattr(metadata, "creation_date", None)
+                modification_date = getattr(metadata, "modification_date", None)
+                author = getattr(metadata, "author", None)
+                subject = getattr(metadata, "subject", None)
+                title = getattr(metadata, "title", None)
 
                 # Convert bytes to strings if needed
-                for attr in ['author', 'subject', 'title']:
+                for attr in ["author", "subject", "title"]:
                     value = locals().get(attr)
                     if isinstance(value, bytes):
-                        locals()[attr] = value.decode('utf-8', errors='ignore')
+                        locals()[attr] = value.decode("utf-8", errors="ignore")
 
                 return {
                     "pdf": PDFMetadata(
@@ -306,7 +316,7 @@ class MetadataExtractionService:
                         modification_date=modification_date,
                         author=author,
                         subject=subject,
-                        title=title
+                        title=title,
                     )
                 }
 
@@ -317,7 +327,7 @@ class MetadataExtractionService:
                     version="unknown",
                     pages=0,
                     encrypted=False,
-                    permissions=[]
+                    permissions=[],
                 )
             }
 
@@ -339,7 +349,7 @@ class MetadataExtractionService:
                     height=0,
                     color_space="unknown",
                     has_exif=False,
-                )
+                ),
             }
 
         try:
@@ -347,7 +357,7 @@ class MetadataExtractionService:
                 # Get basic image info
                 width, height = img.size
                 color_space = "RGB" if img.mode == "RGB" else img.mode
-                has_exif = hasattr(img, '_getexif') and img._getexif() is not None
+                has_exif = hasattr(img, "_getexif") and img._getexif() is not None
 
                 # Extract EXIF data
                 exif_data = {}
@@ -359,16 +369,17 @@ class MetadataExtractionService:
                             exif_data[tag_name] = value
 
                 # Extract camera info
-                camera_make = exif_data.get('Make', 'Unknown')
-                camera_model = exif_data.get('Model', 'Unknown')
+                camera_make = exif_data.get("Make", "Unknown")
+                camera_model = exif_data.get("Model", "Unknown")
 
                 # Extract datetime
-                datetime_original = exif_data.get('DateTimeOriginal')
+                datetime_original = exif_data.get("DateTimeOriginal")
                 if isinstance(datetime_original, str):
                     try:
                         # Convert EXIF datetime format to datetime object
                         from datetime import datetime
-                        datetime_original = datetime.strptime(datetime_original, '%Y:%m:%d %H:%M:%S')
+
+                        datetime_original = datetime.strptime(datetime_original, "%Y:%m:%d %H:%M:%S")
                     except Exception:
                         datetime_original = None
 
@@ -376,8 +387,8 @@ class MetadataExtractionService:
                 gps_latitude = None
                 gps_longitude = None
 
-                if 'GPSInfo' in exif_data:
-                    gps_info = exif_data['GPSInfo']
+                if "GPSInfo" in exif_data:
+                    gps_info = exif_data["GPSInfo"]
 
                     # GPS latitude
                     if 2 in gps_info and 4 in gps_info:
@@ -386,7 +397,7 @@ class MetadataExtractionService:
                         lat_sec = gps_info[2][2] / gps_info[2][3]
                         gps_latitude = lat_deg + (lat_min / 60) + (lat_sec / 3600)
 
-                        if gps_info[1] == 'S':
+                        if gps_info[1] == "S":
                             gps_latitude = -gps_latitude
 
                     # GPS longitude
@@ -396,15 +407,15 @@ class MetadataExtractionService:
                         lon_sec = gps_info[4][2] / gps_info[4][3]
                         gps_longitude = lon_deg + (lon_min / 60) + (lon_sec / 3600)
 
-                        if gps_info[3] == 'W':
+                        if gps_info[3] == "W":
                             gps_longitude = -gps_longitude
 
                 # Additional EXIF fields
-                iso_speed = exif_data.get('ISOSpeedRatings')
-                focal_length = exif_data.get('FocalLength')
-                aperture = exif_data.get('FNumber')
-                exposure_time = exif_data.get('ExposureTime')
-                flash = exif_data.get('Flash')
+                iso_speed = exif_data.get("ISOSpeedRatings")
+                focal_length = exif_data.get("FocalLength")
+                aperture = exif_data.get("FNumber")
+                exposure_time = exif_data.get("ExposureTime")
+                flash = exif_data.get("Flash")
 
                 return {
                     "exif": EXIFMetadata(
@@ -417,7 +428,7 @@ class MetadataExtractionService:
                         focal_length=focal_length,
                         aperture=aperture,
                         exposure_time=exposure_time,
-                        flash_used=flash == 1 if flash is not None else None
+                        flash_used=flash == 1 if flash is not None else None,
                     ),
                     "image": ImageMetadata(
                         width=width,
@@ -425,8 +436,8 @@ class MetadataExtractionService:
                         color_space=color_space,
                         has_exif=has_exif,
                         file_format=img.format,
-                        bits_per_pixel=getattr(img, 'bits', None)
-                    )
+                        bits_per_pixel=getattr(img, "bits", None),
+                    ),
                 }
 
         except Exception as e:
@@ -443,14 +454,14 @@ class MetadataExtractionService:
                     height=0,
                     color_space="unknown",
                     has_exif=False,
-                )
+                ),
             }
 
     def _extract_docx_metadata(self, file_path: Path) -> dict[str, Any]:
         """Extract DOCX metadata using python-docx."""
         try:
-            import zipfile
-            from datetime import datetime
+            import zipfile  # noqa: F401
+            from datetime import datetime  # noqa: F401
 
             from docx import Document
         except ImportError:
@@ -471,12 +482,12 @@ class MetadataExtractionService:
             # Extract core properties
             core_props = doc.core_properties
 
-            author = getattr(core_props, 'author', None) or 'Unknown'
-            created_date = getattr(core_props, 'created', None)
-            modified_date = getattr(core_props, 'modified', None)
-            title = getattr(core_props, 'title', None)
-            subject = getattr(core_props, 'subject', None)
-            keywords = getattr(core_props, 'keywords', None)
+            author = getattr(core_props, "author", None) or "Unknown"
+            created_date = getattr(core_props, "created", None)
+            modified_date = getattr(core_props, "modified", None)
+            title = getattr(core_props, "title", None)
+            subject = getattr(core_props, "subject", None)
+            keywords = getattr(core_props, "keywords", None)
 
             # Count words and paragraphs
             word_count = 0
@@ -499,8 +510,8 @@ class MetadataExtractionService:
             try:
                 rels = doc.part.rels
                 for rel in rels.values():
-                    if hasattr(rel, 'target_ref') and rel.target_ref:
-                        if any(ext in rel.target_ref.lower() for ext in ['.png', '.jpg', '.jpeg', '.gif', '.bmp']):
+                    if hasattr(rel, "target_ref") and rel.target_ref:
+                        if any(ext in rel.target_ref.lower() for ext in [".png", ".jpg", ".jpeg", ".gif", ".bmp"]):
                             image_count += 1
             except Exception:
                 pass
@@ -509,7 +520,7 @@ class MetadataExtractionService:
             custom_props = {}
             try:
                 # Some versions of python-docx support custom properties
-                if hasattr(doc, 'custom_properties'):
+                if hasattr(doc, "custom_properties"):
                     for prop in doc.custom_properties:
                         custom_props[prop.name] = str(prop.value)
             except Exception:
@@ -521,7 +532,7 @@ class MetadataExtractionService:
 
             # Extract revision history (basic)
             revision_count = 0
-            last_modified_by = getattr(core_props, 'last_modified_by', None)
+            last_modified_by = getattr(core_props, "last_modified_by", None)
 
             return {
                 "docx": OfficeMetadata(
@@ -539,7 +550,7 @@ class MetadataExtractionService:
                     language=language,
                     revision_count=revision_count,
                     last_modified_by=last_modified_by,
-                    custom_properties=custom_props
+                    custom_properties=custom_props,
                 )
             }
 
@@ -554,9 +565,7 @@ class MetadataExtractionService:
                 )
             }
 
-    def _merge_metadata(
-        self, base: DocumentMetadata, additional: dict[str, Any]
-    ) -> DocumentMetadata:
+    def _merge_metadata(self, base: DocumentMetadata, additional: dict[str, Any]) -> DocumentMetadata:
         """Merge additional metadata into base."""
         data = base.model_dump()
         for key, value in additional.items():
@@ -567,9 +576,7 @@ class MetadataExtractionService:
                     data[key] = value
         return DocumentMetadata(**data)
 
-    def compare_documents(
-        self, doc_a: DocumentMetadata, doc_b: DocumentMetadata
-    ) -> dict[str, Any]:
+    def compare_documents(self, doc_a: DocumentMetadata, doc_b: DocumentMetadata) -> dict[str, Any]:
         """
         Compare two documents and detect discrepancies.
 
@@ -622,9 +629,7 @@ class MetadataExtractionService:
             a_date = datetime.fromisoformat(doc_a.modified.last_date)
             b_date = datetime.fromisoformat(doc_b.modified.last_date)
             if (b_date - a_date).days > 1:
-                tamper_indicators.append(
-                    f"Modified {(b_date - a_date).days} days after original"
-                )
+                tamper_indicators.append(f"Modified {(b_date - a_date).days} days after original")
 
         return {
             "hash_match": doc_a.hash.sha256 == doc_b.hash.sha256,

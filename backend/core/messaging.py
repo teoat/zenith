@@ -22,9 +22,7 @@ class MessageQueueInterface(ABC):
         """Publish a message to a topic/queue."""
 
     @abstractmethod
-    async def subscribe(
-        self, topic: str, handler: Callable[[dict[str, Any]], None]
-    ) -> bool:
+    async def subscribe(self, topic: str, handler: Callable[[dict[str, Any]], None]) -> bool:
         """Subscribe to a topic with a handler function."""
 
     @abstractmethod
@@ -65,9 +63,7 @@ class InMemoryMessageQueue(MessageQueueInterface):
         logger.debug(f"[MQ] Published to {topic}: {message.keys()}")
         return True
 
-    async def subscribe(
-        self, topic: str, handler: Callable[[dict[str, Any]], None]
-    ) -> bool:
+    async def subscribe(self, topic: str, handler: Callable[[dict[str, Any]], None]) -> bool:
         if topic not in self._subscribers:
             self._subscribers[topic] = []
         self._subscribers[topic].append(handler)

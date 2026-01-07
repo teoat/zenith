@@ -170,9 +170,7 @@ schema = GraphQLSchema(query=QueryType)
 
 
 # Resolver functions
-async def resolve_cases(
-    info, limit=10, offset=0, status=None, priority=None, risk_level=None
-):
+async def resolve_cases(info, limit=10, offset=0, status=None, priority=None, risk_level=None):
     """Resolve cases query"""
     try:
         db = info.context.get("db")
@@ -190,9 +188,7 @@ async def resolve_cases(
         if risk_level:
             filters["risk_level"] = risk_level
 
-        result = db_service.get_cases_paginated(
-            page=(offset // limit) + 1, per_page=limit, filters=filters
-        )
+        result = db_service.get_cases_paginated(page=(offset // limit) + 1, per_page=limit, filters=filters)
 
         return result.get("cases", [])
 
@@ -233,9 +229,7 @@ async def resolve_case(info, id):
         return None
 
 
-async def resolve_transactions(
-    info, case_id=None, limit=50, offset=0, start_date=None, end_date=None
-):
+async def resolve_transactions(info, case_id=None, limit=50, offset=0, start_date=None, end_date=None):
     """Resolve transactions query"""
     try:
         db = info.context.get("db")

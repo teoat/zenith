@@ -12,9 +12,7 @@ class EvidenceSearchIndex:
     Evidence Search Index service that bridges evidence processing and semantic search.
     """
 
-    async def index_evidence(
-        self, file_id: str, file_path: str, processing_dict: dict[str, Any]
-    ):
+    async def index_evidence(self, file_id: str, file_path: str, processing_dict: dict[str, Any]):
         """
         Indices evidence content for semantic search.
         """
@@ -42,14 +40,10 @@ class EvidenceSearchIndex:
             }
 
             # Add to AI vector store/index
-            success = await ai_service.add_document(
-                doc_id=file_id, content=content, metadata=metadata
-            )
+            success = await ai_service.add_document(doc_id=file_id, content=content, metadata=metadata)
 
             if success:
-                logger.info(
-                    f"Successfully indexed evidence {file_id} for semantic search"
-                )
+                logger.info(f"Successfully indexed evidence {file_id} for semantic search")
             else:
                 logger.error(f"Failed to index evidence {file_id} in AI service")
 
@@ -62,10 +56,7 @@ class EvidenceSearchIndex:
     def __init__(self):
         self._background_tasks: list[asyncio.Task] = []
 
-
-    def index_evidence_sync(
-        self, file_id: str, file_path: str, processing_dict: dict[str, Any]
-    ):
+    def index_evidence_sync(self, file_id: str, file_path: str, processing_dict: dict[str, Any]):
         """Synchronous version for calls from sync contexts"""
         try:
             loop = asyncio.get_event_loop()
@@ -73,24 +64,18 @@ class EvidenceSearchIndex:
                 # If loop is already running, we should use a background task
                 # Fire-and-forget indexing task for sync context
                 try:
-                    task = asyncio.create_task(
-                        self.index_evidence(file_id, file_path, processing_dict)
-                    )
+                    task = asyncio.create_task(self.index_evidence(file_id, file_path, processing_dict))
                     self._background_tasks.append(task)
                 except Exception as e:
                     logger.error(f"Failed to create indexing task for {file_id}: {e}")
                 return True
             else:
-                return loop.run_until_complete(
-                    self.index_evidence(file_id, file_path, processing_dict)
-                )
+                return loop.run_until_complete(self.index_evidence(file_id, file_path, processing_dict))
         except Exception as e:
             logger.error(f"Sync indexing failed for {file_id}: {e}")
             return False
 
-    async def search_evidence(
-        self, query: str, limit: int = 20, filters: dict[str, Any] | None = None
-    ) -> list[dict[str, Any]]:
+    async def search_evidence(self, query: str, limit: int = 20, filters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """Search evidence using AI semantic search"""
         try:
             ai_service = await get_ai_service()

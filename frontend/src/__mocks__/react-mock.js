@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 // Mock React.lazy and Suspense
 React.lazy = (factory) => factory;

@@ -31,9 +31,7 @@ def test_debug_relationship_creation():
         "confidence": 0.95,
     }
 
-    response = client.post(
-        "/api/v1/entities/relationships", headers=auth_headers, json=relationship
-    )
+    response = client.post("/api/v1/entities/relationships", headers=auth_headers, json=relationship)
 
     print(f"Status: {response.status_code}")
     print(f"Response: {response.json()}")

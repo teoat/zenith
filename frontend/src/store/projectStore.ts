@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface Project {
   id: string;
@@ -23,12 +23,13 @@ export const useProjectStore = create<ProjectState>()(
       activeProjectId: null,
       projects: [],
       setActiveProject: (id) => set({ activeProjectId: id }),
-      addProject: (project) => set((state) => ({ projects: [...state.projects, project] })),
+      addProject: (project) =>
+        set((state) => ({ projects: [...state.projects, project] })),
       setProjects: (projects) => set({ projects }),
       clearProject: () => set({ activeProjectId: null }),
     }),
     {
-      name: 'project-storage',
-    }
-  )
+      name: "project-storage",
+    },
+  ),
 );

@@ -1,9 +1,9 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 export interface Case {
   id: string;
   title: string;
-  priority: 'High' | 'Medium' | 'Low';
+  priority: "High" | "Medium" | "Low";
   riskScore: number;
   assignee?: { name: string; avatar?: string };
   dueDate?: string;

@@ -8,15 +8,14 @@ class TimeTravelService:
     def get_case_history(self, case_id: str):
         return {"history": [], "message": "Time travel service not implemented"}
 
+
 time_travel_service = TimeTravelService()
 
 router = APIRouter(prefix="/cases", tags=["Time Travel"])
 
 
 @router.get("/{case_id}/history", response_model=list[dict[str, Any]])
-async def get_case_history(
-    case_id: str, service: TimeTravelService = Depends(lambda: time_travel_service)
-):
+async def get_case_history(case_id: str, service: TimeTravelService = Depends(lambda: time_travel_service)):
     """
     Get the timeline of changes for a case graph.
     """

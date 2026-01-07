@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, Filter } from 'lucide-react';
+import React from "react";
+import { Search, Filter } from "lucide-react";
 
 interface FilterControlsProps {
   searchTerm: string;
@@ -11,21 +11,21 @@ interface FilterControlsProps {
 }
 
 const categories = [
-  { value: 'all', label: 'All Categories' },
-  { value: 'security', label: 'Security' },
-  { value: 'performance', label: 'Performance' },
-  { value: 'maintainability', label: 'Maintainability' },
-  { value: 'reliability', label: 'Reliability' },
-  { value: 'compliance', label: 'Compliance' },
-  { value: 'best_practice', label: 'Best Practice' },
+  { value: "all", label: "All Categories" },
+  { value: "security", label: "Security" },
+  { value: "performance", label: "Performance" },
+  { value: "maintainability", label: "Maintainability" },
+  { value: "reliability", label: "Reliability" },
+  { value: "compliance", label: "Compliance" },
+  { value: "best_practice", label: "Best Practice" },
 ];
 
 const severities = [
-  { value: 'all', label: 'All Severities' },
-  { value: 'critical', label: 'Critical' },
-  { value: 'error', label: 'Error' },
-  { value: 'warning', label: 'Warning' },
-  { value: 'info', label: 'Info' },
+  { value: "all", label: "All Severities" },
+  { value: "critical", label: "Critical" },
+  { value: "error", label: "Error" },
+  { value: "warning", label: "Warning" },
+  { value: "info", label: "Info" },
 ];
 
 export const FilterControls: React.FC<FilterControlsProps> = ({

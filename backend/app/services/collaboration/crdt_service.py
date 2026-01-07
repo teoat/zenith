@@ -27,9 +27,7 @@ class Operation:
 class InsertOperation(Operation):
     """Insert operation for text"""
 
-    def __init__(
-        self, op_id: str, user_id: str, timestamp: float, position: int, content: str
-    ):
+    def __init__(self, op_id: str, user_id: str, timestamp: float, position: int, content: str):
         super().__init__(op_id, user_id, timestamp)
         self.position = position
         self.content = content
@@ -46,9 +44,7 @@ class InsertOperation(Operation):
 class DeleteOperation(Operation):
     """Delete operation for text"""
 
-    def __init__(
-        self, op_id: str, user_id: str, timestamp: float, position: int, length: int
-    ):
+    def __init__(self, op_id: str, user_id: str, timestamp: float, position: int, length: int):
         super().__init__(op_id, user_id, timestamp)
         self.position = position
         self.length = length
@@ -196,9 +192,7 @@ class CRDTManager:
         """Get manager statistics"""
         return {
             "total_documents": len(self.documents),
-            "total_participants": sum(
-                len(doc.participants) for doc in self.documents.values()
-            ),
+            "total_participants": sum(len(doc.participants) for doc in self.documents.values()),
             "documents": [
                 {
                     "document_id": doc_id,

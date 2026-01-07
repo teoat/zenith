@@ -1,5 +1,5 @@
-import { useEffect, useCallback, useRef, useState } from 'react';
-import { secureLogger } from '@/utils/secureLogger';
+import { useEffect, useCallback, useRef, useState } from "react";
+import { secureLogger } from "@/utils/secureLogger";
 
 export interface WebSocketConfig {
   url: string;
@@ -25,7 +25,9 @@ export interface WebSocketHookReturn {
  * Enhanced WebSocket hook with automatic reconnection, error recovery,
  * heartbeat mechanism, and message queuing
  */
-export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn {
+export function useWebSocketClient(
+  config: WebSocketConfig,
+): WebSocketHookReturn {
   const {
     url,
     reconnectInterval = 5000,
@@ -34,7 +36,7 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
     onOpen,
     onClose,
     onError,
-    onMessage
+    onMessage,
   } = config;
 
   const [isConnected, setIsConnected] = useState(false);
@@ -43,8 +45,12 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttempts = useRef(0);
-  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  const heartbeatIntervalRef = useRef<
+    ReturnType<typeof setInterval> | undefined
+  >(undefined);
   const messageQueueRef = useRef<any[]>([]);
   const shouldReconnectRef = useRef(true);
 
@@ -61,18 +67,23 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
 
   const startHeartbeat = useCallback(() => {
     if (heartbeatIntervalRef.current) {
-        clearInterval(heartbeatIntervalRef.current);
+      clearInterval(heartbeatIntervalRef.current);
     }
     heartbeatIntervalRef.current = setInterval(() => {
       if (wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }));
+        wsRef.current.send(
+          JSON.stringify({ type: "ping", timestamp: Date.now() }),
+        );
       }
     }, heartbeatInterval);
   }, [heartbeatInterval]);
 
   const flushMessageQueue = useCallback(() => {
-    if (wsRef.current?.readyState === WebSocket.OPEN && messageQueueRef.current.length > 0) {
-      messageQueueRef.current.forEach(msg => {
+    if (
+      wsRef.current?.readyState === WebSocket.OPEN &&
+      messageQueueRef.current.length > 0
+    ) {
+      messageQueueRef.current.forEach((msg) => {
         wsRef.current!.send(JSON.stringify(msg));
       });
       messageQueueRef.current = [];
@@ -92,14 +103,14 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
       wsRef.current = ws;
 
       ws.onopen = (event) => {
-        secureLogger.info('WEBSOCKET', 'Connected to', { url });
+        secureLogger.info("WEBSOCKET", "Connected to", { url });
         setIsConnected(true);
         setError(null);
         reconnectAttempts.current = 0;
-        
+
         // Flush queued messages
         flushMessageQueue();
-        
+
         // Start heartbeat
         startHeartbeat();
 
@@ -107,31 +118,41 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
       };
 
       ws.onclose = (event) => {
-        secureLogger.info('WEBSOCKET', 'Disconnected', { code: event.code, reason: event.reason });
+        secureLogger.info("WEBSOCKET", "Disconnected", {
+          code: event.code,
+          reason: event.reason,
+        });
         setIsConnected(false);
         clearTimers();
 
         onClose?.(event);
 
         // Attempt reconnection if not manually closed
-        if (shouldReconnectRef.current && reconnectAttempts.current < maxReconnectAttempts) {
+        if (
+          shouldReconnectRef.current &&
+          reconnectAttempts.current < maxReconnectAttempts
+        ) {
           reconnectAttempts.current += 1;
-          const delay = reconnectInterval * Math.pow(1.5, reconnectAttempts.current - 1);
-          secureLogger.info('WEBSOCKET', `Reconnecting in ${delay}ms`, { attempt: reconnectAttempts.current, maxAttempts: maxReconnectAttempts });
-          
+          const delay =
+            reconnectInterval * Math.pow(1.5, reconnectAttempts.current - 1);
+          secureLogger.info("WEBSOCKET", `Reconnecting in ${delay}ms`, {
+            attempt: reconnectAttempts.current,
+            maxAttempts: maxReconnectAttempts,
+          });
+
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
           }, delay);
         } else if (reconnectAttempts.current >= maxReconnectAttempts) {
-          setError(new Error('Maximum reconnection attempts exceeded'));
+          setError(new Error("Maximum reconnection attempts exceeded"));
         }
       };
 
       ws.onerror = (event) => {
-        secureLogger.error('WEBSOCKET', 'WebSocket error', { 
-            event: event instanceof ErrorEvent ? event.message : 'Unknown event' 
+        secureLogger.error("WEBSOCKET", "WebSocket error", {
+          event: event instanceof ErrorEvent ? event.message : "Unknown event",
         });
-        const err = new Error('WebSocket connection error');
+        const err = new Error("WebSocket connection error");
         setError(err);
         onError?.(event);
       };
@@ -139,32 +160,44 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          
+
           // Handle pong responses
-          if (data.type === 'pong') {
+          if (data.type === "pong") {
             return;
           }
 
           setLastMessage(data);
           onMessage?.(data);
         } catch (err) {
-          secureLogger.warn('WEBSOCKET', 'Failed to parse message', { data: event.data });
+          secureLogger.warn("WEBSOCKET", "Failed to parse message", {
+            data: event.data,
+          });
         }
       };
-
     } catch (err: any) {
-      secureLogger.error('WEBSOCKET', 'Connection failed', { 
-          error: err instanceof Error ? err.message : String(err) 
+      secureLogger.error("WEBSOCKET", "Connection failed", {
+        error: err instanceof Error ? err.message : String(err),
       });
       setError(err);
     }
-  }, [url, reconnectInterval, maxReconnectAttempts, onOpen, onClose, onError, onMessage, flushMessageQueue, startHeartbeat, clearTimers]);
+  }, [
+    url,
+    reconnectInterval,
+    maxReconnectAttempts,
+    onOpen,
+    onClose,
+    onError,
+    onMessage,
+    flushMessageQueue,
+    startHeartbeat,
+    clearTimers,
+  ]);
 
   const send = useCallback((data: any) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data));
     } else {
-      secureLogger.warn('WEBSOCKET', 'Not connected, queuing message');
+      secureLogger.warn("WEBSOCKET", "Not connected, queuing message");
       messageQueueRef.current.push(data);
     }
   }, []);
@@ -204,6 +237,6 @@ export function useWebSocketClient(config: WebSocketConfig): WebSocketHookReturn
     close,
     reconnect,
     error,
-    lastMessage
+    lastMessage,
   };
 }

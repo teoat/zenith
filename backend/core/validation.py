@@ -31,14 +31,10 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
         re.IGNORECASE,
     )
 
-    XSS_PATTERN = re.compile(
-        r"(<script|javascript:|onerror=|onload=|<iframe|<embed|<object)", re.IGNORECASE
-    )
+    XSS_PATTERN = re.compile(r"(<script|javascript:|onerror=|onload=|<iframe|<embed|<object)", re.IGNORECASE)
 
     # Path traversal detection
-    PATH_TRAVERSAL_PATTERN = re.compile(
-        r"(\.\./|\.\.\\|%2e%2e%2f|%2e%2e/|\.\.%2f|%2e%2e%5c)", re.IGNORECASE
-    )
+    PATH_TRAVERSAL_PATTERN = re.compile(r"(\.\./|\.\.\\|%2e%2e%2f|%2e%2e/|\.\.%2f|%2e%2e%5c)", re.IGNORECASE)
 
     # Command injection detection
     COMMAND_INJECTION_PATTERN = re.compile(
@@ -83,10 +79,7 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
             if "multipart/form-data" in content_type:
                 # Allow multipart for file uploads, will validate individual parts
                 pass
-            elif (
-                content_type not in self.ALLOWED_CONTENT_TYPES
-                and content_type != "application/x-www-form-urlencoded"
-            ):
+            elif content_type not in self.ALLOWED_CONTENT_TYPES and content_type != "application/x-www-form-urlencoded":
                 logger.warning(
                     "Invalid content type",
                     extra={
@@ -95,9 +88,7 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                         "client_ip": request.client.host if request.client else None,
                     },
                 )
-                raise HTTPException(
-                    status_code=415, detail=f"Unsupported content type: {content_type}"
-                )
+                raise HTTPException(status_code=415, detail=f"Unsupported content type: {content_type}")
 
         # Get request body for POST/PUT/PATCH
         if request.method in ["POST", "PUT", "PATCH"]:
@@ -112,9 +103,7 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                         extra={
                             "path": str(request.url.path),
                             "method": request.method,
-                            "client_ip": (
-                                request.client.host if request.client else None
-                            ),
+                            "client_ip": (request.client.host if request.client else None),
                         },
                     )
                     raise HTTPException(
@@ -129,14 +118,10 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                         extra={
                             "path": str(request.url.path),
                             "method": request.method,
-                            "client_ip": (
-                                request.client.host if request.client else None
-                            ),
+                            "client_ip": (request.client.host if request.client else None),
                         },
                     )
-                    raise HTTPException(
-                        status_code=400, detail="Invalid input: Potential XSS detected"
-                    )
+                    raise HTTPException(status_code=400, detail="Invalid input: Potential XSS detected")
 
                 # Check for path traversal
                 if self.PATH_TRAVERSAL_PATTERN.search(body_str):
@@ -145,14 +130,10 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                         extra={
                             "path": str(request.url.path),
                             "method": request.method,
-                            "client_ip": (
-                                request.client.host if request.client else None
-                            ),
+                            "client_ip": (request.client.host if request.client else None),
                         },
                     )
-                    raise HTTPException(
-                        status_code=400, detail="Invalid input: Path traversal detected"
-                    )
+                    raise HTTPException(status_code=400, detail="Invalid input: Path traversal detected")
 
                 # Check for command injection
                 if self.COMMAND_INJECTION_PATTERN.search(body_str):
@@ -161,9 +142,7 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
                         extra={
                             "path": str(request.url.path),
                             "method": request.method,
-                            "client_ip": (
-                                request.client.host if request.client else None
-                            ),
+                            "client_ip": (request.client.host if request.client else None),
                         },
                     )
                     raise HTTPException(
@@ -251,9 +230,7 @@ class CaseStatus(str, Enum):
 # Common validation patterns
 SAFE_STRING_PATTERN = re.compile(r"^[a-zA-Z0-9\s\-_\.,!?()]+$")
 EMAIL_PATTERN = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-UUID_PATTERN = re.compile(
-    r"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
-)
+UUID_PATTERN = re.compile(r"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$")
 
 
 def validate_safe_string(v: str) -> str:
@@ -300,9 +277,7 @@ class UserCreateRequest(BaseModel):
     @classmethod
     def username_alphanumeric(cls, v):
         if not re.match(r"^[a-zA-Z0-9_-]+$", v):
-            raise ValueError(
-                "Username must be alphanumeric with underscores and hyphens only"
-            )
+            raise ValueError("Username must be alphanumeric with underscores and hyphens only")
         return v
 
 
@@ -313,32 +288,22 @@ class UserLoginRequest(BaseModel):
 
 class CaseCreateRequest(BaseModel):
     title: constr(min_length=1, max_length=200) = Field(..., description="Case title")
-    description: constr(max_length=2000) | None = Field(
-        None, description="Case description"
-    )
+    description: constr(max_length=2000) | None = Field(None, description="Case description")
     assigned_to: UUIDStr | None = Field(None, description="Assigned user ID")
 
 
 class CaseUpdateRequest(BaseModel):
-    title: constr(min_length=1, max_length=200) | None = Field(
-        None, description="Case title"
-    )
-    description: constr(max_length=2000) | None = Field(
-        None, description="Case description"
-    )
+    title: constr(min_length=1, max_length=200) | None = Field(None, description="Case title")
+    description: constr(max_length=2000) | None = Field(None, description="Case description")
     status: CaseStatus | None = Field(None, description="Case status")
     assigned_to: UUIDStr | None = Field(None, description="Assigned user ID")
 
 
 class EvidenceUploadRequest(BaseModel):
     case_id: UUIDStr = Field(..., description="Case ID")
-    filename: constr(min_length=1, max_length=255) = Field(
-        ..., description="Original filename"
-    )
+    filename: constr(min_length=1, max_length=255) = Field(..., description="Original filename")
     file_type: SafeString = Field(..., description="MIME type")
-    size_bytes: int = Field(
-        ..., ge=0, le=100 * 1024 * 1024, description="File size in bytes"
-    )  # Max 100MB
+    size_bytes: int = Field(..., ge=0, le=100 * 1024 * 1024, description="File size in bytes")  # Max 100MB
 
     @field_validator("file_type")
     @classmethod

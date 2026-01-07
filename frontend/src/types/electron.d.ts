@@ -1,20 +1,31 @@
 export interface ElectronAPI {
   // Core API methods
   invoke: (channel: string, ...args: unknown[]) => Promise<unknown>;
-  onReceive: (channel: string, func: (...args: unknown[]) => void) => () => void;
+  onReceive: (
+    channel: string,
+    func: (...args: unknown[]) => void,
+  ) => () => void;
 
   // Authentication API
   isMasterPasswordSet: () => Promise<boolean>;
   startSessionListener: () => Promise<{ success: boolean; error?: string }>;
-  onSessionStatusChanged: (callback: (status: { isValid: boolean }) => void) => () => void;
+  onSessionStatusChanged: (
+    callback: (status: { isValid: boolean }) => void,
+  ) => () => void;
   logMemoryAlert?: (level: string, memoryUsage: unknown) => void;
   // Auth methods
   auth: {
     getProfile: () => Promise<unknown>;
     login: (credentials: unknown) => Promise<unknown>;
     logout: () => Promise<void>;
-    getAuthStatus?: () => Promise<{ success: boolean; data?: { isAuthenticated: boolean } }>;
-    isMasterPasswordSet?: () => Promise<{ success: boolean; data?: { isSet: boolean } }>;
+    getAuthStatus?: () => Promise<{
+      success: boolean;
+      data?: { isAuthenticated: boolean };
+    }>;
+    isMasterPasswordSet?: () => Promise<{
+      success: boolean;
+      data?: { isSet: boolean };
+    }>;
   };
   on: (channel: string, callback: (...args: unknown[]) => void) => () => void;
 
@@ -42,8 +53,10 @@ export interface ElectronAPI {
   store?: ElectronStoreAPI;
 
   // Evidence processing
-  processEvidence?: (filePath: string) => Promise<import('../types/api').ProcessedEvidence>;
-  selectFile?: () => Promise<import('../types/api').FileSelectResult>;
+  processEvidence?: (
+    filePath: string,
+  ) => Promise<import("../types/api").ProcessedEvidence>;
+  selectFile?: () => Promise<import("../types/api").FileSelectResult>;
 
   // Security & system
   getSecurityStats?: () => Promise<unknown>;

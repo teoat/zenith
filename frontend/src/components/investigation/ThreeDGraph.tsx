@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import * as THREE from 'three';
+import React, { useRef, useEffect } from "react";
+import * as THREE from "three";
 
 interface GraphNode {
   id: string;
@@ -28,7 +28,7 @@ interface ThreeDGraphProps {
 const ThreeDGraph: React.FC<ThreeDGraphProps> = ({
   data,
   width = 800,
-  height = 600
+  height = 600,
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -63,7 +63,7 @@ const ThreeDGraph: React.FC<ThreeDGraphProps> = ({
       // Create new material for each node with different color
       const colors = [0x3b82f6, 0x10b981, 0xf59e0b, 0xef4444, 0x8b5cf6];
       const nodeMaterialColored = new THREE.MeshBasicMaterial({
-        color: colors[index % colors.length]
+        color: colors[index % colors.length],
       });
 
       const mesh = new THREE.Mesh(nodeGeometry, nodeMaterialColored);
@@ -73,18 +73,25 @@ const ThreeDGraph: React.FC<ThreeDGraphProps> = ({
       const radius = 2;
       mesh.position.x = Math.cos(angle) * radius;
       mesh.position.y = Math.sin(angle) * radius;
-      mesh.position.z = ((window.crypto.getRandomValues(new Uint32Array(1))[0] / 0xFFFFFFFF) - 0.5) * 2;
+      mesh.position.z =
+        (window.crypto.getRandomValues(new Uint32Array(1))[0] / 0xffffffff -
+          0.5) *
+        2;
 
       scene.add(mesh);
     });
 
     // Create links
-    const linkMaterial = new THREE.LineBasicMaterial({ color: 0x374151, opacity: 0.3, transparent: true });
+    const linkMaterial = new THREE.LineBasicMaterial({
+      color: 0x374151,
+      opacity: 0.3,
+      transparent: true,
+    });
     const linkGeometry = new THREE.BufferGeometry();
 
-    data.links.forEach(link => {
-      const sourceNode = data.nodes.find(n => n.id === link.source);
-      const targetNode = data.nodes.find(n => n.id === link.target);
+    data.links.forEach((link) => {
+      const sourceNode = data.nodes.find((n) => n.id === link.source);
+      const targetNode = data.nodes.find((n) => n.id === link.target);
 
       if (sourceNode && targetNode) {
         const sourceIndex = data.nodes.indexOf(sourceNode);
@@ -95,16 +102,24 @@ const ThreeDGraph: React.FC<ThreeDGraphProps> = ({
         const radius = 2;
 
         const points = [];
-        points.push(new THREE.Vector3(
-          Math.cos(sourceAngle) * radius,
-          Math.sin(sourceAngle) * radius,
-          ((window.crypto.getRandomValues(new Uint32Array(1))[0] / 0xFFFFFFFF) - 0.5) * 2
-        ));
-        points.push(new THREE.Vector3(
-          Math.cos(targetAngle) * radius,
-          Math.sin(targetAngle) * radius,
-          ((window.crypto.getRandomValues(new Uint32Array(1))[0] / 0xFFFFFFFF) - 0.5) * 2
-        ));
+        points.push(
+          new THREE.Vector3(
+            Math.cos(sourceAngle) * radius,
+            Math.sin(sourceAngle) * radius,
+            (window.crypto.getRandomValues(new Uint32Array(1))[0] / 0xffffffff -
+              0.5) *
+              2,
+          ),
+        );
+        points.push(
+          new THREE.Vector3(
+            Math.cos(targetAngle) * radius,
+            Math.sin(targetAngle) * radius,
+            (window.crypto.getRandomValues(new Uint32Array(1))[0] / 0xffffffff -
+              0.5) *
+              2,
+          ),
+        );
 
         linkGeometry.setFromPoints(points);
         const line = new THREE.Line(linkGeometry.clone(), linkMaterial);

@@ -18,12 +18,8 @@ class GraphService:
         self.graph.clear()
         for t in transactions:
             if "customer_id" in t:
-                counterparty = (
-                    t.get("merchant_name") or t.get("counterparty") or "Unknown"
-                )
-                self.graph.add_edge(
-                    t["customer_id"], counterparty, weight=t.get("amount", 0)
-                )
+                counterparty = t.get("merchant_name") or t.get("counterparty") or "Unknown"
+                self.graph.add_edge(t["customer_id"], counterparty, weight=t.get("amount", 0))
         logger.info(f"Built graph with {self.graph.number_of_nodes()} nodes")
         return self.graph
 
@@ -36,9 +32,7 @@ class GraphService:
         return {
             "node_count": self.graph.number_of_nodes(),
             "edge_count": self.graph.number_of_edges(),
-            "density": nx.density(self.graph)
-            if self.graph.number_of_nodes() > 0
-            else 0,
+            "density": nx.density(self.graph) if self.graph.number_of_nodes() > 0 else 0,
         }
 
     def detect_communities(self):

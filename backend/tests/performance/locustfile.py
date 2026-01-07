@@ -33,9 +33,7 @@ class CaseManagementTasks(TaskSet):
     def get_case_details(self):
         """GET /api/v1/cases/{id} - Get specific case"""
         case_id = f"case_{random.randint(1, 1000)}"
-        self.client.get(
-            f"/api/v1/cases/{case_id}", headers=self.headers, name="Get Case Details"
-        )
+        self.client.get(f"/api/v1/cases/{case_id}", headers=self.headers, name="Get Case Details")
 
     @task(2)
     def create_case(self):
@@ -44,14 +42,10 @@ class CaseManagementTasks(TaskSet):
             "title": f"Load Test Case {random.randint(1, 10000)}",
             "description": "Automated load testing case",
             "priority": random.choice(["low", "medium", "high", "critical"]),
-            "case_type": random.choice(
-                ["fraud_suspected", "money_laundering", "structuring"]
-            ),
+            "case_type": random.choice(["fraud_suspected", "money_laundering", "structuring"]),
         }
 
-        response = self.client.post(
-            "/api/v1/cases", json=case_data, headers=self.headers, name="Create Case"
-        )
+        response = self.client.post("/api/v1/cases", json=case_data, headers=self.headers, name="Create Case")
 
         if response.status_code in [200, 201]:
             self.case_id = response.json().get("id")
@@ -62,9 +56,7 @@ class CaseManagementTasks(TaskSet):
         search_terms = ["fraud", "structuring", "suspicious", "money laundering"]
         term = random.choice(search_terms)
 
-        self.client.get(
-            f"/api/v1/cases?search={term}", headers=self.headers, name="Search Cases"
-        )
+        self.client.get(f"/api/v1/cases?search={term}", headers=self.headers, name="Search Cases")
 
     @task(1)
     def update_case(self):
@@ -98,9 +90,7 @@ class FraudAnalysisTasks(TaskSet):
             transactions.append(
                 {
                     "amount": random.uniform(100, 10000),
-                    "date": (
-                        datetime.now() - timedelta(days=random.randint(0, 30))
-                    ).isoformat(),
+                    "date": (datetime.now() - timedelta(days=random.randint(0, 30))).isoformat(),
                     "merchant": f"Merchant_{random.randint(1, 100)}",
                 }
             )
@@ -114,9 +104,7 @@ class FraudAnalysisTasks(TaskSet):
     @task(2)
     def get_risk_score(self):
         """GET /api/v1/fraud/risk-score/{case_id}"""
-        self.client.get(
-            f"/api/v1/fraud/risk-score/{self.case_id}", name="Get Risk Score"
-        )
+        self.client.get(f"/api/v1/fraud/risk-score/{self.case_id}", name="Get Risk Score")
 
     @task(1)
     def detect_patterns(self):

@@ -6,12 +6,16 @@ Supports CloudFront, Cloudflare, and generic CDN signed URLs
 import base64
 import hashlib
 import hmac
+import json
+import logging
 import os
 import time
 from typing import Any
 from urllib.parse import urlencode, urlparse
 
 import rsa
+
+logger = logging.getLogger(__name__)
 
 
 class CDNManager:

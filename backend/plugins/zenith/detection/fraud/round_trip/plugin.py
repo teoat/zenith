@@ -57,11 +57,7 @@ def detect_round_trip_transactions(
         date_str = tx.get("date")
 
         try:
-            dt = (
-                datetime.fromisoformat(date_str.replace("Z", "+00:00"))
-                if isinstance(date_str, str)
-                else None
-            )
+            dt = datetime.fromisoformat(date_str.replace("Z", "+00:00")) if isinstance(date_str, str) else None
         except Exception:
             dt = None
 
@@ -98,9 +94,7 @@ def detect_round_trip_transactions(
                 prev_tx = tx_map[prev_tx_id]
                 prev_date_str = prev_tx.get("date")
                 try:
-                    prev_date = datetime.fromisoformat(
-                        prev_date_str.replace("Z", "+00:00")
-                    )
+                    prev_date = datetime.fromisoformat(prev_date_str.replace("Z", "+00:00"))
                 except Exception:
                     prev_date = tx_date  # Should not happen if filtered
 

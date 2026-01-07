@@ -1,13 +1,15 @@
-import React from 'react';
-import { Settings, Eye, Type, Zap } from 'lucide-react';
-import { useAccessibility } from '@/context/AccessibilityContext';
-import { AccessibleButton } from '@/components/ui/AccessibleButton';
+import React from "react";
+import { Settings, Eye, Type, Zap } from "lucide-react";
+import { useAccessibility } from "@/context/AccessibilityContext";
+import { AccessibleButton } from "@/components/ui/AccessibleButton";
 
 interface AccessibilitySettingsProps {
   onClose?: () => void;
 }
 
-export const AccessibilitySettings: React.FC<AccessibilitySettingsProps> = ({ onClose }) => {
+export const AccessibilitySettings: React.FC<AccessibilitySettingsProps> = ({
+  onClose,
+}) => {
   const {
     highContrast,
     setHighContrast,
@@ -89,17 +91,17 @@ export const AccessibilitySettings: React.FC<AccessibilitySettingsProps> = ({ on
           </div>
           <div className="flex gap-2">
             {[
-              { value: 'small' as const, label: 'Small' },
-              { value: 'medium' as const, label: 'Medium' },
-              { value: 'large' as const, label: 'Large' },
+              { value: "small" as const, label: "Small" },
+              { value: "medium" as const, label: "Medium" },
+              { value: "large" as const, label: "Large" },
             ].map((option) => (
               <button
                 key={option.value}
                 onClick={() => setFontSize(option.value)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                   fontSize === option.value
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? "bg-blue-500 text-white"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
                 }`}
                 aria-pressed={fontSize === option.value}
               >
@@ -115,9 +117,28 @@ export const AccessibilitySettings: React.FC<AccessibilitySettingsProps> = ({ on
             Keyboard Navigation
           </h3>
           <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
-            <div><kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-xs">Tab</kbd> - Navigate between elements</div>
-            <div><kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-xs">Enter</kbd> / <kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-xs">Space</kbd> - Activate buttons</div>
-            <div><kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-xs">Escape</kbd> - Close dialogs</div>
+            <div>
+              <kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-xs">
+                Tab
+              </kbd>{" "}
+              - Navigate between elements
+            </div>
+            <div>
+              <kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-xs">
+                Enter
+              </kbd>{" "}
+              /{" "}
+              <kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-xs">
+                Space
+              </kbd>{" "}
+              - Activate buttons
+            </div>
+            <div>
+              <kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-xs">
+                Escape
+              </kbd>{" "}
+              - Close dialogs
+            </div>
           </div>
         </div>
       </div>

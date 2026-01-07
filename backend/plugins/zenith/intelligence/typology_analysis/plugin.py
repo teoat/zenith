@@ -35,19 +35,13 @@ class TypologyAnalysisPlugin(PluginInterface):
 
     async def initialize(self, context: PluginContext) -> bool:
         self.context = context
-        config_dict = (
-            context.config
-            if context.config
-            else {"similarity_threshold": 0.3, "limit": 3}
-        )
+        config_dict = context.config if context.config else {"similarity_threshold": 0.3, "limit": 3}
         self.config = TypologyConfig(**config_dict)
 
         # Dependency injection
         self.ai_service = context.get_service("ai_service")
         if not self.ai_service:
-            logger.warning(
-                "AI Service not available in context. Typology analysis will fail."
-            )
+            logger.warning("AI Service not available in context. Typology analysis will fail.")
 
         return True
 
@@ -64,9 +58,7 @@ class TypologyAnalysisPlugin(PluginInterface):
 
         return await self._analyze_typology_context(case_data)
 
-    async def _analyze_typology_context(
-        self, case_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _analyze_typology_context(self, case_data: dict[str, Any]) -> dict[str, Any]:
         """
         RAG: Extract context from case and search Typology Knowledge Base.
         Copied and adapted from legacy AIService.
@@ -124,29 +116,15 @@ class TypologyAnalysisPlugin(PluginInterface):
             confidence = max(m["similarity"] for m in matches)
             # Take top match
             top_match = matches[0]
-            typology_name = (
-                top_match["metadata"]
-                .get("filename", "Unknown")
-                .replace(".md", "")
-                .replace("_", " ")
-                .title()
-            )
+            typology_name = top_match["metadata"].get("filename", "Unknown").replace(".md", "").replace("_", " ").title()
 
-            insights.append(
-                f"Activity matches '{typology_name}' typology patterns (Confidence: {confidence:.2f})"
-            )
+            insights.append(f"Activity matches '{typology_name}' typology patterns (Confidence: {confidence:.2f})")
 
             # Extract indicators from content
             content_lines = top_match["content"].split("\n")
-            indicators = [
-                line.strip("- ")
-                for line in content_lines
-                if line.strip().startswith("-")
-            ][:3]
+            indicators = [line.strip("- ") for line in content_lines if line.strip().startswith("-")][:3]
             if indicators:
-                recommendations.append(
-                    f"Check for {typology_name} indicators: {', '.join(indicators)}"
-                )
+                recommendations.append(f"Check for {typology_name} indicators: {', '.join(indicators)}")
 
         return {
             "insights": insights,

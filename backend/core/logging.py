@@ -83,9 +83,7 @@ def setup_logging(
 
         from logging.handlers import RotatingFileHandler
 
-        fh = RotatingFileHandler(
-            log_file, maxBytes=max_file_size, backupCount=backup_count, encoding="utf-8"
-        )
+        fh = RotatingFileHandler(log_file, maxBytes=max_file_size, backupCount=backup_count, encoding="utf-8")
         fh.setLevel(numeric_level)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
@@ -241,9 +239,7 @@ def configure_environment_logging():
 
     if env == "development":
         # Development: more verbose, console only, human-readable
-        setup_logging(
-            level="DEBUG", format_type="text", enable_console=True, enable_file=False
-        )
+        setup_logging(level="DEBUG", format_type="text", enable_console=True, enable_file=False)
     elif env == "testing":
         # Testing: capture all logs, minimal output, structured
         setup_logging(

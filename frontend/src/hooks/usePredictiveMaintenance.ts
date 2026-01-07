@@ -1,18 +1,22 @@
-import { useState, useCallback } from 'react';
-import { secureLogger } from '@/utils/secureLogger';
-import { simulateDelay } from '@/utils/simulation';
+import { useState, useCallback } from "react";
+import { secureLogger } from "@/utils/secureLogger";
+import { simulateDelay } from "@/utils/simulation";
 import type {
   SystemMetrics,
   FailurePrediction,
   ChaosExperimentResult,
-  SelfHealingAction
-} from '@/components/ai/types/predictive';
+  SelfHealingAction,
+} from "@/components/ai/types/predictive";
 
 export const usePredictiveMaintenance = () => {
   const [systemHealth, setSystemHealth] = useState<number>(85.5);
-  const [currentMetrics, setCurrentMetrics] = useState<SystemMetrics | null>(null);
+  const [currentMetrics, setCurrentMetrics] = useState<SystemMetrics | null>(
+    null,
+  );
   const [predictions, setPredictions] = useState<FailurePrediction[]>([]);
-  const [chaosExperiments, setChaosExperiments] = useState<ChaosExperimentResult[]>([]);
+  const [chaosExperiments, setChaosExperiments] = useState<
+    ChaosExperimentResult[]
+  >([]);
   const [healingActions, setHealingActions] = useState<SelfHealingAction[]>([]);
   const [monitoringActive, setMonitoringActive] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -30,7 +34,7 @@ export const usePredictiveMaintenance = () => {
         active_connections: 124,
         queue_depth: 8,
         error_rate: 0.012,
-        response_time_ms: 145.6
+        response_time_ms: 145.6,
       };
 
       const mockPredictions: FailurePrediction[] = [
@@ -41,17 +45,20 @@ export const usePredictiveMaintenance = () => {
           confidence_score: 0.78,
           contributing_factors: ["High concurrent users", "Complex queries"],
           recommended_actions: ["scale_up", "optimize_queries"],
-          predicted_impact: "Degraded response times during peak hours"
+          predicted_impact: "Degraded response times during peak hours",
         },
         {
           failure_mode: "memory_leak",
           probability: 0.08,
           time_to_failure_hours: 72.0,
           confidence_score: 0.65,
-          contributing_factors: ["Large dataset processing", "Cache not optimized"],
+          contributing_factors: [
+            "Large dataset processing",
+            "Cache not optimized",
+          ],
           recommended_actions: ["clear_cache", "restart_service"],
-          predicted_impact: "Potential service restarts under memory pressure"
-        }
+          predicted_impact: "Potential service restarts under memory pressure",
+        },
       ];
 
       const mockExperiments: ChaosExperimentResult[] = [
@@ -68,9 +75,9 @@ export const usePredictiveMaintenance = () => {
           lessons_learned: [
             "System handles CPU stress well",
             "Recovery procedures are effective",
-            "Auto-scaling triggers appropriately"
-          ]
-        }
+            "Auto-scaling triggers appropriately",
+          ],
+        },
       ];
 
       const mockHealingActions: SelfHealingAction[] = [
@@ -82,8 +89,8 @@ export const usePredictiveMaintenance = () => {
           execution_time: "2025-12-10T12:15:00Z",
           success: true,
           impact_assessment: "Successfully prevented memory exhaustion",
-          rollback_available: true
-        }
+          rollback_available: true,
+        },
       ];
 
       setCurrentMetrics(mockMetrics);
@@ -91,9 +98,8 @@ export const usePredictiveMaintenance = () => {
       setChaosExperiments(mockExperiments);
       setHealingActions(mockHealingActions);
       setSystemHealth(87.3);
-
     } catch (error) {
-      secureLogger.error('Failed to load predictive maintenance data:', error);
+      secureLogger.error("Failed to load predictive maintenance data:", error);
     } finally {
       setLoading(false);
     }
@@ -101,9 +107,9 @@ export const usePredictiveMaintenance = () => {
 
   const toggleMonitoring = async () => {
     try {
-       setMonitoringActive(prev => !prev);
+      setMonitoringActive((prev) => !prev);
     } catch (error) {
-      secureLogger.error('Failed to toggle monitoring:', error);
+      secureLogger.error("Failed to toggle monitoring:", error);
     }
   };
 
@@ -113,7 +119,7 @@ export const usePredictiveMaintenance = () => {
       await simulateDelay(2000);
       await loadDashboardData();
     } catch (error) {
-      secureLogger.error('Failed to run chaos experiment:', error);
+      secureLogger.error("Failed to run chaos experiment:", error);
     }
   };
 
@@ -127,6 +133,6 @@ export const usePredictiveMaintenance = () => {
     loading,
     loadDashboardData,
     toggleMonitoring,
-    runChaosExperiment
+    runChaosExperiment,
   };
 };

@@ -156,9 +156,7 @@ class MultiLayerCache:
             self.redis_client.ping()
             logger.info("Redis cache layer initialized")
         except Exception as e:
-            logger.warning(
-                f"Redis initialization failed: {e}. Continuing with memory-only cache."
-            )
+            logger.warning(f"Redis initialization failed: {e}. Continuing with memory-only cache.")
             self.redis_client = None
 
     def _redis_available(self) -> bool:
@@ -206,9 +204,7 @@ class MultiLayerCache:
             return
 
         # Sort by last accessed time (oldest first)
-        entries = sorted(
-            cache.items(), key=lambda x: x[1].last_accessed or x[1].created_at
-        )
+        entries = sorted(cache.items(), key=lambda x: x[1].last_accessed or x[1].created_at)
         to_evict = len(cache) - max_entries
 
         for key, _ in entries[:to_evict]:
@@ -231,9 +227,7 @@ class MultiLayerCache:
                 del self.l2_cache[key]
 
             if expired_l1 or expired_l2:
-                logger.debug(
-                    f"Cleaned up {len(expired_l1)} L1 and {len(expired_l2)} L2 expired entries"
-                )
+                logger.debug(f"Cleaned up {len(expired_l1)} L1 and {len(expired_l2)} L2 expired entries")
 
     def _start_cleanup_task(self):
         """Start background cleanup task"""
@@ -288,9 +282,7 @@ class MultiLayerCache:
                     redis_key = f"{namespace}:{cache_key}"
                     redis_value = self.redis_client.get(redis_key)
                     if redis_value:
-                        value = self._deserialize_from_redis(
-                            redis_value.decode("utf-8")
-                        )
+                        value = self._deserialize_from_redis(redis_value.decode("utf-8"))
                         if value is not None:
                             self.metrics.hits += 1
 
@@ -317,14 +309,10 @@ class MultiLayerCache:
             self.metrics.misses += 1
             return None
 
-    def set(
-        self, namespace: str, key: Any, value: Any, ttl_seconds: int | None = None
-    ) -> bool:
+    def set(self, namespace: str, key: Any, value: Any, ttl_seconds: int | None = None) -> bool:
         """Set value in cache"""
         cache_key = self._generate_key(namespace, key)
-        expires_at = (
-            datetime.now() + timedelta(seconds=ttl_seconds) if ttl_seconds else None
-        )
+        expires_at = datetime.now() + timedelta(seconds=ttl_seconds) if ttl_seconds else None
         size_bytes = self._calculate_size(value)
 
         entry = CacheEntry(
@@ -350,9 +338,7 @@ class MultiLayerCache:
                     redis_key = f"{namespace}:{cache_key}"
                     serialized_value = self._serialize_for_redis(value)
                     if ttl_seconds:
-                        self.redis_client.setex(
-                            redis_key, ttl_seconds, serialized_value
-                        )
+                        self.redis_client.setex(redis_key, ttl_seconds, serialized_value)
                     else:
                         self.redis_client.set(redis_key, serialized_value)
                 except Exception as e:
@@ -431,24 +417,15 @@ class MultiLayerCache:
             "l1_cache": {
                 "entries": len(self.l1_cache),
                 "max_entries": self.max_l1_entries,
-                "utilization": (
-                    len(self.l1_cache) / self.max_l1_entries
-                    if self.max_l1_entries > 0
-                    else 0
-                ),
+                "utilization": (len(self.l1_cache) / self.max_l1_entries if self.max_l1_entries > 0 else 0),
             },
             "l2_cache": {
                 "entries": len(self.l2_cache),
                 "max_entries": self.max_l2_entries,
-                "utilization": (
-                    len(self.l2_cache) / self.max_l2_entries
-                    if self.max_l2_entries > 0
-                    else 0
-                ),
+                "utilization": (len(self.l2_cache) / self.max_l2_entries if self.max_l2_entries > 0 else 0),
             },
             "metrics": self.metrics.to_dict(),
-            "total_size_bytes": sum(e.size_bytes for e in self.l1_cache.values())
-            + sum(e.size_bytes for e in self.l2_cache.values()),
+            "total_size_bytes": sum(e.size_bytes for e in self.l1_cache.values()) + sum(e.size_bytes for e in self.l2_cache.values()),
         }
 
         # Add Redis stats if available

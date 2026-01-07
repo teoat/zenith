@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
 import {
   CheckCircle,
   Clock,
@@ -9,8 +9,11 @@ import {
   TrendingUp,
   AlertTriangle,
   Zap,
-} from 'lucide-react';
-import type { SystemMetrics, FailurePrediction } from '@/components/ai/types/predictive';
+} from "lucide-react";
+import type {
+  SystemMetrics,
+  FailurePrediction,
+} from "@/components/ai/types/predictive";
 
 interface PredictiveOverviewProps {
   monitoringActive: boolean;
@@ -44,9 +47,8 @@ export const PredictiveOverview: React.FC<PredictiveOverviewProps> = ({
             <h3 className="status-title">Predictive Monitoring</h3>
             <p className="status-description">
               {monitoringActive
-                ? 'Active - Continuously analyzing system health and predicting failures'
-                : 'Inactive - Click "Start Monitoring" to begin predictive analysis'
-              }
+                ? "Active - Continuously analyzing system health and predicting failures"
+                : 'Inactive - Click "Start Monitoring" to begin predictive analysis'}
             </p>
           </div>
         </div>
@@ -94,9 +96,7 @@ export const PredictiveOverview: React.FC<PredictiveOverviewProps> = ({
               <TrendingUp className="w-6 h-6 text-orange-500" />
               <h4>Predictions Made</h4>
             </div>
-            <div className="metric-value-large">
-              {predictions.length}
-            </div>
+            <div className="metric-value-large">{predictions.length}</div>
             <div className="metric-trend neutral">→ 0</div>
           </div>
         </div>
@@ -111,7 +111,9 @@ export const PredictiveOverview: React.FC<PredictiveOverviewProps> = ({
               <CheckCircle className="w-4 h-4 text-green-500" />
             </div>
             <div className="activity-content">
-              <p className="activity-text">Self-healing action completed: Cache cleared successfully</p>
+              <p className="activity-text">
+                Self-healing action completed: Cache cleared successfully
+              </p>
               <p className="activity-time">5 minutes ago</p>
             </div>
           </div>
@@ -121,7 +123,9 @@ export const PredictiveOverview: React.FC<PredictiveOverviewProps> = ({
               <AlertTriangle className="w-4 h-4 text-yellow-500" />
             </div>
             <div className="activity-content">
-              <p className="activity-text">Failure prediction: CPU spike possible in 18 hours</p>
+              <p className="activity-text">
+                Failure prediction: CPU spike possible in 18 hours
+              </p>
               <p className="activity-time">15 minutes ago</p>
             </div>
           </div>
@@ -131,7 +135,9 @@ export const PredictiveOverview: React.FC<PredictiveOverviewProps> = ({
               <Zap className="w-4 h-4 text-blue-500" />
             </div>
             <div className="activity-content">
-              <p className="activity-text">Chaos experiment completed: CPU stress test passed</p>
+              <p className="activity-text">
+                Chaos experiment completed: CPU stress test passed
+              </p>
               <p className="activity-time">2 hours ago</p>
             </div>
           </div>

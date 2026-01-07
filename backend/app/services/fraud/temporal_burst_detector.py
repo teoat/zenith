@@ -65,9 +65,7 @@ class TemporalBurstDetector:
         self.structuring_margin = structuring_margin
         self.velocity_multiplier = velocity_multiplier
 
-    def analyze_transactions(
-        self, transactions: list[dict[str, Any]], case_id: str | None = None
-    ) -> dict[str, Any]:
+    def analyze_transactions(self, transactions: list[dict[str, Any]], case_id: str | None = None) -> dict[str, Any]:
         """
         Analyze transactions for temporal burst patterns.
 
@@ -100,18 +98,14 @@ class TemporalBurstDetector:
 
         for entity_id, entity_txns in entity_transactions.items():
             # Sort by date
-            sorted_txns = sorted(
-                entity_txns, key=lambda x: self._parse_date(x.get("date", ""))
-            )
+            sorted_txns = sorted(entity_txns, key=lambda x: self._parse_date(x.get("date", "")))
 
             # Detect burst patterns
             burst_alerts = self._detect_burst_patterns(entity_id, sorted_txns)
             all_alerts.extend(burst_alerts)
 
             # Detect structuring patterns
-            structuring_alerts = self._detect_structuring_patterns(
-                entity_id, sorted_txns
-            )
+            structuring_alerts = self._detect_structuring_patterns(entity_id, sorted_txns)
             all_alerts.extend(structuring_alerts)
 
             # Detect velocity anomalies
@@ -130,33 +124,20 @@ class TemporalBurstDetector:
             "transaction_count": len(transactions),
             "alerts": [asdict(alert) for alert in all_alerts],
             "summary": {
-                "burst_patterns": len(
-                    [a for a in all_alerts if a.pattern_type == "burst"]
-                ),
-                "structuring_patterns": len(
-                    [a for a in all_alerts if a.pattern_type == "structuring"]
-                ),
-                "velocity_anomalies": len(
-                    [a for a in all_alerts if a.pattern_type == "velocity"]
-                ),
+                "burst_patterns": len([a for a in all_alerts if a.pattern_type == "burst"]),
+                "structuring_patterns": len([a for a in all_alerts if a.pattern_type == "structuring"]),
+                "velocity_anomalies": len([a for a in all_alerts if a.pattern_type == "velocity"]),
                 "overall_risk_score": risk_score,
                 "highest_severity": self._get_highest_severity(all_alerts),
             },
         }
 
-    def _group_by_entity(
-        self, transactions: list[dict[str, Any]]
-    ) -> dict[str, list[dict[str, Any]]]:
+    def _group_by_entity(self, transactions: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
         """Group transactions by entity (customer/account)"""
         grouped = defaultdict(list)
 
         for txn in transactions:
-            entity_id = (
-                txn.get("customer_id")
-                or txn.get("account_id")
-                or txn.get("entity_id")
-                or "unknown"
-            )
+            entity_id = txn.get("customer_id") or txn.get("account_id") or txn.get("entity_id") or "unknown"
             grouped[entity_id].append(txn)
 
         return grouped
@@ -181,9 +162,7 @@ class TemporalBurstDetector:
 
         return datetime.min.replace(tzinfo=UTC)
 
-    def _detect_burst_patterns(
-        self, entity_id: str, transactions: list[dict[str, Any]]
-    ) -> list[BurstAlert]:
+    def _detect_burst_patterns(self, entity_id: str, transactions: list[dict[str, Any]]) -> list[BurstAlert]:
         """Detect rapid transaction bursts"""
         alerts = []
 
@@ -198,11 +177,7 @@ class TemporalBurstDetector:
             end_time = start_time + window
 
             # Find transactions within window
-            window_txns = [
-                txn
-                for txn in transactions[i:]
-                if start_time <= self._parse_date(txn.get("date", "")) <= end_time
-            ]
+            window_txns = [txn for txn in transactions[i:] if start_time <= self._parse_date(txn.get("date", "")) <= end_time]
 
             if len(window_txns) >= self.burst_threshold:
                 total_amount = sum(float(txn.get("amount", 0)) for txn in window_txns)
@@ -233,9 +208,7 @@ class TemporalBurstDetector:
 
         return alerts
 
-    def _detect_structuring_patterns(
-        self, entity_id: str, transactions: list[dict[str, Any]]
-    ) -> list[BurstAlert]:
+    def _detect_structuring_patterns(self, entity_id: str, transactions: list[dict[str, Any]]) -> list[BurstAlert]:
         """Detect structuring (transactions just below reporting threshold)"""
         alerts = []
 
@@ -244,11 +217,7 @@ class TemporalBurstDetector:
         upper_bound = self.structuring_threshold
 
         # Find transactions in structuring range
-        structuring_txns = [
-            txn
-            for txn in transactions
-            if lower_bound <= float(txn.get("amount", 0)) < upper_bound
-        ]
+        structuring_txns = [txn for txn in transactions if lower_bound <= float(txn.get("amount", 0)) < upper_bound]
 
         # Need at least 3 structuring transactions to be suspicious
         if len(structuring_txns) >= 3:
@@ -260,9 +229,7 @@ class TemporalBurstDetector:
 
             # Calculate time span
             if len(structuring_txns) >= 2:
-                dates = [
-                    self._parse_date(txn.get("date", "")) for txn in structuring_txns
-                ]
+                dates = [self._parse_date(txn.get("date", "")) for txn in structuring_txns]
                 time_span = (max(dates) - min(dates)).total_seconds() / 3600
             else:
                 time_span = 0
@@ -286,9 +253,7 @@ class TemporalBurstDetector:
 
         return alerts
 
-    def _detect_velocity_anomalies(
-        self, entity_id: str, transactions: list[dict[str, Any]]
-    ) -> list[BurstAlert]:
+    def _detect_velocity_anomalies(self, entity_id: str, transactions: list[dict[str, Any]]) -> list[BurstAlert]:
         """Detect sudden increases in transaction velocity"""
         alerts = []
 
@@ -326,20 +291,14 @@ class TemporalBurstDetector:
                 if velocity_ratio >= self.velocity_multiplier:
                     entity_name = transactions[0].get("customer_name", entity_id)
                     recent_txns = transactions[baseline_count:]
-                    total_amount = sum(
-                        float(txn.get("amount", 0)) for txn in recent_txns
-                    )
+                    total_amount = sum(float(txn.get("amount", 0)) for txn in recent_txns)
 
-                    confidence = min(
-                        0.9, 0.5 + (velocity_ratio - self.velocity_multiplier) * 0.1
-                    )
+                    confidence = min(0.9, 0.5 + (velocity_ratio - self.velocity_multiplier) * 0.1)
                     severity = self._determine_severity(confidence, total_amount)
 
                     # Calculate recent time window
                     recent_dates = dates[baseline_count:]
-                    time_window = (
-                        max(recent_dates) - min(recent_dates)
-                    ).total_seconds() / 3600
+                    time_window = (max(recent_dates) - min(recent_dates)).total_seconds() / 3600
 
                     alert = BurstAlert(
                         entity_id=entity_id,
@@ -378,10 +337,7 @@ class TemporalBurstDetector:
 
         severity_weights = {"critical": 1.0, "high": 0.75, "medium": 0.5, "low": 0.25}
 
-        total_score = sum(
-            alert.confidence * severity_weights.get(alert.severity, 0.25)
-            for alert in alerts
-        )
+        total_score = sum(alert.confidence * severity_weights.get(alert.severity, 0.25) for alert in alerts)
 
         # Normalize to 0-100 scale
         normalized = min(100, (total_score / len(alerts)) * 100)

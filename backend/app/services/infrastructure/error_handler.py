@@ -157,9 +157,7 @@ class ServiceErrorHandler:
             )
 
     @staticmethod
-    def handle_validation_error(
-        error: Exception, field: str | None = None
-    ) -> ServiceError:
+    def handle_validation_error(error: Exception, field: str | None = None) -> ServiceError:
         """Handle validation errors"""
         return ServiceError(
             message=f"Validation error{' for ' + field if field else ''}",
@@ -185,9 +183,7 @@ class ServiceErrorHandler:
         )
 
     @staticmethod
-    def handle_authorization_error(
-        error: Exception, resource: str | None = None
-    ) -> ServiceError:
+    def handle_authorization_error(error: Exception, resource: str | None = None) -> ServiceError:
         """Handle authorization errors"""
         return ServiceError(
             message=f"Authorization failed{' for ' + resource if resource else ''}",
@@ -249,16 +245,12 @@ class ServiceErrorHandler:
             ErrorCategory.INFRASTRUCTURE: status.HTTP_503_SERVICE_UNAVAILABLE,
         }
 
-        return category_status_map.get(
-            service_error.category, status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return category_status_map.get(service_error.category, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # Context manager for service operations
 @asynccontextmanager
-async def service_operation_context(
-    operation_name: str, category: ErrorCategory = ErrorCategory.UNKNOWN
-):
+async def service_operation_context(operation_name: str, category: ErrorCategory = ErrorCategory.UNKNOWN):
     """Context manager for service operations with standardized error handling"""
     try:
         yield

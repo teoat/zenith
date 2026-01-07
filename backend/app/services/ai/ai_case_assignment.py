@@ -82,9 +82,7 @@ class AICaseAssignmentEngine:
             "specialization_bonus": 0.25,
         }
 
-    async def recommend_assignment(
-        self, case: CaseCharacteristics
-    ) -> AssignmentRecommendation:
+    async def recommend_assignment(self, case: CaseCharacteristics) -> AssignmentRecommendation:
         """
         Recommend the best analyst for a case using AI-powered analysis
 
@@ -111,12 +109,7 @@ class AICaseAssignmentEngine:
             deadline_score = self._calculate_deadline_compatibility(profile, case)
 
             # Weighted total score
-            total_score = (
-                expertise_score * 0.4
-                + workload_score * 0.25
-                + specialization_score * 0.2
-                + deadline_score * 0.15
-            )
+            total_score = expertise_score * 0.4 + workload_score * 0.25 + specialization_score * 0.2 + deadline_score * 0.15
 
             analyst_scores[analyst_id] = total_score
             reasoning_log[analyst_id] = {
@@ -129,11 +122,7 @@ class AICaseAssignmentEngine:
 
         if not analyst_scores:
             # Fallback to random available analyst
-            available_analysts = [
-                aid
-                for aid, profile in self.analyst_profiles.items()
-                if profile.availability_score >= 0.5
-            ]
+            available_analysts = [aid for aid, profile in self.analyst_profiles.items() if profile.availability_score >= 0.5]
             if available_analysts:
                 fallback_id = available_analysts[0]
                 return AssignmentRecommendation(
@@ -142,9 +131,7 @@ class AICaseAssignmentEngine:
                     reasoning=["Fallback assignment - limited analyst availability"],
                     workload_balance_score=0.5,
                     expertise_match_score=0.3,
-                    estimated_completion_time=self._estimate_completion(
-                        case, self.analyst_profiles[fallback_id]
-                    ),
+                    estimated_completion_time=self._estimate_completion(case, self.analyst_profiles[fallback_id]),
                     alternative_analysts=[],
                 )
             else:
@@ -155,18 +142,11 @@ class AICaseAssignmentEngine:
         best_profile = self.analyst_profiles[best_analyst[0]]
 
         # Get alternative recommendations
-        sorted_analysts = sorted(
-            analyst_scores.items(), key=lambda x: x[1], reverse=True
-        )
-        alternatives = [
-            (aid, score)
-            for aid, score in sorted_analysts[1:4]  # Top 3 alternatives
-        ]
+        sorted_analysts = sorted(analyst_scores.items(), key=lambda x: x[1], reverse=True)
+        alternatives = [(aid, score) for aid, score in sorted_analysts[1:4]]  # Top 3 alternatives
 
         # Generate reasoning
-        reasoning = self._generate_reasoning(
-            best_profile, case, reasoning_log[best_analyst[0]]
-        )
+        reasoning = self._generate_reasoning(best_profile, case, reasoning_log[best_analyst[0]])
 
         return AssignmentRecommendation(
             analyst_id=best_analyst[0],
@@ -178,9 +158,7 @@ class AICaseAssignmentEngine:
             alternative_analysts=alternatives,
         )
 
-    def _calculate_expertise_match(
-        self, profile: AnalystProfile, case: CaseCharacteristics
-    ) -> float:
+    def _calculate_expertise_match(self, profile: AnalystProfile, case: CaseCharacteristics) -> float:
         """Calculate how well analyst expertise matches case requirements"""
         if not case.required_expertise:
             return 0.7  # Neutral score if no specific expertise required
@@ -192,13 +170,9 @@ class AICaseAssignmentEngine:
             score = level.value / 4.0
             expertise_scores.append(score)
 
-        return (
-            sum(expertise_scores) / len(expertise_scores) if expertise_scores else 0.5
-        )
+        return sum(expertise_scores) / len(expertise_scores) if expertise_scores else 0.5
 
-    def _calculate_workload_balance(
-        self, profile: AnalystProfile, case: CaseCharacteristics
-    ) -> float:
+    def _calculate_workload_balance(self, profile: AnalystProfile, case: CaseCharacteristics) -> float:
         """Calculate workload balance score (higher is better balance)"""
         capacity_used = profile.current_workload / profile.max_capacity
         case_load = case.estimated_hours / profile.max_capacity
@@ -210,9 +184,7 @@ class AICaseAssignmentEngine:
         # Reward balanced workload
         return 1.0 - capacity_used
 
-    def _calculate_specialization_match(
-        self, profile: AnalystProfile, case: CaseCharacteristics
-    ) -> float:
+    def _calculate_specialization_match(self, profile: AnalystProfile, case: CaseCharacteristics) -> float:
         """Calculate specialization match score"""
         if not profile.specializations:
             return 0.5
@@ -223,9 +195,7 @@ class AICaseAssignmentEngine:
 
         return min(1.0, specialization_ratio + 0.3)  # Base score + bonus
 
-    def _calculate_deadline_compatibility(
-        self, profile: AnalystProfile, case: CaseCharacteristics
-    ) -> float:
+    def _calculate_deadline_compatibility(self, profile: AnalystProfile, case: CaseCharacteristics) -> float:
         """Calculate deadline compatibility score"""
         if not case.deadline:
             return 0.7  # Neutral if no deadline
@@ -234,9 +204,7 @@ class AICaseAssignmentEngine:
         self._estimate_completion(case, profile)
 
         # Calculate time pressure
-        time_available = (
-            case.deadline - datetime.now()
-        ).total_seconds() / 3600  # hours
+        time_available = (case.deadline - datetime.now()).total_seconds() / 3600  # hours
         time_needed = case.estimated_hours
 
         if time_available <= 0:
@@ -251,9 +219,7 @@ class AICaseAssignmentEngine:
         else:
             return 0.9  # Comfortable timeline
 
-    def _estimate_completion(
-        self, case: CaseCharacteristics, profile: AnalystProfile
-    ) -> datetime:
+    def _estimate_completion(self, case: CaseCharacteristics, profile: AnalystProfile) -> datetime:
         """Estimate case completion time based on analyst profile"""
         # Base time plus complexity factor
         base_hours = case.estimated_hours
@@ -265,9 +231,7 @@ class AICaseAssignmentEngine:
         # Adjust for current workload
         workload_factor = 1.0 + (profile.current_workload / profile.max_capacity)
 
-        estimated_hours = (
-            base_hours * complexity_factor * workload_factor / performance_factor
-        )
+        estimated_hours = base_hours * complexity_factor * workload_factor / performance_factor
 
         return datetime.now() + timedelta(hours=estimated_hours)
 
@@ -366,9 +330,7 @@ class AICaseAssignmentEngine:
         if analyst_id in self.analyst_profiles:
             self.analyst_profiles[analyst_id].current_workload = new_workload
 
-    def record_assignment(
-        self, case_id: str, analyst_id: str, recommendation: AssignmentRecommendation
-    ):
+    def record_assignment(self, case_id: str, analyst_id: str, recommendation: AssignmentRecommendation):
         """Record assignment for learning"""
         self.assignment_history.append(
             {

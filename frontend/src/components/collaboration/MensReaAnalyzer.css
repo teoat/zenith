@@ -1,7 +1,11 @@
 /* MensReaAnalyzer Styles */
 
 .mens-rea-card {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.95),
+    rgba(30, 41, 59, 0.95)
+  );
   border: 1px solid rgba(100, 116, 139, 0.2);
   color: white;
 }
@@ -74,7 +78,9 @@
   border-radius: 12px;
   padding: 16px;
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .indicator-card:hover {
@@ -99,11 +105,26 @@
   flex-shrink: 0;
 }
 
-.indicator-icon.knowledge { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-.indicator-icon.premeditation { background: rgba(249, 115, 22, 0.2); color: #f97316; }
-.indicator-icon.concealment { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-.indicator-icon.pattern { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-.indicator-icon.communication { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+.indicator-icon.knowledge {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+.indicator-icon.premeditation {
+  background: rgba(249, 115, 22, 0.2);
+  color: #f97316;
+}
+.indicator-icon.concealment {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+.indicator-icon.pattern {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+.indicator-icon.communication {
+  background: rgba(139, 92, 246, 0.2);
+  color: #8b5cf6;
+}
 
 .indicator-info {
   flex: 1;
@@ -259,7 +280,7 @@
 }
 
 .intent-timeline::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 8px;
   top: 0;
@@ -286,9 +307,15 @@
   border: 2px solid rgba(15, 23, 42, 0.95);
 }
 
-.timeline-item.high .timeline-marker { background: #ef4444; }
-.timeline-item.medium .timeline-marker { background: #f59e0b; }
-.timeline-item.low .timeline-marker { background: #22c55e; }
+.timeline-item.high .timeline-marker {
+  background: #ef4444;
+}
+.timeline-item.medium .timeline-marker {
+  background: #f59e0b;
+}
+.timeline-item.low .timeline-marker {
+  background: #22c55e;
+}
 
 .timeline-content {
   background: rgba(255, 255, 255, 0.05);

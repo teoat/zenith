@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react';
-import { translations, Language, isRTL } from '@/services/i18n';
-import { usePersistedState } from '@/hooks/usePersistedState';
+import React, { useEffect } from "react";
+import { translations, Language, isRTL } from "@/services/i18n";
+import { usePersistedState } from "@/hooks/usePersistedState";
 
 const LanguageSelector: React.FC = () => {
-  const [currentLang, setCurrentLang] = usePersistedState<Language>('app_language', 'en');
+  const [currentLang, setCurrentLang] = usePersistedState<Language>(
+    "app_language",
+    "en",
+  );
 
   useEffect(() => {
     // Apply RTL direction globally
-    document.dir = isRTL(currentLang) ? 'rtl' : 'ltr';
+    document.dir = isRTL(currentLang) ? "rtl" : "ltr";
     document.documentElement.lang = currentLang;
   }, [currentLang]);
 

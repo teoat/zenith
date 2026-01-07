@@ -13,6 +13,7 @@ from core.logging import logger
 @dataclass
 class SARFiling:
     """SAR Filing data structure"""
+
     id: str
     case_id: str
     filing_institution: str
@@ -28,6 +29,7 @@ class SARFiling:
     submission_id: Optional[str] = None
     submitted_at: Optional[datetime] = None
     response_data: Optional[Dict] = None
+
 
 class BSAEfilingService:
     """FinCEN BSA E-Filing Service"""
@@ -82,7 +84,7 @@ class BSAEfilingService:
         ET.SubElement(sar_body, "Narrative").text = filing.narrative[:10000]  # FinCEN limit
 
         # Generate formatted XML
-        rough_string = ET.tostring(root, 'utf-8')
+        rough_string = ET.tostring(root, "utf-8")
         reparsed = minidom.parseString(rough_string)
         return reparsed.toprettyxml(indent="  ")
 
@@ -107,7 +109,7 @@ class BSAEfilingService:
                 "submission_id": submission_id,
                 "status": "accepted",
                 "confirmation_number": f"FIN-{uuid.uuid4().hex[:8].upper()}",
-                "timestamp": datetime.now(UTC).isoformat()
+                "timestamp": datetime.now(UTC).isoformat(),
             }
 
             # Update filing status
@@ -122,17 +124,13 @@ class BSAEfilingService:
                 "success": True,
                 "submission_id": submission_id,
                 "status": "submitted",
-                "confirmation_number": response_data["confirmation_number"]
+                "confirmation_number": response_data["confirmation_number"],
             }
 
         except Exception as e:
             logger.error(f"SAR filing submission failed: {e}")
             filing.status = "failed"
-            return {
-                "success": False,
-                "error": str(e),
-                "status": "failed"
-            }
+            return {"success": False, "error": str(e), "status": "failed"}
 
     async def check_filing_status(self, submission_id: str) -> Dict[str, Any]:
         """Check status of submitted filing"""
@@ -149,18 +147,14 @@ class BSAEfilingService:
                 "status": "processed",  # accepted, processing, processed, rejected
                 "processing_date": datetime.now(UTC).isoformat(),
                 "confirmation_number": f"FIN-{uuid.uuid4().hex[:8].upper()}",
-                "notes": "Filing processed successfully"
+                "notes": "Filing processed successfully",
             }
 
             return status_response
 
         except Exception as e:
             logger.error(f"Status check failed for {submission_id}: {e}")
-            return {
-                "submission_id": submission_id,
-                "status": "error",
-                "error": str(e)
-            }
+            return {"submission_id": submission_id, "status": "error", "error": str(e)}
 
     async def resubmit_failed_filing(self, filing: SARFiling) -> Dict[str, Any]:
         """Resubmit a failed filing"""
@@ -206,6 +200,7 @@ class BSAEfilingService:
 
         return errors
 
+
 class BSAComplianceManager:
     """Manages BSA compliance requirements"""
 
@@ -227,7 +222,7 @@ class BSAComplianceManager:
             amount_involved=case_data.get("amount", 0),
             date_of_activity=datetime.fromisoformat(case_data.get("activity_date", datetime.now(UTC).isoformat())),
             parties_involved=case_data.get("parties", []),
-            narrative=case_data.get("narrative", "")
+            narrative=case_data.get("narrative", ""),
         )
 
         # Validate filing
@@ -247,13 +242,15 @@ class BSAComplianceManager:
         result = await self.filing_service.submit_filing(filing)
 
         # Track in history
-        self.filing_history.append({
-            "filing_id": filing.id,
-            "case_id": filing.case_id,
-            "submitted_at": datetime.now(UTC),
-            "status": result.get("status", "unknown"),
-            "submission_id": result.get("submission_id")
-        })
+        self.filing_history.append(
+            {
+                "filing_id": filing.id,
+                "case_id": filing.case_id,
+                "submitted_at": datetime.now(UTC),
+                "status": result.get("status", "unknown"),
+                "submission_id": result.get("submission_id"),
+            }
+        )
 
         return result
 
@@ -277,8 +274,9 @@ class BSAComplianceManager:
             "failed_filings": failed_filings,
             "success_rate": (successful_filings / total_filings * 100) if total_filings > 0 else 0,
             "last_filing_date": max([f["submitted_at"] for f in self.filing_history]) if self.filing_history else None,
-            "compliance_status": "compliant" if successful_filings >= total_filings * 0.95 else "needs_attention"
+            "compliance_status": "compliant" if successful_filings >= total_filings * 0.95 else "needs_attention",
         }
+
 
 # Global instances
 # Global instances

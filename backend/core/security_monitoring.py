@@ -54,12 +54,8 @@ class SecurityMonitor:
         self.anomaly_detectors = {}
 
         # Rate limiting tracking
-        self.ip_request_counts: dict[str, deque] = defaultdict(
-            lambda: deque(maxlen=100)
-        )
-        self.user_request_counts: dict[str, deque] = defaultdict(
-            lambda: deque(maxlen=100)
-        )
+        self.ip_request_counts: dict[str, deque] = defaultdict(lambda: deque(maxlen=100))
+        self.user_request_counts: dict[str, deque] = defaultdict(lambda: deque(maxlen=100))
 
         # Failed login tracking
         self.failed_logins: dict[str, list[datetime]] = defaultdict(list)
@@ -140,28 +136,20 @@ class SecurityMonitor:
 
         # Clean failed logins older than 24 hours
         for key in list(self.failed_logins.keys()):
-            self.failed_logins[key] = [
-                ts for ts in self.failed_logins[key] if ts > cutoff_time
-            ]
+            self.failed_logins[key] = [ts for ts in self.failed_logins[key] if ts > cutoff_time]
             if not self.failed_logins[key]:
                 del self.failed_logins[key]
 
         # Clean request counts older than 1 hour
         cutoff_requests = now - timedelta(hours=1)
         for ip in list(self.ip_request_counts.keys()):
-            while (
-                self.ip_request_counts[ip]
-                and self.ip_request_counts[ip][0] < cutoff_requests
-            ):
+            while self.ip_request_counts[ip] and self.ip_request_counts[ip][0] < cutoff_requests:
                 self.ip_request_counts[ip].popleft()
             if not self.ip_request_counts[ip]:
                 del self.ip_request_counts[ip]
 
         for user in list(self.user_request_counts.keys()):
-            while (
-                self.user_request_counts[user]
-                and self.user_request_counts[user][0] < cutoff_requests
-            ):
+            while self.user_request_counts[user] and self.user_request_counts[user][0] < cutoff_requests:
                 self.user_request_counts[user].popleft()
             if not self.user_request_counts[user]:
                 del self.user_request_counts[user]
@@ -196,9 +184,7 @@ class SecurityMonitor:
 
         # Count failures in last hour
         now = datetime.now()
-        recent_failures_count = sum(
-            1 for ts in recent_failures if now - ts < timedelta(hours=1)
-        )
+        recent_failures_count = sum(1 for ts in recent_failures if now - ts < timedelta(hours=1))
 
         if recent_failures_count >= self.thresholds["brute_force_attempts"]:
             return SecurityAlert(
@@ -211,20 +197,14 @@ class SecurityMonitor:
 
         return None
 
-    async def _detect_unusual_traffic(
-        self, event: SecurityEvent
-    ) -> SecurityAlert | None:
+    async def _detect_unusual_traffic(self, event: SecurityEvent) -> SecurityAlert | None:
         """Detect unusual traffic patterns"""
         if not event.ip_address:
             return None
 
         # Count requests from this IP in the last minute
         now = datetime.now()
-        recent_requests = [
-            ts
-            for ts in self.ip_request_counts[event.ip_address]
-            if now - ts < timedelta(minutes=1)
-        ]
+        recent_requests = [ts for ts in self.ip_request_counts[event.ip_address] if now - ts < timedelta(minutes=1)]
 
         if len(recent_requests) > self.thresholds["requests_per_minute"]:
             return SecurityAlert(
@@ -237,9 +217,7 @@ class SecurityMonitor:
 
         return None
 
-    async def _detect_suspicious_patterns(
-        self, event: SecurityEvent
-    ) -> SecurityAlert | None:
+    async def _detect_suspicious_patterns(self, event: SecurityEvent) -> SecurityAlert | None:
         """Detect suspicious patterns in requests"""
         if event.event_type not in [
             "suspicious_input",
@@ -254,8 +232,7 @@ class SecurityMonitor:
             1
             for e in self.events
             if e.ip_address == event.ip_address
-            and e.event_type
-            in ["suspicious_input", "xss_attempt", "sql_injection_attempt"]
+            and e.event_type in ["suspicious_input", "xss_attempt", "sql_injection_attempt"]
             and now - e.timestamp < timedelta(hours=1)
         )
 
@@ -270,9 +247,7 @@ class SecurityMonitor:
 
         return None
 
-    async def _detect_privilege_escalation(
-        self, event: SecurityEvent
-    ) -> SecurityAlert | None:
+    async def _detect_privilege_escalation(self, event: SecurityEvent) -> SecurityAlert | None:
         """Detect potential privilege escalation attempts"""
         if event.event_type not in ["unauthorized_access", "permission_denied"]:
             return None
@@ -297,9 +272,7 @@ class SecurityMonitor:
 
         return None
 
-    async def _detect_data_exfiltration(
-        self, event: SecurityEvent
-    ) -> SecurityAlert | None:
+    async def _detect_data_exfiltration(self, event: SecurityEvent) -> SecurityAlert | None:
         """Detect potential data exfiltration attempts"""
         if event.event_type not in [
             "large_download",
@@ -411,11 +384,7 @@ class SecurityMonitor:
             "active_alerts": dict(alert_counts),
             "blocked_ips": len(self.blocked_ips),
             "suspicious_ips": len(self.suspicious_ips),
-            "system_health": "compromised"
-            if alert_counts["critical"] > 0
-            else "warning"
-            if alert_counts["high"] > 0
-            else "good",
+            "system_health": "compromised" if alert_counts["critical"] > 0 else "warning" if alert_counts["high"] > 0 else "good",
         }
 
     def get_recent_alerts(self, limit: int = 10) -> list[dict[str, Any]]:

@@ -100,9 +100,7 @@ class BehavioralAnomalyDetector:
         self.scalers: dict[str, StandardScaler] = {}
         self.anomaly_history: list[ThreatIndicator] = []
 
-    def create_behavioral_profile(
-        self, entity_id: str, entity_type: str, initial_data: pd.DataFrame
-    ) -> BehavioralProfile:
+    def create_behavioral_profile(self, entity_id: str, entity_type: str, initial_data: pd.DataFrame) -> BehavioralProfile:
         """Create a behavioral profile for an entity"""
         # Calculate baseline metrics
         baseline_metrics = {}
@@ -110,41 +108,21 @@ class BehavioralAnomalyDetector:
 
         # Common behavioral metrics
         if "login_attempts" in initial_data.columns:
-            baseline_metrics["avg_login_attempts"] = initial_data[
-                "login_attempts"
-            ].mean()
-            baseline_metrics["std_login_attempts"] = initial_data[
-                "login_attempts"
-            ].std()
-            anomaly_thresholds["login_attempts"] = (
-                baseline_metrics["avg_login_attempts"]
-                + 3 * baseline_metrics["std_login_attempts"]
-            )
+            baseline_metrics["avg_login_attempts"] = initial_data["login_attempts"].mean()
+            baseline_metrics["std_login_attempts"] = initial_data["login_attempts"].std()
+            anomaly_thresholds["login_attempts"] = baseline_metrics["avg_login_attempts"] + 3 * baseline_metrics["std_login_attempts"]
 
         if "session_duration" in initial_data.columns:
-            baseline_metrics["avg_session_duration"] = initial_data[
-                "session_duration"
-            ].mean()
-            baseline_metrics["std_session_duration"] = initial_data[
-                "session_duration"
-            ].std()
-            anomaly_thresholds["session_duration"] = (
-                baseline_metrics["avg_session_duration"]
-                + 2 * baseline_metrics["std_session_duration"]
-            )
+            baseline_metrics["avg_session_duration"] = initial_data["session_duration"].mean()
+            baseline_metrics["std_session_duration"] = initial_data["session_duration"].std()
+            anomaly_thresholds["session_duration"] = baseline_metrics["avg_session_duration"] + 2 * baseline_metrics["std_session_duration"]
 
         if "data_access_volume" in initial_data.columns:
-            baseline_metrics["avg_data_access"] = initial_data[
-                "data_access_volume"
-            ].mean()
-            anomaly_thresholds["data_access_volume"] = (
-                baseline_metrics["avg_data_access"] * 2.5
-            )
+            baseline_metrics["avg_data_access"] = initial_data["data_access_volume"].mean()
+            anomaly_thresholds["data_access_volume"] = baseline_metrics["avg_data_access"] * 2.5
 
         # Create ML-based anomaly detector
-        feature_columns = [
-            col for col in initial_data.columns if col not in ["timestamp", "entity_id"]
-        ]
+        feature_columns = [col for col in initial_data.columns if col not in ["timestamp", "entity_id"]]
         if feature_columns:
             X = initial_data[feature_columns].values
             scaler = StandardScaler()
@@ -175,9 +153,7 @@ class BehavioralAnomalyDetector:
         logger.info(f"Created behavioral profile for {entity_type} {entity_id}")
         return profile
 
-    def detect_behavioral_anomaly(
-        self, entity_id: str, current_behavior: dict[str, Any]
-    ) -> ThreatIndicator | None:
+    def detect_behavioral_anomaly(self, entity_id: str, current_behavior: dict[str, Any]) -> ThreatIndicator | None:
         """Detect behavioral anomalies for an entity"""
         if entity_id not in self.profiles:
             return None
@@ -194,9 +170,7 @@ class BehavioralAnomalyDetector:
                     baseline = profile.baseline_metrics[metric]
                     deviation = abs(value - baseline)
                     if deviation > threshold:
-                        anomalies_detected.append(
-                            f"{metric}: {value} (baseline: {baseline:.2f}, threshold: {threshold:.2f})"
-                        )
+                        anomalies_detected.append(f"{metric}: {value} (baseline: {baseline:.2f}, threshold: {threshold:.2f})")
                         anomaly_score += min(deviation / threshold, 2.0)  # Cap at 2.0
 
         # ML-based anomaly detection
@@ -269,9 +243,7 @@ class BehavioralAnomalyDetector:
             if column not in ["timestamp", "entity_id"] and column in new_data.columns:
                 new_baseline = new_data[column].mean()
                 profile.baseline_metrics[f"avg_{column}"] = new_baseline
-                profile.anomaly_thresholds[column] = (
-                    new_baseline + 2 * new_data[column].std()
-                )
+                profile.anomaly_thresholds[column] = new_baseline + 2 * new_data[column].std()
 
         profile.last_updated = datetime.now()
         profile.profile_history.append(
@@ -351,14 +323,10 @@ class APTDetectionEngine:
             },
         ]
 
-    def analyze_apt_indicators(
-        self, entity_id: str, activity_log: list[dict]
-    ) -> ThreatIndicator | None:
+    def analyze_apt_indicators(self, entity_id: str, activity_log: list[dict]) -> ThreatIndicator | None:
         """Analyze activities for APT indicators"""
         recent_activities = [
-            activity
-            for activity in activity_log
-            if (datetime.now() - activity.get("timestamp", datetime.min)).seconds < 3600
+            activity for activity in activity_log if (datetime.now() - activity.get("timestamp", datetime.min)).seconds < 3600
         ]
 
         apt_score = 0.0
@@ -366,41 +334,25 @@ class APTDetectionEngine:
 
         # Check for lateral movement
         lateral_movement_count = sum(
-            1
-            for activity in recent_activities
-            if activity.get("type")
-            in ["remote_access", "admin_login", "file_share_access"]
+            1 for activity in recent_activities if activity.get("type") in ["remote_access", "admin_login", "file_share_access"]
         )
         if lateral_movement_count >= 5:
             apt_score += 0.4
-            detected_patterns.append(
-                f"Lateral movement detected: {lateral_movement_count} suspicious accesses"
-            )
+            detected_patterns.append(f"Lateral movement detected: {lateral_movement_count} suspicious accesses")
 
         # Check for data exfiltration
-        exfil_volume = sum(
-            activity.get("data_volume", 0)
-            for activity in recent_activities
-            if activity.get("type") == "data_transfer"
-        )
+        exfil_volume = sum(activity.get("data_volume", 0) for activity in recent_activities if activity.get("type") == "data_transfer")
         if exfil_volume > 100 * 1024 * 1024:  # 100MB
             apt_score += 0.3
-            detected_patterns.append(
-                f"Large data exfiltration: {exfil_volume / (1024 * 1024):.1f}MB"
-            )
+            detected_patterns.append(f"Large data exfiltration: {exfil_volume / (1024 * 1024):.1f}MB")
 
         # Check for persistence
         persistence_count = sum(
-            1
-            for activity in recent_activities
-            if activity.get("type")
-            in ["scheduled_task", "registry_modify", "service_create"]
+            1 for activity in recent_activities if activity.get("type") in ["scheduled_task", "registry_modify", "service_create"]
         )
         if persistence_count >= 2:
             apt_score += 0.3
-            detected_patterns.append(
-                f"Persistence mechanisms: {persistence_count} detections"
-            )
+            detected_patterns.append(f"Persistence mechanisms: {persistence_count} detections")
 
         if apt_score > 0.5:
             threat_level = ThreatLevel.HIGH if apt_score > 0.8 else ThreatLevel.MEDIUM
@@ -447,31 +399,19 @@ class InsiderThreatDetector:
             "classified": 5,
         }
 
-    def analyze_access_patterns(
-        self, user_id: str, access_log: list[dict]
-    ) -> ThreatIndicator | None:
+    def analyze_access_patterns(self, user_id: str, access_log: list[dict]) -> ThreatIndicator | None:
         """Analyze access patterns for insider threat indicators"""
-        recent_accesses = [
-            access
-            for access in access_log
-            if (datetime.now() - access.get("timestamp", datetime.min)).days < 7
-        ]
+        recent_accesses = [access for access in access_log if (datetime.now() - access.get("timestamp", datetime.min)).days < 7]
 
         insider_score = 0.0
         suspicious_activities = []
 
         # Unusual timing patterns
         work_hours = [9, 10, 11, 12, 13, 14, 15, 16, 17]
-        after_hours_accesses = sum(
-            1
-            for access in recent_accesses
-            if access.get("timestamp", datetime.min).hour not in work_hours
-        )
+        after_hours_accesses = sum(1 for access in recent_accesses if access.get("timestamp", datetime.min).hour not in work_hours)
         if after_hours_accesses > len(recent_accesses) * 0.3:  # 30% after hours
             insider_score += 0.2
-            suspicious_activities.append(
-                f"After-hours access: {after_hours_accesses} instances"
-            )
+            suspicious_activities.append(f"After-hours access: {after_hours_accesses} instances")
 
         # Unusual volume patterns
         daily_accesses = defaultdict(int)
@@ -479,46 +419,29 @@ class InsiderThreatDetector:
             day = access.get("timestamp", datetime.min).date()
             daily_accesses[day] += 1
 
-        avg_daily = (
-            sum(daily_accesses.values()) / len(daily_accesses) if daily_accesses else 0
-        )
-        high_volume_days = sum(
-            1 for count in daily_accesses.values() if count > avg_daily * 2
-        )
+        avg_daily = sum(daily_accesses.values()) / len(daily_accesses) if daily_accesses else 0
+        high_volume_days = sum(1 for count in daily_accesses.values() if count > avg_daily * 2)
         if high_volume_days > 2:
             insider_score += 0.2
-            suspicious_activities.append(
-                f"Unusual access volume: {high_volume_days} high-volume days"
-            )
+            suspicious_activities.append(f"Unusual access volume: {high_volume_days} high-volume days")
 
         # Sensitive data access patterns
         sensitive_accesses = [
-            access
-            for access in recent_accesses
-            if self.sensitivity_levels.get(access.get("data_sensitivity", "public"), 1)
-            >= 4
+            access for access in recent_accesses if self.sensitivity_levels.get(access.get("data_sensitivity", "public"), 1) >= 4
         ]
         if len(sensitive_accesses) > len(recent_accesses) * 0.1:  # 10% sensitive data
             insider_score += 0.3
-            suspicious_activities.append(
-                f"Frequent sensitive data access: {len(sensitive_accesses)} instances"
-            )
+            suspicious_activities.append(f"Frequent sensitive data access: {len(sensitive_accesses)} instances")
 
         # Download patterns
-        downloads = [
-            access for access in recent_accesses if access.get("action") == "download"
-        ]
+        downloads = [access for access in recent_accesses if access.get("action") == "download"]
         download_volume = sum(access.get("file_size", 0) for access in downloads)
         if download_volume > 500 * 1024 * 1024:  # 500MB
             insider_score += 0.3
-            suspicious_activities.append(
-                f"Large download volume: {download_volume / (1024 * 1024):.1f}MB"
-            )
+            suspicious_activities.append(f"Large download volume: {download_volume / (1024 * 1024):.1f}MB")
 
         if insider_score > 0.4:
-            threat_level = (
-                ThreatLevel.HIGH if insider_score > 0.7 else ThreatLevel.MEDIUM
-            )
+            threat_level = ThreatLevel.HIGH if insider_score > 0.7 else ThreatLevel.MEDIUM
 
             indicator = ThreatIndicator(
                 indicator_id=f"insider_threat_{user_id}_{int(time.time())}",
@@ -565,12 +488,8 @@ class GraphAnalysisEngine:
 
             if source and target:
                 # Add nodes
-                self.graph.add_node(
-                    source, entity_type=activity.get("source_type", "unknown")
-                )
-                self.graph.add_node(
-                    target, entity_type=activity.get("target_type", "unknown")
-                )
+                self.graph.add_node(source, entity_type=activity.get("source_type", "unknown"))
+                self.graph.add_node(target, entity_type=activity.get("target_type", "unknown"))
 
                 # Add edge with weight
                 if self.graph.has_edge(source, target):
@@ -633,48 +552,36 @@ class AdvancedThreatDetectionService:
         self.threat_indicators: list[ThreatIndicator] = []
         self.threat_intelligence: list[ThreatIntelligence] = []
 
-    async def analyze_entity_behavior(
-        self, entity_id: str, entity_type: str, behavior_data: pd.DataFrame
-    ) -> list[ThreatIndicator]:
+    async def analyze_entity_behavior(self, entity_id: str, entity_type: str, behavior_data: pd.DataFrame) -> list[ThreatIndicator]:
         """Comprehensive behavioral analysis for an entity"""
         indicators = []
 
         # Create/update behavioral profile
         if entity_id not in self.behavioral_detector.profiles:
-            self.behavioral_detector.create_behavioral_profile(
-                entity_id, entity_type, behavior_data
-            )
+            self.behavioral_detector.create_behavioral_profile(entity_id, entity_type, behavior_data)
         else:
             self.behavioral_detector.update_behavioral_profile(entity_id, behavior_data)
 
         # Analyze recent behavior (last data point)
         if not behavior_data.empty:
             recent_behavior = behavior_data.iloc[-1].to_dict()
-            anomaly_indicator = self.behavioral_detector.detect_behavioral_anomaly(
-                entity_id, recent_behavior
-            )
+            anomaly_indicator = self.behavioral_detector.detect_behavioral_anomaly(entity_id, recent_behavior)
             if anomaly_indicator:
                 indicators.append(anomaly_indicator)
 
         return indicators
 
-    async def detect_advanced_threats(
-        self, entity_id: str, activity_log: list[dict]
-    ) -> list[ThreatIndicator]:
+    async def detect_advanced_threats(self, entity_id: str, activity_log: list[dict]) -> list[ThreatIndicator]:
         """Detect advanced threats using multiple detection methods"""
         indicators = []
 
         # APT detection
-        apt_indicator = self.apt_detector.analyze_apt_indicators(
-            entity_id, activity_log
-        )
+        apt_indicator = self.apt_detector.analyze_apt_indicators(entity_id, activity_log)
         if apt_indicator:
             indicators.append(apt_indicator)
 
         # Insider threat detection
-        insider_indicator = self.insider_detector.analyze_access_patterns(
-            entity_id, activity_log
-        )
+        insider_indicator = self.insider_detector.analyze_access_patterns(entity_id, activity_log)
         if insider_indicator:
             indicators.append(insider_indicator)
 
@@ -688,18 +595,12 @@ class AdvancedThreatDetectionService:
 
         return indicators
 
-    async def perform_threat_hunting(
-        self, time_window: timedelta = timedelta(hours=24)
-    ) -> list[ThreatIndicator]:
+    async def perform_threat_hunting(self, time_window: timedelta = timedelta(hours=24)) -> list[ThreatIndicator]:
         """Perform proactive threat hunting across all entities"""
         # This would integrate with data sources to perform hunting
         # For now, return recent indicators
         cutoff_time = datetime.now() - time_window
-        recent_indicators = [
-            indicator
-            for indicator in self.threat_indicators
-            if indicator.timestamp > cutoff_time
-        ]
+        recent_indicators = [indicator for indicator in self.threat_indicators if indicator.timestamp > cutoff_time]
 
         return recent_indicators
 
@@ -707,18 +608,14 @@ class AdvancedThreatDetectionService:
         """Update threat intelligence database"""
         # Remove expired intelligence
         current_time = datetime.now()
-        self.threat_intelligence = [
-            ti for ti in self.threat_intelligence if ti.expires_at > current_time
-        ]
+        self.threat_intelligence = [ti for ti in self.threat_intelligence if ti.expires_at > current_time]
 
         # Add new intelligence
         self.threat_intelligence.append(intelligence)
 
         logger.info(f"Updated threat intelligence: {intelligence.intelligence_id}")
 
-    def correlate_threats(
-        self, indicators: list[ThreatIndicator]
-    ) -> list[dict[str, Any]]:
+    def correlate_threats(self, indicators: list[ThreatIndicator]) -> list[dict[str, Any]]:
         """Correlate related threat indicators"""
         correlations = []
 
@@ -736,14 +633,9 @@ class AdvancedThreatDetectionService:
                     {
                         "entity": entity,
                         "indicators": [ind.indicator_id for ind in entity_indicators],
-                        "correlation_score": len(entity_indicators)
-                        / 5.0,  # Simple scoring
-                        "threat_categories": list(
-                            {ind.category.value for ind in entity_indicators}
-                        ),
-                        "highest_level": max(
-                            ind.level.value for ind in entity_indicators
-                        ),
+                        "correlation_score": len(entity_indicators) / 5.0,  # Simple scoring
+                        "threat_categories": list({ind.category.value for ind in entity_indicators}),
+                        "highest_level": max(ind.level.value for ind in entity_indicators),
                         "description": f"Multiple threat indicators correlated for entity {entity}",
                     }
                 )
@@ -757,12 +649,8 @@ class AdvancedThreatDetectionService:
         last_7d = current_time - timedelta(days=7)
 
         # Calculate metrics
-        recent_indicators_24h = [
-            ind for ind in self.threat_indicators if ind.timestamp > last_24h
-        ]
-        recent_indicators_7d = [
-            ind for ind in self.threat_indicators if ind.timestamp > last_7d
-        ]
+        recent_indicators_24h = [ind for ind in self.threat_indicators if ind.timestamp > last_24h]
+        recent_indicators_7d = [ind for ind in self.threat_indicators if ind.timestamp > last_7d]
 
         threat_counts = defaultdict(int)
         for indicator in recent_indicators_7d:
@@ -778,20 +666,14 @@ class AdvancedThreatDetectionService:
             "indicators_last_7d": len(recent_indicators_7d),
             "threat_category_breakdown": dict(threat_counts),
             "severity_breakdown": dict(severity_counts),
-            "top_threat_categories": sorted(
-                threat_counts.items(), key=lambda x: x[1], reverse=True
-            )[:5],
+            "top_threat_categories": sorted(threat_counts.items(), key=lambda x: x[1], reverse=True)[:5],
             "detection_methods_effectiveness": self._calculate_detection_effectiveness(),
-            "mitigation_recommendations": self._generate_mitigation_recommendations(
-                recent_indicators_7d
-            ),
+            "mitigation_recommendations": self._generate_mitigation_recommendations(recent_indicators_7d),
         }
 
     def _calculate_detection_effectiveness(self) -> dict[str, Any]:
         """Calculate effectiveness of different detection methods"""
-        method_stats = defaultdict(
-            lambda: {"total": 0, "high_confidence": 0, "true_positives": 0}
-        )
+        method_stats = defaultdict(lambda: {"total": 0, "high_confidence": 0, "true_positives": 0})
 
         for indicator in self.threat_indicators[-100:]:  # Last 100 indicators
             method = indicator.detection_method.value
@@ -806,19 +688,13 @@ class AdvancedThreatDetectionService:
                     "total_detections": stats["total"],
                     "high_confidence_rate": stats["high_confidence"] / stats["total"],
                     "average_confidence": np.mean(
-                        [
-                            ind.confidence
-                            for ind in self.threat_indicators[-100:]
-                            if ind.detection_method.value == method
-                        ]
+                        [ind.confidence for ind in self.threat_indicators[-100:] if ind.detection_method.value == method]
                     ),
                 }
 
         return effectiveness
 
-    def _generate_mitigation_recommendations(
-        self, recent_indicators: list[ThreatIndicator]
-    ) -> list[str]:
+    def _generate_mitigation_recommendations(self, recent_indicators: list[ThreatIndicator]) -> list[str]:
         """Generate mitigation recommendations based on recent threats"""
         recommendations = []
 
@@ -827,29 +703,19 @@ class AdvancedThreatDetectionService:
         levels = [ind.level.value for ind in recent_indicators]
 
         if categories.count("advanced_persistent_threat") > 2:
-            recommendations.append(
-                "Strengthen APT defenses: Implement advanced endpoint protection"
-            )
+            recommendations.append("Strengthen APT defenses: Implement advanced endpoint protection")
 
         if categories.count("insider_threat") > 1:
-            recommendations.append(
-                "Enhance insider threat monitoring: Implement user behavior analytics"
-            )
+            recommendations.append("Enhance insider threat monitoring: Implement user behavior analytics")
 
         if levels.count("critical") > 0:
-            recommendations.append(
-                "URGENT: Critical threats detected - initiate incident response protocol"
-            )
+            recommendations.append("URGENT: Critical threats detected - initiate incident response protocol")
 
         if "behavioral_anomaly" in categories:
-            recommendations.append(
-                "Review anomaly detection thresholds and reduce false positives"
-            )
+            recommendations.append("Review anomaly detection thresholds and reduce false positives")
 
         if not recommendations:
-            recommendations.append(
-                "Continue monitoring - no specific recommendations at this time"
-            )
+            recommendations.append("Continue monitoring - no specific recommendations at this time")
 
         return recommendations
 

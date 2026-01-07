@@ -3,15 +3,27 @@
  * Real-time multi-user collaboration and case synchronization service
  */
 
-import { useEffect, useRef, useCallback, useState } from 'react';
-import { secureLogger } from '@/utils/secureLogger';
-import { secureRandom } from '@/utils/secureRandom';
+import { useEffect, useRef, useCallback, useState } from "react";
+import { secureLogger } from "@/utils/secureLogger";
+import { secureRandom } from "@/utils/secureRandom";
 
 // Types
 export interface SyncEvent {
   id: string;
-  type: 'update' | 'create' | 'delete' | 'lock' | 'unlock' | 'cursor' | 'presence';
-  entityType: 'evidence' | 'hypothesis' | 'connection' | 'annotation' | 'comment';
+  type:
+    | "update"
+    | "create"
+    | "delete"
+    | "lock"
+    | "unlock"
+    | "cursor"
+    | "presence";
+  entityType:
+    | "evidence"
+    | "hypothesis"
+    | "connection"
+    | "annotation"
+    | "comment";
   entityId: string;
   userId: string;
   userName: string;
@@ -27,14 +39,14 @@ export interface Collaborator {
   cursor?: { x: number; y: number };
   activeEntity?: string;
   lastSeen: Date;
-  status: 'online' | 'idle' | 'offline';
+  status: "online" | "idle" | "offline";
 }
 
 export interface ConflictResolution {
   entityId: string;
   localVersion: unknown;
   remoteVersion: unknown;
-  resolution: 'local' | 'remote' | 'merge';
+  resolution: "local" | "remote" | "merge";
   mergedValue?: unknown;
 }
 
@@ -78,7 +90,7 @@ class EventQueue {
 
   private scheduleFlush() {
     if (this.flushTimeout) return;
-    
+
     this.flushTimeout = setTimeout(() => {
       this.flush();
     }, this.flushInterval);
@@ -110,7 +122,7 @@ class EventQueue {
 export class _OperationalTransform {
   static transformUpdate(
     localEvent: SyncEvent,
-    remoteEvent: SyncEvent
+    remoteEvent: SyncEvent,
   ): SyncEvent | null {
     // If operating on different entities, no transform needed
     if (localEvent.entityId !== remoteEvent.entityId) {
@@ -128,11 +140,11 @@ export class _OperationalTransform {
 
   static mergeData(
     local: Record<string, unknown>,
-    remote: Record<string, unknown>
+    remote: Record<string, unknown>,
   ): Record<string, unknown> {
     // Simple last-write-wins per field
     const merged: Record<string, unknown> = { ...remote };
-    
+
     for (const key of Object.keys(local)) {
       // If local has a value and remote doesn't, use local
       if (!(key in remote)) {
@@ -195,7 +207,7 @@ export class CaseSyncEngine {
     this.versionVector = new VersionVector();
     this.eventQueue = new EventQueue(
       this.sendEvents.bind(this),
-      100 // Batch events every 100ms
+      100, // Batch events every 100ms
     );
   }
 
@@ -205,18 +217,21 @@ export class CaseSyncEngine {
       // In a real implementation, this would connect to WebSocket
       // For now, we simulate with polling
       this.isConnected = true;
-      
+
       // Announce presence
       this.announcePresence();
-      
+
       // Start polling for updates
       this.startPolling();
-      
-      secureLogger.info('COLLABORATION', `Connected to case: ${this.options.caseId}`);
+
+      secureLogger.info(
+        "COLLABORATION",
+        `Connected to case: ${this.options.caseId}`,
+      );
     } catch (error) {
-      secureLogger.error('COLLABORATION', 'Connection failed', { 
+      secureLogger.error("COLLABORATION", "Connection failed", {
         caseId: this.options.caseId,
-        error: error instanceof Error ? error.message : String(error) 
+        error: error instanceof Error ? error.message : String(error),
       });
       this.options.onError?.(error as Error);
       throw error;
@@ -229,13 +244,15 @@ export class CaseSyncEngine {
     this.stopPolling();
     this.eventQueue.clear();
     this.collaborators.clear();
-    secureLogger.info('COLLABORATION', 'Disconnected');
+    secureLogger.info("COLLABORATION", "Disconnected");
   }
 
   // Emit a sync event
-  emit(event: Omit<SyncEvent, 'id' | 'userId' | 'userName' | 'timestamp'>): void {
+  emit(
+    event: Omit<SyncEvent, "id" | "userId" | "userName" | "timestamp">,
+  ): void {
     if (!this.isConnected) {
-      secureLogger.warn('COLLABORATION', 'Cannot emit: not connected');
+      secureLogger.warn("COLLABORATION", "Cannot emit: not connected");
       return;
     }
 
@@ -244,7 +261,7 @@ export class CaseSyncEngine {
       id: `evt-${Date.now()}-${secureRandom.random().toString(36).slice(2, 9)}`,
       userId: this.options.userId,
       userName: this.options.userName,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     // Version the event
@@ -262,10 +279,10 @@ export class CaseSyncEngine {
 
     this.lockedEntities.set(entityId, this.options.userId);
     this.emit({
-      type: 'lock',
-      entityType: 'evidence',
+      type: "lock",
+      entityType: "evidence",
       entityId,
-      data: { lockedBy: this.options.userId }
+      data: { lockedBy: this.options.userId },
     });
     return true;
   }
@@ -276,10 +293,10 @@ export class CaseSyncEngine {
     if (currentLock === this.options.userId) {
       this.lockedEntities.delete(entityId);
       this.emit({
-        type: 'unlock',
-        entityType: 'evidence',
+        type: "unlock",
+        entityType: "evidence",
         entityId,
-        data: {}
+        data: {},
       });
     }
   }
@@ -289,17 +306,17 @@ export class CaseSyncEngine {
     const locker = this.lockedEntities.get(entityId);
     return {
       locked: !!locker,
-      lockedBy: locker
+      lockedBy: locker,
     };
   }
 
   // Send cursor position
   sendCursor(x: number, y: number): void {
     this.emit({
-      type: 'cursor',
-      entityType: 'annotation',
-      entityId: 'cursor',
-      data: { x, y }
+      type: "cursor",
+      entityType: "annotation",
+      entityId: "cursor",
+      data: { x, y },
     });
   }
 
@@ -316,32 +333,40 @@ export class CaseSyncEngine {
       pendingChanges: 0,
       lastSyncedAt: new Date(),
       conflicts: [],
-      collaborators: this.getCollaborators()
+      collaborators: this.getCollaborators(),
     };
   }
 
   // Private methods
   private async sendEvents(events: SyncEvent[]): Promise<void> {
     // In real implementation, send to server via WebSocket or HTTP
-    secureLogger.info('COLLABORATION', `Sending events: ${events.length}`);
-    
+    secureLogger.info("COLLABORATION", `Sending events: ${events.length}`);
+
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
     // Trigger local sync callback
     this.options.onSync?.(events);
   }
 
   private announcePresence(): void {
-    const colors = ['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
-    const randomColor = colors[Math.floor(secureRandom.random() * colors.length)];
+    const colors = [
+      "#ef4444",
+      "#f59e0b",
+      "#22c55e",
+      "#3b82f6",
+      "#8b5cf6",
+      "#ec4899",
+    ];
+    const randomColor =
+      colors[Math.floor(secureRandom.random() * colors.length)];
 
     const self: Collaborator = {
       id: this.options.userId,
       name: this.options.userName,
       color: randomColor,
       lastSeen: new Date(),
-      status: 'online'
+      status: "online",
     };
 
     this.collaborators.set(this.options.userId, self);
@@ -365,14 +390,16 @@ export class CaseSyncEngine {
   private async poll(): Promise<void> {
     // In real implementation, fetch updates from server
     // This is a stub for the polling mechanism
-    secureLogger.debug('COLLABORATION', 'Polling for updates...');
+    secureLogger.debug("COLLABORATION", "Polling for updates...");
   }
 }
 
 // React Hook for using the sync engine
 export function useCaseSync(options: CaseSyncEngineOptions): {
   syncState: SyncState;
-  emit: (event: Omit<SyncEvent, 'id' | 'userId' | 'userName' | 'timestamp'>) => void;
+  emit: (
+    event: Omit<SyncEvent, "id" | "userId" | "userName" | "timestamp">,
+  ) => void;
   lock: (entityId: string) => boolean;
   unlock: (entityId: string) => void;
   isLocked: (entityId: string) => { locked: boolean; lockedBy?: string };
@@ -385,26 +412,31 @@ export function useCaseSync(options: CaseSyncEngineOptions): {
     pendingChanges: 0,
     lastSyncedAt: null,
     conflicts: [],
-    collaborators: []
+    collaborators: [],
   });
 
   useEffect(() => {
     const engine = new CaseSyncEngine({
       ...options,
       onCollaboratorJoin: (collaborator) => {
-        setSyncState(prev => ({
+        setSyncState((prev) => ({
           ...prev,
-          collaborators: [...prev.collaborators.filter(c => c.id !== collaborator.id), collaborator]
+          collaborators: [
+            ...prev.collaborators.filter((c) => c.id !== collaborator.id),
+            collaborator,
+          ],
         }));
         options.onCollaboratorJoin?.(collaborator);
       },
       onCollaboratorLeave: (collaboratorId) => {
-        setSyncState(prev => ({
+        setSyncState((prev) => ({
           ...prev,
-          collaborators: prev.collaborators.filter(c => c.id !== collaboratorId)
+          collaborators: prev.collaborators.filter(
+            (c) => c.id !== collaboratorId,
+          ),
         }));
         options.onCollaboratorLeave?.(collaboratorId);
-      }
+      },
     });
 
     engineRef.current = engine;
@@ -417,9 +449,12 @@ export function useCaseSync(options: CaseSyncEngineOptions): {
     };
   }, [options.caseId, options.userId]);
 
-  const emit = useCallback((event: Omit<SyncEvent, 'id' | 'userId' | 'userName' | 'timestamp'>) => {
-    engineRef.current?.emit(event);
-  }, []);
+  const emit = useCallback(
+    (event: Omit<SyncEvent, "id" | "userId" | "userName" | "timestamp">) => {
+      engineRef.current?.emit(event);
+    },
+    [],
+  );
 
   const lock = useCallback((entityId: string) => {
     return engineRef.current?.lockEntity(entityId) ?? false;

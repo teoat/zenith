@@ -1,6 +1,13 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Search, Globe, Shield, Activity, Database, BarChart3 } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  Search,
+  Globe,
+  Shield,
+  Activity,
+  Database,
+  BarChart3,
+} from "lucide-react";
 
 const MarketplaceTab: React.FC = () => {
   return (
@@ -13,7 +20,8 @@ const MarketplaceTab: React.FC = () => {
       <div className="marketplace-header">
         <h3 className="text-lg font-semibold mb-2">API Marketplace</h3>
         <p className="text-slate-600 mb-6">
-          Discover and subscribe to enterprise APIs from our ecosystem of 500+ providers
+          Discover and subscribe to enterprise APIs from our ecosystem of 500+
+          providers
         </p>
       </div>
 
@@ -24,7 +32,9 @@ const MarketplaceTab: React.FC = () => {
             <Globe className="w-6 h-6 text-blue-500" />
           </div>
           <h4 className="category-title">Financial Services</h4>
-          <p className="category-description">Banking, payments, and financial data APIs</p>
+          <p className="category-description">
+            Banking, payments, and financial data APIs
+          </p>
           <div className="category-count">89 APIs</div>
         </div>
 
@@ -33,7 +43,9 @@ const MarketplaceTab: React.FC = () => {
             <Shield className="w-6 h-6 text-green-500" />
           </div>
           <h4 className="category-title">Compliance & Risk</h4>
-          <p className="category-description">KYC, AML, sanctions screening, and risk assessment</p>
+          <p className="category-description">
+            KYC, AML, sanctions screening, and risk assessment
+          </p>
           <div className="category-count">67 APIs</div>
         </div>
 
@@ -42,7 +54,9 @@ const MarketplaceTab: React.FC = () => {
             <Activity className="w-6 h-6 text-purple-500" />
           </div>
           <h4 className="category-title">Analytics & AI</h4>
-          <p className="category-description">Business intelligence, ML models, and data analytics</p>
+          <p className="category-description">
+            Business intelligence, ML models, and data analytics
+          </p>
           <div className="category-count">45 APIs</div>
         </div>
 
@@ -51,7 +65,9 @@ const MarketplaceTab: React.FC = () => {
             <Database className="w-6 h-6 text-orange-500" />
           </div>
           <h4 className="category-title">Data & Storage</h4>
-          <p className="category-description">Databases, data lakes, and cloud storage services</p>
+          <p className="category-description">
+            Databases, data lakes, and cloud storage services
+          </p>
           <div className="category-count">78 APIs</div>
         </div>
       </div>
@@ -70,7 +86,9 @@ const MarketplaceTab: React.FC = () => {
                 <span className="featured-category">Security</span>
               </div>
             </div>
-            <p className="featured-description">Real-time fraud detection with 99.5% accuracy</p>
+            <p className="featured-description">
+              Real-time fraud detection with 99.5% accuracy
+            </p>
             <div className="api-pricing">
               <span className="price">$49/month</span>
               <span className="rating">⭐ 4.8 (124 reviews)</span>
@@ -88,7 +106,9 @@ const MarketplaceTab: React.FC = () => {
                 <span className="featured-category">Compliance</span>
               </div>
             </div>
-            <p className="featured-description">Real-time sanctions screening against 200+ lists</p>
+            <p className="featured-description">
+              Real-time sanctions screening against 200+ lists
+            </p>
             <div className="api-pricing">
               <span className="price">$99/month</span>
               <span className="rating">⭐ 4.9 (89 reviews)</span>
@@ -106,7 +126,9 @@ const MarketplaceTab: React.FC = () => {
                 <span className="featured-category">Analytics</span>
               </div>
             </div>
-            <p className="featured-description">AI-powered credit risk assessment and scoring</p>
+            <p className="featured-description">
+              AI-powered credit risk assessment and scoring
+            </p>
             <div className="api-pricing">
               <span className="price">$199/month</span>
               <span className="rating">⭐ 4.7 (156 reviews)</span>
@@ -146,7 +168,9 @@ const MarketplaceTab: React.FC = () => {
               <h5 className="api-name">Transaction Monitoring API</h5>
               <span className="api-type">REST</span>
             </div>
-            <p className="api-description">Advanced transaction monitoring with pattern recognition</p>
+            <p className="api-description">
+              Advanced transaction monitoring with pattern recognition
+            </p>
             <div className="api-meta">
               <span className="provider">by FraudTech Inc.</span>
               <span className="rating">⭐ 4.6</span>

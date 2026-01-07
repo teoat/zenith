@@ -1,14 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
 // Re-export the existing hook for consistency
-export { useDashboardMetrics as useDashboardData } from './useDashboardMetrics';
+export { useDashboardMetrics as useDashboardData } from "./useDashboardMetrics";
 
 export const useRookieChecklist = () => {
   return useQuery({
-    queryKey: ['rookie-checklist'],
+    queryKey: ["rookie-checklist"],
     queryFn: async () => {
       try {
-        const data = localStorage.getItem('rookieChecklist');
+        const data = localStorage.getItem("rookieChecklist");
         return data ? JSON.parse(data) : null;
       } catch {
         return null;

@@ -1,14 +1,22 @@
-import React, { memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
-import { useDashboardMetrics } from '@/hooks/useDashboardMetrics';
-import { Shield, CloudOff, RefreshCw, AlertTriangle, CheckCircle } from 'lucide-react';
-import RookieChecklist from '@/components/common/RookieChecklist';
-import WelcomeMessage from '@/components/common/WelcomeMessage';
-import MovableDashboard from '@/components/dashboard/MovableDashboard';
-import FeatureDiscovery from '@/components/dashboard/FeatureDiscovery';
-import PageErrorBoundary from '@/components/PageErrorBoundary';
-import { useQueryClient } from '@tanstack/react-query';
+import React, { memo, Suspense } from "react";
+import { useTranslation } from "react-i18next";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
+import {
+  Shield,
+  CloudOff,
+  RefreshCw,
+  AlertTriangle,
+  CheckCircle,
+} from "lucide-react";
+import RookieChecklist from "@/components/common/RookieChecklist";
+import WelcomeMessage from "@/components/common/WelcomeMessage";
+const MovableDashboard = React.lazy(
+  () => import("../features/dashboard/components/MovableDashboard"),
+);
+import FeatureDiscovery from "@/features/dashboard/components/FeatureDiscovery";
+import PageErrorBoundary from "@/components/PageErrorBoundary";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Wrapper component to handle localStorage check outside of render
 const RookieChecklistWrapper = memo(() => {
@@ -17,8 +25,9 @@ const RookieChecklistWrapper = memo(() => {
   React.useEffect(() => {
     const checkUser = async () => {
       try {
-        const { electronStore } = await import('../utils/electronStore');
-        const checklistProgress = await electronStore.get<Record<string, boolean>>('rookieChecklist');
+        const { electronStore } = await import("../utils/electronStore");
+        const checklistProgress =
+          await electronStore.get<Record<string, boolean>>("rookieChecklist");
         if (!checklistProgress || !checklistProgress.run_analysis) {
           setIsNewUser(true);
         }
@@ -38,18 +47,16 @@ const RookieChecklistWrapper = memo(() => {
   );
 });
 
-RookieChecklistWrapper.displayName = 'RookieChecklistWrapper';
+RookieChecklistWrapper.displayName = "RookieChecklistWrapper";
 
 const Dashboard: React.FC = () => {
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation("dashboard");
   const { isOnline } = useNetworkStatus();
   const { dataUpdatedAt } = useDashboardMetrics();
   const queryClient = useQueryClient();
   const [showReconnected, setShowReconnected] = React.useState(false);
   const wasOffline = React.useRef(!isOnline);
   const [currentTime, setCurrentTime] = React.useState(0);
-
-
 
   React.useEffect(() => {
     setCurrentTime(Date.now());
@@ -66,11 +73,20 @@ const Dashboard: React.FC = () => {
     wasOffline.current = !isOnline;
   }, [isOnline]);
 
-  const isDataStale = dataUpdatedAt && currentTime > 0 && (currentTime - dataUpdatedAt > 120000); // 2 minutes
+  const isDataStale =
+    dataUpdatedAt && currentTime > 0 && currentTime - dataUpdatedAt > 120000; // 2 minutes
 
   const status = isOnline
-    ? { label: t('status.online', 'System Operational'), color: 'bg-green-500', text: 'text-slate-600 dark:text-slate-300' }
-    : { label: t('status.offline', 'Offline Mode'), color: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400' };
+    ? {
+        label: t("status.online", "System Operational"),
+        color: "bg-green-500",
+        text: "text-slate-600 dark:text-slate-300",
+      }
+    : {
+        label: t("status.offline", "Offline Mode"),
+        color: "bg-amber-500",
+        text: "text-amber-600 dark:text-amber-400",
+      };
 
   return (
     <div className="p-6 space-y-6 bg-slate-50 dark:bg-slate-950 min-h-screen">
@@ -79,8 +95,15 @@ const Dashboard: React.FC = () => {
         <div className="bg-amber-50 border border-amber-200 dark:bg-amber-900/20 dark:border-amber-800 p-4 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
           <CloudOff className="w-5 h-5 text-amber-600 dark:text-amber-400" />
           <div className="flex-1">
-            <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100">{t('messages.offline.title', 'Working Offline')}</h3>
-            <p className="text-xs text-amber-700 dark:text-amber-300">{t('messages.offline.description', 'Changes will be synced when connection is restored. Some features may be limited.')}</p>
+            <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+              {t("messages.offline.title", "Working Offline")}
+            </h3>
+            <p className="text-xs text-amber-700 dark:text-amber-300">
+              {t(
+                "messages.offline.description",
+                "Changes will be synced when connection is restored. Some features may be limited.",
+              )}
+            </p>
           </div>
           <RefreshCw className="w-4 h-4 text-amber-600 animate-spin" />
         </div>
@@ -90,8 +113,15 @@ const Dashboard: React.FC = () => {
         <div className="bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800 p-4 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
           <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
           <div className="flex-1">
-            <h3 className="text-sm font-semibold text-green-900 dark:text-green-100">{t('messages.online.title', 'Back Online')}</h3>
-            <p className="text-xs text-green-700 dark:text-green-300">{t('messages.online.description', 'Your connection has been restored. Syncing latest data...')}</p>
+            <h3 className="text-sm font-semibold text-green-900 dark:text-green-100">
+              {t("messages.online.title", "Back Online")}
+            </h3>
+            <p className="text-xs text-green-700 dark:text-green-300">
+              {t(
+                "messages.online.description",
+                "Your connection has been restored. Syncing latest data...",
+              )}
+            </p>
           </div>
         </div>
       )}
@@ -100,13 +130,15 @@ const Dashboard: React.FC = () => {
         <div className="bg-blue-50 border border-blue-200 dark:bg-blue-900/20 dark:border-blue-800 p-3 rounded-lg flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           <span className="text-xs text-blue-800 dark:text-blue-200 italic">
-            {t('messages.staleData', 'Displaying cached data from {{time}}.', { time: new Date(dataUpdatedAt).toLocaleTimeString() })}
+            {t("messages.staleData", "Displaying cached data from {{time}}.", {
+              time: new Date(dataUpdatedAt).toLocaleTimeString(),
+            })}
           </span>
           <button
             onClick={() => queryClient.invalidateQueries()}
             className="text-xs font-bold text-blue-600 hover:underline ml-auto"
           >
-            {t('actions.refresh', 'Refresh Now')}
+            {t("actions.refresh", "Refresh Now")}
           </button>
         </div>
       )}
@@ -124,8 +156,12 @@ const Dashboard: React.FC = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <span className={`flex items-center gap-2 px-3 py-1 bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 text-xs font-medium shadow-sm transition-all duration-500 ${status.text}`}>
-            <span className={`w-2 h-2 rounded-full ${status.color} ${isOnline ? 'animate-pulse' : ''}`}></span>
+          <span
+            className={`flex items-center gap-2 px-3 py-1 bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 text-xs font-medium shadow-sm transition-all duration-500 ${status.text}`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${status.color} ${isOnline ? "animate-pulse" : ""}`}
+            ></span>
             {status.label}
           </span>
         </div>
@@ -134,7 +170,15 @@ const Dashboard: React.FC = () => {
       <main className="space-y-6">
         <RookieChecklistWrapper />
         <FeatureDiscovery className="mb-6" maxItems={4} />
-        <MovableDashboard />
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-64">
+              Loading Dashboard...
+            </div>
+          }
+        >
+          <MovableDashboard />
+        </Suspense>
         <WelcomeMessage />
       </main>
     </div>

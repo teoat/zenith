@@ -27,9 +27,7 @@ class InvestigationService:
             .first()
         )
 
-    def start_investigation(
-        self, db: Session, case_id: str, investigator_id: str
-    ) -> dict[str, Any]:
+    def start_investigation(self, db: Session, case_id: str, investigator_id: str) -> dict[str, Any]:
         """Start a new investigation for a case"""
         case = self._get_case_with_relationships(db, case_id)
         if not case:
@@ -58,9 +56,7 @@ class InvestigationService:
             "priority": case.priority,
         }
 
-    def close_investigation(
-        self, db: Session, case_id: str, resolution: str, notes: str | None = None
-    ) -> dict[str, Any]:
+    def close_investigation(self, db: Session, case_id: str, resolution: str, notes: str | None = None) -> dict[str, Any]:
         """Close an investigation"""
         case = self._get_case_with_relationships(db, case_id)
         if not case:
@@ -74,18 +70,11 @@ class InvestigationService:
 
         return {"case_id": case_id, "status": "closed", "resolution": resolution}
 
-    def get_related_transactions(
-        self, db: Session, case_id: str, limit: int = 50
-    ) -> list[Transaction]:
+    def get_related_transactions(self, db: Session, case_id: str, limit: int = 50) -> list[Transaction]:
         """Get transactions related to a case"""
         # This would typically query based on case relationships
         # For now, return flagged transactions as a placeholder
-        return (
-            db.query(Transaction)
-            .filter(Transaction.is_flagged)
-            .limit(limit)
-            .all()
-        )
+        return db.query(Transaction).filter(Transaction.is_flagged).limit(limit).all()
 
 
 # Singleton instance

@@ -4,7 +4,7 @@ export interface ComplianceRule {
   framework: string;
   title: string;
   description: string;
-  risk_level: 'low' | 'medium' | 'high' | 'critical';
+  risk_level: "low" | "medium" | "high" | "critical";
   check_frequency: string;
   automated_check: boolean;
   manual_review_required: boolean;
@@ -17,7 +17,7 @@ export interface ComplianceCheck {
   rule_id: string;
   entity_id: string;
   entity_type: string;
-  status: 'compliant' | 'non_compliant' | 'under_review' | 'pending_approval';
+  status: "compliant" | "non_compliant" | "under_review" | "pending_approval";
   risk_score: number;
   findings: string[];
   recommendations: string[];
@@ -32,12 +32,12 @@ export interface RegulatoryAlert {
   framework: string;
   title: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   affected_entities: string[];
   required_action: string;
   deadline: string;
   escalation_level: number;
-  status: 'active' | 'acknowledged' | 'resolved';
+  status: "active" | "acknowledged" | "resolved";
   created_at: string;
   acknowledged_at?: string;
   resolved_at?: string;
@@ -51,7 +51,11 @@ export interface ComplianceReport {
   generated_at: string;
   period_start: string;
   period_end: string;
-  overall_status: 'compliant' | 'non_compliant' | 'under_review' | 'pending_approval';
+  overall_status:
+    | "compliant"
+    | "non_compliant"
+    | "under_review"
+    | "pending_approval";
   compliance_score?: number;
   total_checks?: number;
   passed_checks?: number;

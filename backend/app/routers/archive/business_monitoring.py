@@ -15,6 +15,8 @@ from app.services.infrastructure.business_metrics_service import (
 from core.database_connection import SessionLocal
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+from app.core.exceptions import ZenithError
+from core.zlogging import logger
 
 
 def get_db():
@@ -25,9 +27,6 @@ def get_db():
     finally:
         db.close()
 
-
-from app.core.exceptions import ZenithError
-from core.zlogging import logger
 
 router = APIRouter(
     prefix="/api/v1/monitoring/business",
@@ -56,9 +55,7 @@ class AlertAcknowledgeRequest(BaseModel):
 
 @router.get("/dashboard", response_model=dict[str, Any])
 async def get_business_dashboard(
-    hours: int = Query(
-        24, description="Hours of historical data to include", ge=1, le=168
-    ),
+    hours: int = Query(24, description="Hours of historical data to include", ge=1, le=168),
 ):
     """
     Get comprehensive business metrics dashboard data.
@@ -69,18 +66,14 @@ async def get_business_dashboard(
         return {"status": "success", "data": dashboard}
     except (ZenithError, Exception) as e:
         logger.error(f"Failed to get business dashboard: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to retrieve business dashboard"
-        )
+        raise HTTPException(status_code=500, detail="Failed to retrieve business dashboard")
 
 
 @router.get("/alerts", response_model=dict[str, Any])
 async def get_alerts(
     status: str | None = Query(None, description="Filter by alert status"),
     severity: str | None = Query(None, description="Filter by severity"),
-    limit: int = Query(
-        50, description="Maximum number of alerts to return", ge=1, le=200
-    ),
+    limit: int = Query(50, description="Maximum number of alerts to return", ge=1, le=200),
 ):
     """
     Get alerts with optional filtering.
@@ -121,9 +114,7 @@ async def get_alerts(
 
 
 @router.post("/alerts/{alert_id}/acknowledge")
-async def acknowledge_alert(
-    alert_id: str, request: AlertAcknowledgeRequest, db=Depends(get_db)
-):
+async def acknowledge_alert(alert_id: str, request: AlertAcknowledgeRequest, db=Depends(get_db)):
     """Acknowledge an alert"""
     try:
         alerting_service.acknowledge_alert(alert_id, request.user_id)

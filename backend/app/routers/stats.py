@@ -121,9 +121,7 @@ def get_dashboard_metrics(
 
         # Blocked Amount (Transactions with status 'denied' or 'blocked')
         # Assuming 'denied' is the status for blocked.
-        blocked_amount_result = (
-            db.query(func.sum(Transaction.amount)).filter(Transaction.status.in_(["denied", "blocked"])).scalar()
-        )
+        blocked_amount_result = db.query(func.sum(Transaction.amount)).filter(Transaction.status.in_(["denied", "blocked"])).scalar()
         blocked_amount = float(blocked_amount_result) if blocked_amount_result else 0.0
 
         # System Health
@@ -142,8 +140,6 @@ def get_dashboard_metrics(
             system_health = 95.0
 
         # Optimized single query for multiple counts
-        from sqlalchemy import func
-
         # Get all case statistics in a single query
         case_stats = db.query(
             func.count(Case.id).label("total_cases"),
@@ -245,9 +241,7 @@ def _get_sparkline_data(db: Session) -> dict[str, list[int]]:
     # Slight variation of helper needed for filters, but for speed we'll mock the distribution
     # based on the total trend or do a specific query if strictly required.
     # For now, let's do a specific query for critical cases.
-    critical_records = (
-        db.query(Case.created_at).filter(Case.created_at >= start_date, Case.priority == "critical").all()
-    )
+    critical_records = db.query(Case.created_at).filter(Case.created_at >= start_date, Case.priority == "critical").all()
 
     critical_trend = [0] * 7
     for r in critical_records:

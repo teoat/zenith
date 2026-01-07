@@ -67,9 +67,7 @@ class CircuitBreaker:
 
             if self.failure_count >= self.config.failure_threshold:
                 self.state = CircuitBreakerState.OPEN
-                logger.warning(
-                    f"Circuit breaker '{self.name}' opened after {self.failure_count} failures"
-                )
+                logger.warning(f"Circuit breaker '{self.name}' opened after {self.failure_count} failures")
 
     def _reset(self):
         """Reset circuit breaker to closed state"""
@@ -98,9 +96,7 @@ class CircuitBreaker:
         @contextmanager
         def sync_context():
             if not self._can_attempt():
-                raise CircuitBreakerOpenException(
-                    f"Circuit breaker '{self.name}' is open"
-                )
+                raise CircuitBreakerOpenException(f"Circuit breaker '{self.name}' is open")
 
             if self.state == CircuitBreakerState.OPEN:
                 self.state = CircuitBreakerState.HALF_OPEN
@@ -121,9 +117,7 @@ class CircuitBreaker:
                 self.last_failure_time = time.time()
                 if self.failure_count >= self.config.failure_threshold:
                     self.state = CircuitBreakerState.OPEN
-                    logger.warning(
-                        f"Circuit breaker '{self.name}' opened after {self.failure_count} failures"
-                    )
+                    logger.warning(f"Circuit breaker '{self.name}' opened after {self.failure_count} failures")
                 raise e
 
         return sync_context()
@@ -170,9 +164,7 @@ class CircuitBreakerOpenException(Exception):
 _circuit_breakers: dict[str, CircuitBreaker] = {}
 
 
-def get_circuit_breaker(
-    name: str, config: CircuitBreakerConfig = None
-) -> CircuitBreaker:
+def get_circuit_breaker(name: str, config: CircuitBreakerConfig = None) -> CircuitBreaker:
     """Get or create a circuit breaker instance"""
     if name not in _circuit_breakers:
         _circuit_breakers[name] = CircuitBreaker(name, config)

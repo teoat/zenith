@@ -25,9 +25,7 @@ class TransactionPatternAnalyzer:
             return findings
 
         # Ensure sorted by time
-        sorted_txs = sorted(
-            transactions, key=lambda x: x.get("timestamp", datetime.min)
-        )
+        sorted_txs = sorted(transactions, key=lambda x: x.get("timestamp", datetime.min))
 
         for i, tx in enumerate(sorted_txs):
             current_time = tx.get("timestamp")
@@ -63,20 +61,14 @@ class TransactionPatternAnalyzer:
 
         return findings
 
-    def detect_structuring(
-        self, transactions: list[dict[str, Any]], threshold_amount: float = 10000.0
-    ) -> list[dict[str, Any]]:
+    def detect_structuring(self, transactions: list[dict[str, Any]], threshold_amount: float = 10000.0) -> list[dict[str, Any]]:
         """
         Detects structuring (smurfing) - multiple transactions just below a reporting threshold.
         """
         findings = []
         just_below_threshold = threshold_amount * 0.9  # e.g. 9000
 
-        candidates = [
-            tx
-            for tx in transactions
-            if just_below_threshold <= tx.get("amount", 0.0) < threshold_amount
-        ]
+        candidates = [tx for tx in transactions if just_below_threshold <= tx.get("amount", 0.0) < threshold_amount]
 
         # If we see multiple of these in a short period (e.g. 24h), it's suspicious
         if len(candidates) >= 2:

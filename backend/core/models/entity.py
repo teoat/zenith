@@ -6,8 +6,9 @@ network analysis and entity mapping.
 """
 
 import json
+import uuid
 
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, String
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 
 from .base import Base, EncryptedString, utc_now

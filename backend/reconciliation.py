@@ -20,10 +20,7 @@ def get_fuzzy_score(str1, str2):
 
 def find_amount_column(df):
     for col in df.columns:
-        if any(
-            keyword in col
-            for keyword in ["amount", "price", "value", "credit", "debit", "balance"]
-        ):
+        if any(keyword in col for keyword in ["amount", "price", "value", "credit", "debit", "balance"]):
             return col
     return None
 
@@ -84,10 +81,7 @@ def reconcile_dataframes(df_a, df_b, date_tolerance_days=3):
             continue
 
         # Filter B for candidates (Amount match)
-        candidates = df_b[
-            (not df_b["_matched"])
-            & (np.isclose(df_b[col_amt_b], row_a[col_amt_a], atol=0.01))
-        ]
+        candidates = df_b[(not df_b["_matched"]) & (np.isclose(df_b[col_amt_b], row_a[col_amt_a], atol=0.01))]
 
         # Refine by Date if available
         if col_date_a and col_date_b and not pd.isna(row_a[col_date_a]):
@@ -111,14 +105,8 @@ def reconcile_dataframes(df_a, df_b, date_tolerance_days=3):
             # Date Tolerance
             # e.g. B date is within A date +/- tolerance
             date_window_match = candidates[
-                (
-                    candidates[col_date_b]
-                    >= row_a[col_date_a] - timedelta(days=date_tolerance_days)
-                )
-                & (
-                    candidates[col_date_b]
-                    <= row_a[col_date_a] + timedelta(days=date_tolerance_days)
-                )
+                (candidates[col_date_b] >= row_a[col_date_a] - timedelta(days=date_tolerance_days))
+                & (candidates[col_date_b] <= row_a[col_date_a] + timedelta(days=date_tolerance_days))
             ]
             if not date_window_match.empty:
                 match_row_b = date_window_match.iloc[0]
@@ -142,10 +130,7 @@ def reconcile_dataframes(df_a, df_b, date_tolerance_days=3):
                 continue
 
             # Find candidates with same amount but no date match
-            candidates = df_b[
-                (not df_b["_matched"])
-                & (np.isclose(df_b[col_amt_b], row_a[col_amt_a], atol=0.01))
-            ]
+            candidates = df_b[(not df_b["_matched"]) & (np.isclose(df_b[col_amt_b], row_a[col_amt_a], atol=0.01))]
 
             if not candidates.empty:
                 # Calculate scores
@@ -153,9 +138,7 @@ def reconcile_dataframes(df_a, df_b, date_tolerance_days=3):
                 best_candidate = None
 
                 for idx_b, row_b in candidates.iterrows():
-                    score = get_fuzzy_score(
-                        str(row_a[col_desc_a]), str(row_b[col_desc_b])
-                    )
+                    score = get_fuzzy_score(str(row_a[col_desc_a]), str(row_b[col_desc_b]))
                     if score > best_score:
                         best_score = score
                         best_candidate = row_b
@@ -173,25 +156,12 @@ def reconcile_dataframes(df_a, df_b, date_tolerance_days=3):
                     )
 
     # 4. Result Compilation
-    unmatched_a = (
-        df_a[not df_a["_matched"]]
-        .drop(columns=["_recon_id", "_matched"])
-        .fillna("")
-        .to_dict("records")
-    )
-    unmatched_b = (
-        df_b[not df_b["_matched"]]
-        .drop(columns=["_recon_id", "_matched"])
-        .fillna("")
-        .to_dict("records")
-    )
+    unmatched_a = df_a[not df_a["_matched"]].drop(columns=["_recon_id", "_matched"]).fillna("").to_dict("records")
+    unmatched_b = df_b[not df_b["_matched"]].drop(columns=["_recon_id", "_matched"]).fillna("").to_dict("records")
 
     # Convert timestamp objects to strings for JSON serialization in results
     def serialize_dict(d):
-        return {
-            k: (v.isoformat() if isinstance(v, pd.Timestamp) else v)
-            for k, v in d.items()
-        }
+        return {k: (v.isoformat() if isinstance(v, pd.Timestamp) else v) for k, v in d.items()}
 
     return {
         "summary": {

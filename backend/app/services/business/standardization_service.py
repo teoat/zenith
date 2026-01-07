@@ -56,18 +56,14 @@ class StandardizationService:
         amounts = re.findall(r"(\$?\s?\d{1,3}(?:,\d{3})*(?:\.\d{2})?)", text)
         if amounts:
             # Take the largest amount as the primary fraud amount candidate
-            normalized_amounts = [
-                StandardizationService.normalize_currency(a) for a in amounts
-            ]
+            normalized_amounts = [StandardizationService.normalize_currency(a) for a in amounts]
             valid_amounts = [a for a in normalized_amounts if a is not None]
             if valid_amounts:
                 results["fraud_amount"] = max(valid_amounts)
 
         # 2. Look for potential Customer/Entity names (Simplified: Sequence of capitalized words)
         # Often found near "Customer:", "Name:", "Client:", etc.
-        name_match = re.search(
-            r"(?:Customer|Client|Name|Entity):\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)", text
-        )
+        name_match = re.search(r"(?:Customer|Client|Name|Entity):\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)", text)
         if name_match:
             results["customer_name"] = name_match.group(1).strip()
         else:

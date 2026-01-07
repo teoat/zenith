@@ -56,11 +56,7 @@ class FeatureFlagService:
             # Target users logic
             if flag.target_users and user_id:
                 # target_users is stored as JSON list
-                target_users_list = (
-                    flag.target_users
-                    if isinstance(flag.target_users, list)
-                    else json.loads(flag.target_users)
-                )
+                target_users_list = flag.target_users if isinstance(flag.target_users, list) else json.loads(flag.target_users)
                 if user_id not in target_users_list:
                     return False
 

@@ -117,9 +117,7 @@ class ArchitectureAnalyzerPlugin(PluginInterface):
                 "status": "success",
             }
 
-            logger.info(
-                f"Architecture analysis completed for {codebase_path}: Quality score {result['quality_score']}"
-            )
+            logger.info(f"Architecture analysis completed for {codebase_path}: Quality score {result['quality_score']}")
             return result
 
         except Exception as e:

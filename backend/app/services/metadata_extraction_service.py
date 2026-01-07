@@ -35,9 +35,7 @@ class MetadataExtractionService:
         )
 
     def detect_tampering(self, metadata: DocumentMetadata) -> ForensicFlags:
-        return ForensicFlags(
-            is_tampered=False, indicators=["Mock analysis - clean"], risk_score=0.0
-        )
+        return ForensicFlags(is_tampered=False, indicators=["Mock analysis - clean"], risk_score=0.0)
 
 
 metadata_service = MetadataExtractionService()

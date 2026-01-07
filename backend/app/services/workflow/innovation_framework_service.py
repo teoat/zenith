@@ -119,9 +119,7 @@ class RapidPrototypingEngine:
             "created_at": datetime.now(),
         }
 
-    def generate_prototype_from_template(
-        self, template_id: str, customizations: dict[str, Any]
-    ) -> dict[str, Any]:
+    def generate_prototype_from_template(self, template_id: str, customizations: dict[str, Any]) -> dict[str, Any]:
         """Generate a prototype from a template with customizations"""
         if template_id not in self.templates:
             raise ValueError(f"Template {template_id} not found")
@@ -141,9 +139,7 @@ class RapidPrototypingEngine:
         self.prototype_history.append(prototype)
         return prototype
 
-    async def validate_prototype_feasibility(
-        self, prototype: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def validate_prototype_feasibility(self, prototype: dict[str, Any]) -> dict[str, Any]:
         """Validate if a prototype is technically feasible"""
         # Simulate feasibility analysis
         components = prototype.get("components", [])
@@ -171,16 +167,8 @@ class RapidPrototypingEngine:
         return {
             "feasible": feasibility_score > 0.6,
             "feasibility_score": feasibility_score,
-            "risks_identified": [
-                "complex integration" if feasibility_score < 0.7 else None
-            ],
-            "recommendations": [
-                (
-                    "Break down into smaller components"
-                    if feasibility_score < 0.7
-                    else "Proceed with development"
-                )
-            ],
+            "risks_identified": ["complex integration" if feasibility_score < 0.7 else None],
+            "recommendations": ["Break down into smaller components" if feasibility_score < 0.7 else "Proceed with development"],
             "estimated_complexity": "high" if feasibility_score < 0.7 else "medium",
         }
 
@@ -195,9 +183,7 @@ class ExperimentationPlatform:
 
     async def create_experiment(self, experiment_data: dict[str, Any]) -> Experiment:
         """Create a new experiment"""
-        experiment_id = (
-            f"exp_{int(time.time())}_{experiment_data['title'].replace(' ', '_')[:20]}"
-        )
+        experiment_id = f"exp_{int(time.time())}_{experiment_data['title'].replace(' ', '_')[:20]}"
 
         experiment = Experiment(
             experiment_id=experiment_id,
@@ -234,15 +220,11 @@ class ExperimentationPlatform:
         logger.info(f"Started experiment: {experiment_id}")
         return True
 
-    async def run_ab_test(
-        self, experiment_id: str, test_config: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def run_ab_test(self, experiment_id: str, test_config: dict[str, Any]) -> dict[str, Any]:
         """Run an A/B test for the experiment"""
         return await self.a_b_test_framework.run_test(experiment_id, test_config)
 
-    async def complete_experiment(
-        self, experiment_id: str, results: dict[str, Any]
-    ) -> bool:
+    async def complete_experiment(self, experiment_id: str, results: dict[str, Any]) -> bool:
         """Complete an experiment with results"""
         if experiment_id not in self.experiments:
             return False
@@ -270,9 +252,7 @@ class ExperimentationPlatform:
             "completed_at": datetime.now(),
         }
 
-        logger.info(
-            f"Completed experiment {experiment_id}: {'SUCCESS' if success else 'FAILED'}"
-        )
+        logger.info(f"Completed experiment {experiment_id}: {'SUCCESS' if success else 'FAILED'}")
         return True
 
     def _evaluate_experiment_success(self, experiment: Experiment) -> bool:
@@ -290,9 +270,7 @@ class ExperimentationPlatform:
                 if isinstance(metric_value, (int, float)) and metric_value > 0:
                     success_count += 1
 
-        return (
-            success_count >= len(experiment.success_criteria) * 0.7
-        )  # 70% success rate
+        return success_count >= len(experiment.success_criteria) * 0.7  # 70% success rate
 
 
 class ABTestingFramework:
@@ -302,9 +280,7 @@ class ABTestingFramework:
         self.active_tests: dict[str, dict] = {}
         self.test_results: dict[str, dict] = {}
 
-    async def run_test(
-        self, experiment_id: str, config: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def run_test(self, experiment_id: str, config: dict[str, Any]) -> dict[str, Any]:
         """Run an A/B test"""
         test_id = f"ab_{experiment_id}_{int(time.time())}"
 
@@ -365,9 +341,7 @@ class InnovationPipelineManager:
             title=idea_data["title"],
             description=idea_data["description"],
             category=idea_data["category"],
-            innovation_type=InnovationType(
-                idea_data.get("innovation_type", "incremental")
-            ),
+            innovation_type=InnovationType(idea_data.get("innovation_type", "incremental")),
             stage=InnovationStage.IDEA_GENERATION,
             proposer=idea_data["proposer"],
             created_at=datetime.now(),
@@ -411,18 +385,14 @@ class InnovationPipelineManager:
         self.pipeline_stages[new_stage.value].append(idea_id)
         idea.stage = new_stage
 
-        logger.info(
-            f"Advanced idea {idea_id} from {current_stage} to {new_stage.value}"
-        )
+        logger.info(f"Advanced idea {idea_id} from {current_stage} to {new_stage.value}")
         return True
 
     def get_pipeline_status(self) -> dict[str, Any]:
         """Get current pipeline status"""
         return {
             "total_ideas": len(self.ideas),
-            "pipeline_distribution": {
-                stage: len(ideas) for stage, ideas in self.pipeline_stages.items()
-            },
+            "pipeline_distribution": {stage: len(ideas) for stage, ideas in self.pipeline_stages.items()},
             "stage_transition_rates": self._calculate_transition_rates(),
             "bottlenecks": self._identify_bottlenecks(),
             "success_metrics": self._calculate_success_metrics(),
@@ -451,9 +421,7 @@ class InnovationPipelineManager:
         """Identify bottlenecks in the innovation pipeline"""
         bottlenecks = []
 
-        stage_counts = {
-            stage: len(ideas) for stage, ideas in self.pipeline_stages.items()
-        }
+        stage_counts = {stage: len(ideas) for stage, ideas in self.pipeline_stages.items()}
 
         # Identify stages with high accumulation
         avg_count = statistics.mean(stage_counts.values()) if stage_counts else 0
@@ -470,13 +438,9 @@ class InnovationPipelineManager:
         production_ideas = len(self.pipeline_stages[InnovationStage.PRODUCTION.value])
 
         return {
-            "idea_to_production_rate": (
-                production_ideas / total_ideas if total_ideas > 0 else 0
-            ),
+            "idea_to_production_rate": (production_ideas / total_ideas if total_ideas > 0 else 0),
             "average_time_in_pipeline": self._calculate_average_pipeline_time(),
-            "innovation_success_rate": (
-                production_ideas / total_ideas if total_ideas > 0 else 0
-            ),
+            "innovation_success_rate": (production_ideas / total_ideas if total_ideas > 0 else 0),
         }
 
     def _calculate_average_pipeline_time(self) -> float:
@@ -572,22 +536,16 @@ class InnovationFrameworkService:
         template_id = template_mapping.get(idea.category, "api_endpoint")
 
         # Generate prototype
-        prototype = self.rapid_prototyping.generate_prototype_from_template(
-            template_id, {"idea_id": idea_id, "title": idea.title}
-        )
+        prototype = self.rapid_prototyping.generate_prototype_from_template(template_id, {"idea_id": idea_id, "title": idea.title})
 
         # Validate feasibility
-        validation = await self.rapid_prototyping.validate_prototype_feasibility(
-            prototype
-        )
+        validation = await self.rapid_prototyping.validate_prototype_feasibility(prototype)
 
         prototype["validation"] = validation
 
         # Advance to prototyping stage if feasible
         if validation["feasible"]:
-            self.pipeline_manager.advance_idea_stage(
-                idea_id, InnovationStage.RAPID_PROTOTYPING
-            )
+            self.pipeline_manager.advance_idea_stage(idea_id, InnovationStage.RAPID_PROTOTYPING)
 
         return prototype
 
@@ -613,13 +571,7 @@ class InnovationFrameworkService:
         return {
             "pipeline_status": pipeline_status,
             "innovation_metrics": metrics,
-            "active_experiments": len(
-                [
-                    e
-                    for e in self.experimentation.experiments.values()
-                    if e.status == ExperimentStatus.RUNNING
-                ]
-            ),
+            "active_experiments": len([e for e in self.experimentation.experiments.values() if e.status == ExperimentStatus.RUNNING]),
             "prototypes_created": len(self.rapid_prototyping.prototype_history),
             "velocity_improvements": self._calculate_velocity_improvements(),
             "recommendations": self._generate_innovation_recommendations(metrics),
@@ -654,44 +606,25 @@ class InnovationFrameworkService:
 
         return {
             "improvements": improvements,
-            "overall_velocity_improvement": (
-                statistics.mean(improvements.values()) if improvements else 0
-            ),
+            "overall_velocity_improvement": (statistics.mean(improvements.values()) if improvements else 0),
             "target_achievement": 0.5,  # 50% target
         }
 
-    def _generate_innovation_recommendations(
-        self, metrics: InnovationMetrics
-    ) -> list[str]:
+    def _generate_innovation_recommendations(self, metrics: InnovationMetrics) -> list[str]:
         """Generate recommendations for improving innovation"""
         recommendations = []
 
         if metrics.success_rate < 0.4:
-            recommendations.append(
-                "Improve experiment success rate through better hypothesis validation"
-            )
+            recommendations.append("Improve experiment success rate through better hypothesis validation")
 
         if metrics.average_time_to_prototype > 7:
-            recommendations.append(
-                "Accelerate prototyping through template standardization"
-            )
+            recommendations.append("Accelerate prototyping through template standardization")
 
         if metrics.innovation_velocity_index < 0.6:
-            recommendations.append(
-                "Increase innovation velocity by streamlining approval processes"
-            )
+            recommendations.append("Increase innovation velocity by streamlining approval processes")
 
-        if (
-            len(
-                self.pipeline_manager.pipeline_stages[
-                    InnovationStage.IDEA_GENERATION.value
-                ]
-            )
-            > 20
-        ):
-            recommendations.append(
-                "Process backlog of innovation ideas to prevent accumulation"
-            )
+        if len(self.pipeline_manager.pipeline_stages[InnovationStage.IDEA_GENERATION.value]) > 20:
+            recommendations.append("Process backlog of innovation ideas to prevent accumulation")
 
         recommendations.append("Continue investing in rapid prototyping capabilities")
         recommendations.append("Expand experiment success criteria and measurement")
@@ -702,24 +635,14 @@ class InnovationFrameworkService:
 class InnovationMetricsCalculator:
     """Calculates innovation performance metrics"""
 
-    def calculate_metrics(
-        self, ideas: list[InnovationIdea], experiments: list[Experiment]
-    ) -> InnovationMetrics:
+    def calculate_metrics(self, ideas: list[InnovationIdea], experiments: list[Experiment]) -> InnovationMetrics:
         """Calculate comprehensive innovation metrics"""
 
         total_ideas = len(ideas)
-        implemented_ideas = len(
-            [i for i in ideas if i.stage == InnovationStage.PRODUCTION]
-        )
+        implemented_ideas = len([i for i in ideas if i.stage == InnovationStage.PRODUCTION])
 
         total_experiments = len(experiments)
-        successful_experiments = len(
-            [
-                e
-                for e in experiments
-                if e.status == ExperimentStatus.COMPLETED and e.results
-            ]
-        )
+        successful_experiments = len([e for e in experiments if e.status == ExperimentStatus.COMPLETED and e.results])
 
         # Calculate timing metrics
         prototype_times = []
@@ -741,32 +664,19 @@ class InnovationMetricsCalculator:
                 prototype_times.append(time_in_process)
 
         avg_prototype_time = statistics.mean(prototype_times) if prototype_times else 0
-        avg_experiment_time = (
-            statistics.mean(experiment_times) if experiment_times else 0
-        )
+        avg_experiment_time = statistics.mean(experiment_times) if experiment_times else 0
 
         # Calculate innovation velocity index (0-1 scale)
         velocity_components = [
-            (
-                implemented_ideas / total_ideas if total_ideas > 0 else 0
-            ),  # Implementation rate
-            (
-                successful_experiments / total_experiments
-                if total_experiments > 0
-                else 0
-            ),  # Success rate
+            (implemented_ideas / total_ideas if total_ideas > 0 else 0),  # Implementation rate
+            (successful_experiments / total_experiments if total_experiments > 0 else 0),  # Success rate
             1 / (1 + avg_prototype_time / 30),  # Speed factor (faster is better)
             (
-                len([i for i in ideas if i.innovation_type == InnovationType.RADICAL])
-                / total_ideas
-                if total_ideas > 0
-                else 0
+                len([i for i in ideas if i.innovation_type == InnovationType.RADICAL]) / total_ideas if total_ideas > 0 else 0
             ),  # Innovation quality
         ]
 
-        velocity_index = (
-            statistics.mean(velocity_components) if velocity_components else 0
-        )
+        velocity_index = statistics.mean(velocity_components) if velocity_components else 0
 
         return InnovationMetrics(
             total_ideas_generated=total_ideas,
@@ -776,11 +686,7 @@ class InnovationMetricsCalculator:
             average_time_to_prototype=avg_prototype_time,
             average_time_to_experiment=avg_experiment_time,
             innovation_velocity_index=velocity_index,
-            success_rate=(
-                successful_experiments / total_experiments
-                if total_experiments > 0
-                else 0
-            ),
+            success_rate=(successful_experiments / total_experiments if total_experiments > 0 else 0),
             cost_per_innovation=5000,  # Estimated cost per innovation
         )
 

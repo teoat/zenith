@@ -192,9 +192,7 @@ class AutomatedCaseResolutionEngine:
         for rule in default_rules:
             self.resolution_rules[rule.rule_id] = rule
 
-    async def evaluate_case_for_resolution(
-        self, case_context: CaseResolutionContext
-    ) -> ResolutionAttempt | None:
+    async def evaluate_case_for_resolution(self, case_context: CaseResolutionContext) -> ResolutionAttempt | None:
         """
         Evaluate a case for automated resolution
 
@@ -209,18 +207,14 @@ class AutomatedCaseResolutionEngine:
 
         # Only attempt automation for simple and moderate cases
         if complexity in [CaseComplexity.COMPLEX, CaseComplexity.CRITICAL]:
-            logger.info(
-                f"Case {case_context.case_id} too complex for automation (complexity: {complexity.value})"
-            )
+            logger.info(f"Case {case_context.case_id} too complex for automation (complexity: {complexity.value})")
             return None
 
         # Find applicable rules
         applicable_rules = await self._find_applicable_rules(case_context)
 
         if not applicable_rules:
-            logger.info(
-                f"No applicable automation rules for case {case_context.case_id}"
-            )
+            logger.info(f"No applicable automation rules for case {case_context.case_id}")
             return None
 
         # Select best rule
@@ -230,31 +224,21 @@ class AutomatedCaseResolutionEngine:
             return None
 
         # Evaluate rule conditions
-        condition_results = await self._evaluate_rule_conditions(
-            best_rule, case_context
-        )
+        condition_results = await self._evaluate_rule_conditions(best_rule, case_context)
 
         if not condition_results["all_met"]:
-            logger.info(
-                f"Rule conditions not met for case {case_context.case_id}, rule: {best_rule.rule_id}"
-            )
+            logger.info(f"Rule conditions not met for case {case_context.case_id}, rule: {best_rule.rule_id}")
             return None
 
         # Calculate confidence score
-        confidence_score = self._calculate_resolution_confidence(
-            best_rule, condition_results, case_context
-        )
+        confidence_score = self._calculate_resolution_confidence(best_rule, condition_results, case_context)
 
         if confidence_score < best_rule.confidence_threshold:
-            logger.info(
-                f"Confidence too low for automated resolution: {confidence_score:.2f} < {best_rule.confidence_threshold}"
-            )
+            logger.info(f"Confidence too low for automated resolution: {confidence_score:.2f} < {best_rule.confidence_threshold}")
             return None
 
         # Create resolution attempt
-        attempt_id = (
-            f"resolution_{case_context.case_id}_{int(datetime.now().timestamp())}"
-        )
+        attempt_id = f"resolution_{case_context.case_id}_{int(datetime.now().timestamp())}"
 
         resolution_attempt = ResolutionAttempt(
             attempt_id=attempt_id,
@@ -262,9 +246,7 @@ class AutomatedCaseResolutionEngine:
             rule_id=best_rule.rule_id,
             action_taken=best_rule.action,
             confidence_score=confidence_score,
-            reasoning=self._generate_resolution_reasoning(
-                best_rule, condition_results, case_context
-            ),
+            reasoning=self._generate_resolution_reasoning(best_rule, condition_results, case_context),
             automated=True,
         )
 
@@ -297,9 +279,7 @@ class AutomatedCaseResolutionEngine:
 
             # Record execution details
             resolution_attempt.success = success
-            resolution_attempt.execution_duration_ms = int(
-                (datetime.now() - start_time).total_seconds() * 1000
-            )
+            resolution_attempt.execution_duration_ms = int((datetime.now() - start_time).total_seconds() * 1000)
 
             # Update rule success rate
             rule = self.resolution_rules.get(resolution_attempt.rule_id)
@@ -307,30 +287,20 @@ class AutomatedCaseResolutionEngine:
                 total_attempts = rule.execution_count
                 if total_attempts > 0:
                     # Simplified success rate calculation
-                    rule.success_rate = (
-                        rule.success_rate * (total_attempts - 1) + (1 if success else 0)
-                    ) / total_attempts
+                    rule.success_rate = (rule.success_rate * (total_attempts - 1) + (1 if success else 0)) / total_attempts
 
-            logger.info(
-                f"Resolution executed: {resolution_attempt.attempt_id}, success: {success}"
-            )
+            logger.info(f"Resolution executed: {resolution_attempt.attempt_id}, success: {success}")
             return success
 
         except Exception as e:
             resolution_attempt.success = False
             resolution_attempt.error_message = str(e)
-            resolution_attempt.execution_duration_ms = int(
-                (datetime.now() - start_time).total_seconds() * 1000
-            )
+            resolution_attempt.execution_duration_ms = int((datetime.now() - start_time).total_seconds() * 1000)
 
-            logger.error(
-                f"Resolution execution failed: {resolution_attempt.attempt_id} - {e}"
-            )
+            logger.error(f"Resolution execution failed: {resolution_attempt.attempt_id} - {e}")
             return False
 
-    def _assess_case_complexity(
-        self, case_context: CaseResolutionContext
-    ) -> CaseComplexity:
+    def _assess_case_complexity(self, case_context: CaseResolutionContext) -> CaseComplexity:
         """Assess the complexity of a case for automation potential"""
         # High amount cases are more complex
         if case_context.amount_involved > 100000:
@@ -359,9 +329,7 @@ class AutomatedCaseResolutionEngine:
 
         return CaseComplexity.SIMPLE
 
-    async def _find_applicable_rules(
-        self, case_context: CaseResolutionContext
-    ) -> list[ResolutionRule]:
+    async def _find_applicable_rules(self, case_context: CaseResolutionContext) -> list[ResolutionRule]:
         """Find rules that could apply to this case"""
         applicable_rules = []
 
@@ -370,10 +338,7 @@ class AutomatedCaseResolutionEngine:
                 continue
 
             # Check if case complexity is within rule limits
-            if (
-                self._assess_case_complexity(case_context).value
-                > rule.complexity_limit.value
-            ):
+            if self._assess_case_complexity(case_context).value > rule.complexity_limit.value:
                 continue
 
             # Quick check if rule conditions could potentially match
@@ -382,9 +347,7 @@ class AutomatedCaseResolutionEngine:
 
         return applicable_rules
 
-    async def _rule_could_apply(
-        self, rule: ResolutionRule, case_context: CaseResolutionContext
-    ) -> bool:
+    async def _rule_could_apply(self, rule: ResolutionRule, case_context: CaseResolutionContext) -> bool:
         """Quick check if a rule could potentially apply to the case"""
         # This is a simplified check - in practice, would do more detailed analysis
         for condition in rule.conditions:
@@ -404,15 +367,11 @@ class AutomatedCaseResolutionEngine:
             return None
 
         # Sort by priority (higher priority first), then by success rate
-        sorted_rules = sorted(
-            applicable_rules, key=lambda r: (r.priority, r.success_rate), reverse=True
-        )
+        sorted_rules = sorted(applicable_rules, key=lambda r: (r.priority, r.success_rate), reverse=True)
 
         return sorted_rules[0]
 
-    async def _evaluate_rule_conditions(
-        self, rule: ResolutionRule, case_context: CaseResolutionContext
-    ) -> dict[str, Any]:
+    async def _evaluate_rule_conditions(self, rule: ResolutionRule, case_context: CaseResolutionContext) -> dict[str, Any]:
         """Evaluate all conditions for a rule"""
         results = {
             "all_met": True,
@@ -422,13 +381,9 @@ class AutomatedCaseResolutionEngine:
         }
 
         for condition in rule.conditions:
-            condition_met, details = await self._evaluate_condition(
-                condition, case_context
-            )
+            condition_met, details = await self._evaluate_condition(condition, case_context)
 
-            results["condition_details"].append(
-                {"condition": condition, "met": condition_met, "details": details}
-            )
+            results["condition_details"].append({"condition": condition, "met": condition_met, "details": details})
 
             if condition_met:
                 results["met_conditions"].append(condition)
@@ -438,9 +393,7 @@ class AutomatedCaseResolutionEngine:
 
         return results
 
-    async def _evaluate_condition(
-        self, condition: dict[str, Any], case_context: CaseResolutionContext
-    ) -> tuple[bool, str]:
+    async def _evaluate_condition(self, condition: dict[str, Any], case_context: CaseResolutionContext) -> tuple[bool, str]:
         """Evaluate a single condition"""
         field = condition.get("field")
         operator = condition.get("operator")
@@ -463,23 +416,13 @@ class AutomatedCaseResolutionEngine:
         elif operator == "!=":
             result = actual_value != expected_value
         elif operator == "contains":
-            result = (
-                expected_value in actual_value
-                if isinstance(actual_value, (list, str))
-                else False
-            )
+            result = expected_value in actual_value if isinstance(actual_value, (list, str)) else False
         elif operator == "contains_any":
-            result = (
-                any(item in actual_value for item in expected_value)
-                if isinstance(actual_value, (list, str))
-                else False
-            )
+            result = any(item in actual_value for item in expected_value) if isinstance(actual_value, (list, str)) else False
         else:
             result = False
 
-        details = (
-            f"Field '{field}': {actual_value} {operator} {expected_value} = {result}"
-        )
+        details = f"Field '{field}': {actual_value} {operator} {expected_value} = {result}"
         return result, details
 
     def _get_field_value(self, case_context: CaseResolutionContext, field: str) -> Any:
@@ -508,9 +451,7 @@ class AutomatedCaseResolutionEngine:
         # Default fallback
         return None
 
-    def _extract_fraud_indicators(
-        self, case_context: CaseResolutionContext
-    ) -> list[str]:
+    def _extract_fraud_indicators(self, case_context: CaseResolutionContext) -> list[str]:
         """Extract fraud indicators from case data"""
         indicators = []
 
@@ -524,23 +465,17 @@ class AutomatedCaseResolutionEngine:
 
         return list(set(indicators))
 
-    def _calculate_customer_history_score(
-        self, case_context: CaseResolutionContext
-    ) -> float:
+    def _calculate_customer_history_score(self, case_context: CaseResolutionContext) -> float:
         """Calculate customer history score (simplified)"""
         # In practice, this would query customer history database
         return 0.7  # Mock score
 
-    def _calculate_pattern_match_score(
-        self, case_context: CaseResolutionContext
-    ) -> float:
+    def _calculate_pattern_match_score(self, case_context: CaseResolutionContext) -> float:
         """Calculate how well transactions match customer's normal patterns"""
         # Simplified pattern matching
         return 0.8  # Mock score
 
-    def _detect_suspicious_patterns(
-        self, case_context: CaseResolutionContext
-    ) -> list[str]:
+    def _detect_suspicious_patterns(self, case_context: CaseResolutionContext) -> list[str]:
         """Detect suspicious patterns in case data"""
         patterns = []
 
@@ -548,9 +483,7 @@ class AutomatedCaseResolutionEngine:
         amounts = [tx.get("amount", 0) for tx in case_context.transactions]
         if len(amounts) > 3:
             avg_amount = sum(amounts) / len(amounts)
-            similar_amounts = sum(
-                1 for amt in amounts if abs(amt - avg_amount) / avg_amount < 0.1
-            )
+            similar_amounts = sum(1 for amt in amounts if abs(amt - avg_amount) / avg_amount < 0.1)
             if similar_amounts / len(amounts) > 0.6:
                 patterns.append("structuring")
 
@@ -570,9 +503,7 @@ class AutomatedCaseResolutionEngine:
 
         return len(entities) == 2 and len(transactions) >= 3
 
-    def _calculate_transaction_velocity(
-        self, case_context: CaseResolutionContext
-    ) -> int:
+    def _calculate_transaction_velocity(self, case_context: CaseResolutionContext) -> int:
         """Calculate transaction velocity (transactions per hour)"""
         if not case_context.transactions:
             return 0
@@ -645,9 +576,7 @@ class AutomatedCaseResolutionEngine:
 
         return reasoning
 
-    async def _execute_resolution_action(
-        self, resolution_attempt: ResolutionAttempt
-    ) -> bool:
+    async def _execute_resolution_action(self, resolution_attempt: ResolutionAttempt) -> bool:
         """Execute the resolution action"""
         # This would integrate with the actual case management system
         # For now, simulate successful execution
@@ -671,9 +600,7 @@ class AutomatedCaseResolutionEngine:
             logger.info(f"Setting up monitoring for case {resolution_attempt.case_id}")
 
         # Simulating resolution processing
-        logger.info(
-            f"Processing resolution action {action} for attempt {resolution_attempt.attempt_id}"
-        )
+        logger.info(f"Processing resolution action {action} for attempt {resolution_attempt.attempt_id}")
         # For now, perform immediate resolution - real implementation would process the resolution
 
         return True
@@ -683,9 +610,7 @@ class AutomatedCaseResolutionEngine:
         total_attempts = len(self.resolution_history)
         successful_attempts = len([a for a in self.resolution_history if a.success])
 
-        success_rate = (
-            (successful_attempts / total_attempts * 100) if total_attempts > 0 else 0
-        )
+        success_rate = (successful_attempts / total_attempts * 100) if total_attempts > 0 else 0
 
         # Calculate automation rate by action type
         action_counts = {}

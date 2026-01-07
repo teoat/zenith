@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import type { EvidenceMetadata } from '@/types/evidence';
+import React, { useMemo, useState, useEffect } from "react";
+import type { EvidenceMetadata } from "@/types/evidence";
 
 interface Props {
   items: EvidenceMetadata[];
@@ -8,13 +8,19 @@ interface Props {
   height?: number;
 }
 
-export default function VirtualizedEvidenceList({ items, rowHeight = 96, renderItem, height = 600 }: Props) {
+export default function VirtualizedEvidenceList({
+  items,
+  rowHeight = 96,
+  renderItem,
+  height = 600,
+}: Props) {
   const [hasWindowLib, setHasWindowLib] = useState(false);
-  const [FixedSizeList, setFixedSizeList] = useState<any>(null);
+  const [FixedSizeList, setFixedSizeList] =
+    useState<React.ComponentType<any> | null>(null);
 
   useEffect(() => {
     let mounted = true;
-    import('react-window')
+    import("react-window")
       .then((mod) => {
         if (mounted) {
           setFixedSizeList(() => mod.FixedSizeList);
@@ -25,7 +31,9 @@ export default function VirtualizedEvidenceList({ items, rowHeight = 96, renderI
         // react-window not available — fallback to simple list
         setHasWindowLib(false);
       });
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const itemData = useMemo(() => items, [items]);
@@ -40,7 +48,7 @@ export default function VirtualizedEvidenceList({ items, rowHeight = 96, renderI
         width="100%"
         itemData={itemData}
       >
-        {({ index, style }: any) => (
+        {({ index, style }: { index: number; style: React.CSSProperties }) => (
           <div style={style} key={itemData[index].id}>
             {renderItem(itemData[index], index)}
           </div>
@@ -53,9 +61,7 @@ export default function VirtualizedEvidenceList({ items, rowHeight = 96, renderI
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {items.map((it, i) => (
-        <div key={it.id}>
-          {renderItem(it, i)}
-        </div>
+        <div key={it.id}>{renderItem(it, i)}</div>
       ))}
     </div>
   );

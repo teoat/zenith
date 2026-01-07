@@ -3,7 +3,7 @@
  * Centralized type definitions to prevent import errors
  */
 
-import * as React from 'react';
+import * as React from "react";
 
 export type VariantProps = {
   variant?: "default" | "secondary" | "destructive" | "outline";

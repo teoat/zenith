@@ -124,9 +124,7 @@ class ImplementationPipelineService:
             },
         }
 
-    async def create_pipeline(
-        self, implementation_type: str, parameters: dict[str, Any] | None = None
-    ) -> str:
+    async def create_pipeline(self, implementation_type: str, parameters: dict[str, Any] | None = None) -> str:
         """Create a new implementation pipeline."""
         if implementation_type not in self.pipeline_templates:
             raise ValueError(f"Unknown implementation type: {implementation_type}")
@@ -148,9 +146,7 @@ class ImplementationPipelineService:
             "results": [],
             "rollback_supported": template["rollback_supported"],
             "risk_level": template["risk_level"],
-            "estimated_completion": self._calculate_estimated_completion(
-                template["steps"]
-            ),
+            "estimated_completion": self._calculate_estimated_completion(template["steps"]),
         }
 
         # Initialize step statuses
@@ -207,9 +203,7 @@ class ImplementationPipelineService:
             self.pipeline_history.append(pipeline)
             del self.active_pipelines[pipeline_id]
 
-            logger.info(
-                f"Pipeline {pipeline_id} completed with status: {pipeline['status']}"
-            )
+            logger.info(f"Pipeline {pipeline_id} completed with status: {pipeline['status']}")
 
         except Exception as e:
             pipeline["status"] = PipelineStatus.FAILED.value
@@ -218,9 +212,7 @@ class ImplementationPipelineService:
 
         return pipeline
 
-    async def _execute_step(
-        self, pipeline: dict[str, Any], step: dict[str, Any], step_index: int
-    ):
+    async def _execute_step(self, pipeline: dict[str, Any], step: dict[str, Any], step_index: int):
         """Execute a single pipeline step."""
         step["status"] = PipelineStatus.RUNNING.value
         step["started_at"] = datetime.now().isoformat()
@@ -236,9 +228,7 @@ class ImplementationPipelineService:
                 return
 
             # Execute the step based on its name
-            result = await self._execute_step_action(
-                pipeline["type"], step["name"], pipeline["parameters"]
-            )
+            result = await self._execute_step_action(pipeline["type"], step["name"], pipeline["parameters"])
 
             step["status"] = PipelineStatus.SUCCESS.value
             step["result"] = result
@@ -251,9 +241,7 @@ class ImplementationPipelineService:
         finally:
             step["completed_at"] = datetime.now().isoformat()
 
-    async def _execute_step_action(
-        self, pipeline_type: str, step_name: str, parameters: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _execute_step_action(self, pipeline_type: str, step_name: str, parameters: dict[str, Any]) -> dict[str, Any]:
         """Execute the actual action for a step."""
         if pipeline_type == "database_optimization":
             return await self._execute_database_step(step_name, parameters)
@@ -264,9 +252,7 @@ class ImplementationPipelineService:
         else:
             return {"message": f"Step {step_name} executed (simulated)"}
 
-    async def _execute_database_step(
-        self, step_name: str, parameters: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _execute_database_step(self, step_name: str, parameters: dict[str, Any]) -> dict[str, Any]:
         """Execute database optimization steps."""
         if step_name == "analyze_slow_queries":
             # Simulate query analysis
@@ -292,9 +278,7 @@ class ImplementationPipelineService:
         else:
             return {"message": "Database step executed"}
 
-    async def _execute_audit_step(
-        self, step_name: str, parameters: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _execute_audit_step(self, step_name: str, parameters: dict[str, Any]) -> dict[str, Any]:
         """Execute audit logging steps."""
         if step_name == "assess_coverage":
             return {
@@ -321,9 +305,7 @@ class ImplementationPipelineService:
         else:
             return {"message": "Audit step executed"}
 
-    async def _execute_test_step(
-        self, step_name: str, parameters: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _execute_test_step(self, step_name: str, parameters: dict[str, Any]) -> dict[str, Any]:
         """Execute test coverage steps."""
         if step_name == "analyze_coverage_gaps":
             return {

@@ -11,9 +11,7 @@ from core.database import get_db
 
 logger = logging.getLogger(__name__)
 
-logger.warning(
-    "The 'semantic-search' router is DEPRECATED and uses a MOCK engine. Use 'ai' router instead."
-)
+logger.warning("The 'semantic-search' router is DEPRECATED and uses a MOCK engine. Use 'ai' router instead.")
 
 router = APIRouter(tags=["semantic-search"], deprecated=True)
 
@@ -26,9 +24,7 @@ def get_semantic_engine():
     global semantic_engine
     if semantic_engine is None:
         # Initialize with SQLite backend by default
-        semantic_engine = SemanticSearchEngine(
-            backend="sqlite", config={"db_path": "data/vector_store.db"}
-        )
+        semantic_engine = SemanticSearchEngine(backend="sqlite", config={"db_path": "data/vector_store.db"})
     return semantic_engine
 
 
@@ -230,15 +226,15 @@ async def get_available_backends():
         for backend_name in backends:
             try:
                 if backend_name == "sqlite":
-                    from app.services.ai.ai_service import AIService
+                    from app.services.ai.ai_service import AIService  # noqa: F401 - Import for availability check
 
                     availability[backend_name] = True
                 elif backend_name == "chroma":
-                    import chromadb
+                    import chromadb  # noqa: F401 - Import for availability check
 
                     availability[backend_name] = True
                 elif backend_name == "faiss":
-                    import faiss
+                    import faiss  # noqa: F401 - Import for availability check
 
                     availability[backend_name] = True
                 else:

@@ -7,7 +7,7 @@ export const translations: Record<Language, Record<string, string>> = {
     language: "Language",
     voice_control: "Voice Control",
     contrast: "High Contrast",
-    welcome: "Welcome back, Officer."
+    welcome: "Welcome back, Officer.",
   },
   es: {
     dashboard: "Panel de Control",
@@ -17,9 +17,10 @@ export const translations: Record<Language, Record<string, string>> = {
     language: "Idioma",
     voice_control: "Control de Voz",
     contrast: "Alto Contraste",
-    welcome: "Bienvenido de nuevo, Oficial."
+    welcome: "Bienvenido de nuevo, Oficial.",
   },
-  ar: { // RTL Language
+  ar: {
+    // RTL Language
     dashboard: "لوحة القيادة",
     investigation: "تحقيق",
     alerts: "تنبيهات",
@@ -27,7 +28,7 @@ export const translations: Record<Language, Record<string, string>> = {
     language: "لغة",
     voice_control: "التحكم الصوتي",
     contrast: "تغيير التباين",
-    welcome: "مرحبًا بعودتك أيها الضابط."
+    welcome: "مرحبًا بعودتك أيها الضابط.",
   },
   zh: {
     dashboard: "仪表盘",
@@ -37,12 +38,12 @@ export const translations: Record<Language, Record<string, string>> = {
     language: "语言",
     voice_control: "语音控制",
     contrast: "高对比度",
-    welcome: "欢迎回来，警官。"
-  }
+    welcome: "欢迎回来，警官。",
+  },
 };
 
-export type Language = 'en' | 'es' | 'ar' | 'zh';
+export type Language = "en" | "es" | "ar" | "zh";
 
 export const isRTL = (lang: Language): boolean => {
-  return lang === 'ar';
+  return lang === "ar";
 };

@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import type { Entity } from '@/types/investigation';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
+import type { Entity } from "@/types/investigation";
 
 interface EntityFormProps {
   onSubmit: (data: Partial<Entity>) => void;
@@ -11,9 +17,9 @@ interface EntityFormProps {
 
 const EntityForm: React.FC<EntityFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
-    type: 'person',
-    name: '',
-    riskScore: 0
+    type: "person",
+    name: "",
+    riskScore: 0,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,10 +30,14 @@ const EntityForm: React.FC<EntityFormProps> = ({ onSubmit }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="entity-type-select" className="text-sm font-medium">Entity Type</label>
+        <label htmlFor="entity-type-select" className="text-sm font-medium">
+          Entity Type
+        </label>
         <Select
           value={formData.type}
-          onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, type: value }))
+          }
         >
           <SelectTrigger id="entity-type-select">
             <SelectValue />
@@ -48,7 +58,9 @@ const EntityForm: React.FC<EntityFormProps> = ({ onSubmit }) => {
         <Input
           id="entity-name"
           value={formData.name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFormData((prev) => ({ ...prev, name: e.target.value }))
+          }
           placeholder="Enter entity name"
           required
         />
@@ -62,7 +74,12 @@ const EntityForm: React.FC<EntityFormProps> = ({ onSubmit }) => {
           min="0"
           max="100"
           value={formData.riskScore}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, riskScore: parseInt(e.target.value) || 0 }))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFormData((prev) => ({
+              ...prev,
+              riskScore: parseInt(e.target.value) || 0,
+            }))
+          }
         />
       </div>
 

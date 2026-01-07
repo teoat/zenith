@@ -119,21 +119,11 @@ class HealthCheckService:
 
             # Analyze results
             failed_checks = [
-                c
-                for c in checks
-                if isinstance(c, Exception)
-                or (
-                    isinstance(c, HealthCheckResult)
-                    and c.status != HealthStatus.HEALTHY
-                )
+                c for c in checks if isinstance(c, Exception) or (isinstance(c, HealthCheckResult) and c.status != HealthStatus.HEALTHY)
             ]
 
             if failed_checks:
-                status = (
-                    HealthStatus.DEGRADED
-                    if len(failed_checks) < len(checks)
-                    else HealthStatus.UNHEALTHY
-                )
+                status = HealthStatus.DEGRADED if len(failed_checks) < len(checks) else HealthStatus.UNHEALTHY
                 message = f"Service ready with {len(failed_checks)} failed dependencies"
             else:
                 status = HealthStatus.HEALTHY
@@ -325,14 +315,10 @@ class HealthCheckService:
             pool_status = self.database_service._get_connection_pool_status()
 
             # Check recent transactions
-            recent_tx_count = session.execute(
-                "SELECT COUNT(*) FROM transactions WHERE created_at > datetime('now', '-1 hour')"
-            ).scalar()
+            recent_tx_count = session.execute("SELECT COUNT(*) FROM transactions WHERE created_at > datetime('now', '-1 hour')").scalar()
 
             # Check active cases
-            active_cases = session.execute(
-                "SELECT COUNT(*) FROM cases WHERE status = 'investigating'"
-            ).scalar()
+            active_cases = session.execute("SELECT COUNT(*) FROM cases WHERE status = 'investigating'").scalar()
 
             session.close()
 
@@ -461,9 +447,7 @@ class HealthCheckService:
                     result = await check_func()
                     results.append(result)
                 except Exception as e:
-                    results.append(
-                        {"name": dep_name, "status": "failed", "error": str(e)}
-                    )
+                    results.append({"name": dep_name, "status": "failed", "error": str(e)})
 
             failed_deps = [r for r in results if r.get("status") == "failed"]
 
@@ -494,32 +478,22 @@ class HealthCheckService:
         start_time = time.time()
         try:
             # Get recent performance data
-            recent_health_checks = [
-                check
-                for check in self.health_history[-10:]  # Last 10 checks
-                if check.check_name == "readiness"
-            ]
+            recent_health_checks = [check for check in self.health_history[-10:] if check.check_name == "readiness"]  # Last 10 checks
 
             if recent_health_checks:
-                avg_response_time = sum(
-                    c.response_time for c in recent_health_checks
-                ) / len(recent_health_checks)
+                avg_response_time = sum(c.response_time for c in recent_health_checks) / len(recent_health_checks)
                 max_response_time = max(c.response_time for c in recent_health_checks)
 
                 # Performance thresholds
                 if max_response_time > 2.0:  # Over 2 seconds
                     status = HealthStatus.DEGRADED
-                    message = (
-                        f"Performance degraded: max response {max_response_time:.2f}s"
-                    )
+                    message = f"Performance degraded: max response {max_response_time:.2f}s"
                 elif avg_response_time > 0.5:  # Over 500ms average
                     status = HealthStatus.DEGRADED
                     message = f"Slow performance: avg response {avg_response_time:.2f}s"
                 else:
                     status = HealthStatus.HEALTHY
-                    message = (
-                        f"Performance healthy: avg response {avg_response_time:.2f}s"
-                    )
+                    message = f"Performance healthy: avg response {avg_response_time:.2f}s"
             else:
                 status = HealthStatus.UNKNOWN
                 message = "Insufficient performance data"
@@ -595,15 +569,9 @@ class HealthCheckService:
 
         recent_checks = self.health_history[-10:]  # Last 10 checks
 
-        healthy_count = sum(
-            1 for c in recent_checks if c.status == HealthStatus.HEALTHY
-        )
-        degraded_count = sum(
-            1 for c in recent_checks if c.status == HealthStatus.DEGRADED
-        )
-        unhealthy_count = sum(
-            1 for c in recent_checks if c.status == HealthStatus.UNHEALTHY
-        )
+        healthy_count = sum(1 for c in recent_checks if c.status == HealthStatus.HEALTHY)
+        degraded_count = sum(1 for c in recent_checks if c.status == HealthStatus.DEGRADED)
+        unhealthy_count = sum(1 for c in recent_checks if c.status == HealthStatus.UNHEALTHY)
 
         if unhealthy_count > 0:
             overall_status = "unhealthy"
@@ -622,9 +590,7 @@ class HealthCheckService:
             "healthy": healthy_count,
             "degraded": degraded_count,
             "unhealthy": unhealthy_count,
-            "last_check": recent_checks[-1].timestamp.isoformat()
-            if recent_checks
-            else None,
+            "last_check": recent_checks[-1].timestamp.isoformat() if recent_checks else None,
         }
 
 
@@ -637,14 +603,10 @@ class DistributedTracer:
         self.completed_traces: list[dict[str, Any]] = []
         self.max_completed_traces = 10000
 
-    def start_trace(
-        self, trace_id: str | None = None, parent_span_id: str | None = None
-    ) -> str:
+    def start_trace(self, trace_id: str | None = None, parent_span_id: str | None = None) -> str:
         """Start a new trace or continue existing one"""
         if not trace_id:
-            trace_id = (
-                f"trace_{int(time.time() * 1000000)}_{hash(str(time.time())) % 10000}"
-            )
+            trace_id = f"trace_{int(time.time() * 1000000)}_{hash(str(time.time())) % 10000}"
 
         span_id = f"span_{int(time.time() * 1000000)}_{hash(trace_id) % 10000}"
 
@@ -661,9 +623,7 @@ class DistributedTracer:
         self.active_traces[trace_id] = trace_data
         return trace_id
 
-    def start_span(
-        self, trace_id: str, span_name: str, parent_span_id: str | None = None
-    ) -> str:
+    def start_span(self, trace_id: str, span_name: str, parent_span_id: str | None = None) -> str:
         """Start a new span within a trace"""
         if trace_id not in self.active_traces:
             return None
@@ -768,9 +728,7 @@ class DistributedTracer:
 
         if spans:
             span_durations = [s.get("duration", 0) for s in spans if "duration" in s]
-            avg_span_duration = (
-                sum(span_durations) / len(span_durations) if span_durations else 0
-            )
+            avg_span_duration = sum(span_durations) / len(span_durations) if span_durations else 0
             max_span_duration = max(span_durations) if span_durations else 0
         else:
             avg_span_duration = 0
@@ -818,12 +776,8 @@ class GracefulDegradationService:
     def assess_system_health(self, health_checks: list[HealthCheckResult]) -> str:
         """Assess system health and determine appropriate degradation level"""
 
-        unhealthy_checks = sum(
-            1 for check in health_checks if check.status == HealthStatus.UNHEALTHY
-        )
-        degraded_checks = sum(
-            1 for check in health_checks if check.status == HealthStatus.DEGRADED
-        )
+        unhealthy_checks = sum(1 for check in health_checks if check.status == HealthStatus.UNHEALTHY)
+        degraded_checks = sum(1 for check in health_checks if check.status == HealthStatus.DEGRADED)
         total_checks = len(health_checks)
 
         unhealthy_ratio = unhealthy_checks / total_checks if total_checks > 0 else 0

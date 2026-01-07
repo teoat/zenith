@@ -64,12 +64,8 @@ class EvidenceAnalysisPlugin(PluginInterface):
 
             found_keywords = [kw for kw in fraud_keywords if kw in content]
             if found_keywords:
-                insights.append(
-                    f"Evidence '{filename}' contains suspicious keywords: {', '.join(found_keywords)}"
-                )
-                recommendations.append(
-                    f"Review evidence '{filename}' for fraud indicators"
-                )
+                insights.append(f"Evidence '{filename}' contains suspicious keywords: {', '.join(found_keywords)}")
+                recommendations.append(f"Review evidence '{filename}' for fraud indicators")
                 confidence += 0.3
 
             # Check file metadata

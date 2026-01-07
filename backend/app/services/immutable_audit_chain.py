@@ -15,9 +15,7 @@ from core.immutable_audit import ImmutableAuditLog, immutable_audit
 logger = logging.getLogger(__name__)
 
 # Secret key for HMAC signatures (in production, use secure key management)
-AUDIT_HMAC_KEY = os.environ.get(
-    "AUDIT_HMAC_KEY", "zenith-audit-chain-secret-key-2025"
-).encode()
+AUDIT_HMAC_KEY = os.environ.get("AUDIT_HMAC_KEY", "zenith-audit-chain-secret-key-2025").encode()
 
 
 class ImmutableAuditChainService:
@@ -70,12 +68,8 @@ class ImmutableAuditChainService:
                     broken_links.append(
                         {
                             "sequence": entry.get("sequence", i),
-                            "expected_prev": expected_prev[:16] + "..."
-                            if expected_prev
-                            else None,
-                            "actual_prev": actual_prev[:16] + "..."
-                            if actual_prev
-                            else None,
+                            "expected_prev": expected_prev[:16] + "..." if expected_prev else None,
+                            "actual_prev": actual_prev[:16] + "..." if actual_prev else None,
                         }
                     )
 
@@ -88,9 +82,7 @@ class ImmutableAuditChainService:
                 "verified_entries": verified_count,
                 "integrity_percentage": round(integrity, 2),
                 "broken_links": broken_links[:10],  # First 10 issues
-                "current_root_hash": current_hash[:32] + "..."
-                if current_hash
-                else None,
+                "current_root_hash": current_hash[:32] + "..." if current_hash else None,
                 "verified_at": datetime.now().isoformat(),
             }
 
@@ -151,9 +143,7 @@ class ImmutableAuditChainService:
 
         # Generate HMAC signature
         proof_str = str(proof_data)
-        signature = hmac.new(
-            AUDIT_HMAC_KEY, proof_str.encode(), hashlib.sha256
-        ).hexdigest()
+        signature = hmac.new(AUDIT_HMAC_KEY, proof_str.encode(), hashlib.sha256).hexdigest()
 
         return {
             "proof_id": hashlib.sha256(signature.encode()).hexdigest()[:16],
@@ -191,16 +181,10 @@ class ImmutableAuditChainService:
         return {
             "total_blocks": len(self._entries),
             "chain_length": len(self._entries),
-            "current_root_hash": self.audit_log.get_latest_hash()[:32] + "..."
-            if self.audit_log.get_latest_hash()
-            else None,
+            "current_root_hash": self.audit_log.get_latest_hash()[:32] + "..." if self.audit_log.get_latest_hash() else None,
             "entity_types": entity_types,
-            "oldest_entry": self._entries[0].get("timestamp")
-            if self._entries
-            else None,
-            "newest_entry": self._entries[-1].get("timestamp")
-            if self._entries
-            else None,
+            "oldest_entry": self._entries[0].get("timestamp") if self._entries else None,
+            "newest_entry": self._entries[-1].get("timestamp") if self._entries else None,
             "last_verified": datetime.now().isoformat(),
         }
 
@@ -252,9 +236,7 @@ class ImmutableAuditChainService:
         root_hash = self.audit_log.add_entry(entry_data)
         self._entries.append(entry_data)
 
-        logger.info(
-            f"Appended audit entry {self._sequence_counter}: {action} on {entity_type}/{entity_id}"
-        )
+        logger.info(f"Appended audit entry {self._sequence_counter}: {action} on {entity_type}/{entity_id}")
 
         return {
             "entry_id": f"audit_{self._sequence_counter}",
@@ -267,9 +249,7 @@ class ImmutableAuditChainService:
             "entity_id": entity_id,
         }
 
-    def get_entries(
-        self, limit: int = 100, offset: int = 0, entity_type: str | None = None
-    ) -> list[dict[str, Any]]:
+    def get_entries(self, limit: int = 100, offset: int = 0, entity_type: str | None = None) -> list[dict[str, Any]]:
         """Get paginated audit entries."""
         filtered = self._entries
         if entity_type:

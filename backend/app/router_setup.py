@@ -58,18 +58,12 @@ def setup_routers(app: FastAPI):
     app.include_router(system_router)
 
     # Standard Routers
-    app.include_router(
-        auth_router, prefix=f"/api/{API_VERSION}/auth", tags=["Authentication"]
-    )
+    app.include_router(auth_router, prefix=f"/api/{API_VERSION}/auth", tags=["Authentication"])
     app.include_router(search_router, prefix=f"/api/{API_VERSION}/search", tags=["Search"])
     app.include_router(admin_router, prefix=f"/api/{API_VERSION}/admin", tags=["Admin"])
     app.include_router(users_router, prefix=f"/api/{API_VERSION}/users", tags=["Users"])
-    app.include_router(
-        analytics_router, prefix=f"/api/{API_VERSION}/analytics", tags=["Analytics"]
-    )
-    app.include_router(
-        reporting_router, prefix=f"/api/{API_VERSION}/reports", tags=["Reporting"]
-    )
+    app.include_router(analytics_router, prefix=f"/api/{API_VERSION}/analytics", tags=["Analytics"])
+    app.include_router(reporting_router, prefix=f"/api/{API_VERSION}/reports", tags=["Reporting"])
     app.include_router(cases_router, prefix=f"/api/{API_VERSION}/cases", tags=["Cases"])
     app.include_router(audit_router, prefix=f"/api/{API_VERSION}/audit", tags=["Audit"])
     app.include_router(
@@ -77,24 +71,16 @@ def setup_routers(app: FastAPI):
         prefix=f"/api/{API_VERSION}/cost-optimization",
         tags=["Cost Optimization"],
     )
-    app.include_router(
-        evidence_router, prefix=f"/api/{API_VERSION}/evidence", tags=["Evidence"]
-    )
+    app.include_router(evidence_router, prefix=f"/api/{API_VERSION}/evidence", tags=["Evidence"])
     app.include_router(fraud_router, prefix=f"/api/{API_VERSION}/fraud", tags=["Fraud"])
-    app.include_router(
-        compliance_router, prefix=f"/api/{API_VERSION}/compliance", tags=["Compliance"]
-    )
+    app.include_router(compliance_router, prefix=f"/api/{API_VERSION}/compliance", tags=["Compliance"])
 
     # AI & Intelligence
     app.include_router(ai_router, prefix=f"/api/{API_VERSION}/ai", tags=["AI Intelligence"])
-    app.include_router(
-        advanced_ai.router, prefix=f"/api/{API_VERSION}/advanced_ai", tags=["Advanced AI"]
-    )
+    app.include_router(advanced_ai.router, prefix=f"/api/{API_VERSION}/advanced_ai", tags=["Advanced AI"])
 
     # Additional Routers
-    app.include_router(
-        multimodal_router, prefix=f"/api/{API_VERSION}/multimodal", tags=["Multimodal"]
-    )
+    app.include_router(multimodal_router, prefix=f"/api/{API_VERSION}/multimodal", tags=["Multimodal"])
     # DEPRECATED: Semantic search router - will be removed Feb 1, 2026
     # Keep active until removal deadline to allow graceful migration
     removal_deadline = datetime(2026, 2, 1)
@@ -105,26 +91,18 @@ def setup_routers(app: FastAPI):
             tags=["Semantic Search (DEPRECATED)"],
         )
     else:
-        logger.warning(
-            "Semantic search router removal deadline reached - endpoints disabled"
-        )
-    app.include_router(
-        logging_router, prefix=f"/api/{API_VERSION}/logging", tags=["Logging"]
-    )
+        logger.warning("Semantic search router removal deadline reached - endpoints disabled")
+    app.include_router(logging_router, prefix=f"/api/{API_VERSION}/logging", tags=["Logging"])
     app.include_router(apm_router, prefix=f"/api/{API_VERSION}/apm", tags=["APM"])
     app.include_router(graph_router, prefix=f"/api/{API_VERSION}/graph", tags=["Graph"])
-    app.include_router(
-        realtime_sync_router, prefix=f"/api/{API_VERSION}/sync", tags=["Realtime Sync"]
-    )
+    app.include_router(realtime_sync_router, prefix=f"/api/{API_VERSION}/sync", tags=["Realtime Sync"])
     app.include_router(
         notifications_router,
         prefix=f"/api/{API_VERSION}/notifications",
         tags=["Notifications"],
     )
     app.include_router(backup_router, prefix=f"/api/{API_VERSION}/backup", tags=["Backup"])
-    app.include_router(
-        fraud_rules_router, prefix=f"/api/{API_VERSION}/rules", tags=["Fraud Rules"]
-    )
+    app.include_router(fraud_rules_router, prefix=f"/api/{API_VERSION}/rules", tags=["Fraud Rules"])
     app.include_router(
         collaboration_router,
         prefix=f"/api/{API_VERSION}/collaboration",
@@ -136,12 +114,8 @@ def setup_routers(app: FastAPI):
         prefix=f"/api/{API_VERSION}/reconciliation",
         tags=["Reconciliation"],
     )
-    app.include_router(
-        onboarding_router, prefix=f"/api/{API_VERSION}/onboarding", tags=["Onboarding"]
-    )
-    app.include_router(
-        metadata_router, prefix=f"/api/{API_VERSION}/metadata", tags=["Metadata"]
-    )
+    app.include_router(onboarding_router, prefix=f"/api/{API_VERSION}/onboarding", tags=["Onboarding"])
+    app.include_router(metadata_router, prefix=f"/api/{API_VERSION}/metadata", tags=["Metadata"])
 
     app.include_router(proof_router, prefix=f"/api/{API_VERSION}/proof", tags=["Proof"])
     app.include_router(
@@ -149,9 +123,7 @@ def setup_routers(app: FastAPI):
         prefix=f"/api/{API_VERSION}/forensic-intel",
         tags=["Forensic Intelligence"],
     )
-    app.include_router(
-        entities_router, prefix=f"/api/{API_VERSION}/entities", tags=["Entities"]
-    )
+    app.include_router(entities_router, prefix=f"/api/{API_VERSION}/entities", tags=["Entities"])
     app.include_router(csrf_router, prefix=f"/api/{API_VERSION}", tags=["Security"])
 
     # Roadmap to 10/10 Routers
@@ -165,9 +137,7 @@ def setup_routers(app: FastAPI):
         prefix=f"/api/{API_VERSION}/cases",
         tags=["Time Travel (Roadmap)"],
     )
-    app.include_router(
-        ai_voice_router, prefix=f"/api/{API_VERSION}/ai", tags=["AI Voice (Roadmap)"]
-    )
+    app.include_router(ai_voice_router, prefix=f"/api/{API_VERSION}/ai", tags=["AI Voice (Roadmap)"])
 
     # New Roadmap Routers (Completed)
     app.include_router(xai_router, prefix=f"/api/{API_VERSION}")
@@ -185,42 +155,42 @@ def setup_routers(app: FastAPI):
     # Optional Routers
     try:
         from app.routers.projects import router as projects_router
-        app.include_router(
-            projects_router, prefix=f"/api/{API_VERSION}/projects", tags=["Projects"]
-        )
+
+        app.include_router(projects_router, prefix=f"/api/{API_VERSION}/projects", tags=["Projects"])
     except ImportError as e:
         logger.warning(f"Failed to import projects router: {e}")
 
     try:
         from app.routers.alerts import router as alerts_router
-        app.include_router(
-            alerts_router, prefix=f"/api/{API_VERSION}/alerts", tags=["Alerts"]
-        )
+
+        app.include_router(alerts_router, prefix=f"/api/{API_VERSION}/alerts", tags=["Alerts"])
     except ImportError as e:
         logger.warning(f"Failed to import alerts router: {e}")
 
     try:
         from app.routers.metrics import router as metrics_router
+
         app.include_router(metrics_router, tags=["Metrics"])
     except ImportError:
         pass
 
     try:
         from app.routers.streaming import router as streaming_router
-        app.include_router(
-            streaming_router, prefix=f"/api/{API_VERSION}", tags=["Streaming"]
-        )
+
+        app.include_router(streaming_router, prefix=f"/api/{API_VERSION}", tags=["Streaming"])
     except ImportError:
         pass
 
     try:
         from app.routers.websocket import router as websocket_router
+
         app.include_router(websocket_router, tags=["WebSocket"])
     except ImportError:
         pass
 
     try:
         from app.routers.diagnostics import router as diagnostics_router
+
         app.include_router(
             diagnostics_router,
             prefix=f"/api/{API_VERSION}/diagnostics",

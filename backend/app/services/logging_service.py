@@ -118,11 +118,7 @@ class PIIScrubber:
                 result[key] = PIIScrubber.scrub_pii(value)
             elif isinstance(value, list):
                 result[key] = [
-                    PIIScrubber.scrub_dict(v)
-                    if isinstance(v, dict)
-                    else PIIScrubber.scrub_pii(v)
-                    if isinstance(v, str)
-                    else v
+                    PIIScrubber.scrub_dict(v) if isinstance(v, dict) else PIIScrubber.scrub_pii(v) if isinstance(v, str) else v
                     for v in value
                 ]
             else:
@@ -253,9 +249,7 @@ class StructuredLogger:
         if self.enable_telemetry:
             self._telemetry_buffer.append(entry)
 
-    def log_user_action(
-        self, action: str, user_id: str, metadata: dict[str, Any] | None = None
-    ):
+    def log_user_action(self, action: str, user_id: str, metadata: dict[str, Any] | None = None):
         """Log a user action for audit trail."""
         self.log(
             level=LogLevel.INFO,
@@ -275,13 +269,7 @@ class StructuredLogger:
         metadata: dict[str, Any] | None = None,
     ):
         """Log an API request with performance data."""
-        level = (
-            LogLevel.INFO
-            if status_code < 400
-            else LogLevel.WARNING
-            if status_code < 500
-            else LogLevel.ERROR
-        )
+        level = LogLevel.INFO if status_code < 400 else LogLevel.WARNING if status_code < 500 else LogLevel.ERROR
 
         self.log(
             level=level,
@@ -317,13 +305,7 @@ class StructuredLogger:
         metadata: dict[str, Any] | None = None,
     ):
         """Log a security-related event."""
-        level = (
-            LogLevel.CRITICAL
-            if severity == "CRITICAL"
-            else LogLevel.WARNING
-            if severity == "HIGH"
-            else LogLevel.INFO
-        )
+        level = LogLevel.CRITICAL if severity == "CRITICAL" else LogLevel.WARNING if severity == "HIGH" else LogLevel.INFO
 
         self.log(
             level=level,
@@ -333,9 +315,7 @@ class StructuredLogger:
             metadata={
                 "event_type": event_type,
                 "severity": severity,
-                "event_id": hashlib.sha256(
-                    f"{event_type}{datetime.now().isoformat()}".encode()
-                ).hexdigest()[:16],
+                "event_id": hashlib.sha256(f"{event_type}{datetime.now().isoformat()}".encode()).hexdigest()[:16],
                 **(metadata or {}),
             },
         )

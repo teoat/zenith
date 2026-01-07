@@ -63,14 +63,11 @@ async def validate_ai_access(user_id: int, service_type: str) -> dict[str, Any]:
                     "allowed": True,
                     "reason": f"Access granted for {service_type}",
                     "upgrade_required": True,
-                    "message": "Premium service - upgrade for full functionality"
+                    "message": "Premium service - upgrade for full functionality",
                 }
             return {"allowed": True, "reason": f"Access granted for {service_type}"}
 
-        return {
-            "allowed": False,
-            "reason": f"Role '{user_role}' does not have permission for '{service_type}'"
-        }
+        return {"allowed": False, "reason": f"Role '{user_role}' does not have permission for '{service_type}'"}
 
     except Exception as e:
         logger.error(f"Error validating AI access for user {user_id}: {e}")
@@ -104,7 +101,7 @@ class ScalingRequest(BaseModel):
 async def make_cognitive_decision(
     request: CognitiveDecisionRequest,
     background_tasks: BackgroundTasks,
-    current_user = Depends(auth_service.get_current_user),
+    current_user=Depends(auth_service.get_current_user),
 ):
     """Make an automated cognitive decision"""
     # Validate AI access permissions
@@ -157,9 +154,7 @@ async def make_cognitive_decision(
 
 
 @router.post("/predictive/insights")
-async def generate_predictive_insights(
-    request: PredictiveRequest, current_user = Depends(auth_service.get_current_user)
-):
+async def generate_predictive_insights(request: PredictiveRequest, current_user=Depends(auth_service.get_current_user)):
     """Generate predictive business insights"""
     # Validate AI access permissions
     access_result = await validate_ai_access(current_user["id"], "generate_predictive_insights")
@@ -167,9 +162,7 @@ async def generate_predictive_insights(
         raise HTTPException(status_code=403, detail=access_result.get("reason", "Predictive insights access denied"))
 
     try:
-        insight = await predictive_engine.generate_business_forecast(
-            request.forecast_type, request.data
-        )
+        insight = await predictive_engine.generate_business_forecast(request.forecast_type, request.data)
 
         return {
             "insight_id": insight.insight_id,
@@ -181,16 +174,14 @@ async def generate_predictive_insights(
         }
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Predictive analysis failed: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Predictive analysis failed: {e!s}")
 
 
 @router.post("/collaboration/interact")
 async def human_ai_interaction(
     request: CollaborationRequest,
     background_tasks: BackgroundTasks,
-    current_user = Depends(auth_service.get_current_user),
+    current_user=Depends(auth_service.get_current_user),
 ):
     """Process human-AI collaboration interaction"""
     # Validate AI access permissions
@@ -200,6 +191,7 @@ async def human_ai_interaction(
 
     try:
         import uuid
+
         start_time = datetime.now(UTC)
 
         response = await collaboration_engine.process_user_interaction(
@@ -231,9 +223,7 @@ async def human_ai_interaction(
 
 
 @router.post("/scaling/optimize")
-async def optimize_scaling(
-    request: ScalingRequest, current_user = Depends(auth_service.get_current_user)
-):
+async def optimize_scaling(request: ScalingRequest, current_user=Depends(auth_service.get_current_user)):
     """Run autonomous scaling optimization"""
     # Validate AI access permissions
     access_result = await validate_ai_access(current_user["id"], "optimize_scaling")
@@ -253,9 +243,7 @@ async def optimize_scaling(
         }
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Scaling optimization failed: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Scaling optimization failed: {e!s}")
 
 
 @router.get("/health/ai")
@@ -285,17 +273,13 @@ async def ai_services_health():
 
         try:
             scaling_report = scaling_engine.get_resource_utilization_report()
-            health_status["scaling_resources"] = (
-                len(scaling_report) - 1
-            )  # Exclude system_health
+            health_status["scaling_resources"] = len(scaling_report) - 1  # Exclude system_health
         except Exception:
             health_status["scaling_engine"] = "unhealthy"
 
         try:
             collaboration_metrics = collaboration_engine.get_collaboration_metrics()
-            health_status["collaboration_sessions"] = collaboration_metrics[
-                "total_interactions"
-            ]
+            health_status["collaboration_sessions"] = collaboration_metrics["total_interactions"]
         except Exception:
             health_status["collaboration_engine"] = "unhealthy"
 

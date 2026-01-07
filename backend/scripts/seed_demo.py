@@ -31,9 +31,7 @@ from core.database import (
 )
 
 # Database path
-DB_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "simple378.db"
-)
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "simple378.db")
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 engine = create_engine(f"sqlite:///{DB_PATH}", echo=False)
@@ -247,9 +245,7 @@ def seed_transactions(session, cases):
                 amount=random_amount(),
                 currency=random.choice(["USD", "EUR", "JPY", "GBP", "SGD"]),
                 merchant_name=random_company(),
-                merchant_category=random.choice(
-                    ["Financial Services", "Retail", "Technology", "Consulting"]
-                ),
+                merchant_category=random.choice(["Financial Services", "Retail", "Technology", "Consulting"]),
                 date=random_date(365, 0),
                 transaction_type=random.choice(["DEBIT", "CREDIT", "TRANSFER", "WIRE"]),
                 status=random.choice(["pending", "approved", "denied", "escalated"]),
@@ -332,9 +328,7 @@ def seed_case_notes(session, cases):
                 case_id=case.id,
                 content=random.choice(note_templates),
                 author_name=random_name(),
-                note_type=random.choice(
-                    ["general", "analysis", "action", "escalation"]
-                ),
+                note_type=random.choice(["general", "analysis", "action", "escalation"]),
                 is_internal=random.choice([True, False]),
                 created_at=random_date(60, 0),
                 updated_at=datetime.now(),

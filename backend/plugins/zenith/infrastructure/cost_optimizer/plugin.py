@@ -82,9 +82,7 @@ class CostOptimizationPlugin(PluginInterface):
                 "timestamp": "2025-12-19T12:00:00Z",
             }
 
-            logger.info(
-                f"Cost optimization analysis completed: ${result['annual_savings']} annual savings potential"
-            )
+            logger.info(f"Cost optimization analysis completed: ${result['annual_savings']} annual savings potential")
             return result
 
         except Exception as e:

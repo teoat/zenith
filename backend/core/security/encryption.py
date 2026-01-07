@@ -58,11 +58,7 @@ class VersionedEncryptedString(TypeDecorator):
             version, encrypted_data = value.split(":", 1)
             if version in self._fernet_instances:
                 try:
-                    return (
-                        self._fernet_instances[version]
-                        .decrypt(encrypted_data.encode())
-                        .decode()
-                    )
+                    return self._fernet_instances[version].decrypt(encrypted_data.encode()).decode()
                 except Exception as e:
                     logger.error(f"Decryption failed for {version}: {e}")
                     # Continue to fallback logic
@@ -77,9 +73,7 @@ class VersionedEncryptedString(TypeDecorator):
                 continue
 
         # Final fallback: return raw value (might be unencrypted legacy data)
-        logger.error(
-            f"All decryption attempts failed for value starting with: {value[:50]}..."
-        )
+        logger.error(f"All decryption attempts failed for value starting with: {value[:50]}...")
         return value
 
 

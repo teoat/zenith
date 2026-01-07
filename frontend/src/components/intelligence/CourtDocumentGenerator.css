@@ -1,7 +1,11 @@
 /* CourtDocumentGenerator Styles */
 
 .court-document-card {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.95),
+    rgba(30, 41, 59, 0.95)
+  );
   border: 1px solid rgba(100, 116, 139, 0.2);
   color: white;
 }
@@ -175,7 +179,7 @@
 
 /* Legal Document Preview */
 .legal-document-preview {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: "Times New Roman", Times, serif;
   line-height: 2;
   max-width: 700px;
   margin: 0 auto;
@@ -262,7 +266,7 @@
   .type-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .case-info-grid {
     grid-template-columns: 1fr;
   }

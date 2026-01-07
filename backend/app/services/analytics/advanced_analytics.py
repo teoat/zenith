@@ -4,7 +4,7 @@ Real-time fraud trend analysis with predictive insights and executive reporting.
 """
 
 import logging
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
 from typing import Any
@@ -64,9 +64,7 @@ class AdvancedAnalyticsEngine:
         self.insights_cache: list[AnalyticsInsight] = []
         self.trend_models: dict[str, Any] = {}
 
-    async def generate_executive_dashboard(
-        self, timeframe: AnalyticsTimeframe = AnalyticsTimeframe.MONTH
-    ) -> dict[str, Any]:
+    async def generate_executive_dashboard(self, timeframe: AnalyticsTimeframe = AnalyticsTimeframe.MONTH) -> dict[str, Any]:
         """
         Generate comprehensive executive dashboard with AI insights
 
@@ -96,15 +94,11 @@ class AdvancedAnalyticsEngine:
             "ai_insights": [asdict(insight) for insight in ai_insights],
             "predictive_trends": [asdict(trend) for trend in predictive_trends],
             "risk_heatmaps": risk_heatmaps,
-            "performance_indicators": self._calculate_performance_indicators(
-                core_metrics
-            ),
+            "performance_indicators": self._calculate_performance_indicators(core_metrics),
             "benchmarking": await self._generate_benchmarking_data(),
         }
 
-    async def _calculate_core_metrics(
-        self, timeframe: AnalyticsTimeframe
-    ) -> dict[str, Any]:
+    async def _calculate_core_metrics(self, timeframe: AnalyticsTimeframe) -> dict[str, Any]:
         """Calculate core business metrics"""
         # This would integrate with actual data sources
         # Mock data for demonstration
@@ -146,9 +140,7 @@ class AdvancedAnalyticsEngine:
 
         return metrics
 
-    async def _generate_ai_insights(
-        self, metrics: dict[str, Any]
-    ) -> list[AnalyticsInsight]:
+    async def _generate_ai_insights(self, metrics: dict[str, Any]) -> list[AnalyticsInsight]:
         """Generate AI-powered business insights"""
         insights = []
 
@@ -240,9 +232,7 @@ class AdvancedAnalyticsEngine:
                     supporting_data={
                         "current_risk_score": risk_score,
                         "risk_threshold": 3.0,
-                        "high_risk_entities": metrics["risk_assessment"][
-                            "high_risk_entities"
-                        ],
+                        "high_risk_entities": metrics["risk_assessment"]["high_risk_entities"],
                     },
                     generated_at=datetime.now(),
                 )
@@ -250,9 +240,7 @@ class AdvancedAnalyticsEngine:
 
         return insights
 
-    async def _calculate_predictive_trends(
-        self, timeframe: AnalyticsTimeframe
-    ) -> list[PredictiveTrend]:
+    async def _calculate_predictive_trends(self, timeframe: AnalyticsTimeframe) -> list[PredictiveTrend]:
         """Calculate predictive trends using time series analysis"""
         trends = []
 
@@ -322,9 +310,7 @@ class AdvancedAnalyticsEngine:
 
         return trends
 
-    def _generate_executive_summary(
-        self, metrics: dict[str, Any], insights: list[AnalyticsInsight]
-    ) -> dict[str, Any]:
+    def _generate_executive_summary(self, metrics: dict[str, Any], insights: list[AnalyticsInsight]) -> dict[str, Any]:
         """Generate executive summary with key highlights"""
         fraud_detection = metrics["fraud_detection"]
         financial = metrics["financial_impact"]
@@ -347,9 +333,7 @@ class AdvancedAnalyticsEngine:
 
         # Identify top insights
         high_impact_insights = [i for i in insights if i.impact_level == "high"]
-        top_insights = sorted(
-            high_impact_insights, key=lambda x: x.confidence_score, reverse=True
-        )[:3]
+        top_insights = sorted(high_impact_insights, key=lambda x: x.confidence_score, reverse=True)[:3]
 
         return {
             "kpis": kpis,
@@ -359,9 +343,7 @@ class AdvancedAnalyticsEngine:
             "risk_assessment": "Low risk with strong operational controls",
         }
 
-    async def generate_risk_heatmaps(
-        self, timeframe: AnalyticsTimeframe
-    ) -> dict[str, Any]:
+    async def generate_risk_heatmaps(self, timeframe: AnalyticsTimeframe) -> dict[str, Any]:
         """Generate risk heatmaps for geographic and temporal analysis"""
         # Mock geographic risk data
         geographic_risk = {
@@ -450,22 +432,16 @@ class AdvancedAnalyticsEngine:
             },
         }
 
-    def _calculate_performance_indicators(
-        self, metrics: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _calculate_performance_indicators(self, metrics: dict[str, Any]) -> dict[str, Any]:
         """Calculate key performance indicators"""
         fraud = metrics["fraud_detection"]
         operational = metrics["operational_efficiency"]
 
         return {
-            "efficiency_ratio": fraud["total_amount_prevented"]
-            / operational["case_resolution_time"],
-            "productivity_index": operational["analyst_productivity"]
-            * fraud["detection_rate"],
-            "automation_index": operational["automation_rate"]
-            * fraud["detection_rate"],
-            "risk_efficiency": (5.0 - metrics["risk_assessment"]["overall_risk_score"])
-            / operational["system_uptime"],
+            "efficiency_ratio": fraud["total_amount_prevented"] / operational["case_resolution_time"],
+            "productivity_index": operational["analyst_productivity"] * fraud["detection_rate"],
+            "automation_index": operational["automation_rate"] * fraud["detection_rate"],
+            "risk_efficiency": (5.0 - metrics["risk_assessment"]["overall_risk_score"]) / operational["system_uptime"],
         }
 
     async def _generate_benchmarking_data(self) -> dict[str, Any]:
@@ -502,9 +478,7 @@ class AdvancedAnalyticsEngine:
         # Simplified implementation
         return ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06"]
 
-    def _generate_time_series_data(
-        self, timeframe: AnalyticsTimeframe
-    ) -> dict[str, list[Any]]:
+    def _generate_time_series_data(self, timeframe: AnalyticsTimeframe) -> dict[str, list[Any]]:
         """Generate time series data for metrics"""
         periods = self._get_time_periods(timeframe)
 

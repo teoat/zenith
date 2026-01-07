@@ -15,12 +15,13 @@ except ImportError:
 
 router = APIRouter()
 
+
 @router.get("/analytics/journey")
 def get_journey_analytics():
     """Get user journey and funnel analytics"""
     try:
         if not user_journey_tracker:
-             return {"status": "error", "error": "User Journey Tracker not available"}
+            return {"status": "error", "error": "User Journey Tracker not available"}
 
         # Check if analytics is disabled (test mode)
         if not hasattr(user_journey_tracker, "get_funnel_analysis"):
@@ -62,9 +63,7 @@ def get_journey_analytics():
 
 
 @router.post("/analytics/track")
-def track_user_event(
-    event_type: str, user_id: str | None = None, metadata: dict | None = None
-):
+def track_user_event(event_type: str, user_id: str | None = None, metadata: dict | None = None):
     """Track user events for journey analysis"""
     if not user_journey_tracker:
         return {"status": "error", "message": "User Journey Tracker not available"}
@@ -124,26 +123,10 @@ def get_diagnostics_dashboard():
             },
             "user_analytics": {"journey": journey_data, "sessions": session_data},
             "recommendations": [
-                (
-                    "Monitor CPU usage if > 90%"
-                    if any("cpu" in alert.lower() for alert in alerts)
-                    else None
-                ),
-                (
-                    "Check memory usage if > 85%"
-                    if any("memory" in alert.lower() for alert in alerts)
-                    else None
-                ),
-                (
-                    "Review user drop-off in funnel"
-                    if journey_data.get("drop_off_points")
-                    else None
-                ),
-                (
-                    "Scale infrastructure if needed"
-                    if system_status == "critical"
-                    else None
-                ),
+                ("Monitor CPU usage if > 90%" if any("cpu" in alert.lower() for alert in alerts) else None),
+                ("Check memory usage if > 85%" if any("memory" in alert.lower() for alert in alerts) else None),
+                ("Review user drop-off in funnel" if journey_data.get("drop_off_points") else None),
+                ("Scale infrastructure if needed" if system_status == "critical" else None),
             ],
         }
     except Exception as e:
@@ -182,9 +165,7 @@ async def serve_index():
     if os.path.exists(frontend_dist):
         return FileResponse(os.path.join(frontend_dist, "index.html"))
     else:
-        return {
-            "message": "Frontend not built. Run 'npm run build:frontend' to build the frontend."
-        }
+        return {"message": "Frontend not built. Run 'npm run build:frontend' to build the frontend."}
 
 
 # Manual WebSocket startup endpoint for debugging

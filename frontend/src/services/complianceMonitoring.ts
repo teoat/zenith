@@ -1,4 +1,4 @@
-import { secureLogger } from '@/utils/secureLogger';
+import { secureLogger } from "@/utils/secureLogger";
 
 // Compliance Monitoring Service - Real-time monitoring and alerting for compliance systems
 // Tracks system health, compliance metrics, and provides alerting capabilities
@@ -17,7 +17,7 @@ interface AlertRule {
   name: string;
   condition: string;
   threshold: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   enabled: boolean;
   last_triggered?: string;
 }
@@ -26,7 +26,7 @@ interface ComplianceAlert {
   id: string;
   rule_id: string;
   message: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   timestamp: string;
   acknowledged: boolean;
   resolved: boolean;
@@ -52,60 +52,62 @@ interface MonitoringDashboard {
 class ComplianceMonitoringService {
   private alertRules: AlertRule[] = [
     {
-      id: 'compliance-score-low',
-      name: 'Compliance Score Below Threshold',
-      condition: 'compliance_score < 80',
+      id: "compliance-score-low",
+      name: "Compliance Score Below Threshold",
+      condition: "compliance_score < 80",
       threshold: 80,
-      severity: 'high',
-      enabled: true
+      severity: "high",
+      enabled: true,
     },
     {
-      id: 'high-error-rate',
-      name: 'High Error Rate Detected',
-      condition: 'error_rate > 5',
+      id: "high-error-rate",
+      name: "High Error Rate Detected",
+      condition: "error_rate > 5",
       threshold: 5,
-      severity: 'medium',
-      enabled: true
+      severity: "medium",
+      enabled: true,
     },
     {
-      id: 'response-time-high',
-      name: 'API Response Time High',
-      condition: 'response_time > 2000',
+      id: "response-time-high",
+      name: "API Response Time High",
+      condition: "response_time > 2000",
       threshold: 2000,
-      severity: 'medium',
-      enabled: true
+      severity: "medium",
+      enabled: true,
     },
     {
-      id: 'pending-reports-high',
-      name: 'High Number of Pending Reports',
-      condition: 'pending_reports > 10',
+      id: "pending-reports-high",
+      name: "High Number of Pending Reports",
+      condition: "pending_reports > 10",
       threshold: 10,
-      severity: 'high',
-      enabled: true
+      severity: "high",
+      enabled: true,
     },
     {
-      id: 'overdue-reviews',
-      name: 'Overdue Access Reviews',
-      condition: 'overdue_reviews > 0',
+      id: "overdue-reviews",
+      name: "Overdue Access Reviews",
+      condition: "overdue_reviews > 0",
       threshold: 0,
-      severity: 'medium',
-      enabled: true
-    }
+      severity: "medium",
+      enabled: true,
+    },
   ];
 
   // System Health Monitoring
   /* import { request } from './client'; */
-  
+
   // System Health Monitoring
   async getSystemHealth(): Promise<SystemMetrics> {
     try {
-      const { request } = await import('./client');
+      const { request } = await import("./client");
       // Call backend monitoring dashboard to extract system health
-      const dashboard = await request<MonitoringDashboard>('/compliance/monitoring/dashboard');
+      const dashboard = await request<MonitoringDashboard>(
+        "/compliance/monitoring/dashboard",
+      );
       return dashboard.system_health;
     } catch (error) {
-      secureLogger.error('COMPLIANCE', 'Failed to get system health', { 
-        error: error instanceof Error ? error.message : String(error) 
+      secureLogger.error("COMPLIANCE", "Failed to get system health", {
+        error: error instanceof Error ? error.message : String(error),
       });
       // Fallback for demo stability if backend fails
       return {
@@ -114,43 +116,45 @@ class ComplianceMonitoringService {
         error_rate: 0.02,
         active_users: 42,
         compliance_score: 92,
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       };
     }
   }
 
   async getMonitoringDashboard(): Promise<MonitoringDashboard> {
     try {
-      const { request } = await import('./client');
-      return await request<MonitoringDashboard>('/compliance/monitoring/dashboard');
+      const { request } = await import("./client");
+      return await request<MonitoringDashboard>(
+        "/compliance/monitoring/dashboard",
+      );
     } catch (error) {
-      secureLogger.error('COMPLIANCE', 'Failed to get monitoring dashboard', { 
-        error: error instanceof Error ? error.message : String(error) 
+      secureLogger.error("COMPLIANCE", "Failed to get monitoring dashboard", {
+        error: error instanceof Error ? error.message : String(error),
       });
-       // Fallback for demo stability
-       const mockHealth = {
+      // Fallback for demo stability
+      const mockHealth = {
         uptime: 99.9,
         response_time: 245,
         error_rate: 0.02,
         active_users: 42,
         compliance_score: 92,
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       };
-      
+
       return {
         system_health: mockHealth,
         active_alerts: [],
         recent_incidents: [],
         compliance_trends: [
-            { period: 'Last 7 days', score: 94, alerts_count: 2 },
-            { period: 'Last 30 days', score: 92, alerts_count: 5 },
-            { period: 'Last 90 days', score: 89, alerts_count: 12 }
+          { period: "Last 7 days", score: 94, alerts_count: 2 },
+          { period: "Last 30 days", score: 92, alerts_count: 5 },
+          { period: "Last 90 days", score: 89, alerts_count: 12 },
         ],
         performance_metrics: {
           api_response_time: mockHealth.response_time,
           database_query_time: 45,
-          error_rate: mockHealth.error_rate
-        }
+          error_rate: mockHealth.error_rate,
+        },
       };
     }
   }
@@ -160,10 +164,13 @@ class ComplianceMonitoringService {
     return this.alertRules;
   }
 
-  async updateAlertRule(ruleId: string, updates: Partial<AlertRule>): Promise<void> {
-    const ruleIndex = this.alertRules.findIndex(r => r.id === ruleId);
+  async updateAlertRule(
+    ruleId: string,
+    updates: Partial<AlertRule>,
+  ): Promise<void> {
+    const ruleIndex = this.alertRules.findIndex((r) => r.id === ruleId);
     if (ruleIndex === -1) {
-      throw new Error('Alert rule not found');
+      throw new Error("Alert rule not found");
     }
 
     this.alertRules[ruleIndex] = { ...this.alertRules[ruleIndex], ...updates };
@@ -178,34 +185,34 @@ class ComplianceMonitoringService {
 
       if (metrics.compliance_score < 90) {
         alerts.push({
-          id: 'alert-1',
-          rule_id: 'compliance-score-low',
+          id: "alert-1",
+          rule_id: "compliance-score-low",
           message: `Compliance score is ${metrics.compliance_score}%, below 90% threshold`,
-          severity: 'high',
+          severity: "high",
           timestamp: new Date().toISOString(),
           acknowledged: false,
           resolved: false,
-          metadata: { current_score: metrics.compliance_score }
+          metadata: { current_score: metrics.compliance_score },
         });
       }
 
       if (metrics.error_rate > 0.05) {
         alerts.push({
-          id: 'alert-2',
-          rule_id: 'high-error-rate',
+          id: "alert-2",
+          rule_id: "high-error-rate",
           message: `Error rate is ${metrics.error_rate}%, above 5% threshold`,
-          severity: 'medium',
+          severity: "medium",
           timestamp: new Date().toISOString(),
           acknowledged: false,
           resolved: false,
-          metadata: { current_rate: metrics.error_rate }
+          metadata: { current_rate: metrics.error_rate },
         });
       }
 
       return alerts;
     } catch (error) {
-      secureLogger.error('COMPLIANCE', 'Failed to get active alerts', { 
-        error: error instanceof Error ? error.message : String(error) 
+      secureLogger.error("COMPLIANCE", "Failed to get active alerts", {
+        error: error instanceof Error ? error.message : String(error),
       });
       return [];
     }
@@ -213,22 +220,24 @@ class ComplianceMonitoringService {
 
   async acknowledgeAlert(alertId: string): Promise<void> {
     // In production, call backend API
-    secureLogger.info('COMPLIANCE', `Alert acknowledged: ${alertId}`);
+    secureLogger.info("COMPLIANCE", `Alert acknowledged: ${alertId}`);
   }
 
   async resolveAlert(alertId: string): Promise<void> {
     // In production, call backend API
-    secureLogger.info('COMPLIANCE', `Alert resolved: ${alertId}`);
+    secureLogger.info("COMPLIANCE", `Alert resolved: ${alertId}`);
   }
 
   // Compliance Trends
-  async getComplianceTrends(): Promise<{ period: string; score: number; alerts_count: number }[]> {
+  async getComplianceTrends(): Promise<
+    { period: string; score: number; alerts_count: number }[]
+  > {
     // Mock compliance trend data
     return [
-      { period: 'Last 7 days', score: 94, alerts_count: 2 },
-      { period: 'Last 30 days', score: 92, alerts_count: 5 },
-      { period: 'Last 90 days', score: 89, alerts_count: 12 },
-      { period: 'Last 6 months', score: 91, alerts_count: 8 }
+      { period: "Last 7 days", score: 94, alerts_count: 2 },
+      { period: "Last 30 days", score: 92, alerts_count: 5 },
+      { period: "Last 90 days", score: 89, alerts_count: 12 },
+      { period: "Last 6 months", score: 91, alerts_count: 8 },
     ];
   }
 
@@ -244,15 +253,15 @@ class ComplianceMonitoringService {
         let currentValue = 0;
 
         switch (rule.condition) {
-          case 'compliance_score < 80':
+          case "compliance_score < 80":
             triggered = metrics.compliance_score < rule.threshold;
             currentValue = metrics.compliance_score;
             break;
-          case 'error_rate > 5':
+          case "error_rate > 5":
             triggered = metrics.error_rate > rule.threshold;
             currentValue = metrics.error_rate;
             break;
-          case 'response_time > 2000':
+          case "response_time > 2000":
             triggered = metrics.response_time > rule.threshold;
             currentValue = metrics.response_time;
             break;
@@ -263,17 +272,20 @@ class ComplianceMonitoringService {
         }
       }
     } catch (error) {
-      secureLogger.error('COMPLIANCE', 'Threshold check failed', { 
-        error: error instanceof Error ? error.message : String(error) 
+      secureLogger.error("COMPLIANCE", "Threshold check failed", {
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
 
-  private async createAlert(rule: AlertRule, currentValue: number): Promise<void> {
+  private async createAlert(
+    rule: AlertRule,
+    currentValue: number,
+  ): Promise<void> {
     const alert: ComplianceAlert = {
       id: `alert-${Date.now()}`,
       rule_id: rule.id,
-      message: `${rule.name}: Current value ${currentValue} ${rule.condition.split(' ')[1]} threshold ${rule.threshold}`,
+      message: `${rule.name}: Current value ${currentValue} ${rule.condition.split(" ")[1]} threshold ${rule.threshold}`,
       severity: rule.severity,
       timestamp: new Date().toISOString(),
       acknowledged: false,
@@ -282,12 +294,12 @@ class ComplianceMonitoringService {
         rule_name: rule.name,
         current_value: currentValue,
         threshold: rule.threshold,
-        condition: rule.condition
-      }
+        condition: rule.condition,
+      },
     };
 
     // In production, send to backend and notification system
-    secureLogger.warn('COMPLIANCE', `Alert triggered: ${rule.name}`, { alert });
+    secureLogger.warn("COMPLIANCE", `Alert triggered: ${rule.name}`, { alert });
   }
 
   // Performance Monitoring
@@ -302,40 +314,61 @@ class ComplianceMonitoringService {
       api_response_time: 245,
       database_query_time: 45,
       error_rate: 0.02,
-      throughput: 1250 // requests per minute
+      throughput: 1250, // requests per minute
     };
   }
 
   // Health Checks
   async performHealthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
-    checks: { name: string; status: 'pass' | 'fail'; message: string }[];
+    status: "healthy" | "degraded" | "unhealthy";
+    checks: { name: string; status: "pass" | "fail"; message: string }[];
   }> {
-    const checks: { name: string; status: 'pass' | 'fail'; message: string }[] = [
-      { name: 'API Connectivity', status: 'pass', message: 'API responding normally' },
-      { name: 'Database Connection', status: 'pass', message: 'Database accessible' },
-      { name: 'Compliance Score', status: 'pass', message: 'Score above 80%' },
-      { name: 'Alert System', status: 'pass', message: 'Alert rules active' }
-    ];
+    const checks: { name: string; status: "pass" | "fail"; message: string }[] =
+      [
+        {
+          name: "API Connectivity",
+          status: "pass",
+          message: "API responding normally",
+        },
+        {
+          name: "Database Connection",
+          status: "pass",
+          message: "Database accessible",
+        },
+        {
+          name: "Compliance Score",
+          status: "pass",
+          message: "Score above 80%",
+        },
+        { name: "Alert System", status: "pass", message: "Alert rules active" },
+      ];
 
-    const failedChecks = checks.filter(c => c.status === 'fail').length;
-    const status = failedChecks === 0 ? 'healthy' : failedChecks < 2 ? 'degraded' : 'unhealthy';
+    const failedChecks = checks.filter((c) => c.status === "fail").length;
+    const status =
+      failedChecks === 0
+        ? "healthy"
+        : failedChecks < 2
+          ? "degraded"
+          : "unhealthy";
 
     return { status, checks };
   }
 
   // Scheduled Monitoring
   startMonitoring(intervalMinutes: number = 5): () => void {
-    const interval = setInterval(async () => {
-      try {
-        await this.checkThresholds();
-        await this.performHealthCheck();
-      } catch (error) {
-        secureLogger.error('COMPLIANCE', 'Monitoring check failed', { 
-          error: error instanceof Error ? error.message : String(error) 
-        });
-      }
-    }, intervalMinutes * 60 * 1000);
+    const interval = setInterval(
+      async () => {
+        try {
+          await this.checkThresholds();
+          await this.performHealthCheck();
+        } catch (error) {
+          secureLogger.error("COMPLIANCE", "Monitoring check failed", {
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+      },
+      intervalMinutes * 60 * 1000,
+    );
 
     // Return cleanup function
     return () => clearInterval(interval);

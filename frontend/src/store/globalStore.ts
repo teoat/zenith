@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { devtools, persist } from "zustand/middleware";
 
 /**
  * Global application state store
@@ -9,9 +9,9 @@ import { devtools, persist } from 'zustand/middleware';
 interface GlobalState {
   // UI State
   sidebarCollapsed: boolean;
-  theme: 'light' | 'dark' | 'system';
+  theme: "light" | "dark" | "system";
   locale: string;
-  
+
   // User Preferences
   preferences: {
     defaultPageSize: number;
@@ -19,7 +19,7 @@ interface GlobalState {
     enableNotifications: boolean;
     showKeyboardShortcuts: boolean;
   };
-  
+
   // Filter State (shared across pages)
   filters: {
     dateRange: { start: Date | null; end: Date | null };
@@ -27,7 +27,7 @@ interface GlobalState {
     status: string[];
     assignee: string | null;
   };
-  
+
   // Loading States
   loading: {
     global: boolean;
@@ -35,7 +35,7 @@ interface GlobalState {
     transactions: boolean;
     ai: boolean;
   };
-  
+
   // Error States
   errors: {
     global: Error | null;
@@ -43,47 +43,47 @@ interface GlobalState {
     transactions: Error | null;
     ai: Error | null;
   };
-  
+
   // Actions
   setSidebarCollapsed: (collapsed: boolean) => void;
-  setTheme: (theme: 'light' | 'dark' | 'system') => void;
+  setTheme: (theme: "light" | "dark" | "system") => void;
   setLocale: (locale: string) => void;
-  updatePreferences: (preferences: Partial<GlobalState['preferences']>) => void;
-  updateFilters: (filters: Partial<GlobalState['filters']>) => void;
-  setLoading: (key: keyof GlobalState['loading'], value: boolean) => void;
-  setError: (key: keyof GlobalState['errors'], error: Error | null) => void;
+  updatePreferences: (preferences: Partial<GlobalState["preferences"]>) => void;
+  updateFilters: (filters: Partial<GlobalState["filters"]>) => void;
+  setLoading: (key: keyof GlobalState["loading"], value: boolean) => void;
+  setError: (key: keyof GlobalState["errors"], error: Error | null) => void;
   clearErrors: () => void;
   reset: () => void;
 }
 
 const initialState = {
   sidebarCollapsed: false,
-  theme: 'system' as const,
-  locale: 'en-US',
+  theme: "system" as const,
+  locale: "en-US",
   preferences: {
     defaultPageSize: 20,
     enableAnimations: true,
     enableNotifications: true,
-    showKeyboardShortcuts: true
+    showKeyboardShortcuts: true,
   },
   filters: {
     dateRange: { start: null, end: null },
     riskLevel: [],
     status: [],
-    assignee: null
+    assignee: null,
   },
   loading: {
     global: false,
     cases: false,
     transactions: false,
-    ai: false
+    ai: false,
   },
   errors: {
     global: null,
     cases: null,
     transactions: null,
-    ai: null
-  }
+    ai: null,
+  },
 };
 
 export const useGlobalStore = create<GlobalState>()(
@@ -91,74 +91,67 @@ export const useGlobalStore = create<GlobalState>()(
     persist(
       (set) => ({
         ...initialState,
-        
-        setSidebarCollapsed: (collapsed) => 
-          set({ sidebarCollapsed: collapsed }, false, 'setSidebarCollapsed'),
-        
-        setTheme: (theme) => 
-          set({ theme }, false, 'setTheme'),
-        
-        setLocale: (locale) => 
-          set({ locale }, false, 'setLocale'),
-        
+
+        setSidebarCollapsed: (collapsed) =>
+          set({ sidebarCollapsed: collapsed }, false, "setSidebarCollapsed"),
+
+        setTheme: (theme) => set({ theme }, false, "setTheme"),
+
+        setLocale: (locale) => set({ locale }, false, "setLocale"),
+
         updatePreferences: (preferences) =>
           set(
             (state) => ({
-              preferences: { ...state.preferences, ...preferences }
+              preferences: { ...state.preferences, ...preferences },
             }),
             false,
-            'updatePreferences'
+            "updatePreferences",
           ),
-        
+
         updateFilters: (filters) =>
           set(
             (state) => ({
-              filters: { ...state.filters, ...filters }
+              filters: { ...state.filters, ...filters },
             }),
             false,
-            'updateFilters'
+            "updateFilters",
           ),
-        
+
         setLoading: (key, value) =>
           set(
             (state) => ({
-              loading: { ...state.loading, [key]: value }
+              loading: { ...state.loading, [key]: value },
             }),
             false,
-            'setLoading'
+            "setLoading",
           ),
-        
+
         setError: (key, error) =>
           set(
             (state) => ({
-              errors: { ...state.errors, [key]: error }
+              errors: { ...state.errors, [key]: error },
             }),
             false,
-            'setError'
+            "setError",
           ),
-        
+
         clearErrors: () =>
-          set(
-            { errors: initialState.errors },
-            false,
-            'clearErrors'
-          ),
-        
-        reset: () => 
-          set(initialState, false, 'reset')
+          set({ errors: initialState.errors }, false, "clearErrors"),
+
+        reset: () => set(initialState, false, "reset"),
       }),
       {
-        name: 'global-store',
+        name: "global-store",
         partialize: (state) => ({
           sidebarCollapsed: state.sidebarCollapsed,
           theme: state.theme,
           locale: state.locale,
-          preferences: state.preferences
-        })
-      }
+          preferences: state.preferences,
+        }),
+      },
     ),
-    { name: 'GlobalStore' }
-  )
+    { name: "GlobalStore" },
+  ),
 );
 
 /**
@@ -189,22 +182,22 @@ export const useFilters = () => {
   return { filters, updateFilters };
 };
 
-export const useLoadingState = (key: keyof GlobalState['loading']) => {
+export const useLoadingState = (key: keyof GlobalState["loading"]) => {
   const loading = useGlobalStore((state) => state.loading[key]);
   const setLoading = useGlobalStore((state) => state.setLoading);
   return {
     loading,
-    setLoading: (value: boolean) => setLoading(key, value)
+    setLoading: (value: boolean) => setLoading(key, value),
   };
 };
 
-export const useErrorState = (key: keyof GlobalState['errors']) => {
+export const useErrorState = (key: keyof GlobalState["errors"]) => {
   const error = useGlobalStore((state) => state.errors[key]);
   const setError = useGlobalStore((state) => state.setError);
   const clearErrors = useGlobalStore((state) => state.clearErrors);
   return {
     error,
     setError: (error: Error | null) => setError(key, error),
-    clearErrors
+    clearErrors,
   };
 };

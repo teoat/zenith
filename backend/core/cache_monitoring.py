@@ -15,21 +15,13 @@ from prometheus_client import Counter, Gauge, Histogram
 from core.logging import logger
 
 # Prometheus metrics for cache
-cache_hits = Counter(
-    "cache_hits_total", "Number of cache hits", ["cache_name", "operation"]
-)
+cache_hits = Counter("cache_hits_total", "Number of cache hits", ["cache_name", "operation"])
 
-cache_misses = Counter(
-    "cache_misses_total", "Number of cache misses", ["cache_name", "operation"]
-)
+cache_misses = Counter("cache_misses_total", "Number of cache misses", ["cache_name", "operation"])
 
-cache_set_errors = Counter(
-    "cache_set_errors_total", "Number of cache set errors", ["cache_name"]
-)
+cache_set_errors = Counter("cache_set_errors_total", "Number of cache set errors", ["cache_name"])
 
-cache_get_errors = Counter(
-    "cache_get_errors_total", "Number of cache get errors", ["cache_name"]
-)
+cache_get_errors = Counter("cache_get_errors_total", "Number of cache get errors", ["cache_name"])
 
 cache_latency = Histogram(
     "cache_operation_duration_seconds",
@@ -39,9 +31,7 @@ cache_latency = Histogram(
 
 cache_size = Gauge("cache_size_bytes", "Current cache size in bytes", ["cache_name"])
 
-cache_entry_count = Gauge(
-    "cache_entries_total", "Number of entries in cache", ["cache_name"]
-)
+cache_entry_count = Gauge("cache_entries_total", "Number of entries in cache", ["cache_name"])
 
 
 class CacheMonitor:
@@ -145,11 +135,7 @@ class CacheMonitor:
             "hits": self._hit_count,
             "misses": self._miss_count,
             "hit_rate": self.get_hit_rate(),
-            "avg_latency_ms": (
-                (self._total_latency / self._operation_count * 1000)
-                if self._operation_count > 0
-                else 0
-            ),
+            "avg_latency_ms": ((self._total_latency / self._operation_count * 1000) if self._operation_count > 0 else 0),
         }
 
 
@@ -169,9 +155,7 @@ class _CacheOperationContext:
         duration = time.time() - self.start_time
 
         # Record latency
-        cache_latency.labels(
-            cache_name=self.monitor.cache_name, operation=self.operation
-        ).observe(duration)
+        cache_latency.labels(cache_name=self.monitor.cache_name, operation=self.operation).observe(duration)
 
         self.monitor._total_latency += duration
         self.monitor._operation_count += 1
@@ -236,6 +220,4 @@ def get_cache_stats(cache_name: str | None = None) -> dict:
 def log_cache_performance():
     """Log cache performance statistics"""
     for cache_name, stats in _cache_stats.items():
-        logger.info(
-            "Cache performance report", extra={"cache_name": cache_name, **stats}
-        )
+        logger.info("Cache performance report", extra={"cache_name": cache_name, **stats})

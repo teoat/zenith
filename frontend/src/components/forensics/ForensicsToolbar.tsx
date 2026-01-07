@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search } from 'lucide-react';
+import React from "react";
+import { Search } from "lucide-react";
 
 interface ForensicsToolbarProps {
   searchQuery: string;
@@ -14,7 +14,7 @@ const ForensicsToolbar: React.FC<ForensicsToolbarProps> = ({
   onSearchChange,
   onPageChange: _onPageChange,
   currentPage,
-  totalPages
+  totalPages,
 }) => {
   return (
     <div className="bg-slate-900 border-b border-slate-800 px-4 h-12 flex items-center gap-4 shrink-0">

@@ -8,9 +8,7 @@
   "paths": {
     "/health": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Comprehensive Health Check",
         "description": "Returns detailed health status for all system components.\n\n    Components checked:\n    - Database (PostgreSQL/SQLite)\n    - Cache (Redis)\n    - Storage (S3 if configured)\n    - API responsiveness\n\n    Returns 200 if healthy, 503 if any component is unhealthy.",
         "operationId": "health_check_health_get",
@@ -73,9 +71,7 @@
     },
     "/health/uptime": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Uptime and Proactive Monitoring Status",
         "description": "Get comprehensive uptime metrics and proactive monitoring status for 99.99% target",
         "operationId": "uptime_status_health_uptime_get",
@@ -93,9 +89,7 @@
     },
     "/health/alerts/{alert_id}/acknowledge": {
       "post": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Acknowledge Alert",
         "description": "Acknowledge a proactive monitoring alert",
         "operationId": "acknowledge_alert_health_alerts__alert_id__acknowledge_post",
@@ -134,9 +128,7 @@
     },
     "/health/live": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Liveness Probe",
         "description": "Simple liveness check for Kubernetes. Returns 200 if the service process is running.",
         "operationId": "liveness_health_live_get",
@@ -154,9 +146,7 @@
     },
     "/health/circuit-breakers": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Circuit Breaker Status",
         "description": "Get status of all circuit breakers in the system for monitoring fault tolerance.",
         "operationId": "circuit_breaker_status_health_circuit_breakers_get",
@@ -174,9 +164,7 @@
     },
     "/health/ready": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Readiness Probe",
         "description": "Check if application is ready to accept traffic.",
         "operationId": "readiness_health_ready_get",
@@ -197,9 +185,7 @@
     },
     "/health/startup": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Startup Probe",
         "description": "Check if application has finished starting up. Used for slow-starting applications.",
         "operationId": "startup_health_startup_get",
@@ -217,9 +203,7 @@
     },
     "/api/v1/auth/register": {
       "post": {
-        "tags": [
-          "Authentication"
-        ],
+        "tags": ["Authentication"],
         "summary": "Register",
         "description": "Register a new user with password strength validation",
         "operationId": "register_api_v1_auth_register_post",
@@ -259,9 +243,7 @@
     },
     "/api/v1/auth/login": {
       "post": {
-        "tags": [
-          "Authentication"
-        ],
+        "tags": ["Authentication"],
         "summary": "Login",
         "description": "Authenticate user and return JWT tokens.\nSupports MFA: If user has MFA enabled, mfa_code is required.",
         "operationId": "login_api_v1_auth_login_post",
@@ -351,9 +333,7 @@
     },
     "/api/v1/auth/mfa/setup": {
       "get": {
-        "tags": [
-          "Authentication"
-        ],
+        "tags": ["Authentication"],
         "summary": "Mfa Setup",
         "description": "Generate MFA secret and QR code URI for setup",
         "operationId": "mfa_setup_api_v1_auth_mfa_setup_get",
@@ -378,9 +358,7 @@
     },
     "/api/v1/auth/mfa/verify": {
       "post": {
-        "tags": [
-          "Authentication"
-        ],
+        "tags": ["Authentication"],
         "summary": "Mfa Verify",
         "description": "Verify MFA code and enable MFA for the account",
         "operationId": "mfa_verify_api_v1_auth_mfa_verify_post",
@@ -425,9 +403,7 @@
     },
     "/api/v1/auth/refresh": {
       "post": {
-        "tags": [
-          "Authentication"
-        ],
+        "tags": ["Authentication"],
         "summary": "Refresh Token",
         "description": "Refresh access token using refresh token",
         "operationId": "refresh_token_api_v1_auth_refresh_post",
@@ -469,9 +445,7 @@
     },
     "/api/v1/auth/me": {
       "get": {
-        "tags": [
-          "Authentication"
-        ],
+        "tags": ["Authentication"],
         "summary": "Get Current User Profile",
         "description": "Get current user profile",
         "operationId": "get_current_user_profile_api_v1_auth_me_get",
@@ -496,9 +470,7 @@
     },
     "/api/v1/search": {
       "post": {
-        "tags": [
-          "Search"
-        ],
+        "tags": ["Search"],
         "summary": "Search Evidence",
         "description": "Search processed evidence content",
         "operationId": "search_evidence_api_v1_search_post",
@@ -565,9 +537,7 @@
     },
     "/api/v1/search/stats": {
       "get": {
-        "tags": [
-          "Search"
-        ],
+        "tags": ["Search"],
         "summary": "Get Evidence Search Stats",
         "description": "Get statistics about indexed evidence",
         "operationId": "get_evidence_search_stats_api_v1_search_stats_get",
@@ -585,9 +555,7 @@
     },
     "/api/v1/search/semantic": {
       "post": {
-        "tags": [
-          "Search"
-        ],
+        "tags": ["Search"],
         "summary": "Semantic Search Evidence",
         "description": "Perform semantic search on evidence content",
         "operationId": "semantic_search_evidence_api_v1_search_semantic_post",
@@ -625,9 +593,7 @@
     },
     "/api/v1/search/semantic/stats": {
       "get": {
-        "tags": [
-          "Search"
-        ],
+        "tags": ["Search"],
         "summary": "Get Semantic Search Stats",
         "description": "Get statistics about the semantic search vector store",
         "operationId": "get_semantic_search_stats_api_v1_search_semantic_stats_get",
@@ -645,9 +611,7 @@
     },
     "/api/v1/admin/database/performance": {
       "get": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Get Database Performance",
         "description": "Get database performance metrics (Admin only)",
         "operationId": "get_database_performance_api_v1_admin_database_performance_get",
@@ -670,9 +634,7 @@
     },
     "/api/v1/admin/database/stats": {
       "get": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Get Database Stats",
         "description": "Get comprehensive database statistics (Admin only)",
         "operationId": "get_database_stats_api_v1_admin_database_stats_get",
@@ -695,9 +657,7 @@
     },
     "/api/v1/admin/database/optimize": {
       "post": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Optimize Database",
         "description": "Trigger database optimization (Admin only)",
         "operationId": "optimize_database_api_v1_admin_database_optimize_post",
@@ -720,9 +680,7 @@
     },
     "/api/v1/admin/database/analyze-query": {
       "post": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Analyze Query",
         "description": "Analyze query performance with EXPLAIN (Admin only)",
         "operationId": "analyze_query_api_v1_admin_database_analyze_query_post",
@@ -777,9 +735,7 @@
     },
     "/api/v1/admin/cache/stats": {
       "get": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Get Cache Statistics",
         "description": "Get comprehensive cache statistics (Admin only)",
         "operationId": "get_cache_statistics_api_v1_admin_cache_stats_get",
@@ -802,9 +758,7 @@
     },
     "/api/v1/admin/cache/namespace/{namespace}": {
       "delete": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Clear Cache By Namespace",
         "description": "Clear all cache entries in a specific namespace (Admin only)",
         "operationId": "clear_cache_by_namespace_api_v1_admin_cache_namespace__namespace__delete",
@@ -848,9 +802,7 @@
     },
     "/api/v1/admin/cache/all": {
       "delete": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Clear Entire Cache",
         "description": "Clear all cache entries - DESTRUCTIVE operation (Admin only)",
         "operationId": "clear_entire_cache_api_v1_admin_cache_all_delete",
@@ -873,9 +825,7 @@
     },
     "/api/v1/admin/system/diagnostics": {
       "get": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Get System Diagnostics",
         "description": "Get comprehensive system diagnostics and performance history (Admin only)",
         "operationId": "get_system_diagnostics_api_v1_admin_system_diagnostics_get",
@@ -898,9 +848,7 @@
     },
     "/api/v1/admin/system/metrics/current": {
       "get": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Get Current System Metrics",
         "description": "Get real-time system metrics (Admin only)",
         "operationId": "get_current_system_metrics_api_v1_admin_system_metrics_current_get",
@@ -923,9 +871,7 @@
     },
     "/api/v1/admin/plugins": {
       "get": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "List Plugins",
         "description": "List all installed plugins (Admin only)",
         "operationId": "list_plugins_api_v1_admin_plugins_get",
@@ -948,9 +894,7 @@
     },
     "/api/v1/admin/plugins/{plugin_id}/toggle": {
       "post": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Toggle Plugin Status",
         "description": "Toggle plugin active/inactive status (Admin only)",
         "operationId": "toggle_plugin_status_api_v1_admin_plugins__plugin_id__toggle_post",
@@ -994,9 +938,7 @@
     },
     "/api/v1/admin/plugins/metrics": {
       "get": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Get Plugin Metrics",
         "description": "Get plugin execution metrics (Admin only)",
         "operationId": "get_plugin_metrics_api_v1_admin_plugins_metrics_get",
@@ -1019,9 +961,7 @@
     },
     "/api/v1/users/users/me/preferences": {
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Update User Preferences",
         "description": "Update current user preferences",
         "operationId": "update_user_preferences_api_v1_users_users_me_preferences_put",
@@ -1061,9 +1001,7 @@
     },
     "/api/v1/users/users": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get Users",
         "description": "Get users with standardized pagination and filtering",
         "operationId": "get_users_api_v1_users_users_get",
@@ -1252,9 +1190,7 @@
     },
     "/api/v1/users/users/bulk": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Bulk User Operations",
         "description": "Perform bulk operations on users",
         "operationId": "bulk_user_operations_api_v1_users_users_bulk_post",
@@ -1265,11 +1201,7 @@
                 "$ref": "#/components/schemas/BulkOperationRequest"
               },
               "example": {
-                "ids": [
-                  "usr_123",
-                  "usr_456",
-                  "usr_789"
-                ],
+                "ids": ["usr_123", "usr_456", "usr_789"],
                 "operation": "deactivate"
               }
             }
@@ -1317,9 +1249,7 @@
     },
     "/api/v1/users/me": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get Current User",
         "description": "Get current authenticated user profile",
         "operationId": "get_current_user_api_v1_users_me_get",
@@ -1342,9 +1272,7 @@
     },
     "/api/v1/users/users/{user_id}": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get User",
         "description": "Get user by ID",
         "operationId": "get_user_api_v1_users_users__user_id__get",
@@ -1383,9 +1311,7 @@
     },
     "/api/v1/analytics/cases": {
       "get": {
-        "tags": [
-          "Analytics"
-        ],
+        "tags": ["Analytics"],
         "summary": "Get Case Analytics",
         "description": "Get optimized case analytics",
         "operationId": "get_case_analytics_api_v1_analytics_cases_get",
@@ -1433,9 +1359,7 @@
     },
     "/api/v1/analytics/transactions": {
       "get": {
-        "tags": [
-          "Analytics"
-        ],
+        "tags": ["Analytics"],
         "summary": "Get Transaction Analytics",
         "description": "Get transaction analytics with optimized aggregates",
         "operationId": "get_transaction_analytics_api_v1_analytics_transactions_get",
@@ -1492,9 +1416,7 @@
     },
     "/api/v1/analytics/overview": {
       "get": {
-        "tags": [
-          "Analytics"
-        ],
+        "tags": ["Analytics"],
         "summary": "Get System Overview",
         "description": "Get system overview statistics",
         "operationId": "get_system_overview_api_v1_analytics_overview_get",
@@ -1517,9 +1439,7 @@
     },
     "/api/v1/analytics/temporal-flow": {
       "get": {
-        "tags": [
-          "Analytics"
-        ],
+        "tags": ["Analytics"],
         "summary": "Get Temporal Flow",
         "description": "Get temporal flow data for visualization (TransactionFlow format)",
         "operationId": "get_temporal_flow_api_v1_analytics_temporal_flow_get",
@@ -1565,9 +1485,7 @@
     },
     "/api/v1/analytics/behavioral": {
       "get": {
-        "tags": [
-          "Analytics"
-        ],
+        "tags": ["Analytics"],
         "summary": "Get Behavioral Analytics",
         "description": "Get behavioral analytics for heatmaps",
         "operationId": "get_behavioral_analytics_api_v1_analytics_behavioral_get",
@@ -1590,9 +1508,7 @@
     },
     "/api/v1/analytics/case-metrics": {
       "get": {
-        "tags": [
-          "Analytics"
-        ],
+        "tags": ["Analytics"],
         "summary": "Get Case Metrics",
         "description": "Get summarized case metrics for the dashboard",
         "operationId": "get_case_metrics_api_v1_analytics_case_metrics_get",
@@ -1615,9 +1531,7 @@
     },
     "/api/v1/analytics/fraud-stats": {
       "get": {
-        "tags": [
-          "Analytics"
-        ],
+        "tags": ["Analytics"],
         "summary": "Get Fraud Statistics",
         "description": "Get summarized fraud statistics for various periods",
         "operationId": "get_fraud_statistics_api_v1_analytics_fraud_stats_get",
@@ -1657,10 +1571,7 @@
     },
     "/api/v1/reports/generate": {
       "post": {
-        "tags": [
-          "Reporting",
-          "reporting"
-        ],
+        "tags": ["Reporting", "reporting"],
         "summary": "Generate Report",
         "description": "Generate a report based on provided criteria.\nReport generation happens in the background and returns a job ID for tracking.",
         "operationId": "generate_report_api_v1_reports_generate_post",
@@ -1705,10 +1616,7 @@
     },
     "/api/v1/reports/job/{job_id}": {
       "get": {
-        "tags": [
-          "Reporting",
-          "reporting"
-        ],
+        "tags": ["Reporting", "reporting"],
         "summary": "Get Report Job Status",
         "description": "Get the status of a report generation job",
         "operationId": "get_report_job_status_api_v1_reports_job__job_id__get",
@@ -1754,10 +1662,7 @@
     },
     "/api/v1/reports/download/{report_id}": {
       "get": {
-        "tags": [
-          "Reporting",
-          "reporting"
-        ],
+        "tags": ["Reporting", "reporting"],
         "summary": "Download Report",
         "description": "Download a completed report",
         "operationId": "download_report_api_v1_reports_download__report_id__get",
@@ -1801,10 +1706,7 @@
     },
     "/api/v1/reports/summary/{case_id}": {
       "get": {
-        "tags": [
-          "Reporting",
-          "reporting"
-        ],
+        "tags": ["Reporting", "reporting"],
         "summary": "Get Case Summary",
         "description": "Get comprehensive summary statistics and findings for a case.\nUsed by the Summary Preview tab in the Reporting page.",
         "operationId": "get_case_summary_api_v1_reports_summary__case_id__get",
@@ -1845,10 +1747,7 @@
     },
     "/api/v1/reports/templates": {
       "get": {
-        "tags": [
-          "Reporting",
-          "reporting"
-        ],
+        "tags": ["Reporting", "reporting"],
         "summary": "Get Report Templates",
         "description": "Get available report templates with their metadata.",
         "operationId": "get_report_templates_api_v1_reports_templates_get",
@@ -1872,10 +1771,7 @@
     },
     "/api/v1/reports/scheduled": {
       "get": {
-        "tags": [
-          "Reporting",
-          "reporting"
-        ],
+        "tags": ["Reporting", "reporting"],
         "summary": "Get Scheduled Reports",
         "description": "Get list of configured scheduled reports.",
         "operationId": "get_scheduled_reports_api_v1_reports_scheduled_get",
@@ -1897,10 +1793,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Reporting",
-          "reporting"
-        ],
+        "tags": ["Reporting", "reporting"],
         "summary": "Create Scheduled Report",
         "description": "Create a new scheduled report configuration.",
         "operationId": "create_scheduled_report_api_v1_reports_scheduled_post",
@@ -1940,10 +1833,7 @@
     },
     "/api/v1/reports/scheduled/{schedule_id}": {
       "delete": {
-        "tags": [
-          "Reporting",
-          "reporting"
-        ],
+        "tags": ["Reporting", "reporting"],
         "summary": "Delete Scheduled Report",
         "description": "Delete a scheduled report configuration.",
         "operationId": "delete_scheduled_report_api_v1_reports_scheduled__schedule_id__delete",
@@ -1982,10 +1872,7 @@
     },
     "/api/v1/reports/financial-health/{case_id}": {
       "get": {
-        "tags": [
-          "Reporting",
-          "reporting"
-        ],
+        "tags": ["Reporting", "reporting"],
         "summary": "Get Financial Health",
         "description": "Get financial health data for the FinancialHealth component.\nIncludes cashflow waterfall and burn rate data.",
         "operationId": "get_financial_health_api_v1_reports_financial_health__case_id__get",
@@ -2024,10 +1911,7 @@
     },
     "/api/v1/reports/project-tracker/{case_id}": {
       "get": {
-        "tags": [
-          "Reporting",
-          "reporting"
-        ],
+        "tags": ["Reporting", "reporting"],
         "summary": "Get Project Tracker",
         "description": "Get project milestone and benchmark data for the ProjectTracker component.",
         "operationId": "get_project_tracker_api_v1_reports_project_tracker__case_id__get",
@@ -2066,9 +1950,7 @@
     },
     "/api/v1/cases": {
       "post": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Create Case",
         "description": "Create a new case",
         "operationId": "create_case_api_v1_cases_post",
@@ -2129,9 +2011,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Get Cases",
         "description": "Get a paginated list of cases with optional filtering.",
         "operationId": "get_cases_api_v1_cases_get",
@@ -2293,9 +2173,7 @@
     },
     "/api/v1/cases/search": {
       "get": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Search Cases",
         "description": "Specific search endpoint for cases",
         "operationId": "search_cases_api_v1_cases_search_get",
@@ -2387,9 +2265,7 @@
     },
     "/api/v1/cases/{case_id}": {
       "get": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Get Case Detail",
         "description": "Get detailed information for a specific case",
         "operationId": "get_case_detail_api_v1_cases__case_id__get",
@@ -2433,9 +2309,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Update Case Partial",
         "description": "Update general case details",
         "operationId": "update_case_partial_api_v1_cases__case_id__patch",
@@ -2489,9 +2363,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Update Case",
         "description": "Update a case",
         "operationId": "update_case_api_v1_cases__case_id__put",
@@ -2547,9 +2419,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Delete Case",
         "description": "Delete a case",
         "operationId": "delete_case_api_v1_cases__case_id__delete",
@@ -2593,9 +2463,7 @@
     },
     "/api/v1/cases/{case_id}/status": {
       "put": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Update Case Status",
         "description": "Update case status specifically",
         "operationId": "update_case_status_api_v1_cases__case_id__status_put",
@@ -2653,9 +2521,7 @@
     },
     "/api/v1/cases/{case_id}/notes": {
       "post": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Add Case Note",
         "description": "Add a note to a case",
         "operationId": "add_case_note_api_v1_cases__case_id__notes_post",
@@ -2711,9 +2577,7 @@
     },
     "/api/v1/cases/{case_id}/close": {
       "post": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Close Case",
         "description": "Close a case",
         "operationId": "close_case_api_v1_cases__case_id__close_post",
@@ -2769,9 +2633,7 @@
     },
     "/api/v1/cases/bulk-delete": {
       "post": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "summary": "Bulk Delete Cases",
         "description": "Bulk delete cases",
         "operationId": "bulk_delete_cases_api_v1_cases_bulk_delete_post",
@@ -2816,9 +2678,7 @@
     },
     "/api/v1/audit/": {
       "get": {
-        "tags": [
-          "Audit"
-        ],
+        "tags": ["Audit"],
         "summary": "Get Audit Logs",
         "description": "Returns paginated audit logs",
         "operationId": "get_audit_logs_api_v1_audit__get",
@@ -2868,10 +2728,7 @@
     },
     "/api/v1/cost-optimization/cost-optimization/infrastructure/costs": {
       "get": {
-        "tags": [
-          "Cost Optimization",
-          "cost-optimization"
-        ],
+        "tags": ["Cost Optimization", "cost-optimization"],
         "summary": "Get Infrastructure Costs",
         "description": "Get comprehensive infrastructure cost analysis and optimization recommendations",
         "operationId": "get_infrastructure_costs_api_v1_cost_optimization_cost_optimization_infrastructure_costs_get",
@@ -2896,10 +2753,7 @@
     },
     "/api/v1/cost-optimization/cost-optimization/optimization/{optimization_id}/apply": {
       "post": {
-        "tags": [
-          "Cost Optimization",
-          "cost-optimization"
-        ],
+        "tags": ["Cost Optimization", "cost-optimization"],
         "summary": "Apply Cost Optimization",
         "description": "Apply a specific cost optimization strategy",
         "operationId": "apply_cost_optimization_api_v1_cost_optimization_cost_optimization_optimization__optimization_id__apply_post",
@@ -2953,10 +2807,7 @@
     },
     "/api/v1/cost-optimization/cost-optimization/savings/projection": {
       "get": {
-        "tags": [
-          "Cost Optimization",
-          "cost-optimization"
-        ],
+        "tags": ["Cost Optimization", "cost-optimization"],
         "summary": "Get Savings Projection",
         "description": "Get projected savings over time",
         "operationId": "get_savings_projection_api_v1_cost_optimization_cost_optimization_savings_projection_get",
@@ -3001,9 +2852,7 @@
     },
     "/api/v1/evidence": {
       "get": {
-        "tags": [
-          "Evidence"
-        ],
+        "tags": ["Evidence"],
         "summary": "Get Evidence",
         "description": "Get list of evidence items with pagination and search",
         "operationId": "get_evidence_api_v1_evidence_get",
@@ -3135,9 +2984,7 @@
     },
     "/api/v1/evidence/{evidence_id}/download/stream": {
       "get": {
-        "tags": [
-          "Evidence"
-        ],
+        "tags": ["Evidence"],
         "summary": "Download Evidence Stream",
         "description": "Stream download evidence file for large files.\nProvides better memory efficiency for large downloads.",
         "operationId": "download_evidence_stream_api_v1_evidence__evidence_id__download_stream_get",
@@ -3181,9 +3028,7 @@
     },
     "/api/v1/evidence/processing/metrics": {
       "get": {
-        "tags": [
-          "Evidence"
-        ],
+        "tags": ["Evidence"],
         "summary": "Get Processing Metrics",
         "description": "Get evidence processing performance metrics",
         "operationId": "get_processing_metrics_api_v1_evidence_processing_metrics_get",
@@ -3206,9 +3051,7 @@
     },
     "/api/v1/evidence/processing/cleanup": {
       "post": {
-        "tags": [
-          "Evidence"
-        ],
+        "tags": ["Evidence"],
         "summary": "Cleanup Evidence Processor",
         "description": "Clean up evidence processor resources",
         "operationId": "cleanup_evidence_processor_api_v1_evidence_processing_cleanup_post",
@@ -3231,9 +3074,7 @@
     },
     "/api/v1/evidence/upload/chunk": {
       "post": {
-        "tags": [
-          "Evidence"
-        ],
+        "tags": ["Evidence"],
         "summary": "Upload File Chunk",
         "description": "Upload a file chunk for resumable file uploads.\nSupports large file uploads by splitting them into chunks.",
         "operationId": "upload_file_chunk_api_v1_evidence_upload_chunk_post",
@@ -3278,9 +3119,7 @@
     },
     "/api/v1/evidence/upload/complete": {
       "post": {
-        "tags": [
-          "Evidence"
-        ],
+        "tags": ["Evidence"],
         "summary": "Complete File Upload",
         "description": "Complete a resumable file upload by assembling chunks and processing the file.",
         "operationId": "complete_file_upload_api_v1_evidence_upload_complete_post",
@@ -3343,9 +3182,7 @@
     },
     "/api/v1/evidence/upload": {
       "post": {
-        "tags": [
-          "Evidence"
-        ],
+        "tags": ["Evidence"],
         "summary": "Upload Evidence",
         "description": "Upload and process evidence file for a case\n\nThis endpoint:\n1. Saves the uploaded file\n2. Performs multi-modal analysis (OCR, forensics, etc.)\n3. Creates evidence record in database\n4. Indexes content for search (via processor)",
         "operationId": "upload_evidence_api_v1_evidence_upload_post",
@@ -3406,9 +3243,7 @@
     },
     "/api/v1/evidence/{evidence_id}/highlights": {
       "get": {
-        "tags": [
-          "Evidence"
-        ],
+        "tags": ["Evidence"],
         "summary": "Get Evidence Highlights",
         "description": "Get saved highlights for an evidence file",
         "operationId": "get_evidence_highlights_api_v1_evidence__evidence_id__highlights_get",
@@ -3466,9 +3301,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Evidence"
-        ],
+        "tags": ["Evidence"],
         "summary": "Save Evidence Highlight",
         "description": "Save a new highlight to evidence metadata",
         "operationId": "save_evidence_highlight_api_v1_evidence__evidence_id__highlights_post",
@@ -3523,9 +3356,7 @@
     },
     "/api/v1/evidence/bulk-delete": {
       "post": {
-        "tags": [
-          "Evidence"
-        ],
+        "tags": ["Evidence"],
         "summary": "Bulk Delete Evidence",
         "description": "Bulk delete evidence records and their associated files",
         "operationId": "bulk_delete_evidence_api_v1_evidence_bulk_delete_post",
@@ -3538,11 +3369,7 @@
                 "title": "Payload"
               },
               "example": {
-                "ids": [
-                  "ev_123456",
-                  "ev_789012",
-                  "ev_345678"
-                ]
+                "ids": ["ev_123456", "ev_789012", "ev_345678"]
               }
             }
           },
@@ -3600,9 +3427,7 @@
     },
     "/api/v1/fraud/analyze": {
       "post": {
-        "tags": [
-          "Fraud"
-        ],
+        "tags": ["Fraud"],
         "summary": "Analyze Transaction",
         "description": "Analyze a single transaction for fraud",
         "operationId": "analyze_transaction_api_v1_fraud_analyze_post",
@@ -3647,9 +3472,7 @@
     },
     "/api/v1/fraud/analyze/batch": {
       "post": {
-        "tags": [
-          "Fraud"
-        ],
+        "tags": ["Fraud"],
         "summary": "Analyze Batch",
         "description": "Analyze a batch of transactions",
         "operationId": "analyze_batch_api_v1_fraud_analyze_batch_post",
@@ -3694,9 +3517,7 @@
     },
     "/api/v1/fraud/alerts": {
       "post": {
-        "tags": [
-          "Fraud"
-        ],
+        "tags": ["Fraud"],
         "summary": "Create Fraud Alert",
         "description": "Create a new fraud alert",
         "operationId": "create_fraud_alert_api_v1_fraud_alerts_post",
@@ -3741,9 +3562,7 @@
     },
     "/api/v1/fraud/rules": {
       "get": {
-        "tags": [
-          "Fraud"
-        ],
+        "tags": ["Fraud"],
         "summary": "List Fraud Rules",
         "description": "List fraud detection rules (Backwards compatibility for tests)",
         "operationId": "list_fraud_rules_api_v1_fraud_rules_get",
@@ -3766,9 +3585,7 @@
     },
     "/api/v1/fraud/analyze/{case_id}": {
       "post": {
-        "tags": [
-          "Fraud"
-        ],
+        "tags": ["Fraud"],
         "summary": "Analyze Case",
         "description": "Analyze a case for fraud patterns",
         "operationId": "analyze_case_api_v1_fraud_analyze__case_id__post",
@@ -3821,9 +3638,7 @@
     },
     "/api/v1/fraud/alerts/{case_id}": {
       "get": {
-        "tags": [
-          "Fraud"
-        ],
+        "tags": ["Fraud"],
         "summary": "Get Case Alerts",
         "description": "Get all fraud alerts for a case",
         "operationId": "get_case_alerts_api_v1_fraud_alerts__case_id__get",
@@ -3867,9 +3682,7 @@
     },
     "/api/v1/fraud/alerts/{alert_id}/status": {
       "put": {
-        "tags": [
-          "Fraud"
-        ],
+        "tags": ["Fraud"],
         "summary": "Update Alert Status",
         "description": "Update the status of a fraud alert",
         "operationId": "update_alert_status_api_v1_fraud_alerts__alert_id__status_put",
@@ -3923,9 +3736,7 @@
     },
     "/api/v1/fraud/stats": {
       "get": {
-        "tags": [
-          "Fraud"
-        ],
+        "tags": ["Fraud"],
         "summary": "Get Fraud Stats",
         "description": "Get real-time fraud detection statistics",
         "operationId": "get_fraud_stats_api_v1_fraud_stats_get",
@@ -3948,9 +3759,7 @@
     },
     "/api/v1/fraud/accounts/freeze": {
       "post": {
-        "tags": [
-          "Fraud"
-        ],
+        "tags": ["Fraud"],
         "summary": "Freeze Account",
         "description": "Freeze a bank account due to suspicious activity",
         "operationId": "freeze_account_api_v1_fraud_accounts_freeze_post",
@@ -3995,9 +3804,7 @@
     },
     "/api/v1/compliance/dashboard": {
       "get": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Get Compliance Dashboard",
         "description": "Get high-level compliance metrics backed by real DB data",
         "operationId": "get_compliance_dashboard_api_v1_compliance_dashboard_get",
@@ -4022,9 +3829,7 @@
     },
     "/api/v1/compliance/monitoring/dashboard": {
       "get": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Get Monitoring Dashboard",
         "description": "Get real-time monitoring dashboard data linked to DB",
         "operationId": "get_monitoring_dashboard_api_v1_compliance_monitoring_dashboard_get",
@@ -4049,9 +3854,7 @@
     },
     "/api/v1/compliance/regulatory-reports": {
       "get": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Get Regulatory Reports",
         "operationId": "get_regulatory_reports_api_v1_compliance_regulatory_reports_get",
         "parameters": [
@@ -4096,9 +3899,7 @@
     },
     "/api/v1/compliance/regional-compliance": {
       "get": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Get Regional Compliance",
         "description": "Reserved for global expansion - currently static configuration",
         "operationId": "get_regional_compliance_api_v1_compliance_regional_compliance_get",
@@ -4116,9 +3917,7 @@
     },
     "/api/v1/compliance/data-residency-rules": {
       "get": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Get Data Residency Rules",
         "operationId": "get_data_residency_rules_api_v1_compliance_data_residency_rules_get",
         "responses": {
@@ -4135,9 +3934,7 @@
     },
     "/api/v1/compliance/audit/log": {
       "post": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Log Audit Event",
         "operationId": "log_audit_event_api_v1_compliance_audit_log_post",
         "requestBody": {
@@ -4181,10 +3978,7 @@
     },
     "/api/v1/ai/embeddings": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Create Embeddings",
         "description": "Create embeddings for text content.\n\nThis endpoint generates vector embeddings for the provided text using\nproduction-grade ML models for semantic search and similarity matching.",
         "operationId": "create_embeddings_api_v1_ai_embeddings_post",
@@ -4232,10 +4026,7 @@
     },
     "/api/v1/ai/semantic-search": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Semantic Search New",
         "description": "Perform semantic search across case data and evidence.\n\nThis endpoint uses AI-powered semantic search to find relevant information\nbased on natural language queries, going beyond simple keyword matching.",
         "operationId": "semantic_search_new_api_v1_ai_semantic_search_post",
@@ -4283,10 +4074,7 @@
     },
     "/api/v1/ai/search": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Semantic Search Legacy",
         "description": "LEGACY: Perform semantic search across case data and evidence.\n\nDEPRECATED: Use /semantic-search instead.\nThis endpoint uses AI-powered semantic search to find relevant information\nbased on natural language queries, going beyond simple keyword matching.",
         "operationId": "semantic_search_legacy_api_v1_ai_search_post",
@@ -4334,10 +4122,7 @@
     },
     "/api/v1/ai/analyze": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Ai Analyze",
         "description": "Perform AI-powered analysis on case data or evidence.\n\nSupports various analysis types:\n- case_summary: Generate comprehensive case summary\n- fraud_pattern: Detect fraud patterns in transactions\n- entity_linkage: Analyze relationships between entities\n- risk_assessment: Assess overall risk level\n- evidence_analysis: Analyze evidence for fraud indicators",
         "operationId": "ai_analyze_api_v1_ai_analyze_post",
@@ -4385,10 +4170,7 @@
     },
     "/api/v1/ai/insights": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Get Insights",
         "description": "Generate contextual AI insights based on current application state.\n\nProvides intelligent suggestions, warnings, and opportunities based on\nthe user's current page, selected data, and overall context.",
         "operationId": "get_insights_api_v1_ai_insights_post",
@@ -4436,10 +4218,7 @@
     },
     "/api/v1/ai/documents": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Add Document",
         "description": "Add a document to the AI vector store for semantic search.\n\nThis endpoint indexes documents for future semantic search queries.\nDocuments can be case descriptions, evidence content, or any text data.",
         "operationId": "add_document_api_v1_ai_documents_post",
@@ -4508,10 +4287,7 @@
     },
     "/api/v1/ai/documents/{doc_id}": {
       "delete": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Remove Document",
         "description": "Remove a document from the AI vector store.\n\nThis permanently removes the document from semantic search capabilities.",
         "operationId": "remove_document_api_v1_ai_documents__doc_id__delete",
@@ -4553,10 +4329,7 @@
     },
     "/api/v1/ai/multi-persona-analysis": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Multi Persona Analysis",
         "description": "Perform analysis using multiple AI personas.",
         "operationId": "multi_persona_analysis_api_v1_ai_multi_persona_analysis_post",
@@ -4602,10 +4375,7 @@
     },
     "/api/v1/ai/investigate/{subject_id}": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Investigate Subject",
         "description": "Perform deep dive investigation on a subject.",
         "operationId": "investigate_subject_api_v1_ai_investigate__subject_id__post",
@@ -4652,10 +4422,7 @@
     },
     "/api/v1/ai/proactive-suggestions": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Get Proactive Suggestions",
         "description": "Get proactive suggestions based on an alert.",
         "operationId": "get_proactive_suggestions_api_v1_ai_proactive_suggestions_post",
@@ -4701,10 +4468,7 @@
     },
     "/api/v1/ai/status": {
       "get": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Get Ai Status",
         "description": "Get the current status of the AI service.\n\nReturns information about the AI service health, indexed documents,\nand available analysis capabilities.",
         "operationId": "get_ai_status_api_v1_ai_status_get",
@@ -4725,10 +4489,7 @@
     },
     "/api/v1/ai/analyze/case": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Analyze Case Ai",
         "description": "Perform comprehensive AI-powered case analysis",
         "operationId": "analyze_case_ai_api_v1_ai_analyze_case_post",
@@ -4769,10 +4530,7 @@
     },
     "/api/v1/ai/health": {
       "get": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Ai Health Check",
         "description": "Health check for AI service components",
         "operationId": "ai_health_check_api_v1_ai_health_get",
@@ -4793,10 +4551,7 @@
     },
     "/api/v1/ai/models/status": {
       "get": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Get Model Status",
         "description": "Get status of all AI models",
         "operationId": "get_model_status_api_v1_ai_models_status_get",
@@ -4817,10 +4572,7 @@
     },
     "/api/v1/ai/insights/{case_id}": {
       "get": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Get Case Insights",
         "description": "Get AI-generated insights for a specific case",
         "operationId": "get_case_insights_api_v1_ai_insights__case_id__get",
@@ -4862,10 +4614,7 @@
     },
     "/api/v1/ai/feedback/{transaction_id}": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Submit Ai Feedback",
         "description": "Submit feedback on AI analysis results for model improvement",
         "operationId": "submit_ai_feedback_api_v1_ai_feedback__transaction_id__post",
@@ -4919,10 +4668,7 @@
     },
     "/api/v1/ai/federated/update": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Apply Federated Update",
         "description": "Apply federated learning updates from partner institutions",
         "operationId": "apply_federated_update_api_v1_ai_federated_update_post",
@@ -4968,10 +4714,7 @@
     },
     "/api/v1/ai/performance": {
       "get": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Get Ai Performance Metrics",
         "description": "Get AI model performance metrics",
         "operationId": "get_ai_performance_metrics_api_v1_ai_performance_get",
@@ -4992,10 +4735,7 @@
     },
     "/api/v1/ai/anomaly-detection": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Detect Anomalies",
         "description": "Real-time anomaly detection using AI",
         "operationId": "detect_anomalies_api_v1_ai_anomaly_detection_post",
@@ -5038,10 +4778,7 @@
     },
     "/api/v1/ai/chat": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Chat With Ai",
         "description": "Enhanced AI Assistant with Persona integration and HITL Suggestions",
         "operationId": "chat_with_ai_api_v1_ai_chat_post",
@@ -5089,10 +4826,7 @@
     },
     "/api/v1/ai/code-review": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Analyze Code",
         "description": "AI-powered automated code review and security analysis",
         "operationId": "analyze_code_api_v1_ai_code_review_post",
@@ -5140,10 +4874,7 @@
     },
     "/api/v1/ai/chat/multi-persona": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Multi Persona Chat",
         "description": "Get responses from multiple personas concurrently for comprehensive analysis",
         "operationId": "multi_persona_chat_api_v1_ai_chat_multi_persona_post",
@@ -5184,10 +4915,7 @@
     },
     "/api/v1/ai/analyze/multimodal": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Multimodal Analysis",
         "description": "Perform multi-modal analysis combining transaction, behavioral, network, and document analysis",
         "operationId": "multimodal_analysis_api_v1_ai_analyze_multimodal_post",
@@ -5230,10 +4958,7 @@
     },
     "/api/v1/ai/llm/status": {
       "get": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Get Llm Status",
         "description": "Get status of all LLM providers and personas",
         "operationId": "get_llm_status_api_v1_ai_llm_status_get",
@@ -5254,10 +4979,7 @@
     },
     "/api/v1/ai/deprecated/usage": {
       "get": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Get Deprecated Usage",
         "description": "Get statistics on deprecated endpoint usage for migration monitoring",
         "operationId": "get_deprecated_usage_api_v1_ai_deprecated_usage_get",
@@ -5283,10 +5005,7 @@
     },
     "/api/v1/ai/analyze/batch": {
       "post": {
-        "tags": [
-          "AI Intelligence",
-          "AI"
-        ],
+        "tags": ["AI Intelligence", "AI"],
         "summary": "Analyze Batch",
         "description": "Perform batch AI analysis on multiple cases or evidence",
         "operationId": "analyze_batch_api_v1_ai_analyze_batch_post",
@@ -5334,9 +5053,7 @@
     },
     "/api/v1/advanced_ai/advanced-ai/rag/query": {
       "post": {
-        "tags": [
-          "Advanced AI"
-        ],
+        "tags": ["Advanced AI"],
         "summary": "Local Rag Query",
         "description": "Retrieve documents using consolidated AI Service (FAISS/TF-IDF).",
         "operationId": "local_rag_query_api_v1_advanced_ai_advanced_ai_rag_query_post",
@@ -5374,9 +5091,7 @@
     },
     "/api/v1/advanced_ai/advanced-ai/rag/add": {
       "post": {
-        "tags": [
-          "Advanced AI"
-        ],
+        "tags": ["Advanced AI"],
         "summary": "Local Rag Add",
         "description": "Add a document to the shared vector store.",
         "operationId": "local_rag_add_api_v1_advanced_ai_advanced_ai_rag_add_post",
@@ -5414,9 +5129,7 @@
     },
     "/api/v1/advanced_ai/advanced-ai/multimodal/image": {
       "post": {
-        "tags": [
-          "Advanced AI"
-        ],
+        "tags": ["Advanced AI"],
         "summary": "Analyze Image",
         "description": "Analyze an image for metadata and text (OCR) using the shared EvidenceProcessor.",
         "operationId": "analyze_image_api_v1_advanced_ai_advanced_ai_multimodal_image_post",
@@ -5454,9 +5167,7 @@
     },
     "/api/v1/advanced_ai/advanced-ai/multimodal/text": {
       "post": {
-        "tags": [
-          "Advanced AI"
-        ],
+        "tags": ["Advanced AI"],
         "summary": "Analyze Text",
         "description": "Analyze text for fraud indicators using the shared EvidenceProcessor.",
         "operationId": "analyze_text_api_v1_advanced_ai_advanced_ai_multimodal_text_post",
@@ -5494,9 +5205,7 @@
     },
     "/api/v1/advanced_ai/advanced-ai/red-team/generate": {
       "post": {
-        "tags": [
-          "Advanced AI"
-        ],
+        "tags": ["Advanced AI"],
         "summary": "Generate Red Team Prompts",
         "description": "Generate adversarial prompts to test a feature.",
         "operationId": "generate_red_team_prompts_api_v1_advanced_ai_advanced_ai_red_team_generate_post",
@@ -5534,9 +5243,7 @@
     },
     "/api/v1/advanced_ai/advanced-ai/stats": {
       "get": {
-        "tags": [
-          "Advanced AI"
-        ],
+        "tags": ["Advanced AI"],
         "summary": "Ai Stats",
         "description": "Get statistics about the advanced AI services.",
         "operationId": "ai_stats_api_v1_advanced_ai_advanced_ai_stats_get",
@@ -5554,10 +5261,7 @@
     },
     "/api/v1/multimodal/analyze/upload": {
       "post": {
-        "tags": [
-          "Multimodal",
-          "multi-modal-analysis"
-        ],
+        "tags": ["Multimodal", "multi-modal-analysis"],
         "summary": "Analyze Uploaded File",
         "description": "Analyze uploaded file with multi-modal analysis",
         "operationId": "analyze_uploaded_file_api_v1_multimodal_analyze_upload_post",
@@ -5595,10 +5299,7 @@
     },
     "/api/v1/multimodal/analyze": {
       "post": {
-        "tags": [
-          "Multimodal",
-          "multi-modal-analysis"
-        ],
+        "tags": ["Multimodal", "multi-modal-analysis"],
         "summary": "Analyze Uploaded File",
         "description": "Analyze uploaded file with multi-modal analysis",
         "operationId": "analyze_uploaded_file_api_v1_multimodal_analyze_post",
@@ -5636,10 +5337,7 @@
     },
     "/api/v1/multimodal/analyze/path": {
       "post": {
-        "tags": [
-          "Multimodal",
-          "multi-modal-analysis"
-        ],
+        "tags": ["Multimodal", "multi-modal-analysis"],
         "summary": "Analyze File Path",
         "description": "Analyze file at specified path with multi-modal analysis",
         "operationId": "analyze_file_path_api_v1_multimodal_analyze_path_post",
@@ -5677,10 +5375,7 @@
     },
     "/api/v1/multimodal/analyze/batch": {
       "post": {
-        "tags": [
-          "Multimodal",
-          "multi-modal-analysis"
-        ],
+        "tags": ["Multimodal", "multi-modal-analysis"],
         "summary": "Analyze Batch Files",
         "description": "Analyze multiple uploaded files with multi-modal analysis",
         "operationId": "analyze_batch_files_api_v1_multimodal_analyze_batch_post",
@@ -5718,10 +5413,7 @@
     },
     "/api/v1/multimodal/capabilities": {
       "get": {
-        "tags": [
-          "Multimodal",
-          "multi-modal-analysis"
-        ],
+        "tags": ["Multimodal", "multi-modal-analysis"],
         "summary": "Get Analysis Capabilities",
         "description": "Get available analysis capabilities",
         "operationId": "get_analysis_capabilities_api_v1_multimodal_capabilities_get",
@@ -5739,10 +5431,7 @@
     },
     "/api/v1/multimodal/status": {
       "get": {
-        "tags": [
-          "Multimodal",
-          "multi-modal-analysis"
-        ],
+        "tags": ["Multimodal", "multi-modal-analysis"],
         "summary": "Get Analysis Status",
         "description": "Get status of multi-modal analysis service",
         "operationId": "get_analysis_status_api_v1_multimodal_status_get",
@@ -5760,10 +5449,7 @@
     },
     "/api/v1/semantic_search/index": {
       "post": {
-        "tags": [
-          "Semantic Search (DEPRECATED)",
-          "semantic-search"
-        ],
+        "tags": ["Semantic Search (DEPRECATED)", "semantic-search"],
         "summary": "Index Document",
         "description": "DEPRECATED: This endpoint has been permanently removed.\n\nMigration Path:\n- Old: POST /api/v1/semantic_search/index\n- New: POST /api/v1/ai/embeddings\n\nExample migration:\n```javascript\n// Old\nfetch('/api/v1/semantic_search/index', {\n  method: 'POST',\n  body: JSON.stringify({\n    document_id: 'doc123',\n    content: 'text content',\n    metadata: { type: 'evidence' }\n  })\n});\n\n// New\nfetch('/api/v1/ai/embeddings', {\n  method: 'POST',\n  body: JSON.stringify({\n    text: 'text content',\n    metadata: {\n      document_id: 'doc123',\n      type: 'evidence'\n    }\n  })\n});\n```\n\nThis endpoint returns HTTP 410 Gone to indicate permanent deprecation.",
         "operationId": "index_document_api_v1_semantic_search_index_post",
@@ -5823,10 +5509,7 @@
     },
     "/api/v1/semantic_search/index/batch": {
       "post": {
-        "tags": [
-          "Semantic Search (DEPRECATED)",
-          "semantic-search"
-        ],
+        "tags": ["Semantic Search (DEPRECATED)", "semantic-search"],
         "summary": "Index Batch Documents",
         "description": "DEPRECATED: Use /ai/embeddings for batch document indexing.",
         "operationId": "index_batch_documents_api_v1_semantic_search_index_batch_post",
@@ -5891,10 +5574,7 @@
     },
     "/api/v1/semantic_search/search": {
       "get": {
-        "tags": [
-          "Semantic Search (DEPRECATED)",
-          "semantic-search"
-        ],
+        "tags": ["Semantic Search (DEPRECATED)", "semantic-search"],
         "summary": "Search Documents",
         "description": "DEPRECATED: This endpoint has been permanently removed.\n\nMigration Path:\n- Old: GET /api/v1/semantic_search/search?query=...&limit=...\n- New: POST /api/v1/ai/semantic-search\n\nExample migration:\n```javascript\n// Old\nfetch('/api/v1/semantic_search/search?query=fraud&limit=10');\n\n// New\nfetch('/api/v1/ai/semantic-search', {\n  method: 'POST',\n  body: JSON.stringify({\n    query: 'fraud',\n    top_k: 10,\n    threshold: 0.6\n  })\n});\n```\n\nNote: Search is now POST instead of GET to support complex filter objects.",
         "operationId": "search_documents_api_v1_semantic_search_search_get",
@@ -5997,10 +5677,7 @@
     },
     "/api/v1/semantic_search/index/{document_id}": {
       "delete": {
-        "tags": [
-          "Semantic Search (DEPRECATED)",
-          "semantic-search"
-        ],
+        "tags": ["Semantic Search (DEPRECATED)", "semantic-search"],
         "summary": "Delete Document",
         "description": "DEPRECATED: Endpoint removed.",
         "operationId": "delete_document_api_v1_semantic_search_index__document_id__delete",
@@ -6059,10 +5736,7 @@
     },
     "/api/v1/semantic_search/stats": {
       "get": {
-        "tags": [
-          "Semantic Search (DEPRECATED)",
-          "semantic-search"
-        ],
+        "tags": ["Semantic Search (DEPRECATED)", "semantic-search"],
         "summary": "Get Search Stats",
         "description": "DEPRECATED: Endpoint removed.",
         "operationId": "get_search_stats_api_v1_semantic_search_stats_get",
@@ -6112,10 +5786,7 @@
     },
     "/api/v1/semantic_search/rebuild": {
       "post": {
-        "tags": [
-          "Semantic Search (DEPRECATED)",
-          "semantic-search"
-        ],
+        "tags": ["Semantic Search (DEPRECATED)", "semantic-search"],
         "summary": "Rebuild Index",
         "description": "DEPRECATED: Endpoint removed.",
         "operationId": "rebuild_index_api_v1_semantic_search_rebuild_post",
@@ -6165,10 +5836,7 @@
     },
     "/api/v1/semantic_search/backends": {
       "get": {
-        "tags": [
-          "Semantic Search (DEPRECATED)",
-          "semantic-search"
-        ],
+        "tags": ["Semantic Search (DEPRECATED)", "semantic-search"],
         "summary": "Get Available Backends",
         "description": "Get available vector store backends\n\nReturns:\n    List of available backends and their capabilities",
         "operationId": "get_available_backends_api_v1_semantic_search_backends_get",
@@ -6187,10 +5855,7 @@
     },
     "/api/v1/semantic_search/switch-backend": {
       "post": {
-        "tags": [
-          "Semantic Search (DEPRECATED)",
-          "semantic-search"
-        ],
+        "tags": ["Semantic Search (DEPRECATED)", "semantic-search"],
         "summary": "Switch Backend",
         "description": "DEPRECATED: Endpoint removed.",
         "operationId": "switch_backend_api_v1_semantic_search_switch_backend_post",
@@ -6229,10 +5894,7 @@
     },
     "/api/v1/logging/logging/status": {
       "get": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Get Logging Status",
         "description": "Get current logging status and configuration\n\nReturns:\n    Logging system status",
         "operationId": "get_logging_status_api_v1_logging_logging_status_get",
@@ -6250,10 +5912,7 @@
     },
     "/api/v1/logging/logging/telemetry": {
       "get": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Get Telemetry Data",
         "description": "Get current telemetry data\n\nReturns:\n    Telemetry statistics and metrics",
         "operationId": "get_telemetry_data_api_v1_logging_logging_telemetry_get",
@@ -6271,10 +5930,7 @@
     },
     "/api/v1/logging/logging/telemetry/reset": {
       "post": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Reset Telemetry",
         "description": "Reset telemetry data\n\nReturns:\n    Reset result",
         "operationId": "reset_telemetry_api_v1_logging_logging_telemetry_reset_post",
@@ -6292,10 +5948,7 @@
     },
     "/api/v1/logging/logging/telemetry/export": {
       "post": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Export Telemetry",
         "description": "Export telemetry data to file\n\nArgs:\n    file_path: Optional file path for export\n\nReturns:\n    Export result",
         "operationId": "export_telemetry_api_v1_logging_logging_telemetry_export_post",
@@ -6341,10 +5994,7 @@
     },
     "/api/v1/logging/logging/log": {
       "post": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Create Log Entry",
         "description": "Create a structured log entry\n\nArgs:\n    level: Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)\n    category: Log category\n    message: Log message\n    user_id: User ID\n    session_id: Session ID\n    request_id: Request ID\n    ip_address: IP address\n    user_agent: User agent\n    metadata: Additional metadata\n    duration_ms: Duration in milliseconds\n    error_code: Error code\n\nReturns:\n    Log creation result",
         "operationId": "create_log_entry_api_v1_logging_logging_log_post",
@@ -6382,10 +6032,7 @@
     },
     "/api/v1/logging/logging/log/user-action": {
       "post": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Log User Action",
         "description": "Log user action for telemetry\n\nArgs:\n    action: User action description\n    user_id: User ID\n    metadata: Additional metadata\n\nReturns:\n    Log creation result",
         "operationId": "log_user_action_api_v1_logging_logging_log_user_action_post",
@@ -6423,10 +6070,7 @@
     },
     "/api/v1/logging/logging/log/api-request": {
       "post": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Log Api Request",
         "description": "Log API request for performance monitoring\n\nArgs:\n    method: HTTP method\n    endpoint: API endpoint\n    status_code: HTTP status code\n    duration_ms: Request duration in milliseconds\n    user_id: User ID\n    metadata: Additional metadata\n\nReturns:\n    Log creation result",
         "operationId": "log_api_request_api_v1_logging_logging_log_api_request_post",
@@ -6464,10 +6108,7 @@
     },
     "/api/v1/logging/logging/log/security-event": {
       "post": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Log Security Event",
         "description": "Log security event\n\nArgs:\n    event_type: Security event type\n    severity: Event severity\n    user_id: User ID\n    metadata: Additional metadata\n\nReturns:\n    Log creation result",
         "operationId": "log_security_event_api_v1_logging_logging_log_security_event_post",
@@ -6505,10 +6146,7 @@
     },
     "/api/v1/logging/logging/log/performance-metric": {
       "post": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Log Performance Metric",
         "description": "Log performance metric\n\nArgs:\n    metric_name: Metric name\n    value: Metric value\n    unit: Metric unit\n    metadata: Additional metadata\n\nReturns:\n    Log creation result",
         "operationId": "log_performance_metric_api_v1_logging_logging_log_performance_metric_post",
@@ -6546,10 +6184,7 @@
     },
     "/api/v1/logging/logging/logs/search": {
       "get": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Search Logs",
         "description": "Search log entries (simplified implementation)\n\nArgs:\n    level: Filter by log level\n    category: Filter by log category\n    user_id: Filter by user ID\n    session_id: Filter by session ID\n    start_time: Start time filter\n    end_time: End time filter\n    limit: Maximum number of results\n\nReturns:\n    Search results",
         "operationId": "search_logs_api_v1_logging_logging_logs_search_get",
@@ -6699,10 +6334,7 @@
     },
     "/api/v1/logging/logging/pii-scrubbing/test": {
       "get": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Test Pii Scrubbing",
         "description": "Test PII scrubbing on sample text\n\nArgs:\n    text: Text to test PII scrubbing\n\nReturns:\n    PII scrubbing test results",
         "operationId": "test_pii_scrubbing_api_v1_logging_logging_pii_scrubbing_test_get",
@@ -6743,10 +6375,7 @@
     },
     "/api/v1/logging/logging/config": {
       "get": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Get Logging Config",
         "description": "Get current logging configuration\n\nReturns:\n    Logging configuration",
         "operationId": "get_logging_config_api_v1_logging_logging_config_get",
@@ -6762,10 +6391,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Logging",
-          "logging-telemetry"
-        ],
+        "tags": ["Logging", "logging-telemetry"],
         "summary": "Update Logging Config",
         "description": "Update logging configuration (simplified implementation)\n\nArgs:\n    config: New logging configuration\n\nReturns:\n    Configuration update result",
         "operationId": "update_logging_config_api_v1_logging_logging_config_put",
@@ -6806,10 +6432,7 @@
     },
     "/api/v1/apm/apm/summary": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Apm Summary Endpoint",
         "description": "Get comprehensive APM summary\n\nReturns:\n    APM summary including metrics, spans, alerts, and system metrics",
         "operationId": "get_apm_summary_endpoint_api_v1_apm_apm_summary_get",
@@ -6832,10 +6455,7 @@
     },
     "/api/v1/apm/apm/metrics": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Metrics",
         "description": "Get performance metrics\n\nArgs:\n    name: Filter by metric name\n    start_time: Start time filter\n    end_time: End time filter\n    limit: Maximum number of results\n\nReturns:\n    List of performance metrics",
         "operationId": "get_metrics_api_v1_apm_apm_metrics_get",
@@ -6929,10 +6549,7 @@
         }
       },
       "post": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Create Metric",
         "description": "Create a performance metric\n\nArgs:\n    name: Metric name\n    value: Metric value\n    metric_type: Metric type\n    tags: Metric tags\n    unit: Metric unit\n\nReturns:\n    Metric creation result",
         "operationId": "create_metric_api_v1_apm_apm_metrics_post",
@@ -6970,10 +6587,7 @@
     },
     "/api/v1/apm/apm/spans": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Spans",
         "description": "Get distributed tracing spans\n\nArgs:\n    trace_id: Filter by trace ID\n    operation_name: Filter by operation name\n    start_time: Start time filter\n    end_time: End time filter\n    limit: Maximum number of results\n\nReturns:\n    List of tracing spans",
         "operationId": "get_spans_api_v1_apm_apm_spans_get",
@@ -7087,10 +6701,7 @@
     },
     "/api/v1/apm/apm/alerts": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Alerts",
         "description": "Get system alerts\n\nArgs:\n    severity: Filter by alert severity (info, warning, error, critical)\n    resolved: Filter by resolved status\n    start_time: Start time filter\n    end_time: End time filter\n    limit: Maximum number of results\n\nReturns:\n    List of system alerts",
         "operationId": "get_alerts_api_v1_apm_apm_alerts_get",
@@ -7202,10 +6813,7 @@
         }
       },
       "post": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Create Alert Endpoint",
         "description": "Create a system alert\n\nArgs:\n    severity: Alert severity\n    title: Alert title\n    message: Alert message\n    source: Alert source\n    metadata: Alert metadata\n    tags: Alert tags\n\nReturns:\n    Alert creation result",
         "operationId": "create_alert_endpoint_api_v1_apm_apm_alerts_post",
@@ -7243,10 +6851,7 @@
     },
     "/api/v1/apm/apm/spans/start": {
       "post": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Start Span Endpoint",
         "description": "Start a distributed tracing span\n\nArgs:\n    operation_name: Operation name\n    trace_id: Trace ID\n    parent_span_id: Parent span ID\n    tags: Span tags\n\nReturns:\n    Span creation result with span ID",
         "operationId": "start_span_endpoint_api_v1_apm_apm_spans_start_post",
@@ -7284,10 +6889,7 @@
     },
     "/api/v1/apm/apm/spans/{span_id}/finish": {
       "post": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Finish Span Endpoint",
         "description": "Finish a distributed tracing span\n\nArgs:\n    span_id: Span ID to finish\n    status: Span status\n    error_message: Error message if status is error\n\nReturns:\n    Span completion result",
         "operationId": "finish_span_endpoint_api_v1_apm_apm_spans__span_id__finish_post",
@@ -7335,10 +6937,7 @@
     },
     "/api/v1/apm/apm/alerts/{alert_id}/resolve": {
       "put": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Resolve Alert Endpoint",
         "description": "Resolve a system alert\n\nArgs:\n    alert_id: Alert ID to resolve\n\nReturns:\n    Alert resolution result",
         "operationId": "resolve_alert_endpoint_api_v1_apm_apm_alerts__alert_id__resolve_put",
@@ -7377,10 +6976,7 @@
     },
     "/api/v1/apm/apm/system-metrics": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get System Metrics",
         "description": "Get current system metrics\n\nReturns:\n    System performance metrics",
         "operationId": "get_system_metrics_api_v1_apm_apm_system_metrics_get",
@@ -7398,10 +6994,7 @@
     },
     "/api/v1/apm/apm/aggregated-metrics": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Aggregated Metrics",
         "description": "Get aggregated metrics for a time window\n\nArgs:\n    name: Metric name\n    aggregation: Aggregation type\n    time_window_minutes: Time window in minutes\n\nReturns:\n    Aggregated metric values",
         "operationId": "get_aggregated_metrics_api_v1_apm_apm_aggregated_metrics_get",
@@ -7466,10 +7059,7 @@
     },
     "/api/v1/apm/apm/export": {
       "post": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Export Apm Data",
         "description": "Export APM data to file\n\nArgs:\n    file_path: Export file path\n    include_metrics: Include metrics in export\n    include_spans: Include spans in export\n    include_alerts: Include alerts in export\n\nReturns:\n    Export result",
         "operationId": "export_apm_data_api_v1_apm_apm_export_post",
@@ -7506,10 +7096,7 @@
     },
     "/api/v1/apm/apm/dashboard": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Dashboard Data",
         "description": "Get dashboard data for monitoring UI\n\nReturns:\n    Dashboard data including charts and key metrics",
         "operationId": "get_dashboard_data_api_v1_apm_apm_dashboard_get",
@@ -7527,10 +7114,7 @@
     },
     "/api/v1/apm/apm/health/live": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Liveness Probe",
         "description": "Liveness probe - Kubernetes/health check systems use this to determine if service is running\nReturns 200 if service is alive, 500 if not",
         "operationId": "liveness_probe_api_v1_apm_apm_health_live_get",
@@ -7548,10 +7132,7 @@
     },
     "/api/v1/apm/apm/health/ready": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Readiness Probe",
         "description": "Readiness probe - Determines if service is ready to serve traffic\nReturns 200 if ready, 503 if not ready",
         "operationId": "readiness_probe_api_v1_apm_apm_health_ready_get",
@@ -7569,10 +7150,7 @@
     },
     "/api/v1/apm/apm/health/deep": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Deep Health Check",
         "description": "Deep health check - Comprehensive system health assessment\nRequires authentication as it exposes detailed system information",
         "operationId": "deep_health_check_api_v1_apm_apm_health_deep_get",
@@ -7595,10 +7173,7 @@
     },
     "/api/v1/apm/apm/health/status": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Health Status",
         "description": "Get overall health status summary",
         "operationId": "get_health_status_api_v1_apm_apm_health_status_get",
@@ -7621,10 +7196,7 @@
     },
     "/api/v1/apm/apm/health/history": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Health History",
         "description": "Get health check history",
         "operationId": "get_health_history_api_v1_apm_apm_health_history_get",
@@ -7671,10 +7243,7 @@
     },
     "/api/v1/apm/apm/health/degradation": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Degradation Status",
         "description": "Get current graceful degradation status",
         "operationId": "get_degradation_status_api_v1_apm_apm_health_degradation_get",
@@ -7697,10 +7266,7 @@
     },
     "/api/v1/apm/apm/trace/start": {
       "post": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Start Trace",
         "description": "Start a new distributed trace",
         "operationId": "start_trace_api_v1_apm_apm_trace_start_post",
@@ -7767,10 +7333,7 @@
     },
     "/api/v1/apm/apm/trace/{trace_id}/span/start": {
       "post": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Start Span",
         "description": "Start a new span within a trace",
         "operationId": "start_span_api_v1_apm_apm_trace__trace_id__span_start_post",
@@ -7839,10 +7402,7 @@
     },
     "/api/v1/apm/apm/trace/{trace_id}/span/{span_id}/end": {
       "post": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "End Span",
         "description": "End a span",
         "operationId": "end_span_api_v1_apm_apm_trace__trace_id__span__span_id__end_post",
@@ -7913,10 +7473,7 @@
     },
     "/api/v1/apm/apm/trace/{trace_id}/end": {
       "post": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "End Trace",
         "description": "End a trace",
         "operationId": "end_trace_api_v1_apm_apm_trace__trace_id__end_post",
@@ -7988,10 +7545,7 @@
     },
     "/api/v1/apm/apm/trace/{trace_id}": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Trace",
         "description": "Get a trace by ID",
         "operationId": "get_trace_api_v1_apm_apm_trace__trace_id__get",
@@ -8035,10 +7589,7 @@
     },
     "/api/v1/apm/apm/trace/{trace_id}/summary": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Trace Summary",
         "description": "Get a trace summary",
         "operationId": "get_trace_summary_api_v1_apm_apm_trace__trace_id__summary_get",
@@ -8082,10 +7633,7 @@
     },
     "/api/v1/apm/apm/traces/recent": {
       "get": {
-        "tags": [
-          "APM",
-          "apm-monitoring"
-        ],
+        "tags": ["APM", "apm-monitoring"],
         "summary": "Get Recent Traces",
         "description": "Get recent traces",
         "operationId": "get_recent_traces_api_v1_apm_apm_traces_recent_get",
@@ -8132,10 +7680,7 @@
     },
     "/api/v1/graph/graph/snapshot/{case_id}": {
       "post": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Save Graph Snapshot",
         "description": "Save a graph snapshot for a case",
         "operationId": "save_graph_snapshot_api_v1_graph_graph_snapshot__case_id__post",
@@ -8184,10 +7729,7 @@
     },
     "/api/v1/graph/graph/snapshots/{case_id}": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Get Graph Snapshots",
         "description": "Get all graph snapshots for a case",
         "operationId": "get_graph_snapshots_api_v1_graph_graph_snapshots__case_id__get",
@@ -8226,10 +7768,7 @@
     },
     "/api/v1/graph/graph/snapshot/{snapshot_id}": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Get Graph Snapshot",
         "description": "Get a specific graph snapshot by ID",
         "operationId": "get_graph_snapshot_api_v1_graph_graph_snapshot__snapshot_id__get",
@@ -8268,10 +7807,7 @@
     },
     "/api/v1/graph/graph/build": {
       "post": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Build Relationship Graph",
         "description": "Build relationship graph from transaction data",
         "operationId": "build_relationship_graph_api_v1_graph_graph_build_post",
@@ -8334,10 +7870,7 @@
     },
     "/api/v1/graph/graph/data": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Get Graph Data",
         "description": "Get current graph data for visualization",
         "operationId": "get_graph_data_api_v1_graph_graph_data_get",
@@ -8360,10 +7893,7 @@
     },
     "/api/v1/graph/graph/communities": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Detect Communities",
         "description": "Detect communities in the relationship graph",
         "operationId": "detect_communities_api_v1_graph_graph_communities_get",
@@ -8386,10 +7916,7 @@
     },
     "/api/v1/graph/graph/central-entities": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Get Central Entities",
         "description": "Get most central entities in the graph",
         "operationId": "get_central_entities_api_v1_graph_graph_central_entities_get",
@@ -8431,10 +7958,7 @@
     },
     "/api/v1/graph/graph/suspicious-patterns": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Get Suspicious Patterns",
         "description": "Find suspicious patterns in the relationship graph",
         "operationId": "get_suspicious_patterns_api_v1_graph_graph_suspicious_patterns_get",
@@ -8457,10 +7981,7 @@
     },
     "/api/v1/graph/graph/entity/{entity_id}": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Get Entity Details",
         "description": "Get detailed information about a specific entity",
         "operationId": "get_entity_details_api_v1_graph_graph_entity__entity_id__get",
@@ -8499,10 +8020,7 @@
     },
     "/api/v1/graph/graph/path/{source}/{target}": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Find Shortest Path",
         "description": "Find shortest path between two entities",
         "operationId": "find_shortest_path_api_v1_graph_graph_path__source___target__get",
@@ -8550,10 +8068,7 @@
     },
     "/api/v1/graph/graph/export/{format}": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Export Graph",
         "description": "Export graph data in specified format",
         "operationId": "export_graph_api_v1_graph_graph_export__format__get",
@@ -8592,10 +8107,7 @@
     },
     "/api/v1/graph/graph/clear": {
       "delete": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Clear Graph",
         "description": "Clear the current relationship graph",
         "operationId": "clear_graph_api_v1_graph_graph_clear_delete",
@@ -8618,10 +8130,7 @@
     },
     "/api/v1/graph/graph/search": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Search Graph",
         "description": "Search for nodes in the graph",
         "operationId": "search_graph_api_v1_graph_graph_search_get",
@@ -8692,10 +8201,7 @@
     },
     "/api/v1/graph/graph/{case_id}/correlations": {
       "get": {
-        "tags": [
-          "Graph",
-          "relationship-graph"
-        ],
+        "tags": ["Graph", "relationship-graph"],
         "summary": "Get Metadata Correlations",
         "description": "Get all metadata correlations for a case",
         "operationId": "get_metadata_correlations_api_v1_graph_graph__case_id__correlations_get",
@@ -8734,10 +8240,7 @@
     },
     "/api/v1/sync/sync/status": {
       "get": {
-        "tags": [
-          "Realtime Sync",
-          "realtime-sync"
-        ],
+        "tags": ["Realtime Sync", "realtime-sync"],
         "summary": "Get Service Status",
         "description": "Get sync service status",
         "operationId": "get_service_status_api_v1_sync_sync_status_get",
@@ -8755,10 +8258,7 @@
     },
     "/api/v1/sync/sync/documents": {
       "get": {
-        "tags": [
-          "Realtime Sync",
-          "realtime-sync"
-        ],
+        "tags": ["Realtime Sync", "realtime-sync"],
         "summary": "Get Documents",
         "description": "Get list of all collaborative documents",
         "operationId": "get_documents_api_v1_sync_sync_documents_get",
@@ -8776,10 +8276,7 @@
     },
     "/api/v1/sync/sync/documents/{document_id}": {
       "get": {
-        "tags": [
-          "Realtime Sync",
-          "realtime-sync"
-        ],
+        "tags": ["Realtime Sync", "realtime-sync"],
         "summary": "Get Document",
         "description": "Get specific document details",
         "operationId": "get_document_api_v1_sync_sync_documents__document_id__get",
@@ -8816,10 +8313,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Realtime Sync",
-          "realtime-sync"
-        ],
+        "tags": ["Realtime Sync", "realtime-sync"],
         "summary": "Delete Document",
         "description": "Delete a collaborative document",
         "operationId": "delete_document_api_v1_sync_sync_documents__document_id__delete",
@@ -8858,10 +8352,7 @@
     },
     "/api/v1/sync/sync/documents/{document_id}/operations": {
       "post": {
-        "tags": [
-          "Realtime Sync",
-          "realtime-sync"
-        ],
+        "tags": ["Realtime Sync", "realtime-sync"],
         "summary": "Create Operation",
         "description": "Create and apply an operation to a document (HTTP fallback)",
         "operationId": "create_operation_api_v1_sync_sync_documents__document_id__operations_post",
@@ -8912,10 +8403,7 @@
     },
     "/api/v1/sync/sync/stats": {
       "get": {
-        "tags": [
-          "Realtime Sync",
-          "realtime-sync"
-        ],
+        "tags": ["Realtime Sync", "realtime-sync"],
         "summary": "Get Sync Stats",
         "description": "Get real-time sync statistics",
         "operationId": "get_sync_stats_api_v1_sync_sync_stats_get",
@@ -8933,10 +8421,7 @@
     },
     "/api/v1/sync/sync/broadcast": {
       "post": {
-        "tags": [
-          "Realtime Sync",
-          "realtime-sync"
-        ],
+        "tags": ["Realtime Sync", "realtime-sync"],
         "summary": "Broadcast Message",
         "description": "Broadcast message to all connected clients",
         "operationId": "broadcast_message_api_v1_sync_sync_broadcast_post",
@@ -8976,10 +8461,7 @@
     },
     "/api/v1/notifications/notifications/": {
       "get": {
-        "tags": [
-          "Notifications",
-          "notifications"
-        ],
+        "tags": ["Notifications", "notifications"],
         "summary": "Get Notifications",
         "description": "Get notifications for a user",
         "operationId": "get_notifications_api_v1_notifications_notifications__get",
@@ -9038,10 +8520,7 @@
     },
     "/api/v1/notifications/notifications/{notification_id}/read": {
       "post": {
-        "tags": [
-          "Notifications",
-          "notifications"
-        ],
+        "tags": ["Notifications", "notifications"],
         "summary": "Mark Notification Read",
         "description": "Mark a notification as read",
         "operationId": "mark_notification_read_api_v1_notifications_notifications__notification_id__read_post",
@@ -9089,10 +8568,7 @@
     },
     "/api/v1/notifications/notifications/mark-all-read": {
       "post": {
-        "tags": [
-          "Notifications",
-          "notifications"
-        ],
+        "tags": ["Notifications", "notifications"],
         "summary": "Mark All Notifications Read",
         "description": "Mark all notifications as read for a user",
         "operationId": "mark_all_notifications_read_api_v1_notifications_notifications_mark_all_read_post",
@@ -9131,10 +8607,7 @@
     },
     "/api/v1/notifications/notifications/trigger": {
       "post": {
-        "tags": [
-          "Notifications",
-          "notifications"
-        ],
+        "tags": ["Notifications", "notifications"],
         "summary": "Trigger Notification",
         "description": "Manually trigger a notification event",
         "operationId": "trigger_notification_api_v1_notifications_notifications_trigger_post",
@@ -9174,10 +8647,7 @@
     },
     "/api/v1/notifications/notifications/stats": {
       "get": {
-        "tags": [
-          "Notifications",
-          "notifications"
-        ],
+        "tags": ["Notifications", "notifications"],
         "summary": "Get Notification Stats",
         "description": "Get notification system statistics",
         "operationId": "get_notification_stats_api_v1_notifications_notifications_stats_get",
@@ -9200,10 +8670,7 @@
     },
     "/api/v1/notifications/notifications/test": {
       "post": {
-        "tags": [
-          "Notifications",
-          "notifications"
-        ],
+        "tags": ["Notifications", "notifications"],
         "summary": "Test Notification",
         "description": "Send a test notification",
         "operationId": "test_notification_api_v1_notifications_notifications_test_post",
@@ -9251,10 +8718,7 @@
     },
     "/api/v1/notifications/notifications/clear": {
       "delete": {
-        "tags": [
-          "Notifications",
-          "notifications"
-        ],
+        "tags": ["Notifications", "notifications"],
         "summary": "Clear Notifications",
         "description": "Clear all notifications for a user",
         "operationId": "clear_notifications_api_v1_notifications_notifications_clear_delete",
@@ -9293,10 +8757,7 @@
     },
     "/api/v1/notifications/notifications/types": {
       "get": {
-        "tags": [
-          "Notifications",
-          "notifications"
-        ],
+        "tags": ["Notifications", "notifications"],
         "summary": "Get Notification Types",
         "description": "Get available notification types",
         "operationId": "get_notification_types_api_v1_notifications_notifications_types_get",
@@ -9319,10 +8780,7 @@
     },
     "/api/v1/notifications/notifications/channels": {
       "get": {
-        "tags": [
-          "Notifications",
-          "notifications"
-        ],
+        "tags": ["Notifications", "notifications"],
         "summary": "Get Notification Channels",
         "description": "Get available notification channels",
         "operationId": "get_notification_channels_api_v1_notifications_notifications_channels_get",
@@ -9345,10 +8803,7 @@
     },
     "/api/v1/backup/backup/create": {
       "post": {
-        "tags": [
-          "Backup",
-          "Backup & Recovery"
-        ],
+        "tags": ["Backup", "Backup & Recovery"],
         "summary": "Create Backup",
         "description": "Create a new backup of the system.\n\nThis endpoint supports both full and incremental backups.\nFull backups contain all system data, while incremental backups\nonly contain changes since the last full backup.",
         "operationId": "create_backup_api_v1_backup_backup_create_post",
@@ -9396,10 +8851,7 @@
     },
     "/api/v1/backup/backup/restore": {
       "post": {
-        "tags": [
-          "Backup",
-          "Backup & Recovery"
-        ],
+        "tags": ["Backup", "Backup & Recovery"],
         "summary": "Restore Backup",
         "description": "Restore system from a backup.\n\nThis operation will restore the system to the state captured\nin the specified backup. Use with caution as it may overwrite\ncurrent data.",
         "operationId": "restore_backup_api_v1_backup_backup_restore_post",
@@ -9447,10 +8899,7 @@
     },
     "/api/v1/backup/backup/status": {
       "get": {
-        "tags": [
-          "Backup",
-          "Backup & Recovery"
-        ],
+        "tags": ["Backup", "Backup & Recovery"],
         "summary": "Get Backup Status",
         "description": "Get current backup system status and statistics.\n\nReturns information about backup operations, recent backups,\nand system configuration.",
         "operationId": "get_backup_status_api_v1_backup_backup_status_get",
@@ -9478,10 +8927,7 @@
     },
     "/api/v1/backup/backup/list": {
       "get": {
-        "tags": [
-          "Backup",
-          "Backup & Recovery"
-        ],
+        "tags": ["Backup", "Backup & Recovery"],
         "summary": "List Backups",
         "description": "List all available backups.\n\nReturns a list of all backups in the system, including\nfull and incremental backups with their metadata.",
         "operationId": "list_backups_api_v1_backup_backup_list_get",
@@ -9513,10 +8959,7 @@
     },
     "/api/v1/backup/backup/verify/{backup_id}": {
       "get": {
-        "tags": [
-          "Backup",
-          "Backup & Recovery"
-        ],
+        "tags": ["Backup", "Backup & Recovery"],
         "summary": "Verify Backup Integrity",
         "description": "Verify the integrity of a specific backup.\n\nChecks the backup archive integrity using SHA-256 hash\nverification and validates the archive structure.",
         "operationId": "verify_backup_integrity_api_v1_backup_backup_verify__backup_id__get",
@@ -9565,10 +9008,7 @@
     },
     "/api/v1/backup/backup/{backup_id}": {
       "delete": {
-        "tags": [
-          "Backup",
-          "Backup & Recovery"
-        ],
+        "tags": ["Backup", "Backup & Recovery"],
         "summary": "Delete Backup",
         "description": "Delete a specific backup.\n\nPermanently removes the backup from the system.\nUse with caution as deleted backups cannot be recovered.",
         "operationId": "delete_backup_api_v1_backup_backup__backup_id__delete",
@@ -9615,10 +9055,7 @@
     },
     "/api/v1/backup/backup/cleanup": {
       "post": {
-        "tags": [
-          "Backup",
-          "Backup & Recovery"
-        ],
+        "tags": ["Backup", "Backup & Recovery"],
         "summary": "Cleanup Old Backups",
         "description": "Clean up old backups based on retention policy.\n\nRemoves backups older than the configured retention period\nto free up disk space.",
         "operationId": "cleanup_old_backups_api_v1_backup_backup_cleanup_post",
@@ -9644,10 +9081,7 @@
     },
     "/api/v1/backup/backup/config": {
       "get": {
-        "tags": [
-          "Backup",
-          "Backup & Recovery"
-        ],
+        "tags": ["Backup", "Backup & Recovery"],
         "summary": "Get Backup Config",
         "description": "Get backup system configuration.\n\nReturns the current backup configuration settings.",
         "operationId": "get_backup_config_api_v1_backup_backup_config_get",
@@ -9671,10 +9105,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Backup",
-          "Backup & Recovery"
-        ],
+        "tags": ["Backup", "Backup & Recovery"],
         "summary": "Update Backup Config",
         "description": "Update backup system configuration.\n\nAllows updating backup settings like retention period,\ncompression level, and scheduling.",
         "operationId": "update_backup_config_api_v1_backup_backup_config_put",
@@ -9722,10 +9153,7 @@
     },
     "/api/v1/backup/backup/health": {
       "get": {
-        "tags": [
-          "Backup",
-          "Backup & Recovery"
-        ],
+        "tags": ["Backup", "Backup & Recovery"],
         "summary": "Backup Health Check",
         "description": "Health check for backup service components",
         "operationId": "backup_health_check_api_v1_backup_backup_health_get",
@@ -9746,10 +9174,7 @@
     },
     "/api/v1/rules/": {
       "get": {
-        "tags": [
-          "Fraud Rules",
-          "Fraud Rules Engine"
-        ],
+        "tags": ["Fraud Rules", "Fraud Rules Engine"],
         "summary": "List Rules",
         "description": "List all loaded fraud detection rules",
         "operationId": "list_rules_api_v1_rules__get",
@@ -9774,10 +9199,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Fraud Rules",
-          "Fraud Rules Engine"
-        ],
+        "tags": ["Fraud Rules", "Fraud Rules Engine"],
         "summary": "Create Rule",
         "operationId": "create_rule_api_v1_rules__post",
         "responses": {
@@ -9797,10 +9219,7 @@
     },
     "/api/v1/rules/{rule_name}": {
       "get": {
-        "tags": [
-          "Fraud Rules",
-          "Fraud Rules Engine"
-        ],
+        "tags": ["Fraud Rules", "Fraud Rules Engine"],
         "summary": "Get Rule",
         "description": "Get details of a specific rule",
         "operationId": "get_rule_api_v1_rules__rule_name__get",
@@ -9844,10 +9263,7 @@
     },
     "/api/v1/rules/evaluate": {
       "post": {
-        "tags": [
-          "Fraud Rules",
-          "Fraud Rules Engine"
-        ],
+        "tags": ["Fraud Rules", "Fraud Rules Engine"],
         "summary": "Evaluate Transaction",
         "description": "Evaluate a transaction against all active rules",
         "operationId": "evaluate_transaction_api_v1_rules_evaluate_post",
@@ -9888,10 +9304,7 @@
     },
     "/api/v1/rules/config/status": {
       "get": {
-        "tags": [
-          "Fraud Rules",
-          "Fraud Rules Engine"
-        ],
+        "tags": ["Fraud Rules", "Fraud Rules Engine"],
         "summary": "Get Engine Status",
         "description": "Get status of all rules",
         "operationId": "get_engine_status_api_v1_rules_config_status_get",
@@ -9912,10 +9325,7 @@
     },
     "/api/v1/rules/{rule_id}": {
       "delete": {
-        "tags": [
-          "Fraud Rules",
-          "Fraud Rules Engine"
-        ],
+        "tags": ["Fraud Rules", "Fraud Rules Engine"],
         "summary": "Delete Rule",
         "operationId": "delete_rule_api_v1_rules__rule_id__delete",
         "parameters": [
@@ -9956,9 +9366,7 @@
     },
     "/api/v1/stats/locations": {
       "get": {
-        "tags": [
-          "Stats"
-        ],
+        "tags": ["Stats"],
         "summary": "Get Threat Map Locations",
         "description": "Returns real-time threat map data points based on actual transaction locations.\n\nGeocodes flagged transactions and blocked transactions to provide accurate\ngeographic visualization of fraud patterns.",
         "operationId": "get_threat_map_locations_api_v1_stats_locations_get",
@@ -9987,9 +9395,7 @@
     },
     "/api/v1/stats/metrics": {
       "get": {
-        "tags": [
-          "Stats"
-        ],
+        "tags": ["Stats"],
         "summary": "Get Dashboard Metrics",
         "description": "Returns aggregated dashboard KPIs from actual database and monitoring service",
         "operationId": "get_dashboard_metrics_api_v1_stats_metrics_get",
@@ -10012,9 +9418,7 @@
     },
     "/api/v1/stats/predictive": {
       "get": {
-        "tags": [
-          "Stats"
-        ],
+        "tags": ["Stats"],
         "summary": "Get Predictive Analytics",
         "description": "Returns predictive intelligence stats based on recent trends.\nUses historical data to project future risk alerts.",
         "operationId": "get_predictive_analytics_api_v1_stats_predictive_get",
@@ -10039,10 +9443,7 @@
     },
     "/api/v1/reconciliation/items": {
       "get": {
-        "tags": [
-          "Reconciliation",
-          "reconciliation"
-        ],
+        "tags": ["Reconciliation", "reconciliation"],
         "summary": "Get Reconciliation Items",
         "operationId": "get_reconciliation_items_api_v1_reconciliation_items_get",
         "security": [
@@ -10128,10 +9529,7 @@
     },
     "/api/v1/reconciliation/cash-float": {
       "post": {
-        "tags": [
-          "Reconciliation",
-          "reconciliation"
-        ],
+        "tags": ["Reconciliation", "reconciliation"],
         "summary": "Analyze Cash Float",
         "operationId": "analyze_cash_float_api_v1_reconciliation_cash_float_post",
         "requestBody": {
@@ -10180,10 +9578,7 @@
     },
     "/api/v1/reconciliation/batch-match": {
       "post": {
-        "tags": [
-          "Reconciliation",
-          "reconciliation"
-        ],
+        "tags": ["Reconciliation", "reconciliation"],
         "summary": "Find Batch Matches",
         "operationId": "find_batch_matches_api_v1_reconciliation_batch_match_post",
         "requestBody": {
@@ -10232,10 +9627,7 @@
     },
     "/api/v1/reconciliation/temporal-analysis": {
       "post": {
-        "tags": [
-          "Reconciliation",
-          "reconciliation"
-        ],
+        "tags": ["Reconciliation", "reconciliation"],
         "summary": "Analyze Temporal Anomalies",
         "operationId": "analyze_temporal_anomalies_api_v1_reconciliation_temporal_analysis_post",
         "requestBody": {
@@ -10284,10 +9676,7 @@
     },
     "/api/v1/reconciliation/batch/save": {
       "post": {
-        "tags": [
-          "Reconciliation",
-          "reconciliation"
-        ],
+        "tags": ["Reconciliation", "reconciliation"],
         "summary": "Save Batch Match",
         "operationId": "save_batch_match_api_v1_reconciliation_batch_save_post",
         "requestBody": {
@@ -10336,10 +9725,7 @@
     },
     "/api/v1/reconciliation/batch/analyze-sequence": {
       "post": {
-        "tags": [
-          "Reconciliation",
-          "reconciliation"
-        ],
+        "tags": ["Reconciliation", "reconciliation"],
         "summary": "Analyze Sequence Anomalies",
         "operationId": "analyze_sequence_anomalies_api_v1_reconciliation_batch_analyze_sequence_post",
         "requestBody": {
@@ -10388,10 +9774,7 @@
     },
     "/api/v1/reconciliation/reconcile/{transaction_id}": {
       "post": {
-        "tags": [
-          "Reconciliation",
-          "reconciliation"
-        ],
+        "tags": ["Reconciliation", "reconciliation"],
         "summary": "Mark Reconciled",
         "operationId": "mark_reconciled_api_v1_reconciliation_reconcile__transaction_id__post",
         "security": [
@@ -10453,10 +9836,7 @@
     },
     "/api/v1/reconciliation/ingest-mapped": {
       "post": {
-        "tags": [
-          "Reconciliation",
-          "reconciliation"
-        ],
+        "tags": ["Reconciliation", "reconciliation"],
         "summary": "Ingest Mapped Data",
         "description": "Ingest data from an evidence file using a column mapping.\nCreates Transaction records.",
         "operationId": "ingest_mapped_data_api_v1_reconciliation_ingest_mapped_post",
@@ -10506,10 +9886,7 @@
     },
     "/api/v1/onboarding/roles": {
       "get": {
-        "tags": [
-          "Onboarding",
-          "onboarding"
-        ],
+        "tags": ["Onboarding", "onboarding"],
         "summary": "Get Roles",
         "description": "Return a list of supported roles for the role selection wizard.",
         "operationId": "get_roles_api_v1_onboarding_roles_get",
@@ -10527,10 +9904,7 @@
     },
     "/api/v1/onboarding/rookie-checklist/{user_id}": {
       "get": {
-        "tags": [
-          "Onboarding",
-          "onboarding"
-        ],
+        "tags": ["Onboarding", "onboarding"],
         "summary": "Get Rookie Checklist",
         "description": "Fetch the current checklist state for a user.",
         "operationId": "get_rookie_checklist_api_v1_onboarding_rookie_checklist__user_id__get",
@@ -10569,10 +9943,7 @@
     },
     "/api/v1/onboarding/rookie-checklist": {
       "post": {
-        "tags": [
-          "Onboarding",
-          "onboarding"
-        ],
+        "tags": ["Onboarding", "onboarding"],
         "summary": "Submit Rookie Checklist",
         "description": "Validate and persist the rookie checklist submission to the DB.",
         "operationId": "submit_rookie_checklist_api_v1_onboarding_rookie_checklist_post",
@@ -10610,10 +9981,7 @@
     },
     "/api/v1/metadata/metadata/extract": {
       "post": {
-        "tags": [
-          "Metadata",
-          "metadata"
-        ],
+        "tags": ["Metadata", "metadata"],
         "summary": "Extract Metadata",
         "description": "Extract EXIF-like metadata from an uploaded document.\n\nSupports:\n- PDF files\n- Images (JPEG, PNG, TIFF)\n- Office documents (DOCX)\n\nReturns complete metadata including forensic flags.",
         "operationId": "extract_metadata_api_v1_metadata_metadata_extract_post",
@@ -10653,10 +10021,7 @@
     },
     "/api/v1/metadata/metadata/hash/{file_id}": {
       "get": {
-        "tags": [
-          "Metadata",
-          "metadata"
-        ],
+        "tags": ["Metadata", "metadata"],
         "summary": "Get File Hash",
         "description": "Get hash values for a previously processed file.\n\nUsed for chain of custody verification.",
         "operationId": "get_file_hash_api_v1_metadata_metadata_hash__file_id__get",
@@ -10695,10 +10060,7 @@
     },
     "/api/v1/metadata/metadata/compare": {
       "post": {
-        "tags": [
-          "Metadata",
-          "metadata"
-        ],
+        "tags": ["Metadata", "metadata"],
         "summary": "Compare Documents",
         "description": "Compare two documents and detect discrepancies.\n\nReturns:\n- hash_match: Whether content is identical\n- discrepancies: List of differing fields\n- tamper_indicators: Signs of potential tampering\n- risk_score: 0-100 risk assessment",
         "operationId": "compare_documents_api_v1_metadata_metadata_compare_post",
@@ -10738,10 +10100,7 @@
     },
     "/api/v1/metadata/metadata/forensic-scan": {
       "post": {
-        "tags": [
-          "Metadata",
-          "metadata"
-        ],
+        "tags": ["Metadata", "metadata"],
         "summary": "Forensic Scan",
         "description": "Perform deep forensic analysis on a document.\n\nChecks for:\n- Metadata inconsistencies\n- Editing software signatures\n- Modification patterns\n- Missing expected data",
         "operationId": "forensic_scan_api_v1_metadata_metadata_forensic_scan_post",
@@ -10781,10 +10140,7 @@
     },
     "/api/v1/metadata/metadata/supported-types": {
       "get": {
-        "tags": [
-          "Metadata",
-          "metadata"
-        ],
+        "tags": ["Metadata", "metadata"],
         "summary": "Get Supported Types",
         "description": "List all supported document types for metadata extraction.",
         "operationId": "get_supported_types_api_v1_metadata_metadata_supported_types_get",
@@ -10802,10 +10158,7 @@
     },
     "/api/v1/proof/proof/metadata-correlations/{case_id}": {
       "get": {
-        "tags": [
-          "Proof",
-          "fraud-proof"
-        ],
+        "tags": ["Proof", "fraud-proof"],
         "summary": "Get Metadata Correlations",
         "description": "Get metadata correlations for a case.\n\nDetects relationships between entities via shared metadata:\n- Same phone number\n- Same email address\n- Same physical address\n- Same IP address\n\nReturns:\n    Correlation results with confidence scores",
         "operationId": "get_metadata_correlations_api_v1_proof_proof_metadata_correlations__case_id__get",
@@ -10844,10 +10197,7 @@
     },
     "/api/v1/proof/proof/temporal-bursts/{case_id}": {
       "get": {
-        "tags": [
-          "Proof",
-          "fraud-proof"
-        ],
+        "tags": ["Proof", "fraud-proof"],
         "summary": "Detect Temporal Bursts",
         "description": "Detect temporal burst patterns in case transactions.\n\nPatterns detected:\n- Burst: Rapid transaction sequences (10+ in 48 hours default)\n- Structuring: Amounts clustering below reporting threshold\n- Velocity: Sudden increases in transaction frequency\n\nReturns:\n    Burst analysis results with alerts and risk scores",
         "operationId": "detect_temporal_bursts_api_v1_proof_proof_temporal_bursts__case_id__get",
@@ -10922,10 +10272,7 @@
     },
     "/api/v1/proof/proof/temporal-bursts/analyze": {
       "post": {
-        "tags": [
-          "Proof",
-          "fraud-proof"
-        ],
+        "tags": ["Proof", "fraud-proof"],
         "summary": "Analyze Transactions For Bursts",
         "description": "Analyze provided transactions for temporal burst patterns.\n\nUseful for ad-hoc analysis without a case context.\n\nArgs:\n    transactions: List of transaction dictionaries with date, amount, customer_id\n\nReturns:\n    Burst analysis results",
         "operationId": "analyze_transactions_for_bursts_api_v1_proof_proof_temporal_bursts_analyze_post",
@@ -10994,10 +10341,7 @@
     },
     "/api/v1/proof/proof/audit-chain/verify": {
       "get": {
-        "tags": [
-          "Proof",
-          "fraud-proof"
-        ],
+        "tags": ["Proof", "fraud-proof"],
         "summary": "Verify Audit Chain",
         "description": "Verify the integrity of the immutable audit chain.\n\nChecks:\n- Chain linkage (each entry links to previous)\n- HMAC signatures validity\n- Data hash integrity\n\nReturns:\n    Verification result with status and any detected issues",
         "operationId": "verify_audit_chain_api_v1_proof_proof_audit_chain_verify_get",
@@ -11015,10 +10359,7 @@
     },
     "/api/v1/proof/proof/audit-chain/export": {
       "get": {
-        "tags": [
-          "Proof",
-          "fraud-proof"
-        ],
+        "tags": ["Proof", "fraud-proof"],
         "summary": "Export Audit Chain Proof",
         "description": "Export chain proof for court-admissible evidence.\n\nGenerates a cryptographically signed proof document containing:\n- Filtered audit entries\n- Chain verification data\n- HMAC proof signature\n\nReturns:\n    Court-ready proof document",
         "operationId": "export_audit_chain_proof_api_v1_proof_proof_audit_chain_export_get",
@@ -11120,10 +10461,7 @@
     },
     "/api/v1/proof/proof/audit-chain/stats": {
       "get": {
-        "tags": [
-          "Proof",
-          "fraud-proof"
-        ],
+        "tags": ["Proof", "fraud-proof"],
         "summary": "Get Audit Chain Stats",
         "description": "Get audit chain statistics",
         "operationId": "get_audit_chain_stats_api_v1_proof_proof_audit_chain_stats_get",
@@ -11141,10 +10479,7 @@
     },
     "/api/v1/proof/proof/audit-chain/append": {
       "post": {
-        "tags": [
-          "Proof",
-          "fraud-proof"
-        ],
+        "tags": ["Proof", "fraud-proof"],
         "summary": "Append Audit Entry",
         "description": "Append a new entry to the immutable audit chain.\n\nThis creates a cryptographically linked entry with:\n- Link to previous entry (previous_hash)\n- HMAC signature\n- Data hash",
         "operationId": "append_audit_entry_api_v1_proof_proof_audit_chain_append_post",
@@ -11268,10 +10603,7 @@
     },
     "/api/v1/proof/proof/community-detection/{case_id}": {
       "get": {
-        "tags": [
-          "Proof",
-          "fraud-proof"
-        ],
+        "tags": ["Proof", "fraud-proof"],
         "summary": "Detect Shell Networks",
         "description": "Detect potential shell company networks in case data.\n\nUses Louvain community detection to identify:\n- Tight-knit transaction clusters\n- Circular transaction patterns\n- Entities with high internal transaction ratios\n\nReturns:\n    Detected shell networks with risk scoring",
         "operationId": "detect_shell_networks_api_v1_proof_proof_community_detection__case_id__get",
@@ -11334,10 +10666,7 @@
     },
     "/api/v1/proof/proof/summary/{case_id}": {
       "get": {
-        "tags": [
-          "Proof",
-          "fraud-proof"
-        ],
+        "tags": ["Proof", "fraud-proof"],
         "summary": "Get Proof Summary",
         "description": "Get combined proof visualization data for a case.\n\nAggregates all proof mechanisms into a single dashboard-ready response:\n- Metadata correlation summary\n- Temporal burst summary\n- Audit chain status\n- Shell network summary\n\nReturns:\n    Combined proof summary with confidence scores",
         "operationId": "get_proof_summary_api_v1_proof_proof_summary__case_id__get",
@@ -11376,10 +10705,7 @@
     },
     "/api/v1/forensic-intel/triangulate": {
       "post": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Triangulate Redaction",
         "description": "Unmask redacted transaction names using probabilistic triangulation.",
         "operationId": "triangulate_redaction_api_v1_forensic_intel_triangulate_post",
@@ -11425,10 +10751,7 @@
     },
     "/api/v1/forensic-intel/libr-analysis": {
       "post": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Run Libr Analysis",
         "description": "Analyze mixed funds (personal/business) using the Lowest Intermediate Balance Rule.",
         "operationId": "run_libr_analysis_api_v1_forensic_intel_libr_analysis_post",
@@ -11474,10 +10797,7 @@
     },
     "/api/v1/forensic-intel/attribute-intent": {
       "post": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Attribute Intent",
         "description": "Determine Mens Rea (Theory of Intent) from forensic evidence.",
         "operationId": "attribute_intent_api_v1_forensic_intel_attribute_intent_post",
@@ -11523,10 +10843,7 @@
     },
     "/api/v1/forensic-intel/mirror-detection/{account_id}": {
       "get": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Mirror Detection",
         "description": "Detect equal and opposite 'mirror' transactions.",
         "operationId": "mirror_detection_api_v1_forensic_intel_mirror_detection__account_id__get",
@@ -11573,10 +10890,7 @@
     },
     "/api/v1/forensic-intel/zenith-score/{project_id}": {
       "get": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Get Zenith Score",
         "description": "Get the overall Zenith health score for a project.",
         "operationId": "get_zenith_score_api_v1_forensic_intel_zenith_score__project_id__get",
@@ -11623,10 +10937,7 @@
     },
     "/api/v1/forensic-intel/validate-imputation": {
       "post": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Validate Imputation",
         "description": "Validate AI-imputed forensic data for legal resilience.",
         "operationId": "validate_imputation_api_v1_forensic_intel_validate_imputation_post",
@@ -11672,10 +10983,7 @@
     },
     "/api/v1/forensic-intel/aml/structuring/{account_id}": {
       "get": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Check Structuring",
         "description": "Check for structuring (Smurfing) patterns.",
         "operationId": "check_structuring_api_v1_forensic_intel_aml_structuring__account_id__get",
@@ -11722,10 +11030,7 @@
     },
     "/api/v1/forensic-intel/aml/ubo-trace/{entity_name}": {
       "get": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Trace Ubo",
         "description": "Trace Ultimate Beneficial Owners (UBO) using layering analysis.",
         "operationId": "trace_ubo_api_v1_forensic_intel_aml_ubo_trace__entity_name__get",
@@ -11772,10 +11077,7 @@
     },
     "/api/v1/forensic-intel/sign-report": {
       "post": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Sign Forensic Report",
         "description": "Sign a forensic report with Post-Quantum resistant signatures.",
         "operationId": "sign_forensic_report_api_v1_forensic_intel_sign_report_post",
@@ -11831,10 +11133,7 @@
     },
     "/api/v1/forensic-intel/zenith/federated-sync": {
       "post": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Zenith Federated Sync",
         "description": "Synchronize local knowledge with the Federated Forensic Mesh.",
         "operationId": "zenith_federated_sync_api_v1_forensic_intel_zenith_federated_sync_post",
@@ -11860,10 +11159,7 @@
     },
     "/api/v1/forensic-intel/zenith/shield-verify/{artifact_id}": {
       "get": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Zenith Shield Verify",
         "description": "Verify artifact integrity using Adversarial Forensic Shield.",
         "operationId": "zenith_shield_verify_api_v1_forensic_intel_zenith_shield_verify__artifact_id__get",
@@ -11910,10 +11206,7 @@
     },
     "/api/v1/forensic-intel/zenith/autonomous-hunt": {
       "post": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Zenith Autonomous Hunt",
         "description": "Execute Autonomous Forensic Hunting Agents.",
         "operationId": "zenith_autonomous_hunt_api_v1_forensic_intel_zenith_autonomous_hunt_post",
@@ -11939,10 +11232,7 @@
     },
     "/api/v1/forensic-intel/evidence/{evidence_id}/coc": {
       "get": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Get Evidence Coc",
         "description": "Retrieve the litigation-grade Chain of Custody for an evidence item.",
         "operationId": "get_evidence_coc_api_v1_forensic_intel_evidence__evidence_id__coc_get",
@@ -11987,10 +11277,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Log Coc Event",
         "description": "Log a new Chain of Custody event.",
         "operationId": "log_coc_event_api_v1_forensic_intel_evidence__evidence_id__coc_post",
@@ -12062,10 +11349,7 @@
     },
     "/api/v1/forensic-intel/aml/behavior-baseline/{account_id}": {
       "get": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Get Behavior Baseline",
         "description": "Get the calculated behavior baseline for an account.",
         "operationId": "get_behavior_baseline_api_v1_forensic_intel_aml_behavior_baseline__account_id__get",
@@ -12112,10 +11396,7 @@
     },
     "/api/v1/forensic-intel/aml/behavior-check/{account_id}": {
       "post": {
-        "tags": [
-          "Forensic Intelligence",
-          "Forensic Intelligence"
-        ],
+        "tags": ["Forensic Intelligence", "Forensic Intelligence"],
         "summary": "Check Behavior Anomalies",
         "description": "Check a batch of transactions against the behavior baseline.",
         "operationId": "check_behavior_anomalies_api_v1_forensic_intel_aml_behavior_check__account_id__post",
@@ -12177,10 +11458,7 @@
     },
     "/api/v1/entities/": {
       "post": {
-        "tags": [
-          "Entities",
-          "entities"
-        ],
+        "tags": ["Entities", "entities"],
         "summary": "Create Entity",
         "description": "Create a new entity",
         "operationId": "create_entity_api_v1_entities__post",
@@ -12225,10 +11503,7 @@
     },
     "/api/v1/entities": {
       "post": {
-        "tags": [
-          "Entities",
-          "entities"
-        ],
+        "tags": ["Entities", "entities"],
         "summary": "Create Entity",
         "description": "Create a new entity",
         "operationId": "create_entity_api_v1_entities_post",
@@ -12273,10 +11548,7 @@
     },
     "/api/v1/entities/{entity_id}": {
       "get": {
-        "tags": [
-          "Entities",
-          "entities"
-        ],
+        "tags": ["Entities", "entities"],
         "summary": "Get Entity",
         "description": "Get entity details",
         "operationId": "get_entity_api_v1_entities__entity_id__get",
@@ -12320,9 +11592,7 @@
     },
     "/api/v1/csrf-token": {
       "get": {
-        "tags": [
-          "Security"
-        ],
+        "tags": ["Security"],
         "summary": "Get Csrf Token",
         "description": "Get a CSRF token for the current session.\nIn production, this should be stored in Redis or database with expiration.",
         "operationId": "get_csrf_token_api_v1_csrf_token_get",
@@ -12340,9 +11610,7 @@
     },
     "/api/v1/validate-csrf": {
       "post": {
-        "tags": [
-          "Security"
-        ],
+        "tags": ["Security"],
         "summary": "Validate Csrf Token",
         "description": "Validate a CSRF token (optional endpoint for explicit validation)",
         "operationId": "validate_csrf_token_api_v1_validate_csrf_post",
@@ -12381,9 +11649,7 @@
     },
     "/api/v1/cleanup-tokens": {
       "post": {
-        "tags": [
-          "Security"
-        ],
+        "tags": ["Security"],
         "summary": "Cleanup Expired Tokens",
         "description": "Clean up expired CSRF tokens (should be called by a scheduled job)",
         "operationId": "cleanup_expired_tokens_api_v1_cleanup_tokens_post",
@@ -12401,10 +11667,7 @@
     },
     "/api/v1/cases/cases/{case_id}/history": {
       "get": {
-        "tags": [
-          "Time Travel (Roadmap)",
-          "Time Travel"
-        ],
+        "tags": ["Time Travel (Roadmap)", "Time Travel"],
         "summary": "Get Case History",
         "description": "Get the timeline of changes for a case graph.",
         "operationId": "get_case_history_api_v1_cases_cases__case_id__history_get",
@@ -12450,10 +11713,7 @@
     },
     "/api/v1/cases/cases/{case_id}/graph/snapshot/{snapshot_id}": {
       "get": {
-        "tags": [
-          "Time Travel (Roadmap)",
-          "Time Travel"
-        ],
+        "tags": ["Time Travel (Roadmap)", "Time Travel"],
         "summary": "Get Graph Snapshot",
         "description": "Get the state of the graph at a specific history snapshot.",
         "operationId": "get_graph_snapshot_api_v1_cases_cases__case_id__graph_snapshot__snapshot_id__get",
@@ -12505,10 +11765,7 @@
     },
     "/api/v1/ai/ai/voice-command": {
       "post": {
-        "tags": [
-          "AI Voice (Roadmap)",
-          "AI Companion"
-        ],
+        "tags": ["AI Voice (Roadmap)", "AI Companion"],
         "summary": "Process Voice Command",
         "description": "Process a natural language voice transcript and map it to a UI action.",
         "operationId": "process_voice_command_api_v1_ai_ai_voice_command_post",
@@ -12548,10 +11805,7 @@
     },
     "/api/v1/ai/ai/chat/regulatory": {
       "post": {
-        "tags": [
-          "AI Voice (Roadmap)",
-          "AI Companion"
-        ],
+        "tags": ["AI Voice (Roadmap)", "AI Companion"],
         "summary": "Regulatory Chat",
         "description": "RAG-enabled chatbot for regulatory queries.",
         "operationId": "regulatory_chat_api_v1_ai_ai_chat_regulatory_post",
@@ -12589,10 +11843,7 @@
     },
     "/api/v1/cases/cases/macros/execute": {
       "post": {
-        "tags": [
-          "Macros (Roadmap)",
-          "Macros"
-        ],
+        "tags": ["Macros (Roadmap)", "Macros"],
         "summary": "Execute Macro",
         "description": "Execute a predefined macro (multi-step workflow) on a set of cases.",
         "operationId": "execute_macro_api_v1_cases_cases_macros_execute_post",
@@ -12630,9 +11881,7 @@
     },
     "/api/v1/ai/explain/{score_id}": {
       "get": {
-        "tags": [
-          "Explainable AI"
-        ],
+        "tags": ["Explainable AI"],
         "summary": "Explain Score",
         "description": "Get SHAP values and narrative explanation for a specific AI score.",
         "operationId": "explain_score_api_v1_ai_explain__score_id__get",
@@ -12673,9 +11922,7 @@
     },
     "/api/v1/ai/explain/{score_id}/features": {
       "get": {
-        "tags": [
-          "Explainable AI"
-        ],
+        "tags": ["Explainable AI"],
         "summary": "Get Visual Data",
         "description": "Get sorted feature contributions for tooltip visualization.",
         "operationId": "get_visual_data_api_v1_ai_explain__score_id__features_get",
@@ -12721,9 +11968,7 @@
     },
     "/api/v1/ai/regulatory/ingest": {
       "post": {
-        "tags": [
-          "Regulatory Intelligence"
-        ],
+        "tags": ["Regulatory Intelligence"],
         "summary": "Ingest Document",
         "description": "Ingest a regulatory PDF for RAG indexing.",
         "operationId": "ingest_document_api_v1_ai_regulatory_ingest_post",
@@ -12763,9 +12008,7 @@
     },
     "/api/v1/ai/regulatory/search": {
       "post": {
-        "tags": [
-          "Regulatory Intelligence"
-        ],
+        "tags": ["Regulatory Intelligence"],
         "summary": "Search Regulatory Knowledge",
         "description": "Semantic search over indexed regulatory documents.",
         "operationId": "search_regulatory_knowledge_api_v1_ai_regulatory_search_post",
@@ -12809,9 +12052,7 @@
     },
     "/api/v1/auth/webauthn/register/start": {
       "post": {
-        "tags": [
-          "Biometric Authentication"
-        ],
+        "tags": ["Biometric Authentication"],
         "summary": "Start Registration",
         "description": "Start WebAuthn registration ceremony.",
         "operationId": "start_registration_api_v1_auth_webauthn_register_start_post",
@@ -12852,9 +12093,7 @@
     },
     "/api/v1/auth/webauthn/register/complete": {
       "post": {
-        "tags": [
-          "Biometric Authentication"
-        ],
+        "tags": ["Biometric Authentication"],
         "summary": "Complete Registration",
         "description": "Complete WebAuthn registration.",
         "operationId": "complete_registration_api_v1_auth_webauthn_register_complete_post",
@@ -12892,9 +12131,7 @@
     },
     "/api/v1/auth/webauthn/login/start": {
       "post": {
-        "tags": [
-          "Biometric Authentication"
-        ],
+        "tags": ["Biometric Authentication"],
         "summary": "Start Login",
         "description": "Start WebAuthn authentication ceremony.",
         "operationId": "start_login_api_v1_auth_webauthn_login_start_post",
@@ -12933,9 +12170,7 @@
     },
     "/api/v1/auth/webauthn/login/complete": {
       "post": {
-        "tags": [
-          "Biometric Authentication"
-        ],
+        "tags": ["Biometric Authentication"],
         "summary": "Complete Login",
         "description": "Verify WebAuthn assertion.",
         "operationId": "complete_login_api_v1_auth_webauthn_login_complete_post",
@@ -12975,9 +12210,7 @@
     },
     "/api/v1/auth/oauth/{provider}": {
       "get": {
-        "tags": [
-          "Social Authentication"
-        ],
+        "tags": ["Social Authentication"],
         "summary": "Oauth Login",
         "description": "Redirect user to social identity provider.",
         "operationId": "oauth_login_api_v1_auth_oauth__provider__get",
@@ -13016,9 +12249,7 @@
     },
     "/api/v1/auth/oauth/{provider}/callback": {
       "get": {
-        "tags": [
-          "Social Authentication"
-        ],
+        "tags": ["Social Authentication"],
         "summary": "Oauth Callback",
         "description": "Handle OAuth2 callback code exchange.",
         "operationId": "oauth_callback_api_v1_auth_oauth__provider__callback_get",
@@ -13066,9 +12297,7 @@
     },
     "/api/v1/system/scripts/execute": {
       "post": {
-        "tags": [
-          "Self-Healing Scripts"
-        ],
+        "tags": ["Self-Healing Scripts"],
         "summary": "Execute Remediation Script",
         "description": "Execute a predefined remediation script in a sandboxed environment.",
         "operationId": "execute_remediation_script_api_v1_system_scripts_execute_post",
@@ -13108,9 +12337,7 @@
     },
     "/api/v1/system/scripts/approvals": {
       "get": {
-        "tags": [
-          "Self-Healing Scripts"
-        ],
+        "tags": ["Self-Healing Scripts"],
         "summary": "Get Pending Approvals",
         "description": "List scripts waiting for dual-control approval.",
         "operationId": "get_pending_approvals_api_v1_system_scripts_approvals_get",
@@ -13128,9 +12355,7 @@
     },
     "/api/v1/dashboard": {
       "get": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Get Compliance Dashboard",
         "description": "Get high-level compliance metrics backed by real DB data",
         "operationId": "get_compliance_dashboard_api_v1_dashboard_get",
@@ -13155,9 +12380,7 @@
     },
     "/api/v1/monitoring/dashboard": {
       "get": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Get Monitoring Dashboard",
         "description": "Get real-time monitoring dashboard data linked to DB",
         "operationId": "get_monitoring_dashboard_api_v1_monitoring_dashboard_get",
@@ -13182,9 +12405,7 @@
     },
     "/api/v1/regulatory-reports": {
       "get": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Get Regulatory Reports",
         "operationId": "get_regulatory_reports_api_v1_regulatory_reports_get",
         "parameters": [
@@ -13229,9 +12450,7 @@
     },
     "/api/v1/regional-compliance": {
       "get": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Get Regional Compliance",
         "description": "Reserved for global expansion - currently static configuration",
         "operationId": "get_regional_compliance_api_v1_regional_compliance_get",
@@ -13249,9 +12468,7 @@
     },
     "/api/v1/data-residency-rules": {
       "get": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Get Data Residency Rules",
         "operationId": "get_data_residency_rules_api_v1_data_residency_rules_get",
         "responses": {
@@ -13268,9 +12485,7 @@
     },
     "/api/v1/audit/log": {
       "post": {
-        "tags": [
-          "Compliance"
-        ],
+        "tags": ["Compliance"],
         "summary": "Log Audit Event",
         "operationId": "log_audit_event_api_v1_audit_log_post",
         "requestBody": {
@@ -13314,10 +12529,7 @@
     },
     "/api/v1/relationships": {
       "post": {
-        "tags": [
-          "Relationships",
-          "relationships"
-        ],
+        "tags": ["Relationships", "relationships"],
         "summary": "Create Relationship",
         "description": "Create a relationship between entities",
         "operationId": "create_relationship_api_v1_relationships_post",
@@ -13362,9 +12574,7 @@
     },
     "/api/v1/projects": {
       "get": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "summary": "Get Projects",
         "description": "List all projects",
         "operationId": "get_projects_api_v1_projects_get",
@@ -13391,9 +12601,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "summary": "Create Project",
         "description": "Create a new project",
         "operationId": "create_project_api_v1_projects_post",
@@ -13438,9 +12646,7 @@
     },
     "/api/v1/projects/{project_id}": {
       "get": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "summary": "Get Project",
         "description": "Get project details",
         "operationId": "get_project_api_v1_projects__project_id__get",
@@ -13486,9 +12692,7 @@
     },
     "/api/v1/alerts": {
       "get": {
-        "tags": [
-          "Alerts"
-        ],
+        "tags": ["Alerts"],
         "summary": "Get Alerts",
         "description": "Get all fraud alerts with filtering",
         "operationId": "get_alerts_api_v1_alerts_get",
@@ -13587,9 +12791,7 @@
     },
     "/api/v1/alerts/{alert_id}": {
       "put": {
-        "tags": [
-          "Alerts"
-        ],
+        "tags": ["Alerts"],
         "summary": "Update Alert",
         "description": "Update alert status",
         "operationId": "update_alert_api_v1_alerts__alert_id__put",
@@ -13662,9 +12864,7 @@
     },
     "/health/detailed": {
       "get": {
-        "tags": [
-          "Metrics"
-        ],
+        "tags": ["Metrics"],
         "summary": "Detailed Health",
         "description": "Detailed health check with system metrics",
         "operationId": "detailed_health_health_detailed_get",
@@ -13682,9 +12882,7 @@
     },
     "/api/v1/ai/stream": {
       "post": {
-        "tags": [
-          "Streaming"
-        ],
+        "tags": ["Streaming"],
         "summary": "Stream Ai Response",
         "description": "Stream AI response using Server-Sent Events\n\nRequest body:\n{\n    \"message\": \"User message\",\n    \"context\": {\n        \"caseId\": \"optional\",\n        \"persona\": \"frenly|skeptical|thorough\"\n    }\n}",
         "operationId": "stream_ai_response_api_v1_ai_stream_post",
@@ -13702,9 +12900,7 @@
     },
     "/api/v1/ai/analyze/stream": {
       "post": {
-        "tags": [
-          "Streaming"
-        ],
+        "tags": ["Streaming"],
         "summary": "Stream Transaction Analysis",
         "description": "Stream transaction analysis results\n\nRequest body:\n{\n    \"transaction_id\": \"txn_123\",\n    \"amount\": 15000.00,\n    \"currency\": \"USD\",\n    ...\n}",
         "operationId": "stream_transaction_analysis_api_v1_ai_analyze_stream_post",
@@ -13722,9 +12918,7 @@
     },
     "/api/v1/ai/stream/test": {
       "get": {
-        "tags": [
-          "Streaming"
-        ],
+        "tags": ["Streaming"],
         "summary": "Test Stream",
         "description": "Test SSE streaming endpoint",
         "operationId": "test_stream_api_v1_ai_stream_test_get",
@@ -13742,9 +12936,7 @@
     },
     "/broadcast_alert": {
       "post": {
-        "tags": [
-          "WebSocket"
-        ],
+        "tags": ["WebSocket"],
         "summary": "Trigger Alert",
         "operationId": "trigger_alert_broadcast_alert_post",
         "requestBody": {
@@ -13979,12 +13171,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "title",
-          "severity",
-          "status"
-        ],
+        "required": ["id", "title", "severity", "status"],
         "title": "AlertResponse"
       },
       "AnalysisRequest": {
@@ -14021,10 +13208,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "type",
-          "data"
-        ],
+        "required": ["type", "data"],
         "title": "AnalysisRequest"
       },
       "AnalysisResponse": {
@@ -14056,10 +13240,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "analysis",
-          "confidence"
-        ],
+        "required": ["analysis", "confidence"],
         "title": "AnalysisResponse"
       },
       "ApplyOptimizationRequest": {
@@ -14070,9 +13251,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "optimization_id"
-        ],
+        "required": ["optimization_id"],
         "title": "ApplyOptimizationRequest"
       },
       "AuthenticatorResponse": {
@@ -14087,10 +13266,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "client_data_json",
-          "attestation_object"
-        ],
+        "required": ["client_data_json", "attestation_object"],
         "title": "AuthenticatorResponse"
       },
       "BackupInfo": {
@@ -14157,11 +13333,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "full",
-              "incremental",
-              "auto"
-            ],
+            "enum": ["full", "incremental", "auto"],
             "title": "Type",
             "description": "Backup type",
             "default": "auto"
@@ -14306,9 +13478,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "withdrawal_id"
-        ],
+        "required": ["withdrawal_id"],
         "title": "BatchMatchRequest"
       },
       "BatchSaveRequest": {
@@ -14326,10 +13496,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "withdrawal_id",
-          "expense_ids"
-        ],
+        "required": ["withdrawal_id", "expense_ids"],
         "title": "BatchSaveRequest"
       },
       "Body_analyze_batch_files_api_v1_multimodal_analyze_batch_post": {
@@ -14364,9 +13531,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "files"
-        ],
+        "required": ["files"],
         "title": "Body_analyze_batch_files_api_v1_multimodal_analyze_batch_post"
       },
       "Body_analyze_case_api_v1_fraud_analyze__case_id__post": {
@@ -14417,9 +13582,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "file_path"
-        ],
+        "required": ["file_path"],
         "title": "Body_analyze_file_path_api_v1_multimodal_analyze_path_post"
       },
       "Body_analyze_image_api_v1_advanced_ai_advanced_ai_multimodal_image_post": {
@@ -14431,9 +13594,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "file"
-        ],
+        "required": ["file"],
         "title": "Body_analyze_image_api_v1_advanced_ai_advanced_ai_multimodal_image_post"
       },
       "Body_analyze_text_api_v1_advanced_ai_advanced_ai_multimodal_text_post": {
@@ -14444,9 +13605,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "text"
-        ],
+        "required": ["text"],
         "title": "Body_analyze_text_api_v1_advanced_ai_advanced_ai_multimodal_text_post"
       },
       "Body_analyze_uploaded_file_api_v1_multimodal_analyze_post": {
@@ -14478,9 +13637,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "file"
-        ],
+        "required": ["file"],
         "title": "Body_analyze_uploaded_file_api_v1_multimodal_analyze_post"
       },
       "Body_analyze_uploaded_file_api_v1_multimodal_analyze_upload_post": {
@@ -14512,9 +13669,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "file"
-        ],
+        "required": ["file"],
         "title": "Body_analyze_uploaded_file_api_v1_multimodal_analyze_upload_post"
       },
       "Body_create_alert_endpoint_api_v1_apm_apm_alerts_post": {
@@ -14570,11 +13725,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "severity",
-          "title",
-          "message"
-        ],
+        "required": ["severity", "title", "message"],
         "title": "Body_create_alert_endpoint_api_v1_apm_apm_alerts_post"
       },
       "Body_create_log_entry_api_v1_logging_logging_log_post": {
@@ -14693,11 +13844,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "level",
-          "category",
-          "message"
-        ],
+        "required": ["level", "category", "message"],
         "title": "Body_create_log_entry_api_v1_logging_logging_log_post"
       },
       "Body_create_metric_api_v1_apm_apm_metrics_post": {
@@ -14747,10 +13894,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "name",
-          "value"
-        ],
+        "required": ["name", "value"],
         "title": "Body_create_metric_api_v1_apm_apm_metrics_post"
       },
       "Body_evaluate_transaction_api_v1_rules_evaluate_post": {
@@ -14765,9 +13909,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "request"
-        ],
+        "required": ["request"],
         "title": "Body_evaluate_transaction_api_v1_rules_evaluate_post"
       },
       "Body_export_apm_data_api_v1_apm_apm_export_post": {
@@ -14815,9 +13957,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "file"
-        ],
+        "required": ["file"],
         "title": "Body_extract_metadata_api_v1_metadata_metadata_extract_post"
       },
       "Body_finish_span_endpoint_api_v1_apm_apm_spans__span_id__finish_post": {
@@ -14853,9 +13993,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "file"
-        ],
+        "required": ["file"],
         "title": "Body_forensic_scan_api_v1_metadata_metadata_forensic_scan_post"
       },
       "Body_index_document_api_v1_semantic_search_index_post": {
@@ -14882,10 +14020,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "document_id",
-          "content"
-        ],
+        "required": ["document_id", "content"],
         "title": "Body_index_document_api_v1_semantic_search_index_post"
       },
       "Body_ingest_document_api_v1_ai_regulatory_ingest_post": {
@@ -14897,9 +14032,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "file"
-        ],
+        "required": ["file"],
         "title": "Body_ingest_document_api_v1_ai_regulatory_ingest_post"
       },
       "Body_local_rag_add_api_v1_advanced_ai_advanced_ai_rag_add_post": {
@@ -14914,10 +14047,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "doc_id",
-          "text"
-        ],
+        "required": ["doc_id", "text"],
         "title": "Body_local_rag_add_api_v1_advanced_ai_advanced_ai_rag_add_post"
       },
       "Body_log_api_request_api_v1_logging_logging_log_api_request_post": {
@@ -14969,12 +14099,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "method",
-          "endpoint",
-          "status_code",
-          "duration_ms"
-        ],
+        "required": ["method", "endpoint", "status_code", "duration_ms"],
         "title": "Body_log_api_request_api_v1_logging_logging_log_api_request_post"
       },
       "Body_log_performance_metric_api_v1_logging_logging_log_performance_metric_post": {
@@ -15016,10 +14141,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "metric_name",
-          "value"
-        ],
+        "required": ["metric_name", "value"],
         "title": "Body_log_performance_metric_api_v1_logging_logging_log_performance_metric_post"
       },
       "Body_log_security_event_api_v1_logging_logging_log_security_event_post": {
@@ -15061,10 +14183,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "event_type",
-          "severity"
-        ],
+        "required": ["event_type", "severity"],
         "title": "Body_log_security_event_api_v1_logging_logging_log_security_event_post"
       },
       "Body_log_user_action_api_v1_logging_logging_log_user_action_post": {
@@ -15094,10 +14213,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "action",
-          "user_id"
-        ],
+        "required": ["action", "user_id"],
         "title": "Body_log_user_action_api_v1_logging_logging_log_user_action_post"
       },
       "Body_start_span_endpoint_api_v1_apm_apm_spans_start_post": {
@@ -15148,9 +14264,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "operation_name"
-        ],
+        "required": ["operation_name"],
         "title": "Body_start_span_endpoint_api_v1_apm_apm_spans_start_post"
       },
       "Body_switch_backend_api_v1_semantic_search_switch_backend_post": {
@@ -15175,9 +14289,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "backend"
-        ],
+        "required": ["backend"],
         "title": "Body_switch_backend_api_v1_semantic_search_switch_backend_post"
       },
       "Body_update_alert_status_api_v1_fraud_alerts__alert_id__status_put": {
@@ -15188,9 +14300,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "status"
-        ],
+        "required": ["status"],
         "title": "Body_update_alert_status_api_v1_fraud_alerts__alert_id__status_put"
       },
       "Body_upload_evidence_api_v1_evidence_upload_post": {
@@ -15228,10 +14338,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "case_id",
-          "file"
-        ],
+        "required": ["case_id", "file"],
         "title": "Body_upload_evidence_api_v1_evidence_upload_post"
       },
       "Body_validate_imputation_api_v1_forensic_intel_validate_imputation_post": {
@@ -15248,10 +14355,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "original",
-          "imputed"
-        ],
+        "required": ["original", "imputed"],
         "title": "Body_validate_imputation_api_v1_forensic_intel_validate_imputation_post"
       },
       "BulkDeleteRequest": {
@@ -15267,9 +14371,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "caseIds"
-        ],
+        "required": ["caseIds"],
         "title": "BulkDeleteRequest"
       },
       "BulkDeleteResponse": {
@@ -15431,11 +14533,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "deletedCount",
-          "failedIds",
-          "message"
-        ],
+        "required": ["deletedCount", "failedIds", "message"],
         "title": "BulkDeleteResponse"
       },
       "BulkOperationRequest": {
@@ -15465,10 +14563,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "ids",
-          "operation"
-        ],
+        "required": ["ids", "operation"],
         "title": "BulkOperationRequest",
         "description": "Standard bulk operation request"
       },
@@ -15533,9 +14628,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "title"
-        ],
+        "required": ["title"],
         "title": "CaseCreate"
       },
       "CaseCreateResponse": {
@@ -15559,12 +14652,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "case_id",
-          "message",
-          "case"
-        ],
+        "required": ["id", "case_id", "message", "case"],
         "title": "CaseCreateResponse"
       },
       "CaseListResponse": {
@@ -15594,13 +14682,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "cases",
-          "page",
-          "perPage",
-          "total",
-          "totalPages"
-        ],
+        "required": ["cases", "page", "perPage", "total", "totalPages"],
         "title": "CaseListResponse"
       },
       "CaseNoteCreate": {
@@ -15630,9 +14712,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "content"
-        ],
+        "required": ["content"],
         "title": "CaseNoteCreate"
       },
       "CaseNoteResponse": {
@@ -15840,10 +14920,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "stats",
-          "findings"
-        ],
+        "required": ["stats", "findings"],
         "title": "CaseSummaryResponse"
       },
       "CaseSummaryStats": {
@@ -15927,11 +15004,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "entity_name",
-          "start_date",
-          "end_date"
-        ],
+        "required": ["entity_name", "start_date", "end_date"],
         "title": "CashFloatRequest"
       },
       "ChatResponse": {
@@ -15965,11 +15038,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "response",
-          "confidence",
-          "persona"
-        ],
+        "required": ["response", "confidence", "persona"],
         "title": "ChatResponse"
       },
       "CodeIssue": {
@@ -16061,9 +15130,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "code"
-        ],
+        "required": ["code"],
         "title": "CodeReviewRequest"
       },
       "CodeReviewResponse": {
@@ -16085,11 +15152,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "issues",
-          "quality_score",
-          "summary"
-        ],
+        "required": ["issues", "quality_score", "summary"],
         "title": "CodeReviewResponse"
       },
       "ComparisonRequest": {
@@ -16104,10 +15167,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "doc_a_id",
-          "doc_b_id"
-        ],
+        "required": ["doc_a_id", "doc_b_id"],
         "title": "ComparisonRequest",
         "description": "Request to compare two document metadata sets."
       },
@@ -16354,9 +15414,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "text"
-        ],
+        "required": ["text"],
         "title": "EmbeddingRequest"
       },
       "EmbeddingResponse": {
@@ -16382,12 +15440,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "embedding",
-          "dimension",
-          "model",
-          "processing_time_ms"
-        ],
+        "required": ["embedding", "dimension", "model", "processing_time_ms"],
         "title": "EmbeddingResponse"
       },
       "EvaluateTransactionRequest": {
@@ -16400,9 +15453,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "transaction_data"
-        ],
+        "required": ["transaction_data"],
         "title": "EvaluateTransactionRequest"
       },
       "ExplanationResponse": {
@@ -16475,12 +15526,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "type",
-          "severity",
-          "description"
-        ],
+        "required": ["id", "type", "severity", "description"],
         "title": "Finding"
       },
       "ForensicFlags": {
@@ -16527,12 +15573,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "lat",
-          "lng",
-          "intensity",
-          "type"
-        ],
+        "required": ["lat", "lng", "intensity", "type"],
         "title": "GeoPoint"
       },
       "GraphSnapshotCreate": {
@@ -16610,10 +15651,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "evidence_id",
-          "mapping"
-        ],
+        "required": ["evidence_id", "mapping"],
         "title": "IngestMappedDataRequest"
       },
       "IngestionStatus": {
@@ -16632,11 +15670,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "file_name",
-          "status",
-          "chunks_indexed"
-        ],
+        "required": ["file_name", "status", "chunks_indexed"],
         "title": "IngestionStatus"
       },
       "InsightsRequest": {
@@ -16649,9 +15683,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "context"
-        ],
+        "required": ["context"],
         "title": "InsightsRequest"
       },
       "InsightsResponse": {
@@ -16668,9 +15700,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "insights"
-        ],
+        "required": ["insights"],
         "title": "InsightsResponse"
       },
       "IntegrityCheckResponse": {
@@ -16725,9 +15755,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "valid"
-        ],
+        "required": ["valid"],
         "title": "IntegrityCheckResponse"
       },
       "IntentRequest": {
@@ -16742,10 +15770,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "evidence_id",
-          "content"
-        ],
+        "required": ["evidence_id", "content"],
         "title": "IntentRequest"
       },
       "LIBRRequest": {
@@ -16766,11 +15791,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "account_id",
-          "start_date",
-          "end_date"
-        ],
+        "required": ["account_id", "start_date", "end_date"],
         "title": "LIBRRequest"
       },
       "LoginRequest": {
@@ -16799,10 +15820,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "username",
-          "password"
-        ],
+        "required": ["username", "password"],
         "title": "LoginRequest"
       },
       "MFASetupResponse": {
@@ -16817,10 +15835,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "secret",
-          "otpauth_url"
-        ],
+        "required": ["secret", "otpauth_url"],
         "title": "MFASetupResponse"
       },
       "MFAVerifyRequest": {
@@ -16831,9 +15846,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "code"
-        ],
+        "required": ["code"],
         "title": "MFAVerifyRequest"
       },
       "MFAVerifyResponse": {
@@ -16848,10 +15861,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "verified",
-          "message"
-        ],
+        "required": ["verified", "message"],
         "title": "MFAVerifyResponse"
       },
       "MacroExecutionRequest": {
@@ -16875,10 +15885,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "macro_id",
-          "case_ids"
-        ],
+        "required": ["macro_id", "case_ids"],
         "title": "MacroExecutionRequest"
       },
       "MonitoringDashboard": {
@@ -16937,10 +15944,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "case_id",
-          "personas"
-        ],
+        "required": ["case_id", "personas"],
         "title": "MultiPersonaRequest"
       },
       "OptimizationResult": {
@@ -16999,12 +16003,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "riskTrend",
-          "predictedFraud",
-          "accuracy",
-          "activeAlerts"
-        ],
+        "required": ["riskTrend", "predictedFraud", "accuracy", "activeAlerts"],
         "title": "PredictiveStats"
       },
       "ProactiveRequest": {
@@ -17019,10 +16018,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "alert_id",
-          "context"
-        ],
+        "required": ["alert_id", "context"],
         "title": "ProactiveRequest"
       },
       "ProjectCreate": {
@@ -17044,9 +16040,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "title": "ProjectCreate"
       },
       "ProjectResponse": {
@@ -17083,10 +16077,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "name"
-        ],
+        "required": ["id", "name"],
         "title": "ProjectResponse"
       },
       "RAGQuery": {
@@ -17114,9 +16105,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "query"
-        ],
+        "required": ["query"],
         "title": "RAGQuery"
       },
       "RedTeamRequest": {
@@ -17132,9 +16121,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "feature"
-        ],
+        "required": ["feature"],
         "title": "RedTeamRequest"
       },
       "RedactionRequest": {
@@ -17149,10 +16136,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "transaction_id",
-          "masked_name"
-        ],
+        "required": ["transaction_id", "masked_name"],
         "title": "RedactionRequest"
       },
       "RegisterRequest": {
@@ -17194,12 +16178,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "username",
-          "email",
-          "password",
-          "full_name"
-        ],
+        "required": ["username", "email", "password", "full_name"],
         "title": "RegisterRequest"
       },
       "RegisterResponse": {
@@ -17227,13 +16206,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "user_id",
-          "username",
-          "email",
-          "message",
-          "created_at"
-        ],
+        "required": ["user_id", "username", "email", "message", "created_at"],
         "title": "RegisterResponse"
       },
       "RegistrationStartResponse": {
@@ -17252,20 +16225,12 @@
           }
         },
         "type": "object",
-        "required": [
-          "challenge",
-          "user_id",
-          "rp_id"
-        ],
+        "required": ["challenge", "user_id", "rp_id"],
         "title": "RegistrationStartResponse"
       },
       "ReportFormat": {
         "type": "string",
-        "enum": [
-          "pdf",
-          "html",
-          "csv"
-        ],
+        "enum": ["pdf", "html", "csv"],
         "title": "ReportFormat"
       },
       "ReportGenerationResponse": {
@@ -17338,12 +16303,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "status",
-          "progress",
-          "created_at"
-        ],
+        "required": ["id", "status", "progress", "created_at"],
         "title": "ReportJobStatus"
       },
       "ReportRequest": {
@@ -17411,12 +16371,7 @@
       },
       "ReportTemplate": {
         "type": "string",
-        "enum": [
-          "executive",
-          "standard",
-          "detailed",
-          "compliance"
-        ],
+        "enum": ["executive", "standard", "detailed", "compliance"],
         "title": "ReportTemplate"
       },
       "ReportTemplateInfo": {
@@ -17446,13 +16401,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "name",
-          "description",
-          "sections",
-          "estimatedPages"
-        ],
+        "required": ["id", "name", "description", "sections", "estimatedPages"],
         "title": "ReportTemplateInfo"
       },
       "RestoreRequest": {
@@ -17476,9 +16425,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "backup_id"
-        ],
+        "required": ["backup_id"],
         "title": "RestoreRequest"
       },
       "RestoreResponse": {
@@ -17564,10 +16511,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "user_id",
-          "items"
-        ],
+        "required": ["user_id", "items"],
         "title": "RookieChecklistIn"
       },
       "RuleResponse": {
@@ -17598,21 +16542,12 @@
           }
         },
         "type": "object",
-        "required": [
-          "name",
-          "severity",
-          "enabled"
-        ],
+        "required": ["name", "severity", "enabled"],
         "title": "RuleResponse"
       },
       "ScheduleFrequency": {
         "type": "string",
-        "enum": [
-          "daily",
-          "weekly",
-          "monthly",
-          "quarterly"
-        ],
+        "enum": ["daily", "weekly", "monthly", "quarterly"],
         "title": "ScheduleFrequency"
       },
       "ScheduledReport": {
@@ -17713,12 +16648,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "name",
-          "frequency",
-          "template",
-          "recipients"
-        ],
+        "required": ["name", "frequency", "template", "recipients"],
         "title": "ScheduledReportRequest"
       },
       "ScriptExecutionLog": {
@@ -17740,11 +16670,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "execution_id",
-          "status",
-          "output"
-        ],
+        "required": ["execution_id", "status", "output"],
         "title": "ScriptExecutionLog"
       },
       "ScriptRequest": {
@@ -17764,10 +16690,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "script_name",
-          "target_service"
-        ],
+        "required": ["script_name", "target_service"],
         "title": "ScriptRequest"
       },
       "SearchQuery": {
@@ -17783,9 +16706,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "query"
-        ],
+        "required": ["query"],
         "title": "SearchQuery"
       },
       "SearchRequest": {
@@ -17818,9 +16739,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "query"
-        ],
+        "required": ["query"],
         "title": "SearchRequest"
       },
       "SearchResponse": {
@@ -17843,10 +16762,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "results",
-          "total"
-        ],
+        "required": ["results", "total"],
         "title": "SearchResponse"
       },
       "SequenceAnalysisRequest": {
@@ -17871,9 +16787,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "transaction_ids"
-        ],
+        "required": ["transaction_ids"],
         "title": "SequenceAnalysisRequest"
       },
       "SystemMetrics": {
@@ -17925,9 +16839,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "transaction_ids"
-        ],
+        "required": ["transaction_ids"],
         "title": "TemporalAnalysisRequest"
       },
       "TokenResponse": {
@@ -17952,10 +16864,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "access_token",
-          "refresh_token"
-        ],
+        "required": ["access_token", "refresh_token"],
         "title": "TokenResponse"
       },
       "TransactionFlowResponse": {
@@ -18079,12 +16988,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "file_id",
-          "chunk_index",
-          "uploaded",
-          "message"
-        ],
+        "required": ["file_id", "chunk_index", "uploaded", "message"],
         "title": "UploadChunkResponse"
       },
       "UploadCompleteRequest": {
@@ -18124,10 +17028,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "file_id",
-          "case_id"
-        ],
+        "required": ["file_id", "case_id"],
         "title": "UploadCompleteRequest"
       },
       "UploadCompleteResponse": {
@@ -18257,11 +17158,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
+        "required": ["loc", "msg", "type"],
         "title": "ValidationError"
       },
       "VoiceCommandRequest": {
@@ -18278,9 +17175,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "transcript"
-        ],
+        "required": ["transcript"],
         "title": "VoiceCommandRequest"
       },
       "VoiceCommandResponse": {
@@ -18300,11 +17195,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "action",
-          "parameters",
-          "confirmation_message"
-        ],
+        "required": ["action", "parameters", "confirmation_message"],
         "title": "VoiceCommandResponse"
       },
       "app__routers__ai__ChatRequest": {
@@ -18339,9 +17230,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "message"
-        ],
+        "required": ["message"],
         "title": "ChatRequest"
       },
       "app__routers__ai__SearchResult": {
@@ -18369,13 +17258,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "similarity",
-          "content",
-          "metadata",
-          "created_at"
-        ],
+        "required": ["id", "similarity", "content", "metadata", "created_at"],
         "title": "SearchResult"
       },
       "app__routers__ai__SemanticSearchRequest": {
@@ -18416,9 +17299,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "query"
-        ],
+        "required": ["query"],
         "title": "SemanticSearchRequest"
       },
       "app__routers__ai_voice__ChatRequest": {
@@ -18429,9 +17310,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "message"
-        ],
+        "required": ["message"],
         "title": "ChatRequest"
       },
       "app__routers__regulatory_rag__SearchResult": {
@@ -18454,12 +17333,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "text",
-          "score",
-          "source",
-          "citation"
-        ],
+        "required": ["text", "score", "source", "citation"],
         "title": "SearchResult"
       },
       "app__routers__search__SemanticSearchRequest": {
@@ -18480,9 +17354,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "query"
-        ],
+        "required": ["query"],
         "title": "SemanticSearchRequest"
       }
     },

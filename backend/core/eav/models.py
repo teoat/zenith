@@ -23,9 +23,7 @@ class EAVEntity(Base):
     created_at = Column(DateTime, default=utc_now)
     updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
 
-    values = relationship(
-        "EAVValue", back_populates="entity", cascade="all, delete-orphan"
-    )
+    values = relationship("EAVValue", back_populates="entity", cascade="all, delete-orphan")
 
 
 class EAVAttribute(Base):
@@ -33,9 +31,7 @@ class EAVAttribute(Base):
 
     attribute_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     attribute_name = Column(String, unique=True, nullable=False, index=True)
-    data_type = Column(
-        String, nullable=False
-    )  # 'text', 'numeric', 'boolean', 'json', 'date'
+    data_type = Column(String, nullable=False)  # 'text', 'numeric', 'boolean', 'json', 'date'
     description = Column(Text)
     is_required = Column(Boolean, default=False)
 
@@ -56,6 +52,4 @@ class EAVValue(Base):
     entity = relationship("EAVEntity", back_populates="values")
     attribute = relationship("EAVAttribute")
 
-    __table_args__ = (
-        Index("idx_eav_entity_attribute", "entity_id", "attribute_id", unique=True),
-    )
+    __table_args__ = (Index("idx_eav_entity_attribute", "entity_id", "attribute_id", unique=True),)

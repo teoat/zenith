@@ -30,9 +30,7 @@ class TimeTravelService:
             },
         ]
 
-    async def get_graph_snapshot(
-        self, case_id: str, snapshot_id: str
-    ) -> dict[str, Any]:
+    async def get_graph_snapshot(self, case_id: str, snapshot_id: str) -> dict[str, Any]:
         """
         Retrieve a specific point-in-time snapshot of the graph.
         """

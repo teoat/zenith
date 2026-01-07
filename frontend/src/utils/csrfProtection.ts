@@ -1,4 +1,4 @@
-import { secureLogger } from './secureLogger';
+import { secureLogger } from "./secureLogger";
 
 // CSRF protection utilities
 export class CSRFProtection {
@@ -29,12 +29,12 @@ export class CSRFProtection {
   // Request new CSRF token from server
   private static async requestToken(): Promise<string> {
     try {
-      const response = await fetch('/api/v1/csrf-token', {
-        method: 'GET',
-        credentials: 'same-origin',
+      const response = await fetch("/api/v1/csrf-token", {
+        method: "GET",
+        credentials: "same-origin",
         headers: {
-          'Accept': 'application/json'
-        }
+          Accept: "application/json",
+        },
       });
 
       if (!response.ok) {
@@ -44,11 +44,11 @@ export class CSRFProtection {
       const data = await response.json();
       return data.csrf_token || data.token;
     } catch (error) {
-      secureLogger.warn('CSRF_PROTECTION', 'Failed to get CSRF token', {
-        error: error instanceof Error ? error.message : String(error)
+      secureLogger.warn("CSRF_PROTECTION", "Failed to get CSRF token", {
+        error: error instanceof Error ? error.message : String(error),
       });
       // Return a fallback token for development
-      return 'fallback-csrf-token-' + Date.now();
+      return "fallback-csrf-token-" + Date.now();
     }
   }
 
@@ -60,14 +60,14 @@ export class CSRFProtection {
 
   // Check if a request method requires CSRF protection
   static requiresCSRF(method: string): boolean {
-    const csrfMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
+    const csrfMethods = ["POST", "PUT", "PATCH", "DELETE"];
     return csrfMethods.includes(method.toUpperCase());
   }
 
   // Add CSRF token to headers if required
   static async addCSRFHeader(
     headers: Record<string, string>,
-    method: string
+    method: string,
   ): Promise<Record<string, string>> {
     if (!this.requiresCSRF(method)) {
       return headers;
@@ -76,7 +76,7 @@ export class CSRFProtection {
     const token = await this.getToken();
     return {
       ...headers,
-      'X-CSRF-Token': token
+      "X-CSRF-Token": token,
     };
   }
 }
@@ -84,5 +84,7 @@ export class CSRFProtection {
 // Export convenience functions
 export const getCsrfToken = () => CSRFProtection.getToken();
 export const clearCsrfToken = () => CSRFProtection.clearToken();
-export const addCsrfHeader = (headers: Record<string, string>, method: string) =>
-  CSRFProtection.addCSRFHeader(headers, method);
+export const addCsrfHeader = (
+  headers: Record<string, string>,
+  method: string,
+) => CSRFProtection.addCSRFHeader(headers, method);

@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 export interface QueuedRequest {
   id: string;
@@ -11,7 +11,7 @@ export interface QueuedRequest {
 
 export interface OfflineQueueContextType {
   queue: QueuedRequest[];
-  addToQueue: (request: Omit<QueuedRequest, 'id' | 'timestamp'>) => void;
+  addToQueue: (request: Omit<QueuedRequest, "id" | "timestamp">) => void;
   removeFromQueue: (id: string) => void;
   clearQueue: () => void;
   isSyncing: boolean;
