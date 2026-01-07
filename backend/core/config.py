@@ -24,12 +24,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str = os.environ.get("JWT_SECRET_KEY", "dev-jwt-secret-for-testing")
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    FIELD_ENCRYPTION_KEY: str = os.environ.get(
-        "FIELD_ENCRYPTION_KEY",
-        os.environ.get(
-            "ENCRYPTION_KEY", os.environ.get("SECRET_KEY", "5HgPxilcgUjkOZTfS8xyBw-VZGEQdsSBTAyjFG48Ok4=")
-        ),  # Fallback to SECRET_KEY if not specified
-    )
+    FIELD_ENCRYPTION_KEY: str | None = None
 
     # CORS Configuration
     ALLOWED_ORIGINS: list[str] = os.environ.get(
@@ -73,6 +68,26 @@ class Settings(BaseSettings):
 
 # Validate required settings
 settings = Settings()
+
+
+# Manual validation for encryption key to ensure secure startup
+def get_encryption_key() -> str:
+    """Retrieves the encryption key from environment variables, raising an error if not found."""
+    key = (
+        os.environ.get("FIELD_ENCRYPTION_KEY")
+        or os.environ.get("ENCRYPTION_KEY")
+        or os.environ.get("SECRET_KEY")
+    )
+    if not key:
+        raise ValueError(
+            "Security risk: No encryption key found. "
+            "Set FIELD_ENCRYPTION_KEY, ENCRYPTION_KEY, or SECRET_KEY."
+        )
+    return key
+
+
+settings.FIELD_ENCRYPTION_KEY = get_encryption_key()
+
 
 # DATABASE_URL validation removed - system uses get_database_url() for SQLite path
 
