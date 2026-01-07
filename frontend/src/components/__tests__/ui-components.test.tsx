@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import LoadingState from '@/LoadingState';
+import LoadingState from '../LoadingState';
 
 describe('LoadingState Component', () => {
   test('renders spinner by default', () => {

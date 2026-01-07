@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import LoadingState from '@/LoadingState';
+import LoadingState from '../LoadingState';
 
 describe('LoadingState', () => {
   it('renders spinner by default', () => {

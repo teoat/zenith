@@ -1,7 +1,7 @@
 
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ErrorMessage from '@/ErrorMessage';
+import ErrorMessage from '../ErrorMessage';
 
 describe('ErrorMessage', () => {
   it('renders string error with default styling', () => {
