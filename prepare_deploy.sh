@@ -20,15 +20,15 @@ if ! grep -q "generate_secrets.py" .gitignore; then
 fi
 
 # 3. Clean up legacy config
-if [ -f "backend/railway.toml" ]; then
-    echo "🗑️  Removing legacy backend/railway.toml..."
-    rm backend/railway.toml
-fi
+# if [ -f "backend/railway.toml" ]; then
+#     echo "🗑️  Removing legacy backend/railway.toml..."
+#     rm backend/railway.toml
+# fi
 
-if [ -f "backend/requirements.txt" ]; then
-    echo "🗑️  Removing legacy backend/requirements.txt..."
-    rm backend/requirements.txt
-fi
+# if [ -f "backend/requirements.txt" ]; then
+#     echo "🗑️  Removing legacy backend/requirements.txt..."
+#     rm backend/requirements.txt
+# fi
 
 # 4. Check Railway CLI
 if ! command -v railway &> /dev/null; then
