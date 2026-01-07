@@ -19,7 +19,7 @@ import type { MockedFunction } from "jest-mock";
  * @param method - The service method to mock
  * @returns Properly typed MockedFunction
  */
-export const mockServiceMethod = <T extends (...args: any[]) => any>(
+export const mockServiceMethod = <T extends (...args: unknown[]) => unknown>(
   method: T,
 ): MockedFunction<T> => {
   return method as MockedFunction<T>;
@@ -51,7 +51,7 @@ export const createMockPromise = <T>(): jest.MockedFunction<
  */
 export const createMockFunction = <
   TReturn,
-  TArgs extends any[] = any[],
+  TArgs extends unknown[] = unknown[],
 >(): jest.MockedFunction<(...args: TArgs) => TReturn> => {
   return jest.fn() as unknown as jest.MockedFunction<
     (...args: TArgs) => TReturn
@@ -148,18 +148,17 @@ export const createMockWebSocket = () => {
   const mock = {
     send: jest.fn(),
     close: jest.fn(),
-    addEventListener: jest.fn((event: string, callback: Function) => {
+    addEventListener: jest.fn((event: string, callback: (data: unknown) => void) => {
       if (!listeners[event]) listeners[event] = [];
       listeners[event].push(callback);
     }),
-    removeEventListener: jest.fn((event: string, callback: Function) => {
+    removeEventListener: jest.fn((event: string, callback: (data: unknown) => void) => {
       if (listeners[event]) {
         listeners[event] = listeners[event].filter((cb) => cb !== callback);
       }
     }),
     readyState: WebSocket.OPEN,
-    // Trigger events for testing
-    triggerEvent: (event: string, data?: any) => {
+    triggerEvent: (event: string, data?: unknown) => {
       listeners[event]?.forEach((callback) => callback(data));
     },
   };
@@ -196,8 +195,8 @@ export const createMockLocalStorage = () => {
 /**
  * Type guard to check if a value is a MockedFunction
  */
-export const isMockedFunction = <T extends (...args: any[]) => any>(
-  value: any,
+export const isMockedFunction = <T extends (...args: unknown[]) => unknown>(
+  value: unknown,
 ): value is MockedFunction<T> => {
   return typeof value === "function" && "_isMockFunction" in value;
 };
@@ -214,7 +213,7 @@ export const isMockedFunction = <T extends (...args: any[]) => any>(
  * resetAllMocks(mocks);
  * ```
  */
-export const resetAllMocks = (mocks: Record<string, any>) => {
+export const resetAllMocks = (mocks: Record<string, unknown>) => {
   Object.values(mocks).forEach((mock) => {
     if (isMockedFunction(mock)) {
       mock.mockReset();
@@ -225,7 +224,7 @@ export const resetAllMocks = (mocks: Record<string, any>) => {
 /**
  * Create a properly typed mock for service methods that return ApiResponse<T>
  */
-export const mockServiceMethodTyped = <TArgs extends any[], TReturn>() => {
+export const mockServiceMethodTyped = <TArgs extends unknown[], TReturn>() => {
   return jest.fn() as jest.MockedFunction<(...args: TArgs) => Promise<TReturn>>;
 };
 
@@ -374,22 +373,22 @@ export const createAsyncMockReturn = <TArgs extends any[], TReturn>(
 /**
  * Create a comprehensive service mock factory
  */
-export const createServiceMockFactory = <T extends Record<string, any>>() => {
+export const createServiceMockFactory = <T extends Record<string, unknown>>() => {
   return <K extends keyof T>(
     service: T,
     methodName: K,
-    returnValue?: T[K] extends (...args: any[]) => any
+    returnValue?: T[K] extends (...args: unknown[]) => unknown
       ? ReturnType<T[K]>
       : T[K],
-  ): jest.MockedFunction<any> => {
+  ): jest.MockedFunction<(...args: unknown[]) => unknown> => {
     if (typeof service[methodName] === "function") {
       const mock = jest.fn();
       if (returnValue !== undefined) {
         mock.mockResolvedValue(returnValue);
       }
-      return mock as jest.MockedFunction<any>;
+      return mock as jest.MockedFunction<(...args: unknown[]) => unknown>;
     }
-    return jest.fn() as jest.MockedFunction<any>;
+    return jest.fn() as jest.MockedFunction<(...args: unknown[]) => unknown>;
   };
 };
 

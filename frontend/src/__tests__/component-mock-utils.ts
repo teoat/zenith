@@ -1,10 +1,12 @@
 import React from "react";
 
+type MockProps = Record<string, unknown>;
+
 // Comprehensive mock utilities for component testing
 
 // Mock external libraries
 jest.mock("react-grid-layout", () => ({
-  ResponsiveGridLayout: ({ children, ...props }: any) =>
+  ResponsiveGridLayout: ({ children, ...props }: MockProps) =>
     React.createElement(
       "div",
       { "data-testid": "grid-layout", ...props },
@@ -26,9 +28,9 @@ jest.mock("react-force-graph-2d", () => ({
 // Mock React.lazy to render components immediately
 jest.mock("react", () => ({
   ...jest.requireActual("react"),
-  Suspense: ({ children, fallback }: any) => fallback || children,
-  lazy: (_importFn: () => Promise<any>) => {
-    const LazyComponent = (props: any) =>
+  Suspense: ({ children, fallback }: MockProps) => fallback || children,
+  lazy: (_importFn: () => Promise<unknown>) => {
+    const LazyComponent = (props: MockProps) =>
       React.createElement(
         "div",
         { "data-testid": "lazy-component", ...props },
@@ -44,7 +46,7 @@ export const createComponentMocks = () => {
   // Dashboard components
   jest.mock("../components/dashboard/ThreatMap", () => ({
     __esModule: true,
-    default: (props: any) =>
+    default: (props: MockProps) =>
       React.createElement(
         "div",
         { "data-testid": "threat-map", ...props },
@@ -54,7 +56,7 @@ export const createComponentMocks = () => {
 
   jest.mock("../components/dashboard/AIWatchtower", () => ({
     __esModule: true,
-    default: (props: any) =>
+    default: (props: MockProps) =>
       React.createElement(
         "div",
         { "data-testid": "ai-watchtower", ...props },
@@ -64,7 +66,7 @@ export const createComponentMocks = () => {
 
   jest.mock("../components/dashboard/LiveQueue", () => ({
     __esModule: true,
-    default: (props: any) =>
+    default: (props: MockProps) =>
       React.createElement(
         "div",
         { "data-testid": "live-queue", ...props },
@@ -74,7 +76,7 @@ export const createComponentMocks = () => {
 
   jest.mock("../components/dashboard/VolumeChart", () => ({
     __esModule: true,
-    default: (props: any) =>
+    default: (props: MockProps) =>
       React.createElement(
         "div",
         { "data-testid": "volume-chart", ...props },
@@ -84,7 +86,7 @@ export const createComponentMocks = () => {
 
   jest.mock("../components/dashboard/RiskDistributionChart", () => ({
     __esModule: true,
-    default: (props: any) =>
+    default: (props: MockProps) =>
       React.createElement(
         "div",
         { "data-testid": "risk-chart", ...props },
@@ -94,7 +96,7 @@ export const createComponentMocks = () => {
 
   jest.mock("../components/dashboard/ProofVisualizationCard", () => ({
     __esModule: true,
-    default: (props: any) =>
+    default: (props: MockProps) =>
       React.createElement(
         "div",
         { "data-testid": "proof-viz", ...props },
@@ -104,7 +106,7 @@ export const createComponentMocks = () => {
 
   jest.mock("../components/dashboard/CostOptimizationWidget", () => ({
     __esModule: true,
-    default: (props: any) =>
+    default: (props: MockProps) =>
       React.createElement(
         "div",
         { "data-testid": "cost-widget", ...props },
@@ -115,7 +117,7 @@ export const createComponentMocks = () => {
   // Mock other components
   jest.mock("../components/common/RookieChecklist", () => ({
     __esModule: true,
-    default: (props: any) =>
+    default: (props: MockProps) =>
       React.createElement(
         "div",
         { "data-testid": "rookie-checklist", ...props },
@@ -125,7 +127,7 @@ export const createComponentMocks = () => {
 
   jest.mock("../components/common/WelcomeMessage", () => ({
     __esModule: true,
-    default: (props: any) =>
+    default: (props: MockProps) =>
       React.createElement(
         "div",
         { "data-testid": "welcome-message", ...props },

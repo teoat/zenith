@@ -11,7 +11,7 @@ jest.mock("react", () => {
   const React = jest.requireActual("react");
   return {
     ...React,
-    Suspense: ({ children }: any) => children,
+    Suspense: ({ children }: { children: React.ReactNode }) => children,
   };
 });
 
@@ -36,7 +36,7 @@ global.IntersectionObserver = class IntersectionObserver {
   takeRecords() {
     return [];
   }
-} as any;
+} as unknown as typeof IntersectionObserver;
 
 // TextEncoder/Decoder polyfill
 import { TextEncoder, TextDecoder } from "util";
@@ -54,7 +54,7 @@ if (typeof global.TransformStream === "undefined") {
 }
 
 // Enhanced fetch mock
-global.fetch = jest.fn((_url: string, _options?: any) => {
+global.fetch = jest.fn((_url: string, _options?: RequestInit) => {
   return Promise.resolve({
     ok: true,
     status: 200,
@@ -73,7 +73,7 @@ global.fetch = jest.fn((_url: string, _options?: any) => {
 // Basic Web API polyfills
 if (typeof global.Request === "undefined") {
   Object.defineProperty(global, "Request", {
-    value: function (_url: string, _options?: any) {
+    value: function (_url: string, _options?: RequestInit) {
       this.url = _url;
       this.method = _options?.method || "GET";
       this.headers = _options?.headers || {};
@@ -84,7 +84,7 @@ if (typeof global.Request === "undefined") {
 
 if (typeof global.Response === "undefined") {
   Object.defineProperty(global, "Response", {
-    value: function (body?: any, options?: any) {
+    value: function (body?: unknown, options?: ResponseInit) {
       this.ok = options?.status
         ? options.status >= 200 && options.status < 300
         : true;
@@ -101,15 +101,15 @@ if (typeof global.Response === "undefined") {
 
 if (typeof global.Headers === "undefined") {
   Object.defineProperty(global, "Headers", {
-    value: function (init?: any) {
-      this._headers = new Map();
+    value: function (init?: Record<string, string>) {
+      this._headers = new Map<string, string>();
       if (init) {
-        Object.entries(init).forEach(([key, value]: [string, any]) => {
+        Object.entries(init).forEach(([key, value]) => {
           this._headers.set(key.toLowerCase(), value);
         });
       }
       this.get = (name: string) => this._headers.get(name.toLowerCase());
-      this.set = (name: string, value: any) =>
+      this.set = (name: string, value: string) =>
         this._headers.set(name.toLowerCase(), value);
     },
     writable: true,
@@ -131,7 +131,7 @@ Object.defineProperty(global, "crypto", {
 });
 
 // UUID v4 mock for secureLogger and other utilities
-(global as any).uuidv4 = () => crypto.randomUUID();
+global.uuidv4 = () => crypto.randomUUID();
 
 // localStorage mock
 const localStorageMock = {
@@ -142,10 +142,10 @@ const localStorageMock = {
   length: 0,
   key: jest.fn((_index: number) => null),
 };
-global.localStorage = localStorageMock as any;
+global.localStorage = localStorageMock as unknown as Storage;
 
 // sessionStorage mock
-global.sessionStorage = localStorageMock as any;
+global.sessionStorage = localStorageMock as unknown as Storage;
 
 // matchMedia mock
 Object.defineProperty(window, "matchMedia", {
