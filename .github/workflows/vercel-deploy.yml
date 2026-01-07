@@ -1,0 +1,46 @@
+name: Deploy Frontend to Vercel
+
+on:
+  push:
+    branches: [ "main" ]
+    workflow_dispatch:
+
+env:
+  VERCEL_ORG_ID: teoat
+  VERCEL_PROJECT_NAME: frontend
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          pnpm install
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          pnpm run build
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ env.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: vercel deploy --prebuilt --prod --token=${{ env.VERCEL_TOKEN }}
