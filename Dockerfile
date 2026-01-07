@@ -26,27 +26,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ================================
-# Stage 2: Frontend Build
-# ================================
-FROM node:18-alpine as frontend-build
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files
-COPY frontend/package*.json ./
-
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy source code
-COPY frontend ./
-
-# Build application
-RUN npm run build
-
-# ================================
-# Stage 3: Production Runtime
+# Stage 2: Production Runtime
 # ================================
 FROM python:3.12-slim
 
@@ -69,9 +49,6 @@ COPY --from=backend-deps /usr/local/bin /usr/local/bin
 
 # Copy backend application
 COPY backend/ .
-
-# Copy built frontend
-COPY --from=frontend-build /app/dist ./frontend/dist
 
 # Create data directories
 RUN mkdir -p /app/data && \
