@@ -2,6 +2,7 @@
 Delegates to backend implementation when available.
 """
 from datetime import UTC
+from sqlalchemy import func, case
 
 try:
     # Prefer canonical implementation (backend detector)
@@ -44,22 +45,56 @@ def detect_burst(session, ip, window_minutes=60):
             window_delta = timedelta(minutes=window_minutes)
             window_start = now - window_delta
 
-            q_now = session.query(Tx).filter(
-                Tx.ip_address == ip, Tx.date >= window_start
-            )
-            count_now = q_now.count()
+            # OPTIMIZATION: Combine all window counts into a single aggregation query
+            # instead of running 1 loop iteration per window (1 + 12 queries).
+            # This reduces database round-trips significantly.
 
-            # Build historical windows (previous 12 windows)
-            hist_counts = []
+            earliest_start = window_start - (12 * window_delta)
+
+            # Define aggregation expressions
+            expressions = []
+
+            # 1. Current window count
+            # Use func.sum(case(...)) to count matches conditionally
+            # NOTE: We must ensure we don't double count if ranges overlap, but here
+            # current window is >= window_start, and historical are < window_start (mostly).
+            # However, the original code had:
+            # q_now = Tx.date >= window_start
+            # hist_i = start <= Tx.date < end
+            # where start = window_start - i*delta, end = start + delta.
+            # So hist_1 end is window_start. Ranges are disjoint.
+
+            # The filter(Tx.date >= earliest_start) includes everything from earliest_start onwards.
+            # So it covers all historical windows AND the current window.
+
+            expressions.append(
+                func.sum(case((Tx.date >= window_start, 1), else_=0))
+            )
+
+            # 2. Historical windows counts
             for i in range(1, 13):
                 start = window_start - i * window_delta
                 end = start + window_delta
-                c = (
-                    session.query(Tx)
-                    .filter(Tx.ip_address == ip, Tx.date >= start, Tx.date < end)
-                    .count()
+                # Range: [start, end)
+                cond = (Tx.date >= start) & (Tx.date < end)
+                expressions.append(
+                    func.sum(case((cond, 1), else_=0))
                 )
-                hist_counts.append(c)
+
+            # Execute single query
+            results = session.query(*expressions).filter(
+                Tx.ip_address == ip,
+                Tx.date >= earliest_start
+            ).first()
+
+            # Handle results (None if no rows match filter)
+            if results:
+                values = [int(v) if v is not None else 0 for v in results]
+                count_now = values[0]
+                hist_counts = values[1:]
+            else:
+                count_now = 0
+                hist_counts = [0] * 12
 
             import statistics
 
