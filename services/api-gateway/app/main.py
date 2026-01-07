@@ -13,6 +13,7 @@ from app.utils.config import settings
 from app.utils.http_client import RailwayHttpClient
 from app.middleware.rate_limit import RateLimitMiddleware
 from app.middleware.security import SecurityMiddleware
+from app.routers import auth, cases, ai, fraud, health
 
 logging.basicConfig(
     level=getattr(logging, settings.LOG_LEVEL.upper()),
@@ -49,6 +50,13 @@ app.add_middleware(
 app.add_middleware(RateLimitMiddleware)
 app.add_middleware(SecurityMiddleware)
 
+# Include routers
+app.include_router(health.router)
+app.include_router(auth.router, prefix="/api/v1")
+app.include_router(cases.router, prefix="/api/v1")
+app.include_router(ai.router, prefix="/api/v1")
+app.include_router(fraud.router, prefix="/api/v1")
+
 
 @app.get("/health", tags=["Health"])
 async def health_check():
@@ -63,31 +71,6 @@ async def readiness_check():
         "status": "ready",
         "service": "api-gateway",
     }
-
-
-@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-async def proxy_request(request: Request, path: str):
-    """
-    Proxy requests to appropriate backend services.
-    """
-    try:
-        target_url = f"{settings.AUTH_SERVICE_URL}/{path}"
-        response = await http_client.proxy_request(
-            target_url,
-            method=request.method,
-            headers=dict(request.headers),
-            body=await request.body(),
-        )
-        return JSONResponse(
-            content=response.get("data", {}),
-            status_code=response.get("status", 200),
-        )
-    except Exception as e:
-        logger.error(f"Proxy error: {e}")
-        return JSONResponse(
-            content={"error": "Service unavailable"},
-            status_code=503,
-        )
 
 
 if __name__ == "__main__":
