@@ -1,39 +1,38 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "target": "ESNext",
     "module": "ESNext",
+    "lib": ["ES2015", "ES2016"],
+    "jsx": "react-jsx",
+    "strict": false,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": false,
+    "importsNotUsedAsValues": "remove",
+    "forceConsistentCasingInFileNames": false,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "types": ["jest", "@types/node", "@testing-library/jest-dom"],
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
+    "allowImportingTsExtensions": ".ts,.tsx,.d.ts,.json,.json"
+    "allowUmdGlobalAccess": true
     "strictNullChecks": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitThis": false,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "alwaysStrict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "exclude": [
-    "src 2",
-    "coverage",
-    "coverage-e2e",
-    "coverage-e2e 2",
-    "dist",
-    "node_modules",
-    "e2e"
-  ],
-  "include": ["src"]
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "allowUnusedLabels": true,
+    "allowUnreachableCode": false,
+    "allowSyntheticDefaultImports": true
+  }
 }

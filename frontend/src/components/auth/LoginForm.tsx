@@ -34,14 +34,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       if (onSuccess) {
         onSuccess();
       }
-    } catch (err: any) {
-      // Check for MFA requirement
-      // The backend returns 403 with detail "MFA code required"
-      const errorMessage = err?.message || "";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
 
       if (errorMessage.includes("MFA code required")) {
         setMfaRequired(true);
-        // Clear error as this is a prompt, not a failure
         clearError();
       } else {
         handleError(err);

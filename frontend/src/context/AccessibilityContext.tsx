@@ -7,11 +7,20 @@ import React, {
 } from "react";
 import { secureLogger } from "@/utils/secureLogger";
 
-// Extend window interface for speech recognition
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message: string;
+}
+
 declare global {
   interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
+    SpeechRecognition: typeof SpeechRecognition | undefined;
+    webkitSpeechRecognition: typeof webkitSpeechRecognition | undefined;
   }
 }
 
@@ -171,40 +180,43 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     recognition.interimResults = false;
     recognition.lang = "en-US";
 
-    recognition.onresult = (event: any) => {
-      const command = event.results[event.results.length - 1][0].transcript
-        .toLowerCase()
-        .trim();
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const result = event.results[event.results.length - 1];
+      if (result) {
+        const command = result[0].transcript
+          .toLowerCase()
+          .trim();
 
-      if (
-        command.includes("click") ||
-        command.includes("press") ||
-        command.includes("select")
-      ) {
-        const focusedElement = document.activeElement as HTMLElement;
-        if (focusedElement?.click) focusedElement.click();
-      } else if (command.includes("next") || command.includes("forward")) {
-        const focusableElements = document.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-        );
-        const currentIndex = Array.from(focusableElements).indexOf(
-          document.activeElement as Element,
-        );
-        const nextElement = focusableElements[currentIndex + 1] as HTMLElement;
-        if (nextElement) nextElement.focus();
-      } else if (command.includes("previous") || command.includes("back")) {
-        const focusableElements = document.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-        );
-        const currentIndex = Array.from(focusableElements).indexOf(
-          document.activeElement as Element,
-        );
-        const prevElement = focusableElements[currentIndex - 1] as HTMLElement;
-        if (prevElement) prevElement.focus();
+        if (
+          command.includes("click") ||
+          command.includes("press") ||
+          command.includes("select")
+        ) {
+          const focusedElement = document.activeElement as HTMLElement;
+          if (focusedElement?.click) focusedElement.click();
+        } else if (command.includes("next") || command.includes("forward")) {
+          const focusableElements = document.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+          );
+          const currentIndex = Array.from(focusableElements).indexOf(
+            document.activeElement as Element,
+          );
+          const nextElement = focusableElements[currentIndex + 1] as HTMLElement;
+          if (nextElement) nextElement.focus();
+        } else if (command.includes("previous") || command.includes("back")) {
+          const focusableElements = document.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+          );
+          const currentIndex = Array.from(focusableElements).indexOf(
+            document.activeElement as Element,
+          );
+          const prevElement = focusableElements[currentIndex - 1] as HTMLElement;
+          if (prevElement) prevElement.focus();
+        }
       }
     };
 
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       if (event.error === "not-allowed") {
         announce("Voice control requires microphone permission", "assertive");
         setVoiceControl(false);

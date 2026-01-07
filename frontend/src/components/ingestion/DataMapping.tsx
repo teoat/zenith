@@ -8,17 +8,23 @@ import {
 import { GripVertical, ArrowRight, X } from "lucide-react";
 
 interface MappingConfig {
-  [systemField: string]: string; // systemField: sourceColumn
+  [systemField: string]: string;
+}
+
+interface SystemField {
+  id: string;
+  label: string;
+  required: boolean;
 }
 
 interface DataMappingProps {
   sourceColumns: string[];
-  previewData: any[];
+  previewData: Record<string, unknown>[];
   onMappingComplete: (mapping: MappingConfig) => void;
   onBack: () => void;
 }
 
-const SYSTEM_FIELDS = [
+const SYSTEM_FIELDS: SystemField[] = [
   { id: "date", label: "Transaction Date", required: true },
   { id: "amount", label: "Amount", required: true },
   { id: "description", label: "Description", required: true },
@@ -55,7 +61,7 @@ const TargetField = ({
   mappedColumn,
   onRemove,
 }: {
-  field: any;
+  field: SystemField;
   mappedColumn: string | null;
   onRemove: () => void;
 }) => {
@@ -111,13 +117,18 @@ export const DataMapping: React.FC<DataMappingProps> = ({
   onBack,
 }) => {
   const [mapping, setMapping] = useState<MappingConfig>({});
-  const [activeDragItem, setActiveDragItem] = useState<any>(null);
+  const [activeDragItem, setActiveDragItem] = useState<{ type: string; value: string; label: string } | null>(null);
 
-  const handleDragStart = (event: any) => {
-    setActiveDragItem(event.active.data.current);
+  interface DragEndEvent {
+    active: { id: string; data: { current: { type: string; value: string; label: string } } };
+    over: { id: string } | null;
+  }
+
+  const handleDragStart = (_event: { active: { data: { current: { type: string; value: string; label: string } } } }) => {
+    setActiveDragItem(_event.active.data.current);
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveDragItem(null);
 
