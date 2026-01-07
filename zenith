@@ -1,0 +1,64 @@
+#!/bin/bash
+# Zenith CLI - Unified Entry Point
+
+COMMAND=$1
+SUBCOMMAND=$2
+
+function show_help {
+    echo "Zenith CLI Usage:"
+    echo "  ./zenith [command] [subcommand]"
+    echo ""
+    echo "Commands:"
+    echo "  init      : Initialize environment (dev, prod)"
+    echo "  test      : Run tests (frontend, backend, all)"
+    echo "  lint      : Run linters and fixers"
+    echo "  clean     : Cleanup artifacts and caches"
+    echo "  docs      : Documentation management"
+    echo "  security  : Security audits"
+    echo ""
+}
+
+if [ -z "$COMMAND" ]; then
+    show_help
+    exit 1
+fi
+
+case $COMMAND in
+    init)
+        if [ "$SUBCOMMAND" == "prod" ]; then
+            echo "Initializing Production..."
+            ./scripts/setup-production.sh
+        else
+            echo "Initializing Development..."
+            ./scripts/start-local.sh
+        fi
+        ;;
+    test)
+        if [ "$SUBCOMMAND" == "backend" ]; then
+            export FIELD_ENCRYPTION_KEY=${FIELD_ENCRYPTION_KEY:-"5HgPxilcgUjkOZTfS8xyBw-VZGEQdsSBTAyjFG48Ok4="}
+            cd backend && python -m pytest
+        elif [ "$SUBCOMMAND" == "frontend" ]; then
+            cd frontend && npm test
+        else
+            echo "Running All Tests..."
+            cd frontend && npm test
+            cd backend && python -m pytest
+        fi
+        ;;
+    lint)
+        echo "Running Linters..."
+        cd frontend && npm run lint:fix
+        ;;
+    clean)
+        echo "Cleaning Workspace..."
+        python scripts/final_cleanup.py
+        ;;
+    security)
+        ./scripts/security_audit_automation.py
+        ;;
+    *)
+        echo "Unknown command: $COMMAND"
+        show_help
+        exit 1
+        ;;
+esac
