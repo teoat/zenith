@@ -5,7 +5,7 @@ import { CheckCircle, XCircle, Clock, AlertTriangle, Filter, Search } from 'luci
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select.tsx'';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { useToast } from '@/hooks/use-toast';
 import { AccessibleButton } from '@/components/ui/AccessibleButton';
