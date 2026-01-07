@@ -485,21 +485,21 @@ export const InvestigationCanvas: React.FC<InvestigationCanvasProps> = ({
             >
               <ForceGraph2D
                 ref={fgRef}
-                graphData={graphData as any}
-                nodeLabel={(node: any) => `${node.name} (${node.type})`}
-                nodeColor={(node: any) => node.color}
-                nodeVal={(node: any) => node.val}
-                linkColor={(link: any) => link.color}
-                linkWidth={(link: any) => link.width}
+                graphData={graphData as unknown as import("react-force-graph-2d").GraphData}
+                nodeLabel={(node: GraphNode) => `${node.name} (${node.type})`}
+                nodeColor={(node: GraphNode) => node.color}
+                nodeVal={(node: GraphNode) => node.val}
+                linkColor={(link: GraphLink) => link.color}
+                linkWidth={(link: GraphLink) => link.width}
                 linkDirectionalArrowLength={6}
                 linkDirectionalArrowRelPos={1}
-                onNodeClick={(node: any) => {
+                onNodeClick={(node: GraphNode) => {
                   const entity = entities.find((e) => e.id === node.id);
                   if (entity) {
                     handleEntitySelect(entity);
                   }
                 }}
-                onNodeDragEnd={(node: any) => {
+                onNodeDragEnd={(node: GraphNode) => {
                   setEntities((prev) =>
                     prev.map((entity) =>
                       entity.id === node.id &&

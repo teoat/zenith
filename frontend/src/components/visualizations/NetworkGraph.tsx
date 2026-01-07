@@ -206,7 +206,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     "#64748b", // Slate
   ];
 
-  const getNodeColor = (node: any) => {
+  const getNodeColor = (node: NetworkGraphNode) => {
     if (focusedNodeId === node.id) {
       return "#dc2626"; // Premium red for focus
     }
@@ -228,19 +228,19 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     height: finalHeight,
     nodeLabel: "label",
     nodeAutoColorBy: undefined, // Disable auto coloring to use custom
-    nodeVal: (node: any) =>
+    nodeVal: (node: NetworkGraphNode) =>
       focusedNodeId === node.id ? (node.val || 5) * 1.5 : node.val || 5,
     nodeColor: getNodeColor,
     linkColor: () => "#94a3b8", // Premium slate color for links
     linkDirectionalArrowLength: 3.5,
     linkDirectionalArrowRelPos: 1,
     linkDirectionalArrowColor: "#64748b", // Matching arrow color
-    onNodeClick: (node: any) => {
+    onNodeClick: (node: NetworkGraphNode) => {
       setFocusedNodeId(node.id);
-      onNodeClick?.(node as NetworkGraphNode);
+      onNodeClick?.(node);
     },
-    onNodeHover: (node: any) => onNodeHover?.(node as NetworkGraphNode | null),
-    onLinkClick: (link: any) => onLinkClick?.(link as NetworkGraphLink),
+    onNodeHover: (node: NetworkGraphNode | null) => onNodeHover?.(node),
+    onLinkClick: (link: NetworkGraphLink) => onLinkClick?.(link),
     backgroundColor: "rgba(0,0,0,0)", // Transparent to let container bg show
   };
 

@@ -66,19 +66,17 @@ const ForensicsLayout: React.FC<ForensicsLayoutProps> = memo(() => {
     return <ForensicsErrorState error={error} onRetry={refetch} />;
   }
 
-  // Calculate generic stats based on loaded items for specific counts
+// Calculate generic stats based on loaded items for specific counts
   // In a real app these should come from the API summary endpoint
   const stats = {
     total: evidenceData?.total || 0,
-     
+      
     flagged:
       evidenceData?.items.filter(
-        (i: any) => i.riskLevel === "high" || i.tags?.includes("flagged"),
+        (i: EvidenceItem) => i.riskLevel === "high" || i.tags?.includes("flagged"),
       ).length || 0,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    processed: evidenceData?.items.filter((i: any) => i.processed).length || 0,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    pending: evidenceData?.items.filter((i: any) => !i.processed).length || 0,
+    processed: evidenceData?.items.filter((i: EvidenceItem) => i.processed).length || 0,
+    pending: evidenceData?.items.filter((i: EvidenceItem) => !i.processed).length || 0,
   };
 
   return (
