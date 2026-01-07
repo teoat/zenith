@@ -59,8 +59,9 @@ export const caseService = {
   getAllCases: async (params?: Record<string, unknown>): Promise<Case[]> => {
     const query = params ? '?' + new URLSearchParams(params as Record<string, string>).toString() : '';
     const result = await request(`/cases${query}`);
-    // Handle both direct array response and object with cases property
-    return Array.isArray(result) ? result : (result as any).cases || [];
+    const cases = Array.isArray(result) ? result : (result as any).cases || [];
+    
+    return cases;
   },
 
   getCaseStatistics: async (): Promise<{

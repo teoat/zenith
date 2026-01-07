@@ -60,12 +60,8 @@ export const useCaseKanban = (externalCases?: ApiCase[], onCaseClick?: (caseId: 
     const loadCases = async () => {
       try {
         setError(null);
-        // Build fix: dynamic import might fail if path implies relative from hook not component
-        // Typically api is a singleton export. Accessing from '@/lib/api' or similar is safer
         const { api } = await import('@/lib/api'); 
-        const result = await api.getCases();
-        // Backend returns both cases and items, but CollectionResponse type defines items
-        const cases: ApiCase[] = result?.items || [];
+        const cases: Case[] = await api.getCases();
         
         const incoming = cases.filter((c: ApiCase) => 
           c.status === 'open' || c.status === 'OPEN'
@@ -78,7 +74,7 @@ export const useCaseKanban = (externalCases?: ApiCase[], onCaseClick?: (caseId: 
         const closed = cases.filter((c: ApiCase) => 
           c.status?.startsWith('closed') || c.status === 'resolved'
         ).map(transformCase);
-
+        
         setItems({ incoming, review, closed });
       } catch (err) {
         secureLogger.error('Failed to load cases:', err);

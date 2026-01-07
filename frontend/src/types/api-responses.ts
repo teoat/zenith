@@ -49,6 +49,7 @@ export interface LoginResponse extends ApiResponse<{
 export interface CollectionResponse<T> extends ApiResponse<{
   items: T[];
   total: number;
+  filter: string;
   page: number;
   pageSize: number;
 }> {}
