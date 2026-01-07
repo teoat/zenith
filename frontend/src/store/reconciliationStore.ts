@@ -33,8 +33,8 @@ export const useReconciliationStore = create<ReconciliationState>(
           },
         );
         set({ items: mappedData, loading: false });
-      } catch (err: any) {
-        set({ error: err.message || "Failed to fetch items", loading: false });
+      } catch (err) {
+        set({ error: err instanceof Error ? err.message : "Failed to fetch items", loading: false });
       }
     },
 
@@ -50,7 +50,7 @@ export const useReconciliationStore = create<ReconciliationState>(
             i.id === itemId ? { ...i, status: "matched" } : i,
           ),
         });
-      } catch (err: any) {
+      } catch (err) {
         secureLogger.error("Failed to reconcile item:", err);
       }
     },
@@ -67,7 +67,7 @@ export const useReconciliationStore = create<ReconciliationState>(
             i.id === itemId ? { ...i, status: "discrepancy" } : i,
           ),
         });
-      } catch (err: any) {
+      } catch (err) {
         secureLogger.error("Failed to flag item:", err);
       }
     },

@@ -7,10 +7,8 @@ export interface ProcessedFileData {
   ocrText?: string;
   extracted_tables?: TableData[];
   document_type?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  bank_statement_data?: Record<string, any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  expense_data?: Record<string, any>;
+  bank_statement_data?: Record<string, unknown>;
+  expense_data?: Record<string, unknown>;
 }
 
 export interface ProcessingResult {
@@ -31,16 +29,14 @@ export interface ProcessingResult {
   savedId?: string;
   mappingConfig?: Record<string, string>;
   detectedHeaders?: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rawPreviewData?: any[];
+  rawPreviewData?: unknown[];
 }
 
 interface IngestionState {
   files: File[];
   processingResults: ProcessingResult[];
   isProcessing: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  filters: Record<string, any>;
+  filters: Record<string, unknown>;
 
   setFiles: (files: File[]) => void;
   addFiles: (files: File[]) => void;
@@ -50,8 +46,7 @@ interface IngestionState {
       | ((prev: ProcessingResult[]) => ProcessingResult[]),
   ) => void;
   setIsProcessing: (isProcessing: boolean) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setFilters: (filters: Record<string, any>) => void;
+  setFilters: (filters: Record<string, unknown>) => void;
   updateProcessingResult: (
     index: number,
     updates: Partial<ProcessingResult>,
