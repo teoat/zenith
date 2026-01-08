@@ -198,21 +198,27 @@ class CaseService:
         return True
 
     def get_case_stats(self, db: Session, project_id: str | None = None) -> dict[str, Any]:
-        """Get case statistics"""
-        query = db.query(Case)
+        """Get case statistics with optimized single query"""
+        from sqlalchemy import func, case
+
+        # Optimize: Use single query with aggregations instead of 4 separate count queries
+        query = db.query(
+            func.count().label("total"),
+            func.sum(case((Case.status == "open", 1), else_=0)).label("open_cases"),
+            func.sum(case((Case.status == "closed", 1), else_=0)).label("closed_cases"),
+            func.sum(case((Case.priority == "critical", 1), else_=0)).label("critical_cases"),
+        )
+
         if project_id:
             query = query.filter(Case.project_id == project_id)
 
-        total = query.count()
-        open_cases = query.filter(Case.status == "open").count()
-        closed = query.filter(Case.status == "closed").count()
-        critical = query.filter(Case.priority == "critical").count()
+        result = query.one()
 
         return {
-            "total_cases": total,
-            "open_cases": open_cases,
-            "closed_cases": closed,
-            "critical_cases": critical,
+            "total_cases": result.total or 0,
+            "open_cases": result.open_cases or 0,
+            "closed_cases": result.closed_cases or 0,
+            "critical_cases": result.critical_cases or 0,
         }
 
     def get_cases_paginated(self, db: Session, page: int, per_page: int, filters: dict[str, Any]) -> dict[str, Any]:
