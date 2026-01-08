@@ -64,22 +64,18 @@ jobs:
         cd frontend
         npm ci
     
-    - name: Run unit tests
+    - name: Run tests with Vitest
       run: |
         cd frontend
-        npm run test:unit -- --coverage
-    
-    - name: Run component tests
-      run: |
-        cd frontend
-        npm run test:component
+        npm run test -- --run --coverage
     
     - name: Upload coverage
       uses: codecov/codecov-action@v3
       with:
-        files: ./frontend/coverage/coverage-final.json
+        files: ./frontend/coverage/lcov.info
         flags: frontend
         name: frontend-coverage
+        fail_ci_if_error: false
 
   e2e-tests:
     runs-on: ubuntu-latest
