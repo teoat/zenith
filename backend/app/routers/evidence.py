@@ -3,6 +3,7 @@ import contextlib
 import json
 import logging
 import os
+import re
 import uuid
 from datetime import datetime
 from typing import Any
@@ -21,7 +22,7 @@ from fastapi import (
     UploadFile,
 )
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -43,6 +44,20 @@ class UploadChunkRequest(BaseModel):
     file_size: int = Field(..., gt=0, description="Total file size in bytes")
     mime_type: str = Field(..., description="File MIME type")
 
+    @field_validator("file_id")
+    @classmethod
+    def validate_file_id(cls, v):
+        if not re.match(r"^[a-zA-Z0-9_-]+$", v):
+            raise ValueError("Invalid file_id format")
+        return v
+
+    @field_validator("file_name")
+    @classmethod
+    def validate_file_name(cls, v):
+        if ".." in v or v.startswith("/") or "\\" in v:
+            raise ValueError("Invalid file name")
+        return os.path.basename(v)
+
 
 class UploadChunkResponse(BaseModel):
     file_id: str
@@ -56,6 +71,13 @@ class UploadCompleteRequest(BaseModel):
     case_id: str
     description: str | None = None
     tags: list[str] | None = Field(default_factory=list)
+
+    @field_validator("file_id")
+    @classmethod
+    def validate_file_id(cls, v):
+        if not re.match(r"^[a-zA-Z0-9_-]+$", v):
+            raise ValueError("Invalid file_id format")
+        return v
 
 
 class UploadCompleteResponse(BaseModel):
