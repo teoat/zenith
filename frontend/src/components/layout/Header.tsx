@@ -9,8 +9,8 @@ import { QuickActionsMenu } from "@/components/ui/QuickActionsMenu";
 
 import { ProjectSwitcher } from "@/components/common/ProjectSwitcher";
 
-import { Switch } from "@/components/ui/Switch";
-import { Label } from "@/components/ui/Label";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/Badge";
 import { useState, useEffect, useRef } from "react";
 
@@ -95,6 +95,7 @@ export const Header = () => {
           size="icon"
           className="h-8 w-8 rounded-full"
           title="Regulatory Chatbot"
+          aria-label="Regulatory Chatbot"
         >
           <MessageSquare className="h-4 w-4" />
         </Button>
