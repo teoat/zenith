@@ -1,4 +1,5 @@
 # services/db.py
+import asyncio
 import time
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
@@ -18,16 +19,13 @@ from app.services.infrastructure.circuit_breaker import (
 )
 from app.services.infrastructure.storage.database_optimizer_service import db_optimizer
 from core.database import (
-    SAR,
     Case,
-    CaseActivity,
-    CaseNote,
     CaseStatus,
-    Evidence,
     SessionLocal,
     Transaction,
-    User,
 )
+from core.models.case import CaseActivity, CaseNote, Evidence
+from core.models.user import User
 from core.logging import logger
 
 
@@ -89,7 +87,7 @@ class DatabaseService:
     ) -> Any:
         """Execute a database query with intelligent caching"""
 
-        async def query_func():
+        def blocking_query():
             # Execute query using read replica if available and requested
             session = self.get_db()
             try:
@@ -97,6 +95,10 @@ class DatabaseService:
                 return result.fetchall()
             finally:
                 session.close()
+
+        async def query_func():
+            loop = asyncio.get_running_loop()
+            return await loop.run_in_executor(None, blocking_query)
 
         return await query_cache.execute_cached_query(
             query_func=query_func,
@@ -948,7 +950,7 @@ class DatabaseService:
         """Create a new SAR report"""
         import uuid
 
-        from core.database import SAR
+        from core.models.compliance import SAR
 
         with self.get_db() as db:
             sar_data["id"] = str(uuid.uuid4())
@@ -961,7 +963,7 @@ class DatabaseService:
 
     def get_sars(self, case_id: str | None = None) -> list["SAR"]:
         """Get SAR reports"""
-        from core.database import SAR
+        from core.models.compliance import SAR
 
         with self.get_db() as db:
             query = db.query(SAR)
@@ -973,7 +975,7 @@ class DatabaseService:
         """Submit a SAR report, marking it as immutable"""
         from datetime import datetime
 
-        from core.database import SAR
+        from core.models.compliance import SAR
 
         with self.get_db() as db:
             sar = db.query(SAR).filter(SAR.id == sar_id).first()
