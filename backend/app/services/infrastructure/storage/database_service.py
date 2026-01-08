@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from main import FilterParams, PaginationParams
 
-from sqlalchemy import desc, or_, text
+from sqlalchemy import desc, func, or_, text
 from sqlalchemy.exc import DisconnectionError, OperationalError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -902,38 +902,31 @@ class DatabaseService:
     def get_case_analytics(self, date_from: datetime | None = None, date_to: datetime | None = None) -> dict[str, Any]:
         """Get case analytics with optimized queries"""
         with self.get_db() as db:
-            # Use optimized aggregation queries
-            total_cases_query = db.query(Case.id)
+            # Use single aggregation query for better performance (3 queries -> 1 query)
+            query = db.query(Case.status, func.count(Case.id).label("count"))
+
             if date_from:
-                total_cases_query = total_cases_query.filter(Case.created_at >= date_from)
+                query = query.filter(Case.created_at >= date_from)
             if date_to:
-                total_cases_query = total_cases_query.filter(Case.created_at <= date_to)
+                query = query.filter(Case.created_at <= date_to)
 
-            total_cases = total_cases_query.count()
+            # Get status distribution
+            status_stats = query.group_by(Case.status).all()
 
-            # Get closed cases count efficiently
-            closed_cases_query = db.query(Case.id).filter(
-                Case.status.in_(
-                    [
-                        CaseStatus.CLOSED_APPROVED,
-                        CaseStatus.CLOSED_DENIED,
-                        CaseStatus.CLOSED_NO_ACTION,
-                    ]
-                )
-            )
-            if date_from:
-                closed_cases_query = closed_cases_query.filter(Case.created_at >= date_from)
-            if date_to:
-                closed_cases_query = closed_cases_query.filter(Case.created_at <= date_to)
+            status_distribution = {s.value: count for s, count in status_stats if s}
 
-            closed_cases = closed_cases_query.count()
+            # Calculate totals in memory from the distribution
+            total_cases = sum(status_distribution.values())
+
+            closed_statuses = {
+                CaseStatus.CLOSED_APPROVED.value,
+                CaseStatus.CLOSED_DENIED.value,
+                CaseStatus.CLOSED_NO_ACTION.value,
+            }
+
+            closed_cases = sum(count for status, count in status_distribution.items() if status in closed_statuses)
 
             priority_distribution = {}
-
-            # Get status distribution efficiently
-            status_stats = db.query(Case.status, db.func.count(Case.id).label("count")).group_by(Case.status).all()
-
-            status_distribution = {s.value: count for s, count in status_stats}
 
             return {
                 "total_cases": total_cases,
