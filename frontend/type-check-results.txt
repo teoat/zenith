@@ -1,0 +1,9 @@
+
+> frontend@0.0.0 type-check
+> tsc --noEmit
+
+src/types/iterators.ts(4,17): error TS1005: ',' expected.
+src/types/iterators.ts(4,22): error TS1005: ',' expected.
+src/types/iterators.ts(5,19): error TS1005: ',' expected.
+src/types/iterators.ts(5,24): error TS1005: ',' expected.
+tsconfig.json(16,35): error TS5024: Compiler option 'allowImportingTsExtensions' requires a value of type boolean.

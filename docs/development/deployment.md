@@ -1,463 +1,380 @@
 # 🚀 Deployment Guide
-## Zenith Fraud Detection Platform - Production Deployment & CI/CD
+## Zenith Fraud Detection Platform - Production Deployment
 
-**Generated:** December 17, 2025
-**Purpose:** Complete guide for deploying and maintaining the fraud detection platform
-
----
-
-## 📋 Pre-Deployment Checklist
-
-### Infrastructure Requirements
-- [ ] **Kubernetes Cluster** (v1.24+) with sufficient resources
-- [ ] **PostgreSQL Database** (v14+) with 100GB+ storage
-- [ ] **Redis Cache** (v6+) with persistence enabled
-- [ ] **Domain Name** configured with SSL certificates
-- [ ] **SSL Certificates** (Let's Encrypt or commercial)
-- [ ] **Storage** for file uploads (S3-compatible, 500GB+)
-
-### Security Prerequisites
-- [ ] **Secrets Management** (Kubernetes secrets or external vault)
-- [ ] **Database Encryption** keys configured
-- [ ] **JWT Secrets** (32+ characters, securely generated)
-- [ ] **API Keys** for external services (OpenAI, etc.)
-- [ ] **SSH Keys** for deployment access
-
-### Application Configuration
-- [ ] **Environment Variables** configured for production
-- [ ] **Database Migrations** tested and ready
-- [ ] **Static Assets** optimized and minified
-- [ ] **Health Checks** implemented and tested
+**Version:** 1.0.0  
+**Last Updated:** 2026-01-08  
+**Related Document:** [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md)
 
 ---
 
-## 🚀 Production Deployment
+## Overview
 
-### Automated Deployment
+This guide covers deploying the Zenith Platform to Railway (backend services) and Vercel (edge gateway). The architecture consists of:
+
+- **Railway**: 4 microservices (API Gateway, AI/ML, Fraud+Intel, Workflow+Reg)
+- **Vercel**: Edge Gateway with caching, rate limiting, and monitoring
+
+## Prerequisites
+
+### Required Accounts
+- [Railway](https://railway.app) account with payment method
+- [Vercel](https://vercel.com) account
+- [GitHub](https://github.com) repository
+
+### Local Tools
 ```bash
-# Deploy to production Kubernetes
-./scripts/deploy-production.sh
-
-# This script performs:
-# - Build verification
-# - Security scanning
-# - Multi-platform packaging
-# - Kubernetes deployment
-# - Health verification
-# - Rollback preparation
-```
-
-### Manual Deployment Steps
-
-#### 1. Build Artifacts
-```bash
-# Build all components
-npm run ci:build
-
-# Verify builds
-npm run verify:build
-
-# Package for deployment
-npm run package
-```
-
-#### 2. Kubernetes Deployment
-```bash
-# Apply Kubernetes manifests
-kubectl apply -f k8s/
-
-# Verify deployment
-kubectl get pods -l app=fraud-detection
-kubectl get services -l app=fraud-detection
-
-# Check health endpoints
-curl https://your-domain.com/health
-curl https://your-domain.com/health/ready
-```
-
-#### 3. Database Migration
-```bash
-# Run database migrations
-kubectl exec -it deployment/fraud-detection-backend -- alembic upgrade head
-
-# Verify database connectivity
-kubectl exec -it deployment/fraud-detection-backend -- python -c "
-from core.database import get_db
-db = next(get_db())
-db.execute('SELECT 1')
-print('Database connection: OK')
-"
+# Install required CLI tools
+npm install -g vercel@latest
+brew install railway-cli
+brew install docker
 ```
 
 ---
 
-## 🔄 CI/CD Pipeline
+## Environment Setup
 
-### Pipeline Overview
-
-| Stage | Purpose | Duration | Tools |
-|-------|---------|----------|-------|
-| **Security Scan** | Vulnerability detection | 3-5 min | npm audit, Safety, Trivy |
-| **Code Quality** | Linting & type checking | 2-3 min | ESLint, mypy, black |
-| **Unit Tests** | Component testing | 5-10 min | Jest, pytest |
-| **Integration Tests** | API & service testing | 5-8 min | pytest, Playwright |
-| **Build** | Multi-platform packaging | 10-15 min | Electron Builder, PyInstaller |
-| **E2E Tests** | Full application testing | 3-5 min | Playwright |
-| **Release** | GitHub release creation | 1-2 min | GitHub Actions |
-
-### Workflow Configuration
-
-#### Main CI/CD Pipeline (`.github/workflows/ci-cd.yml`)
-```yaml
-name: CI/CD Pipeline
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  security-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Security audit
-        run: |
-          npm audit --audit-level high
-          cd backend && safety check
-          trivy filesystem .
-
-  test:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: test
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run tests
-        run: npm run test:ci
-
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build application
-        run: npm run build:electron
-
-  release:
-    needs: [security-scan, test, build]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Create release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-### Quality Gates
-
-#### Security Requirements
-- [ ] **Zero critical vulnerabilities** in dependencies
-- [ ] **Clean security scans** (npm audit, Safety, Trivy)
-- [ ] **Code signing** for production releases
-- [ ] **Container scanning** for Docker images
-
-#### Code Quality Requirements
-- [ ] **ESLint clean** (no errors, warnings within limits)
-- [ ] **TypeScript compilation** successful
-- [ ] **Python type checking** (mypy strict mode)
-- [ ] **Code formatting** (Prettier, Black compliant)
-
-#### Testing Requirements
-- [ ] **Unit test coverage** > 80%
-- [ ] **Integration tests** passing
-- [ ] **E2E tests** successful on all platforms
-- [ ] **Performance benchmarks** within limits
-
----
-
-## 🔒 Security Configuration
-
-### Environment Variables
+### 1. Clone Repository
 ```bash
-# Production environment
-ENVIRONMENT=production
-DEBUG=false
-
-# Security keys (generate securely)
-JWT_SECRET=your-32-character-jwt-secret
-ENCRYPTION_KEY=32-character-encryption-key
-API_ENCRYPTION_KEY=32-character-api-key
-
-# Database (managed PostgreSQL)
-DATABASE_URL=postgresql://user:password@host:5432/db
-
-# Redis (managed Redis)
-REDIS_URL=redis://host:6379/0
-
-# External services
-OPENAI_API_KEY=sk-your-production-key
-SENTRY_DSN=https://your-sentry-dsn
-
-# CORS (restrict to your domains)
-CORS_ORIGINS=https://yourdomain.com,https://app.yourdomain.com
+git clone https://github.com/your-org/zenith-platform.git
+cd zenith-platform
 ```
 
-### SSL/TLS Configuration
-```nginx
-# Nginx configuration example
-server {
-    listen 443 ssl http2;
-    server_name yourdomain.com;
+### 2. Configure Environment Variables
 
-    ssl_certificate /path/to/cert.pem;
-    ssl_certificate_key /path/to/key.pem;
-
-    # Security headers
-    add_header X-Frame-Options DENY;
-    add_header X-Content-Type-Options nosniff;
-    add_header X-XSS-Protection "1; mode=block";
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
-
-    location / {
-        proxy_pass http://localhost:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
-
----
-
-## 📊 Monitoring & Observability
-
-### Health Checks
+Create `.env.production` for Railway:
 ```bash
-# Application health
-curl https://yourdomain.com/health
-curl https://yourdomain.com/health/ready
+# PostgreSQL
+POSTGRES_URL=postgresql://user:pass@hostname:5432/zenith_db
 
-# Database connectivity
-curl https://yourdomain.com/health/database
+# Redis
+REDIS_URL=redis://hostname:6379/0
 
-# External services
-curl https://yourdomain.com/health/external
+# API Gateway
+AUTH_SERVICE_URL=https://auth-service.railway.app
+CASE_SERVICE_URL=https://case-service.railway.app
+AI_SERVICE_URL=https://ai-service.railway.app
+FRAUD_SERVICE_URL=https://fraud-service.railway.app
+WORKFLOW_SERVICE_URL=https://workflow-service.railway.app
+
+# Security
+JWT_SECRET=your-super-secret-jwt-key
+ENCRYPTION_KEY=your-encryption-key
+
+# AI Service
+GPU_ENABLED=true
+MODEL_CACHE_DIR=/app/models
 ```
 
-### Logging Configuration
-```python
-# Sentry error tracking
-import sentry_sdk
-from sentry_sdk.integrations.fastapi import FastApiIntegration
-
-sentry_sdk.init(
-    dsn=os.getenv("SENTRY_DSN"),
-    environment="production",
-    traces_sample_rate=0.1,
-    integrations=[FastApiIntegration()]
-)
-```
-
-### Metrics Collection
-```yaml
-# Prometheus configuration
-scrape_configs:
-  - job_name: 'fraud-detection'
-    static_configs:
-      - targets: ['localhost:8000']
-    metrics_path: '/metrics'
-```
-
----
-
-## 🚨 Troubleshooting
-
-### Common Deployment Issues
-
-#### Build Failures
+Create `.env.production` for Vercel:
 ```bash
-# Check build logs
-npm run build 2>&1 | head -50
+# Required
+RAILWAY_API_GATEWAY_URL=https://your-api-gateway.railway.app
 
-# Clean and rebuild
-npm run clean
-npm install
-npm run ci:build
+# Optional (for distributed caching)
+KV_URL=redis://...
+KV_REST_API_TOKEN=your-kv-token
+KV_REST_API_URL=your-kv-url
 
-# Verify Node.js version
-node --version
-npm --version
+# Optional (tuning)
+RATE_LIMIT_MAX=1000
+CACHE_TTL=300
+RETRY_MAX_ATTEMPTS=3
+RETRY_DELAY_MS=500
 ```
 
-#### Database Connection Issues
+---
+
+## Railway Deployment
+
+### 1. Initialize Railway Project
 ```bash
-# Test database connectivity
-psql postgresql://user:password@host:5432/db -c "SELECT 1;"
+# Login to Railway
+railway login
 
-# Check migration status
-alembic current
+# Create new project
+railway init
 
-# Reset database (CAUTION)
-alembic downgrade base
-alembic upgrade head
+# Select "Empty Project" and name it "zenith-platform"
 ```
 
-#### Kubernetes Issues
+### 2. Deploy Services
+
+Deploy each service sequentially:
+
 ```bash
-# Check pod status
-kubectl get pods -l app=fraud-detection
+# Deploy API Gateway
+cd services/api-gateway
+railway up --detach
+railway variables set \
+  AUTH_SERVICE_URL=https://auth-service.railway.app \
+  CASE_SERVICE_URL=https://case-service.railway.app \
+  REDIS_URL=$REDIS_URL \
+  POSTGRES_URL=$POSTGRES_URL
 
-# View pod logs
-kubectl logs deployment/fraud-detection-backend
+# Deploy AI/ML Service (with GPU)
+cd ../ai-ml-service
+railway up --detach
+railway variables set GPU_ENABLED=true
+railway environment set gpu
 
-# Check services
-kubectl get services -l app=fraud-detection
+# Deploy Fraud+Intel Service
+cd ../fraud-intel-service
+railway up --detach
+railway variables set AI_SERVICE_URL=$AI_SERVICE_URL
 
-# Debug pod
-kubectl exec -it deployment/fraud-detection-backend -- /bin/bash
+# Deploy Workflow+Reg Service
+cd ../workflow-regulatory-service
+railway up --detach
 ```
 
-#### SSL Certificate Issues
+### 3. Verify Deployment
 ```bash
-# Test SSL configuration
-openssl s_client -connect yourdomain.com:443 -servername yourdomain.com
+# Check service status
+railway status
 
-# Renew Let's Encrypt certificates
-certbot renew
+# Test health endpoints
+curl https://api-gateway.railway.app/health
+curl https://ai-service.railway.app/health
+curl https://fraud-service.railway.app/health
+curl https://workflow-service.railway.app/health
 
-# Check certificate validity
-openssl x509 -in cert.pem -text -noout | grep "Not After"
+# Set up domain
+railway domain add api.zenith.com
 ```
 
 ---
 
-## 🔄 Rollback Procedures
+## Vercel Deployment
 
-### Automated Rollback
+### 1. Initialize Vercel Project
 ```bash
-# Rollback to previous release
-./scripts/rollback.sh
-
-# Or manually
-kubectl rollout undo deployment/fraud-detection-backend
-kubectl rollout undo deployment/fraud-detection-frontend
+cd vercel-edge
+vercel login
+vercel init
 ```
 
-### Emergency Rollback Steps
-1. **Stop traffic** (if using load balancer)
-2. **Scale down current deployment**
-   ```bash
-   kubectl scale deployment fraud-detection-backend --replicas=0
-   ```
-3. **Deploy previous version**
-   ```bash
-   kubectl apply -f k8s/previous-version/
-   ```
-4. **Verify functionality**
-5. **Restore traffic**
+### 2. Configure Environment
+```bash
+# Add environment variables
+vercel env add RAILWAY_API_GATEWAY_URL
+vercel env add KV_URL
+vercel env add KV_REST_API_TOKEN
 
----
-
-## 📈 Performance Optimization
-
-### Application Performance
-- **Bundle size**: Keep under 100KB gzipped
-- **First paint**: < 2 seconds
-- **Time to interactive**: < 3 seconds
-- **Lighthouse score**: > 90
-
-### Infrastructure Scaling
-```yaml
-# Horizontal Pod Autoscaling
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: fraud-detection-backend
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: fraud-detection-backend
-  minReplicas: 3
-  maxReplicas: 10
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
+# Link to project
+vercel link
 ```
 
-### Database Optimization
-- **Connection pooling**: Use PgBouncer
-- **Query optimization**: Monitor slow queries
-- **Indexing**: Regular index maintenance
-- **Caching**: Redis for session and computed data
+### 3. Deploy
+```bash
+# Deploy to preview
+vercel
+
+# Deploy to production
+vercel --prod
+```
+
+### 4. Configure Domain
+```bash
+# Add custom domain
+vercel domains add zenith.com
+vercel domains add api.zenith.com
+
+# Configure CNAME records in your DNS
+# api.zenith.com -> cname.vercel-dns.com
+```
 
 ---
 
-## 📋 Maintenance Procedures
+## Database Setup
 
-### Daily Checks
-- [ ] Health endpoint responses (200 OK)
-- [ ] Error rates (< 1%)
-- [ ] Response times (< 2 seconds P95)
-- [ ] Database connections (< 90% utilization)
-- [ ] Disk space (> 20% free)
+### 1. Provision PostgreSQL on Railway
+```bash
+# Create PostgreSQL service
+railway add postgresql
 
-### Weekly Maintenance
-- [ ] Security updates for dependencies
-- [ ] Database vacuum and reindexing
-- [ ] Log rotation and archival
-- [ ] Backup verification
+# Note the POSTGRES_URL from output
+export POSTGRES_URL=$(railway variables get POSTGRES_URL)
+```
 
-### Monthly Maintenance
-- [ ] Performance benchmarking
-- [ ] Security audit and penetration testing
-- [ ] Compliance review (GDPR, SOC2)
-- [ ] Disaster recovery testing
+### 2. Run Migrations
+```bash
+cd services/api-gateway
+railway run alembic upgrade head
+```
 
----
-
-## 📞 Support & Escalation
-
-### Incident Response
-1. **Detection**: Monitoring alerts or user reports
-2. **Assessment**: Evaluate impact and severity
-3. **Communication**: Notify stakeholders
-4. **Resolution**: Apply fixes or rollback
-5. **Post-mortem**: Document lessons learned
-
-### Support Contacts
-- **Development Team**: dev-team@company.com
-- **Infrastructure Team**: infra@company.com
-- **Security Team**: security@company.com
-- **Emergency**: +1-555-0123 (24/7)
+### 3. Seed Initial Data (if needed)
+```bash
+railway run python scripts/seed_initial_data.py
+```
 
 ---
 
-## 📊 Success Metrics
+## Redis Setup
 
-### Deployment KPIs
-- **Deployment Frequency**: Multiple times per day
-- **Lead Time**: < 1 hour from commit to production
-- **Change Failure Rate**: < 5%
-- **Time to Restore**: < 1 hour
+### 1. Provision Redis on Railway
+```bash
+railway add redis
+```
 
-### Application KPIs
-- **Availability**: 99.9% uptime
-- **Performance**: < 2 second response time
-- **Security**: Zero critical vulnerabilities
-- **User Satisfaction**: > 95% satisfaction score
+### 2. Configure
+```bash
+export REDIS_URL=$(railway variables get REDIS_URL)
+```
 
 ---
 
-*This deployment guide consolidates CI/CD procedures, security configuration, and operational procedures. Essential deployment steps and security requirements preserved, redundant information combined logically.*
+## Monitoring Setup
+
+### 1. Configure Health Checks
+Each service automatically exposes `/health` endpoint.
+
+### 2. Set Up Logging
+```bash
+# View logs
+railway logs --tail
+
+# Filter by service
+railway logs --service api-gateway
+```
+
+### 3. Configure Alerts
+```bash
+# Set up Railway alerts
+railway alerts add --service api-gateway --threshold 5m --condition error_rate > 10%
+```
+
+---
+
+## Rollback Procedures
+
+### Railway Rollback
+```bash
+# View deployments
+railway deployments
+
+# Rollback to previous deployment
+railway rollback <deployment-id>
+```
+
+### Vercel Rollback
+```bash
+# View deployments
+vercel list
+
+# Rollback
+vercel rollback <deployment-url>
+```
+
+---
+
+## Scaling
+
+### Railway Scaling
+```bash
+# Scale API Gateway
+railway scale api-gateway --replicas 2
+
+# Scale AI/ML Service (GPU)
+railway scale ai-ml-service --replicas 1 --gpu 1
+
+# Adjust resources
+railway resources edit
+```
+
+### Vercel Scaling
+Automatic scaling is handled by Vercel's Edge network.
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**Service won't start:**
+```bash
+# Check logs
+railway logs --service api-gateway
+
+# Check environment
+railway variables list
+```
+
+**Database connection failed:**
+```bash
+# Verify DATABASE_URL
+railway variables get POSTGRES_URL
+
+# Test connection
+railway run pg_isready -U $POSTGRES_USER -h $POSTGRES_HOST
+```
+
+**Redis cache miss:**
+```bash
+# Verify REDIS_URL
+railway variables get REDIS_URL
+
+# Test connection
+railway run redis-cli ping
+```
+
+**Health check failing:**
+```bash
+# Check endpoint directly
+curl -v https://api-gateway.railway.app/health
+
+# Check service status
+railway status
+```
+
+---
+
+## Security Checklist
+
+- [ ] Rotate all default secrets
+- [ ] Enable PostgreSQL SSL
+- [ ] Configure Redis authentication
+- [ ] Set up WAF rules
+- [ ] Configure CORS origins
+- [ ] Enable rate limiting
+- [ ] Set up audit logging
+- [ ] Configure backup schedule
+
+---
+
+## Performance Tuning
+
+### Database
+```sql
+-- Create indexes for common queries
+CREATE INDEX idx_cases_status ON cases(status);
+CREATE INDEX idx_cases_priority ON cases(priority);
+CREATE INDEX idx_alerts_created ON alerts(created_at);
+```
+
+### Redis
+```bash
+# Configure memory limits
+maxmemory 256mb
+maxmemory-policy allkeys-lru
+```
+
+### Application
+- Enable response compression
+- Configure connection pooling (20-50 connections)
+- Set appropriate timeouts (30s)
+
+---
+
+## Next Steps
+
+1. Set up CI/CD pipeline (see [CI/CD Pipeline](../.github/workflows/))
+2. Configure custom domains
+3. Enable SSL certificates
+4. Set up monitoring dashboards
+5. Configure backup strategy
+6. Document emergency contacts
+
+---
+
+**Document Version:** 1.0.0  
+**Last Modified:** 2026-01-08

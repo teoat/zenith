@@ -1,0 +1,22 @@
+{
+  "name": "zenith-gateway",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers Edge Gateway for Zenith Platform",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:prod": "wrangler deploy --env production",
+    "tail": "wrangler tail",
+    "test": "vitest",
+    "build": "esbuild src/index.ts --bundle --outdir=dist --format=esm"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "esbuild": "^0.19.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0",
+    "wrangler": "^3.24.0"
+  },
+  "dependencies": {}
+}

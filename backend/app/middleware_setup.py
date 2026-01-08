@@ -234,19 +234,28 @@ def setup_middleware(app: FastAPI):
 
     # CORS configuration with security
     allowed_origins = []
-    if is_development:
-        # Development: Allow localhost origins
+    
+    # Check for environment variable configuration first (Production & Development)
+    env_origins = os.getenv("CORS_ALLOWED_ORIGINS")
+    if env_origins:
+        # Support comma-separated list or "*"
+        if env_origins == "*":
+            allowed_origins = ["*"]
+        else:
+            allowed_origins = [origin.strip() for origin in env_origins.split(",")]
+    elif is_development:
+        # Development fallback
         allowed_origins = [
-            "http://localhost:5173",  # Vite dev server
-            "http://localhost:5174",  # Vite dev server (fallback port)
-            "http://localhost:5175",  # Vite dev server (fallback port)
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://localhost:5175",
             "http://127.0.0.1:5173",
             "http://127.0.0.1:5174",
             "http://127.0.0.1:3000",
         ]
     else:
-        # Production: Restrict to specific domains
-        allowed_origins = ["https://app.zenith.com", "https://api.zenith.com"]
+        # Production fallback (if env var not set)
+        allowed_origins = ["*"] # Default to open for Zenith Free Tier deployment
 
     app.add_middleware(
         CORSMiddleware,

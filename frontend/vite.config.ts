@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { fileURLToPath } from "url";
 import { visualizer } from "rollup-plugin-visualizer";
+import { ViteImageOptimize } from "vite-plugin-image-optimize";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,6 +18,12 @@ export default defineConfig({
       open: false,
       gzipSize: true,
       brotliSize: true,
+    }),
+    // Image optimization
+    ViteImageOptimize({
+      png: { quality: 80 },
+      jpg: { quality: 80 },
+      webp: { quality: 85 },
     }),
   ],
   resolve: {
@@ -117,6 +124,17 @@ export default defineConfig({
           }
           if (id.includes("node_modules/d3")) {
             return "d3-vendor";
+          }
+
+          // Additional performance optimizations
+          if (id.includes("node_modules/@tanstack/react-query")) {
+            return "react-query";
+          }
+          if (id.includes("node_modules/zustand")) {
+            return "zustand";
+          }
+          if (id.includes("node_modules/framer-motion")) {
+            return "framer-motion";
           }
 
           // Graph visualization

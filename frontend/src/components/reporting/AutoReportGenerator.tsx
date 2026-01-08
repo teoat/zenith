@@ -27,7 +27,7 @@ const AutoReportGenerator: React.FC<AutoReportGeneratorProps> = ({
       await new Promise((r) => setTimeout(r, 2000));
       setReportReady(true);
       addToast("Report generated successfully", "success");
-    } catch (e) {
+    } catch (_e) {
       addToast("Failed to generate report", "error");
     } finally {
       setGenerating(false);

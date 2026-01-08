@@ -193,7 +193,7 @@ class EnhancedErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     this.setState({ errorInfo });
 
     // Enhanced error reporting
@@ -217,7 +217,7 @@ class EnhancedErrorBoundary extends React.Component<
     // Example: Sentry, LogRocket, etc.
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       const FallbackComponent = this.props.fallback || DefaultErrorFallback;
       return <FallbackComponent error={this.state.error!} />;

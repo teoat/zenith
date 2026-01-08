@@ -53,18 +53,6 @@ const Setup: React.FC = () => {
     setLoading(true);
 
     try {
-      // Call Electron API to set master password
-      const electronAPI = (
-        window as typeof window & {
-          electronAPI?: {
-            auth?: { setMasterPassword: (pwd: string) => Promise<unknown> };
-          };
-        }
-      ).electronAPI;
-      if (electronAPI?.auth?.setMasterPassword) {
-        await electronAPI.auth.setMasterPassword(password);
-      }
-
       // Store selected role for first user
       localStorage.setItem("firstUserRole", selectedRole);
 

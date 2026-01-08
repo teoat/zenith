@@ -1,6 +1,5 @@
-import { request, isElectron } from "./client";
+import { request } from "./client";
 import type { AppSettings, AuditLogEntry, SecurityStats } from "@/types/api";
-import "../types/electron.d.ts"; // Ensure electron types are available
 
 export const settingsService = {
   getSettings: async (): Promise<AppSettings> => {
@@ -26,9 +25,6 @@ export const settingsService = {
   },
 
   getSecurityStats: async (): Promise<SecurityStats> => {
-    if (isElectron() && window.electronAPI?.getSecurityStats) {
-      return window.electronAPI.getSecurityStats() as Promise<SecurityStats>;
-    }
     return {
       success: true,
       data: { encryptionEnabled: true, secureStorage: true },

@@ -67,3 +67,4 @@ error_analysis.txt
 generate_secrets.py
 .vercel
 .env*.local
+.credentials.env

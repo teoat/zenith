@@ -25,9 +25,9 @@ const RookieChecklistWrapper = memo(() => {
   React.useEffect(() => {
     const checkUser = async () => {
       try {
-        const { electronStore } = await import("../utils/electronStore");
+        const { webStore } = await import("../utils/electronStore");
         const checklistProgress =
-          await electronStore.get<Record<string, boolean>>("rookieChecklist");
+          await webStore.get<Record<string, boolean>>("rookieChecklist");
         if (!checklistProgress || !checklistProgress.run_analysis) {
           setIsNewUser(true);
         }

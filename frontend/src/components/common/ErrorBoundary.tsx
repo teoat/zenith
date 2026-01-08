@@ -13,10 +13,6 @@ interface State {
   errorInfo: ErrorInfo | null;
 }
 
-/**
- * Error Boundary Component
- * Catches JavaScript errors anywhere in the child component tree
- */
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -28,27 +24,19 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
-    // Update state so the next render will show the fallback UI
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log error to console in development
-    if (process.env.NODE_ENV === "development") {
-      secureLogger.error("Error Boundary caught an error:", error, errorInfo);
-    }
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    secureLogger.error("Error Boundary caught an error:", error, errorInfo);
 
-    // Update state with error details
     this.setState({
       error,
       errorInfo,
     });
 
-    // Call optional error handler
     this.props.onError?.(error, errorInfo);
 
-    // In production, you'd send this to an error reporting service
-    // e.g., Sentry, LogRocket, etc.
     if (process.env.NODE_ENV === "production" && window.sentryAPI) {
       window.sentryAPI.captureException(error, {
         contexts: {
@@ -68,14 +56,12 @@ export class ErrorBoundary extends Component<Props, State> {
     });
   };
 
-  render(): ReactNode {
+  override render(): ReactNode {
     if (this.state.hasError) {
-      // Custom fallback UI
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      // Default fallback UI
       return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50 p-6">
           <div className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl p-8">
@@ -88,7 +74,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   Oops! Something went wrong
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  We've encountered an unexpected error
+                  We have encountered an unexpected error
                 </p>
               </div>
             </div>
@@ -158,11 +144,10 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// Type declaration for Sentry API (optional)
 declare global {
   interface Window {
     sentryAPI?: {
-      captureException: (error: Error, context?: any) => void;
+      captureException: (error: Error, context?: Record<string, unknown>) => void;
     };
   }
 }

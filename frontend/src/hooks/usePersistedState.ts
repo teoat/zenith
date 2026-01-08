@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { electronStore } from "@/utils/electronStore";
+import { webStore } from "@/utils/electronStore";
 import { secureLogger } from "@/utils/secureLogger";
 
 /**
- * A custom hook to persist state to localStorage (and Electron store if available).
+ * A custom hook to persist state to localStorage.
  * @param key The key to store the value under.
  * @param initialValue The initial value if no stored value exists.
  * @returns [storedValue, setValue]
@@ -19,7 +19,7 @@ export function usePersistedState<T>(
   useEffect(() => {
     const loadPersistedState = async () => {
       try {
-        const item = await electronStore.get<T>(key, initialValue);
+        const item = await webStore.get<T>(key, initialValue);
         setStoredValue(item !== undefined ? item : initialValue);
       } catch (error) {
         secureLogger.warn(`Error reading persisted key "${key}":`, error);
@@ -39,8 +39,8 @@ export function usePersistedState<T>(
       // Save state
       setStoredValue(valueToStore);
 
-      // Save to store (handles both localStorage and Electron)
-      electronStore.set(key, valueToStore).catch((error) => {
+      // Save to store
+      webStore.set(key, valueToStore).catch((error) => {
         secureLogger.warn(`Error persisting key "${key}":`, error);
       });
     } catch (error) {

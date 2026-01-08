@@ -12,6 +12,8 @@ import { TourProvider } from "@/context/TourContext";
 import { WebSocketProvider } from "@/providers/WebSocketProvider";
 import { AIProvider } from "@/context/AIContext";
 import { AccessibilityProvider } from "@/context/AccessibilityContext";
+import { PWAInstallPrompt } from "@/components/common/PWAInstallPrompt";
+import { OfflineIndicator } from "@/components/common/OfflineIndicator";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,7 +41,11 @@ export const AppProviders: React.FC<{ children: React.ReactNode }> = ({
                 <WebSocketProvider>
                   <AIProvider>
                     <AccessibilityProvider>
-                      <OfflineQueueProvider>{children}</OfflineQueueProvider>
+                      <OfflineQueueProvider>
+                        {children}
+                        <PWAInstallPrompt />
+                        <OfflineIndicator />
+                      </OfflineQueueProvider>
                     </AccessibilityProvider>
                   </AIProvider>
                 </WebSocketProvider>

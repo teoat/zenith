@@ -91,6 +91,41 @@ repos:
           - "@eslint/js@^9.39.2"
           - typescript-eslint@^8.50.1
           - eslint-plugin-react-hooks@^7.0.1
+           - eslint-plugin-react-refresh@^0.4.26
+           - globals@^16.5.0
+         exclude: ^(backend/|scripts/)
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.3
+    hooks:
+      - id: prettier
+        files: \.(js|ts|jsx|tsx|css|scss|json|yaml|md|html)$
+        additional_dependencies:
+          - prettier@^3.2.5
+          - "@prettier/plugin-xml@^3.2.2"
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.48.0
+    hooks:
+      - id: eslint
+        files: \.(js|ts|jsx|tsx)$
+        types: [file]
+        additional_dependencies:
+          - eslint@^9.39.2
+          - "@eslint/js@^9.39.2"
+          - typescript-eslint@^8.50.1
+          - eslint-plugin-react-hooks@^7.0.1
           - eslint-plugin-react-refresh@^0.4.26
           - globals@^16.5.0
         exclude: ^(backend/|scripts/)
+        args: [--cache, --cache-location, .eslintcache]
+
+  - repo: https://github.com/s冪orawski/commitlint-prettier-check
+    rev: v1.0.0
+    hooks:
+      - id: commitlint-prettier-check
+
+  - repo: https://github.com/alessandjolly/commitlint-github-admins
+    rev: v1.0.0
+    hooks:
+      - id: commitlint-github-admins

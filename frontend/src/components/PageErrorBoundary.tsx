@@ -26,11 +26,11 @@ class PageLevelErrorBoundary extends Component<Props, State> {
     error: null,
   };
 
-  public static getDerivedStateFromError(error: Error): State {
+  public static override getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  public override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     secureLogger.error("Page error caught:", error, errorInfo);
 
     // Log to our centralized error reporting service
@@ -50,7 +50,7 @@ class PageLevelErrorBoundary extends Component<Props, State> {
     window.location.href = "/";
   };
 
-  public render() {
+  public override render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;

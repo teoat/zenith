@@ -1,0 +1,20 @@
+name = "zenith-gateway"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# Backend URLs (your Railway deployment)
+[vars]
+API_GATEWAY_URL = "https://zenith-fraud-detection-backend-production.up.railway.app"
+AI_ML_URL = "https://zenith-fraud-detection-backend-production.up.railway.app"
+FRAUD_URL = "https://zenith-fraud-detection-backend-production.up.railway.app"
+WORKFLOW_URL = "https://zenith-fraud-detection-backend-production.up.railway.app"
+RATE_LIMIT_MAX = "100"
+CACHE_TTL = "300"
+ENVIRONMENT = "production"
+
+# Development environment
+[env.dev]
+name = "zenith-gateway-dev"
+[env.dev.vars]
+ENVIRONMENT = "development"
+RATE_LIMIT_MAX = "1000"

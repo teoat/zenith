@@ -1,0 +1,53 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    url: http://prometheus:9090
+    access: proxy
+    isDefault: true
+
+  - name: Loki
+    type: loki
+    url: http://loki:3100
+    access: proxy
+
+dashboardProviders:
+  - name: 'zenith'
+    orgId: 1
+    folder: 'Zenith'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+
+dashboards:
+  - name: 'system-overview'
+    type: 'file'
+    orgId: 1
+    folder: 'Zenith'
+    options:
+      path: /var/lib/grafana/dashboards/system-overview.json
+
+  - name: 'api-performance'
+    type: 'file'
+    orgId: 1
+    folder: 'Zenith'
+    options:
+      path: /var/lib/grafana/dashboards/api-performance.json
+
+  - name: 'ai-ml-metrics'
+    type: 'file'
+    orgId: 1
+    folder: 'Zenith'
+    options:
+      path: /var/lib/grafana/dashboards/ai-ml-metrics.json
+
+  - name: 'fraud-detection'
+    type: 'file'
+    orgId: 1
+    folder: 'Zenith'
+    options:
+      path: /var/lib/grafana/dashboards/fraud-detection.json

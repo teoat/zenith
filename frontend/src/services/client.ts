@@ -55,20 +55,10 @@ function getUserFriendlyErrorMessage(
   }
 }
 
-/**
- * Checks if the application is running in an Electron environment.
- *
- * @returns True if running in Electron, false otherwise
- */
-export const isElectron = (): boolean => {
-  return typeof window !== "undefined" && window.electronAPI !== undefined;
-};
-
 // Token management is now handled via HttpOnly cookies
-// export const getToken = ... (Removed)
 
 /**
- * Core request method for making API calls. Works in both browser and Electron environments.
+ * Core request method for making API calls. Works in browser environments.
  * Handles authentication via HttpOnly cookies, project context injection, CSRF protection,
  * circuit breaker pattern, and automatic retry logic.
  *

@@ -7,11 +7,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 // PWA Install Hook
 const usePWAInstall = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
-    const handler = (e: Event) => {
+    const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
     };
@@ -64,7 +64,10 @@ const useServiceWorker = () => {
             }
           });
         })
-        .catch((error: Error) => console.log('SW registration failed', error));
+        .catch((error) => {
+          // TODO: Add proper logging service
+          console.error('SW registration failed', error);
+        });
     }
 
     return () => {
@@ -75,7 +78,7 @@ const useServiceWorker = () => {
 
   const updateApp = () => {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then((registrations: ServiceWorkerRegistration[]) => {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
         registrations.forEach(reg => reg.update());
       });
     }
@@ -87,13 +90,11 @@ const useServiceWorker = () => {
 
 // Offline Detection Component
 const OfflineIndicator = () => {
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(() => navigator.onLine);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-
-    setIsOnline(navigator.onLine);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
@@ -117,11 +118,12 @@ const OfflineIndicator = () => {
 const MobileDashboard = () => {
   const { canInstall, installPWA, isInstalled } = usePWAInstall();
   const { isOnline, updateAvailable, updateApp } = useServiceWorker();
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [drawerOpen, _setDrawerOpen] = useState(false);
+  const [activeTab, _setActiveTab] = useState('dashboard'); // TODO: Use activeTab for navigation
 
   const syncData = useCallback(async () => {
     try {
+      // TODO: Add proper logging service
       console.log('Syncing data...');
     } catch (error) {
       console.error('Sync failed:', error);

@@ -11,12 +11,11 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = memo(
     const [isVisible, setIsVisible] = React.useState(false);
 
     useEffect(() => {
-      if (process.env.NODE_ENV === "development" && showInDevelopment) {
-        setIsVisible(true);
-      } else if (
-        process.env.NODE_ENV === "production" &&
-        window.location.search.includes("perf=1")
-      ) {
+      // Set initial visibility based on environment and URL params
+      const shouldShowInDevelopment = process.env.NODE_ENV === "development" && showInDevelopment;
+      const shouldShowInProduction = process.env.NODE_ENV === "production" && window.location.search.includes("perf=1");
+      
+      if (shouldShowInDevelopment || shouldShowInProduction) {
         setIsVisible(true);
       }
     }, [showInDevelopment]);

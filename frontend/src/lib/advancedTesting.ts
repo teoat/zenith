@@ -106,9 +106,6 @@ export const integrationTests = {
     fraudAnalysisFlow: async (page: unknown) => {
       secureLogger.info("TESTING", "Executing fraud analysis flow test");
     },
-      expect(parseFloat(results)).toBeGreaterThanOrEqual(0);
-      expect(parseFloat(results)).toBeLessThanOrEqual(100);
-    },
   },
 
   // API integration tests

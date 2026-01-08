@@ -1,10 +1,9 @@
-import { request, isElectron, API_BASE } from "./client";
+import { request, API_BASE } from "./client";
 import type {
   EvidenceItem,
   ProcessedEvidence,
   FileSelectResult,
 } from "@/types/api";
-import "../types/electron.d.ts"; // Ensure electron types are available
 
 export const evidenceService = {
   getEvidence: async (
@@ -22,26 +21,42 @@ export const evidenceService = {
     return request(`/evidence?${params.toString()}`);
   },
 
-  uploadEvidence: async (caseId: string, file: File): Promise<EvidenceItem> => {
+  getEvidenceById: async (id: string): Promise<EvidenceItem> => {
+    return request(`/evidence/${id}`);
+  },
+
+  uploadEvidence: async (
+    caseId: string,
+    file: File,
+    metadata?: Record<string, string>,
+  ): Promise<EvidenceItem> => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("case_id", caseId);
+    if (metadata) {
+      Object.entries(metadata).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+    }
 
     const response = await fetch(`${API_BASE}/evidence/upload`, {
       method: "POST",
       body: formData,
-      credentials: "include", // Use HttpOnly cookies
+      credentials: "include",
     });
 
-    if (!response.ok) throw new Error("Upload failed");
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || "Upload failed");
+    }
     return response.json();
   },
 
-  processEvidence: async (filePath: string): Promise<ProcessedEvidence> => {
-    if (isElectron() && window.electronAPI?.processEvidence) {
-      return window.electronAPI.processEvidence(filePath);
-    }
-    // Browser fallback - mock response
+  deleteEvidence: async (id: string): Promise<void> => {
+    await request(`/evidence/${id}`, { method: "DELETE" });
+  },
+
+  processEvidence: async (_filePath: string): Promise<ProcessedEvidence> => {
     return { fileType: "unknown", sizeBytes: 0 };
   },
 
@@ -49,14 +64,13 @@ export const evidenceService = {
     const formData = new FormData();
     formData.append("file", file);
 
-    // Default options
     formData.append("enable_ocr", "true");
     formData.append("enable_forensics", "true");
 
     const response = await fetch(`${API_BASE}/multimodal/analyze/upload`, {
       method: "POST",
       body: formData,
-      credentials: "include", // Use HttpOnly cookies
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -89,7 +103,7 @@ export const evidenceService = {
     const response = await fetch(`${API_BASE}/multimodal/analyze/path`, {
       method: "POST",
       body: formData,
-      credentials: "include", // Use HttpOnly cookies
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -100,10 +114,6 @@ export const evidenceService = {
   },
 
   selectFile: async (): Promise<FileSelectResult> => {
-    if (isElectron() && window.electronAPI?.selectFile) {
-      return window.electronAPI.selectFile() as Promise<FileSelectResult>;
-    }
-    // Browser fallback - use file input
     return new Promise((resolve) => {
       const input = document.createElement("input");
       input.type = "file";
@@ -126,7 +136,7 @@ export const evidenceService = {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // Use HttpOnly cookies
+        credentials: "include",
       },
     );
 

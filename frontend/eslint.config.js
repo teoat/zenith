@@ -6,6 +6,7 @@ import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
+import eslintPluginReact from "eslint-plugin-react";
 
 // Define the configuration
 export default [{
@@ -39,6 +40,7 @@ export default [{
   plugins: {
     "react-hooks": reactHooks,
     "react-refresh": reactRefresh,
+    "react": eslintPluginReact,
   },
   rules: {
     ...reactHooks.configs.recommended.rules,
@@ -76,6 +78,7 @@ export default [{
     "no-new-func": "error",
     "no-script-url": "error",
     "no-alert": "warn",
+    "react/forbid-dom-props": ["error", { forbid: ["data-unsafe", "data-dangerous"] }],
     // Disabled for optimization - focus on functional errors
     // "max-lines": [
     //   "warn",

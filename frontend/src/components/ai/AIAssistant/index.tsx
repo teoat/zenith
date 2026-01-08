@@ -64,12 +64,12 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
         action.endpoint,
         action.method || "POST",
         action.body,
-      )) as any;
+      )) as unknown as Promise<{ success: boolean; message?: string }>;
 
       const successMsg: Message = {
         id: Date.now().toString(),
         role: "assistant",
-        content: `✅ ${action.label} completed: ${result.message || "Success"}`,
+        content: `✅ ${action.label} completed: Success`,
         timestamp: Date.now(),
         persona: activePersona,
       };

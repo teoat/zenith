@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import type { EvidenceMetadata } from "@/types/evidence";
+import type { FixedSizeListProps } from '@/types/common';
 
 interface Props {
   items: EvidenceMetadata[];
@@ -16,7 +17,7 @@ export default function VirtualizedEvidenceList({
 }: Props) {
   const [hasWindowLib, setHasWindowLib] = useState(false);
   const [FixedSizeList, setFixedSizeList] =
-    useState<React.ComponentType<any> | null>(null);
+    useState<React.ComponentType<FixedSizeListProps> | null>(null);
 
   useEffect(() => {
     let mounted = true;

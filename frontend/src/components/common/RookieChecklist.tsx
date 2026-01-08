@@ -22,7 +22,7 @@ interface RookieChecklistProps {
   onComplete?: () => void;
 }
 
-import { electronStore } from "@/utils/electronStore";
+import { webStore } from "@/utils/electronStore";
 
 // Get initial items (defaults only, Async load handles persistence)
 const getInitialItems = (): ChecklistItem[] => {
@@ -66,7 +66,7 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
     async function init() {
       try {
         const savedProgress =
-          await electronStore.get<Record<string, boolean>>("rookieChecklist");
+          await webStore.get<Record<string, boolean>>("rookieChecklist");
         if (savedProgress) {
           setItems((prev) =>
             prev.map((item) => ({
@@ -122,7 +122,7 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
   useEffect(() => {
     if (!loaded) return;
 
-    // Save progress to electronStore
+    // Save progress to webStore
     const progress = items.reduce(
       (acc, item) => {
         acc[item.id] = item.completed;
@@ -131,8 +131,8 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
       {} as Record<string, boolean>,
     );
 
-    electronStore.set("rookieChecklist", progress).catch((err) => {
-      secureLogger.error("Failed to save checklist to electronStore", err);
+    webStore.set("rookieChecklist", progress).catch((err) => {
+      secureLogger.error("Failed to save checklist to webStore", err);
     });
 
     // Sync to backend if logged in

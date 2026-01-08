@@ -35,7 +35,7 @@ import {
   Divider,
   Alert,
   Snackbar,
-  Fab,
+
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
@@ -525,9 +525,9 @@ const QuickActionsFab = () => {
 
 // Main dashboard component
 const AdvancedDashboard = () => {
-  const { isMobile, isTablet } = useResponsiveDesign();
+  const { isMobile, isTablet: _isTablet } = useResponsiveDesign();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, _setNotifications] = useState([]); // TODO: Use notifications for real-time updates
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -566,8 +566,8 @@ const AdvancedDashboard = () => {
     },
   ];
 
-  const showNotification = (message, severity = "info") => {
-    setSnackbar({ open: true, message, severity });
+  const _showNotification = (_message, _severity = "info") => {
+    // TODO: Implement notification system
   };
 
   // Simulate real-time notifications
@@ -626,7 +626,7 @@ const AdvancedDashboard = () => {
       <NavigationDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        onNavigate={(path) => {
+        onNavigate={(_path) => {
           /* TODO: Implement navigation */
         }}
       />

@@ -1,0 +1,57 @@
+config:
+  target: 'http://localhost:8000'
+  phases:
+    - duration: 60
+      arrivalRate: 10  # 10 requests per second for 1 minute
+    - duration: 120
+      arrivalRate: 50  # Ramp up to 50 requests per second
+    - duration: 180
+      arrivalRate: 100 # Peak load of 100 requests per second
+
+scenarios:
+  - name: 'API Gateway Load Test'
+    weight: 40
+    flow:
+      - get:
+          url: '/health'
+          expect:
+            - statusCode: 200
+
+  - name: 'Case Management Load Test'
+    weight: 30
+    flow:
+      - post:
+          url: '/cases'
+          json:
+            title: 'Load Test Case {{ $randomInt }}'
+            priority: 'MEDIUM'
+            status: 'OPEN'
+          expect:
+            - statusCode: 201
+      - get:
+          url: '/cases'
+          expect:
+            - statusCode: 200
+
+  - name: 'AI Analysis Load Test'
+    weight: 20
+    flow:
+      - post:
+          url: '/ai/analyze'
+          json:
+            text: 'Load test transaction analysis {{ $randomInt }}'
+            type: 'text'
+          expect:
+            - statusCode: 200
+
+  - name: 'Fraud Detection Load Test'
+    weight: 10
+    flow:
+      - post:
+          url: '/fraud/detect'
+          json:
+            transaction:
+              amount: '{{ $randomInt(100, 10000) }}'
+              merchant: 'test-merchant-{{ $randomInt }}.com'
+          expect:
+            - statusCode: 200

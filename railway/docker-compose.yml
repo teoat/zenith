@@ -1,0 +1,213 @@
+# Railway Docker Compose Configuration
+# For local development and testing all microservices
+
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: zenith-postgres
+    environment:
+      POSTGRES_USER: zenith_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zenith_password}
+      POSTGRES_DB: zenith_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zenith_user -d zenith_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - zenith-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: zenith-redis
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - zenith-network
+    restart: unless-stopped
+
+  pgbouncer:
+    image: pgbouncer/pgbouncer:latest
+    container_name: zenith-pgbouncer
+    environment:
+      DATABASES: "host=postgres port=5432 dbname=zenith_db user=zenith_user password=${POSTGRES_PASSWORD:-zenith_password}"
+      PGBOUNCER_PORT: 6432
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_MAX_CLIENT_CONN: 100
+      PGBOUNCER_DEFAULT_POOL_SIZE: 20
+      PGBOUNCER_MIN_POOL_SIZE: 5
+    ports:
+      - "6432:6432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - zenith-network
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: ../services/api-gateway
+      dockerfile: Dockerfile
+    container_name: zenith-api-gateway
+    environment:
+      ENVIRONMENT: development
+      LOG_LEVEL: debug
+      SERVICE_NAME: api-gateway
+      PORT: 8000
+      AUTH_SERVICE_URL: http://auth-service:8001
+      CASE_SERVICE_URL: http://case-service:8002
+      AI_SERVICE_URL: http://ai-service:8003
+      FRAUD_SERVICE_URL: http://fraud-service:8004
+      WORKFLOW_SERVICE_URL: http://workflow-service:8005
+      POSTGRES_URL: postgresql://zenith_user:zenith_password@postgres:5432/zenith_db
+      POSTGRES_POOL_URL: postgresql://zenith_user:zenith_password@pgbouncer:6432/zenith_db
+      REDIS_URL: redis://redis:6379/0
+      CACHE_TTL: 300
+      RATE_LIMIT_REQUESTS: 100
+      RATE_LIMIT_WINDOW: 60
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zenith-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  ai-ml-service:
+    build:
+      context: ../services/ai-ml-service
+      dockerfile: Dockerfile
+    container_name: zenith-ai-ml-service
+    environment:
+      ENVIRONMENT: development
+      LOG_LEVEL: debug
+      SERVICE_NAME: ai-ml-service
+      PORT: 8003
+      POSTGRES_URL: postgresql://zenith_user:zenith_password@postgres:5432/zenith_db
+      POSTGRES_POOL_URL: postgresql://zenith_user:zenith_password@pgbouncer:6432/zenith_db
+      REDIS_URL: redis://redis:6379/0
+      CACHE_TTL: 300
+      GPU_ENABLED: ${GPU_ENABLED:-false}
+      MODEL_CACHE_DIR: /app/models
+    ports:
+      - "8003:8003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zenith-network
+    restart: unless-stopped
+    volumes:
+      - ai_models_data:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  fraud-intel-service:
+    build:
+      context: ../services/fraud-intel-service
+      dockerfile: Dockerfile
+    container_name: zenith-fraud-intel-service
+    environment:
+      ENVIRONMENT: development
+      LOG_LEVEL: debug
+      SERVICE_NAME: fraud-intel-service
+      PORT: 8004
+      POSTGRES_URL: postgresql://zenith_user:zenith_password@postgres:5432/zenith_db
+      POSTGRES_POOL_URL: postgresql://zenith_user:zenith_password@pgbouncer:6432/zenith_db
+      REDIS_URL: redis://redis:6379/0
+      CACHE_TTL: 300
+      AI_SERVICE_URL: http://ai-ml-service:8003
+    ports:
+      - "8004:8004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ai-ml-service:
+        condition: service_healthy
+    networks:
+      - zenith-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  workflow-regulatory-service:
+    build:
+      context: ../services/workflow-regulatory-service
+      dockerfile: Dockerfile
+    container_name: zenith-workflow-service
+    environment:
+      ENVIRONMENT: development
+      LOG_LEVEL: debug
+      SERVICE_NAME: workflow-regulatory-service
+      PORT: 8005
+      POSTGRES_URL: postgresql://zenith_user:zenith_password@postgres:5432/zenith_db
+      POSTGRES_POOL_URL: postgresql://zenith_user:zenith_password@pgbouncer:6432/zenith_db
+      REDIS_URL: redis://redis:6379/0
+      CACHE_TTL: 300
+      FRAUD_SERVICE_URL: http://fraud-intel-service:8004
+      AI_SERVICE_URL: http://ai-ml-service:8003
+    ports:
+      - "8005:8005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      fraud-intel-service:
+        condition: service_healthy
+    networks:
+      - zenith-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  postgres_data:
+  redis_data:
+  ai_models_data:
+
+networks:
+  zenith-network:
+    driver: bridge
+

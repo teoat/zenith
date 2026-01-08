@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "target": "ESNext",
     "module": "ESNext",
     "lib": ["ES2015", "ES2016"],
     "jsx": "react-jsx",
-    "strict": false,
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -15,8 +18,8 @@
     "importsNotUsedAsValues": "remove",
     "forceConsistentCasingInFileNames": false,
     "isolatedModules": true,
-    "allowImportingTsExtensions": ".ts,.tsx,.d.ts,.json,.json"
-    "allowUmdGlobalAccess": true
+    "allowImportingTsExtensions": true,
+    "allowUmdGlobalAccess": true,
     "strictNullChecks": true,
     "noImplicitThis": false,
     "strictFunctionTypes": true,
