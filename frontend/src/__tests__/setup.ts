@@ -166,7 +166,7 @@ Object.defineProperty(window, "matchMedia", {
 // and dynamic Function call during runtime to avoid parser errors.
 
 // Mock components that use import.meta.env
-jest.mock("../components/dashboard/ThreatMap", () => ({
+jest.mock("../features/dashboard/components/ThreatMap", () => ({
   __esModule: true,
   default: () =>
     React.createElement("div", { "data-testid": "threat-map" }, "Threat Map"),

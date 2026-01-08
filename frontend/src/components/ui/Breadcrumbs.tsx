@@ -153,7 +153,10 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ className }) => {
                 <ChevronRight className="h-3.5 w-3.5 text-slate-400 dark:text-slate-600" />
               )}
               {isLast ? (
-                <span className="font-medium text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                <span
+                  className="font-medium text-slate-900 dark:text-slate-100 flex items-center gap-1.5"
+                  aria-current="page"
+                >
                   {crumb.icon}
                   {crumb.label}
                 </span>
