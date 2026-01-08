@@ -18,9 +18,9 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
 
     # Security
-    # Secrets must be provided via environment variables - defaults for testing
-    SECRET_KEY: str = os.environ.get("SECRET_KEY", "5HgPxilcgUjkOZTfS8xyBw-VZGEQdsSBTAyjFG48Ok4=")
-    JWT_SECRET_KEY: str = os.environ.get("JWT_SECRET_KEY", "dev-jwt-secret-for-testing")
+    # Secrets must be provided via environment variables
+    SECRET_KEY: str
+    JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     FIELD_ENCRYPTION_KEY: str | None = None
