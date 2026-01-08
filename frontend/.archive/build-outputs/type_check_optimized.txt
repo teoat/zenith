@@ -1,0 +1,10 @@
+
+> frontend@0.0.0 type-check
+> tsc --noEmit
+
+src/components/investigation/InvestigationWizard.tsx(63,115): error TS1005: '}' expected.
+src/components/investigation/InvestigationWizard.tsx(63,116): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/investigation/InvestigationWizard.tsx(65,7): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/investigation/InvestigationWizard.tsx(70,9): error TS17002: Expected corresponding JSX closing tag for 'div'.
+src/components/investigation/InvestigationWizard.tsx(72,3): error TS1005: ')' expected.
+src/components/investigation/InvestigationWizard.tsx(73,1): error TS1109: Expression expected.

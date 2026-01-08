@@ -1,0 +1,66 @@
+version: 2
+static:
+  cleanUrls: true
+  
+snapshot:
+  widths:
+    - 375   # Mobile
+    - 768   # Tablet
+    - 1280  # Desktop
+    - 1920  # Large Desktop
+  minHeight: 1024
+  
+  percyCSS: |
+    /* Hide dynamic elements */
+    [data-testid="timestamp"],
+    [data-testid="username"],
+    [data-testid="realtime-indicator"],
+    .loading-spinner,
+    .skeleton {
+      visibility: hidden !important;
+    }
+    
+    /* Freeze animations */
+    * {
+      animation-duration: 0s !important;
+      transition-duration: 0s !important;
+    }
+    
+    /* Standardize test data */
+    .test-data {
+      content: "Sample Data" !important;
+    }
+
+# Disallowed selectors for better snapshot stability
+disallowed-selectors:
+  - "[data-testid='timestamp']"
+  - "[data-testid='username']"
+  - ".loading-spinner"
+  - "[class*='loading']"
+  - "[class*='spinner']"
+
+# Additional configuration
+agent:
+  'chrome': {
+    'chromeFlags': ['--disable-dev-shm-usage']
+  }
+  'firefox': {}
+  'safari': {}
+
+# Asset discovery
+asset-discovery:
+  network-idle-timeout: 120
+  request-cache: false
+
+# DOM snapshots
+dom-snapshot:
+  request-headers:
+    'Accept-Language': 'en-US,en;q=0.9'
+  remove-scripts: true
+  javascript: true
+
+# Performance settings
+performance:
+  max-concurrent-snapshots: 3
+  network-request-timeout: 30000
+  page-load-timeout: 60000

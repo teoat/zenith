@@ -1,82 +1,28 @@
-export interface EvidenceMetadata {
+export interface EvidenceCard {
   id: string;
-  filename: string;
-  fileType: string;
-  size: number;
-  hash: string;
-  uploadedAt: string;
-  uploadedBy: string;
-  caseId?: string;
-  chainOfCustody: CustodyEvent[];
-  multimodalData?: MultimodalData;
-  correlations: EvidenceCorrelation[];
-  integrityVerified: boolean;
-  lastAccessed: string;
-  accessCount: number;
+  title: string;
+  type: 'document' | 'image' | 'video' | 'email' | 'transaction' | 'note';
+  content: string;
+  status: 'new' | 'reviewing' | 'verified' | 'flagged';
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  tags: string[];
+  connections: string[];
+  position: { x: number; y: number };
+  addedBy: string;
+  addedAt: Date;
+  comments: Comment[];
 }
 
-export interface CustodyEvent {
+export interface Comment {
   id: string;
-  timestamp: string;
-  action: "upload" | "access" | "transfer" | "analysis" | "download" | "delete";
-  user: string;
-  location?: string;
-  notes?: string;
-  hash: string;
+  author: string;
+  content: string;
+  timestamp: Date;
 }
 
-export interface MultimodalData {
-  ocr?: string;
-  faces?: FaceDetection[];
-  objects?: ObjectDetection[];
-  audioTranscript?: string;
-  videoMetadata?: VideoMetadata;
-  exif?: Record<string, any>;
-  signatures?: DigitalSignature[];
-}
-
-export interface FaceDetection {
-  id: string;
-  confidence: number;
-  boundingBox: { x: number; y: number; width: number; height: number };
-  landmarks?: { [key: string]: { x: number; y: number } };
-  embedding?: number[];
-}
-
-export interface ObjectDetection {
-  id: string;
-  label: string;
-  confidence: number;
-  boundingBox: { x: number; y: number; width: number; height: number };
-}
-
-export interface VideoMetadata {
-  duration: number;
-  resolution: string;
-  frameRate: number;
-  codec: string;
-  scenes?: SceneDetection[];
-}
-
-export interface SceneDetection {
-  timestamp: number;
-  description: string;
-  confidence: number;
-}
-
-export interface DigitalSignature {
-  id: string;
-  signer: string;
-  certificate: string;
-  timestamp: string;
-  verified: boolean;
-}
-
-export interface EvidenceCorrelation {
-  id: string;
-  relatedEvidenceId: string;
-  correlationType: "content" | "metadata" | "temporal" | "entity" | "semantic";
-  confidence: number;
-  description: string;
-  detectedAt: string;
+export interface Connection {
+  sourceId: string;
+  targetId: string;
+  type: string;
+  label?: string;
 }

@@ -1,102 +1,99 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import react from 'eslint-plugin-react';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import tseslint from 'typescript-eslint';
 
-import js from "@eslint/js";
-import globals from "globals";
-import reactHooks from "eslint-plugin-react-hooks";
-import reactRefresh from "eslint-plugin-react-refresh";
-import tseslint from "typescript-eslint";
-import eslintPluginReact from "eslint-plugin-react";
+/** @type {import('eslint').Linter.Config[]} */
+export default [
+  // Ignore patterns
+  {
+    ignores: [
+      'dist/**',
+      'build/**',
+      'coverage/**',
+      'node_modules/**',
+      'public/**',
+      'scripts/**',
+      'docs/**',
+      '*.config.*',
+      'jest.config.*',
+      'playwright.config.*',
+      'postcss.config.*',
+      '.eslintignore',
+      '**/*.min.js',
+      '**/*.bundle.js',
+      '**/__generated__/**',
+      '**/vendor/**',
+    ]
+  },
 
-// Define the configuration
-export default [{
-  ignores: [
-    "dist",
-    "dist 2",
-    "dev-dist",
-    "build",
-    "scripts",
-    "coverage",
-    "coverage-e2e",
-    "coverage-e2e 2",
-    "node_modules",
-    "e2e",
-    "*.config.*",
-    "jest.config.*",
-    "playwright.config.*",
-    "postcss.config.*",
-    "public",
-    "public 2",
-  ],
-}, js.configs.recommended, ...tseslint.configs.recommended, {
-  files: ["src/**/*.{ts,tsx,js,jsx}", "jest.setup.ts"],
-  languageOptions: {
-    ecmaVersion: 2020,
-    globals: globals.browser,
-    parserOptions: {
-      ecmaFeatures: { jsx: true },
+  // Base JS
+  js.configs.recommended,
+
+  // TypeScript (v8 style)
+  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
+
+  // Configuration for all project files
+  {
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2021,
+      },
+      parser: tseslint.parser,
+      parserOptions: {
+        project: ['./tsconfig.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+      'react': react,
+      'jsx-a11y': jsxA11y,
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      ...react.configs.recommended.rules,
+      ...react.configs['jsx-runtime'].rules,
+      ...jsxA11y.configs.recommended.rules,
+
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'no-console': 'off',
     },
   },
-  plugins: {
-    "react-hooks": reactHooks,
-    "react-refresh": reactRefresh,
-    "react": eslintPluginReact,
-  },
-  rules: {
-    ...reactHooks.configs.recommended.rules,
-    "react-refresh/only-export-components": [
-      "warn",
-      { allowConstantExport: true },
-    ],
 
-    // Error Prevention Rules
-    "no-console": ["warn", { allow: ["warn", "error"] }],
-    "no-debugger": "error",
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        argsIgnorePattern: "^_",
-        varsIgnorePattern: "^_",
-        ignoreRestSiblings: true,
+  // Test files
+  {
+    files: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', '**/__tests__/**'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+        vi: 'readonly',
+        describe: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
       },
-    ],
-    "@typescript-eslint/no-explicit-any": "error",
-    "prefer-const": "error",
-    "no-var": "error",
-
-    // Import Rules
-    "no-duplicate-imports": "error",
-
-    // Error Handling Rules
-    "no-throw-literal": "error",
-
-    // Code Quality Rules
-    eqeqeq: ["error", "always"],
-    "no-eval": "error",
-    "no-implied-eval": "error",
-    "no-new-func": "error",
-    "no-script-url": "error",
-    "no-alert": "warn",
-    "react/forbid-dom-props": ["error", { forbid: ["data-unsafe", "data-dangerous"] }],
-    // Disabled for optimization - focus on functional errors
-    // "max-lines": [
-    //   "warn",
-    //   { max: 400, skipBlankLines: true, skipComments: true },
-    // ],
-    // "max-lines-per-function": [
-    //   "warn",
-    //   { max: 100, skipBlankLines: true, skipComments: true },
-    // ],
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
   },
-}, // Override rules for test files
-{
-  files: [
-    "src/**/*.{test,spec}.{ts,tsx,js,jsx}",
-    "src/__tests__/**/*.{ts,tsx,js,jsx}",
-  ],
-  rules: {
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-unsafe-function-type": "off",
-  },
-}, ...storybook.configs["flat/recommended"]];
+];

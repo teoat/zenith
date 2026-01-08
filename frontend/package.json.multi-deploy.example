@@ -1,0 +1,21 @@
+{
+  "name": "zenith-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:dev": "vite build --mode development",
+    "build:staging": "vite build --mode staging",
+    "build:production": "vite build --mode production",
+    "build:all": "npm run build:dev && npm run build:staging && npm run build:production",
+    "deploy:dev": "npm run build:dev && vercel --target development",
+    "deploy:staging": "npm run build:staging && vercel --target preview",
+    "deploy:production": "npm run build:production && vercel --prod",
+    "deploy:all": "concurrently \"npm run deploy:dev\" \"npm run deploy:staging\" \"npm run deploy:production\"",
+    "version:check": "node scripts/check-version.js",
+    "version:bump": "npm version patch && git push && git push --tags"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

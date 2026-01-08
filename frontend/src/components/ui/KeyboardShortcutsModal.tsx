@@ -3,7 +3,7 @@
  * Separated from useKeyboardNavigation hook for better code organization
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
 export interface Shortcut {
   key: string;
@@ -20,24 +20,22 @@ interface KeyboardShortcutsModalProps {
 export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
   shortcuts,
   isOpen,
-  onClose,
+  onClose
 }) => {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
+      if (e.key === 'Escape' && isOpen) {
         onClose();
       }
     };
 
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
-  const categories = Array.from(
-    new Set(shortcuts.map((s) => s.category || "General")),
-  );
+  const categories = Array.from(new Set(shortcuts.map(s => s.category || 'General')));
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -47,31 +45,22 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
             Keyboard Shortcuts
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-            Press{" "}
-            <kbd className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs">
-              Esc
-            </kbd>{" "}
-            to close
+            Press <kbd className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs">Esc</kbd> to close
           </p>
         </div>
-
+        
         <div className="p-6 overflow-y-auto max-h-[calc(80vh-120px)]">
-          {categories.map((category) => (
+          {categories.map(category => (
             <div key={category} className="mb-6 last:mb-0">
               <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wide">
                 {category}
               </h3>
               <div className="space-y-2">
                 {shortcuts
-                  .filter((s) => (s.category || "General") === category)
+                  .filter(s => (s.category || 'General') === category)
                   .map((shortcut, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                    >
-                      <span className="text-slate-600 dark:text-slate-400">
-                        {shortcut.description}
-                      </span>
+                    <div key={idx} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                      <span className="text-slate-600 dark:text-slate-400">{shortcut.description}</span>
                       <kbd className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded font-mono text-sm border border-slate-300 dark:border-slate-700">
                         {shortcut.key}
                       </kbd>

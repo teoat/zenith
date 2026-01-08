@@ -1,8 +1,33 @@
-// frontend/src/components/ui/SyncStatus.tsx
-import { useState, useEffect } from "react";
-import { api } from "@/lib/api";
-import { secureLogger } from "@/utils/secureLogger";
-import "./SyncStatus.css";
+import { useState, useEffect } from 'react';
+import { api } from '../../lib/api';
+import { BaseError, QueueItem } from '../../types/common';
+import './SyncStatus.css';
+
+interface ConflictAnalysis {
+  type: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  detectedAt: number;
+  summary: string;
+  suggestedResolution?: string;
+}
+
+interface ActiveConflict {
+  id: string;
+  type: string;
+  severity: string;
+  detectedAt: number;
+  analysis: ConflictAnalysis;
+}
+
+interface SyncResult {
+  status: 'completed' | 'error' | 'partial';
+  results?: {
+    successful: number;
+    failed: number;
+    skipped: number;
+  };
+  error?: string;
+}
 
 interface SyncStatus {
   isOnline: boolean;
@@ -12,61 +37,60 @@ interface SyncStatus {
   conflicts: number;
   failed: number;
   pendingManual: number;
-  activeConflicts: Array<{
-    id: string;
-    type: string;
-    severity: string;
-    detectedAt: number;
-    analysis: Record<string, unknown>;
-  }>;
+  activeConflicts: ActiveConflict[];
   lastSyncAttempt?: number;
-  lastSyncResult?: {
-    status: "completed" | "error";
-    results?: {
-      successful: number;
-    };
-    error?: string;
-  };
+  lastSyncResult?: SyncResult;
 }
+
+const DEFAULT_SYNC_STATUS: SyncStatus = {
+  isOnline: false,
+  syncInProgress: false,
+  queueLength: 0,
+  queued: 0,
+  conflicts: 0,
+  failed: 0,
+  pendingManual: 0,
+  activeConflicts: []
+};
 
 export function SyncStatus() {
   const [status, setStatus] = useState<SyncStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
 
-  const loadSyncStatus = async () => {
+  const loadSyncStatus = async (): Promise<void> => {
     try {
       setLoading(true);
       const syncStatus = await api.getSyncStatus();
-      setStatus(syncStatus as unknown as SyncStatus);
-    } catch (error) {
-      secureLogger.error("Failed to load sync status:", error);
+      setStatus(syncStatus);
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to load sync status');
+      console.error('Failed to load sync status:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleForceSync = async () => {
+  const handleForceSync = async (): Promise<void> => {
     try {
       setSyncing(true);
       await api.forceSync();
       await loadSyncStatus(); // Refresh status after sync
-    } catch (error) {
-      secureLogger.error("Failed to force sync:", error);
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to force sync');
+      console.error('Failed to force sync:', error);
     } finally {
       setSyncing(false);
     }
   };
 
-  const handleResolveConflict = async (
-    conflictId: string,
-    resolution: string,
-  ) => {
+  const handleResolveConflict = async (conflictId: string, resolution: string): Promise<void> => {
     try {
-      await api.resolveConflict(conflictId, resolution as any);
+      await api.resolveConflict(conflictId, resolution);
       await loadSyncStatus(); // Refresh status after resolution
-    } catch (error) {
-      secureLogger.error("Failed to resolve conflict:", error);
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to resolve conflict');
+      console.error('Failed to resolve conflict:', error);
     }
   };
 
@@ -74,9 +98,7 @@ export function SyncStatus() {
     loadSyncStatus();
 
     // Refresh status every 30 seconds
-    const interval = setInterval(() => {
-      loadSyncStatus();
-    }, 30000);
+    const interval = setInterval(loadSyncStatus, 30000);
 
     return () => clearInterval(interval);
   }, []);
@@ -92,37 +114,32 @@ export function SyncStatus() {
     );
   }
 
-  const hasIssues =
-    status.conflicts > 0 || status.failed > 0 || status.pendingManual > 0;
+  const hasIssues = status.conflicts > 0 || status.failed > 0 || status.pendingManual > 0;
 
   return (
-    <div className={`sync-status ${hasIssues ? "has-issues" : ""}`}>
+    <div className={`sync-status ${hasIssues ? 'has-issues' : ''}`}>
       <div className="sync-header">
         <div className="sync-indicator">
-          <div
-            className={`status-dot ${status.isOnline ? "online" : "offline"}`}
-          ></div>
-          <span>{status.isOnline ? "Online" : "Offline"}</span>
+          <div className={`status-dot ${status.isOnline ? 'online' : 'offline'}`}></div>
+          <span>{status.isOnline ? 'Online' : 'Offline'}</span>
         </div>
 
         <div className="sync-actions">
           <button
-            onClick={() => {
-              handleForceSync();
-            }}
+            onClick={handleForceSync}
             disabled={syncing || !status.isOnline}
             className="sync-button"
+            type="button"
           >
-            {syncing ? "Syncing..." : "Sync Now"}
+            {syncing ? 'Syncing...' : 'Sync Now'}
           </button>
           <button
-            onClick={() => {
-              loadSyncStatus();
-            }}
+            onClick={loadSyncStatus}
             disabled={loading}
             className="refresh-button"
+            type="button"
           >
-            {loading ? "..." : "↻"}
+            {loading ? '...' : '↻'}
           </button>
         </div>
       </div>
@@ -159,26 +176,23 @@ export function SyncStatus() {
               </div>
               <div className="conflict-actions">
                 <button
-                  onClick={() => {
-                    handleResolveConflict(conflict.id, "use-remote");
-                  }}
+                  onClick={() => handleResolveConflict(conflict.id, 'use-remote')}
                   className="resolve-button"
+                  type="button"
                 >
                   Use Remote
                 </button>
                 <button
-                  onClick={() => {
-                    handleResolveConflict(conflict.id, "use-local");
-                  }}
+                  onClick={() => handleResolveConflict(conflict.id, 'use-local')}
                   className="resolve-button"
+                  type="button"
                 >
                   Use Local
                 </button>
                 <button
-                  onClick={() => {
-                    handleResolveConflict(conflict.id, "merge");
-                  }}
+                  onClick={() => handleResolveConflict(conflict.id, 'merge')}
                   className="resolve-button"
+                  type="button"
                 >
                   Merge
                 </button>
@@ -192,14 +206,15 @@ export function SyncStatus() {
         <div className="last-sync-info">
           <small>
             Last sync: {new Date(status.lastSyncAttempt || 0).toLocaleString()}
-            {status.lastSyncResult.status === "completed" &&
-              status.lastSyncResult.results && (
-                <span className="success">
-                  ✓ {status.lastSyncResult.results.successful} successful
-                </span>
-              )}
-            {status.lastSyncResult.status === "error" && (
-              <span className="error">✗ {status.lastSyncResult.error}</span>
+            {status.lastSyncResult.status === 'completed' && status.lastSyncResult.results && (
+              <span className="success">
+                ✓ {status.lastSyncResult.results.successful} successful
+              </span>
+            )}
+            {status.lastSyncResult.status === 'error' && (
+              <span className="error">
+                ✗ {status.lastSyncResult.error}
+              </span>
             )}
           </small>
         </div>

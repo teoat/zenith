@@ -1,26 +1,26 @@
-import React from "react";
+import React from 'react';
 
 interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
-  variant?: "text" | "rectangular" | "circular";
+  variant?: 'text' | 'rectangular' | 'circular';
   width?: string | number;
   height?: string | number;
 }
 
 export const Skeleton: React.FC<SkeletonProps> = ({
-  className = "",
-  variant = "rectangular",
+  className = '',
+  variant = 'rectangular',
   width,
   height,
   style,
   ...props
 }) => {
-  const baseStyles = "bg-slate-200 dark:bg-slate-700 animate-pulse";
-
+  const baseStyles = 'bg-slate-200 dark:bg-slate-700 animate-pulse';
+  
   const variantStyles = {
-    text: "rounded",
-    rectangular: "rounded-md",
-    circular: "rounded-full",
+    text: 'rounded',
+    rectangular: 'rounded-md',
+    circular: 'rounded-full',
   };
 
   const computedStyle: React.CSSProperties = {

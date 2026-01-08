@@ -1,5 +1,3 @@
-import { secureLogger } from "./secureLogger";
-
 const antiDebug = () => {
   const check = () => {
     // This will pause execution if dev tools are open
@@ -10,17 +8,13 @@ const antiDebug = () => {
       // eslint-disable-next-line no-debugger
       debugger;
       const after = new Date().getTime();
-      if (after - before > 100) {
-        // If time difference is significant, debugger was likely hit
+      if (after - before > 100) { // If time difference is significant, debugger was likely hit
         // You can add more aggressive actions here, e.g., redirect or clear local storage
-        // Use safer text content instead of innerHTML
-        document.body.textContent = "Debugger detected!";
-        window.location.href = "about:blank"; // Redirect to a blank page
+        document.body.innerHTML = '<h1>Debugger detected!</h1>';
+        window.location.href = 'about:blank'; // Redirect to a blank page
       }
-    } catch (error) {
-      secureLogger.error("SECURITY", "Anti-debug check error", {
-        error: error instanceof Error ? error.message : String(error),
-      });
+    } catch (err) {
+      // console.error("Anti-debug check error:", err);
     }
 
     // Schedule the next check

@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
-import { secureLogger } from "@/utils/secureLogger";
-import axe from "axe-core";
+import React, { useEffect } from 'react';
+import axe from 'axe-core';
 
 interface AccessibilityCheckerProps {
   children: React.ReactNode;
@@ -9,7 +8,7 @@ interface AccessibilityCheckerProps {
 
 export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({
   children,
-  enabled = process.env.NODE_ENV === "development",
+  enabled = process.env.NODE_ENV === 'development'
 }) => {
   useEffect(() => {
     if (!enabled) return;
@@ -20,30 +19,22 @@ export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({
         const violations = results.violations;
 
         if (violations.length > 0) {
-          secureLogger.warn(
-            "ACCESSIBILITY",
-            `Accessibility Violations Found: ${violations.length}`,
-            {
-              violations: violations.map((v) => ({
-                id: v.id,
-                description: v.description,
-                impact: v.impact,
-                help: v.help,
-                helpUrl: v.helpUrl,
-                elements: v.nodes.map((node) => node.target).join(", "),
-              })),
-            },
-          );
+          console.group('🚨 Accessibility Violations Found');
+          violations.forEach((violation, index) => {
+            console.group(`Violation ${index + 1}: ${violation.id}`);
+            console.log('Description:', violation.description);
+            console.log('Impact:', violation.impact);
+            console.log('Help:', violation.help);
+            console.log('Help URL:', violation.helpUrl);
+            console.log('Elements:', violation.nodes.map(node => node.target).join(', '));
+            console.groupEnd();
+          });
+          console.groupEnd();
         } else {
-          secureLogger.info(
-            "ACCESSIBILITY",
-            "No accessibility violations found",
-          );
+          console.log('✅ No accessibility violations found');
         }
-      } catch (error) {
-        secureLogger.error("ACCESSIBILITY", "Accessibility check failed", {
-          error: error instanceof Error ? error.message : String(error),
-        });
+      } catch (err) {
+        console.error('Accessibility check failed:', err);
       }
     };
 
@@ -56,4 +47,18 @@ export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({
   return <>{children}</>;
 };
 
-export default AccessibilityChecker;
+// Utility function for manual accessibility testing
+export const runAccessibilityAudit = async (context?: Element) => {
+  try {
+    const results = await axe.run(context || document);
+    return {
+      violations: results.violations,
+      passes: results.passes,
+      incomplete: results.incomplete,
+      inapplicable: results.inapplicable
+    };
+  } catch (err) {
+    console.error('Accessibility audit failed:', err);
+    return null;
+  }
+};

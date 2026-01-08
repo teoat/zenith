@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Bot, X, Sparkles } from "lucide-react";
+import React, { useState } from 'react';
+import { Bot, X, Sparkles } from 'lucide-react';
 
 interface WelcomeMessageProps {
   onDismiss?: () => void;
@@ -8,7 +8,7 @@ interface WelcomeMessageProps {
 const WelcomeMessage: React.FC<WelcomeMessageProps> = ({ onDismiss }) => {
   // Initialize visibility based on localStorage to avoid setState in useEffect
   const [isVisible, setIsVisible] = useState(() => {
-    const hasSeenWelcome = localStorage.getItem("welcome-seen");
+    const hasSeenWelcome = localStorage.getItem('welcome-seen');
     return !hasSeenWelcome;
   });
   const [currentMessage, setCurrentMessage] = useState(0);
@@ -16,41 +16,38 @@ const WelcomeMessage: React.FC<WelcomeMessageProps> = ({ onDismiss }) => {
   const messages = [
     {
       title: "👋 Welcome, Investigator!",
-      content:
-        "I'm your Senior Partner AI. I'm here to help you navigate the complex world of fraud detection. Let's get you started with some quick tips.",
+      content: "I'm your Senior Partner AI. I'm here to help you navigate the complex world of fraud detection. Let's get you started with some quick tips.",
       suggestions: [
         "Start by creating your first case in the Cases section",
         "Upload evidence files to build your investigation",
-        "Explore the Network Graph to visualize connections",
-      ],
+        "Explore the Network Graph to visualize connections"
+      ]
     },
     {
       title: "🎯 Quick Start Guide",
-      content:
-        "Based on your role, here are the most important features you'll use:",
+      content: "Based on your role, here are the most important features you'll use:",
       suggestions: [
         "Dashboard: Monitor real-time alerts and metrics",
         "Cases: Manage your investigations and evidence",
         "Network Analysis: Visualize fraud patterns and relationships",
-        "Forensics: Analyze documents and digital evidence",
-      ],
+        "Forensics: Analyze documents and digital evidence"
+      ]
     },
     {
       title: "💡 Pro Tips",
-      content:
-        "Here are some advanced features that will make you more effective:",
+      content: "Here are some advanced features that will make you more effective:",
       suggestions: [
         "Use the AI Watchtower for automated anomaly detection",
         "Leverage the relationship graph to find hidden connections",
         "Set up alerts for suspicious patterns in your data",
-        "Collaborate with team members using the built-in tools",
-      ],
-    },
+        "Collaborate with team members using the built-in tools"
+    ]
+    }
   ];
 
   const handleDismiss = () => {
     setIsVisible(false);
-    localStorage.setItem("welcome-seen", "true");
+    localStorage.setItem('welcome-seen', 'true');
     onDismiss?.();
   };
 
@@ -82,7 +79,6 @@ const WelcomeMessage: React.FC<WelcomeMessageProps> = ({ onDismiss }) => {
           <button
             onClick={handleDismiss}
             className="text-gray-400 hover:text-gray-600"
-            aria-label="Dismiss welcome message"
           >
             <X size={16} />
           </button>
@@ -105,7 +101,7 @@ const WelcomeMessage: React.FC<WelcomeMessageProps> = ({ onDismiss }) => {
               <div
                 key={index}
                 className={`w-2 h-2 rounded-full ${
-                  index === currentMessage ? "bg-blue-500" : "bg-gray-300"
+                  index === currentMessage ? 'bg-blue-500' : 'bg-gray-300'
                 }`}
               />
             ))}
@@ -115,9 +111,7 @@ const WelcomeMessage: React.FC<WelcomeMessageProps> = ({ onDismiss }) => {
             onClick={handleNext}
             className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors"
           >
-            {currentMessage === messages.length - 1
-              ? "Get Started"
-              : "Next Tip"}
+            {currentMessage === messages.length - 1 ? 'Get Started' : 'Next Tip'}
           </button>
         </div>
       </div>

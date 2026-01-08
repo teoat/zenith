@@ -1,159 +1,181 @@
-// Common types to replace 'any' usage throughout the application
+// Common types used across the application
 
-export interface BaseEvent {
-  preventDefault(): void;
-  stopPropagation(): void;
-  target: EventTarget;
+// ============ ERROR TYPES ============
+export interface BaseError {
+  message: string;
+  code?: string;
+  status?: number;
+  timestamp?: string;
 }
 
-export interface BeforeInstallPromptEvent extends Event {
-  readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
-    platform: string;
-  }>;
-  prompt(): Promise<void>;
+export interface ApiError extends BaseError {
+  status: number;
+  endpoint?: string;
+  method?: string;
+  response?: {
+    data?: unknown;
+    status: number;
+    statusText: string;
+  };
 }
 
-export interface ServiceWorkerRegistration {
-  active?: ServiceWorker | null;
-  installing?: ServiceWorker | null;
-  waiting?: ServiceWorker | null;
-  scope: string;
-  navigationPreload?: NavigationPreloadManager;
-  pushManager?: PushManager;
-  // sync?: SyncManager; // Commented out due to compatibility
-  // periodicSync?: PeriodicSyncManager; // Commented out due to compatibility
-  updateViaCache?: 'imports' | 'all' | 'none';
+export interface ValidationError extends BaseError {
+  field?: string;
+  value?: unknown;
 }
 
-export interface GenericObject {
+export interface NetworkError extends BaseError {
+  type: 'NetworkError' | 'TimeoutError' | 'AbortError';
+  url?: string;
+}
+
+// ============ API RESPONSE TYPES ============
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: BaseError;
+  message?: string;
+  timestamp?: string;
+}
+
+export interface PaginatedResponse<T> extends ApiResponse<T[]> {
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+// ============ QUEUE TYPES ============
+export interface QueueItem {
+  id: string;
+  type: string;
+  data: Record<string, unknown>;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  createdAt: string;
+  processedAt?: string;
+  retryCount?: number;
+  error?: BaseError;
+}
+
+// ============ ELECTRON API TYPES ============
+export interface ElectronCallback {
+  (...args: unknown[]): void;
+}
+
+export interface ElectronAPIEvents {
+  'auth:changed': (isAuthenticated: boolean, user?: unknown) => void;
+  'session:status': (status: { authenticated: boolean; expires?: number }) => void;
+  'sync:progress': (progress: { completed: number; total: number }) => void;
+  'notification': (notification: { title: string; body: string; type: string }) => void;
+}
+
+// ============ FORM TYPES ============
+export interface FormField {
+  name: string;
+  label: string;
+  type: 'text' | 'email' | 'password' | 'number' | 'select' | 'textarea' | 'checkbox';
+  required?: boolean;
+  placeholder?: string;
+  options?: Array<{ value: string; label: string }>;
+  validation?: {
+    min?: number;
+    max?: number;
+    pattern?: string;
+    custom?: (value: unknown) => string | undefined;
+  };
+  value?: unknown;
+  error?: string;
+}
+
+export interface FormData {
   [key: string]: unknown;
 }
 
-export interface EventHandlers {
-  [key: string]: (event: BaseEvent) => void;
+// ============ FILE TYPES ============
+export interface UploadedFile {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  file: File;
+  progress: number;
+  status: 'pending' | 'uploading' | 'completed' | 'error';
+  error?: string;
+  url?: string;
 }
 
-export type ComponentProps = Record<string, unknown>;
+export interface ProcessingResult {
+  success: boolean;
+  data?: Record<string, unknown>;
+  error?: string;
+  metadata?: {
+    processingTime: number;
+    fileSize: number;
+    fileType: string;
+  };
+}
 
-export interface APIResponse<T = unknown> {
+// ============ WEBSOCKET TYPES ============
+export interface WebSocketMessage<T = unknown> {
+  type: string;
   data: T;
-  status: number;
-  statusText: string;
-  headers: Record<string, string>;
+  timestamp: string;
+  id?: string;
 }
 
-export interface ErrorInfo {
-  componentStack: string;
-  errorBoundary?: string;
-  error?: Error;
+export interface WebSocketState {
+  isConnected: boolean;
+  isConnecting: boolean;
+  error?: BaseError;
+  lastMessage?: WebSocketMessage;
+  reconnectAttempts: number;
 }
 
-export interface GraphData {
-  nodes: GraphNode[];
-  links: GraphLink[];
+// ============ COMPONENT PROP TYPES ============
+export interface BaseComponentProps {
+  className?: string;
+  children?: React.ReactNode;
+  id?: string;
+  'data-testid'?: string;
 }
 
-export interface GraphNode {
-  id: string;
-  name: string;
-  type: string;
-  color: string;
-  val?: number;
-  group?: number;
-  x?: number;
-  y?: number;
-  fx?: number;
-  fy?: number;
+export interface LoadingProps extends BaseComponentProps {
+  isLoading?: boolean;
+  loadingText?: string;
 }
 
-export interface GraphLink {
-  source: string | GraphNode;
-  target: string | GraphNode;
-  color: string;
-  width?: number;
-  type?: string;
-}
-
-export interface PerformanceMetric {
-  name: string;
-  value: number;
-  unit: string;
-  timestamp: number;
-}
-
-export interface SystemHealth {
-  cpu: number;
-  memory: number;
-  disk: number;
-  network: number;
-}
-
-export interface EvidenceMetadata {
-  id: string;
-  title: string;
-  type: string;
-  processed: boolean;
-  riskLevel?: 'low' | 'medium' | 'high';
-  tags?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CaseDetails {
-  id: string;
-  title: string;
-  status: string;
-  priority: string;
-  createdAt: string;
-  updatedAt: string;
-  assignedTo?: string;
-  description?: string;
-}
-
-export interface NetworkGraphData {
-  nodes: NetworkGraphNode[];
-  links: NetworkGraphLink[];
-}
-
-export interface NetworkGraphNode {
-  id: string;
-  label: string;
-  group: number;
-  x?: number;
-  y?: number;
-  radius?: number;
-  color?: string;
-}
-
-export interface NetworkGraphLink {
-  source: string | number;
-  target: string | number;
-  value: number;
-  color?: string;
-}
-
-// Fixed Size List Types
-export interface FixedSizeListProps {
-  children: (props: { index: number; style: React.CSSProperties }) => React.ReactElement;
-  height: number;
-  itemCount: number;
-  itemSize: number;
-  itemData?: unknown[];
-  width?: string | number;
-}
-
-export interface VirtualizedListProps<T> {
-  items: T[];
-  itemHeight: number;
-  height: number;
-  renderItem: (item: T, index: number) => React.ReactNode;
-  getItemKey?: (item: T, index: number) => string | number;
-}
-
-// Utility types for common patterns
+// ============ UTILITY TYPES ============
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
+export type RequiredBy<T, K extends keyof T> = T & Required<Pick<T, K>>;
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
+
+export type EventHandler<T = Event> = (event: T) => void;
+export type AsyncEventHandler<T = Event> = (event: T) => Promise<void>;
+
+// ============ STATUS TYPES ============
+export type Status = 'idle' | 'loading' | 'success' | 'error';
+export type Priority = 'low' | 'medium' | 'high' | 'critical';
+export type Severity = 'info' | 'warning' | 'error' | 'critical';
+
+// ============ CONFIGURATION TYPES ============
+export interface AppConfig {
+  api: {
+    baseUrl: string;
+    timeout: number;
+    retryAttempts: number;
+  };
+  features: {
+    enableRealTime: boolean;
+    enableOfflineMode: boolean;
+    enableAnalytics: boolean;
+  };
+  ui: {
+    theme: 'light' | 'dark' | 'auto';
+    language: string;
+    animations: boolean;
+  };
+}

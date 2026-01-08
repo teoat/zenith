@@ -1,9 +1,7 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 export interface NetworkStatusContextType {
   isOnline: boolean;
 }
 
-export const NetworkStatusContext = createContext<NetworkStatusContextType>({
-  isOnline: true,
-});
+export const NetworkStatusContext = createContext<NetworkStatusContextType>({ isOnline: true });

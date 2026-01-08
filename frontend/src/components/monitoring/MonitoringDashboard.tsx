@@ -1,5 +1,5 @@
 // frontend/src/components/monitoring/MonitoringDashboard.tsx
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from 'react';
 import {
   Activity,
   AlertTriangle,
@@ -11,13 +11,12 @@ import {
   Zap,
   Shield,
   HardDrive,
-  BarChart3,
-} from "lucide-react";
-import { api } from "@/lib/api";
-import { secureLogger } from "@/utils/secureLogger";
+  BarChart3
+} from 'lucide-react';
+import { api } from '../../lib/api';
 
 interface SystemMetrics {
-  status: "healthy" | "warning" | "critical";
+  status: 'healthy' | 'warning' | 'critical';
   health_score: number;
   timestamp: string;
   metrics: {
@@ -72,11 +71,12 @@ export function MonitoringDashboard() {
       const performanceResponse = await api.getPerformanceHistory(timeRange);
       setPerformanceData(performanceResponse);
 
-      // Load error summary
+      // Load err summary
       const errorResponse = await api.getErrorSummary(timeRange);
       setErrorSummary(errorResponse);
-    } catch (error) {
-      secureLogger.error("Failed to load monitoring data:", error);
+
+    } catch (err) {
+      console.error('Failed to load monitoring data:', err);
     } finally {
       setLoading(false);
     }
@@ -88,27 +88,19 @@ export function MonitoringDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "healthy":
-        return "text-green-600 bg-green-50 border-green-200";
-      case "warning":
-        return "text-yellow-600 bg-yellow-50 border-yellow-200";
-      case "critical":
-        return "text-red-600 bg-red-50 border-red-200";
-      default:
-        return "text-gray-600 bg-gray-50 border-gray-200";
+      case 'healthy': return 'text-green-600 bg-green-50 border-green-200';
+      case 'warning': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'critical': return 'text-red-600 bg-red-50 border-red-200';
+      default: return 'text-gray-600 bg-gray-50 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "healthy":
-        return <Shield className="w-5 h-5 text-green-600" />;
-      case "warning":
-        return <AlertTriangle className="w-5 h-5 text-yellow-600" />;
-      case "critical":
-        return <AlertTriangle className="w-5 h-5 text-red-600" />;
-      default:
-        return <Activity className="w-5 h-5 text-gray-600" />;
+      case 'healthy': return <Shield className="w-5 h-5 text-green-600" />;
+      case 'warning': return <AlertTriangle className="w-5 h-5 text-yellow-600" />;
+      case 'critical': return <AlertTriangle className="w-5 h-5 text-red-600" />;
+      default: return <Activity className="w-5 h-5 text-gray-600" />;
     }
   };
 
@@ -132,12 +124,8 @@ export function MonitoringDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            System Monitoring
-          </h1>
-          <p className="text-gray-600">
-            Real-time application performance and health metrics
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">System Monitoring</h1>
+          <p className="text-gray-600">Real-time application performance and health metrics</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -164,23 +152,17 @@ export function MonitoringDashboard() {
 
       {/* System Status */}
       {systemStatus && (
-        <div
-          className={`system-status-card ${getStatusColor(systemStatus.status)} border rounded-lg p-6`}
-        >
+        <div className={`system-status-card ${getStatusColor(systemStatus.status)} border rounded-lg p-6`}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               {getStatusIcon(systemStatus.status)}
               <div>
                 <h3 className="text-lg font-semibold">System Status</h3>
-                <p className="text-sm opacity-75 capitalize">
-                  {systemStatus.status}
-                </p>
+                <p className="text-sm opacity-75 capitalize">{systemStatus.status}</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold">
-                {systemStatus.health_score.toFixed(1)}%
-              </div>
+              <div className="text-2xl font-bold">{systemStatus.health_score.toFixed(1)}%</div>
               <div className="text-sm opacity-75">Health Score</div>
             </div>
           </div>
@@ -188,21 +170,15 @@ export function MonitoringDashboard() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <div className="font-medium">CPU</div>
-              <div className="text-lg">
-                {systemStatus.metrics.cpu_percent.toFixed(1)}%
-              </div>
+              <div className="text-lg">{systemStatus.metrics.cpu_percent.toFixed(1)}%</div>
             </div>
             <div>
               <div className="font-medium">Memory</div>
-              <div className="text-lg">
-                {systemStatus.metrics.memory_percent.toFixed(1)}%
-              </div>
+              <div className="text-lg">{systemStatus.metrics.memory_percent.toFixed(1)}%</div>
             </div>
             <div>
               <div className="font-medium">Requests</div>
-              <div className="text-lg">
-                {systemStatus.metrics.request_count}
-              </div>
+              <div className="text-lg">{systemStatus.metrics.request_count}</div>
             </div>
             <div>
               <div className="font-medium">Errors</div>
@@ -272,7 +248,9 @@ export function MonitoringDashboard() {
           <div className="text-2xl font-bold text-red-600">
             {systemStatus?.metrics.error_count}
           </div>
-          <div className="text-xs text-gray-600 mt-1">Total errors</div>
+          <div className="text-xs text-gray-600 mt-1">
+            Total errors
+          </div>
         </div>
       </div>
 
@@ -286,9 +264,7 @@ export function MonitoringDashboard() {
         {performanceData.length > 0 ? (
           <div className="chart-placeholder bg-gray-50 rounded-lg p-8 text-center">
             <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">
-              Performance chart would be displayed here
-            </p>
+            <p className="text-gray-600">Performance chart would be displayed here</p>
             <p className="text-sm text-gray-500 mt-2">
               {performanceData.length} data points available
             </p>
@@ -314,23 +290,17 @@ export function MonitoringDashboard() {
               <div className="text-3xl font-bold text-red-600 mb-2">
                 {errorSummary.total_errors}
               </div>
-              <div className="text-sm text-gray-600 mb-4">
-                Total errors in last {timeRange} hours
-              </div>
+              <div className="text-sm text-gray-600 mb-4">Total errors in last {timeRange} hours</div>
 
               {Object.keys(errorSummary.error_types).length > 0 && (
                 <div className="space-y-2">
                   <h4 className="font-medium text-sm">Error Types:</h4>
-                  {Object.entries(errorSummary.error_types).map(
-                    ([type, count]) => (
-                      <div key={type} className="flex justify-between text-sm">
-                        <span className="capitalize">
-                          {type.replace("_", " ")}
-                        </span>
-                        <span className="font-medium">{count}</span>
-                      </div>
-                    ),
-                  )}
+                  {Object.entries(errorSummary.error_types).map(([type, count]) => (
+                    <div key={type} className="flex justify-between text-sm">
+                      <span className="capitalize">{type.replace('_', ' ')}</span>
+                      <span className="font-medium">{count}</span>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -340,21 +310,16 @@ export function MonitoringDashboard() {
               <h4 className="font-medium mb-3">Recent Errors</h4>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {errorSummary.recent_errors.slice(0, 5).map((error, index) => (
-                  <div
-                    key={index}
-                    className="bg-red-50 border border-red-200 rounded p-3"
-                  >
+                  <div key={index} className="bg-red-50 border border-red-200 rounded p-3">
                     <div className="flex justify-between items-start mb-1">
                       <span className="font-medium text-sm capitalize">
-                        {error.error_type.replace("_", " ")}
+                        {error.error_type.replace('_', ' ')}
                       </span>
                       <span className="text-xs text-gray-500">
                         {new Date(error.timestamp).toLocaleTimeString()}
                       </span>
                     </div>
-                    <p className="text-sm text-red-800 truncate">
-                      {error.message}
-                    </p>
+                    <p className="text-sm text-red-800 truncate">{error.message}</p>
                   </div>
                 ))}
                 {errorSummary.recent_errors.length === 0 && (

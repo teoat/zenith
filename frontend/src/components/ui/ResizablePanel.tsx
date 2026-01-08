@@ -1,9 +1,9 @@
 // frontend/src/components/ui/ResizablePanel.tsx
-import React, { useState, useRef, useCallback, useId } from "react";
+import React, { useState, useRef, useCallback, useId } from 'react';
 
 interface ResizablePanelProps {
   children: React.ReactNode;
-  direction: "horizontal" | "vertical";
+  direction: 'horizontal' | 'vertical';
   defaultSize?: number;
   minSize?: number;
   maxSize?: number;
@@ -21,12 +21,12 @@ export function ResizablePanel({
   defaultSize = 200,
   minSize = 100,
   maxSize = 800,
-  className = "",
+  className = '',
   onResize,
   onResizeStart,
   onResizeEnd,
-  resizerClassName = "",
-  showResizer = true,
+  resizerClassName = '',
+  showResizer = true
 }: ResizablePanelProps) {
   const [size, setSize] = useState(defaultSize);
   const [isResizing, setIsResizing] = useState(false);
@@ -34,99 +34,92 @@ export function ResizablePanel({
   const resizerRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
 
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      setIsResizing(true);
-      onResizeStart?.();
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    setIsResizing(true);
+    onResizeStart?.();
 
-      const startPos = direction === "horizontal" ? e.clientX : e.clientY;
-      const startSize = size;
+    const startPos = direction === 'horizontal' ? e.clientX : e.clientY;
+    const startSize = size;
 
-      const handleMouseMove = (e: MouseEvent) => {
-        const currentPos = direction === "horizontal" ? e.clientX : e.clientY;
-        const delta = currentPos - startPos;
-        const newSize = Math.max(minSize, Math.min(maxSize, startSize + delta));
+    const handleMouseMove = (e: MouseEvent) => {
+      const currentPos = direction === 'horizontal' ? e.clientX : e.clientY;
+      const delta = currentPos - startPos;
+      const newSize = Math.max(minSize, Math.min(maxSize, startSize + delta));
 
-        setSize(newSize);
-        onResize?.(newSize);
-      };
+      setSize(newSize);
+      onResize?.(newSize);
+    };
 
-      const handleMouseUp = () => {
-        setIsResizing(false);
-        onResizeEnd?.(size);
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
-        document.body.style.cursor = "";
-        document.body.style.userSelect = "";
-      };
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      onResizeEnd?.(size);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
 
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor =
-        direction === "horizontal" ? "col-resize" : "row-resize";
-      document.body.style.userSelect = "none";
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.body.style.cursor = direction === 'horizontal' ? 'col-resize' : 'row-resize';
+    document.body.style.userSelect = 'none';
 
+    e.preventDefault();
+  }, [direction, size, minSize, maxSize, onResize, onResizeStart, onResizeEnd]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft' && direction === 'horizontal') {
       e.preventDefault();
-    },
-    [direction, size, minSize, maxSize, onResize, onResizeStart, onResizeEnd],
-  );
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "ArrowLeft" && direction === "horizontal") {
-        e.preventDefault();
-        const newSize = Math.max(minSize, size - 10);
-        setSize(newSize);
-        onResize?.(newSize);
-      } else if (e.key === "ArrowRight" && direction === "horizontal") {
-        e.preventDefault();
-        const newSize = Math.min(maxSize, size + 10);
-        setSize(newSize);
-        onResize?.(newSize);
-      } else if (e.key === "ArrowUp" && direction === "vertical") {
-        e.preventDefault();
-        const newSize = Math.max(minSize, size - 10);
-        setSize(newSize);
-        onResize?.(newSize);
-      } else if (e.key === "ArrowDown" && direction === "vertical") {
-        e.preventDefault();
-        const newSize = Math.min(maxSize, size + 10);
-        setSize(newSize);
-        onResize?.(newSize);
-      }
-    },
-    [direction, size, minSize, maxSize, onResize],
-  );
+      const newSize = Math.max(minSize, size - 10);
+      setSize(newSize);
+      onResize?.(newSize);
+    } else if (e.key === 'ArrowRight' && direction === 'horizontal') {
+      e.preventDefault();
+      const newSize = Math.min(maxSize, size + 10);
+      setSize(newSize);
+      onResize?.(newSize);
+    } else if (e.key === 'ArrowUp' && direction === 'vertical') {
+      e.preventDefault();
+      const newSize = Math.max(minSize, size - 10);
+      setSize(newSize);
+      onResize?.(newSize);
+    } else if (e.key === 'ArrowDown' && direction === 'vertical') {
+      e.preventDefault();
+      const newSize = Math.min(maxSize, size + 10);
+      setSize(newSize);
+      onResize?.(newSize);
+    }
+  }, [direction, size, minSize, maxSize, onResize]);
 
   const panelStyle: React.CSSProperties = {
-    [direction === "horizontal" ? "width" : "height"]: size,
+    [direction === 'horizontal' ? 'width' : 'height']: size,
   };
 
   const resizerClasses = `resizer absolute z-10 transition-colors duration-200 ${
-    direction === "horizontal"
-      ? "right-0 top-0 cursor-col-resize h-full w-1"
-      : "bottom-0 left-0 cursor-row-resize w-full h-1"
-  } ${resizerClassName} ${isResizing ? "bg-blue-500" : "bg-transparent hover:bg-blue-500/50"}`;
+    direction === 'horizontal' 
+      ? 'right-0 top-0 cursor-col-resize h-full w-1' 
+      : 'bottom-0 left-0 cursor-row-resize w-full h-1'
+  } ${resizerClassName} ${isResizing ? 'bg-blue-500' : 'bg-transparent hover:bg-blue-500/50'}`;
 
   return (
     <div
       ref={panelRef}
       id={panelId}
-      className={`resizable-panel relative shrink-0 ${direction} ${isResizing ? "resizing" : ""} ${className}`}
+      className={`resizable-panel relative shrink-0 ${direction} ${isResizing ? 'resizing' : ''} ${className}`}
       style={panelStyle}
     >
       {children}
 
       {showResizer && (
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
         <div
           ref={resizerRef}
           className={resizerClasses}
           onMouseDown={handleMouseDown}
           onKeyDown={handleKeyDown}
+          tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
           role="separator"
-          aria-orientation={
-            direction === "horizontal" ? "horizontal" : "vertical"
-          }
+          aria-orientation={direction === 'horizontal' ? 'horizontal' : 'vertical'}
           aria-label={`Resize ${direction} panel`}
           aria-valuenow={Math.round(size)}
           aria-controls={panelId}
@@ -134,7 +127,7 @@ export function ResizablePanel({
           aria-valuemax={maxSize}
         >
           <div className="resizer-handle flex items-center justify-center h-full opacity-0 hover:opacity-100 transition-opacity">
-            {direction === "horizontal" ? "⋮" : "⋯"}
+            {direction === 'horizontal' ? '⋮' : '⋯'}
           </div>
         </div>
       )}
@@ -145,7 +138,7 @@ export function ResizablePanel({
 // Resizable Layout Component
 interface ResizableLayoutProps {
   children: React.ReactNode[];
-  direction: "horizontal" | "vertical";
+  direction: 'horizontal' | 'vertical';
   defaultSizes?: number[];
   minSizes?: number[];
   maxSizes?: number[];
@@ -160,9 +153,9 @@ export function ResizableLayout({
   defaultSizes,
   minSizes,
   maxSizes,
-  className = "",
+  className = '',
   onLayoutChange,
-  resizerClassName = "",
+  resizerClassName = ''
 }: ResizableLayoutProps) {
   const [sizes, setSizes] = useState(() => {
     if (defaultSizes && defaultSizes.length === children.length) {
@@ -173,26 +166,23 @@ export function ResizableLayout({
     return children.map(() => equalSize);
   });
 
-  const handleResize = useCallback(
-    (index: number, newSize: number) => {
-      setSizes((prevSizes) => {
-        const newSizes = [...prevSizes];
-        newSizes[index] = newSize;
+  const handleResize = useCallback((index: number, newSize: number) => {
+    setSizes(prevSizes => {
+      const newSizes = [...prevSizes];
+      newSizes[index] = newSize;
 
-        // Adjust other panels to maintain total
-        const totalSize = newSizes.reduce((sum, size) => sum + size, 0);
-        const scale = 100 / totalSize;
+      // Adjust other panels to maintain total
+      const totalSize = newSizes.reduce((sum, size) => sum + size, 0);
+      const scale = 100 / totalSize;
 
-        const adjustedSizes = newSizes.map((size) => size * scale);
-        onLayoutChange?.(adjustedSizes);
-        return adjustedSizes;
-      });
-    },
-    [onLayoutChange],
-  );
+      const adjustedSizes = newSizes.map(size => size * scale);
+      onLayoutChange?.(adjustedSizes);
+      return adjustedSizes;
+    });
+  }, [onLayoutChange]);
 
   const containerClasses = `resizable-layout flex w-full h-full overflow-hidden ${
-    direction === "horizontal" ? "flex-row" : "flex-col"
+    direction === 'horizontal' ? 'flex-row' : 'flex-col'
   } ${className}`;
 
   return (
@@ -220,24 +210,21 @@ export function useInfiniteScroll(
   callback: () => void,
   hasMore: boolean,
   loading: boolean,
-  threshold = 100,
+  threshold = 100
 ) {
   const [isFetching, setIsFetching] = useState(false);
 
-  const handleScroll = useCallback(
-    (event: React.UIEvent<HTMLElement>) => {
-      if (loading || !hasMore || isFetching) return;
+  const handleScroll = useCallback((event: React.UIEvent<HTMLElement>) => {
+    if (loading || !hasMore || isFetching) return;
 
-      const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
-      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
 
-      if (distanceFromBottom < threshold) {
-        setIsFetching(true);
-        callback();
-      }
-    },
-    [callback, hasMore, loading, isFetching, threshold],
-  );
+    if (distanceFromBottom < threshold) {
+      setIsFetching(true);
+      callback();
+    }
+  }, [callback, hasMore, loading, isFetching, threshold]);
 
   const resetFetching = useCallback(() => {
     setIsFetching(false);
@@ -264,11 +251,11 @@ export function AutoComplete<T>({
   onChange,
   onSelect,
   suggestions,
-  placeholder = "",
-  className = "",
+  placeholder = '',
+  className = '',
   renderSuggestion,
   getSuggestionValue = (item) => String(item),
-  filterSuggestions,
+  filterSuggestions
 }: AutoCompleteProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -277,8 +264,8 @@ export function AutoComplete<T>({
 
   const filteredSuggestions = filterSuggestions
     ? filterSuggestions(value, suggestions)
-    : suggestions.filter((item) =>
-        getSuggestionValue(item).toLowerCase().includes(value.toLowerCase()),
+    : suggestions.filter(item =>
+        getSuggestionValue(item).toLowerCase().includes(value.toLowerCase())
       );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -290,7 +277,7 @@ export function AutoComplete<T>({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
-      if (e.key === "ArrowDown") {
+      if (e.key === 'ArrowDown') {
         setIsOpen(true);
         setHighlightedIndex(0);
       }
@@ -298,23 +285,23 @@ export function AutoComplete<T>({
     }
 
     switch (e.key) {
-      case "ArrowDown":
+      case 'ArrowDown':
         e.preventDefault();
-        setHighlightedIndex((prev) =>
-          prev < filteredSuggestions.length - 1 ? prev + 1 : prev,
+        setHighlightedIndex(prev =>
+          prev < filteredSuggestions.length - 1 ? prev + 1 : prev
         );
         break;
-      case "ArrowUp":
+      case 'ArrowUp':
         e.preventDefault();
-        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : -1));
+        setHighlightedIndex(prev => prev > 0 ? prev - 1 : -1);
         break;
-      case "Enter":
+      case 'Enter':
         e.preventDefault();
         if (highlightedIndex >= 0 && filteredSuggestions[highlightedIndex]) {
           handleSelect(filteredSuggestions[highlightedIndex]);
         }
         break;
-      case "Escape":
+      case 'Escape':
         setIsOpen(false);
         setHighlightedIndex(-1);
         break;
@@ -351,11 +338,7 @@ export function AutoComplete<T>({
         aria-haspopup="listbox"
         aria-autocomplete="list"
         aria-controls="autocomplete-listbox"
-        aria-activedescendant={
-          highlightedIndex >= 0
-            ? `autocomplete-option-${highlightedIndex}`
-            : undefined
-        }
+        aria-activedescendant={highlightedIndex >= 0 ? `autocomplete-option-${highlightedIndex}` : undefined}
       />
 
       {isOpen && filteredSuggestions.length > 0 && (
@@ -370,21 +353,14 @@ export function AutoComplete<T>({
             <li
               key={index}
               id={`autocomplete-option-${index}`}
-              className={`autocomplete-item ${index === highlightedIndex ? "bg-blue-100 dark:bg-blue-900 cursor-pointer p-2" : "cursor-pointer p-2"} ${index === highlightedIndex ? "highlighted" : ""}`}
+              className={`autocomplete-item ${index === highlightedIndex ? 'bg-blue-100 dark:bg-blue-900 cursor-pointer p-2' : 'cursor-pointer p-2'} ${index === highlightedIndex ? 'highlighted' : ''}`}
               onClick={() => handleSelect(item)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleSelect(item);
-                }
-              }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelect(item); } }}
               tabIndex={0}
               role="option"
               aria-selected={index === highlightedIndex ? "true" : "false"}
             >
-              {renderSuggestion
-                ? renderSuggestion(item)
-                : getSuggestionValue(item)}
+              {renderSuggestion ? renderSuggestion(item) : getSuggestionValue(item)}
             </li>
           ))}
         </ul>

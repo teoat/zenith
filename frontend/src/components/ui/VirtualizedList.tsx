@@ -1,12 +1,12 @@
 /**
  * VirtualizedList - High-performance virtualized list component
- *
+ * 
  * Uses @tanstack/react-virtual for rendering only visible items.
  * Supports variable heights and dynamic content.
  */
 
-import React, { useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import React, { useRef } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 export interface VirtualizedListProps<T> {
   items: T[];
@@ -23,9 +23,9 @@ export function VirtualizedList<T>({
   renderItem,
   estimateSize = 80,
   overscan = 5,
-  className = "",
-  emptyMessage = "No items to display",
-  getItemKey = (_, index) => index,
+  className = '',
+  emptyMessage = 'No items to display',
+  getItemKey = (_, index) => index
 }: VirtualizedListProps<T>) {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -48,13 +48,13 @@ export function VirtualizedList<T>({
     <div
       ref={parentRef}
       className={`overflow-auto ${className}`}
-      style={{ contain: "strict" }}
+      style={{ contain: 'strict' }}
     >
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,
-          width: "100%",
-          position: "relative",
+          width: '100%',
+          position: 'relative',
         }}
       >
         {virtualizer.getVirtualItems().map((virtualItem) => {
@@ -65,10 +65,10 @@ export function VirtualizedList<T>({
               data-index={virtualItem.index}
               ref={virtualizer.measureElement}
               style={{
-                position: "absolute",
+                position: 'absolute',
                 top: 0,
                 left: 0,
-                width: "100%",
+                width: '100%',
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >

@@ -1,31 +1,29 @@
 // lib/api.ts - Aggregator for modular services
 // Preserving backwards compatibility for existing imports
 
-import { authService } from "@/services/auth";
-import { caseService } from "@/services/cases";
-import { reportingService } from "@/services/reporting";
-import { graphService } from "@/services/graph";
-import { evidenceService } from "@/services/evidence";
-import { settingsService } from "@/services/settings";
-import { notificationService } from "@/services/notifications";
-import { monitoringService } from "@/services/monitoring";
-import { syncService } from "@/services/sync";
-import { alertService } from "@/services/alerts";
-import { reconciliationService } from "@/services/reconciliation";
-import { userService } from "@/services/user";
-import { aiService } from "@/services/ai";
-import { integrationService } from "@/services/integrations";
-import { costOptimizationService } from "@/services/costOptimization";
+import { authService } from '../services/auth';
+import { caseService } from '../services/cases';
+import { reportingService } from '../services/reporting';
+import { graphService } from '../services/graph';
+import { evidenceService } from '../services/evidence';
+import { settingsService } from '../services/settings';
+import { notificationService } from '../services/notifications';
+import { monitoringService } from '../services/monitoring';
+import { syncService } from '../services/sync';
+import { alertService } from '../services/alerts';
+import { reconciliationService } from '../services/reconciliation';
+import { userService } from '../services/user';
+import { aiService } from '../services/ai';
+import { integrationService } from '../services/integrations';
 // diagnosticsService is standalone (uses internal logic, not the API facade)
 
 // Export types
-export * from "@/types/api";
+export * from '../types/api';
 
 // Facade Class to maintain the DualModeAPI interface used in the app
 class DualModeAPIFacade {
   // Auth
   login = authService.login;
-  logout = authService.logout;
 
   // Cases
   getCases = caseService.getCases;
@@ -74,9 +72,6 @@ class DualModeAPIFacade {
   processEvidence = evidenceService.processEvidence;
   selectFile = evidenceService.selectFile;
   analyzeFile = evidenceService.analyzeFile;
-  analyzeEvidencePath = evidenceService.analyzeEvidencePath;
-  getHighlights = evidenceService.getHighlights;
-  saveHighlight = evidenceService.saveHighlight;
 
   // Settings / Audit
   getAuditLogs = settingsService.getAuditLogs;
@@ -108,25 +103,15 @@ class DualModeAPIFacade {
   reconcileTransaction = reconciliationService.reconcileTransaction;
   flagTransaction = reconciliationService.flagTransaction;
   getReconciliationItems = reconciliationService.getReconciliationItems;
-  ingestMappedData = reconciliationService.ingestMappedData;
 
   // User (from userService)
   saveUserPreferences = userService.saveUserPreferences;
-  getMe = userService.getMe;
 
   // AI Assistant
   chat = aiService.chat;
   getMultiPersonaAnalysis = aiService.getMultiPersonaAnalysis;
   investigateSubject = aiService.investigateSubject;
   getProactiveSuggestions = aiService.getProactiveSuggestions;
-
-  // Cost Optimization
-  getInfrastructureCosts = costOptimizationService.getInfrastructureCosts;
-  getSavingsProjection = costOptimizationService.getSavingsProjection;
-  applyCostOptimization = costOptimizationService.applyCostOptimization;
-
-  // Diagnostics (Enhanced)
-  resolveDiagnosticIssue = monitoringService.resolveDiagnosticIssue;
 
   // Integrations
   getIntegrations = integrationService.getIntegrations;

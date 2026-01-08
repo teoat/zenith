@@ -1,5 +1,5 @@
-import { secureLogger } from "@/utils/secureLogger";
-import { secureRandom } from "@/utils/secureRandom";
+// frontend/src/lib/AIFraudDetection.ts
+// AI-powered fraud detection using machine learning algorithms
 
 interface TransactionFeatures {
   amount: number;
@@ -44,16 +44,11 @@ export class AIFraudDetector {
 
   // Train the AI models with historical data
   async train(trainingData: TrainingData[]): Promise<void> {
-    secureLogger.info(
-      "AI_INTELLIGENCE",
-      `Training AI models with ${trainingData.length} samples...`,
-    );
+    console.log(`Training AI models with ${trainingData.length} samples...`);
 
     // Prepare features for training
-    const features = trainingData.map((data) =>
-      this.extractFeatures(data.features),
-    );
-    const labels = trainingData.map((data) => (data.label ? 1 : 0));
+    const features = trainingData.map(data => this.extractFeatures(data.features));
+    const labels = trainingData.map(data => data.label ? 1 : 0);
 
     // Normalize features
     const normalizedFeatures = this.featureNormalizer.fitTransform(features);
@@ -65,13 +60,13 @@ export class AIFraudDetector {
     this.neuralNetwork.fit(normalizedFeatures, labels);
 
     this.trained = true;
-    secureLogger.info("AI_INTELLIGENCE", "AI models trained successfully");
+    console.log('AI models trained successfully');
   }
 
   // Predict fraud for a transaction
   async predict(transaction: TransactionFeatures): Promise<FraudPrediction> {
     if (!this.trained) {
-      throw new Error("AI models not trained. Call train() first.");
+      throw new Error('AI models not trained. Call train() first.');
     }
 
     const features = this.extractFeatures(transaction);
@@ -87,17 +82,10 @@ export class AIFraudDetector {
     const confidence = Math.abs(combinedScore - 0.5) * 2; // Confidence in prediction
 
     // Generate risk factors
-    const factors = this.analyzeRiskFactors(
-      transaction,
-      anomalyScore,
-      nnPrediction,
-    );
+    const factors = this.analyzeRiskFactors(transaction, anomalyScore, nnPrediction);
 
     // Generate recommendations
-    const recommendations = this.generateRecommendations(
-      transaction,
-      combinedScore,
-    );
+    const recommendations = this.generateRecommendations(transaction, combinedScore);
 
     return {
       isFraud,
@@ -105,7 +93,7 @@ export class AIFraudDetector {
       riskScore: combinedScore,
       factors,
       anomalyScore,
-      recommendations,
+      recommendations
     };
   }
 
@@ -121,21 +109,16 @@ export class AIFraudDetector {
       transaction.userHistory.averageAmount,
       transaction.userHistory.riskScore,
       // Add more features as needed
-      this.hashString(transaction.location || ""),
-      this.hashString(transaction.merchantCategory || ""),
+      this.hashString(transaction.location || ''),
+      this.hashString(transaction.merchantCategory || ''),
       Math.max(...transaction.previousTransactions, 0), // Max previous amount
-      transaction.previousTransactions.reduce((a, b) => a + b, 0) /
-        Math.max(transaction.previousTransactions.length, 1), // Average previous
-      transaction.previousTransactions.filter((t) => t > transaction.amount)
-        .length, // Count of larger transactions
+      transaction.previousTransactions.reduce((a, b) => a + b, 0) / Math.max(transaction.previousTransactions.length, 1), // Average previous
+      transaction.previousTransactions.filter(t => t > transaction.amount).length // Count of larger transactions
     ];
   }
 
   // Combine predictions from multiple models
-  private combinePredictions(
-    anomalyScore: number,
-    nnPrediction: number,
-  ): number {
+  private combinePredictions(anomalyScore: number, nnPrediction: number): number {
     // Anomaly score is typically between 0-1, higher = more anomalous
     // NN prediction is 0-1, higher = more likely fraud
 
@@ -143,51 +126,48 @@ export class AIFraudDetector {
     const anomalyWeight = 0.6;
     const nnWeight = 0.4;
 
-    return anomalyScore * anomalyWeight + nnPrediction * nnWeight;
+    return (anomalyScore * anomalyWeight) + (nnPrediction * nnWeight);
   }
 
   // Analyze what factors contribute to the risk score
   private analyzeRiskFactors(
     transaction: TransactionFeatures,
     anomalyScore: number,
-    nnPrediction: number,
+    nnPrediction: number
   ): string[] {
     const factors: string[] = [];
 
     // Amount-based factors
     if (transaction.amount > transaction.userHistory.averageAmount * 3) {
-      factors.push("Unusually high transaction amount");
+      factors.push('Unusually high transaction amount');
     }
 
-    if (
-      transaction.amount >
-      Math.max(...transaction.previousTransactions, 0) * 2
-    ) {
-      factors.push("Significantly higher than previous transactions");
+    if (transaction.amount > Math.max(...transaction.previousTransactions, 0) * 2) {
+      factors.push('Significantly higher than previous transactions');
     }
 
     // Frequency factors
     if (transaction.frequency > 10) {
-      factors.push("High transaction frequency");
+      factors.push('High transaction frequency');
     }
 
     // Time-based factors
     if (transaction.timeOfDay < 6 || transaction.timeOfDay > 22) {
-      factors.push("Unusual transaction time");
+      factors.push('Unusual transaction time');
     }
 
     // Anomaly-based factors
     if (anomalyScore > 0.8) {
-      factors.push("Highly anomalous transaction pattern");
+      factors.push('Highly anomalous transaction pattern');
     }
 
     if (nnPrediction > 0.7) {
-      factors.push("Neural network fraud prediction");
+      factors.push('Neural network fraud prediction');
     }
 
     // User history factors
     if (transaction.userHistory.riskScore > 0.5) {
-      factors.push("High-risk user history");
+      factors.push('High-risk user history');
     }
 
     return factors;
@@ -196,31 +176,29 @@ export class AIFraudDetector {
   // Generate recommendations based on risk assessment
   private generateRecommendations(
     transaction: TransactionFeatures,
-    riskScore: number,
+    riskScore: number
   ): string[] {
     const recommendations: string[] = [];
 
     if (riskScore > 0.8) {
-      recommendations.push("Immediate transaction hold recommended");
-      recommendations.push("Contact customer for verification");
-      recommendations.push("Flag account for enhanced monitoring");
+      recommendations.push('Immediate transaction hold recommended');
+      recommendations.push('Contact customer for verification');
+      recommendations.push('Flag account for enhanced monitoring');
     } else if (riskScore > 0.6) {
-      recommendations.push("Additional verification required");
-      recommendations.push("Monitor account activity closely");
+      recommendations.push('Additional verification required');
+      recommendations.push('Monitor account activity closely');
     } else if (riskScore > 0.4) {
-      recommendations.push("Review transaction manually");
-      recommendations.push("Check for unusual patterns");
+      recommendations.push('Review transaction manually');
+      recommendations.push('Check for unusual patterns');
     }
 
     // Specific recommendations based on factors
     if (transaction.amount > 10000) {
-      recommendations.push(
-        "High-value transaction - enhanced verification needed",
-      );
+      recommendations.push('High-value transaction - enhanced verification needed');
     }
 
     if (transaction.frequency > 20) {
-      recommendations.push("Suspicious transaction frequency detected");
+      recommendations.push('Suspicious transaction frequency detected');
     }
 
     return recommendations;
@@ -231,7 +209,7 @@ export class AIFraudDetector {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
+      hash = ((hash << 5) - hash) + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash) / 2147483647; // Normalize to 0-1
@@ -245,7 +223,7 @@ export class AIFraudDetector {
     f1Score: number;
   }> {
     if (!this.trained) {
-      throw new Error("Models not trained");
+      throw new Error('Models not trained');
     }
 
     let truePositives = 0;
@@ -266,7 +244,7 @@ export class AIFraudDetector {
     const accuracy = (truePositives + trueNegatives) / testData.length;
     const precision = truePositives / (truePositives + falsePositives) || 0;
     const recall = truePositives / (truePositives + falseNegatives) || 0;
-    const f1Score = (2 * (precision * recall)) / (precision + recall) || 0;
+    const f1Score = 2 * (precision * recall) / (precision + recall) || 0;
 
     return { accuracy, precision, recall, f1Score };
   }
@@ -293,7 +271,7 @@ class IsolationForest {
   async predict(features: number[]): Promise<number> {
     if (this.trees.length === 0) return 0;
 
-    const scores = this.trees.map((tree) => tree.score(features));
+    const scores = this.trees.map(tree => tree.score(features));
     const averageScore = scores.reduce((a, b) => a + b, 0) / scores.length;
 
     // Convert to anomaly score (0-1, higher = more anomalous)
@@ -303,7 +281,7 @@ class IsolationForest {
   private sampleData(data: number[][], size: number): number[][] {
     const sampled: number[][] = [];
     for (let i = 0; i < size && i < data.length; i++) {
-      const randomIndex = Math.floor(secureRandom.random() * data.length);
+      const randomIndex = Math.floor(Math.random() * data.length);
       sampled.push(data[randomIndex]);
     }
     return sampled;
@@ -324,23 +302,19 @@ class IsolationTree {
     }
 
     // Randomly select feature to split on
-    this.splitFeature = Math.floor(secureRandom.random() * data[0].length);
+    this.splitFeature = Math.floor(Math.random() * data[0].length);
 
     // Find min/max values for this feature
-    const values = data.map((row) => row[this.splitFeature]);
+    const values = data.map(row => row[this.splitFeature]);
     const min = Math.min(...values);
     const max = Math.max(...values);
 
     // Random split value
-    this.splitValue = min + secureRandom.random() * (max - min);
+    this.splitValue = min + Math.random() * (max - min);
 
     // Split data
-    const leftData = data.filter(
-      (row) => row[this.splitFeature] < this.splitValue,
-    );
-    const rightData = data.filter(
-      (row) => row[this.splitFeature] >= this.splitValue,
-    );
+    const leftData = data.filter(row => row[this.splitFeature] < this.splitValue);
+    const rightData = data.filter(row => row[this.splitFeature] >= this.splitValue);
 
     // Recursively build children
     this.leftChild = new IsolationTree();
@@ -382,11 +356,8 @@ class SimpleNeuralNetwork {
 
   fit(features: number[][], labels: number[]): void {
     this.inputSize = features[0].length;
-    this.weights = Array.from(
-      { length: this.inputSize },
-      () => secureRandom.random() - 0.5,
-    );
-    this.bias = secureRandom.random() - 0.5;
+    this.weights = Array.from({ length: this.inputSize }, () => Math.random() - 0.5);
+    this.bias = Math.random() - 0.5;
 
     // Very simple training - just adjust weights based on average error
     const learningRate = 0.01;
@@ -408,9 +379,7 @@ class SimpleNeuralNetwork {
       }
 
       if (epoch % 10 === 0) {
-        secureLogger.debug("AI_INTELLIGENCE", `Training Epoch ${epoch}`, {
-          avgError: totalError / features.length,
-        });
+        console.log(`Epoch ${epoch}, Avg Error: ${totalError / features.length}`);
       }
     }
   }
@@ -446,7 +415,7 @@ class FeatureNormalizer {
         this.means[i] += row[i];
       }
     }
-    this.means = this.means.map((mean) => mean / data.length);
+    this.means = this.means.map(mean => mean / data.length);
 
     // Calculate standard deviations
     for (const row of data) {
@@ -454,17 +423,17 @@ class FeatureNormalizer {
         this.stds[i] += Math.pow(row[i] - this.means[i], 2);
       }
     }
-    this.stds = this.stds.map((std) => Math.sqrt(std / data.length));
+    this.stds = this.stds.map(std => Math.sqrt(std / data.length));
 
     return this.transform(data);
   }
 
   transform(data: number[][]): number[][] {
-    return data.map((row) =>
+    return data.map(row =>
       row.map((value, i) => {
         const std = this.stds[i] || 1;
         return std > 0 ? (value - this.means[i]) / std : 0;
-      }),
+      })
     );
   }
 }
@@ -487,9 +456,7 @@ export class AIFraudDetectionEngine {
   }
 
   // Analyze transaction with AI
-  async analyzeTransaction(
-    transaction: TransactionFeatures,
-  ): Promise<FraudPrediction> {
+  async analyzeTransaction(transaction: TransactionFeatures): Promise<FraudPrediction> {
     if (!this.trained) {
       await this.initialize();
     }
@@ -505,23 +472,20 @@ export class AIFraudDetectionEngine {
     for (let i = 0; i < 1000; i++) {
       data.push({
         features: {
-          amount: secureRandom.random() * 1000 + 10, // $10-$1010
-          frequency: Math.floor(secureRandom.random() * 5) + 1, // 1-5 transactions
-          timeOfDay: Math.floor(secureRandom.random() * 24), // 0-23 hours
-          dayOfWeek: Math.floor(secureRandom.random() * 7), // 0-6 days
-          location: "local",
-          merchantCategory: "retail",
-          previousTransactions: Array.from(
-            { length: 10 },
-            () => secureRandom.random() * 500 + 20,
-          ),
+          amount: Math.random() * 1000 + 10, // $10-$1010
+          frequency: Math.floor(Math.random() * 5) + 1, // 1-5 transactions
+          timeOfDay: Math.floor(Math.random() * 24), // 0-23 hours
+          dayOfWeek: Math.floor(Math.random() * 7), // 0-6 days
+          location: 'local',
+          merchantCategory: 'retail',
+          previousTransactions: Array.from({ length: 10 }, () => Math.random() * 500 + 20),
           userHistory: {
-            totalTransactions: Math.floor(secureRandom.random() * 100) + 10,
-            averageAmount: secureRandom.random() * 300 + 50,
-            riskScore: secureRandom.random() * 0.3, // Low risk for legitimate
-          },
+            totalTransactions: Math.floor(Math.random() * 100) + 10,
+            averageAmount: Math.random() * 300 + 50,
+            riskScore: Math.random() * 0.3 // Low risk for legitimate
+          }
         },
-        label: false,
+        label: false
       });
     }
 
@@ -529,27 +493,20 @@ export class AIFraudDetectionEngine {
     for (let i = 0; i < 200; i++) {
       data.push({
         features: {
-          amount: secureRandom.random() * 5000 + 2000, // $2000-$7000 (unusually high)
-          frequency: Math.floor(secureRandom.random() * 20) + 10, // 10-30 transactions (high frequency)
-          timeOfDay:
-            secureRandom.random() < 0.7
-              ? Math.floor(secureRandom.random() * 6)
-              : Math.floor(secureRandom.random() * 6) + 18, // Unusual hours
-          dayOfWeek: Math.floor(secureRandom.random() * 7),
-          location: secureRandom.random() < 0.5 ? "international" : "local",
-          merchantCategory:
-            secureRandom.random() < 0.5 ? "high-risk" : "retail",
-          previousTransactions: Array.from(
-            { length: 5 },
-            () => secureRandom.random() * 100 + 5,
-          ), // Fewer previous transactions
+          amount: Math.random() * 5000 + 2000, // $2000-$7000 (unusually high)
+          frequency: Math.floor(Math.random() * 20) + 10, // 10-30 transactions (high frequency)
+          timeOfDay: Math.random() < 0.7 ? Math.floor(Math.random() * 6) : Math.floor(Math.random() * 6) + 18, // Unusual hours
+          dayOfWeek: Math.floor(Math.random() * 7),
+          location: Math.random() < 0.5 ? 'international' : 'local',
+          merchantCategory: Math.random() < 0.5 ? 'high-risk' : 'retail',
+          previousTransactions: Array.from({ length: 5 }, () => Math.random() * 100 + 5), // Fewer previous transactions
           userHistory: {
-            totalTransactions: Math.floor(secureRandom.random() * 20) + 1, // New user
-            averageAmount: secureRandom.random() * 100 + 10, // Low average
-            riskScore: secureRandom.random() * 0.7 + 0.3, // Higher risk
-          },
+            totalTransactions: Math.floor(Math.random() * 20) + 1, // New user
+            averageAmount: Math.random() * 100 + 10, // Low average
+            riskScore: Math.random() * 0.7 + 0.3 // Higher risk
+          }
         },
-        label: true,
+        label: true
       });
     }
 

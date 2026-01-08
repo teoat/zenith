@@ -1,12 +1,9 @@
-import { secureLogger } from "./secureLogger";
+// src/utils/performanceMonitor.ts
+// Performance monitoring utilities
 
 declare global {
   interface Window {
-    gtag?: (
-      command: string,
-      targetId: string,
-      config?: Record<string, unknown>,
-    ) => void;
+    gtag?: (command: string, targetId: string, config?: Record<string, unknown>) => void;
   }
 }
 
@@ -24,7 +21,7 @@ class PerformanceMonitor {
     lcp: null,
     fid: null,
     cls: null,
-    ttfb: null,
+    ttfb: null
   };
 
   private observers: PerformanceObserver[] = [];
@@ -41,12 +38,12 @@ class PerformanceMonitor {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
         this.metrics.fcp = lastEntry.startTime;
-        secureLogger.info("PERFORMANCE", `FCP Measured: ${this.metrics.fcp}ms`);
+        console.log('FCP:', this.metrics.fcp);
       });
-      fcpObserver.observe({ entryTypes: ["paint"] });
+      fcpObserver.observe({ entryTypes: ['paint'] });
       this.observers.push(fcpObserver);
     } catch {
-      secureLogger.warn("PERFORMANCE", "FCP observer not supported");
+      console.warn('FCP observer not supported');
     }
 
     // Largest Contentful Paint
@@ -56,28 +53,26 @@ class PerformanceMonitor {
         const lastEntry = entries[entries.length - 1];
         this.metrics.lcp = lastEntry.startTime;
       });
-      lcpObserver.observe({ entryTypes: ["largest-contentful-paint"] });
+      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.push(lcpObserver);
     } catch {
-      secureLogger.warn("PERFORMANCE", "LCP observer not supported");
+      console.warn('LCP observer not supported');
     }
 
     // First Input Delay
     try {
       const fidObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        entries.forEach(
-          (entry: PerformanceEntry & { processingStart?: number }) => {
-            if (entry.processingStart !== undefined) {
-              this.metrics.fid = entry.processingStart - entry.startTime;
-            }
-          },
-        );
+        entries.forEach((entry: PerformanceEntry & { processingStart?: number }) => {
+          if (entry.processingStart !== undefined) {
+            this.metrics.fid = entry.processingStart - entry.startTime;
+          }
+        });
       });
-      fidObserver.observe({ entryTypes: ["first-input"] });
+      fidObserver.observe({ entryTypes: ['first-input'] });
       this.observers.push(fidObserver);
     } catch {
-      secureLogger.warn("PERFORMANCE", "FID observer not supported");
+      console.warn('FID observer not supported');
     }
 
     // Cumulative Layout Shift
@@ -85,30 +80,23 @@ class PerformanceMonitor {
       const clsObserver = new PerformanceObserver((list) => {
         let clsValue = 0;
         const entries = list.getEntries();
-        entries.forEach(
-          (
-            entry: PerformanceEntry & {
-              hadRecentInput?: boolean;
-              value?: number;
-            },
-          ) => {
-            if (!entry.hadRecentInput && entry.value !== undefined) {
-              clsValue += entry.value;
-            }
-          },
-        );
+        entries.forEach((entry: PerformanceEntry & { hadRecentInput?: boolean; value?: number }) => {
+          if (!entry.hadRecentInput && entry.value !== undefined) {
+            clsValue += entry.value;
+          }
+        });
         this.metrics.cls = clsValue;
       });
-      clsObserver.observe({ entryTypes: ["layout-shift"] });
+      clsObserver.observe({ entryTypes: ['layout-shift'] });
       this.observers.push(clsObserver);
     } catch {
-      secureLogger.warn("PERFORMANCE", "CLS observer not supported");
+      console.warn('CLS observer not supported');
     }
   }
 
   private measureTTFB() {
     // Time to First Byte - measure navigation timing
-    if ("performance" in window && "timing" in window.performance) {
+    if ('performance' in window && 'timing' in window.performance) {
       const timing = window.performance.timing;
       this.metrics.ttfb = timing.responseStart - timing.requestStart;
     }
@@ -119,19 +107,13 @@ class PerformanceMonitor {
   }
 
   public logMetrics() {
-    secureLogger.info("PERFORMANCE", "Summary of Web Vitals", {
-      fcp: this.metrics.fcp
-        ? `${this.metrics.fcp.toFixed(2)}ms`
-        : "Not measured",
-      lcp: this.metrics.lcp
-        ? `${this.metrics.lcp.toFixed(2)}ms`
-        : "Not measured",
-      fid: this.metrics.fid
-        ? `${this.metrics.fid.toFixed(2)}ms`
-        : "Not measured",
-      cls: this.metrics.cls ? this.metrics.cls.toFixed(4) : "Not measured",
-      ttfb: this.metrics.ttfb ? `${this.metrics.ttfb}ms` : "Not measured",
-    });
+    console.group('🚀 Performance Metrics');
+    console.log('FCP (First Contentful Paint):', this.metrics.fcp ? `${this.metrics.fcp.toFixed(2)}ms` : 'Not measured');
+    console.log('LCP (Largest Contentful Paint):', this.metrics.lcp ? `${this.metrics.lcp.toFixed(2)}ms` : 'Not measured');
+    console.log('FID (First Input Delay):', this.metrics.fid ? `${this.metrics.fid.toFixed(2)}ms` : 'Not measured');
+    console.log('CLS (Cumulative Layout Shift):', this.metrics.cls ? this.metrics.cls.toFixed(4) : 'Not measured');
+    console.log('TTFB (Time to First Byte):', this.metrics.ttfb ? `${this.metrics.ttfb}ms` : 'Not measured');
+    console.groupEnd();
   }
 
   public reportToAnalytics() {
@@ -140,23 +122,23 @@ class PerformanceMonitor {
 
     // Example: Send to analytics
     if (window.gtag) {
-      window.gtag("event", "web_vitals", {
-        event_category: "Web Vitals",
-        event_label: "Performance Metrics",
+      window.gtag('event', 'web_vitals', {
+        event_category: 'Web Vitals',
+        event_label: 'Performance Metrics',
         value: Math.round(metrics.lcp || 0),
         custom_map: {
           metric_fcp: metrics.fcp,
           metric_lcp: metrics.lcp,
           metric_fid: metrics.fid,
           metric_cls: metrics.cls,
-          metric_ttfb: metrics.ttfb,
-        },
+          metric_ttfb: metrics.ttfb
+        }
       });
     }
   }
 
   public destroy() {
-    this.observers.forEach((observer) => {
+    this.observers.forEach(observer => {
       try {
         observer.disconnect();
       } catch {
@@ -171,16 +153,16 @@ class PerformanceMonitor {
 export const WEB_VITALS_THRESHOLDS = {
   fcp: { good: 1800, needsImprovement: 3000 }, // ms
   lcp: { good: 2500, needsImprovement: 4000 }, // ms
-  fid: { good: 100, needsImprovement: 300 }, // ms
-  cls: { good: 0.1, needsImprovement: 0.25 }, // score
-  ttfb: { good: 800, needsImprovement: 1800 }, // ms
+  fid: { good: 100, needsImprovement: 300 },   // ms
+  cls: { good: 0.1, needsImprovement: 0.25 },  // score
+  ttfb: { good: 800, needsImprovement: 1800 }  // ms
 };
 
 export const performanceMonitor = new PerformanceMonitor();
 
 // Auto-report metrics after page load
-if (typeof window !== "undefined") {
-  window.addEventListener("load", () => {
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', () => {
     setTimeout(() => {
       performanceMonitor.logMetrics();
       performanceMonitor.reportToAnalytics();
@@ -188,7 +170,7 @@ if (typeof window !== "undefined") {
   });
 
   // Report before page unload
-  window.addEventListener("beforeunload", () => {
+  window.addEventListener('beforeunload', () => {
     performanceMonitor.reportToAnalytics();
   });
 }

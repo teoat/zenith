@@ -1,134 +1,142 @@
-import React, { useState, useEffect } from "react";
-import { secureLogger } from "@/utils/secureLogger";
-import { api } from "@/lib/api";
-import type { User } from "@/types/schema";
-import type { LoginCredentials } from "@/context/AuthContext";
-import { AuthContext } from "@/context/AuthContext";
-import { errorReporting } from "@/services/errorReporting";
+import React, { useState, useEffect } from 'react';
+import { api } from '../lib/api';
+import { User } from '../types/schema';
+import { isElectron } from '../utils/electron';
+import { AuthContext, LoginCredentials } from '../context/AuthContext';
+import errorReporting from '../services/errorReporting';
 
-import { isDev, env } from "@/utils/env";
+// Set to true to bypass authentication for debugging purposes
+const isDebugging = false;
 
-const isDevelopment = isDev;
-const BYPASS_AUTH = env.VITE_BYPASS_AUTH === "true" && isDevelopment;
-
-export const AuthenticationProvider: React.FC<{
-  children: React.ReactNode;
-}> = ({ children }) => {
+export const AuthenticationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const [isLoading, setIsLoading] = useState(true);
   const [isSetupRequired, setIsSetupRequired] = useState(false);
 
   useEffect(() => {
-    const initAuth = async () => {
-      secureLogger.info(
-        "AUTH",
-        "Authentication provider initialization started",
-      );
+    let unsubscribeAuth: (() => void) | undefined;
 
-      if (BYPASS_AUTH) {
-        secureLogger.warn(
-          "AUTH",
-          "Auth bypassed - Development Debug Mode Active",
-        );
+    const initAuth = async () => {
+      console.log('!!! AUTH PROVIDER INIT START !!!');
+      console.log('isDebugging flag:', isDebugging);
+
+      // TEMPORARY: Bypass auth for debugging
+      if (isDebugging) {
+        console.log('[DEV] Auth bypassed - Debug Mode Active');
         setUser({
-          id: "dev-user",
-          email: "dev@local",
-          role: "ADMIN",
-          name: "Developer",
-          preferences: {},
+          id: 'dev-user',
+          email: 'dev@local',
+          role: 'ADMIN',
+          name: 'Developer',
+          preferences: {}
         });
+        setToken('debug-token');
+        localStorage.setItem('token', 'debug-token');
         setIsSetupRequired(false);
         setIsLoading(false);
         return;
       }
 
       try {
-        secureLogger.debug("AUTH", "Running in web mode, checking session");
+        const hasElectron = isElectron();
+        console.log('Environment check:', { hasElectron, hasAPI: !!window.electronAPI });
 
-        try {
-          const userData = await api.getMe();
-          if (userData) {
-            setUser({
-              id: userData.id,
-              email: userData.email,
-              role: userData.role || "ANALYST",
-              name: userData.full_name || userData.username || "User",
-            });
-          }
-        } catch (e) {
-          secureLogger.debug("AUTH", "Session check failed (not logged in)", {
-            error: e instanceof Error ? e.message : "Unknown error",
-          });
+        if (hasElectron && window.electronAPI) {
+            // Electron Path
+            try {
+                const isSet = await window.electronAPI.isMasterPasswordSet();
+                if (!isSet) {
+                    setIsSetupRequired(true);
+                } else {
+                    // Start session listener
+                    const response = await window.electronAPI.startSessionListener();
+                    if (response.success) {
+                        unsubscribeAuth = window.electronAPI.onSessionStatusChanged((status: any) => {
+                             console.log('Session status changed:', status);
+                             if (!status.isValid) {
+                                 setToken(null);
+                                 setUser(null);
+                             }
+                        });
+                    }
+                }
+            } catch (electronErr) {
+                console.error('Electron API Error:', electronErr);
+                // Fallback to browser mode if Electron API fails
+            }
+        } else {
+             console.log('[DEBUG] Browser Mode (No Electron API detected)');
+             // Browser Path: Check local storage
         }
+         
+        // Common Token Validation
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) {
+            setToken(storedToken);
+            // Verify token with backend if needed
+            // await api.verifyToken(storedToken);
+        }
+
       } catch (caughtError) {
-        const errorMessage = caughtError instanceof Error
-          ? caughtError.message
-          : "Unknown error";
-
-        secureLogger.error(
-          "AUTH",
-          "Critical authentication initialization error",
-          { error: errorMessage },
-        );
-
+        console.error('CRITICAL AUTH INIT ERROR:', caughtError);
         errorReporting.reportError({
-          message: "Auth initialization failed",
-          component: "AuthenticationProvider",
-          severity: "medium",
-          context: { error: errorMessage },
+          message: 'Auth initialization failed',
+          component: 'AuthenticationProvider',
+          severity: 'medium',
+          context: { error: caughtError instanceof Error ? caughtError.message : String(caughtError) }
         });
+        // Even on error, stop loading to prevent infinite spinner
       } finally {
-        setIsLoading(false);
+         setIsLoading(false);
       }
     };
 
     initAuth();
+    
+    return () => {
+      if (unsubscribeAuth) unsubscribeAuth();
+    };
   }, []);
 
   const login = async (credentials: LoginCredentials) => {
     try {
       if (!credentials.password) {
-        throw new Error("Password is required");
+        throw new Error('Password is required');
       }
 
-      const result = await api.login({
-        email: credentials.email,
+      // api.login expects { email, password, mfa_code? }
+      const result = await api.login({ 
+        email: credentials.email, 
         password: credentials.password,
-        mfa_code: credentials.mfa_code,
+        mfa_code: credentials.mfa_code
       });
-
-      const loggedInUser: User = {
-        id: "1",
-        email: credentials.email,
-        role: "ANALYST",
-        name: credentials.email.split("@")[0],
+      const accessToken = result.access_token;
+      
+      localStorage.setItem('token', accessToken);
+      setToken(accessToken);
+      
+      const loggedInUser: User = { 
+        id: '1', 
+        email: credentials.email, 
+        role: 'ANALYST', // Default role
+        name: credentials.email.split('@')[0] // Derive name from email
       };
-      setUser(loggedInUser);
-      secureLogger.info("AUTH", "User logged in successfully", {
-        email: credentials.email,
-      });
-    } catch (error) {
-      secureLogger.error("AUTH", "Login attempt failed", {
-        email: credentials.email,
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
-      throw error;
+      setUser(loggedInUser); 
+    } catch (err) {
+      console.error('Login failed:', err);
+      throw err;
     }
   };
 
-  const logout = async () => {
-    try {
-      await api.logout();
-    } catch (e) {
-      secureLogger.warn("AUTH", "Logout API call failed", { error: e });
-    }
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, token: null, login, logout, isLoading, isSetupRequired }}
-    >
+    <AuthContext.Provider value={{ user, token, login, logout, isLoading, isSetupRequired }}>
       {children}
     </AuthContext.Provider>
   );

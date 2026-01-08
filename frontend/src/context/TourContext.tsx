@@ -1,17 +1,11 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  type ReactNode,
-} from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface TourStep {
   id: string;
   title: string;
   description: string;
   target: string; // CSS selector
-  placement?: "top" | "bottom" | "left" | "right";
+  placement?: 'top' | 'bottom' | 'left' | 'right';
 }
 
 interface TourContextType {
@@ -29,7 +23,7 @@ const TourContext = createContext<TourContextType | undefined>(undefined);
 export const useTour = () => {
   const context = useContext(TourContext);
   if (!context) {
-    throw new Error("useTour must be used within a TourProvider");
+    throw new Error('useTour must be used within a TourProvider');
   }
   return context;
 };
@@ -44,75 +38,68 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
   const [steps, setSteps] = useState<TourStep[]>([]);
 
   const tours: Record<string, TourStep[]> = {
-    "dashboard-intro": [
+    'dashboard-intro': [
       {
-        id: "welcome",
-        title: "Welcome to Zenith!",
-        description:
-          "This is your command center for fraud detection and investigation.",
+        id: 'welcome',
+        title: 'Welcome to 378x492!',
+        description: 'This is your command center for fraud detection and investigation.',
         target: '[data-tour="dashboard-header"]',
-        placement: "bottom",
+        placement: 'bottom'
       },
       {
-        id: "metrics",
-        title: "Key Metrics",
-        description:
-          "Monitor your fraud detection performance with these real-time metrics.",
+        id: 'metrics',
+        title: 'Key Metrics',
+        description: 'Monitor your fraud detection performance with these real-time metrics.',
         target: '[data-tour="metrics-grid"]',
-        placement: "top",
+        placement: 'top'
       },
       {
-        id: "threat-map",
-        title: "Threat Map",
-        description:
-          "Visualize fraud patterns and hotspots across your network.",
+        id: 'threat-map',
+        title: 'Threat Map',
+        description: 'Visualize fraud patterns and hotspots across your network.',
         target: '[data-tour="threat-map"]',
-        placement: "left",
+        placement: 'left'
       },
       {
-        id: "ai-watchtower",
-        title: "AI Watchtower",
-        description: "Get AI-powered insights and anomaly detection alerts.",
+        id: 'ai-watchtower',
+        title: 'AI Watchtower',
+        description: 'Get AI-powered insights and anomaly detection alerts.',
         target: '[data-tour="ai-watchtower"]',
-        placement: "right",
-      },
+        placement: 'right'
+      }
     ],
-    "cases-intro": [
+    'cases-intro': [
       {
-        id: "cases-view",
-        title: "Case Management",
-        description:
-          "Organize and track all your fraud investigations in one place.",
+        id: 'cases-view',
+        title: 'Case Management',
+        description: 'Organize and track all your fraud investigations in one place.',
         target: '[data-tour="cases-toolbar"]',
-        placement: "bottom",
+        placement: 'bottom'
       },
       {
-        id: "kanban-board",
-        title: "Investigation Pipeline",
-        description:
-          "Move cases through different stages: Incoming, In Review, and Closed.",
+        id: 'kanban-board',
+        title: 'Investigation Pipeline',
+        description: 'Move cases through different stages: Incoming, In Review, and Closed.',
         target: '[data-tour="kanban-board"]',
-        placement: "top",
-      },
+        placement: 'top'
+      }
     ],
-    "graph-navigation": [
+    'graph-navigation': [
       {
-        id: "force-layout",
-        title: "Force Layout Graph",
-        description:
-          "Explore relationships between entities using our interactive network graph.",
+        id: 'force-layout',
+        title: 'Force Layout Graph',
+        description: 'Explore relationships between entities using our interactive network graph.',
         target: '[data-tour="network-graph"]',
-        placement: "top",
+        placement: 'top'
       },
       {
-        id: "graph-controls",
-        title: "Graph Controls",
-        description:
-          "Zoom, pan, and filter the graph to focus on specific connections.",
+        id: 'graph-controls',
+        title: 'Graph Controls',
+        description: 'Zoom, pan, and filter the graph to focus on specific connections.',
         target: '[data-tour="graph-controls"]',
-        placement: "right",
-      },
-    ],
+        placement: 'right'
+      }
+    ]
   };
 
   const startTour = (tourId: string) => {
@@ -146,19 +133,17 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
 
   // Auto-start tours for new users
   useEffect(() => {
-    const hasSeenDashboardTour = localStorage.getItem(
-      "tour-seen-dashboard-intro",
-    );
+    const hasSeenDashboardTour = localStorage.getItem('tour-seen-dashboard-intro');
     if (!hasSeenDashboardTour) {
       // Delay to allow components to mount
-      setTimeout(() => startTour("dashboard-intro"), 2000);
+      setTimeout(() => startTour('dashboard-intro'), 2000);
     }
   }, []);
 
   // Mark tour as seen when completed
   useEffect(() => {
     if (currentTourId && currentStep === null) {
-      localStorage.setItem(`tour-seen-${currentTourId}`, "true");
+      localStorage.setItem(`tour-seen-${currentTourId}`, 'true');
     }
   }, [currentTourId, currentStep]);
 
@@ -169,8 +154,12 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
     nextStep,
     prevStep,
     endTour,
-    isActive: currentStep !== null,
+    isActive: currentStep !== null
   };
 
-  return <TourContext.Provider value={value}>{children}</TourContext.Provider>;
+  return (
+    <TourContext.Provider value={value}>
+      {children}
+    </TourContext.Provider>
+  );
 };

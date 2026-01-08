@@ -1,5 +1,5 @@
-import { createContext } from "react";
-import type { User } from "@/types/schema";
+import { createContext } from 'react';
+import { User } from '../types/schema';
 
 export interface LoginCredentials {
   email: string;
@@ -17,6 +17,4 @@ export interface AuthContextType {
   isSetupRequired: boolean;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined,
-);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);

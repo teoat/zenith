@@ -1,15 +1,8 @@
 // frontend/src/components/ui/AIInsights.tsx
 // React import removed
-import { useState, useEffect } from "react";
-import {
-  Brain,
-  AlertTriangle,
-  CheckCircle,
-  TrendingUp,
-  Activity,
-} from "lucide-react";
-import { aiFraudDetector } from "@/lib/AIFraudDetection";
-import { secureLogger } from "@/utils/secureLogger";
+import { useState, useEffect } from 'react';
+import { Brain, AlertTriangle, CheckCircle, TrendingUp, Activity } from 'lucide-react';
+import { aiFraudDetector } from '../../lib/AIFraudDetection';
 // api import removed as unused
 
 interface TransactionData {
@@ -26,7 +19,7 @@ interface AIInsightsProps {
   className?: string;
 }
 
-export function AIInsights({ transaction, className = "" }: AIInsightsProps) {
+export function AIInsights({ transaction, className = '' }: AIInsightsProps) {
   const [insights, setInsights] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,29 +41,29 @@ export function AIInsights({ transaction, className = "" }: AIInsightsProps) {
         frequency: 1, // Simplified - would need historical data
         timeOfDay: new Date(tx.timestamp).getHours(),
         dayOfWeek: new Date(tx.timestamp).getDay(),
-        location: tx.location || "unknown",
+        location: tx.location || 'unknown',
         merchantCategory: tx.category,
         previousTransactions: [tx.amount * 0.8, tx.amount * 0.9], // Simplified
         userHistory: {
           totalTransactions: 50, // Would come from user data
           averageAmount: 200, // Would come from user data
-          riskScore: 0.1, // Would come from user data
-        },
+          riskScore: 0.1 // Would come from user data
+        }
       };
 
       const result = await aiFraudDetector.analyzeTransaction(features);
       setInsights(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Analysis failed");
+      setError(err instanceof Error ? err.message : 'Analysis failed');
     } finally {
       setLoading(false);
     }
   };
 
   const getRiskColor = (score: number) => {
-    if (score > 0.7) return "text-red-600 bg-red-50 border-red-200";
-    if (score > 0.4) return "text-yellow-600 bg-yellow-50 border-yellow-200";
-    return "text-green-600 bg-green-50 border-green-200";
+    if (score > 0.7) return 'text-red-600 bg-red-50 border-red-200';
+    if (score > 0.4) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    return 'text-green-600 bg-green-50 border-green-200';
   };
 
   const getRiskIcon = (score: number) => {
@@ -126,9 +119,7 @@ export function AIInsights({ transaction, className = "" }: AIInsightsProps) {
       </div>
 
       {/* Risk Score */}
-      <div
-        className={`risk-score-card ${getRiskColor(insights.riskScore)} border rounded-lg p-4 mb-4`}
-      >
+      <div className={`risk-score-card ${getRiskColor(insights.riskScore)} border rounded-lg p-4 mb-4`}>
         <div className="flex items-center justify-between mb-2">
           <span className="font-medium">Risk Score</span>
           {getRiskIcon(insights.riskScore)}
@@ -150,10 +141,7 @@ export function AIInsights({ transaction, className = "" }: AIInsightsProps) {
           </h4>
           <ul className="space-y-1">
             {insights.factors.map((factor: string, index: number) => (
-              <li
-                key={index}
-                className="text-sm text-gray-700 flex items-start gap-2"
-              >
+              <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
                 <span className="text-red-500 mt-1">•</span>
                 {factor}
               </li>
@@ -171,10 +159,7 @@ export function AIInsights({ transaction, className = "" }: AIInsightsProps) {
           </h4>
           <ul className="space-y-1">
             {insights.recommendations.map((rec: string, index: number) => (
-              <li
-                key={index}
-                className="text-sm text-gray-700 flex items-start gap-2"
-              >
+              <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
                 <span className="text-green-500 mt-1">✓</span>
                 {rec}
               </li>
@@ -208,8 +193,8 @@ export function AIModelPerformance() {
       setLoading(true);
       const perf = await aiFraudDetector.getModelPerformance();
       setPerformance(perf);
-    } catch (error) {
-      secureLogger.error("Failed to load AI performance:", error);
+    } catch (err) {
+      console.error('Failed to load AI performance:', err);
     } finally {
       setLoading(false);
     }
@@ -220,11 +205,7 @@ export function AIModelPerformance() {
   }
 
   if (!performance) {
-    return (
-      <div className="text-center py-4 text-gray-500">
-        No performance data available
-      </div>
-    );
+    return <div className="text-center py-4 text-gray-500">No performance data available</div>;
   }
 
   return (

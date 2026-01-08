@@ -1,9 +1,10 @@
-import { secureLogger } from "@/utils/secureLogger";
-import { monitoringService } from "./monitoring";
-import type { HealthMetrics } from "@/types/api";
+// Frontend diagnostics service for monitoring and analytics
+// Uses monitoringService directly to avoid circular dependency with api facade
+import { monitoringService } from './monitoring';
+import { HealthMetrics } from '../types/api';
 
 export interface HealthStatus {
-  status: "healthy" | "degraded" | "critical" | "error";
+  status: 'healthy' | 'degraded' | 'critical' | 'error';
   timestamp: string;
   system_health?: number;
   services?: Record<string, string>;
@@ -44,30 +45,22 @@ class DiagnosticsService {
       const healthMetrics = await monitoringService.getHealthMetrics();
       // Calculate system health score (0-100) based on CPU/Memory
       // Default to 85 if metrics are missing (optimistic)
-      const systemHealth =
-        healthMetrics.cpuUsage && healthMetrics.memoryUsage
-          ? 100 - (healthMetrics.cpuUsage + healthMetrics.memoryUsage) / 2
-          : 85;
-
+      const systemHealth = healthMetrics.cpuUsage && healthMetrics.memoryUsage
+        ? 100 - ((healthMetrics.cpuUsage + healthMetrics.memoryUsage) / 2)
+        : 85;
+      
       return {
-        status:
-          systemHealth > 70
-            ? "healthy"
-            : systemHealth > 50
-              ? "degraded"
-              : "critical",
+        status: systemHealth > 70 ? 'healthy' : systemHealth > 50 ? 'degraded' : 'critical',
         timestamp: new Date().toISOString(),
         system_health: Math.round(systemHealth),
-        metrics: healthMetrics,
+        metrics: healthMetrics
       };
-    } catch (error) {
-      secureLogger.error("DIAGNOSTICS", "Failed to fetch health status", {
-        error: error instanceof Error ? error.message : String(error),
-      });
+    } catch (err) {
+      console.error('Failed to fetch health status:', err);
       return {
-        status: "error",
+        status: 'error',
         timestamp: new Date().toISOString(),
-        system_health: 0,
+        system_health: 0
       };
     }
   }
@@ -76,15 +69,13 @@ class DiagnosticsService {
     try {
       const status = await monitoringService.getSystemStatus();
       return {
-        status: "healthy",
+        status: 'healthy',
         components: status,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
-    } catch (error) {
-      secureLogger.error("DIAGNOSTICS", "Failed to fetch detailed health", {
-        error: error instanceof Error ? error.message : String(error),
-      });
-      return { status: "error" };
+    } catch (err) {
+      console.error('Failed to fetch detailed health:', err);
+      return { status: 'error' };
     }
   }
 
@@ -93,40 +84,32 @@ class DiagnosticsService {
       const history = await monitoringService.getPerformanceHistory(1); // Last 1 hour
       // Get the most recent metrics if available
       const latest = history.length > 0 ? history[history.length - 1] : null;
-
-      const current_metrics: Record<string, unknown> = latest
-        ? {
-            cpu_percent: latest.cpu_percent,
-            memory_percent: latest.memory_percent,
-            response_time: latest.response_time_avg,
-            requests: latest.request_count,
-            errors: latest.error_count,
-          }
-        : {};
+      
+      const current_metrics: Record<string, unknown> = latest ? {
+        cpu_percent: latest.cpu_percent,
+        memory_percent: latest.memory_percent,
+        response_time: latest.response_time_avg,
+        requests: latest.request_count,
+        errors: latest.error_count
+      } : {};
 
       return {
         baselines: {
           avg_response_time: 150,
           max_memory_mb: 512,
-          target_cpu_percent: 70,
+          target_cpu_percent: 70
         },
         current_metrics,
         alerts: [],
-        status: "healthy",
+        status: 'healthy'
       };
-    } catch (error) {
-      secureLogger.error(
-        "DIAGNOSTICS",
-        "Failed to fetch performance baselines",
-        {
-          error: error instanceof Error ? error.message : String(error),
-        },
-      );
+    } catch (err) {
+      console.error('Failed to fetch performance baselines:', err);
       return {
         baselines: {},
         current_metrics: {},
-        alerts: ["Failed to load performance data"],
-        status: "error",
+        alerts: ['Failed to load performance data'],
+        status: 'error'
       };
     }
   }
@@ -137,12 +120,12 @@ class DiagnosticsService {
       funnel_analysis: {
         total_users: 127,
         completed_onboarding: 98,
-        active_investigators: 45,
+        active_investigators: 45
       },
       session_analytics: {
-        avg_session_duration: "15m 32s",
-        pages_per_session: 7.2,
-      },
+        avg_session_duration: '15m 32s',
+        pages_per_session: 7.2
+      }
     };
   }
 
@@ -150,9 +133,9 @@ class DiagnosticsService {
     try {
       const [health, performance] = await Promise.all([
         this.getHealthStatus(),
-        this.getPerformanceBaselines(),
+        this.getPerformanceBaselines()
       ]);
-
+      
       const userAnalytics = await this.getUserJourneyAnalytics();
 
       return {
@@ -162,100 +145,77 @@ class DiagnosticsService {
           system_health: health.system_health || 85,
           active_alerts: performance.alerts.length,
           total_users: 127,
-          performance_score: "A",
+          performance_score: 'A'
         },
         health: health.metrics || {},
         performance,
         user_analytics: userAnalytics,
-        recommendations: this.generateRecommendations(health, performance),
+        recommendations: this.generateRecommendations(health, performance)
       };
-    } catch (error) {
-      secureLogger.error(
-        "DIAGNOSTICS",
-        "Failed to fetch diagnostics dashboard",
-        {
-          error: error instanceof Error ? error.message : String(error),
-        },
-      );
+    } catch (err) {
+      console.error('Failed to fetch diagnostics dashboard:', err);
       return {
-        status: "error",
+        status: 'error',
         timestamp: new Date().toISOString(),
         summary: {
           system_health: 0,
           active_alerts: 1,
           total_users: 0,
-          performance_score: "error",
+          performance_score: 'error'
         },
         health: {},
         performance: {
           baselines: {},
           current_metrics: {},
-          alerts: ["Failed to load dashboard"],
-          status: "error",
+          alerts: ['Failed to load dashboard'],
+          status: 'error'
         },
         user_analytics: {
           funnel_analysis: {},
-          session_analytics: {},
+          session_analytics: {}
         },
-        recommendations: ["Check system connectivity", "Contact support"],
+        recommendations: ['Check system connectivity', 'Contact support']
       };
     }
   }
 
-  private generateRecommendations(
-    health: HealthStatus,
-    performance: PerformanceMetrics,
-  ): string[] {
+  private generateRecommendations(health: HealthStatus, performance: PerformanceMetrics): string[] {
     const recommendations: string[] = [];
-
+    
     if ((health.system_health || 100) < 70) {
-      recommendations.push(
-        "System health is below optimal - consider scaling resources",
-      );
+      recommendations.push('System health is below optimal - consider scaling resources');
     }
-
+    
     if (performance.alerts.length > 0) {
-      recommendations.push("Address active performance alerts");
+      recommendations.push('Address active performance alerts');
     }
-
+    
     if (recommendations.length === 0) {
-      recommendations.push("System is operating optimally");
+      recommendations.push('System is operating optimally');
     }
-
+    
     return recommendations;
   }
 
-  async trackUserEvent(
-    eventType: string,
-    metadata?: Record<string, unknown>,
-  ): Promise<void> {
+  async trackUserEvent(eventType: string, metadata?: Record<string, unknown>): Promise<void> {
     try {
       // Log event locally - would send to analytics backend in production
-      const userId = localStorage.getItem("userId") || "anonymous";
-      secureLogger.info("ANALYTICS", `Event: ${eventType}`, {
-        userId,
-        metadata,
-      });
-    } catch (error) {
-      secureLogger.warn("DIAGNOSTICS", "Failed to track user event", {
-        error: error instanceof Error ? error.message : String(error),
-      });
+      const userId = localStorage.getItem('userId') || 'anonymous';
+      console.log(`[Analytics] Event: ${eventType}`, { userId, metadata, timestamp: new Date().toISOString() });
+    } catch (err) {
+      console.warn('Failed to track user event:', err);
       // Don't throw - tracking failures shouldn't break the app
     }
   }
 
   // Utility methods for real-time monitoring
-  startRealTimeMonitoring(
-    callback: (data: DiagnosticsDashboard) => void,
-  ): () => void {
+  startRealTimeMonitoring(callback: (data: DiagnosticsDashboard) => void): () => void {
     const interval = setInterval(async () => {
       try {
         const data = await this.getDiagnosticsDashboard();
         callback(data);
-      } catch (error) {
-        secureLogger.error("DIAGNOSTICS", "Real-time monitoring error", {
-          error: error instanceof Error ? error.message : String(error),
-        });
+      } catch (err) {
+        console.error('Real-time monitoring error:', err);
       }
     }, 30000); // Update every 30 seconds
 
@@ -267,18 +227,16 @@ class DiagnosticsService {
   checkForCriticalAlerts(dashboard: DiagnosticsDashboard): string[] {
     const criticalAlerts: string[] = [];
 
-    if (dashboard.status === "critical") {
-      criticalAlerts.push("System is in critical state");
+    if (dashboard.status === 'critical') {
+      criticalAlerts.push('System is in critical state');
     }
 
     if (dashboard.summary.system_health < 50) {
-      criticalAlerts.push("System health is critically low");
+      criticalAlerts.push('System health is critically low');
     }
 
     if (dashboard.performance.alerts.length > 0) {
-      criticalAlerts.push(
-        `Performance alerts: ${dashboard.performance.alerts.length}`,
-      );
+      criticalAlerts.push(`Performance alerts: ${dashboard.performance.alerts.length}`);
     }
 
     return criticalAlerts;

@@ -1,8 +1,106 @@
 {
   "title": "Settings",
-  "profile": "Profile",
-  "account": "Account",
-  "preferences": "Preferences",
-  "notifications": "Notifications",
-  "security": "Security"
+  "subtitle": "Application Configuration",
+  "general": {
+    "title": "General Settings",
+    "description": "Basic application preferences",
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "language": {
+      "label": "Language",
+      "description": "Select your preferred language"
+    },
+    "timezone": {
+      "label": "Timezone",
+      "description": "Select your timezone"
+    },
+    "dateFormat": {
+      "label": "Date Format",
+      "description": "Choose how dates are displayed"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Configure notification preferences",
+    "emailNotifications": {
+      "label": "Email Notifications",
+      "description": "Receive notifications via email"
+    },
+    "pushNotifications": {
+      "label": "Push Notifications",
+      "description": "Receive push notifications in browser"
+    },
+    "alertNotifications": {
+      "label": "Alert Notifications",
+      "description": "Get notified about high-risk alerts"
+    },
+    "caseNotifications": {
+      "label": "Case Notifications",
+      "description": "Get notified about case updates"
+    }
+  },
+  "security": {
+    "title": "Security Settings",
+    "description": "Configure security and access preferences",
+    "autoLock": {
+      "label": "Auto-lock Application",
+      "description": "Automatically lock the application after inactivity"
+    },
+    "sessionTimeout": {
+      "label": "Session Timeout (minutes)",
+      "description": "Time before automatic logout"
+    },
+    "twoFactor": {
+      "label": "Two-Factor Authentication",
+      "description": "Enable additional security layer"
+    },
+    "passwordPolicy": {
+      "label": "Password Policy",
+      "description": "Configure password requirements"
+    }
+  },
+  "system": {
+    "title": "System Settings",
+    "description": "Advanced system configuration",
+    "dataRetention": {
+      "label": "Data Retention (days)",
+      "description": "How long to keep case data"
+    },
+    "maxFileSize": {
+      "label": "Maximum File Size (MB)",
+      "description": "Maximum size for uploaded files"
+    },
+    "apiRateLimit": {
+      "label": "API Rate Limit",
+      "description": "Limit API requests per minute"
+    },
+    "debugMode": {
+      "label": "Debug Mode",
+      "description": "Enable detailed logging and debugging"
+    }
+  },
+  "accessibility": {
+    "title": "Accessibility",
+    "description": "Configure accessibility preferences",
+    "highContrast": {
+      "label": "High Contrast Mode",
+      "description": "Increase contrast for better visibility"
+    },
+    "reducedMotion": {
+      "label": "Reduced Motion",
+      "description": "Minimize animations and transitions"
+    },
+    "fontSize": {
+      "label": "Font Size",
+      "description": "Adjust text size"
+    },
+    "screenReader": {
+      "label": "Screen Reader Support",
+      "description": "Optimize for screen readers"
+    }
+  }
 }

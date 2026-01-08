@@ -1,13 +1,5 @@
-import React, { useState } from "react";
-import {
-  Sparkles,
-  Loader2,
-  Copy,
-  Check,
-  ChevronDown,
-  FileText,
-  AlertTriangle,
-} from "lucide-react";
+import React, { useState } from 'react';
+import { Sparkles, Loader2, Copy, Check, ChevronDown, FileText, AlertTriangle } from 'lucide-react';
 
 interface AIWriterProps {
   caseData?: {
@@ -20,28 +12,28 @@ interface AIWriterProps {
 }
 
 const SAMPLE_PROMPTS = [
-  "Generate executive summary",
-  "Summarize key findings",
-  "List red flags detected",
-  "Draft conclusion paragraph",
-  "Create timeline narrative",
+  'Generate executive summary',
+  'Summarize key findings',
+  'List red flags detected',
+  'Draft conclusion paragraph',
+  'Create timeline narrative',
 ];
 
 const AIWriter: React.FC<AIWriterProps> = ({ caseData, onInsert }) => {
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedText, setGeneratedText] = useState("");
+  const [generatedText, setGeneratedText] = useState('');
   const [copied, setCopied] = useState(false);
   const [expandPrompts, setExpandPrompts] = useState(false);
 
   const generateNarrative = async () => {
     setIsGenerating(true);
-    setGeneratedText("");
+    setGeneratedText('');
 
     // Simulate AI generation with streaming effect
     const sampleOutput = `## Executive Summary
 
-Based on the investigation of Case #${caseData?.id || "492"}, the following key findings were identified:
+Based on the investigation of Case #${caseData?.id || '492'}, the following key findings were identified:
 
 ### Red Flags Detected
 1. **Layered Transactions**: Multiple transfers between shell companies within 24-hour periods
@@ -61,7 +53,7 @@ Based on the evidence gathered, this case warrants **escalation to compliance** 
 
     // Simulate streaming
     for (let i = 0; i <= sampleOutput.length; i += 20) {
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await new Promise(resolve => setTimeout(resolve, 30));
       setGeneratedText(sampleOutput.slice(0, i));
     }
     setGeneratedText(sampleOutput);
@@ -109,10 +101,7 @@ Based on the evidence gathered, this case warrants **escalation to compliance** 
             onClick={() => setExpandPrompts(!expandPrompts)}
             className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 mb-2"
           >
-            <ChevronDown
-              size={14}
-              className={`transition-transform ${expandPrompts ? "rotate-180" : ""}`}
-            />
+            <ChevronDown size={14} className={`transition-transform ${expandPrompts ? 'rotate-180' : ''}`} />
             Quick prompts
           </button>
           {expandPrompts && (
@@ -155,9 +144,7 @@ Based on the evidence gathered, this case warrants **escalation to compliance** 
       {(generatedText || isGenerating) && (
         <div className="p-4">
           <div className="flex justify-between items-center mb-3">
-            <span className="text-xs font-bold text-slate-500 uppercase">
-              Generated Output
-            </span>
+            <span className="text-xs font-bold text-slate-500 uppercase">Generated Output</span>
             <div className="flex gap-2">
               <button
                 onClick={handleCopy}
@@ -165,7 +152,7 @@ Based on the evidence gathered, this case warrants **escalation to compliance** 
                 className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 disabled:opacity-50"
               >
                 {copied ? <Check size={12} /> : <Copy size={12} />}
-                {copied ? "Copied!" : "Copy"}
+                {copied ? 'Copied!' : 'Copy'}
               </button>
               <button
                 onClick={() => onInsert?.(generatedText)}
@@ -187,13 +174,9 @@ Based on the evidence gathered, this case warrants **escalation to compliance** 
 
           {generatedText && !isGenerating && (
             <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-start gap-2">
-              <AlertTriangle
-                size={14}
-                className="text-amber-600 mt-0.5 shrink-0"
-              />
+              <AlertTriangle size={14} className="text-amber-600 mt-0.5 shrink-0" />
               <p className="text-xs text-amber-800 dark:text-amber-200">
-                AI-generated content should be reviewed for accuracy before
-                inclusion in official reports.
+                AI-generated content should be reviewed for accuracy before inclusion in official reports.
               </p>
             </div>
           )}

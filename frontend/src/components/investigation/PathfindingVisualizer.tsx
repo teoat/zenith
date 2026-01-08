@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import { MapPin, Navigation, Pause, Play, RotateCcw, Zap } from "lucide-react";
+import React, { useState, useCallback } from 'react';
+import { MapPin, Navigation, Pause, Play, RotateCcw, Zap } from 'lucide-react';
 
 interface PathNode {
   id: string;
@@ -16,27 +16,27 @@ interface PathEdge {
 
 // Mock graph for demo
 const MOCK_NODES: PathNode[] = [
-  { id: "A", label: "John Doe", x: 50, y: 150 },
-  { id: "B", label: "Shell Corp", x: 200, y: 50 },
-  { id: "C", label: "Offshore Bank", x: 200, y: 250 },
-  { id: "D", label: "Jane Smith", x: 350, y: 100 },
-  { id: "E", label: "Real Estate LLC", x: 350, y: 200 },
-  { id: "F", label: "Cayman Trust", x: 500, y: 150 },
+  { id: 'A', label: 'John Doe', x: 50, y: 150 },
+  { id: 'B', label: 'Shell Corp', x: 200, y: 50 },
+  { id: 'C', label: 'Offshore Bank', x: 200, y: 250 },
+  { id: 'D', label: 'Jane Smith', x: 350, y: 100 },
+  { id: 'E', label: 'Real Estate LLC', x: 350, y: 200 },
+  { id: 'F', label: 'Cayman Trust', x: 500, y: 150 },
 ];
 
 const MOCK_EDGES: PathEdge[] = [
-  { source: "A", target: "B", weight: 2 },
-  { source: "A", target: "C", weight: 4 },
-  { source: "B", target: "D", weight: 1 },
-  { source: "B", target: "E", weight: 3 },
-  { source: "C", target: "E", weight: 2 },
-  { source: "D", target: "F", weight: 2 },
-  { source: "E", target: "F", weight: 1 },
+  { source: 'A', target: 'B', weight: 2 },
+  { source: 'A', target: 'C', weight: 4 },
+  { source: 'B', target: 'D', weight: 1 },
+  { source: 'B', target: 'E', weight: 3 },
+  { source: 'C', target: 'E', weight: 2 },
+  { source: 'D', target: 'F', weight: 2 },
+  { source: 'E', target: 'F', weight: 1 },
 ];
 
 const PathfindingVisualizer: React.FC = () => {
-  const [startNode, setStartNode] = useState<string>("A");
-  const [endNode, setEndNode] = useState<string>("F");
+  const [startNode, setStartNode] = useState<string>('A');
+  const [endNode, setEndNode] = useState<string>('F');
   const [isRunning, setIsRunning] = useState(false);
   const [visitedNodes, setVisitedNodes] = useState<Set<string>>(new Set());
   const [pathNodes, setPathNodes] = useState<string[]>([]);
@@ -44,29 +44,26 @@ const PathfindingVisualizer: React.FC = () => {
 
   // Simple BFS for shortest path
   const findPath = useCallback(() => {
-    const queue: { node: string; path: string[] }[] = [
-      { node: startNode, path: [startNode] },
-    ];
+    const queue: { node: string; path: string[] }[] = [{ node: startNode, path: [startNode] }];
     const visited = new Set<string>();
     const steps: { visited: Set<string>; path: string[] }[] = [];
 
     while (queue.length > 0) {
       const { node, path } = queue.shift()!;
-
+      
       if (visited.has(node)) continue;
       visited.add(node);
-
+      
       steps.push({ visited: new Set(visited), path: [...path] });
 
       if (node === endNode) {
         return steps;
       }
 
-      const neighbors = MOCK_EDGES.filter(
-        (e) => e.source === node || e.target === node,
-      )
-        .map((e) => (e.source === node ? e.target : e.source))
-        .filter((n) => !visited.has(n));
+      const neighbors = MOCK_EDGES
+        .filter(e => e.source === node || e.target === node)
+        .map(e => e.source === node ? e.target : e.source)
+        .filter(n => !visited.has(n));
 
       for (const neighbor of neighbors) {
         queue.push({ node: neighbor, path: [...path, neighbor] });
@@ -83,9 +80,9 @@ const PathfindingVisualizer: React.FC = () => {
     setCurrentStep(0);
 
     const steps = findPath();
-
+    
     for (let i = 0; i < steps.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
       setVisitedNodes(steps[i].visited);
       setPathNodes(steps[i].path);
       setCurrentStep(i + 1);
@@ -103,7 +100,7 @@ const PathfindingVisualizer: React.FC = () => {
 
   const isOnPath = (nodeId: string) => pathNodes.includes(nodeId);
   const isVisited = (nodeId: string) => visitedNodes.has(nodeId);
-
+  
   const isEdgeOnPath = (edge: PathEdge) => {
     const idx1 = pathNodes.indexOf(edge.source);
     const idx2 = pathNodes.indexOf(edge.target);
@@ -123,10 +120,8 @@ const PathfindingVisualizer: React.FC = () => {
             className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800"
             aria-label="Select start node"
           >
-            {MOCK_NODES.map((n) => (
-              <option key={n.id} value={n.id}>
-                {n.label}
-              </option>
+            {MOCK_NODES.map(n => (
+              <option key={n.id} value={n.id}>{n.label}</option>
             ))}
           </select>
         </div>
@@ -142,10 +137,8 @@ const PathfindingVisualizer: React.FC = () => {
             className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800"
             aria-label="Select end node"
           >
-            {MOCK_NODES.map((n) => (
-              <option key={n.id} value={n.id}>
-                {n.label}
-              </option>
+            {MOCK_NODES.map(n => (
+              <option key={n.id} value={n.id}>{n.label}</option>
             ))}
           </select>
         </div>
@@ -158,7 +151,7 @@ const PathfindingVisualizer: React.FC = () => {
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium disabled:opacity-50"
         >
           {isRunning ? <Pause size={16} /> : <Play size={16} />}
-          {isRunning ? "Running..." : "Find Path"}
+          {isRunning ? 'Running...' : 'Find Path'}
         </button>
 
         <button
@@ -175,10 +168,10 @@ const PathfindingVisualizer: React.FC = () => {
         <svg className="w-full h-full">
           {/* Edges */}
           {MOCK_EDGES.map((edge, i) => {
-            const source = MOCK_NODES.find((n) => n.id === edge.source)!;
-            const target = MOCK_NODES.find((n) => n.id === edge.target)!;
+            const source = MOCK_NODES.find(n => n.id === edge.source)!;
+            const target = MOCK_NODES.find(n => n.id === edge.target)!;
             const onPath = isEdgeOnPath(edge);
-
+            
             return (
               <g key={i}>
                 <line
@@ -186,7 +179,7 @@ const PathfindingVisualizer: React.FC = () => {
                   y1={source.y}
                   x2={target.x}
                   y2={target.y}
-                  stroke={onPath ? "#3b82f6" : "#e2e8f0"}
+                  stroke={onPath ? '#3b82f6' : '#e2e8f0'}
                   strokeWidth={onPath ? 3 : 1.5}
                   className="transition-all duration-300"
                 />
@@ -203,7 +196,7 @@ const PathfindingVisualizer: React.FC = () => {
           })}
 
           {/* Nodes */}
-          {MOCK_NODES.map((node) => {
+          {MOCK_NODES.map(node => {
             const onPath = isOnPath(node.id);
             const visited = isVisited(node.id);
             const isStart = node.id === startNode;
@@ -216,17 +209,13 @@ const PathfindingVisualizer: React.FC = () => {
                   cy={node.y}
                   r={onPath ? 24 : 20}
                   fill={
-                    isStart
-                      ? "#22c55e"
-                      : isEnd
-                        ? "#ef4444"
-                        : onPath
-                          ? "#3b82f6"
-                          : visited
-                            ? "#f59e0b"
-                            : "#fff"
+                    isStart ? '#22c55e' :
+                    isEnd ? '#ef4444' :
+                    onPath ? '#3b82f6' :
+                    visited ? '#f59e0b' :
+                    '#fff'
                   }
-                  stroke={onPath ? "#1d4ed8" : "#e2e8f0"}
+                  stroke={onPath ? '#1d4ed8' : '#e2e8f0'}
                   strokeWidth={2}
                   className="transition-all duration-300"
                 />
@@ -234,7 +223,7 @@ const PathfindingVisualizer: React.FC = () => {
                   x={node.x}
                   y={node.y + 4}
                   textAnchor="middle"
-                  className={`text-xs font-bold ${onPath || isStart || isEnd ? "fill-white" : "fill-slate-700"}`}
+                  className={`text-xs font-bold ${onPath || isStart || isEnd ? 'fill-white' : 'fill-slate-700'}`}
                 >
                   {node.id}
                 </text>
@@ -256,18 +245,16 @@ const PathfindingVisualizer: React.FC = () => {
       <div className="p-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-sm">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-2">
-            <span className="w-3 h-3 bg-amber-500 rounded-full" /> Visited:{" "}
-            {visitedNodes.size}
+            <span className="w-3 h-3 bg-amber-500 rounded-full" /> Visited: {visitedNodes.size}
           </span>
           <span className="flex items-center gap-2">
-            <span className="w-3 h-3 bg-blue-500 rounded-full" /> Path:{" "}
-            {pathNodes.length}
+            <span className="w-3 h-3 bg-blue-500 rounded-full" /> Path: {pathNodes.length}
           </span>
         </div>
         {pathNodes.length > 0 && (
           <div className="flex items-center gap-2 text-blue-600">
             <Zap size={14} />
-            {pathNodes.join(" → ")}
+            {pathNodes.join(' → ')}
           </div>
         )}
       </div>

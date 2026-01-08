@@ -1,14 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { CheckCircle, Circle, Award } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-// Import service with fallback in case of module resolution issues during refactor - assuming services exist based on diagnosis
-import {
-  submitRookieChecklist,
-  fetchRookieChecklist,
-} from "@/services/onboarding";
-import { secureLogger } from "@/utils/secureLogger";
-
-import "./RookieChecklist.css";
+import React, { useState, useEffect } from 'react';
+import { CheckCircle, Circle, Award } from 'lucide-react';
 
 interface ChecklistItem {
   id: string;
@@ -22,195 +13,112 @@ interface RookieChecklistProps {
   onComplete?: () => void;
 }
 
-import { webStore } from "@/utils/electronStore";
-
-// Get initial items (defaults only, Async load handles persistence)
+// Get initial items with saved progress
 const getInitialItems = (): ChecklistItem[] => {
-  return [
+  const defaultItems: ChecklistItem[] = [
     {
-      id: "create-case",
-      title: "Create Your First Case",
-      description: "Start investigating by creating a new case file",
+      id: 'create-case',
+      title: 'Create Your First Case',
+      description: 'Start investigating by creating a new case file',
       completed: false,
     },
     {
-      id: "upload-evidence",
-      title: "Upload Evidence",
-      description: "Add documents, images, or files to your case",
+      id: 'upload-evidence',
+      title: 'Upload Evidence',
+      description: 'Add documents, images, or files to your case',
       completed: false,
     },
     {
-      id: "explore-graph",
-      title: "Explore the Network Graph",
-      description: "Visualize connections between entities and transactions",
+      id: 'explore-graph',
+      title: 'Explore the Network Graph',
+      description: 'Visualize connections between entities and transactions',
       completed: false,
     },
     {
-      id: "run-analysis",
-      title: "Run Your First Analysis",
-      description: "Use forensic tools to analyze evidence",
+      id: 'run-analysis',
+      title: 'Run Your First Analysis',
+      description: 'Use forensic tools to analyze evidence',
       completed: false,
     },
   ];
+
+  try {
+    const saved = localStorage.getItem('rookieChecklist');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return defaultItems.map(item => ({
+        ...item,
+        completed: parsed[item.id] || false
+      }));
+    }
+  } catch {
+    // Ignore parse errors
+  }
+  return defaultItems;
+};
+
+// Check if all items are complete (for initial badge state)
+const getInitialBadgeState = (): boolean => {
+  const items = getInitialItems();
+  return items.every(item => item.completed);
 };
 
 const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
-  const { user } = useAuth();
   const [items, setItems] = useState<ChecklistItem[]>(getInitialItems);
-  const [showBadge, setShowBadge] = useState(false);
-  const [synced, setSynced] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-
-  // Load from store on mount
-  useEffect(() => {
-    async function init() {
-      try {
-        const savedProgress =
-          await webStore.get<Record<string, boolean>>("rookieChecklist");
-        if (savedProgress) {
-          setItems((prev) =>
-            prev.map((item) => ({
-              ...item,
-              completed: savedProgress[item.id] || false,
-            })),
-          );
-
-          // Check badge state after load
-          const initialItems = getInitialItems().map((item) => ({
-            ...item,
-            completed: savedProgress[item.id] || false,
-          }));
-          if (initialItems.every((i) => i.completed)) setShowBadge(true);
-        }
-      } catch (e) {
-        secureLogger.warn("Failed to load checklist from store", e);
-      } finally {
-        setLoaded(true);
-      }
-    }
-    init();
-  }, []);
-
-  // Sync with backend on mount (after local load)
-  useEffect(() => {
-    async function loadFromBackend() {
-      if (user?.id && loaded) {
-        try {
-          const data = await fetchRookieChecklist(user.id);
-          if (data && data.items && Array.isArray(data.items)) {
-            setItems((prev) =>
-              prev.map((item) => ({
-                ...item,
-                completed: data.items.includes(item.id) || item.completed,
-              })),
-            );
-            setSynced(true);
-          }
-        } catch (err) {
-          secureLogger.warn(
-            "Failed to sync checklist from backend, using local storage",
-            err,
-          );
-        }
-      }
-    }
-    if (!synced && loaded) {
-      loadFromBackend();
-    }
-  }, [user?.id, synced, loaded]);
+  const [showBadge, setShowBadge] = useState(getInitialBadgeState);
 
   useEffect(() => {
-    if (!loaded) return;
-
-    // Save progress to webStore
-    const progress = items.reduce(
-      (acc, item) => {
-        acc[item.id] = item.completed;
-        return acc;
-      },
-      {} as Record<string, boolean>,
-    );
-
-    webStore.set("rookieChecklist", progress).catch((err) => {
-      secureLogger.error("Failed to save checklist to webStore", err);
-    });
-
-    // Sync to backend if logged in
-    const syncToBackend = async () => {
-      if (user?.id) {
-        try {
-          const completedIds = items
-            .filter((i) => i.completed)
-            .map((i) => i.id);
-          await submitRookieChecklist({
-            user_id: user.id,
-            items: completedIds,
-          });
-        } catch (err) {
-          secureLogger.error("Failed to sync checklist to backend", err);
-        }
-      }
-    };
-
-    if (synced) {
-      syncToBackend();
-    }
-  }, [items, user?.id, synced, loaded]);
+    // Save progress to localStorage
+    const progress = items.reduce((acc, item) => {
+      acc[item.id] = item.completed;
+      return acc;
+    }, {} as Record<string, boolean>);
+    localStorage.setItem('rookieChecklist', JSON.stringify(progress));
+  }, [items]);
 
   // Check completion and show badge
   useEffect(() => {
-    const allCompleted = items.every((item) => item.completed);
-    let timeoutId: NodeJS.Timeout;
-
+    const allCompleted = items.every(item => item.completed);
     if (allCompleted && !showBadge) {
-      const rafId = requestAnimationFrame(() => {
+      // Use requestAnimationFrame to avoid sync setState in effect
+      requestAnimationFrame(() => {
         setShowBadge(true);
-        timeoutId = setTimeout(() => {
+        setTimeout(() => {
           onComplete?.();
         }, 2000);
       });
-
-      return () => {
-        cancelAnimationFrame(rafId);
-        if (timeoutId) clearTimeout(timeoutId);
-      };
     }
   }, [items, showBadge, onComplete]);
 
   const toggleItem = (id: string) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, completed: !item.completed } : item,
-      ),
-    );
-    setSynced(true);
+    setItems(prev => prev.map(item =>
+      item.id === id ? { ...item, completed: !item.completed } : item
+    ));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, id: string) => {
-    if (e.key === "Enter" || e.key === " ") {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       toggleItem(id);
     }
   };
 
-  const completedCount = items.filter((item) => item.completed).length;
+  const completedCount = items.filter(item => item.completed).length;
   const progress = (completedCount / items.length) * 100;
 
   if (showBadge) {
     return (
-      <div className="badge-overlay">
-        <div className="badge-card">
-          <div className="badge-icon-container">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-8 text-center max-w-md mx-4">
+          <div className="mb-4">
             <Award className="w-16 h-16 text-yellow-500 mx-auto" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Congratulations!
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Congratulations!</h2>
           <p className="text-gray-600 mb-4">You've earned the</p>
-          <div className="badge-reward">🏆 Level 1 Investigator</div>
-          <p className="text-sm text-gray-500">
-            You're ready to tackle real fraud cases!
-          </p>
+          <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-4 py-2 rounded-full font-bold text-lg mb-4">
+            🏆 Level 1 Investigator
+          </div>
+          <p className="text-sm text-gray-500">You're ready to tackle real fraud cases!</p>
         </div>
       </div>
     );
@@ -219,20 +127,13 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
-          Rookie Investigator
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900">Rookie Investigator</h3>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">
-            {completedCount}/{items.length}
-          </span>
+          <span className="text-sm text-gray-600">{completedCount}/{items.length}</span>
           <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="rookie-progress-bar"
-              style={{ "--progress": `${progress}%` } as React.CSSProperties}
-              aria-valuenow={progress}
-              aria-valuemin={0}
-              aria-valuemax={100}
+              className="h-full bg-blue-500 transition-all duration-300"
+              style={{ width: `${progress}%` }}
             />
           </div>
         </div>
@@ -246,8 +147,8 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
             tabIndex={0}
             className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer ${
               item.completed
-                ? "bg-green-50 border-green-200"
-                : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+                ? 'bg-green-50 border-green-200'
+                : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
             onClick={() => toggleItem(item.id)}
             onKeyDown={(e) => handleKeyDown(e, item.id)}
@@ -261,14 +162,10 @@ const RookieChecklist: React.FC<RookieChecklistProps> = ({ onComplete }) => {
               )}
             </div>
             <div className="flex-1">
-              <h4
-                className={`font-medium ${item.completed ? "text-green-800" : "text-gray-900"}`}
-              >
+              <h4 className={`font-medium ${item.completed ? 'text-green-800' : 'text-gray-900'}`}>
                 {item.title}
               </h4>
-              <p
-                className={`text-sm ${item.completed ? "text-green-600" : "text-gray-600"}`}
-              >
+              <p className={`text-sm ${item.completed ? 'text-green-600' : 'text-gray-600'}`}>
                 {item.description}
               </p>
             </div>

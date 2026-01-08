@@ -1,0 +1,22 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:analyze": "vite build --mode analyze",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "type-check": "tsc --noEmit",
+    "preview": "vite preview",
+    "test": "jest",
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "a11y:test": "pa11y-ci",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },

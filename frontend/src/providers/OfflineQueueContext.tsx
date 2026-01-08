@@ -1,24 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { useNetworkStatus } from '../hooks/useNetworkStatus';
+import { api } from '../lib/api';
+import { QueuedRequest, OfflineQueueContext } from '../context/OfflineQueueContext';
 
-import { useNetworkStatus } from "@/hooks/useNetworkStatus";
-import { api } from "@/lib/api";
-import {
-  OfflineQueueContext,
-  type QueuedRequest,
-} from "@/context/OfflineQueueContext";
-import { secureLogger } from "@/utils/secureLogger"; // Import secureLogger
+const QUEUE_STORAGE_KEY = 'offline_mutation_queue';
 
-const QUEUE_STORAGE_KEY = "offline_mutation_queue";
-
-export const OfflineQueueProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const OfflineQueueProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isOnline } = useNetworkStatus();
   const [queue, setQueue] = useState<QueuedRequest[]>(() => {
     try {
       const stored = localStorage.getItem(QUEUE_STORAGE_KEY);
       return stored ? JSON.parse(stored) : [];
-    } catch {
+    } catch { // Ignore parse errors
       return [];
     }
   });
@@ -32,48 +25,39 @@ export const OfflineQueueProvider: React.FC<{ children: React.ReactNode }> = ({
   // Listen for storage events (triggered by api.ts or other tabs)
   useEffect(() => {
     const handleStorageChange = () => {
-      const storedQueue = localStorage.getItem(QUEUE_STORAGE_KEY);
-      if (storedQueue) {
-        try {
-          // We should only update if it's different to prevent loops,
-          // but for now simple setQueue is fine as Re-render is cheap
-          setQueue(JSON.parse(storedQueue));
-        } catch {
-          // Ignore storage parse errors
+        const storedQueue = localStorage.getItem(QUEUE_STORAGE_KEY);
+        if (storedQueue) {
+            try {
+                // We should only update if it's different to prevent loops, 
+                // but for now simple setQueue is fine as Re-render is cheap
+                setQueue(JSON.parse(storedQueue));
+            } catch(_e) { // Renamed to _e
+                // Ignore storage parse errors
+            }
         }
-      }
     };
-
+    
     // api.ts dispatches this manually on window
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  const addToQueue = (request: Omit<QueuedRequest, "id" | "timestamp">) => {
+  const addToQueue = (request: Omit<QueuedRequest, 'id' | 'timestamp'>) => {
     setQueue((prev) => {
       if (prev.length >= 50) {
-        secureLogger.warn(
-          "OFFLINE",
-          "Queue limit reached (50 items). Dropping oldest request.",
-        );
+        console.warn('[OfflineQueue] Queue limit reached (50 items). Dropping oldest request.');
         const [, ...rest] = prev;
-        return [
-          ...rest,
-          {
-            ...request,
-            id: crypto.randomUUID(),
-            timestamp: Date.now(),
-          },
-        ];
-      }
-      return [
-        ...prev,
-        {
+        return [...rest, {
           ...request,
           id: crypto.randomUUID(),
           timestamp: Date.now(),
-        },
-      ];
+        }];
+      }
+      return [...prev, {
+        ...request,
+        id: crypto.randomUUID(),
+        timestamp: Date.now(),
+      }];
     });
   };
 
@@ -91,31 +75,27 @@ export const OfflineQueueProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const syncQueue = async () => {
       setIsSyncing(true);
-      const currentQueue = queue.filter((req) => !req.synced);
+      const currentQueue = queue.filter(req => !req.synced);
 
       for (const req of currentQueue) {
         try {
-          secureLogger.info(
-            "OFFLINE",
-            `Replaying request: ${req.method} (ID: ${req.id})`,
-          );
+          console.log(`[OfflineQueue] Replaying request: ${req.method} (ID: ${req.id})`);
 
           // Dynamically invoke API method
           // @ts-expect-error - Dynamic method invocation
-          if (typeof api[req.method] === "function") {
+          if (typeof api[req.method] === 'function') {
             // @ts-expect-error - spread args safely
             await api[req.method](...req.body); // body is assumed to be args array
-            secureLogger.info("OFFLINE", `Request ${req.id} succeeded`);
+            console.log(`[OfflineQueue] Request ${req.id} succeeded`);
             removeFromQueue(req.id);
           } else {
-            secureLogger.error("OFFLINE", `Unknown API method: ${req.method}`);
+            console.error(`[OfflineQueue] Unknown API method: ${req.method}`);
             // Drop invalid requests to prevent blocking
             removeFromQueue(req.id);
           }
-        } catch (error) {
-          secureLogger.error("OFFLINE", `Request ${req.id} failed`, {
-            error: String(error),
-          });
+
+        } catch (err) {
+          console.error(`[OfflineQueue] Request ${req.id} failed`, error);
           // Stop syncing on error to preserve order
           break;
         }

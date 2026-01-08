@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apk add --no-cache python3 make g++
+
+# Install dependencies
+COPY package*.json ./
+RUN npm install --legacy-peer-deps
+
+# Avoid rollup issues on Alpine
+RUN npm install @rollup/rollup-linux-x64-musl --save-optional
+
+# Expose Vite dev server port
+EXPOSE 5173
+
+# Start dev server (will be overridden by docker-compose)
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]

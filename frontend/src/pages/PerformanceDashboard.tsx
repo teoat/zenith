@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-import { motion } from "framer-motion";
-import { useWebSocket } from "@/providers/WebSocketProvider";
-import { secureLogger } from "@/utils/secureLogger";
+import { motion } from 'framer-motion';
+import { useWebSocket } from '../providers/WebSocketProvider';
 
 import {
   Activity,
@@ -15,8 +14,12 @@ import {
   CheckCircle,
   Clock,
   BarChart3,
-  type LucideIcon,
-} from "lucide-react";
+  LucideIcon
+} from 'lucide-react';
+
+import memoryManager from '../utils/memoryManager';
+
+import { cn } from '@/lib/utils';
 
 // MetricCard Component - Moved outside
 interface MetricCardProps {
@@ -25,19 +28,11 @@ interface MetricCardProps {
   unit: string;
   icon: LucideIcon;
   trend?: number;
-  status: "good" | "warning" | "critical";
+  status: 'good' | 'warning' | 'critical';
   children?: React.ReactNode;
 }
 
-const MetricCard: React.FC<MetricCardProps> = ({
-  title,
-  value,
-  unit,
-  icon: Icon,
-  trend,
-  status,
-  children,
-}) => (
+const MetricCard: React.FC<MetricCardProps> = ({ title, value, unit, icon: Icon, trend, status, children }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -45,12 +40,14 @@ const MetricCard: React.FC<MetricCardProps> = ({
   >
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-3">
-        <div
-          className={`p-2 rounded-lg ${status === "good" ? "bg-success-500/20" : status === "warning" ? "bg-warning-500/20" : "bg-error-500/20"}`}
-        >
-          <Icon
-            className={`w-5 h-5 ${status === "good" ? "text-success-400" : status === "warning" ? "text-warning-400" : "text-error-400"}`}
-          />
+        <div className={cn(
+          "p-2 rounded-lg",
+          status === 'good' ? 'bg-success-500/20' : status === 'warning' ? 'bg-warning-500/20' : 'bg-error-500/20'
+        )}>
+          <Icon className={cn(
+            "w-5 h-5",
+            status === 'good' ? 'text-success-400' : status === 'warning' ? 'text-warning-400' : 'text-error-400'
+          )} />
         </div>
         <div>
           <h3 className="font-semibold text-sm">{title}</h3>
@@ -58,14 +55,11 @@ const MetricCard: React.FC<MetricCardProps> = ({
             <span className="text-2xl font-bold">{value}</span>
             <span className="text-sm text-secondary-400">{unit}</span>
             {trend && (
-              <div
-                className={`flex items-center gap-1 text-xs ${trend > 0 ? "text-success-400" : "text-error-400"}`}
-              >
-                {trend > 0 ? (
-                  <TrendingUp className="w-3 h-3" />
-                ) : (
-                  <TrendingDown className="w-3 h-3" />
-                )}
+              <div className={cn(
+                "flex items-center gap-1 text-xs",
+                trend > 0 ? 'text-success-400' : 'text-error-400'
+              )}>
+                {trend > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                 {Math.abs(trend)}%
               </div>
             )}
@@ -80,7 +74,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
 interface PerformanceAlert {
   id: number;
   type: string;
-  level: "good" | "warning" | "critical";
+  level: 'good' | 'warning' | 'critical';
   message: string;
   timestamp: Date;
 }
@@ -92,105 +86,82 @@ const PerformanceDashboard: React.FC = () => {
     memory: { used: 0, limit: 1, percentage: 0 },
     components: { renderCount: 0, avgRenderTime: 0 },
     api: { totalCalls: 0, avgResponseTime: 0, errorRate: 0 },
-    system: { cpu: 0, memory: 0, uptime: 0 },
-    cost: { currentSpend: 0, savings: 0, roi: 0 },
+    system: { cpu: 0, memory: 0, uptime: 0 }
   });
 
   const [alerts] = useState<PerformanceAlert[]>([]);
-  const [timeRange, setTimeRange] = useState("5m");
+  const [timeRange, setTimeRange] = useState('5m');
 
   useEffect(() => {
     // Initialize metrics collection
     const updateLocalMetrics = async () => {
       // IPC Metrics (Local/Mock)
+      const ipcStats: Record<string, { pendingRequests: number }> = memoryManager.getBatchStats?.() || {};
       const ipcMetrics = {
-        calls: 0,
-        avgResponseTime: 45,
-        cacheHitRate: 78,
+        calls: Object.values(ipcStats).reduce((sum: number, stat) => sum + (stat.pendingRequests || 0), 0),
+        avgResponseTime: 45, 
+        cacheHitRate: 78
       };
 
-      // Memory Metrics
-      const perfMemory = (performance as any).memory;
-      const memoryMetrics = {
-        used: perfMemory ? perfMemory.usedJSHeapSize : 0,
-        limit: perfMemory ? perfMemory.jsHeapSizeLimit : 1,
-        percentage: perfMemory
-          ? ((perfMemory.usedJSHeapSize || 0) /
-              (perfMemory.jsHeapSizeLimit || 1)) *
-            100
-          : 0,
-      };
+      // Memory Metrics (Local Browser Memory)
+      const memoryStats = memoryManager.getMemoryStats?.() || {};
+      const memoryMetrics = memoryStats.current ? {
+        used: memoryStats.current.usedJSHeapSize || 0,
+        limit: memoryStats.current.jsHeapSizeLimit || 1,
+        percentage: ((memoryStats.current.usedJSHeapSize || 0) / (memoryStats.current.jsHeapSizeLimit || 1)) * 100
+      } : { used: 0, limit: 1, percentage: 0 };
 
-      // Component Metrics
+      // Component Metrics (Local)
       const componentMetrics = {
-        renderCount: 0,
-        avgRenderTime: 16,
+        renderCount: memoryStats.registeredComponents || 0,
+        avgRenderTime: 16
       };
-
-      // Cost Metrics (Async Fetch)
-      let costMetrics = { currentSpend: 0, savings: 0, roi: 0 };
-      try {
-        // Dynamic import to avoid circular dependencies if any
-        const { api } = await import("../lib/api");
-        const costs = await api.getInfrastructureCosts().catch(() => null);
-        if (costs) {
-          costMetrics = {
-            currentSpend: costs.current_spend,
-            savings: costs.projected_savings,
-            roi: costs.roi_percentage,
-          };
-        }
-      } catch (e) {
-        // Silent fail for dashboard
-      }
-
-      setMetrics((prev) => ({
-        ...prev,
-        ipc: ipcMetrics,
-        memory: memoryMetrics,
-        components: componentMetrics,
-        cost: costMetrics,
+      
+      setMetrics(prev => ({
+          ...prev,
+          ipc: ipcMetrics,
+          memory: memoryMetrics,
+          components: componentMetrics
       }));
     };
 
-    interface SystemMetricsPayload {
-      cpu_percent: number;
-      memory_percent: number;
-      uptime: number;
-      request_count: number;
-      response_time_avg: number;
-      error_rate: number;
-    }
+interface SystemMetricsPayload {
+    cpu_percent: number;
+    memory_percent: number;
+    uptime: number;
+    request_count: number;
+    response_time_avg: number;
+    error_rate: number;
+}
 
-    // ... inside component ...
+// ... inside component ...
     // WebSocket listener for Backend Metrics
     const unsubscribeWS = addListener((data) => {
-      if (data.type === "system_metrics" && data.metrics) {
-        const metrics = data.metrics as SystemMetricsPayload;
-        setMetrics((prev) => ({
-          ...prev,
-          system: {
-            cpu: metrics.cpu_percent || prev.system.cpu,
-            memory: metrics.memory_percent || prev.system.memory,
-            uptime: metrics.uptime || prev.system.uptime,
-          },
-          api: {
-            totalCalls: metrics.request_count || prev.api.totalCalls,
-            avgResponseTime:
-              metrics.response_time_avg || prev.api.avgResponseTime,
-            errorRate: metrics.error_rate || prev.api.errorRate,
-          },
-        }));
-      }
+        if (data.type === 'system_metrics' && data.metrics) {
+            const metrics = data.metrics as SystemMetricsPayload;
+            setMetrics(prev => ({
+                ...prev,
+                system: {
+                    cpu: metrics.cpu_percent || prev.system.cpu,
+                    memory: metrics.memory_percent || prev.system.memory,
+                    uptime: metrics.uptime || prev.system.uptime
+                },
+                api: {
+                    totalCalls: metrics.request_count || prev.api.totalCalls,
+                    avgResponseTime: metrics.response_time_avg || prev.api.avgResponseTime,
+                    errorRate: metrics.error_rate || prev.api.errorRate
+                }
+            }));
+        }
     });
 
-    const interval = setInterval(() => {
-      updateLocalMetrics();
-      if (!isConnected) {
-        // Optional: Poll backend if WS disconnected
-      }
+    const interval = setInterval(() => { 
+        updateLocalMetrics();
+        if (!isConnected) {
+            // Optional: Poll backend if WS disconnected
+        }
     }, 2000);
-
+    
     updateLocalMetrics();
 
     return () => {
@@ -200,19 +171,16 @@ const PerformanceDashboard: React.FC = () => {
   }, [isConnected, addListener]);
 
   const formatBytes = (bytes: number) => {
-    if (!bytes) return "0 B";
-    const sizes = ["B", "KB", "MB", "GB"];
+    if (!bytes) return '0 B';
+    const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
   };
 
-  const getStatusColor = (
-    value: number,
-    thresholds: { warning: number; critical: number },
-  ) => {
-    if (value >= thresholds.critical) return "text-error-400";
-    if (value >= thresholds.warning) return "text-warning-400";
-    return "text-success-400";
+  const getStatusColor = (value: number, thresholds: { warning: number; critical: number }) => {
+    if (value >= thresholds.critical) return 'text-error-400';
+    if (value >= thresholds.warning) return 'text-warning-400';
+    return 'text-success-400';
   };
 
   return (
@@ -220,12 +188,8 @@ const PerformanceDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold title-gradient">
-            Performance Dashboard
-          </h1>
-          <p className="text-secondary-400 mt-2">
-            Real-time application performance monitoring
-          </p>
+          <h1 className="text-3xl font-bold title-gradient">Performance Dashboard</h1>
+          <p className="text-secondary-400 mt-2">Real-time application performance monitoring</p>
         </div>
         <div className="flex items-center gap-4">
           <select
@@ -240,9 +204,7 @@ const PerformanceDashboard: React.FC = () => {
             <option value="1h">Last Hour</option>
           </select>
           <button
-            onClick={() =>
-              secureLogger.info("Memory snapshot functionality removed")
-            }
+            onClick={() => memoryManager.takeMemorySnapshot?.('manual-dashboard')}
             className="btn btn-secondary"
           >
             📸 Snapshot
@@ -258,11 +220,12 @@ const PerformanceDashboard: React.FC = () => {
               key={alert.id}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className={`p-4 rounded-lg border ${
-                alert.level === "critical"
-                  ? "bg-error-500/10 border-error-500/20 text-error-400"
-                  : "bg-warning-500/10 border-warning-500/20 text-warning-400"
-              }`}
+              className={cn(
+                "p-4 rounded-lg border",
+                alert.level === 'critical' 
+                  ? 'bg-error-500/10 border-error-500/20 text-error-400' 
+                  : 'bg-warning-500/10 border-warning-500/20 text-warning-400'
+              )}
             >
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4" />
@@ -306,13 +269,7 @@ const PerformanceDashboard: React.FC = () => {
           unit="%"
           icon={HardDrive}
           trend={3}
-          status={
-            metrics.memory.percentage > 80
-              ? "critical"
-              : metrics.memory.percentage > 60
-                ? "warning"
-                : "good"
-          }
+          status={metrics.memory.percentage > 80 ? 'critical' : metrics.memory.percentage > 60 ? 'warning' : 'good'}
         >
           <div className="space-y-2 text-xs text-secondary-400">
             <div className="flex justify-between">
@@ -333,7 +290,7 @@ const PerformanceDashboard: React.FC = () => {
           unit="ms avg"
           icon={Activity}
           trend={-8}
-          status={metrics.api.avgResponseTime > 200 ? "warning" : "good"}
+          status={metrics.api.avgResponseTime > 200 ? 'warning' : 'good'}
         >
           <div className="space-y-2 text-xs text-secondary-400">
             <div className="flex justify-between">
@@ -354,7 +311,7 @@ const PerformanceDashboard: React.FC = () => {
           unit="% CPU"
           icon={Cpu}
           trend={2}
-          status={metrics.system.cpu > 70 ? "warning" : "good"}
+          status={metrics.system.cpu > 70 ? 'warning' : 'good'}
         >
           <div className="space-y-2 text-xs text-secondary-400">
             <div className="flex justify-between">
@@ -364,29 +321,6 @@ const PerformanceDashboard: React.FC = () => {
             <div className="flex justify-between">
               <span>Components</span>
               <span>{metrics.components.renderCount}</span>
-            </div>
-          </div>
-        </MetricCard>
-
-        {/* Cost Efficiency */}
-        <MetricCard
-          title="Cost Efficiency"
-          value={`$${metrics.cost.currentSpend.toLocaleString()}`}
-          unit="/mo"
-          icon={TrendingDown} // Using generic icon as DollarSign might not be imported
-          trend={15} // Positive trend means savings in this context visually, but usually green means good. Let's say +15% savings.
-          status="good"
-        >
-          <div className="space-y-2 text-xs text-secondary-400">
-            <div className="flex justify-between">
-              <span>Projected Savings</span>
-              <span className="text-success-400">
-                ${metrics.cost.savings.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span>ROI</span>
-              <span>{metrics.cost.roi}%</span>
             </div>
           </div>
         </MetricCard>
@@ -440,27 +374,19 @@ const PerformanceDashboard: React.FC = () => {
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span>Memory Usage</span>
-                <span
-                  className={getStatusColor(metrics.memory.percentage, {
-                    warning: 60,
-                    critical: 80,
-                  })}
-                >
+                <span className={getStatusColor(metrics.memory.percentage, { warning: 60, critical: 80 })}>
                   {metrics.memory.percentage.toFixed(1)}%
                 </span>
               </div>
-              <div className="progress-bar">
+              <div className="w-full bg-secondary-700 rounded-full h-3">
                 <div
-                  className={`progress-fill ${
-                    metrics.memory.percentage > 80
-                      ? "progress-error"
-                      : metrics.memory.percentage > 60
-                        ? "progress-warning"
-                        : "progress-primary"
-                  }`}
-                  style={{
-                    width: `${Math.min(metrics.memory.percentage, 100)}%`,
-                  }}
+                  className={cn(
+                    "h-3 rounded-full transition-all duration-300",
+                    metrics.memory.percentage > 80 ? 'bg-error-500' :
+                    metrics.memory.percentage > 60 ? 'bg-warning-500' :
+                    'bg-success-500'
+                  )}
+                  style={{ width: `${Math.min(metrics.memory.percentage, 100)}%` }}
                 />
               </div>
             </div>
@@ -469,24 +395,18 @@ const PerformanceDashboard: React.FC = () => {
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span>CPU Usage</span>
-                <span
-                  className={getStatusColor(metrics.system.cpu, {
-                    warning: 50,
-                    critical: 70,
-                  })}
-                >
+                <span className={getStatusColor(metrics.system.cpu, { warning: 50, critical: 70 })}>
                   {metrics.system.cpu}%
                 </span>
               </div>
-              <div className="progress-bar">
+              <div className="w-full bg-secondary-700 rounded-full h-3">
                 <div
-                  className={`progress-fill ${
-                    metrics.system.cpu > 70
-                      ? "progress-error"
-                      : metrics.system.cpu > 50
-                        ? "progress-warning"
-                        : "progress-primary"
-                  }`}
+                  className={cn(
+                    "h-3 rounded-full transition-all duration-300",
+                    metrics.system.cpu > 70 ? 'bg-error-500' :
+                    metrics.system.cpu > 50 ? 'bg-warning-500' :
+                    'bg-success-500'
+                  )}
                   style={{ width: `${Math.min(metrics.system.cpu, 100)}%` }}
                 />
               </div>

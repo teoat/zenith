@@ -1,39 +1,29 @@
-import { secureLogger } from "./secureLogger";
-
 const verifyIntegrity = async (expectedHash: string) => {
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     return;
   }
 
   try {
-    const response = await fetch("/"); // Fetch the current index.html
+    const response = await fetch('/'); // Fetch the current index.html
     const text = await response.text();
 
     const encoder = new TextEncoder();
     const data = encoder.encode(text);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const currentHash = Array.from(new Uint8Array(hashBuffer))
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
 
     if (currentHash !== expectedHash) {
-      secureLogger.error(
-        "SECURITY",
-        "Integrity check failed: index.html has been tampered with!",
-        { expectedHash, currentHash },
-      );
-      document.body.textContent =
-        "Integrity check failed! The application may have been tampered with.";
-      window.location.href = "about:blank"; // Redirect to a blank page
+      console.error('Integrity check failed: index.html has been tampered with!');
+      document.body.innerHTML = '<h1>Integrity check failed! The application may have been tampered with.</h1>';
+      window.location.href = 'about:blank'; // Redirect to a blank page
     }
-  } catch (error) {
-    secureLogger.error("SECURITY", "Error during integrity verification", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+  } catch (err) {
+    console.error('Error during integrity verification:', err);
     // Potentially take action even on error if it suggests a blocked request or other issue
-    document.body.textContent =
-      "Application integrity check failed due to an error.";
-    window.location.href = "about:blank";
+    document.body.innerHTML = '<h1>Application integrity check failed due to an error.</h1>';
+    window.location.href = 'about:blank';
   }
 };
 

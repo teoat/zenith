@@ -1,15 +1,11 @@
-import { useState } from "react";
-import { secureLogger } from "@/utils/secureLogger";
+import { useState } from 'react';
 
 // Advanced AI Features - Quantum-Resistant Cryptography & More
 // Note: This file contains placeholder implementations for advanced features
 // In production, these would use actual quantum-resistant cryptographic libraries
 
 export class QuantumResistantCrypto {
-  static async generateKyberKeypair(): Promise<{
-    publicKey: Uint8Array;
-    privateKey: Uint8Array;
-  }> {
+  static async generateKyberKeypair(): Promise<{ publicKey: Uint8Array; privateKey: Uint8Array }> {
     const publicKey = new Uint8Array(32);
     const privateKey = new Uint8Array(32);
     crypto.getRandomValues(publicKey);
@@ -17,10 +13,7 @@ export class QuantumResistantCrypto {
     return { publicKey, privateKey };
   }
 
-  static async hybridEncrypt(
-    data: Uint8Array,
-    _publicKey: Uint8Array,
-  ): Promise<{
+  static async hybridEncrypt(data: Uint8Array, _publicKey: Uint8Array): Promise<{
     encryptedData: Uint8Array;
     encapsulatedKey: Uint8Array;
     nonce: Uint8Array;
@@ -37,7 +30,7 @@ export class QuantumResistantCrypto {
     return {
       encryptedData,
       encapsulatedKey: new Uint8Array(64), // Placeholder
-      nonce,
+      nonce
     };
   }
 
@@ -45,7 +38,7 @@ export class QuantumResistantCrypto {
     encryptedData: Uint8Array,
     _encapsulatedKey: Uint8Array,
     nonce: Uint8Array,
-    _privateKey: Uint8Array,
+    _privateKey: Uint8Array
   ): Promise<Uint8Array> {
     // Placeholder decryption
     return encryptedData.slice(nonce.length);
@@ -55,17 +48,11 @@ export class QuantumResistantCrypto {
 export class FederatedLearning {
   private model: Map<string, number[]> = new Map();
 
-  async submitLocalUpdate(
-    _participantId: string,
-    updates: Record<string, number[]>,
-  ): Promise<void> {
+  async submitLocalUpdate(_participantId: string, updates: Record<string, number[]>): Promise<void> {
     // Placeholder federated learning
     Object.entries(updates).forEach(([key, update]) => {
       const current = this.model.get(key) || [];
-      this.model.set(
-        key,
-        current.map((val, idx) => val + (update[idx] || 0)),
-      );
+      this.model.set(key, current.map((val, idx) => val + (update[idx] || 0)));
     });
   }
 
@@ -79,40 +66,37 @@ export class FederatedLearning {
 }
 
 export class VoiceController {
-  private recognition: SpeechRecognition | null = null;
-  private commands: Map<string, (params?: Record<string, unknown>) => void> = new Map();
+  private recognition: any = null;
+  private commands: Map<string, (params?: any) => void> = new Map();
 
   constructor() {
     this.initializeSpeechRecognition();
   }
 
   private initializeSpeechRecognition(): void {
-    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-      const SpeechRecognitionClass =
-        window.SpeechRecognition ||
-        (window as { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition;
-      if (SpeechRecognitionClass) {
-        this.recognition = new SpeechRecognitionClass();
-        this.recognition.continuous = false;
-        this.recognition.interimResults = false;
-        this.recognition.lang = "en-US";
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      this.recognition = new SpeechRecognition();
+      this.recognition.continuous = false;
+      this.recognition.interimResults = false;
+      this.recognition.lang = 'en-US';
 
-        this.recognition.onresult = (event: SpeechRecognitionEvent) => {
-          const transcript = event.results[0][0].transcript.toLowerCase();
-          this.processCommand(transcript);
-        };
+      this.recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        this.processCommand(transcript);
+      };
 
-        this.recognition.onend = () => {
-        };
+      this.recognition.onend = () => {
+        // Listening ended
+      };
 
-        this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-          secureLogger.error("Speech recognition error:", event.error);
-        };
-      }
+      this.recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+      };
     }
   }
 
-  registerCommand(command: string, handler: (params?: Record<string, unknown>) => void): void {
+  registerCommand(command: string, handler: (params?: any) => void): void {
     this.commands.set(command.toLowerCase(), handler);
   }
 
@@ -145,9 +129,7 @@ export const useQuantumCrypto = () => ({
   decrypt: QuantumResistantCrypto.hybridDecrypt,
 });
 
-export const useFederatedLearning = (
-  _initialModel: Record<string, number[]>,
-) => {
+export const useFederatedLearning = (_initialModel: Record<string, number[]>) => {
   const [fedLearning] = useState(() => new FederatedLearning());
 
   return {

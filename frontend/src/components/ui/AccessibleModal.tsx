@@ -1,15 +1,15 @@
 // frontend/src/components/ui/AccessibleModal.tsx
-import React, { useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-import { AccessibleButton } from "./AccessibleButton";
-import { accessibilityManager, focus } from "@/lib/accessibility";
+import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { AccessibleButton } from './AccessibleButton';
+import { accessibilityManager, focus } from '../../lib/accessibility';
 
 interface AccessibleModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   description?: string;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   children: React.ReactNode;
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
@@ -22,12 +22,12 @@ export function AccessibleModal({
   onClose,
   title,
   description,
-  size = "md",
+  size = 'md',
   children,
   closeOnOverlayClick = true,
   closeOnEscape = true,
   showCloseButton = true,
-  initialFocusRef,
+  initialFocusRef
 }: AccessibleModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -39,18 +39,18 @@ export function AccessibleModal({
       previousFocusRef.current = document.activeElement as HTMLElement;
 
       // Prevent body scroll
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
 
       // Focus management
-      const focusableElement =
-        initialFocusRef?.current || focus.findFirstFocusable(modalRef.current!);
+      const focusableElement = initialFocusRef?.current ||
+                              focus.findFirstFocusable(modalRef.current!);
 
       if (focusableElement) {
         setTimeout(() => focus.moveFocus(focusableElement), 100);
       }
 
       // Announce modal opening
-      accessibilityManager.announce(`Opened ${title} dialog`, "assertive");
+      accessibilityManager.announce(`Opened ${title} dialog`, 'assertive');
 
       // Set up focus trap
       const focusTrapId = `modal-${Date.now()}`;
@@ -60,7 +60,7 @@ export function AccessibleModal({
 
       return () => {
         // Cleanup
-        document.body.style.overflow = "";
+        document.body.style.overflow = '';
         accessibilityManager.removeFocusTrap(focusTrapId);
 
         // Restore focus
@@ -76,13 +76,13 @@ export function AccessibleModal({
     if (!isOpen || !closeOnEscape) return;
 
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         onClose();
       }
     };
 
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, closeOnEscape, onClose]);
 
   // Handle overlay click
@@ -95,10 +95,10 @@ export function AccessibleModal({
   if (!isOpen) return null;
 
   const sizeClasses = {
-    sm: "max-w-md",
-    md: "max-w-lg",
-    lg: "max-w-2xl",
-    xl: "max-w-4xl",
+    sm: 'max-w-md',
+    md: 'max-w-lg',
+    lg: 'max-w-2xl',
+    xl: 'max-w-4xl'
   };
 
   return createPortal(
@@ -132,7 +132,10 @@ export function AccessibleModal({
               {title}
             </h2>
             {description && (
-              <p id="modal-description" className="mt-1 text-sm text-gray-600">
+              <p
+                id="modal-description"
+                className="mt-1 text-sm text-gray-600"
+              >
                 {description}
               </p>
             )}
@@ -165,9 +168,11 @@ export function AccessibleModal({
         </div>
 
         {/* Content */}
-        <div className="p-6">{children}</div>
+        <div className="p-6">
+          {children}
+        </div>
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }

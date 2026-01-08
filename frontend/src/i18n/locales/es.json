@@ -1,0 +1,11 @@
+{
+  "app_name": "Zenith",
+  "welcome": "Bienvenido",
+  "login": "Iniciar sesión",
+  "logout": "Cerrar sesión",
+  "dashboard": "Panel",
+  "cases": "Casos",
+  "evidence": "Evidencia",
+  "reports": "Informes",
+  "settings": "Configuración"
+}

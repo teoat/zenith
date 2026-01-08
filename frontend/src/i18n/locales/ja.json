@@ -1,0 +1,11 @@
+{
+  "app_name": "Zenith",
+  "welcome": "ようこそ",
+  "login": "ログイン",
+  "logout": "ログアウト",
+  "dashboard": "ダッシュボード",
+  "cases": "ケース",
+  "evidence": "証拠",
+  "reports": "レポート",
+  "settings": "設定"
+}

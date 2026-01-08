@@ -1,36 +1,25 @@
-import { secureLogger } from "./secureLogger";
-import { api } from "@/lib/api";
+// frontend/src/utils/errorHandler.ts
+import { api } from '../lib/api';
 
 export const setupGlobalErrorHandlers = () => {
   // Handle unhandled promise rejections
-  window.addEventListener("unhandledrejection", (event) => {
-    secureLogger.error("SYSTEM", "Unhandled promise rejection", {
-      reason: event.reason?.message || String(event.reason),
-      stack: event.reason?.stack,
-    });
-
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
     sendErrorReport({
-      type: "unhandled_promise_rejection",
-      message: event.reason?.message || "Unhandled promise rejection",
+      type: 'unhandled_promise_rejection',
+      message: event.reason?.message || 'Unhandled promise rejection',
       stack: event.reason?.stack,
       timestamp: new Date().toISOString(),
       url: window.location.href,
-      userAgent: navigator.userAgent,
+      userAgent: navigator.userAgent
     });
   });
 
   // Handle uncaught errors
-  window.addEventListener("error", (event) => {
-    secureLogger.error("SYSTEM", "Uncaught error detected", {
-      message: event.message,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-      stack: event.error?.stack,
-    });
-
+  window.addEventListener('error', (event) => {
+    console.error('Uncaught error:', event.error);
     sendErrorReport({
-      type: "uncaught_error",
+      type: 'uncaught_error',
       message: event.message,
       stack: event.error?.stack,
       filename: event.filename,
@@ -38,7 +27,7 @@ export const setupGlobalErrorHandlers = () => {
       colno: event.colno,
       timestamp: new Date().toISOString(),
       url: window.location.href,
-      userAgent: navigator.userAgent,
+      userAgent: navigator.userAgent
     });
   });
 
@@ -46,48 +35,23 @@ export const setupGlobalErrorHandlers = () => {
   const originalConsoleError = console.error;
   console.error = (...args) => {
     // Check if this is a React error
-    if (
-      args[0]?.includes?.("Warning: ReactDOM.render is no longer supported") ||
-      args[0]?.includes?.("Warning: React.createFactory is deprecated")
-    ) {
-      // Ignore React deprecation warnings
+    if (args[0]?.includes?.('Warning: ReactDOM.render is no longer supported') ||
+        args[0]?.includes?.('Warning: React.createFactory is deprecated')) {
+      // Ignore React deprecation warnings in production
       return;
     }
 
-    // Ignore SecureLogger output to prevent recursion (starts with [CATEGORY])
-    if (typeof args[0] === "string" && args[0].match(/^\[.*\]/)) {
-      if (
-        process.env.NODE_ENV === "development" ||
-        process.env.NODE_ENV === "test"
-      ) {
-        originalConsoleError.apply(console, args);
-      }
-      return;
-    }
-
-    // Log other errors using secureLogger instead of original console
-    secureLogger.error(
-      "CONSOLE",
-      args
-        .map((arg) =>
-          typeof arg === "object" ? JSON.stringify(arg) : String(arg),
-        )
-        .join(" "),
-    );
+    // Log other errors
+    originalConsoleError.apply(console, args);
 
     // Report critical errors
-    if (args[0]?.includes?.("Critical") || args[0]?.includes?.("Error")) {
+    if (args[0]?.includes?.('Critical') || args[0]?.includes?.('Error')) {
       sendErrorReport({
-        type: "console_error",
-        message: args.join(" "),
+        type: 'console_error',
+        message: args.join(' '),
         timestamp: new Date().toISOString(),
-        url: window.location.href,
+        url: window.location.href
       });
-    }
-
-    // Fallback to original console in development to avoid missing it in the terminal
-    if (process.env.NODE_ENV === "development") {
-      originalConsoleError.apply(console, args);
     }
   };
 };
@@ -105,8 +69,14 @@ interface ErrorData {
 }
 
 const sendErrorReport = (errorData: ErrorData) => {
+  // Send to monitoring service via API
+  // Using imported api (need to import it at top)
+  // For now using api global if available or importing
+  // Since this is a util, we should import api
   api.reportError(errorData);
-  secureLogger.debug("SYSTEM", "Error reported to monitoring service", {
-    type: errorData.type,
-  });
+
+  // In development, also log to console
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Error reported:', errorData);
+  }
 };

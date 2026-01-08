@@ -1,0 +1,64 @@
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  plugins: [react({ jsxRuntime: 'automatic' })],
+  testEnvironment: 'jsdom',
+  include: ['src/**/*.{ts,tsx}'],
+  exclude: ['node_modules', 'dist', 'e2e'],
+  testMatch: [
+    '**/__tests__/**/*.{test,spec}.{ts,tsx}'
+  ],
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}'
+  ],
+  coverage: {
+    reporter: ['text'],
+    provider: 'v8',
+    all: true,
+    thresholds: {
+      global: {
+        branches: 70,
+        functions: 70,
+        lines: 75,
+        statements: 75
+      }
+    }
+  },
+  globals: true,
+  setupFiles: ['src/__tests__/setup.vitest.ts'],
+  testTimeout: 10000,
+  isolate: true,
+  environment: 'jsdom',
+  deps: {
+    vite: true,
+    '@vitejs/plugin-react': true,
+  },
+  test: {
+    globals: true,
+    setupFiles: ['src/__tests__/setup.vitest.ts'],
+    include: ['src/**/*.{ts,tsx}'],
+    coverage: {
+      reporter: ['text'],
+      provider: 'v8',
+      all: true,
+      thresholds: {
+        global: {
+          branches: 70,
+          functions: 70,
+          lines: 75,
+          statements: 75
+        }
+      }
+    }
+  },
+  testTimeout: 10000,
+  pool: 'threads',
+  poolOptions: {
+    threads: {
+      singleThread: {
+        timeout: 5000,
+        isolate: false
+      }
+    }
+  }
+});

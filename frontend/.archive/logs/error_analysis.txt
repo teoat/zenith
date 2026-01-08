@@ -1,0 +1,278 @@
+ 131 Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+  20 Argument of type 'Error' is not assignable to parameter of type 'never'.
+  14 Conversion of type '{ new (url: string | URL, protocols?: string | string[] | undefined): WebSocket; prototype: WebSocket; readonly CONNECTING: 0; readonly OPEN: 1; readonly CLOSING: 2; readonly CLOSED: 3; }' to type 'Mock<UnknownFunction>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  14 Argument of type 'never[]' is not assignable to parameter of type 'never'.
+  14 Argument of type '{ id: string; title: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+  12 Argument of type '{}' is not assignable to parameter of type 'never'.
+  11 Type '{ caseId: string; onUpload: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+  10 Property 'toHaveTextContent' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+  10 Expected 1 arguments, but got 2.
+   9 Property 'setCases' does not exist on type 'CaseStore'. Did you mean 'getCase'?
+   9 Property 'setAuth' does not exist on type 'AuthState'.
+   9 Argument of type '{ ok: boolean; status: number; }' is not assignable to parameter of type 'never'.
+   9 'React' is declared but its value is never read.
+   8 Property 'toBeInTheDocument' does not exist on type 'JestMatchers<void, HTMLElement | null>'.
+   8 Property 'isAuthenticated' does not exist on type 'AuthContextType'.
+   8 Parameter 'c' implicitly has an 'any' type.
+   7 Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+   6 Property 'generateInsights' does not exist on type 'AIService'.
+   6 Property 'error' does not exist on type 'AuthContextType'.
+   6 Argument of type '{ id: string; title: string; status: string; priority: string; created_at: string; }[]' is not assignable to parameter of type 'never'.
+   6 Argument of type '{ id: string; email: string; role: string; }' is not assignable to parameter of type 'never'.
+   5 Property 'toBeInTheDocument' does not exist on type 'Matchers<void, Element | null> & SnapshotMatchers<void, Element | null> & Inverse<JestMatchers<void, Element | null>> & PromiseMatchers<...>'.
+   5 Property 'bulkUpdateCases' does not exist on type '{ getCases: (params?: Record<string, unknown> | undefined) => Promise<CollectionResponse<Case> & { pagination: PaginationInfo; }>; ... 9 more ...; getCaseStatistics: () => Promise<...>; }'. Did you mean 'updateCase'?
+   5 Argument of type 'undefined' is not assignable to parameter of type 'never'.
+   5 Argument of type 'string' is not assignable to parameter of type 'UseWebSocketOptions'.
+   5 Argument of type '{ ok: boolean; status: number; json: () => Promise<{ detail: string; }>; }' is not assignable to parameter of type 'never'.
+   4 Type 'unknown' is not assignable to type '((event: MessageEvent<any>) => void) | null'.
+   4 Type 'unknown' is not assignable to type '(() => void) | null'.
+   4 Spread types may only be created from object types.
+   4 Property 'suggestions' does not exist on type 'ApiResponse<AIChatResponse>'.
+   4 Property 'searchCases' does not exist on type '{ getCases: (params?: Record<string, unknown> | undefined) => Promise<CollectionResponse<Case> & { pagination: PaginationInfo; }>; ... 9 more ...; getCaseStatistics: () => Promise<...>; }'.
+   4 Property 'hasPermission' does not exist on type 'AuthState'.
+   4 Property 'cases' does not exist on type 'CollectionResponse<Case> & { pagination: PaginationInfo; }'.
+   4 Duplicate identifier 'screen'.
+   4 Duplicate identifier 'render'.
+   3 Property 'waitFor' does not exist on type 'RenderHookResult<UseWebSocketReturn, unknown>'.
+   3 Property 'waitFor' does not exist on type 'RenderHookResult<UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>, unknown>'.
+   3 Property 'toHaveClass' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+   3 Property 'toHaveAttribute' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+   3 Property 'toBeInTheDocument' does not exist on type 'Matchers<void, SVGSVGElement | null> & SnapshotMatchers<void, SVGSVGElement | null> & Inverse<JestMatchers<void, SVGSVGElement | null>> & PromiseMatchers<...>'.
+   3 Property 'setFilter' does not exist on type 'CaseStore'.
+   3 Property 'setError' does not exist on type 'AuthState'.
+   3 Property 'selectedCase' does not exist on type 'CaseStore'. Did you mean 'deleteCase'?
+   3 Property 'queueNotification' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+   3 Property 'getQueue' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+   3 Property 'getPendingSARs' does not exist on type 'ComplianceService'.
+   3 Property 'getCaseById' does not exist on type '{ getCases: (params?: Record<string, unknown> | undefined) => Promise<CollectionResponse<Case> & { pagination: PaginationInfo; }>; ... 9 more ...; getCaseStatistics: () => Promise<...>; }'.
+   3 Property 'filter' does not exist on type 'CaseStore'.
+   3 Property 'exportCases' does not exist on type '{ getCases: (params?: Record<string, unknown> | undefined) => Promise<CollectionResponse<Case> & { pagination: PaginationInfo; }>; ... 9 more ...; getCaseStatistics: () => Promise<...>; }'.
+   3 Cannot find namespace 'DOMPurify'.
+   3 Argument of type '{ ok: boolean; json: () => Promise<{ message: string; }>; }' is not assignable to parameter of type 'never'.
+   3 Argument of type '{ ok: boolean; json: () => Promise<{ items: { id: string; fileName: string; case_id: string; uploadedAt: string; }[]; total: number; }>; }' is not assignable to parameter of type 'never'.
+   3 Argument of type '{ ok: boolean; blob: () => Promise<Blob>; }' is not assignable to parameter of type 'never'.
+   3 Argument of type '{ access_token: string; user: { id: string; email: string; role: string; }; }' is not assignable to parameter of type 'never'.
+   3 Argument of type '{ access_token: string; user: { id: string; email: string; }; }' is not assignable to parameter of type 'never'.
+   3 'React' refers to a UMD global, but the current file is a module. Consider adding an import instead.
+   2 Type '{ caseId: string; }' is not assignable to type 'IntrinsicAttributes & InvestigationWizardProps'.
+   2 Property 'submitSAR' does not exist on type 'ComplianceService'.
+   2 Property 'setLoading' does not exist on type 'CaseStore'. Did you mean 'loading'?
+   2 Property 'setLoading' does not exist on type 'AuthState'. Did you mean 'isLoading'?
+   2 Property 'setError' does not exist on type 'CaseStore'.
+   2 Property 'sendNotification' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'. Did you mean 'getNotifications'?
+   2 Property 'selectCase' does not exist on type 'CaseStore'. Did you mean 'deleteCase'?
+   2 Property 'runCheck' does not exist on type 'ComplianceService'.
+   2 Property 'response' does not exist on type 'ApiResponse<AIChatResponse>'.
+   2 Property 'requestPermission' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+   2 Property 'register' does not exist on type 'AuthContextType'.
+   2 Property 'isLoading' does not exist on type 'CaseStore'. Did you mean 'loading'?
+   2 Property 'hasRole' does not exist on type 'AuthState'.
+   2 Property 'hasRole' does not exist on type 'AuthContextType'.
+   2 Property 'hasPermission' does not exist on type 'AuthContextType'.
+   2 Property 'getSuggestions' does not exist on type 'AIService'.
+   2 Property 'getSortedCases' does not exist on type 'CaseStore'.
+   2 Property 'getDeadlines' does not exist on type 'ComplianceService'.
+   2 Property 'exportReport' does not exist on type 'ComplianceService'.
+   2 Property 'cases' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+   2 Property 'badge' does not exist on type 'JSX.IntrinsicElements'.
+   2 Parameter 'case_' implicitly has an 'any' type.
+   2 Duplicate identifier 'waitFor'.
+   2 Duplicate identifier 'fireEvent'.
+   2 Duplicate function implementation.
+   2 Cannot redeclare exported variable 'createApiErrorMock'.
+   2 Cannot find name 'err'.
+   2 Cannot find module '../store/caseStore' or its corresponding type declarations.
+   2 Argument of type 'EvidenceItem' is not assignable to parameter of type 'SetStateAction<EvidenceMetadata | null>'.
+   2 Argument of type 'Blob' is not assignable to parameter of type 'never'.
+   2 Argument of type 'any' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ updated: number; }' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ text: string; type: string; }[]' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ summary: string; confidence: number; }' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ response: string; confidence: number; }' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ response: string; }' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ ok: boolean; json: () => Promise<never[]>; }' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; email: string; role: string; }>; }' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ id: string; title: string; }' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ id: string; status: string; }[]' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ id: string; email: string; }' is not assignable to parameter of type 'never'.
+   2 Argument of type '{ access_token: string; }' is not assignable to parameter of type 'never'.
+   2 Argument of type '"case-123"' is not assignable to parameter of type '"pdf" | "html" | "csv" | undefined'.
+   2 All imports in import declaration are unused.
+   2 'importFn' is declared but its value is never read.
+   2 'Badge' is declared but its value is never read.
+   1 Type '{}' is missing the following properties from type 'ExecuteResult': changes, lastInsertRowid
+   1 Type '{ initialValues: { id: string; title: string; priority: "high"; description: string; }; onSubmit: Mock<UnknownFunction>; onCancel: Mock<UnknownFunction>; }' is not assignable to type 'IntrinsicAttributes & CaseFormProps'.
+   1 Type '{ caseId: string; onUpload: Mock<UnknownFunction>; multiple: true; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+   1 Type '{ caseId: string; onUpload: Mock<UnknownFunction>; maxSize: number; }' is not assignable to type 'IntrinsicAttributes & EvidenceUploaderProps'.
+   1 Type '"short"' has no properties in common with type 'DateTimeFormatOptions'.
+   1 Type '"low"' is not assignable to type 'CasePriority | undefined'. Did you mean '"LOW"'?
+   1 Type '"long"' has no properties in common with type 'DateTimeFormatOptions'.
+   1 Property 'updateCase' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+   1 Property 'toHaveClass' does not exist on type 'Matchers<void, Element | null> & SnapshotMatchers<void, Element | null> & Inverse<JestMatchers<void, Element | null>> & PromiseMatchers<...>'.
+   1 Property 'toBeDisabled' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+   1 Property 'toBeDisabled' does not exist on type 'JestMatchers<void, HTMLElement>'.
+   1 Property 'suggestActions' does not exist on type 'AIService'.
+   1 Property 'submitRegulatory' does not exist on type 'ComplianceService'.
+   1 Property 'refresh' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+   1 Property 'predictFraudRisk' does not exist on type 'AIService'.
+   1 Property 'persona' does not exist on type 'ApiResponse<AIChatResponse>'.
+   1 Property 'initializeAuth' does not exist on type 'AuthState'.
+   1 Property 'getStatus' does not exist on type 'ComplianceService'.
+   1 Property 'getRelationships' does not exist on type '{ getGraphData: () => Promise<any>; getCentralEntities: (topN?: number) => Promise<CentralEntity[]>; getSuspiciousPatterns: () => Promise<SuspiciousPattern[]>; ... 5 more ...; exportGraph: (format: string) => Promise<...>; }'.
+   1 Property 'getMetrics' does not exist on type 'ComplianceService'.
+   1 Property 'getFilteredCases' does not exist on type 'CaseStore'.
+   1 Property 'getConversationHistory' does not exist on type 'AIService'.
+   1 Property 'getAuditTrail' does not exist on type 'ComplianceService'.
+   1 Property 'generateSAR' does not exist on type 'ComplianceService'.
+   1 Property 'findShortestPath' does not exist on type '{ getGraphData: () => Promise<any>; getCentralEntities: (topN?: number) => Promise<CentralEntity[]>; getSuspiciousPatterns: () => Promise<SuspiciousPattern[]>; ... 5 more ...; exportGraph: (format: string) => Promise<...>; }'.
+   1 Property 'extractEntities' does not exist on type 'AIService'.
+   1 Property 'detectCommunities' does not exist on type '{ getGraphData: () => Promise<any>; getCentralEntities: (topN?: number) => Promise<CentralEntity[]>; getSuspiciousPatterns: () => Promise<SuspiciousPattern[]>; ... 5 more ...; exportGraph: (format: string) => Promise<...>; }'. Did you mean 'getCommunities'?
+   1 Property 'deleteCase' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+   1 Property 'createCase' does not exist on type 'UseQueryResult<CollectionResponse<Case> & { pagination: PaginationInfo; }, Error>'.
+   1 Property 'confidence' does not exist on type 'ApiResponse<AIChatResponse>'.
+   1 Property 'clearSelection' does not exist on type 'CaseStore'.
+   1 Property 'clearQueue' does not exist on type '{ getNotifications: () => Promise<NotificationItem[]>; }'.
+   1 Property 'clearFilter' does not exist on type 'CaseStore'.
+   1 Property 'clearError' does not exist on type 'CaseStore'.
+   1 Property 'checkCompliance' does not exist on type 'ComplianceService'.
+   1 Property 'bulkUpdate' does not exist on type 'CaseStore'.
+   1 Property 'bulkDelete' does not exist on type 'CaseStore'.
+   1 Property 'assignCase' does not exist on type '{ getCases: (params?: Record<string, unknown> | undefined) => Promise<CollectionResponse<Case> & { pagination: PaginationInfo; }>; ... 9 more ...; getCaseStatistics: () => Promise<...>; }'.
+   1 Property 'analyzeSentiment' does not exist on type 'AIService'.
+   1 Property 'addNote' does not exist on type '{ getCases: (params?: Record<string, unknown> | undefined) => Promise<CollectionResponse<Case> & { pagination: PaginationInfo; }>; ... 9 more ...; getCaseStatistics: () => Promise<...>; }'.
+   1 Property 'addCase' does not exist on type 'CaseStore'.
+   1 Parameter 'caseItem' implicitly has an 'any' type.
+   1 Object literal may only specify known properties, and 'selectedCase' does not exist in type 'CaseStore | Partial<CaseStore> | ((state: CaseStore) => CaseStore | Partial<CaseStore>)'.
+   1 Object literal may only specify known properties, and 'projectId' does not exist in type 'Case'.
+   1 Object is of type 'unknown'.
+   1 Module '"/Users/Arief/Desktop/Zenith/frontend/src/hooks/usePersistedState"' has no default export. Did you mean to use 'import { usePersistedState } from "/Users/Arief/Desktop/Zenith/frontend/src/hooks/usePersistedState"' instead?
+   1 Module '"/Users/Arief/Desktop/Zenith/frontend/src/components/ai/AIAssistant"' has no default export. Did you mean to use 'import { AIAssistant } from "/Users/Arief/Desktop/Zenith/frontend/src/components/ai/AIAssistant"' instead?
+   1 Module '"../validation"' has no exported member 'validateSSN'.
+   1 Module '"../validation"' has no exported member 'validatePhone'.
+   1 Module '"../validation"' has no exported member 'validatePassword'.
+   1 Module '"../types/schema"' has no exported member 'ProjectId'.
+   1 Module '"../AuthContext"' has no exported member 'useAuth'.
+   1 Module '"../AuthContext"' has no exported member 'AuthProvider'.
+   1 File name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/tabs.tsx' differs from already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Tabs.tsx' only in casing.
+   1 File name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/card.tsx' differs from already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Card.tsx' only in casing.
+   1 File name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/button.tsx' differs from already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Button.tsx' only in casing.
+   1 File name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/badge.tsx' differs from already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Badge.tsx' only in casing.
+   1 Expected 1 arguments, but got 0.
+   1 Expected 0 arguments, but got 1.
+   1 Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ en: { dashboard: string; investigation: string; alerts: string; settings: string; language: string; voice_control: string; contrast: string; welcome: string; }; es: { dashboard: string; investigation: string; ... 5 more ...; welcome: string; }; ar: { ...; }; zh: { ...; }; }'.
+   1 Could not find a declaration file for module 'react-window'. '/Users/Arief/Desktop/Zenith/frontend/node_modules/react-window/dist/index.cjs.js' implicitly has an 'any' type.
+   1 Cannot find name 'useEffect'.
+   1 Cannot find name 'getTypeIcon'.
+   1 Cannot find name 'getImpactColor'.
+   1 Cannot find name 'fireEvent'.
+   1 Cannot find name 'err'. Did you mean '_err'?
+   1 Cannot find module 'openapi-types' or its corresponding type declarations.
+   1 Argument of type '{ type: string; dueDate: string; daysRemaining: number; overdue: boolean; }[]' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ type: string; dueDate: string; daysRemaining: number; }[]' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ total: number; open: number; in_progress: number; closed: number; by_priority: { high: number; medium: number; low: number; }; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ total: number; open: number; in_progress: number; closed: number; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ title: string; priority: "high"; description: string; }' is not assignable to parameter of type 'Partial<Case>'.
+   1 Argument of type '{ summary: string; recommendations: string[]; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ success: boolean; error: { code: string; message: string; }; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ success: boolean; confirmationNumber: string; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ status: string; lastAudit: string; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ status: "in_progress"; }' is not assignable to parameter of type 'Partial<Case>'.
+   1 Argument of type '{ status: "closed"; resolution: string; }' is not assignable to parameter of type 'Partial<Case>'.
+   1 Argument of type '{ role: string; content: string; }[]' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ passed: boolean; checks: { name: string; passed: boolean; }[]; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ passed: boolean; checks: ({ name: string; passed: boolean; } | { name: string; passed: boolean; reason: string; })[]; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ open: number; in_progress: number; closed: number; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{}>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ valid: boolean; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ updated: number; ids: string[]; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ updated_at: string; status: "closed"; resolution: string; id: string; title: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ total: number; open: number; in_progress: number; closed: number; by_priority: { high: number; medium: number; low: number; }; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ summary: string; confidence: number; recommendations: string[]; entities: string[]; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ submitted: boolean; confirmationNumber: string; timestamp: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ status: "in_progress"; id: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ score: number; magnitude: number; label: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ riskScore: number; factors: string[]; threshold: number; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ persons: string[]; organizations: string[]; amounts: string[]; dates: string[]; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ path: string[]; distance: number; relationships: string[]; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ nodes: { id: string; label: string; type: string; }[]; edges: { source: string; target: string; label: string; }[]; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; type: string; generatedAt: string; }[]>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; type: string; data: { caseId: string; title: string; summary: string; }; generatedAt: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; title: string; status: string; priority: string; description: string; created_at: string; updated_at: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; title: string; status: string; priority: string; created_at: string; }[]>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; title: string; score: number; }[]>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; status: string; data: { suspiciousActivity: string; }; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; status: string; created_at: string; title: string; priority: "high"; description: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; reportType: string; frequency: string; nextRun: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; members: string[]; density: number; }[]>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; fileName: string; size: number; type: string; case_id: string; uploadedAt: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ id: string; assigned_to: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ compliant: boolean; checks: { rule: string; passed: boolean; }[]; score: number; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ case_id: string; created_at: string; content: string; author: string; id: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ action: string; confidence: number; reason: string; }[]>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ access_token: string; token_type: string; user: { id: string; email: string; role: string; }; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ ok: boolean; json: () => Promise<{ access_token: string; token_type: string; }>; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ name: string; status: string; message: string; }[]' is not assignable to parameter of type 'SetStateAction<HealthCheck[]>'.
+   1 Argument of type '{ id: string; title: string; status: string; priority: string; created_at: string; alert: boolean; }[]' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; title: string; status: string; priority: string; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; title: string; evidence: never[]; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; title: string; created_at: string; status: string; priority: string; }[]' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; status: string; title: string; priority: "high"; description: string; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; status: string; resolution: string; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; status: string; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; filename: string; case_id: string; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; filename: string; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; email: string; role: string; permissions: string[]; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; caseId: string; status: string; createdAt: string; }[]' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ id: string; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ fileType: string; sizeBytes: number; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ compliantCases: number; totalCases: number; pendingSARs: number; submittedSARs: number; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ by_priority: { high: number; medium: number; low: number; }; }' is not assignable to parameter of type 'never'.
+   1 Argument of type '{ action: string; timestamp: string; user: string; }[]' is not assignable to parameter of type 'never'.
+   1 Argument of type '"granted"' is not assignable to parameter of type 'never'.
+   1 Argument of type '"denied"' is not assignable to parameter of type 'never'.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Textarea.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/textarea.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Tabs.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/tabs.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Table.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/table.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Switch.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/switch.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Separator.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/separator.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Select.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/select.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Progress.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/progress.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Label.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/label.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Dialog.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/dialog.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Checkbox.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/checkbox.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Badge.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/badge.tsx' only in casing.
+   1 Already included file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/Alert.tsx' differs from file name '/Users/Arief/Desktop/Zenith/frontend/src/components/ui/alert.tsx' only in casing.
+   1 'waitFor' is declared but its value is never read.
+   1 'useEffect' is declared but its value is never read.
+   1 'type' is declared but its value is never read.
+   1 'TrendingUp' is declared but its value is never read.
+   1 'trackedResult' is declared but its value is never read.
+   1 'Separator' is declared but its value is never read.
+   1 'secureRandom' is declared but its value is never read.
+   1 'Search' is declared but its value is never read.
+   1 'result' is declared but its value is never read.
+   1 'ReactNode' is declared but its value is never read.
+   1 'QueryClientProvider' is declared but its value is never read.
+   1 'queryClient' is declared but its value is never read.
+   1 'Pointer' is declared but its value is never read.
+   1 'Network' is declared but its value is never read.
+   1 'monitoringService' is declared but its value is never read.
+   1 'modelPath' is declared but its value is never read.
+   1 'mockNavigate' is declared but its value is never read.
+   1 'Input' is declared but its value is never read.
+   1 'getToken' is declared but its value is never read.
+   1 'getImpactStyles' is declared but its value is never read.
+   1 'Filter' is declared but its value is never read.
+   1 'fileTypes' is declared but its value is never read.
+   1 'File' is declared but its value is never read.
+   1 'endpoint' is declared but its value is never read.
+   1 'Download' is declared but its value is never read.
+   1 'Database' is declared but its value is never read.
+   1 'Bell' is declared but its value is never read.
+   1 'baseUrl' is declared but its value is never read.
+   1 'API_BASE' is declared but its value is never read.
+   1 'AlertTriangle' is declared but its value is never read.
+   1 'Alert' is declared but its value is never read.
+   1 'activeTab' is declared but its value is never read.
+   1 '"../types/schema"' has no exported member named 'UserId'. Did you mean 'User'?
+   1 '"../types/schema"' has no exported member named 'CaseId'. Did you mean 'Case'?

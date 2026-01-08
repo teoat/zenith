@@ -1,45 +1,89 @@
-import React, { memo, Suspense } from "react";
-import { useTranslation } from "react-i18next";
-import { useNetworkStatus } from "@/hooks/useNetworkStatus";
-import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
-import {
-  Shield,
-  CloudOff,
-  RefreshCw,
-  AlertTriangle,
-  CheckCircle,
-} from "lucide-react";
-import RookieChecklist from "@/components/common/RookieChecklist";
-import WelcomeMessage from "@/components/common/WelcomeMessage";
-const MovableDashboard = React.lazy(
-  () => import("../features/dashboard/components/MovableDashboard"),
-);
-import FeatureDiscovery from "@/features/dashboard/components/FeatureDiscovery";
-import PageErrorBoundary from "@/components/PageErrorBoundary";
-import { useQueryClient } from "@tanstack/react-query";
+// pages/Dashboard.tsx
+import React, { memo } from 'react';
+import { useDashboardMetrics } from '../hooks/useDashboardMetrics';
+import { Activity, AlertTriangle, FolderOpen, Users } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+// New Components
+const ThreatMap = React.lazy(() => import('../components/dashboard/ThreatMap'));
+import LiveQueue from '../components/dashboard/LiveQueue';
+import AIWatchtower from '../components/dashboard/AIWatchtower';
+const MetricSparkline = React.lazy(() => import('../components/dashboard/MetricSparkline'));
+import LoadingState from '../components/LoadingState';
+import ErrorMessage from '../components/ErrorMessage';
+import RookieChecklist from '../components/common/RookieChecklist';
+import WelcomeMessage from '../components/common/WelcomeMessage';
+import ProofVisualizationCard from '../components/dashboard/ProofVisualizationCard';
+const VolumeChart = React.lazy(() => import('../components/dashboard/VolumeChart'));
+const RiskDistributionChart = React.lazy(() => import('../components/dashboard/RiskDistributionChart'));
+
+// Type definitions
+interface KPICardProps {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  trend: string;
+  isCritical?: boolean;
+  sparklineData?: number[];
+  sparklineColor?: string;
+}
+
+
+// Enhanced KPI Card with Sparkline - Memoized for performance
+const KPICard = memo<KPICardProps>(({ 
+  title, 
+  value, 
+  icon, 
+  trend, 
+  isCritical = false, 
+  sparklineData, 
+  sparklineColor 
+}) => (
+  <div className={cn(
+    "p-4 rounded-xl border shadow-sm transition-all hover:shadow-md",
+    isCritical 
+      ? 'bg-red-50 border-red-100 dark:bg-red-900/10 dark:border-red-900/30' 
+      : 'bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-800'
+  )}>
+    <div className="flex justify-between items-start mb-2">
+      <div className={cn(
+        "p-2 rounded-lg",
+        isCritical ? 'bg-red-100 dark:bg-red-900/20' : 'bg-slate-100 dark:bg-slate-800'
+      )}>
+        {icon}
+      </div>
+      <span className={cn(
+        "text-xs font-medium px-2 py-0.5 rounded-full",
+        isCritical ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+      )}>
+        {trend}
+      </span>
+    </div>
+    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{value}</h3>
+    <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">{title}</p>
+    {sparklineData && (
+      <React.Suspense fallback={<div className="h-8 bg-slate-200 dark:bg-slate-700 animate-pulse rounded" />}>
+        <MetricSparkline data={sparklineData} color={sparklineColor} height={32} />
+      </React.Suspense>
+    )}
+  </div>
+));
+
+KPICard.displayName = 'KPICard';
 
 // Wrapper component to handle localStorage check outside of render
 const RookieChecklistWrapper = memo(() => {
-  const [isNewUser, setIsNewUser] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const { webStore } = await import("../utils/electronStore");
-        const checklistProgress =
-          await webStore.get<Record<string, boolean>>("rookieChecklist");
-        if (!checklistProgress || !checklistProgress.run_analysis) {
-          setIsNewUser(true);
-        }
-      } catch {
-        setIsNewUser(true);
-      }
-    };
-    checkUser();
+  const isNewUser = React.useMemo(() => {
+    try {
+      const checklistProgress = localStorage.getItem('rookieChecklist');
+      return !checklistProgress || !JSON.parse(checklistProgress || '{}').run_analysis;
+    } catch {
+      return true;
+    }
   }, []);
 
   if (!isNewUser) return null;
-
+  
   return (
     <div className="mb-6">
       <RookieChecklist />
@@ -47,148 +91,138 @@ const RookieChecklistWrapper = memo(() => {
   );
 });
 
-RookieChecklistWrapper.displayName = "RookieChecklistWrapper";
+RookieChecklistWrapper.displayName = 'RookieChecklistWrapper';
 
 const Dashboard: React.FC = () => {
-  const { t } = useTranslation("dashboard");
-  const { isOnline } = useNetworkStatus();
-  const { dataUpdatedAt } = useDashboardMetrics();
-  const queryClient = useQueryClient();
-  const [showReconnected, setShowReconnected] = React.useState(false);
-  const wasOffline = React.useRef(!isOnline);
-  const [currentTime, setCurrentTime] = React.useState(0);
+  // Use React Query hook
+  const { data: metrics, isLoading, error } = useDashboardMetrics();
 
-  React.useEffect(() => {
-    setCurrentTime(Date.now());
-    const interval = setInterval(() => setCurrentTime(Date.now()), 30000); // Update every 30s
-    return () => clearInterval(interval);
-  }, []);
+  if (isLoading) return <div className="p-6"><LoadingState text="Loading Intelligence Dashboard..." /></div>;
+  if (error) return <div className="p-6"><ErrorMessage error={error.message} /></div>;
 
-  React.useEffect(() => {
-    if (isOnline && wasOffline.current) {
-      setShowReconnected(true);
-      const timer = setTimeout(() => setShowReconnected(false), 5000);
-      return () => clearTimeout(timer);
-    }
-    wasOffline.current = !isOnline;
-  }, [isOnline]);
 
-  const isDataStale =
-    dataUpdatedAt && currentTime > 0 && currentTime - dataUpdatedAt > 120000; // 2 minutes
+  const getSystemStatus = () => {
+      const health = metrics?.systemHealth || 0;
+      if (health > 90) return { label: 'System Operational', color: 'bg-green-500', text: 'text-slate-600 dark:text-slate-300' };
+      if (health > 70) return { label: 'Degraded Performance', color: 'bg-yellow-500', text: 'text-yellow-700 dark:text-yellow-400' };
+      return { label: 'System Critical', color: 'bg-red-500', text: 'text-red-700 dark:text-red-400' };
+  };
 
-  const status = isOnline
-    ? {
-        label: t("status.online", "System Operational"),
-        color: "bg-green-500",
-        text: "text-slate-600 dark:text-slate-300",
-      }
-    : {
-        label: t("status.offline", "Offline Mode"),
-        color: "bg-amber-500",
-        text: "text-amber-600 dark:text-amber-400",
-      };
+  const status = getSystemStatus();
 
   return (
     <div className="p-6 space-y-6 bg-slate-50 dark:bg-slate-950 min-h-screen">
-      {/* Network Status Banners */}
-      {!isOnline && (
-        <div className="bg-amber-50 border border-amber-200 dark:bg-amber-900/20 dark:border-amber-800 p-4 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
-          <CloudOff className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-          <div className="flex-1">
-            <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100">
-              {t("messages.offline.title", "Working Offline")}
-            </h3>
-            <p className="text-xs text-amber-700 dark:text-amber-300">
-              {t(
-                "messages.offline.description",
-                "Changes will be synced when connection is restored. Some features may be limited.",
-              )}
-            </p>
-          </div>
-          <RefreshCw className="w-4 h-4 text-amber-600 animate-spin" />
-        </div>
-      )}
-
-      {showReconnected && (
-        <div className="bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800 p-4 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
-          <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-          <div className="flex-1">
-            <h3 className="text-sm font-semibold text-green-900 dark:text-green-100">
-              {t("messages.online.title", "Back Online")}
-            </h3>
-            <p className="text-xs text-green-700 dark:text-green-300">
-              {t(
-                "messages.online.description",
-                "Your connection has been restored. Syncing latest data...",
-              )}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {isDataStale && isOnline && (
-        <div className="bg-blue-50 border border-blue-200 dark:bg-blue-900/20 dark:border-blue-800 p-3 rounded-lg flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-          <span className="text-xs text-blue-800 dark:text-blue-200 italic">
-            {t("messages.staleData", "Displaying cached data from {{time}}.", {
-              time: new Date(dataUpdatedAt).toLocaleTimeString(),
-            })}
-          </span>
-          <button
-            onClick={() => queryClient.invalidateQueries()}
-            className="text-xs font-bold text-blue-600 hover:underline ml-auto"
-          >
-            {t("actions.refresh", "Refresh Now")}
-          </button>
-        </div>
-      )}
-
-      <header className="flex justify-between items-center mb-6">
+      {/* Header */}
+      <header className="flex justify-between items-center mb-6" data-tour="dashboard-header">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Shield className="w-6 h-6 text-blue-600" />
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-              Command Center
-            </h1>
-          </div>
-          <p className="text-slate-500 text-sm italic">
-            Real-time fraud monitoring & intelligence
-          </p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Command Center</h1>
+          <p className="text-slate-500 text-sm">Real-time fraud monitoring & intelligence</p>
         </div>
         <div className="flex gap-2">
-          <span
-            className={`flex items-center gap-2 px-3 py-1 bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 text-xs font-medium shadow-sm transition-all duration-500 ${status.text}`}
-          >
-            <span
-              className={`w-2 h-2 rounded-full ${status.color} ${isOnline ? "animate-pulse" : ""}`}
-            ></span>
+          <span className={cn(
+            "flex items-center gap-2 px-3 py-1 bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 text-xs font-medium",
+            status.text
+          )}>
+            <span className={cn("w-2 h-2 rounded-full animate-pulse", status.color)}></span>
             {status.label}
           </span>
         </div>
       </header>
 
-      <main className="space-y-6">
-        <RookieChecklistWrapper />
-        <FeatureDiscovery className="mb-6" maxItems={4} />
-        <Suspense
-          fallback={
-            <div className="flex items-center justify-center h-64">
-              Loading Dashboard...
-            </div>
-          }
-        >
-          <MovableDashboard />
-        </Suspense>
-        <WelcomeMessage />
-      </main>
+      {/* Rookie Checklist for new users - using stable check */}
+      <RookieChecklistWrapper />
+
+      {/* KPI Grid */}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" data-tour="metrics-grid">
+        <KPICard 
+          title="Total Cases" 
+          value={metrics?.totalCases || 0} 
+          icon={<FolderOpen className="text-blue-500" />} 
+          trend=""
+          sparklineData={metrics?.sparklineData?.totalCases}
+          sparklineColor="#3b82f6"
+        />
+        <KPICard 
+          title="Open Investigations" 
+          value={metrics?.openCases || 0} 
+          icon={<Activity className="text-amber-500" />} 
+          trend=""
+          sparklineData={metrics?.sparklineData?.openCases}
+          sparklineColor="#f59e0b"
+        />
+        <KPICard 
+          title="Critical Alerts" 
+          value={metrics?.criticalCases || 0} 
+          icon={<AlertTriangle className="text-red-500" />} 
+          isCritical 
+          trend=""
+          sparklineData={metrics?.sparklineData?.criticalCases}
+          sparklineColor="#ef4444"
+        />
+        <KPICard 
+          title="Active Analysts" 
+          value={metrics?.activeAnalysts || 0}
+          icon={<Users className="text-emerald-500" />} 
+          trend=""
+          sparklineData={metrics?.sparklineData?.analysts}
+          sparklineColor="#10b981"
+        />
+      </section>
+
+      {/* Main Intelligence Grid */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[500px]">
+        {/* Threat Map - Takes up 8 cols */}
+        <div className="lg:col-span-8 h-full flex flex-col" data-tour="threat-map">
+          <React.Suspense fallback={<div className="h-full w-full bg-slate-100 dark:bg-slate-800 animate-pulse rounded-xl" />}>
+            <ThreatMap />
+          </React.Suspense>
+        </div>
+
+        {/* AI Watchtower - Takes up 4 cols */}
+        <div className="lg:col-span-4 h-full flex flex-col gap-6" data-tour="ai-watchtower">
+          <AIWatchtower />
+          <ProofVisualizationCard caseId="492" />
+        </div>
+      </section>
+
+      {/* Operational Grid */}
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[400px]">
+        {/* Live Queue - Takes up 1 col */}
+        <div className="lg:col-span-1 h-full">
+          <LiveQueue />
+        </div>
+
+        {/* Volume Trends Chart */}
+        <div className="lg:col-span-1 h-full">
+          <React.Suspense fallback={<div className="h-full w-full bg-slate-100 dark:bg-slate-800 animate-pulse rounded-xl" />}>
+             <VolumeChart data={[
+               { date: 'Jan 1', volume: 4000 },
+               { date: 'Jan 5', volume: 3000 },
+               { date: 'Jan 10', volume: 2000 },
+               { date: 'Jan 15', volume: 2780 },
+               { date: 'Jan 20', volume: 1890 },
+               { date: 'Jan 25', volume: 2390 },
+               { date: 'Jan 30', volume: 3490 },
+             ]} />
+          </React.Suspense>
+        </div>
+
+        {/* Risk Distribution Chart */}
+        <div className="lg:col-span-1 h-full">
+          <React.Suspense fallback={<div className="h-full w-full bg-slate-100 dark:bg-slate-800 animate-pulse rounded-xl" />}>
+            <RiskDistributionChart data={[
+              { name: 'Critical', value: metrics?.riskDistribution?.critical || 0, color: '#ef4444' }, 
+              { name: 'High', value: metrics?.riskDistribution?.high || 0, color: '#f59e0b' },     
+              { name: 'Medium', value: metrics?.riskDistribution?.medium || 0, color: '#3b82f6' },   
+              { name: 'Low', value: metrics?.riskDistribution?.low || 0, color: '#10b981' },      
+            ]} />
+          </React.Suspense>
+        </div>
+      </section>
+
+      <WelcomeMessage />
     </div>
   );
 };
 
-const DashboardWithErrorBoundary = () => (
-  <PageErrorBoundary>
-    <Dashboard />
-  </PageErrorBoundary>
-);
-
-export default DashboardWithErrorBoundary;
+export default Dashboard;

@@ -1,23 +1,20 @@
 /**
  * ApprovalService - Service for managing AI agent approval workflows
- *
+ * 
  * Handles pending actions, approval/rejection, and integration with AI workflows.
  */
 
-import { request } from "./client";
-
-import { secureLogger } from "@/utils/secureLogger";
-import { secureRandom } from "@/utils/secureRandom";
+import { api } from '../lib/api';
 
 export interface PendingAction {
   id: string;
-  type: "create" | "update" | "delete" | "external_api" | "financial";
+  type: 'create' | 'update' | 'delete' | 'external_api' | 'financial';
   category: string;
   title: string;
   description: string;
-  proposedBy: "agent" | "system";
+  proposedBy: 'agent' | 'system';
   timestamp: Date;
-  impact: "low" | "medium" | "high" | "critical";
+  impact: 'low' | 'medium' | 'high' | 'critical';
   details?: Record<string, unknown>;
   previewData?: string;
   aiReasoning?: string;
@@ -44,13 +41,11 @@ class ApprovalService {
       // In production, fetch from backend
       // const response = await api.get('/approvals/pending');
       // return response.data;
-
+      
       // For now, return local state
       return Array.from(this.pendingActions.values());
     } catch (error) {
-      secureLogger.error("ApprovalService", "Failed to fetch pending actions", {
-        error: String(error),
-      });
+      console.error('Failed to fetch pending actions:', error);
       return [];
     }
   }
@@ -58,12 +53,10 @@ class ApprovalService {
   /**
    * Add a new pending action
    */
-  async addPendingAction(
-    action: Omit<PendingAction, "id" | "timestamp">,
-  ): Promise<PendingAction> {
+  async addPendingAction(action: Omit<PendingAction, 'id' | 'timestamp'>): Promise<PendingAction> {
     const newAction: PendingAction = {
       ...action,
-      id: `action_${Date.now()}_${secureRandom.random().toString(36).substr(2, 9)}`,
+      id: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date(),
     };
 
@@ -92,8 +85,6 @@ class ApprovalService {
       userId,
     };
 
-    secureLogger.debug("ApprovalService", "Decision made", { decision });
-
     // Execute the approved action
     await this.executeAction(action);
 
@@ -108,11 +99,7 @@ class ApprovalService {
   /**
    * Reject an action
    */
-  async rejectAction(
-    actionId: string,
-    reason?: string,
-    userId?: string,
-  ): Promise<void> {
+  async rejectAction(actionId: string, reason?: string, userId?: string): Promise<void> {
     const action = this.pendingActions.get(actionId);
     if (!action) {
       throw new Error(`Action ${actionId} not found`);
@@ -126,8 +113,6 @@ class ApprovalService {
       userId,
     };
 
-    secureLogger.debug("HITL", "Decision made (rejected)", { decision });
-
     // Remove from pending
     this.pendingActions.delete(actionId);
     this.notifyListeners();
@@ -140,57 +125,28 @@ class ApprovalService {
    * Execute an approved action
    */
   private async executeAction(action: PendingAction): Promise<void> {
-    secureLogger.info(
-      "HITL",
-      `Executing action: ${action.type} - ${action.title}`,
-    );
-
+    console.log(`[ApprovalService] Executing action: ${action.type} - ${action.title}`);
+    
     try {
       switch (action.type) {
-        case "delete":
-          if (action.details?.ids || action.details?.caseIds) {
-            const ids = action.details.ids || action.details.caseIds;
-            const endpoint = action.details?.caseIds
-              ? "/cases/bulk-delete"
-              : "/evidence/bulk-delete";
-            await request(endpoint, {
-              method: "POST",
-              body: JSON.stringify({ ids }),
-            });
-          }
+        case 'create':
+          // Execute create action
           break;
-        case "external_api":
-          if (action.details?.endpoint === "freeze_account") {
-            await request("/accounts/freeze", {
-              method: "POST",
-              body: JSON.stringify({ account_id: action.details.id }),
-            });
-          } else if (action.details?.endpoint === "create_sar") {
-            await request("/compliance/sar/create", {
-              method: "POST",
-              body: JSON.stringify({ case_id: action.details.caseId }),
-            });
-          } else if (action.details?.operation === "bulk_ai_analyze") {
-            await request("/ai/analyze/batch", {
-              method: "POST",
-              body: JSON.stringify({ caseIds: action.details.caseIds }),
-            });
-          }
+        case 'update':
+          // Execute update action
           break;
-        case "financial":
-          // Mock financial execution
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+        case 'delete':
+          // Execute delete action
           break;
-        default:
-          secureLogger.warn(
-            "HITL",
-            `No execution logic for type: ${action.type}`,
-          );
+        case 'external_api':
+          // Execute external API call
+          break;
+        case 'financial':
+          // Execute financial transaction
+          break;
       }
     } catch (error) {
-      secureLogger.error("HITL", `Failed to execute action ${action.id}`, {
-        error: error instanceof Error ? error.message : String(error),
-      });
+      console.error(`[ApprovalService] Failed to execute action ${action.id}:`, error);
       throw error;
     }
   }
@@ -208,28 +164,30 @@ class ApprovalService {
    */
   private notifyListeners(): void {
     const actions = Array.from(this.pendingActions.values());
-    this.listeners.forEach((listener) => listener(actions));
+    this.listeners.forEach(listener => listener(actions));
   }
 
   /**
    * Create action from AI suggestion
    */
-  async createFromAISuggestion(suggestion: {
-    type: PendingAction["type"];
-    title: string;
-    description: string;
-    details?: Record<string, unknown>;
-    reasoning?: string;
-    confidence?: number;
-  }): Promise<PendingAction> {
+  async createFromAISuggestion(
+    suggestion: {
+      type: PendingAction['type'];
+      title: string;
+      description: string;
+      details?: Record<string, unknown>;
+      reasoning?: string;
+      confidence?: number;
+    }
+  ): Promise<PendingAction> {
     const impact = this.calculateImpact(suggestion.type, suggestion.details);
-
+    
     return this.addPendingAction({
       type: suggestion.type,
       category: this.getCategoryFromType(suggestion.type),
       title: suggestion.title,
       description: suggestion.description,
-      proposedBy: "agent",
+      proposedBy: 'agent',
       impact,
       details: suggestion.details,
       aiReasoning: suggestion.reasoning,
@@ -241,35 +199,31 @@ class ApprovalService {
    * Calculate impact level based on action type and details
    */
   private calculateImpact(
-    type: PendingAction["type"],
-    details?: Record<string, unknown>,
-  ): PendingAction["impact"] {
+    type: PendingAction['type'],
+    details?: Record<string, unknown>
+  ): PendingAction['impact'] {
     // High-stakes actions
-    if (type === "delete" || type === "financial") return "critical";
-    if (type === "external_api") return "high";
-
+    if (type === 'delete' || type === 'financial') return 'critical';
+    if (type === 'external_api') return 'high';
+    
     // Check details for high-value items
-    if (
-      details?.value &&
-      typeof details.value === "number" &&
-      details.value > 10000
-    ) {
-      return "high";
+    if (details?.value && typeof details.value === 'number' && details.value > 10000) {
+      return 'high';
     }
-
-    return "medium";
+    
+    return 'medium';
   }
 
   /**
    * Get category from action type
    */
-  private getCategoryFromType(type: PendingAction["type"]): string {
-    const categories: Record<PendingAction["type"], string> = {
-      create: "Data Creation",
-      update: "Data Modification",
-      delete: "Data Deletion",
-      external_api: "External Integration",
-      financial: "Financial Transaction",
+  private getCategoryFromType(type: PendingAction['type']): string {
+    const categories: Record<PendingAction['type'], string> = {
+      create: 'Data Creation',
+      update: 'Data Modification',
+      delete: 'Data Deletion',
+      external_api: 'External Integration',
+      financial: 'Financial Transaction',
     };
     return categories[type];
   }

@@ -1,53 +1,50 @@
-import { useState, useEffect } from "react";
-import { webStore } from "@/utils/electronStore";
-import { secureLogger } from "@/utils/secureLogger";
+import { useState, useEffect } from 'react';
 
 /**
- * A custom hook to persist state to localStorage.
+ * A custom hook to persist state to localStorage (and Electron store if available).
  * @param key The key to store the value under.
  * @param initialValue The initial value if no stored value exists.
  * @returns [storedValue, setValue]
  */
-export function usePersistedState<T>(
-  key: string,
-  initialValue: T,
-): [T, (value: T | ((val: T) => T)) => void] {
+export function usePersistedState<T>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] {
   // State to store our value
-  const [storedValue, setStoredValue] = useState<T>(initialValue);
-
-  // Load initial value from store
-  useEffect(() => {
-    const loadPersistedState = async () => {
-      try {
-        const item = await webStore.get<T>(key, initialValue);
-        setStoredValue(item !== undefined ? item : initialValue);
-      } catch (error) {
-        secureLogger.warn(`Error reading persisted key "${key}":`, error);
-      }
-    };
-    loadPersistedState();
-  }, [key, initialValue]);
+  // Pass initial state function to useState so logic is only executed once
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    if (typeof window === 'undefined') {
+      return initialValue;
+    }
+    try {
+      // Get from local storage by key
+      const item = window.localStorage.getItem(key);
+      // Parse stored json or if none return initialValue
+      return item ? JSON.parse(item) : initialValue;
+    } catch (err) {
+      // If error also return initialValue
+      console.warn(`Error reading localStorage key "${key}":`, err);
+      return initialValue;
+    }
+  });
 
   // Return a wrapped version of useState's setter function that ...
-  // ... persists the new value to the store.
+  // ... persists the new value to localStorage.
   const setValue = (value: T | ((val: T) => T)) => {
     try {
       // Allow value to be a function so we have same API as useState
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      
       // Save state
       setStoredValue(valueToStore);
-
-      // Save to store
-      webStore.set(key, valueToStore).catch((error) => {
-        secureLogger.warn(`Error persisting key "${key}":`, error);
-      });
-    } catch (error) {
-      secureLogger.warn(
-        `Error setting persisted value for key "${key}":`,
-        error,
-      );
+      
+      // Save to local storage
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        
+        // TODO: Integration with Electron Store for deeper persistence
+        // if (window.electronAPI?.store) { ... }
+      }
+    } catch (err) {
+      // A more advanced implementation would handle the error case
+      console.warn(`Error setting localStorage key "${key}":`, err);
     }
   };
 
@@ -55,19 +52,12 @@ export function usePersistedState<T>(
     // Sync with other tabs/windows
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === key && e.newValue) {
-        try {
-          setStoredValue(JSON.parse(e.newValue));
-        } catch (error) {
-          secureLogger.error(
-            `Error parsing storage change for key "${key}":`,
-            error,
-          );
-        }
+        setStoredValue(JSON.parse(e.newValue));
       }
     };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [key]);
 
   return [storedValue, setValue];

@@ -1,177 +1,253 @@
-/**
- * Error reporting service for frontend error handling and reporting.
- * Provides centralized error logging, user feedback, and optional remote reporting.
- */
-
-import { secureLogger } from "@/utils/secureLogger";
+import { BaseError, ApiError } from '../types/common';
 
 interface ErrorReport {
+  id: string;
+  type: string;
   message: string;
   stack?: string;
-  component?: string;
-  userId?: string;
   timestamp: string;
-  userAgent: string;
-  url: string;
-  severity: "low" | "medium" | "high" | "critical";
-  context?: Record<string, unknown>;
+  userAgent?: string;
+  url?: string;
+  userId?: string;
+  metadata?: Record<string, unknown>;
+}
+
+interface ErrorReportConfig {
+  enabled: boolean;
+  endpoint?: string;
+  maxRetries: number;
+  includeStackTrace: boolean;
+  includeUserAgent: boolean;
+  includeUrl: boolean;
 }
 
 class ErrorReportingService {
-  // ... (keeping existing private props)
-  private static instance: ErrorReportingService;
+  private config: ErrorReportConfig;
   private errorQueue: ErrorReport[] = [];
-  private isReportingEnabled = process.env.NODE_ENV === "production";
-  private maxQueueSize = 50;
+  private isReporting = false;
 
-  private constructor() {
-    this.setupGlobalHandlers();
+  constructor(config: Partial<ErrorReportConfig> = {}) {
+    this.config = {
+      enabled: true,
+      maxRetries: 3,
+      includeStackTrace: true,
+      includeUserAgent: true,
+      includeUrl: true,
+      ...config
+    };
   }
 
-  static getInstance(): ErrorReportingService {
-    if (!ErrorReportingService.instance) {
-      ErrorReportingService.instance = new ErrorReportingService();
+  /**
+   * Report an error to the monitoring service
+   */
+  async reportError(error: Error | BaseError | unknown, context?: Record<string, unknown>): Promise<void> {
+    if (!this.config.enabled) return;
+
+    try {
+      const errorReport = this.createErrorReport(error, context);
+      await this.sendErrorReport(errorReport);
+    } catch (reportingError) {
+      console.error('Failed to report error:', reportingError);
+      this.queueErrorForLater(error, context);
     }
-    return ErrorReportingService.instance;
   }
 
-  private setupGlobalHandlers(): void {
-    window.addEventListener("unhandledrejection", (event) => {
-      this.reportError({
-        message: `Unhandled promise rejection: ${event.reason}`,
-        stack: event.reason?.stack,
-        severity: "high",
-        context: { type: "unhandledrejection" },
-      });
-    });
+  /**
+   * Report API-specific errors with additional context
+   */
+  async reportApiError(error: unknown, endpoint: string, method: string = 'GET'): Promise<void> {
+    if (!this.config.enabled) return;
 
-    window.addEventListener("error", (event) => {
-      this.reportError({
-        message: event.message,
-        stack: event.error?.stack,
-        component: "global",
-        severity: "high",
-        context: {
-          filename: event.filename,
-          lineno: event.lineno,
-          colno: event.colno,
-        },
-      });
-    });
-  }
+    let errorMessage = 'Unknown API error';
+    let statusCode = 0;
 
-  reportError(error: Partial<ErrorReport> & { message: string }): void {
-    // ... existing implementation ...
-    const errorReport: ErrorReport = {
-      stack: error.stack,
-      component: error.component || "unknown",
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'object' && error !== null) {
+      errorMessage = 
+        (typeof (error as any).message === 'string') ? String((error as any).message) : 'Unknown API error';
+      statusCode = 
+        (typeof (error as any).status === 'number') ? (error as any).status : undefined;
+    }
+
+    const apiError: ApiError = {
+      message: errorMessage,
+      status: statusCode,
+      endpoint,
+      method,
       timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-      url: window.location.href,
-      severity: error.severity || "medium",
-      context: error.context || {},
-      ...error,
     };
 
-    this.errorQueue.push(errorReport);
-
-    if (this.errorQueue.length > this.maxQueueSize) {
-      this.errorQueue.shift();
-    }
-
-    if (process.env.NODE_ENV === "development") {
-      secureLogger.debug("ERROR_REPORTING", "Error reported", errorReport);
-    }
-
-    if (this.isReportingEnabled) {
-      this.sendToRemoteService(errorReport);
-    }
+    await this.reportError(apiError, {
+      type: 'api_error',
+      endpoint,
+      method,
+      status: statusCode,
+    });
   }
 
-  private async sendToRemoteService(errorReport: ErrorReport): Promise<void> {
+  /**
+   * Create a standardized error report
+   */
+  private createErrorReport(error: Error | BaseError | unknown, context?: Record<string, unknown>): ErrorReport {
+    const now = new Date().toISOString();
+    
+    let errorReport: ErrorReport = {
+      id: this.generateErrorId(),
+      type: 'javascript_error',
+      message: 'Unknown error occurred',
+      timestamp: now,
+      metadata: context,
+    };
+
+    if (error instanceof Error) {
+      errorReport = {
+        ...errorReport,
+        type: error.constructor.name,
+        message: error.message,
+        stack: this.config.includeStackTrace ? error.stack : undefined,
+      };
+    } else if (typeof error === 'object' && error !== null) {
+      const errorObj = error as Record<string, unknown>;
+      errorReport = {
+        ...errorReport,
+        type: (typeof errorObj.type === 'string') ? errorObj.type : 'object_error',
+        message: (typeof errorObj.message === 'string') ? errorObj.message : String(error),
+      };
+    } else if (typeof error === 'string') {
+      errorReport = {
+        ...errorReport,
+        type: 'string_error',
+        message: error,
+      };
+    }
+
+    if (this.config.includeUserAgent && typeof window !== 'undefined') {
+      errorReport.userAgent = window.navigator.userAgent;
+    }
+
+    if (this.config.includeUrl && typeof window !== 'undefined') {
+      errorReport.url = window.location.href;
+    }
+
+    return errorReport;
+  }
+
+  /**
+   * Send error report to monitoring endpoint
+   */
+  private async sendErrorReport(errorReport: ErrorReport): Promise<void> {
+    if (!this.config.endpoint) {
+      console.warn('Error reporting endpoint not configured');
+      return;
+    }
+
     try {
-      const response = await fetch("/api/errors/report", {
-        method: "POST",
+      const response = await fetch(this.config.endpoint, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(errorReport),
       });
 
       if (!response.ok) {
-        secureLogger.warn(
-          "ERROR_REPORTING",
-          "Failed to send error report to remote service",
-        );
+        throw new Error(`Failed to report error: ${response.status} ${response.statusText}`);
       }
-    } catch (error) {
-      secureLogger.warn("ERROR_REPORTING", "Error reporting service failed", {
-        error: error instanceof Error ? error.message : String(error),
-      });
+    } catch (fetchError) {
+      throw new Error(`Network error while reporting: ${fetchError instanceof Error ? fetchError.message : 'Unknown'}`);
     }
   }
 
-  getErrorReports(): ErrorReport[] {
-    return [...this.errorQueue];
+  /**
+   * Queue error for later reporting if immediate reporting fails
+   */
+  private queueErrorForLater(error: Error | BaseError | unknown, context?: Record<string, unknown>): void {
+    try {
+      const errorReport = this.createErrorReport(error, context);
+      this.errorQueue.push(errorReport);
+
+      // Keep only the last 50 errors
+      if (this.errorQueue.length > 50) {
+        this.errorQueue.shift();
+      }
+
+      // Try to report queued errors after a delay
+      setTimeout(() => {
+        this.reportQueuedErrors();
+      }, 5000);
+    } catch (queueError) {
+      console.error('Failed to queue error:', queueError);
+    }
   }
 
-  clearErrorReports(): void {
+  /**
+   * Report all queued errors
+   */
+  private async reportQueuedErrors(): Promise<void> {
+    if (this.isReporting || this.errorQueue.length === 0) return;
+
+    this.isReporting = true;
+    const queuedErrors = [...this.errorQueue];
     this.errorQueue = [];
+
+    try {
+      await Promise.allSettled(
+        queuedErrors.map(errorReport => 
+          this.sendErrorReport(errorReport).catch(err => 
+            console.error('Failed to report queued error:', err)
+          )
+        )
+      );
+    } finally {
+      this.isReporting = false;
+    }
   }
 
-  setReportingEnabled(enabled: boolean): void {
-    this.isReportingEnabled = enabled;
+  /**
+   * Generate unique error ID
+   */
+  private generateErrorId(): string {
+    return `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  reportReactError(
-    error: Error,
-    errorInfo: { componentStack: string },
-    componentName?: string,
-  ): void {
-    this.reportError({
-      message: `React Error: ${error.message}`,
-      stack: error.stack,
-      component: componentName || "ReactComponent",
-      severity: "high",
-      context: {
-        componentStack: errorInfo.componentStack,
-        type: "react_error",
-      },
-    });
+  /**
+   * Get current configuration
+   */
+  getConfig(): ErrorReportConfig {
+    return { ...this.config };
   }
 
-  reportApiError(
-    error: unknown,
-    endpoint: string,
-    method: string = "GET",
-  ): void {
-    const message =
-      error instanceof Error
-        ? error.message
-        : typeof error === "object" && error && "message" in error
-          ? String((error as any).message)
-          : "Unknown API error";
-    const status =
-      typeof error === "object" && error && "status" in error
-        ? (error as any).status
-        : undefined;
+  /**
+   * Update configuration
+   */
+  updateConfig(newConfig: Partial<ErrorReportConfig>): void {
+    this.config = { ...this.config, ...newConfig };
+  }
 
-    this.reportError({
-      message: `API Error: ${message}`,
-      component: "API",
-      severity: "medium",
-      context: {
-        endpoint,
-        method,
-        status,
-        type: "api_error",
-      },
-    });
+  /**
+   * Get queued errors count
+   */
+  getQueuedErrorsCount(): number {
+    return this.errorQueue.length;
+  }
+
+  /**
+   * Clear queued errors
+   */
+  clearQueuedErrors(): void {
+    this.errorQueue = [];
   }
 }
 
 // Export singleton instance
-export const errorReporting = ErrorReportingService.getInstance();
+export const errorReportingService = new ErrorReportingService();
 
-// Export types
-export type { ErrorReport };
+// Export convenience functions
+export const reportError = (error: Error | BaseError | unknown, context?: Record<string, unknown>) => 
+  errorReportingService.reportError(error, context);
+
+export const reportApiError = (error: unknown, endpoint: string, method?: string) => 
+  errorReportingService.reportApiError(error, endpoint, method);
+
+export default errorReportingService;

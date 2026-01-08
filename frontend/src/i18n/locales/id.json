@@ -1,0 +1,11 @@
+{
+  "app_name": "Zenith",
+  "welcome": "Selamat datang",
+  "login": "Masuk",
+  "logout": "Keluar",
+  "dashboard": "Dasbor",
+  "cases": "Kasus",
+  "evidence": "Bukti",
+  "reports": "Laporan",
+  "settings": "Pengaturan"
+}

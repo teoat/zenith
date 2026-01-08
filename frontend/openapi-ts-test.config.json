@@ -1,0 +1,16 @@
+{
+  "input": "http://localhost:8000/openapi.json",
+  "output": "src/generated/api-test",
+  "client": "@hey-api/client-fetch",
+  "plugins": [
+    "@tanstack/react-query",
+    {
+      "name": "@hey-api/schemas",
+      "type": "json"
+    },
+    {
+       "name": "@hey-api/typescript",
+       "enums": "javascript"
+    }
+  ]
+}

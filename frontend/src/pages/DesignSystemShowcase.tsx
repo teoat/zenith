@@ -1,23 +1,14 @@
 // React import removed as unused
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-  CardDescription,
-} from "@/components/ui/Card";
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from '@/components/ui/card';
 
 export default function DesignSystemShowcase() {
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Design System</h1>
-        <p className="text-muted-foreground">
-          Core components and style guide.
-        </p>
+        <p className="text-muted-foreground">Core components and style guide.</p>
       </div>
 
       <section className="space-y-4">
@@ -58,17 +49,15 @@ export default function DesignSystemShowcase() {
               <Button className="w-full">Action</Button>
             </CardFooter>
           </Card>
-
-          <Card>
+          
+           <Card>
             <CardHeader>
               <CardTitle>Login</CardTitle>
-              <CardDescription>
-                Enter credentials to access account.
-              </CardDescription>
+              <CardDescription>Enter credentials to access account.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Input placeholder="Username" />
-              <Input type="password" placeholder="Password" />
+               <Input placeholder="Username" />
+               <Input type="password" placeholder="Password" />
             </CardContent>
             <CardFooter>
               <Button className="w-full">Sign In</Button>

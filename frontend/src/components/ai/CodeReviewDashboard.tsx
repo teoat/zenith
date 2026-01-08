@@ -1,195 +1,263 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { secureLogger } from "@/utils/secureLogger";
-import type { CodeIssue } from "@/types/code-review";
-import { AnalysisResultSchema, type AnalysisResult } from "@/lib/schemas";
+// frontend/src/components/ai/CodeReviewDashboard.tsx
+import React, { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import {
+  Code,
+  Download,
+  RefreshCw,
+  BarChart3,
+  AlertTriangle,
+  TrendingUp,
+  CheckCircle
+} from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+
+import { CodeReviewResult, TestSuggestion } from '@/types/code-review';
+import { CodeReviewOverview } from '@/components/features/code-review/CodeReviewOverview';
+import { CodeIssuesList } from '@/components/features/code-review/CodeIssuesList';
+import { CodeMetricsPanel } from '@/components/features/code-review/CodeMetricsPanel';
+import { TestSuggestionsList } from '@/components/features/code-review/TestSuggestionsList';
 
 const CodeReviewDashboard: React.FC = () => {
-  const [reviewResult, setReviewResult] = useState<AnalysisResult | null>(null);
-  const [, setTestSuggestions] = useState<
-    {
-      test_type: string;
-      code_snippet: string;
-      target_function: string;
-      justification: string;
-    }[]
-  >([]);
+  const [activeTab, setActiveTab] = useState<'overview' | 'issues' | 'metrics' | 'tests'>('overview');
+  const [reviewResult, setReviewResult] = useState<CodeReviewResult | null>(null);
+  const [testSuggestions, setTestSuggestions] = useState<TestSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
 
-  const loadCodeReviewData = useCallback(async () => {
+  useEffect(() => {
+    loadCodeReviewData();
+  }, []);
+
+  const loadCodeReviewData = async () => {
     setLoading(true);
     try {
-      const sampleCode = `
-def get_user_data(user_id):
-    # Potential SQL Injection
-    query = f"SELECT * FROM users WHERE id = {user_id}"
-    api_key = process.env.API_KEY  # Use environment variable
-    return db.execute(query)
-      `;
-
-      const aiData = await fetch("/ai/code-review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          code: sampleCode,
-          language: "python",
-          file_path: "backend/security_scan_sample.py",
-          context: { analysis_depth: "deep" },
-        }),
-      }).then((res) => res.json());
-
-      const aiIssues: CodeIssue[] = aiData.issues.map((issue: any) => {
-        let codeSnippetLine = "";
-        if (issue.line_number === 4) {
-          codeSnippetLine = `00004:     query = f"SELECT * FROM users WHERE id = {user_id}"`;
-        } else if (issue.line_number === 5) {
-          codeSnippetLine = `00005:     api_key = process.env.API_KEY  # Use environment variable`;
-        } else {
-          codeSnippetLine = `0000${issue.line_number}: ${issue.code_snippet || "..."}`;
-        }
-
-        return {
-          file_path: issue.file_path,
-          line_number: issue.line_number,
-          issue_type: issue.issue_type,
-          category: issue.category,
-          severity: issue.severity,
-          message: issue.message,
-          code_snippet: codeSnippetLine,
-          fix_suggestion: issue.fix_suggestion,
-          confidence_score: issue.confidence_score,
-        };
-      });
-
-      const issuesByCategory = aiIssues.reduce(
-        (acc, issue) => {
-          acc[issue.category] = (acc[issue.category] || 0) + 1;
-          return acc;
+      // Mock data - would be replaced with actual API call
+      const mockResult: CodeReviewResult = {
+        repository: "fraud-detection-platform",
+        branch: "main",
+        commit_hash: "a1b2c3d4e5f6",
+        files_analyzed: 45,
+        total_lines: 12580,
+        quality_score: 87.5,
+        quality_rating: "good",
+        issues: [
+          {
+            file_path: "backend/app/services/ai_service.py",
+            line_number: 142,
+            issue_type: "hardcoded_secrets",
+            category: "security",
+            severity: "critical",
+            title: "Hardcoded API Key Detected",
+            description: "Potential hardcoded API key found in source code",
+            code_snippet: "00140:     api_key = \"sk-1234567890abcdef\"\n00141:     headers = {\"Authorization\": f\"Bearer {api_key}\"}\n00142:     response = requests.get(url, headers=headers)",
+            suggestion: "Use environment variables or secure credential storage",
+            confidence_score: 0.95,
+            cwe_id: "CWE-798",
+            owasp_id: "A05:2021-Security Misconfiguration",
+            references: ["OWASP Top 10", "CWE-798"]
+          },
+          {
+            file_path: "frontend/src/components/Dashboard.tsx",
+            line_number: 89,
+            issue_type: "console_statements",
+            category: "performance",
+            severity: "warning",
+            title: "Console Statement in Production",
+            description: "Console statements should be removed for production builds",
+            code_snippet: "00087:   const handleSubmit = (data) => {\n00088:     console.log('Form submitted:', data);\n00089:     // Process form data\n00090:   };",
+            suggestion: "Remove console statements or use proper logging",
+            confidence_score: 0.88,
+            references: []
+          },
+          {
+            file_path: "backend/app/models/user.py",
+            line_number: 234,
+            issue_type: "sql_injection_risk",
+            category: "security",
+            severity: "error",
+            title: "SQL Injection Vulnerability",
+            description: "String formatting used in SQL query",
+            code_snippet: "00232:   def get_user(self, user_id):\n00233:     query = f\"SELECT * FROM users WHERE id = {user_id}\"\n00234:     return self.db.execute(query)",
+            suggestion: "Use parameterized queries or prepared statements",
+            confidence_score: 0.92,
+            cwe_id: "CWE-89",
+            owasp_id: "A03:2021-Injection",
+            references: ["OWASP Top 10", "CWE-89"]
+          }
+        ],
+        metrics: {
+          total_issues: 12,
+          issues_by_category: {
+            security: 5,
+            performance: 3,
+            maintainability: 2,
+            reliability: 1,
+            compliance: 1,
+            best_practice: 0
+          },
+          issues_by_severity: {
+            critical: 2,
+            error: 4,
+            warning: 5,
+            info: 1
+          },
+          avg_issues_per_file: 0.27,
+          issues_per_1000_lines: 0.95,
+          lines_of_code: 12580,
+          files_analyzed: 45,
+          test_coverage_estimate: 78,
+          maintainability_index: 82.5
         },
-        {} as Record<string, number>,
-      );
-
-      const issuesBySeverity = aiIssues.reduce(
-        (acc, issue) => {
-          acc[issue.severity] = (acc[issue.severity] || 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>,
-      );
-
-      const linesOfCode = sampleCode.split("\n").length;
-      const maintainabilityIndex = Math.max(
-        0,
-        100 -
-          (issuesBySeverity["critical"] * 10 + issuesBySeverity["high"] * 5),
-      );
-
-      const realResult = AnalysisResultSchema.parse({
-        total_issues: aiIssues.length,
-        issues_by_category: issuesByCategory,
-        issues_by_severity: issuesBySeverity,
-        avg_issues_per_file: aiIssues.length / 1,
-        issues_per_1000_lines: (aiIssues.length / linesOfCode) * 1000,
-        lines_of_code: linesOfCode,
-        files_analyzed: 1,
-        test_coverage_estimate: 85,
-        maintainability_index: maintainabilityIndex,
-        analysis_time_seconds: aiData.analysis_time_seconds || 1.5,
         generated_at: new Date().toISOString(),
-      });
+        analysis_time_seconds: 45.2
+      };
 
-      const mockSuggestions = [
+      const mockTestSuggestions: TestSuggestion[] = [
         {
           test_type: "unit_test",
-          code_snippet:
-            'def test_get_user_data():\n    # Test cases for user data retrieval\n    assert get_user_data(1) == "expected_data"',
-          target_function: "get_user_data",
-          justification:
-            "Add unit tests to prevent SQL injection and validate inputs",
+          description: "Test authentication service token validation",
+          code_example: "def test_token_validation():\n    service = AuthService()\n    token = service.generate_token(user_id=123)\n    assert service.validate_token(token) == 123",
+          coverage_areas: ["token_validation", "error_handling", "edge_cases"],
+          priority: "high",
+          complexity: "medium"
         },
+        {
+          test_type: "integration_test",
+          description: "Test user registration API endpoint",
+          code_example: "def test_user_registration():\n    response = client.post('/api/users', json=user_data)\n    assert response.status_code == 201\n    assert 'id' in response.json()",
+          coverage_areas: ["api_endpoints", "data_validation", "database_integration"],
+          priority: "high",
+          complexity: "medium"
+        }
       ];
 
-      setReviewResult(realResult);
-      setTestSuggestions(mockSuggestions);
-
-      secureLogger.info("CodeReview: Analysis completed", {
-        issuesFound: aiIssues.length,
-        maintainabilityScore: maintainabilityIndex,
-      });
-    } catch (error) {
-      secureLogger.error("CodeReview: Analysis failed", error);
-      setReviewResult(null);
-      setTestSuggestions([]);
+      setReviewResult(mockResult);
+      setTestSuggestions(mockTestSuggestions);
+    } catch (err) {
+      console.error('Failed to load code review data:', err);
     } finally {
       setLoading(false);
     }
-  }, [setLoading, setReviewResult, setTestSuggestions]);
+  };
 
-  const displayResult = useMemo(() => {
+  const runCodeAnalysis = async () => {
+    setAnalyzing(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      await loadCodeReviewData();
+    } catch (err) {
+      console.error('Analysis failed:', err);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'critical': return 'text-red-600 bg-red-50 border-red-200';
+      case 'error': return 'text-orange-600 bg-orange-50 border-orange-200';
+      case 'warning': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'info': return 'text-blue-600 bg-blue-50 border-blue-200';
+      default: return 'text-slate-600 bg-slate-50 border-slate-200';
+    }
+  };
+
+  if (loading) {
     return (
-      reviewResult || {
-        total_issues: 0,
-        issues_by_category: {},
-        issues_by_severity: {},
-        avg_issues_per_file: 0,
-        issues_per_1000_lines: 0,
-        lines_of_code: 0,
-        files_analyzed: 0,
-        test_coverage_estimate: 0,
-        maintainability_index: 0,
-        analysis_time_seconds: 0,
-        generated_at: new Date().toISOString(),
-      }
+      <div className="flex flex-col items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <p className="mt-2 text-slate-600">Loading Code Review Dashboard...</p>
+      </div>
     );
-  }, [reviewResult]);
+  }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Code Review Dashboard
-          </h2>
-          <p className="text-gray-600 mb-6">
-            AI-powered code analysis with security vulnerability detection.
-          </p>
+    <div className="p-6 bg-slate-50 min-h-screen">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 flex items-center">
+              <Code className="w-8 h-8 text-blue-600 mr-3" />
+              AI-Powered Code Review
+            </h1>
+            <p className="text-slate-600 mt-1">
+              Automated code quality analysis and security vulnerability detection
+            </p>
+          </div>
+
+          <div className="flex items-center space-x-3">
+             <Button
+                onClick={runCodeAnalysis}
+                disabled={analyzing}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+             >
+                {analyzing ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+                {analyzing ? 'Analyzing...' : 'Run Analysis'}
+             </Button>
+             <Button variant="outline" className="bg-white">
+                <Download className="w-4 h-4 mr-2" />
+                Export
+             </Button>
+          </div>
         </div>
-
-        <div className="mb-6">
-          <button
-            onClick={loadCodeReviewData}
-            disabled={loading}
-            className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            {loading ? "Analyzing..." : "Analyze Code"}
-          </button>
-        </div>
-
-        <AnimatePresence>
-          {loading && (
-            <div className="flex flex-col items-center justify-center py-12">
-              <div className="w-12 h-12 border-4 border-blue-200 border-t-transparent animate-spin rounded-full"></div>
-            </div>
-          )}
-        </AnimatePresence>
-
-        {!loading && displayResult && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-6"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <div className="bg-white p-6 border rounded-lg">
-                <h3 className="text-lg font-semibold text-blue-600">
-                  {displayResult.total_issues}
-                </h3>
-                <p className="text-gray-600">Total Issues Found</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
       </div>
+
+      {/* Navigation Tabs */}
+      <div className="flex space-x-2 border-b border-slate-200 mb-6 bg-white p-1 rounded-t-lg">
+        {[
+          { id: 'overview', label: 'Overview', icon: BarChart3 },
+          { id: 'issues', label: 'Issues', icon: AlertTriangle },
+          { id: 'metrics', label: 'Metrics', icon: TrendingUp },
+          { id: 'tests', label: 'Test Suggestions', icon: CheckCircle }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as typeof activeTab)}
+            className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              activeTab === tab.id
+                ? 'bg-blue-50 text-blue-700'
+                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+            }`}
+          >
+            <tab.icon className="w-4 h-4 mr-2" />
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      <AnimatePresence mode="wait">
+        {activeTab === 'overview' && (
+          <CodeReviewOverview
+            key="overview"
+            reviewResult={reviewResult}
+          />
+        )}
+
+        {activeTab === 'issues' && (
+          <CodeIssuesList
+            key="issues"
+            issues={reviewResult?.issues || []}
+            getSeverityColor={getSeverityColor}
+          />
+        )}
+
+        {activeTab === 'metrics' && reviewResult && (
+          <CodeMetricsPanel
+            key="metrics"
+            metrics={reviewResult.metrics}
+          />
+        )}
+
+        {activeTab === 'tests' && (
+          <TestSuggestionsList
+            key="tests"
+            suggestions={testSuggestions}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

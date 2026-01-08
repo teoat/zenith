@@ -1,9 +1,9 @@
 // frontend/src/components/ui/SemanticSearch.tsx
-import React, { useState, useCallback } from "react";
-import { Search, Loader2, FileText, MessageSquare } from "lucide-react";
-import { Button } from "./Button";
-import { Input } from "./Input";
-import { Card, CardContent, CardHeader, CardTitle } from "./Card";
+import React, { useState, useCallback } from 'react';
+import { Search, Loader2, FileText, MessageSquare } from 'lucide-react';
+import { Button } from './Button';
+import { Input } from './Input';
+import { Card, CardContent, CardHeader, CardTitle } from './card';
 
 interface SearchResult {
   document_id: string;
@@ -21,7 +21,7 @@ interface SemanticSearchProps {
 export function SemanticSearch({
   onResultSelect,
   placeholder = "Search evidence semantically...",
-  className = "",
+  className = ""
 }: SemanticSearchProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -35,15 +35,15 @@ export function SemanticSearch({
     setError(null);
 
     try {
-      const response = await fetch("/api/v1/evidence/search/semantic", {
-        method: "POST",
+      const response = await fetch('/api/v1/evidence/search/semantic', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           query: searchQuery,
           limit: 10,
-          threshold: 0.1,
+          threshold: 0.1
         }),
       });
 
@@ -54,7 +54,7 @@ export function SemanticSearch({
       const data = await response.json();
       setResults(data.results || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Search failed");
+      setError(err instanceof Error ? err.message : 'Search failed');
       setResults([]);
     } finally {
       setIsSearching(false);
@@ -65,21 +65,15 @@ export function SemanticSearch({
     performSearch(query);
   }, [query, performSearch]);
 
-  const handleKeyPress = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Enter") {
-        handleSearch();
-      }
-    },
-    [handleSearch],
-  );
+  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  }, [handleSearch]);
 
-  const handleResultClick = useCallback(
-    (result: SearchResult) => {
-      onResultSelect?.(result);
-    },
-    [onResultSelect],
-  );
+  const handleResultClick = useCallback((result: SearchResult) => {
+    onResultSelect?.(result);
+  }, [onResultSelect]);
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -133,12 +127,7 @@ export function SemanticSearch({
                 key={result.document_id}
                 className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                 onClick={() => handleResultClick(result)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleResultClick(result);
-                  }
-                }}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleResultClick(result); } }}
                 tabIndex={0}
                 role="button"
               >
@@ -169,9 +158,7 @@ export function SemanticSearch({
         <div className="text-center py-8 text-gray-500">
           <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
           <p>No results found for "{query}"</p>
-          <p className="text-sm mt-1">
-            Try different keywords or check your spelling
-          </p>
+          <p className="text-sm mt-1">Try different keywords or check your spelling</p>
         </div>
       )}
     </div>
@@ -189,15 +176,15 @@ export function useSemanticSearch() {
     setError(null);
 
     try {
-      const response = await fetch("/api/v1/evidence/search/semantic", {
-        method: "POST",
+      const response = await fetch('/api/v1/evidence/search/semantic', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           query,
           limit,
-          threshold: 0.1,
+          threshold: 0.1
         }),
       });
 
@@ -209,7 +196,7 @@ export function useSemanticSearch() {
       setResults(data.results || []);
       return data.results || [];
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Search failed";
+      const errorMessage = err instanceof Error ? err.message : 'Search failed';
       setError(errorMessage);
       setResults([]);
       throw err;
@@ -223,6 +210,6 @@ export function useSemanticSearch() {
     results,
     isSearching,
     error,
-    clearResults: () => setResults([]),
+    clearResults: () => setResults([])
   };
 }
