@@ -302,17 +302,18 @@ async def refresh_token(request: Request, response: Response):
         # Determine claims
         user = auth_service.get_user(user_id) if hasattr(auth_service, "get_user") else None
 
-        claims = {"sub": user_id}
-        if user:
-            claims.update(
-                {
-                    "username": user.username,
-                    "role": user.role,
-                    "mfa_verified": user.mfa_enabled,
-                }
-            )
-        else:
-            claims.update({"username": "unknown", "role": "analyst"})
+        if not user:
+            # Security fix: Do not issue tokens for non-existent/inactive users
+            # Previously this fell back to "unknown" user which allowed access after deletion
+            logger.warning(f"Refresh attempt for non-existent user: {user_id}")
+            raise HTTPException(status_code=401, detail="User no longer exists or is inactive")
+
+        claims = {
+            "sub": user_id,
+            "username": user.username,
+            "role": user.role,
+            "mfa_verified": user.mfa_enabled,
+        }
 
         new_access_token = auth_service.create_access_token(claims)
 

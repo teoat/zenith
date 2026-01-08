@@ -23,3 +23,11 @@
 **Vulnerability:** Authentication endpoints (/auth/login) were configured for strict rate limiting, but the application served them under /api/v1/auth/login. This caused them to fall back to the default, much looser rate limit.
 **Learning:** Middleware often sees the full path including prefixes. Configuration keys must match the runtime request path exactly.
 **Prevention:** Always verify rate limit configurations with integration tests that check the effective limit on the full path.
+
+## 2025-12-20 - Ghost User Refresh
+**Vulnerability:** The `refresh_token` endpoint contained a fallback mechanism that issued valid access tokens for an "unknown" user (role: "analyst") if the user lookup failed (e.g., user deleted). This allowed malicious actors with a valid refresh token to maintain access even after their account was deleted.
+**Learning:** Fallback mechanisms intended for robustness (like handling "unknown" states) can inadvertently introduce security holes by defaulting to an authorized state ("Fail Open"). Authentication logic must always "Fail Closed".
+**Prevention:**
+1. Never issue tokens if the user entity cannot be strictly verified.
+2. Verify `user_id` against the database on every refresh.
+3. Implement tests that specifically simulate deleted/banned user scenarios for all auth flows.
