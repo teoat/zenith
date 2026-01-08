@@ -5,10 +5,11 @@ Case Service - Business logic for case management
 import logging
 from typing import Any
 
-from sqlalchemy import func
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload, selectinload
 
 from core.database import Case
+from core.models.case import CaseNote, Evidence
 
 logger = logging.getLogger(__name__)
 
@@ -106,16 +107,26 @@ class CaseService:
         limit: int = 100,
     ) -> list[dict[str, Any]]:
         """Get cases with evidence/note counts for dashboard performance"""
-        from sqlalchemy import func
+        # Use correlated subqueries to avoid Cartesian product and improve performance
+        # previous implementation using joins caused multiplication of rows (Cartesian product)
+        evidence_count = (
+            select(func.count(Evidence.id))
+            .where(Evidence.case_id == Case.id)
+            .correlate(Case)
+            .scalar_subquery()
+            .label("evidence_count")
+        )
+
+        notes_count = (
+            select(func.count(CaseNote.id))
+            .where(CaseNote.case_id == Case.id)
+            .correlate(Case)
+            .scalar_subquery()
+            .label("notes_count")
+        )
 
         query = (
-            db.query(
-                Case,
-                func.count(Case.evidence).label("evidence_count"),
-                func.count(Case.notes).label("notes_count"),
-            )
-            .outerjoin(Case.evidence)
-            .outerjoin(Case.notes)
+            db.query(Case, evidence_count, notes_count)
             .options(joinedload(Case.assignee))
         )
 
@@ -126,10 +137,10 @@ class CaseService:
         if priority:
             query = query.filter(Case.priority == priority)
 
-        query = query.group_by(Case.id).order_by(Case.created_at.desc()).limit(limit)
+        query = query.order_by(Case.created_at.desc()).limit(limit)
 
         results = []
-        for case, evidence_count, notes_count in query.all():
+        for case, e_count, n_count in query.all():
             case_dict = {
                 "id": case.id,
                 "title": case.title,
@@ -139,8 +150,8 @@ class CaseService:
                 "created_at": case.created_at,
                 "updated_at": case.updated_at,
                 "assignee": case.assignee.username if case.assignee else None,
-                "evidence_count": evidence_count or 0,
-                "notes_count": notes_count or 0,
+                "evidence_count": e_count or 0,
+                "notes_count": n_count or 0,
             }
             results.append(case_dict)
 
